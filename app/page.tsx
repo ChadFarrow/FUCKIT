@@ -98,8 +98,11 @@ export default function HomePage() {
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [customFeeds, setCustomFeeds] = useState<string[]>([]);
   const [isAddingFeed, setIsAddingFeed] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
+    console.log('🔄 useEffect triggered - starting to load albums');
     loadAlbumsData();
   }, []);
 
@@ -122,6 +125,7 @@ export default function HomePage() {
 
   const loadAlbumsData = async (additionalFeeds: string[] = []) => {
     try {
+      console.log('🚀 loadAlbumsData called with additionalFeeds:', additionalFeeds);
       setIsLoading(true);
       setError(null);
       
@@ -142,41 +146,34 @@ export default function HomePage() {
       
       // Map all feedUrls to use the backend proxy
       const proxiedFeedUrls = allFeeds.map(url => `/api/fetch-rss?url=${encodeURIComponent(url)}`);
-      const parsePromise = RSSParser.parseMultipleFeeds(proxiedFeedUrls);
-      const albumsData = await Promise.race([parsePromise, timeoutPromise]) as RSSAlbum[];
+      console.log('🔗 Proxied URLs:', proxiedFeedUrls.slice(0, 3), '...');
+      
+      let albumsData: RSSAlbum[];
+      try {
+        const parsePromise = RSSParser.parseMultipleFeeds(proxiedFeedUrls);
+        albumsData = await Promise.race([parsePromise, timeoutPromise]) as RSSAlbum[];
+        console.log('📦 Albums data received:', albumsData);
+      } catch (parseError) {
+        console.error('❌ RSSParser.parseMultipleFeeds failed:', parseError);
+        throw parseError;
+      }
       
       console.log('Albums data received:', albumsData);
       
       if (albumsData && albumsData.length > 0) {
+        console.log('✅ Setting albums:', albumsData.length, 'albums');
         setAlbums(albumsData);
         console.log('Successfully set', albumsData.length, 'albums');
       } else {
-        console.log('No album data received');
+        console.log('❌ No album data received');
         setError('Failed to load any album data from RSS feeds');
       }
+      
     } catch (err) {
       console.error('Error loading albums:', err);
-      // Check if it's a timeout error and show partial results if available
-      if (err instanceof Error && err.message.includes('timeout')) {
-        setError('Some feeds took too long to load. Showing available albums.');
-        // Try to show any albums that did load before timeout
-        try {
-          const allFeeds = [...feedUrls, ...additionalFeeds];
-          const quickParsePromise = RSSParser.parseMultipleFeeds(allFeeds.slice(0, 20).map(url => `/api/fetch-rss?url=${encodeURIComponent(url)}`)); // Try first 20 feeds
-          const partialAlbums = await Promise.race([
-            quickParsePromise,
-            new Promise<RSSAlbum[]>((_, reject) => setTimeout(() => reject([]), 10000))
-          ]) as RSSAlbum[];
-          if (partialAlbums.length > 0) {
-            setAlbums(partialAlbums);
-          }
-        } catch (partialErr) {
-          console.error('Even partial loading failed:', partialErr);
-        }
-      } else {
-        setError(`Error loading album data: ${err instanceof Error ? err.message : 'Unknown error'}`);
-      }
+      setError(`Error loading album data: ${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
+      console.log('🏁 loadAlbumsData finally block - setting isLoading to false');
       setIsLoading(false);
     }
   };
@@ -230,10 +227,10 @@ export default function HomePage() {
       {/* Main Content */}
       <div className="container mx-auto px-6 py-8">
         {/* Add RSS Feed Component */}
-        <AddRSSFeed onAddFeed={handleAddFeed} isLoading={isAddingFeed} />
+        {isClient && <AddRSSFeed onAddFeed={handleAddFeed} isLoading={isAddingFeed} />}
         
         {/* Custom Feeds Display */}
-        {customFeeds.length > 0 && (
+        {isClient && customFeeds.length > 0 && (
           <div className="bg-gray-800/30 backdrop-blur-sm border border-gray-700 rounded-lg p-4 mb-6">
             <h3 className="text-lg font-semibold mb-3 text-white">Custom RSS Feeds ({customFeeds.length})</h3>
             <div className="space-y-2">
@@ -259,7 +256,7 @@ export default function HomePage() {
           </div>
         )}
         
-        {isLoading ? (
+        {!isClient || isLoading ? (
           <div className="flex justify-center items-center py-12">
             <LoadingSpinner />
           </div>
@@ -276,9 +273,23 @@ export default function HomePage() {
           </div>
         ) : albums.length > 0 ? (
           <div className="max-w-7xl mx-auto">
-            {/* Albums Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {albums.map((album, index) => (
+            {(() => {
+              // Separate albums from singles
+              const albumsWithMultipleTracks = albums.filter(album => album.tracks.length > 1);
+              const singles = albums.filter(album => album.tracks.length === 1);
+              
+              // Sort both by title (case-insensitive)
+              albumsWithMultipleTracks.sort((a, b) => a.title.toLowerCase().localeCompare(b.title.toLowerCase()));
+              singles.sort((a, b) => a.title.toLowerCase().localeCompare(b.title.toLowerCase()));
+              
+              return (
+                <>
+                  {/* Albums Grid */}
+                  {albumsWithMultipleTracks.length > 0 && (
+                    <div className="mb-12">
+                      <h2 className="text-2xl font-bold mb-6">Albums</h2>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        {albumsWithMultipleTracks.map((album, index) => (
                 <Link 
                   key={index}
                   href={`/album/${encodeURIComponent(album.title)}`}
@@ -362,10 +373,111 @@ export default function HomePage() {
                         )}
                       </div>
                     )}
-                  </div>
-                </Link>
-              ))}
-            </div>
+                          </div>
+                        </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Singles Grid */}
+                  {singles.length > 0 && (
+                    <div>
+                      <h2 className="text-2xl font-bold mb-6">Singles</h2>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        {singles.map((album, index) => (
+                          <Link 
+                            key={`single-${index}`}
+                            href={`/album/${encodeURIComponent(album.title)}`}
+                            className="bg-black/20 backdrop-blur-sm rounded-lg overflow-hidden group hover:bg-black/30 transition-all duration-300 border border-gray-700/50 hover:border-gray-600/50 block cursor-pointer"
+                          >
+                            {/* Album Cover */}
+                            <div className="relative aspect-square">
+                              {album.coverArt ? (
+                                <Image 
+                                  src={getAlbumArtworkUrl(album.coverArt, 'medium')} 
+                                  alt={album.title}
+                                  width={300}
+                                  height={300}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-full h-full bg-gradient-to-br from-red-700 to-red-900 flex items-center justify-center">
+                                  <span className="text-white text-lg font-bold text-center px-4">
+                                    {album.title}
+                                  </span>
+                                </div>
+                              )}
+                              
+                              {/* Play Button Overlay - Always Visible */}
+                              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
+                                <div className="bg-white/80 hover:bg-white text-black rounded-full p-3 transform hover:scale-110 transition-all duration-200 shadow-lg">
+                                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8 5v14l11-7z"/>
+                                  </svg>
+                                </div>
+                              </div>
+                              
+                              {/* Single Badge */}
+                              <div className="absolute top-2 right-2 bg-purple-600/80 text-white text-xs px-2 py-1 rounded-full">
+                                Single
+                              </div>
+                            </div>
+                            
+                            {/* Album Info */}
+                            <div className="p-4">
+                              <h3 className="font-bold text-lg mb-1 group-hover:text-blue-400 transition-colors truncate">
+                                {album.title}
+                              </h3>
+                              <p className="text-gray-400 text-sm mb-2 truncate">{album.artist}</p>
+                              
+                              {/* Album Subtitle */}
+                              {album.subtitle && (
+                                <p className="text-gray-300 text-xs mb-2 italic truncate">{album.subtitle}</p>
+                              )}
+                              
+                              {/* Album Stats */}
+                              <div className="flex items-center justify-between text-xs text-gray-500">
+                                <span>{new Date(album.releaseDate).getFullYear()}</span>
+                                {album.explicit && (
+                                  <span className="bg-red-600 text-white px-1 py-0.5 rounded text-xs font-bold">
+                                    E
+                                  </span>
+                                )}
+                              </div>
+                              
+                              {/* Funding Links */}
+                              {album.funding && album.funding.length > 0 && (
+                                <div className="mt-3 flex flex-wrap gap-1">
+                                  {album.funding.slice(0, 2).map((funding, fundingIndex) => (
+                                    <button
+                                      key={fundingIndex}
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        window.open(funding.url, '_blank', 'noopener,noreferrer');
+                                      }}
+                                      className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 hover:from-blue-500/30 hover:to-purple-500/30 text-white px-2 py-1 rounded text-xs transition-all cursor-pointer"
+                                    >
+                                      💝 {funding.message || 'Support'}
+                                    </button>
+                                  ))}
+                                  {album.funding.length > 2 && (
+                                    <span className="text-xs text-gray-500 px-2 py-1">
+                                      +{album.funding.length - 2} more
+                                    </span>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
           </div>
         ) : (
           <div className="text-center py-12">

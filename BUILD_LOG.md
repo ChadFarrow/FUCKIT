@@ -240,6 +240,11 @@ cat .env.local
 ## 🔄 Recent Updates
 
 ### Latest Changes (Commit: 9b8ab95)
+- ✅ **API Response Caching** - RSS feed responses cached for 5 minutes
+- ✅ **Static Site Generation** - Album pages pre-generated at build time
+- ✅ **Service Worker Caching** - Offline functionality with intelligent caching
+- ✅ **PWA Support** - Web app manifest and service worker registration
+- ✅ **Offline Page** - Custom offline experience for users
 - ✅ Added RSS feed addition feature with passphrase protection
 - ✅ Implemented custom feed management
 - ✅ Fixed CORS issues completely

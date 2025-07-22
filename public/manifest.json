@@ -1,0 +1,52 @@
+{
+  "name": "DoerfelVerse",
+  "short_name": "DoerfelVerse",
+  "description": "Music and podcast hub from the Doerfel family and friends",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1f2937",
+  "theme_color": "#1f2937",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["music", "entertainment", "lifestyle"],
+  "icons": [
+    {
+      "src": "/logo.webp",
+      "sizes": "192x192",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/placeholder-podcast.jpg",
+      "sizes": "1280x720",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "DoerfelVerse Music Hub"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Browse Albums",
+      "short_name": "Albums",
+      "description": "Browse all available albums",
+      "url": "/",
+      "icons": [
+        {
+          "src": "/logo.webp",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+} 
