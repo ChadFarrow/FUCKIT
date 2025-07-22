@@ -58,24 +58,39 @@ export class RSSParser {
       }
       
       const xmlText = await response.text();
-      const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+      
+      // Use different XML parsing based on environment
+      let xmlDoc: any;
+      if (typeof window !== 'undefined') {
+        // Browser environment
+        const parser = new DOMParser();
+        xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+      } else {
+        // Server environment - use xmldom
+        const { DOMParser } = require('@xmldom/xmldom');
+        const parser = new DOMParser();
+        xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+      }
       
       // Check for parsing errors
-      const parserError = xmlDoc.querySelector('parsererror');
+      const parserError = xmlDoc.getElementsByTagName('parsererror')[0];
       if (parserError) {
         throw new Error('Invalid XML format');
       }
       
       // Extract channel info
-      const channel = xmlDoc.querySelector('channel');
-      if (!channel) {
+      const channels = xmlDoc.getElementsByTagName('channel');
+      if (!channels || channels.length === 0) {
         throw new Error('Invalid RSS feed: no channel found');
       }
+      const channel = channels[0];
       
-      const title = channel.querySelector('title')?.textContent?.trim() || 'Unknown Album';
-      const description = channel.querySelector('description')?.textContent?.trim() || '';
-      const link = channel.querySelector('link')?.textContent?.trim() || '';
+      const titleElement = channel.getElementsByTagName('title')[0];
+      const title = titleElement?.textContent?.trim() || 'Unknown Album';
+      const descriptionElement = channel.getElementsByTagName('description')[0];
+      const description = descriptionElement?.textContent?.trim() || '';
+      const linkElement = channel.getElementsByTagName('link')[0];
+      const link = linkElement?.textContent?.trim() || '';
       
       // Helper function to clean HTML content
       const cleanHtmlContent = (content: string | null | undefined): string | undefined => {
@@ -94,7 +109,8 @@ export class RSSParser {
       
       // Extract artist from title or author
       let artist = 'Unknown Artist';
-      const authorElement = channel.querySelector('itunes\\:author, author');
+      const authorElements = channel.getElementsByTagName('itunes:author');
+      const authorElement = authorElements.length > 0 ? authorElements[0] : channel.getElementsByTagName('author')[0];
       if (authorElement) {
         artist = authorElement.textContent?.trim() || artist;
       } else {
@@ -166,15 +182,16 @@ export class RSSParser {
       } : undefined;
 
       // Extract tracks from items
-      const items = xmlDoc.querySelectorAll('item');
+      const items = xmlDoc.getElementsByTagName('item');
       const tracks: RSSTrack[] = [];
       
-      items.forEach((item, index) => {
-        const trackTitle = item.querySelector('title')?.textContent?.trim() || `Track ${index + 1}`;
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        const trackTitle = item.getElementsByTagName('title')[0]?.textContent?.trim() || `Track ${i + 1}`;
         // Try multiple duration formats with better parsing
         let duration = '0:00';
-        const itunesDuration = item.querySelector('itunes\\:duration');
-        const durationElement = item.querySelector('duration');
+        const itunesDuration = item.getElementsByTagName('itunes:duration')[0];
+        const durationElement = item.getElementsByTagName('duration')[0];
         
         if (itunesDuration?.textContent?.trim()) {
           duration = itunesDuration.textContent.trim();
@@ -223,7 +240,7 @@ export class RSSParser {
             }
           }
         }
-        const enclosureElement = item.querySelector('enclosure');
+        const enclosureElement = item.getElementsByTagName('enclosure')[0];
         const url = enclosureElement?.getAttribute('url') || undefined;
         
         // Extract track-specific metadata
@@ -255,17 +272,17 @@ export class RSSParser {
           title: trackTitle,
           duration: duration,
           url: url,
-          trackNumber: index + 1,
+          trackNumber: i + 1,
           subtitle: cleanHtmlContent(trackSubtitle),
           summary: cleanHtmlContent(trackSummary),
           image: trackImage || undefined,
           explicit: trackExplicit,
           keywords: trackKeywords.length > 0 ? trackKeywords : undefined
         });
-      });
+      }
       
       // Extract release date
-      const pubDateElement = channel.querySelector('pubDate, lastBuildDate');
+      const pubDateElement = channel.getElementsByTagName('pubDate')[0] || channel.getElementsByTagName('lastBuildDate')[0];
       const releaseDate = pubDateElement?.textContent?.trim() || new Date().toISOString();
       
       // Extract funding information
@@ -354,7 +371,12 @@ export class RSSParser {
       };
       
     } catch (error) {
-      console.error('Error parsing RSS feed:', error);
+      console.error('❌ Error parsing RSS feed:', error);
+      console.error('🔍 Error details:', {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+        feedUrl
+      });
       return null;
     }
   }
@@ -363,6 +385,8 @@ export class RSSParser {
     console.log(`🔄 Parsing ${feedUrls.length} RSS feeds...`);
     const promises = feedUrls.map(url => this.parseAlbumFeed(url));
     const results = await Promise.allSettled(promises);
+    
+    console.log(`📊 Results: ${results.length} total, ${results.filter(r => r.status === 'fulfilled').length} fulfilled, ${results.filter(r => r.status === 'rejected').length} rejected`);
     
     const successful = results.filter((result): result is PromiseFulfilledResult<RSSAlbum> => 
       result.status === 'fulfilled' && result.value !== null);
@@ -374,6 +398,8 @@ export class RSSParser {
       failed.forEach((result, index) => {
         if (result.status === 'rejected') {
           console.error(`❌ Failed to parse feed ${feedUrls[index]}: ${result.reason}`);
+        } else if (result.status === 'fulfilled' && result.value === null) {
+          console.error(`❌ Feed ${feedUrls[index]} returned null`);
         }
       });
     }
