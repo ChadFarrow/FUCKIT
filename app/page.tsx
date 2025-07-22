@@ -5,7 +5,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { RSSParser, RSSAlbum, RSSTrack } from '@/lib/rss-parser';
-import { extractDominantColors, DominantColors, getContrastColor, adjustColorBrightness } from '@/lib/color-extractor';
 
 export default function HomePage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -15,7 +14,6 @@ export default function HomePage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [dominantColors, setDominantColors] = useState<DominantColors | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
@@ -101,17 +99,6 @@ export default function HomePage() {
       if (albumData) {
         setAlbum(albumData);
         
-        // Extract dominant colors from album artwork
-        if (albumData.coverArt) {
-          try {
-            const colors = await extractDominantColors(albumData.coverArt);
-            setDominantColors(colors);
-            console.log('🎨 Album cover URL:', albumData.coverArt);
-            console.log('🎨 Extracted colors:', colors);
-          } catch (colorError) {
-            console.error('Error extracting colors:', colorError);
-          }
-        }
       } else {
         setError('Failed to load album data from RSS feed');
       }
@@ -125,23 +112,18 @@ export default function HomePage() {
 
   return (
     <div 
-      className="min-h-screen text-white transition-all duration-1000"
+      className="min-h-screen text-white relative"
       style={{
-        background: dominantColors 
-          ? `linear-gradient(135deg, ${dominantColors.primary}05, ${dominantColors.secondary}05, ${dominantColors.tertiary}05)`
+        background: album?.coverArt 
+          ? `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('${album.coverArt}') center/cover fixed`
           : 'rgb(3, 7, 18)'
       }}
     >
       {/* Header */}
       <header 
-        className="border-b transition-all duration-1000"
+        className="border-b backdrop-blur-sm bg-black/30"
         style={{
-          background: dominantColors 
-            ? `linear-gradient(90deg, ${dominantColors.primary}15, ${dominantColors.secondary}15)`
-            : 'rgb(17, 24, 39)',
-          borderColor: dominantColors 
-            ? `${dominantColors.tertiary}30`
-            : 'rgb(31, 41, 55)'
+          borderColor: 'rgba(255, 255, 255, 0.1)'
         }}
       >
         <div className="container mx-auto px-6 py-4">
@@ -202,11 +184,9 @@ export default function HomePage() {
           <div className="max-w-4xl mx-auto">
             {/* Album Header */}
             <div 
-              className="flex flex-col md:flex-row gap-8 mb-8 p-6 rounded-lg"
+              className="flex flex-col md:flex-row gap-8 mb-8 p-6 rounded-lg backdrop-blur-sm"
               style={{
-                background: dominantColors 
-                  ? `linear-gradient(135deg, ${dominantColors.primary}20, ${dominantColors.secondary}20, ${dominantColors.tertiary}20)`
-                  : 'rgba(31, 41, 55, 0.5)'
+                background: 'rgba(0, 0, 0, 0.4)'
               }}
             >
               <div className="flex-shrink-0">
@@ -237,39 +217,7 @@ export default function HomePage() {
                   <p className="text-gray-300 mb-6">{album.summary || album.description}</p>
                 )}
                 
-                                  {/* Dominant Colors */}
-                  {dominantColors && (
-                    <div className="mb-6">
-                      <span className="text-sm text-gray-400 mr-2">Album Colors:</span>
-                      <div className="inline-flex gap-2 mt-2">
-                        <div className="flex items-center gap-2">
-                          <div 
-                            className="w-6 h-6 rounded-full border border-gray-600"
-                            style={{ backgroundColor: dominantColors.primary }}
-                            title={`Primary: ${dominantColors.primary}`}
-                          />
-                          <span className="text-xs text-gray-300">{dominantColors.primary}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div 
-                            className="w-6 h-6 rounded-full border border-gray-600"
-                            style={{ backgroundColor: dominantColors.secondary }}
-                            title={`Secondary: ${dominantColors.secondary}`}
-                          />
-                          <span className="text-xs text-gray-300">{dominantColors.secondary}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div 
-                            className="w-6 h-6 rounded-full border border-gray-600"
-                            style={{ backgroundColor: dominantColors.tertiary }}
-                            title={`Tertiary: ${dominantColors.tertiary}`}
-                          />
-                          <span className="text-xs text-gray-300">{dominantColors.tertiary}</span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
+                
                   {/* Categories and Keywords */}
                   {(album.categories || album.keywords) && (
                   <div className="mb-6">
@@ -338,20 +286,7 @@ export default function HomePage() {
                     <div 
                       key={index} 
                       className="flex items-center justify-between p-3 rounded-lg transition-colors group"
-                      style={{
-                        background: 'transparent',
-                        '--hover-bg': dominantColors ? `${dominantColors.primary}10` : 'rgb(31, 41, 55)'
-                      } as React.CSSProperties}
-                      onMouseEnter={(e) => {
-                        if (dominantColors) {
-                          e.currentTarget.style.background = `${dominantColors.primary}10`;
-                        } else {
-                          e.currentTarget.style.background = 'rgb(31, 41, 55)';
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = 'transparent';
-                      }}
+                      className="hover:bg-white/10 transition-colors"
                     >
                       <div className="flex items-center gap-4">
                         {/* Track artwork or play button */}
@@ -392,10 +327,7 @@ export default function HomePage() {
                             {currentTrack?.title === track.title && isPlaying ? (
                               <button 
                                 onClick={togglePlayPause}
-                                style={{
-                                  color: dominantColors ? dominantColors.secondary : '#4ade80'
-                                }}
-                                className="hover:opacity-80"
+                                className="hover:opacity-80 text-green-400"
                               >
                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                   <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
@@ -404,11 +336,8 @@ export default function HomePage() {
                             ) : (
                               <button 
                                 onClick={() => playTrack(track)}
-                                className="opacity-0 group-hover:opacity-100 transition-opacity"
+                                className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity"
                                 disabled={!track.url}
-                                style={{
-                                  color: dominantColors ? dominantColors.primary : '#9ca3af'
-                                }}
                               >
                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                   <path d="M8 5v14l11-7z"/>
@@ -423,14 +352,11 @@ export default function HomePage() {
                         
                         <div className="flex-1">
                                                       <p 
-                              className="font-medium"
-                              style={{
-                                color: currentTrack?.title === track.title 
-                                  ? dominantColors 
-                                    ? dominantColors.secondary
-                                    : '#4ade80'
-                                  : 'white'
-                              }}
+                              className={`font-medium ${
+                                currentTrack?.title === track.title 
+                                  ? 'text-green-400'
+                                  : 'text-white'
+                              }`}
                             >
                             {track.title}
                           </p>
@@ -498,14 +424,10 @@ export default function HomePage() {
 
       {/* Music Player */}
       <div 
-        className="fixed bottom-0 left-0 right-0 p-4 z-50 transition-all duration-1000"
+        className="fixed bottom-0 left-0 right-0 p-4 z-50 backdrop-blur-md"
         style={{
-          background: dominantColors 
-            ? `linear-gradient(90deg, ${dominantColors.primary}20, ${dominantColors.secondary}20)`
-            : 'rgb(17, 24, 39)',
-          borderTop: dominantColors 
-            ? `1px solid ${dominantColors.tertiary}40`
-            : '1px solid rgb(31, 41, 55)'
+          background: 'rgba(0, 0, 0, 0.7)',
+          borderTop: '1px solid rgba(255, 255, 255, 0.1)'
         }}
       >
           <div className="container mx-auto max-w-4xl">
