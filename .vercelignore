@@ -14,8 +14,9 @@
 README.md
 *.md
 
-# Exclude scripts
-scripts/
+# Exclude scripts (except auto-version-update.js)
+scripts/*
+!scripts/auto-version-update.js
 
 # Exclude any temporary files
 *.tmp

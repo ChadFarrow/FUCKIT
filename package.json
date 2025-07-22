@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node scripts/auto-version-update.js",
+    "prebuild": "echo 'Skipping auto-version update for deployment'",
     "build": "next build",
     "postbuild": "echo '✅ Build complete with auto-versioned PWA'",
     "start": "next start",
