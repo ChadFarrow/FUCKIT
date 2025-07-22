@@ -79,8 +79,11 @@ export const extractDominantColors = async (imageUrl: string): Promise<DominantC
         color.saturation > 30    // Has good color saturation
       )
       .slice(0, 10); // Get top 10 vibrant colors
+
+    console.log('🎨 Total colors found:', Object.keys(colorCounts).length);
+    console.log('🎨 Filtered vibrant colors:', sortedColors.length);
+    console.log('🎨 Top colors:', sortedColors.slice(0, 5).map(c => `${c.hex} (brightness: ${c.brightness.toFixed(0)}, saturation: ${c.saturation})`));
     
-    console.log('🎨 Found colors:', sortedColors.map(c => `${c.hex} (${c.count})`));
     
     if (sortedColors.length >= 3) {
       return {
@@ -89,6 +92,7 @@ export const extractDominantColors = async (imageUrl: string): Promise<DominantC
         tertiary: sortedColors[2].hex
       };
     } else {
+      console.log('🎨 No vibrant colors found, using fallback colors');
       // Fallback to manual color selection based on the Bloodshot Lies artwork
       return {
         primary: '#ff6b9d',   // Vibrant pink
@@ -98,6 +102,7 @@ export const extractDominantColors = async (imageUrl: string): Promise<DominantC
     }
   } catch (error) {
     console.error('Error extracting colors:', error);
+    console.log('🎨 Using fallback colors due to error');
     // Fallback colors for Bloodshot Lies
     return {
       primary: '#ff6b9d',   // Vibrant pink

@@ -96,32 +96,24 @@ export default function HomePage() {
       setIsLoading(true);
       setError(null);
       
-      console.log('Loading RSS feed...');
       const albumData = await RSSParser.parseAlbumFeed('https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml');
       
       if (albumData) {
         setAlbum(albumData);
-        console.log('Album loaded successfully:', {
-          title: albumData.title,
-          artist: albumData.artist,
-          tracks: albumData.tracks.length,
-          coverArt: albumData.coverArt
-        });
         
         // Extract dominant colors from album artwork
         if (albumData.coverArt) {
           try {
             const colors = await extractDominantColors(albumData.coverArt);
             setDominantColors(colors);
-            console.log('🎨 Extracted dominant colors:', colors);
             console.log('🎨 Album cover URL:', albumData.coverArt);
+            console.log('🎨 Extracted colors:', colors);
           } catch (colorError) {
             console.error('Error extracting colors:', colorError);
           }
         }
       } else {
         setError('Failed to load album data from RSS feed');
-        console.log('RSS Parser returned null');
       }
     } catch (err) {
       console.error('Error loading album:', err);
