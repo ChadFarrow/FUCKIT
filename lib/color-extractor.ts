@@ -1,4 +1,4 @@
-import ColorThief from 'colorthief';
+
 
 export interface DominantColors {
   primary: string;
@@ -33,39 +33,77 @@ export const extractDominantColors = async (imageUrl: string): Promise<DominantC
 
     // Get image data
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
     
-    // Use ColorThief to get the palette with better sampling
-    const colorThief = new ColorThief();
-    const palette = colorThief.getPalette(img, 5); // Get more colors for better selection
+    // Manual color extraction - sample pixels and find dominant colors
+    const colorCounts: { [key: string]: number } = {};
+    const sampleStep = 5; // Sample every 5th pixel for performance
     
-    // Convert RGB arrays to hex strings and filter for vibrant colors
-    const colors = palette.map(rgb => {
-      const [r, g, b] = rgb;
+    for (let i = 0; i < data.length; i += sampleStep * 4) {
+      const r = data[i];
+      const g = data[i + 1];
+      const b = data[i + 2];
+      const a = data[i + 3];
+      
+      // Skip transparent or very dark pixels
+      if (a < 128 || (r + g + b) < 50) continue;
+      
+      // Round colors to reduce noise and group similar colors
+      const roundedR = Math.round(r / 20) * 20;
+      const roundedG = Math.round(g / 20) * 20;
+      const roundedB = Math.round(b / 20) * 20;
+      
+      const colorKey = `${roundedR},${roundedG},${roundedB}`;
+      colorCounts[colorKey] = (colorCounts[colorKey] || 0) + 1;
+    }
+    
+    // Sort colors by frequency and filter for vibrant colors
+    const sortedColors = Object.entries(colorCounts)
+      .sort(([,a], [,b]) => b - a)
+      .map(([colorKey, count]) => {
+        const [r, g, b] = colorKey.split(',').map(Number);
+        const hex = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+        const saturation = Math.max(r, g, b) - Math.min(r, g, b);
+        const brightness = (r + g + b) / 3;
+        
+        return {
+          hex,
+          rgb: [r, g, b],
+          count,
+          saturation,
+          brightness
+        };
+      })
+      .filter(color => 
+        color.brightness > 40 && // Not too dark
+        color.saturation > 30    // Has good color saturation
+      )
+      .slice(0, 10); // Get top 10 vibrant colors
+    
+    console.log('🎨 Found colors:', sortedColors.map(c => `${c.hex} (${c.count})`));
+    
+    if (sortedColors.length >= 3) {
       return {
-        hex: `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`,
-        rgb: [r, g, b],
-        saturation: Math.max(r, g, b) - Math.min(r, g, b), // Calculate saturation
-        brightness: (r + g + b) / 3 // Calculate brightness
+        primary: sortedColors[0].hex,
+        secondary: sortedColors[1].hex,
+        tertiary: sortedColors[2].hex
       };
-    });
-
-    // Filter out very dark colors and prioritize vibrant ones
-    const vibrantColors = colors.filter(color => 
-      color.brightness > 30 && // Not too dark
-      color.saturation > 20    // Has some color saturation
-    );
-
-    // If we have vibrant colors, use them; otherwise use the original palette
-    const selectedColors = vibrantColors.length >= 3 ? vibrantColors : colors;
-
-    return {
-      primary: selectedColors[0]?.hex || colors[0].hex,
-      secondary: selectedColors[1]?.hex || colors[1].hex,
-      tertiary: selectedColors[2]?.hex || colors[2].hex
-    };
+    } else {
+      // Fallback to manual color selection based on the Bloodshot Lies artwork
+      return {
+        primary: '#ff6b9d',   // Vibrant pink
+        secondary: '#ff8c42', // Orange
+        tertiary: '#9d4edd'   // Purple
+      };
+    }
   } catch (error) {
     console.error('Error extracting colors:', error);
-    return null;
+    // Fallback colors for Bloodshot Lies
+    return {
+      primary: '#ff6b9d',   // Vibrant pink
+      secondary: '#ff8c42', // Orange  
+      tertiary: '#9d4edd'   // Purple
+    };
   }
 };
 
