@@ -26,11 +26,24 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'whiterabbitrecords.org',
+        port: '',
+        pathname: '/wp-content/**',
+      },
       // Bunny.net CDN
       {
         protocol: 'https',
         hostname: process.env.BUNNY_CDN_HOSTNAME || 'your-zone.b-cdn.net',
         port: '',
+        pathname: '/**',
+      },
+      // Fallback for local development
+      {
+        protocol: 'https',
+        hostname: 'localhost',
+        port: '3000',
         pathname: '/**',
       },
     ],
