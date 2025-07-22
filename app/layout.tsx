@@ -9,7 +9,6 @@ export const metadata: Metadata = {
   title: 'DoerfelVerse - Music & Podcast Hub',
   description: 'Discover and listen to music and podcasts from the Doerfel family and friends',
   manifest: '/manifest.json',
-  themeColor: '#1f2937',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
@@ -27,6 +26,7 @@ export const viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
+  themeColor: '#1f2937',
 }
 
 export default function RootLayout({

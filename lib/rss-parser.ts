@@ -91,7 +91,7 @@ export class RSSParser {
         xmlDoc = parser.parseFromString(xmlText, 'text/xml');
       } else {
         // Server environment - use xmldom
-        const { DOMParser } = require('@xmldom/xmldom');
+        const { DOMParser } = await import('@xmldom/xmldom');
         const parser = new DOMParser();
         xmlDoc = parser.parseFromString(xmlText, 'text/xml');
       }
@@ -434,34 +434,48 @@ export class RSSParser {
   
   static async parseMultipleFeeds(feedUrls: string[]): Promise<RSSAlbum[]> {
     console.log(`🔄 Parsing ${feedUrls.length} RSS feeds...`);
-    const promises = feedUrls.map(url => this.parseAlbumFeed(url));
-    const results = await Promise.allSettled(promises);
     
-    console.log(`📊 Results: ${results.length} total, ${results.filter(r => r.status === 'fulfilled').length} fulfilled, ${results.filter(r => r.status === 'rejected').length} rejected`);
+    // Process feeds in larger batches for better performance
+    const batchSize = 20; // Increased from 10
+    const results: RSSAlbum[] = [];
     
-    const successful = results.filter((result): result is PromiseFulfilledResult<RSSAlbum> => 
-      result.status === 'fulfilled' && result.value !== null);
-    
-    const failed = results.filter(result => result.status === 'rejected' || result.value === null);
-    
-    if (failed.length > 0) {
-      console.warn(`⚠️ Failed to parse ${failed.length} feeds out of ${feedUrls.length}`);
-      failed.forEach((result, index) => {
-        if (result.status === 'rejected') {
-          console.error(`❌ Failed to parse feed ${feedUrls[index]}: ${result.reason}`);
-        } else if (result.status === 'fulfilled' && result.value === null) {
-          console.error(`❌ Feed ${feedUrls[index]} returned null`);
+    for (let i = 0; i < feedUrls.length; i += batchSize) {
+      const batch = feedUrls.slice(i, i + batchSize);
+      console.log(`📦 Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(feedUrls.length / batchSize)} (${batch.length} feeds)`);
+      
+      const promises = batch.map(url => this.parseAlbumFeed(url));
+      const batchResults = await Promise.allSettled(promises);
+      
+      const successful = batchResults.filter((result): result is PromiseFulfilledResult<RSSAlbum> => 
+        result.status === 'fulfilled' && result.value !== null);
+      
+      const failed = batchResults.filter(result => result.status === 'rejected' || result.value === null);
+      
+      if (failed.length > 0) {
+        console.warn(`⚠️ Failed to parse ${failed.length} feeds in batch ${Math.floor(i / batchSize) + 1}`);
+        // Only log first few failures to avoid console spam
+        failed.slice(0, 3).forEach((result, index) => {
+          if (result.status === 'rejected') {
+            console.error(`❌ Failed to parse feed ${batch[index]}: ${result.reason}`);
+          } else if (result.status === 'fulfilled' && result.value === null) {
+            console.error(`❌ Feed ${batch[index]} returned null`);
+          }
+        });
+        if (failed.length > 3) {
+          console.warn(`... and ${failed.length - 3} more failures`);
         }
-      });
+      }
+      
+      results.push(...successful.map(result => result.value));
+      
+      // Reduced delay between batches for faster loading
+      if (i + batchSize < feedUrls.length) {
+        await new Promise(resolve => setTimeout(resolve, 50)); // Reduced from 100ms
+      }
     }
     
-    // Log successful albums for debugging
-    successful.forEach((result, index) => {
-      console.log(`📦 Parsed album ${index + 1}: "${result.value.title}" by ${result.value.artist} (${result.value.tracks.length} tracks)`);
-    });
-    
-    console.log(`✅ Successfully parsed ${successful.length} albums from ${feedUrls.length} feeds`);
-    return successful.map(result => result.value);
+    console.log(`✅ Successfully parsed ${results.length} albums from ${feedUrls.length} feeds`);
+    return results;
   }
 
   static async parsePublisherFeedInfo(feedUrl: string): Promise<{ title?: string; description?: string; artist?: string; coverArt?: string } | null> {
@@ -495,7 +509,7 @@ export class RSSParser {
         xmlDoc = parser.parseFromString(xmlText, 'text/xml');
       } else {
         // Server environment - use xmldom
-        const { DOMParser } = require('@xmldom/xmldom');
+        const { DOMParser } = await import('@xmldom/xmldom');
         const parser = new DOMParser();
         xmlDoc = parser.parseFromString(xmlText, 'text/xml');
       }
@@ -548,7 +562,7 @@ export class RSSParser {
         title,
         description,
         artist,
-        coverArt
+        coverArt: coverArt || undefined
       };
       
     } catch (error) {
@@ -588,7 +602,7 @@ export class RSSParser {
         xmlDoc = parser.parseFromString(xmlText, 'text/xml');
       } else {
         // Server environment - use xmldom
-        const { DOMParser } = require('@xmldom/xmldom');
+        const { DOMParser } = await import('@xmldom/xmldom');
         const parser = new DOMParser();
         xmlDoc = parser.parseFromString(xmlText, 'text/xml');
       }

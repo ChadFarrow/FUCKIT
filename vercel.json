@@ -3,16 +3,6 @@
   "buildCommand": "npm run build",
   "installCommand": "npm install",
   "framework": "nextjs",
-
-
-  "env": {
-    "BUNNY_CDN_HOSTNAME": "re-podtards.b-cdn.net",
-    "BUNNY_CDN_ZONE": "re-podtards", 
-    "BUNNY_CDN_API_KEY": "d33f9b6a-779d-4cce-8767-cd050a2819bf",
-    "NEXT_PUBLIC_SITE_URL": "https://re.podtards.com",
-    "NEXT_PUBLIC_API_URL": "https://re.podtards.com/api",
-    "NEXT_PUBLIC_CDN_URL": "https://re-podtards.b-cdn.net"
-  },
   "headers": [
     {
       "source": "/(.*)",
@@ -36,7 +26,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://re.podtards.com"
+          "value": "*"
         },
         {
           "key": "Access-Control-Allow-Methods",

@@ -100,15 +100,51 @@ export default function HomePage() {
   const [customFeeds, setCustomFeeds] = useState<string[]>([]);
   const [isAddingFeed, setIsAddingFeed] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   
   // Audio player state for main page
   const [currentPlayingAlbum, setCurrentPlayingAlbum] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const hasLoadedRef = useRef(false);
+  
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
   
   useEffect(() => {
     console.log('🔄 useEffect triggered - starting to load albums');
-    loadAlbumsData();
+    if (!hasLoadedRef.current) {
+      hasLoadedRef.current = true;
+      
+      // Try to load from cache first
+      if (typeof window !== 'undefined') {
+        const cachedAlbums = localStorage.getItem('cachedAlbums');
+        const cacheTimestamp = localStorage.getItem('albumsCacheTimestamp');
+        
+        if (cachedAlbums && cacheTimestamp) {
+          const cacheAge = Date.now() - parseInt(cacheTimestamp);
+          const cacheValid = cacheAge < 5 * 60 * 1000; // 5 minutes
+          
+          if (cacheValid) {
+            try {
+              const parsedAlbums = JSON.parse(cachedAlbums);
+              console.log('📦 Loading albums from cache:', parsedAlbums.length, 'albums');
+              setAlbums(parsedAlbums);
+              setIsLoading(false);
+              return;
+            } catch (error) {
+              console.warn('⚠️ Failed to parse cached albums:', error);
+            }
+          }
+        }
+      }
+      
+      // Add a small delay to let the UI render first
+      setTimeout(() => {
+        loadAlbumsData();
+      }, 100);
+    }
   }, []);
 
   const handleAddFeed = async (feedUrl: string) => {
@@ -159,7 +195,13 @@ export default function HomePage() {
         const regularAlbums = await Promise.race([parsePromise, timeoutPromise]) as RSSAlbum[];
         console.log('📦 Regular albums data received:', regularAlbums);
 
-        // Find albums with publisher information and load their publisher feeds
+        // Set albums immediately for faster UI response
+        if (regularAlbums && regularAlbums.length > 0) {
+          setAlbums(regularAlbums);
+          console.log('✅ Set initial albums:', regularAlbums.length, 'albums');
+        }
+
+        // Load publisher feeds in background (non-blocking)
         const publisherFeeds = new Set<string>();
         regularAlbums.forEach(album => {
           if (album.publisher && album.publisher.feedUrl) {
@@ -167,36 +209,36 @@ export default function HomePage() {
           }
         });
 
-        console.log(`🏢 Found ${publisherFeeds.size} publisher feeds to load`);
+        console.log(`🏢 Found ${publisherFeeds.size} publisher feeds to load in background`);
 
-        // Load albums from publisher feeds
-        let publisherAlbums: RSSAlbum[] = [];
+        // Load publisher feeds asynchronously without blocking the UI
         if (publisherFeeds.size > 0) {
-          const publisherPromises = Array.from(publisherFeeds).map(feedUrl => 
-            RSSParser.parsePublisherFeedAlbums(feedUrl)
-          );
-          const publisherResults = await Promise.allSettled(publisherPromises);
-          publisherAlbums = publisherResults
-            .filter((result): result is PromiseFulfilledResult<RSSAlbum[]> => result.status === 'fulfilled')
-            .flatMap(result => result.value);
-          
-          console.log(`🎶 Loaded ${publisherAlbums.length} albums from publisher feeds`);
+          // Don't await this - let it run in background
+          RSSParser.parseMultipleFeeds(Array.from(publisherFeeds))
+            .then(publisherAlbums => {
+              console.log(`🎶 Loaded ${publisherAlbums.length} albums from publisher feeds`);
+              
+              // Combine with existing albums
+              const existingAlbums = albums;
+              const existingKeys = new Set(existingAlbums.map(album => `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`));
+              
+              const newAlbums = publisherAlbums.filter(album => {
+                const key = `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`;
+                return !existingKeys.has(key);
+              });
+              
+              if (newAlbums.length > 0) {
+                setAlbums(prev => [...prev, ...newAlbums]);
+                console.log(`✅ Added ${newAlbums.length} new albums from publisher feeds`);
+              }
+            })
+            .catch(error => {
+              console.warn('⚠️ Failed to load publisher feeds:', error);
+            });
         }
 
-        // Combine regular albums and publisher feed albums, removing duplicates by title+artist
-        const allAlbums = [...regularAlbums];
-        const existingKeys = new Set(regularAlbums.map(album => `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`));
-        
-        publisherAlbums.forEach(album => {
-          const key = `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`;
-          if (!existingKeys.has(key)) {
-            allAlbums.push(album);
-            existingKeys.add(key);
-          }
-        });
-
-        albumsData = allAlbums;
-        console.log(`📦 Total albums after combining: ${albumsData.length}`);
+        albumsData = regularAlbums;
+        console.log(`📦 Total albums after initial load: ${albumsData.length}`);
       } catch (parseError) {
         console.error('❌ Album parsing failed:', parseError);
         throw parseError;
@@ -208,6 +250,17 @@ export default function HomePage() {
         console.log('✅ Setting albums:', albumsData.length, 'albums');
         setAlbums(albumsData);
         console.log('Successfully set', albumsData.length, 'albums');
+        
+        // Cache albums in localStorage for faster subsequent loads
+        if (typeof window !== 'undefined') {
+          try {
+            localStorage.setItem('cachedAlbums', JSON.stringify(albumsData));
+            localStorage.setItem('albumsCacheTimestamp', Date.now().toString());
+            console.log('💾 Cached albums in localStorage');
+          } catch (error) {
+            console.warn('⚠️ Failed to cache albums:', error);
+          }
+        }
       } else {
         console.log('❌ No album data received');
         setError('Failed to load any album data from RSS feeds');
@@ -258,17 +311,18 @@ export default function HomePage() {
           setIsPlaying(false);
           setCurrentPlayingAlbum(null);
         }}
+        style={{ display: 'none' }}
       />
       
       {/* Header */}
       <header 
-        className="border-b backdrop-blur-sm bg-black/30 relative z-20"
+        className="border-b backdrop-blur-sm bg-black/30"
         style={{
           borderColor: 'rgba(255, 255, 255, 0.1)'
         }}
       >
         <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4 mb-8">
             {/* Menu Button - Left */}
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -276,26 +330,21 @@ export default function HomePage() {
               aria-label="Toggle menu"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isSidebarOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
             
             {/* Logo and Title - Centered */}
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 relative border border-gray-700 rounded-lg overflow-hidden">
-                <Image 
-                  src="/logo.webp" 
-                  alt="VALUE Logo" 
-                  width={40} 
-                  height={40}
-                  className="object-cover"
-                />
-              </div>
-              <h1 className="text-4xl font-bold">Into the ValueVerse</h1>
+            <div className="w-10 h-10 relative border border-gray-700 rounded-lg overflow-hidden">
+              <Image 
+                src="/logo.webp" 
+                alt="VALUE Logo" 
+                width={40} 
+                height={40}
+                className="object-cover"
+              />
             </div>
-            
-            {/* Empty div for balance */}
-            <div className="w-10 h-10"></div>
+            <h1 className="text-4xl font-bold">Into the ValueVerse</h1>
           </div>
           
           {/* Description */}
@@ -307,19 +356,40 @@ export default function HomePage() {
           </p>
           
           {/* Loading/Error Status */}
-          <div className="flex items-center gap-2 text-sm">
-            {isLoading ? (
-              <>
-                <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
-                <span className="text-yellow-400">Loading {feedUrls.length + customFeeds.length} RSS feeds...</span>
-              </>
-            ) : error ? (
-              <>
-                <span className="w-2 h-2 bg-red-400 rounded-full"></span>
-                <span className="text-red-400">{error}</span>
-              </>
-            ) : null}
-          </div>
+          {isClient && (
+            <div className="flex items-center gap-2 text-sm">
+              {isLoading ? (
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
+                  <span className="text-yellow-400">
+                    Loading {albums.length > 0 ? `${albums.length} albums` : `${feedUrls.length + customFeeds.length} RSS feeds`}...
+                  </span>
+                </div>
+              ) : error ? (
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 bg-red-400 rounded-full"></span>
+                  <span className="text-red-400">{error}</span>
+                </div>
+              ) : albums.length > 0 ? (
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 bg-green-400 rounded-full"></span>
+                  <span className="text-green-400">Loaded {albums.length} albums</span>
+                  <button
+                    onClick={() => {
+                      localStorage.removeItem('cachedAlbums');
+                      localStorage.removeItem('albumsCacheTimestamp');
+                      setIsLoading(true);
+                      loadAlbumsData();
+                    }}
+                    className="ml-2 px-2 py-1 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 rounded text-xs transition-colors"
+                    title="Refresh albums"
+                  >
+                    🔄
+                  </button>
+                </div>
+              ) : null}
+            </div>
+          )}
         </div>
       </header>
       
@@ -507,6 +577,8 @@ export default function HomePage() {
                         width={300}
                         height={300}
                         className="w-full h-full object-cover"
+                        loading="lazy"
+                        priority={index < 8} // Only prioritize first 8 images
                       />
                     ) : (
                       <div className="w-full h-full bg-gradient-to-br from-red-700 to-red-900 flex items-center justify-center">
@@ -612,6 +684,8 @@ export default function HomePage() {
                                   width={300}
                                   height={300}
                                   className="w-full h-full object-cover"
+                                  loading="lazy"
+                                  priority={false} // Never prioritize EPs/singles
                                 />
                               ) : (
                                 <div className="w-full h-full bg-gradient-to-br from-red-700 to-red-900 flex items-center justify-center">

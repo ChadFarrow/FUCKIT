@@ -102,7 +102,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Access-Control-Allow-Origin',
-            value: process.env.NODE_ENV === 'production' ? 'https://re.podtards.com' : '*',
+            value: '*',
           },
           {
             key: 'Access-Control-Allow-Methods',

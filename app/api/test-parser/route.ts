@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
     const xmlText = await response.text();
     
     // Test XML parsing
-    const { DOMParser } = require('@xmldom/xmldom');
+    const { DOMParser } = await import('@xmldom/xmldom');
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
     

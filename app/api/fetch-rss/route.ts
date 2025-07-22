@@ -3,33 +3,33 @@ import { NextRequest, NextResponse } from 'next/server';
 // In-memory cache for RSS feeds
 const cache = new Map<string, { data: string; timestamp: number; ttl: number }>();
 
-// Cache TTL: 1 minute
-const CACHE_TTL = 1 * 60 * 1000;
+// Cache TTL: 5 minutes (increased for better performance)
+const CACHE_TTL = 5 * 60 * 1000;
 
 // Rate limiting: track requests per domain
 const rateLimit = new Map<string, { count: number; resetTime: number }>();
 const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
-const MAX_REQUESTS_PER_MINUTE = 10; // Conservative limit
+const MAX_REQUESTS_PER_MINUTE = 20; // Increased for better performance
 
-// Clean up expired cache entries every 10 minutes
-setInterval(() => {
+// Clean up expired cache entries on demand
+function cleanupCache() {
   const now = Date.now();
   Array.from(cache.entries()).forEach(([key, value]) => {
     if (now - value.timestamp > value.ttl) {
       cache.delete(key);
     }
   });
-}, 10 * 60 * 1000);
+}
 
-// Clean up rate limit data every 5 minutes
-setInterval(() => {
+// Clean up rate limit data on demand
+function cleanupRateLimit() {
   const now = Date.now();
   Array.from(rateLimit.entries()).forEach(([domain, data]) => {
     if (now > data.resetTime) {
       rateLimit.delete(domain);
     }
   });
-}, 5 * 60 * 1000);
+}
 
 /**
  * Check if we're rate limited for a domain
@@ -107,6 +107,10 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const url = searchParams.get('url');
   const clearCache = searchParams.get('clearCache');
+
+  // Clean up expired data on each request
+  cleanupCache();
+  cleanupRateLimit();
 
   // Clear cache if requested
   if (clearCache === 'true') {
