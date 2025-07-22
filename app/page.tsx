@@ -98,6 +98,8 @@ export default function HomePage() {
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [customFeeds, setCustomFeeds] = useState<string[]>([]);
   const [isAddingFeed, setIsAddingFeed] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  
   useEffect(() => {
     console.log('🔄 useEffect triggered - starting to load albums');
     loadAlbumsData();
@@ -178,13 +180,23 @@ export default function HomePage() {
     <div className="min-h-screen text-white bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       {/* Header */}
       <header 
-        className="border-b backdrop-blur-sm bg-black/30"
+        className="border-b backdrop-blur-sm bg-black/30 relative z-20"
         style={{
           borderColor: 'rgba(255, 255, 255, 0.1)'
         }}
       >
         <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center gap-4 mb-8">
+          <div className="flex items-center gap-4">
+            {/* Menu Toggle Button */}
+            <button
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="p-2 rounded-lg bg-gray-800/50 hover:bg-gray-700/50 transition-colors"
+              aria-label="Toggle menu"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isSidebarOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
+              </svg>
+            </button>
             <div className="w-10 h-10 relative border border-gray-700 rounded-lg overflow-hidden">
               <Image 
                 src="/logo.webp" 
@@ -194,7 +206,7 @@ export default function HomePage() {
                 className="object-cover"
               />
             </div>
-            <h1 className="text-4xl font-bold">Into the ValueVerse</h1>
+            <h1 className="text-4xl font-bold mb-4">Into the ValueVerse</h1>
           </div>
           <p className="text-gray-400 text-lg mb-4">
             This is a demo app I built as the "insert title" project to see what we could do with RSS feeds and music. All data here comes from RSS feeds on{' '}
@@ -218,38 +230,65 @@ export default function HomePage() {
                 </div>
       </header>
       
+      {/* Sidebar */}
+      <div className={`fixed top-0 left-0 h-full w-80 bg-gray-900/95 backdrop-blur-sm transform transition-transform duration-300 z-30 border-r border-gray-700 ${
+        isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}>
+        <div className="p-6 pt-20">
+          <h2 className="text-xl font-bold mb-6">Menu</h2>
+          
+          {/* Add RSS Feed Component */}
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold mb-4">Add RSS Feed</h3>
+            <AddRSSFeed onAddFeed={handleAddFeed} isLoading={isAddingFeed} />
+          </div>
+          
+          {/* Custom Feeds Display */}
+          {customFeeds.length > 0 && (
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold mb-3 text-white">Custom RSS Feeds ({customFeeds.length})</h3>
+              <div className="space-y-2 max-h-60 overflow-y-auto">
+                {customFeeds.map((feed, index) => (
+                  <div key={index} className="flex items-center justify-between bg-gray-800/50 rounded p-2">
+                    <span className="text-sm text-gray-300 truncate flex-1">{feed}</span>
+                    <button
+                      onClick={() => {
+                        const newCustomFeeds = customFeeds.filter((_, i) => i !== index);
+                        setCustomFeeds(newCustomFeeds);
+                        loadAlbumsData(newCustomFeeds);
+                      }}
+                      className="ml-2 text-red-400 hover:text-red-300 transition-colors"
+                      title="Remove feed"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {/* Feed Stats */}
+          <div className="text-sm text-gray-400">
+            <p>Default feeds: {feedUrls.length}</p>
+            <p>Custom feeds: {customFeeds.length}</p>
+            <p>Total albums: {albums.length}</p>
+          </div>
+        </div>
+      </div>
+      
+      {/* Overlay to close sidebar when clicking outside */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-20" 
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+      
       {/* Main Content */}
       <div className="container mx-auto px-6 py-8">
-        {/* Add RSS Feed Component */}
-        <AddRSSFeed onAddFeed={handleAddFeed} isLoading={isAddingFeed} />
-        
-        {/* Custom Feeds Display */}
-        {customFeeds.length > 0 && (
-          <div className="bg-gray-800/30 backdrop-blur-sm border border-gray-700 rounded-lg p-4 mb-6">
-            <h3 className="text-lg font-semibold mb-3 text-white">Custom RSS Feeds ({customFeeds.length})</h3>
-            <div className="space-y-2">
-              {customFeeds.map((feed, index) => (
-                <div key={index} className="flex items-center justify-between bg-gray-700/50 rounded p-2">
-                  <span className="text-sm text-gray-300 truncate flex-1">{feed}</span>
-                  <button
-                    onClick={() => {
-                      const newCustomFeeds = customFeeds.filter((_, i) => i !== index);
-                      setCustomFeeds(newCustomFeeds);
-                      loadAlbumsData(newCustomFeeds);
-                    }}
-                    className="ml-2 text-red-400 hover:text-red-300 transition-colors"
-                    title="Remove feed"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-        
         {isLoading ? (
           <div className="flex justify-center items-center py-12">
             <LoadingSpinner />
