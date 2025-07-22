@@ -275,8 +275,16 @@ export default function HomePage() {
               const albumsWithMultipleTracks = albums.filter(album => album.tracks.length > 6);
               const epsAndSingles = albums.filter(album => album.tracks.length <= 6);
               
-              // Sort both by artist first, then by title within each artist (case-insensitive)
+              // Sort albums: Pin "Bloodshot Lies" first, then by artist/title
               albumsWithMultipleTracks.sort((a, b) => {
+                // Check if either album is "Bloodshot Lies" (case-insensitive)
+                const aIsBloodshot = a.title.toLowerCase().includes('bloodshot lie');
+                const bIsBloodshot = b.title.toLowerCase().includes('bloodshot lie');
+                
+                if (aIsBloodshot && !bIsBloodshot) return -1; // a comes first
+                if (!aIsBloodshot && bIsBloodshot) return 1; // b comes first
+                
+                // For all other albums, sort by artist then title
                 const artistCompare = a.artist.toLowerCase().localeCompare(b.artist.toLowerCase());
                 if (artistCompare !== 0) return artistCompare;
                 return a.title.toLowerCase().localeCompare(b.title.toLowerCase());

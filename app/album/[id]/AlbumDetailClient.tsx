@@ -174,11 +174,48 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
           // Parse feeds
           const albumsData = await RSSParser.parseMultipleFeeds(proxiedFeedUrls);
           
-          // Find the matching album
+          // Debug: Log all available albums
+          console.log('🔍 Available albums:', albumsData.map(a => ({ title: a.title, artist: a.artist })));
+          console.log('🎯 Searching for album:', decodedAlbumTitle);
+          
+          // Find the matching album with more flexible matching
           const foundAlbum = albumsData.find(a => {
-            const normalizedTitle = a.title.toLowerCase().replace(/[^a-z0-9]/g, '');
-            const normalizedSearch = decodedAlbumTitle.toLowerCase().replace(/[^a-z0-9]/g, '');
-            return normalizedTitle === normalizedSearch || a.title === decodedAlbumTitle || a.title === albumTitle;
+            const albumTitleLower = a.title.toLowerCase();
+            const searchTitleLower = decodedAlbumTitle.toLowerCase();
+            
+            // Exact match
+            if (a.title === decodedAlbumTitle || a.title === albumTitle) {
+              console.log('✅ Exact match found:', a.title);
+              return true;
+            }
+            
+            // Case-insensitive match
+            if (albumTitleLower === searchTitleLower) {
+              console.log('✅ Case-insensitive match found:', a.title);
+              return true;
+            }
+            
+            // Contains match (search title contains album title or vice versa)
+            if (albumTitleLower.includes(searchTitleLower) || searchTitleLower.includes(albumTitleLower)) {
+              console.log('✅ Contains match found:', a.title);
+              return true;
+            }
+            
+            // Normalized match (remove special characters)
+            const normalizedAlbum = albumTitleLower.replace(/[^a-z0-9]/g, '');
+            const normalizedSearch = searchTitleLower.replace(/[^a-z0-9]/g, '');
+            if (normalizedAlbum === normalizedSearch) {
+              console.log('✅ Normalized match found:', a.title);
+              return true;
+            }
+            
+            // Partial normalized match
+            if (normalizedAlbum.includes(normalizedSearch) || normalizedSearch.includes(normalizedAlbum)) {
+              console.log('✅ Partial normalized match found:', a.title);
+              return true;
+            }
+            
+            return false;
           });
           
           if (foundAlbum) {

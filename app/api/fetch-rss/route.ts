@@ -3,8 +3,8 @@ import { NextRequest, NextResponse } from 'next/server';
 // Simple in-memory cache (in production, use Redis or similar)
 const cache = new Map<string, { data: string; timestamp: number; ttl: number }>();
 
-// Cache TTL in milliseconds (5 minutes)
-const CACHE_TTL = 5 * 60 * 1000;
+// Cache TTL in milliseconds (1 minute for debugging)
+const CACHE_TTL = 1 * 60 * 1000;
 
 // Clean up expired cache entries every 10 minutes
 setInterval(() => {
@@ -19,6 +19,14 @@ setInterval(() => {
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const url = searchParams.get('url');
+  const clearCache = searchParams.get('clearCache');
+
+  // Clear cache if requested
+  if (clearCache === 'true') {
+    cache.clear();
+    console.log('🧹 Cache cleared');
+    return NextResponse.json({ message: 'Cache cleared' });
+  }
 
   if (!url) {
     return NextResponse.json({ error: 'URL parameter is required' }, { status: 400 });

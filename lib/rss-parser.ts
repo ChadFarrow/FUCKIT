@@ -378,6 +378,11 @@ export class RSSParser {
       });
     }
     
+    // Log successful albums for debugging
+    successful.forEach((result, index) => {
+      console.log(`📦 Parsed album ${index + 1}: "${result.value.title}" by ${result.value.artist} (${result.value.tracks.length} tracks)`);
+    });
+    
     console.log(`✅ Successfully parsed ${successful.length} albums from ${feedUrls.length} feeds`);
     return successful.map(result => result.value);
   }
