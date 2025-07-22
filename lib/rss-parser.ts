@@ -182,7 +182,7 @@ export class RSSParser {
       
       items.forEach((item, index) => {
         const trackTitle = item.querySelector('title')?.textContent?.trim() || `Track ${index + 1}`;
-        // Try multiple duration formats
+        // Try multiple duration formats with better parsing
         let duration = '0:00';
         const itunesDuration = item.querySelector('itunes\\:duration');
         const durationElement = item.querySelector('duration');
@@ -196,6 +196,26 @@ export class RSSParser {
         // If duration is empty or just whitespace, use default
         if (!duration || duration.trim() === '') {
           duration = '0:00';
+        } else {
+          // Convert seconds to MM:SS format if needed
+          const durationStr = duration.trim();
+          if (/^\d+$/.test(durationStr)) {
+            // It's just seconds, convert to MM:SS
+            const seconds = parseInt(durationStr);
+            if (!isNaN(seconds) && seconds > 0) {
+              const mins = Math.floor(seconds / 60);
+              const secs = seconds % 60;
+              duration = `${mins}:${secs.toString().padStart(2, '0')}`;
+            }
+          } else if (durationStr.includes(':') && durationStr.split(':').length === 2) {
+            // It's already in MM:SS format, ensure it's valid
+            const parts = durationStr.split(':');
+            const mins = parseInt(parts[0]);
+            const secs = parseInt(parts[1]);
+            if (!isNaN(mins) && !isNaN(secs) && mins >= 0 && secs >= 0 && secs < 60) {
+              duration = `${mins}:${secs.toString().padStart(2, '0')}`;
+            }
+          }
         }
         const enclosureElement = item.querySelector('enclosure');
         const url = enclosureElement?.getAttribute('url') || undefined;

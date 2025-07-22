@@ -452,21 +452,21 @@ export default function AlbumDetailPage() {
         {podrollAlbums.length > 0 && (
           <div className="bg-black/40 backdrop-blur-sm rounded-lg p-6 mt-8">
             <h2 className="text-xl font-semibold mb-4">You Might Also Like</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {podrollAlbums.map((podrollAlbum, index) => (
                 <Link
                   key={index}
                   href={`/album/${encodeURIComponent(podrollAlbum.title)}`}
                   className="group block"
                 >
-                  <div className="bg-white/5 hover:bg-white/10 rounded-lg p-4 transition-all duration-200 hover:scale-105">
-                    <div className="aspect-square relative mb-4">
+                  <div className="bg-white/5 hover:bg-white/10 rounded-lg p-3 transition-all duration-200 hover:scale-105">
+                    <div className="aspect-square relative mb-3">
                       {podrollAlbum.coverArt ? (
                         <Image 
                           src={podrollAlbum.coverArt} 
                           alt={podrollAlbum.title}
-                          width={200}
-                          height={200}
+                          width={150}
+                          height={150}
                           className="w-full h-full object-cover rounded-md"
                         />
                       ) : (
