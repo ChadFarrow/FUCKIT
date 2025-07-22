@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { RSSParser, RSSAlbum } from '@/lib/rss-parser';
 
@@ -23,7 +24,12 @@ export default function HomePage() {
       
       // List of RSS feed URLs - you can add more feeds here
       const feedUrls = [
-        'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml'
+        'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml',
+        'https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml',
+        'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml',
+        'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/CityBeach.xml',
+        'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml',
+        'https://www.thisisjdog.com/media/ring-that-bell.xml'
         // Add more feed URLs here
       ];
       
@@ -116,9 +122,10 @@ export default function HomePage() {
             {/* Albums Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {albums.map((album, index) => (
-                <div 
+                <Link 
                   key={index}
-                  className="bg-black/20 backdrop-blur-sm rounded-lg overflow-hidden group hover:bg-black/30 transition-all duration-300 border border-gray-700/50 hover:border-gray-600/50"
+                  href={`/album/${encodeURIComponent(album.title)}`}
+                  className="bg-black/20 backdrop-blur-sm rounded-lg overflow-hidden group hover:bg-black/30 transition-all duration-300 border border-gray-700/50 hover:border-gray-600/50 block cursor-pointer"
                 >
                   {/* Album Cover */}
                   <div className="relative aspect-square">
@@ -138,16 +145,13 @@ export default function HomePage() {
                       </div>
                     )}
                     
-                    {/* Overlay with Play Button */}
-                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all duration-300 flex items-center justify-center">
-                      <a 
-                        href={`/album/${encodeURIComponent(album.title)}`}
-                        className="bg-white/90 hover:bg-white text-black rounded-full p-3 transform hover:scale-110 transition-all duration-200 shadow-lg opacity-0 group-hover:opacity-100"
-                      >
+                    {/* Play Button Overlay - Always Visible */}
+                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
+                      <div className="bg-white/80 hover:bg-white text-black rounded-full p-3 transform hover:scale-110 transition-all duration-200 shadow-lg">
                         <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                           <path d="M8 5v14l11-7z"/>
                         </svg>
-                      </a>
+                      </div>
                     </div>
                     
                     {/* Track Count Badge */}
@@ -159,9 +163,7 @@ export default function HomePage() {
                   {/* Album Info */}
                   <div className="p-4">
                     <h3 className="font-bold text-lg mb-1 group-hover:text-blue-400 transition-colors truncate">
-                      <a href={`/album/${encodeURIComponent(album.title)}`}>
-                        {album.title}
-                      </a>
+                      {album.title}
                     </h3>
                     <p className="text-gray-400 text-sm mb-2 truncate">{album.artist}</p>
                     
@@ -184,15 +186,17 @@ export default function HomePage() {
                     {album.funding && album.funding.length > 0 && (
                       <div className="mt-3 flex flex-wrap gap-1">
                         {album.funding.slice(0, 2).map((funding, fundingIndex) => (
-                          <a
+                          <button
                             key={fundingIndex}
-                            href={funding.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 hover:from-blue-500/30 hover:to-purple-500/30 text-white px-2 py-1 rounded text-xs transition-all"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              window.open(funding.url, '_blank', 'noopener,noreferrer');
+                            }}
+                            className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 hover:from-blue-500/30 hover:to-purple-500/30 text-white px-2 py-1 rounded text-xs transition-all cursor-pointer"
                           >
                             💝 {funding.message || 'Support'}
-                          </a>
+                          </button>
                         ))}
                         {album.funding.length > 2 && (
                           <span className="text-xs text-gray-500 px-2 py-1">
@@ -202,7 +206,7 @@ export default function HomePage() {
                       </div>
                     )}
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>

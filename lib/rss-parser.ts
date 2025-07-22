@@ -162,8 +162,21 @@ export class RSSParser {
       
       items.forEach((item, index) => {
         const trackTitle = item.querySelector('title')?.textContent?.trim() || `Track ${index + 1}`;
-        const durationElement = item.querySelector('itunes\\:duration, duration');
-        const duration = durationElement?.textContent?.trim() || '0:00';
+        // Try multiple duration formats
+        let duration = '0:00';
+        const itunesDuration = item.querySelector('itunes\\:duration');
+        const durationElement = item.querySelector('duration');
+        
+        if (itunesDuration?.textContent?.trim()) {
+          duration = itunesDuration.textContent.trim();
+        } else if (durationElement?.textContent?.trim()) {
+          duration = durationElement.textContent.trim();
+        }
+        
+        // If duration is empty or just whitespace, use default
+        if (!duration || duration.trim() === '') {
+          duration = '0:00';
+        }
         const enclosureElement = item.querySelector('enclosure');
         const url = enclosureElement?.getAttribute('url') || undefined;
         
@@ -232,26 +245,48 @@ export class RSSParser {
       // Extract PodRoll information  
       const podroll: RSSPodRoll[] = [];
       
-      // Try both namespaced and non-namespaced versions
+      // Try both namespaced and non-namespaced versions for podroll containers
       const podrollElements1 = Array.from(channel.getElementsByTagName('podcast:podroll'));
       const podrollElements2 = Array.from(channel.getElementsByTagName('podroll'));
       const allPodrollElements = [...podrollElements1, ...podrollElements2];
       
       allPodrollElements.forEach(podrollElement => {
-        const url = podrollElement.getAttribute('url');
-        const title = podrollElement.getAttribute('title') || podrollElement.textContent?.trim();
-        const description = podrollElement.getAttribute('description');
+        // Look for podcast:remoteItem children within the podroll
+        const remoteItems1 = Array.from(podrollElement.getElementsByTagName('podcast:remoteItem'));
+        const remoteItems2 = Array.from(podrollElement.getElementsByTagName('remoteItem'));
+        const allRemoteItems = [...remoteItems1, ...remoteItems2];
         
-        if (url) {
+        allRemoteItems.forEach(remoteItem => {
+          const feedUrl = remoteItem.getAttribute('feedUrl');
+          const feedGuid = remoteItem.getAttribute('feedGuid');
+          const title = remoteItem.getAttribute('title') || remoteItem.textContent?.trim();
+          const description = remoteItem.getAttribute('description');
+          
+          if (feedUrl) {
+            podroll.push({
+              url: feedUrl,
+              title: title || `Feed ${feedGuid ? feedGuid.substring(0, 8) + '...' : 'Unknown'}`,
+              description: description || undefined
+            });
+          }
+        });
+        
+        // Also check for direct url attributes on the podroll element (legacy format)
+        const directUrl = podrollElement.getAttribute('url');
+        const directTitle = podrollElement.getAttribute('title') || podrollElement.textContent?.trim();
+        const directDescription = podrollElement.getAttribute('description');
+        
+        if (directUrl) {
           podroll.push({
-            url: url,
-            title: title || undefined,
-            description: description || undefined
+            url: directUrl,
+            title: directTitle || undefined,
+            description: directDescription || undefined
           });
         }
       });
       
       console.log('🎲 Found PodRoll entries:', podroll);
+      console.log('🎲 PodRoll details:', podroll.map(p => ({ url: p.url, title: p.title, description: p.description })));
       
       return {
         title,
