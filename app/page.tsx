@@ -131,9 +131,26 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
+    <div 
+      className="min-h-screen text-white transition-all duration-1000"
+      style={{
+        background: dominantColors 
+          ? `linear-gradient(135deg, ${dominantColors.primary}05, ${dominantColors.secondary}05, ${dominantColors.tertiary}05)`
+          : 'rgb(3, 7, 18)'
+      }}
+    >
       {/* Header */}
-      <header className="bg-gray-900 border-b border-gray-800">
+      <header 
+        className="border-b transition-all duration-1000"
+        style={{
+          background: dominantColors 
+            ? `linear-gradient(90deg, ${dominantColors.primary}15, ${dominantColors.secondary}15)`
+            : 'rgb(17, 24, 39)',
+          borderColor: dominantColors 
+            ? `${dominantColors.tertiary}30`
+            : 'rgb(31, 41, 55)'
+        }}
+      >
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center gap-4 mb-8">
             <div className="w-10 h-10 relative border border-gray-700 rounded-lg overflow-hidden">
@@ -281,7 +298,7 @@ export default function HomePage() {
                         <div className="inline-flex flex-wrap gap-2">
                                                       {album.keywords.map((keyword: string, index: number) => (
                             <span key={index} className="bg-gray-700 text-gray-300 px-2 py-1 rounded-full text-xs">
-                              #{keyword}
+                              {keyword}
                             </span>
                           ))}
                         </div>
@@ -325,7 +342,24 @@ export default function HomePage() {
                 <h2 className="text-xl font-semibold mb-4">Tracks</h2>
                 <div className="space-y-2">
                   {album.tracks.map((track: any, index: number) => (
-                    <div key={index} className="flex items-center justify-between p-3 hover:bg-gray-800 rounded-lg transition-colors group">
+                    <div 
+                      key={index} 
+                      className="flex items-center justify-between p-3 rounded-lg transition-colors group"
+                      style={{
+                        background: 'transparent',
+                        '--hover-bg': dominantColors ? `${dominantColors.primary}10` : 'rgb(31, 41, 55)'
+                      } as React.CSSProperties}
+                      onMouseEnter={(e) => {
+                        if (dominantColors) {
+                          e.currentTarget.style.background = `${dominantColors.primary}10`;
+                        } else {
+                          e.currentTarget.style.background = 'rgb(31, 41, 55)';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'transparent';
+                      }}
+                    >
                       <div className="flex items-center gap-4">
                         {/* Track artwork or play button */}
                         {track.image ? (
@@ -365,7 +399,10 @@ export default function HomePage() {
                             {currentTrack?.title === track.title && isPlaying ? (
                               <button 
                                 onClick={togglePlayPause}
-                                className="text-green-400 hover:text-green-300"
+                                style={{
+                                  color: dominantColors ? dominantColors.secondary : '#4ade80'
+                                }}
+                                className="hover:opacity-80"
                               >
                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                   <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
@@ -374,8 +411,11 @@ export default function HomePage() {
                             ) : (
                               <button 
                                 onClick={() => playTrack(track)}
-                                className="text-gray-400 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                className="opacity-0 group-hover:opacity-100 transition-opacity"
                                 disabled={!track.url}
+                                style={{
+                                  color: dominantColors ? dominantColors.primary : '#9ca3af'
+                                }}
                               >
                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                   <path d="M8 5v14l11-7z"/>
@@ -389,18 +429,26 @@ export default function HomePage() {
                         )}
                         
                         <div className="flex-1">
-                          <p className={`font-medium ${currentTrack?.title === track.title ? 'text-green-400' : 'text-white'}`}>
+                                                      <p 
+                              className="font-medium"
+                              style={{
+                                color: currentTrack?.title === track.title 
+                                  ? dominantColors 
+                                    ? dominantColors.secondary
+                                    : '#4ade80'
+                                  : 'white'
+                              }}
+                            >
                             {track.title}
                           </p>
                           {track.subtitle && (
                             <p className="text-sm text-gray-500 italic">{track.subtitle}</p>
                           )}
-                          <p className="text-sm text-gray-400">{album.artist}</p>
                           {track.keywords && track.keywords.length > 0 && (
                             <div className="flex flex-wrap gap-1 mt-1">
                               {track.keywords.slice(0, 3).map((keyword: string, idx: number) => (
                                 <span key={idx} className="bg-gray-700 text-gray-400 px-1 py-0.5 rounded text-xs">
-                                  #{keyword}
+                                  {keyword}
                                 </span>
                               ))}
                             </div>
@@ -456,7 +504,17 @@ export default function HomePage() {
       <audio ref={audioRef} />
 
       {/* Music Player */}
-      <div className="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800 p-4 z-50">
+      <div 
+        className="fixed bottom-0 left-0 right-0 p-4 z-50 transition-all duration-1000"
+        style={{
+          background: dominantColors 
+            ? `linear-gradient(90deg, ${dominantColors.primary}20, ${dominantColors.secondary}20)`
+            : 'rgb(17, 24, 39)',
+          borderTop: dominantColors 
+            ? `1px solid ${dominantColors.tertiary}40`
+            : '1px solid rgb(31, 41, 55)'
+        }}
+      >
           <div className="container mx-auto max-w-4xl">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4 flex-1">
@@ -491,9 +549,21 @@ export default function HomePage() {
                   disabled={!currentTrack}
                   className={`rounded-full p-2 transition-colors ${
                     currentTrack 
-                      ? 'bg-white text-black hover:bg-gray-200' 
-                      : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                      ? 'hover:bg-gray-200' 
+                      : 'cursor-not-allowed'
                   }`}
+                  style={{
+                    background: currentTrack 
+                      ? dominantColors 
+                        ? dominantColors.primary
+                        : 'white'
+                      : 'rgb(55, 65, 81)',
+                    color: currentTrack 
+                      ? dominantColors 
+                        ? getContrastColor(dominantColors.primary)
+                        : 'black'
+                      : 'rgb(156, 163, 175)'
+                  }}
                 >
                   {isPlaying ? (
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -511,11 +581,17 @@ export default function HomePage() {
                 <span className="text-xs text-gray-400">
                   {currentTrack ? formatTime(currentTime) : '0:00'}
                 </span>
-                <div className="w-24 h-1 bg-gray-700 rounded-full overflow-hidden relative">
-                  <div 
-                    className="h-full bg-white transition-all duration-100"
-                    style={{ width: duration > 0 ? `${(currentTime / duration) * 100}%` : '0%' }}
-                  />
+                                  <div 
+                    className="w-24 h-1 rounded-full overflow-hidden relative"
+                    style={{ background: dominantColors ? `${dominantColors.tertiary}30` : 'rgb(55, 65, 81)' }}
+                  >
+                    <div 
+                      className="h-full transition-all duration-100"
+                      style={{ 
+                        width: duration > 0 ? `${(currentTime / duration) * 100}%` : '0%',
+                        background: dominantColors ? dominantColors.secondary : 'white'
+                      }}
+                    />
                   <input
                     type="range"
                     min="0"
