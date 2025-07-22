@@ -186,8 +186,22 @@ export default function HomePage() {
         }}
       >
         <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center gap-4">
-            {/* Menu Toggle Button */}
+          <div className="flex items-center justify-between">
+            {/* Left side - Logo and Title */}
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 relative border border-gray-700 rounded-lg overflow-hidden">
+                <Image 
+                  src="/logo.webp" 
+                  alt="VALUE Logo" 
+                  width={40} 
+                  height={40}
+                  className="object-cover"
+                />
+              </div>
+              <h1 className="text-4xl font-bold mb-4">Into the ValueVerse</h1>
+            </div>
+            
+            {/* Right side - Menu Button */}
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
               className="p-2 rounded-lg bg-gray-800/50 hover:bg-gray-700/50 transition-colors"
@@ -197,23 +211,17 @@ export default function HomePage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isSidebarOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
               </svg>
             </button>
-            <div className="w-10 h-10 relative border border-gray-700 rounded-lg overflow-hidden">
-              <Image 
-                src="/logo.webp" 
-                alt="VALUE Logo" 
-                width={40} 
-                height={40}
-                className="object-cover"
-              />
-            </div>
-            <h1 className="text-4xl font-bold mb-4">Into the ValueVerse</h1>
           </div>
+          
+          {/* Description */}
           <p className="text-gray-400 text-lg mb-4">
             This is a demo app I built as the "insert title" project to see what we could do with RSS feeds and music. All data here comes from RSS feeds on{' '}
             <a href="https://podcastindex.org/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
               podcastindex.org
             </a>. This is also a demo of a site for The Doerfels that I added other music I like also and some stuff to help test. -ChadF
           </p>
+          
+          {/* Loading/Error Status */}
           <div className="flex items-center gap-2 text-sm">
             {isLoading ? (
               <>
@@ -227,7 +235,7 @@ export default function HomePage() {
               </>
             ) : null}
           </div>
-                </div>
+        </div>
       </header>
       
       {/* Sidebar */}
