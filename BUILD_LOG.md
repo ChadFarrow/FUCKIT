@@ -239,6 +239,14 @@ FUCKIT/
 - Added `<media:content>` tag support
 - Added debugging logs for track parsing
 
+#### 11. Image Optimization Errors (HTTP 400)
+**Problem:** Album artwork images returning HTTP 400 errors from Next.js Image Optimization
+**Solution:** Added missing external domains to `next.config.js` remotePatterns
+- Added `d12wklypp119aj.cloudfront.net` (Wavlake CDN)
+- Added `ableandthewolf.com` (artist domain)
+- Added `www.wavlake.com` (Wavlake www subdomain)
+- Added `re-podtards.b-cdn.net` (Bunny CDN)
+
 ### Debug Commands
 ```bash
 # Test RSS proxy
@@ -274,7 +282,13 @@ cat .env.local
 
 ## 🔄 Recent Updates
 
-### Latest Changes (Commit: 7effca1) - January 22, 2025
+### Latest Changes (Commit: 07ec909) - January 22, 2025
+- ✅ **Fixed Image Optimization Errors** - Resolved HTTP 400 errors for album artwork
+- ✅ **Added Missing External Domains** - Configured Wavlake CDN and artist domains
+- ✅ **Enhanced Image Configuration** - Added support for multiple CDN providers
+- ✅ **Production Deployment** - Successfully deployed image optimization fix
+
+### Previous Changes (Commit: 7effca1) - January 22, 2025
 - ✅ **Fixed RSS Track Parsing** - Resolved "EP - 0 tracks" issue for Wavlake feeds
 - ✅ **Enhanced URL Extraction** - Added fallback methods for track URLs (link tags, media:content)
 - ✅ **Added Debug Logging** - Better visibility into RSS parsing process
