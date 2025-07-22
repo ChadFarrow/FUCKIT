@@ -167,9 +167,9 @@ export class RSSParser {
       // Extract additional channel metadata
       const subtitle = channel.getElementsByTagName('itunes:subtitle')[0]?.textContent?.trim();
       const summary = channel.getElementsByTagName('itunes:summary')[0]?.textContent?.trim();
-      const languageEl = channel.querySelector('language');
+      const languageEl = channel.getElementsByTagName('language')[0];
       const language = languageEl?.textContent?.trim();
-      const copyrightEl = channel.querySelector('copyright');
+      const copyrightEl = channel.getElementsByTagName('copyright')[0];
       const copyright = copyrightEl?.textContent?.trim();
       
       // Extract explicit rating
