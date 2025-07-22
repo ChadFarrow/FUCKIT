@@ -186,7 +186,7 @@ export default function HomePage() {
         }}
       >
         <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center justify-between">
             {/* Menu Button - Left */}
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -198,17 +198,22 @@ export default function HomePage() {
               </svg>
             </button>
             
-            {/* Logo and Title */}
-            <div className="w-10 h-10 relative border border-gray-700 rounded-lg overflow-hidden">
-              <Image 
-                src="/logo.webp" 
-                alt="VALUE Logo" 
-                width={40} 
-                height={40}
-                className="object-cover"
-              />
+            {/* Logo and Title - Centered */}
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 relative border border-gray-700 rounded-lg overflow-hidden">
+                <Image 
+                  src="/logo.webp" 
+                  alt="VALUE Logo" 
+                  width={40} 
+                  height={40}
+                  className="object-cover"
+                />
+              </div>
+              <h1 className="text-4xl font-bold mb-4">Into the ValueVerse</h1>
             </div>
-            <h1 className="text-4xl font-bold mb-4">Into the ValueVerse</h1>
+            
+            {/* Empty div for balance */}
+            <div className="w-10 h-10"></div>
           </div>
           
           {/* Description */}
