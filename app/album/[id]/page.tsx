@@ -126,20 +126,73 @@ export default function AlbumDetailPage() {
         setIsLoading(true);
         setError(null);
         
-        // Load both feeds and find the matching album
+        // Load all feeds and find the matching album
         const feedUrls = [
+          // Main Doerfels feeds
           'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml',
-          'https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml'
+          'https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml',
+          'https://www.doerfelverse.com/feeds/intothedoerfelverse.xml',
+          'https://www.doerfelverse.com/feeds/wrath-of-banjo.xml',
+          'https://www.doerfelverse.com/feeds/ben-doerfel.xml',
+          
+          // Additional Doerfels albums and projects
+          'https://www.doerfelverse.com/feeds/18sundays.xml',
+          'https://www.doerfelverse.com/feeds/alandace.xml',
+          'https://www.doerfelverse.com/feeds/autumn.xml',
+          'https://www.doerfelverse.com/feeds/christ-exalted.xml',
+          'https://www.doerfelverse.com/feeds/come-back-to-me.xml',
+          'https://www.doerfelverse.com/feeds/dead-time-live-2016.xml',
+          'https://www.doerfelverse.com/feeds/dfbv1.xml',
+          'https://www.doerfelverse.com/feeds/dfbv2.xml',
+          'https://www.doerfelverse.com/feeds/disco-swag.xml',
+          'https://www.doerfelverse.com/feeds/doerfels-pubfeed.xml',
+          'https://www.doerfelverse.com/feeds/first-married-christmas.xml',
+          'https://www.doerfelverse.com/feeds/generation-gap.xml',
+          'https://www.doerfelverse.com/feeds/heartbreak.xml',
+          'https://www.doerfelverse.com/feeds/merry-christmix.xml',
+          'https://www.doerfelverse.com/feeds/middle-season-let-go.xml',
+          'https://www.doerfelverse.com/feeds/phatty-the-grasshopper.xml',
+          'https://www.doerfelverse.com/feeds/possible.xml',
+          'https://www.doerfelverse.com/feeds/pour-over.xml',
+          'https://www.doerfelverse.com/feeds/psalm-54.xml',
+          'https://www.doerfelverse.com/feeds/sensitive-guy.xml',
+          'https://www.doerfelverse.com/feeds/they-dont-know.xml',
+          'https://www.doerfelverse.com/feeds/think-ep.xml',
+          'https://www.doerfelverse.com/feeds/underwater-single.xml',
+          'https://www.doerfelverse.com/feeds/unsound-existence.xml',
+          'https://www.doerfelverse.com/feeds/you-are-my-world.xml',
+          'https://www.doerfelverse.com/feeds/you-feel-like-home.xml',
+          'https://www.doerfelverse.com/feeds/your-chance.xml',
+          
+          // Ed Doerfel (Shredward) projects
+          'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml',
+          'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/CityBeach.xml',
+          'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml',
+          
+          // TJ Doerfel projects
+          'https://www.thisisjdog.com/media/ring-that-bell.xml'
         ];
         
         const albumsData = await RSSParser.parseMultipleFeeds(feedUrls);
-        const foundAlbum = albumsData.find(a => a.title === albumTitle);
+        
+        // More flexible title matching with URL decoding
+        const decodedAlbumTitle = decodeURIComponent(albumTitle);
+        const foundAlbum = albumsData.find(a => {
+          const normalizedTitle = a.title.toLowerCase().replace(/[^a-z0-9]/g, '');
+          const normalizedSearch = decodedAlbumTitle.toLowerCase().replace(/[^a-z0-9]/g, '');
+          return normalizedTitle === normalizedSearch || a.title === decodedAlbumTitle || a.title === albumTitle;
+        });
         
         if (foundAlbum) {
           setAlbum(foundAlbum);
+          console.log('Found album:', foundAlbum.title);
+          console.log('PodRoll data:', foundAlbum.podroll);
           // Load PodRoll albums if they exist
           if (foundAlbum.podroll && foundAlbum.podroll.length > 0) {
+            console.log('Loading PodRoll albums for:', foundAlbum.title);
             loadPodrollAlbums(foundAlbum.podroll);
+          } else {
+            console.log('No PodRoll data found for:', foundAlbum.title);
           }
         } else {
           setError('Album not found');
@@ -362,6 +415,51 @@ export default function AlbumDetailPage() {
             ))}
           </div>
         </div>
+
+        {/* PodRoll Recommendations */}
+        {podrollAlbums.length > 0 && (
+          <div className="bg-black/40 backdrop-blur-sm rounded-lg p-6 mt-8">
+            <h2 className="text-xl font-semibold mb-4">You Might Also Like</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {podrollAlbums.map((podrollAlbum, index) => (
+                <Link
+                  key={index}
+                  href={`/album/${encodeURIComponent(podrollAlbum.title)}`}
+                  className="group block"
+                >
+                  <div className="bg-white/5 hover:bg-white/10 rounded-lg p-4 transition-all duration-200 hover:scale-105">
+                    <div className="aspect-square relative mb-4">
+                      {podrollAlbum.coverArt ? (
+                        <Image 
+                          src={podrollAlbum.coverArt} 
+                          alt={podrollAlbum.title}
+                          width={200}
+                          height={200}
+                          className="w-full h-full object-cover rounded-md"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-red-700 to-red-900 rounded-md flex items-center justify-center">
+                          <div className="text-white text-sm font-bold text-center px-2">
+                            {podrollAlbum.title}
+                          </div>
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 rounded-md transition-all duration-200 flex items-center justify-center">
+                        <Play className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                      </div>
+                    </div>
+                    <h3 className="font-semibold text-white text-sm mb-1 overflow-hidden text-ellipsis" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                      {podrollAlbum.title}
+                    </h3>
+                    <p className="text-gray-400 text-xs">
+                      {podrollAlbum.artist}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Fixed Audio Player Bar */}
