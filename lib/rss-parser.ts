@@ -3,6 +3,11 @@ export interface RSSTrack {
   duration: string;
   url?: string;
   trackNumber?: number;
+  subtitle?: string;
+  summary?: string;
+  image?: string;
+  explicit?: boolean;
+  keywords?: string[];
 }
 
 export interface RSSFunding {
@@ -20,6 +25,17 @@ export interface RSSAlbum {
   duration?: string;
   link?: string;
   funding?: RSSFunding[];
+  subtitle?: string;
+  summary?: string;
+  keywords?: string[];
+  categories?: string[];
+  explicit?: boolean;
+  language?: string;
+  copyright?: string;
+  owner?: {
+    name?: string;
+    email?: string;
+  };
 }
 
 export class RSSParser {
@@ -79,6 +95,33 @@ export class RSSParser {
         }
       }
       
+      // Extract additional channel metadata
+      const subtitle = channel.getElementsByTagName('itunes:subtitle')[0]?.textContent?.trim();
+      const summary = channel.getElementsByTagName('itunes:summary')[0]?.textContent?.trim();
+      const languageEl = channel.querySelector('language');
+      const language = languageEl?.textContent?.trim();
+      const copyrightEl = channel.querySelector('copyright');
+      const copyright = copyrightEl?.textContent?.trim();
+      
+      // Extract explicit rating
+      const explicitEl = channel.getElementsByTagName('itunes:explicit')[0];
+      const explicit = explicitEl?.textContent?.trim().toLowerCase() === 'true';
+      
+      // Extract keywords
+      const keywordsEl = channel.getElementsByTagName('itunes:keywords')[0];
+      const keywords = keywordsEl?.textContent?.trim().split(',').map(k => k.trim()).filter(k => k) || [];
+      
+      // Extract categories
+      const categoryElements = channel.getElementsByTagName('itunes:category');
+      const categories = Array.from(categoryElements).map(cat => cat.getAttribute('text')).filter(Boolean);
+      
+      // Extract owner info
+      const ownerEl = channel.getElementsByTagName('itunes:owner')[0];
+      const owner = ownerEl ? {
+        name: ownerEl.getElementsByTagName('itunes:name')[0]?.textContent?.trim(),
+        email: ownerEl.getElementsByTagName('itunes:email')[0]?.textContent?.trim()
+      } : undefined;
+
       // Extract tracks from items
       const items = xmlDoc.querySelectorAll('item');
       const tracks: RSSTrack[] = [];
@@ -90,11 +133,26 @@ export class RSSParser {
         const enclosureElement = item.querySelector('enclosure');
         const url = enclosureElement?.getAttribute('url') || undefined;
         
+        // Extract track-specific metadata
+        const trackSubtitle = item.getElementsByTagName('itunes:subtitle')[0]?.textContent?.trim();
+        const trackSummary = item.getElementsByTagName('itunes:summary')[0]?.textContent?.trim();
+        const trackImageEl = item.getElementsByTagName('itunes:image')[0];
+        const trackImage = trackImageEl?.getAttribute('href') || trackImageEl?.getAttribute('url');
+        const trackExplicitEl = item.getElementsByTagName('itunes:explicit')[0];
+        const trackExplicit = trackExplicitEl?.textContent?.trim().toLowerCase() === 'true';
+        const trackKeywordsEl = item.getElementsByTagName('itunes:keywords')[0];
+        const trackKeywords = trackKeywordsEl?.textContent?.trim().split(',').map(k => k.trim()).filter(k => k) || [];
+        
         tracks.push({
           title: trackTitle,
           duration: duration,
           url: url,
-          trackNumber: index + 1
+          trackNumber: index + 1,
+          subtitle: trackSubtitle,
+          summary: trackSummary,
+          image: trackImage,
+          explicit: trackExplicit,
+          keywords: trackKeywords.length > 0 ? trackKeywords : undefined
         });
       });
       
@@ -118,7 +176,124 @@ export class RSSParser {
         }
       });
       
+      // Log all available channel elements for debugging
+      console.log('=== RSS FEED ANALYSIS ===');
+      console.log('Channel elements found:');
+      
+      const allChannelElements = channel.querySelectorAll('*');
+      const elementCounts: { [key: string]: number } = {};
+      
+      allChannelElements.forEach(element => {
+        const tagName = element.tagName.toLowerCase();
+        elementCounts[tagName] = (elementCounts[tagName] || 0) + 1;
+      });
+      
+      console.log('Element counts:', elementCounts);
+      
+      // Log some specific elements we might want to use
+      const specificElements = [
+        'itunes\\:subtitle',
+        'itunes\\:summary', 
+        'itunes\\:keywords',
+        'itunes\\:category',
+        'itunes\\:explicit',
+        'itunes\\:owner',
+        'itunes\\:type',
+        'language',
+        'copyright',
+        'generator',
+        'podcast\\:guid',
+        'podcast\\:funding',
+        'podcast\\:value',
+        'podcast\\:person',
+        'podcast\\:location',
+        'podcast\\:season',
+        'podcast\\:episode',
+        'managingEditor',
+        'webMaster'
+      ];
+      
+      console.log('=== SPECIFIC ELEMENTS ===');
+      specificElements.forEach(elementName => {
+        try {
+          const elements = channel.querySelectorAll(elementName);
+          if (elements.length > 0) {
+            console.log(`${elementName}:`, Array.from(elements).map(el => ({
+              textContent: el.textContent?.trim(),
+              attributes: Array.from(el.attributes).map(attr => `${attr.name}="${attr.value}"`)
+            })));
+          }
+        } catch (e) {
+          // Try alternative approach for namespaced elements
+          const tagName = elementName.replace('\\:', ':');
+          const elements = Array.from(channel.getElementsByTagName(tagName));
+          if (elements.length > 0) {
+            console.log(`${tagName} (via getElementsByTagName):`, elements.map(el => ({
+              textContent: el.textContent?.trim(),
+              attributes: Array.from(el.attributes).map(attr => `${attr.name}="${attr.value}"`)
+            })));
+          }
+        }
+      });
+      
+      // Log item-level elements too
+      if (items.length > 0) {
+        console.log('=== FIRST ITEM ELEMENTS ===');
+        const firstItem = items[0];
+        const itemElements = firstItem.querySelectorAll('*');
+        const itemElementCounts: { [key: string]: number } = {};
+        
+        itemElements.forEach(element => {
+          const tagName = element.tagName.toLowerCase();
+          itemElementCounts[tagName] = (itemElementCounts[tagName] || 0) + 1;
+        });
+        
+        console.log('Item element counts:', itemElementCounts);
+        
+        // Check for specific item elements
+        const itemSpecificElements = [
+          'itunes\\:duration',
+          'itunes\\:explicit',
+          'itunes\\:image',
+          'itunes\\:keywords',
+          'itunes\\:subtitle',
+          'itunes\\:summary',
+          'itunes\\:episodeType',
+          'itunes\\:season',
+          'itunes\\:episode',
+          'podcast\\:transcript',
+          'podcast\\:chapters',
+          'podcast\\:person',
+          'podcast\\:location',
+          'podcast\\:season',
+          'podcast\\:episode'
+        ];
+        
+        itemSpecificElements.forEach(elementName => {
+          try {
+            const elements = firstItem.querySelectorAll(elementName);
+            if (elements.length > 0) {
+              console.log(`Item ${elementName}:`, Array.from(elements).map(el => ({
+                textContent: el.textContent?.trim(),
+                attributes: Array.from(el.attributes).map(attr => `${attr.name}="${attr.value}"`)
+              })));
+            }
+          } catch (e) {
+            // Try alternative approach for namespaced elements
+            const tagName = elementName.replace('\\:', ':');
+            const elements = Array.from(firstItem.getElementsByTagName(tagName));
+            if (elements.length > 0) {
+              console.log(`Item ${tagName} (via getElementsByTagName):`, elements.map(el => ({
+                textContent: el.textContent?.trim(),
+                attributes: Array.from(el.attributes).map(attr => `${attr.name}="${attr.value}"`)
+              })));
+            }
+          }
+        });
+      }
+      
       console.log('Found funding information:', funding);
+      console.log('========================');
       
       return {
         title,
@@ -128,7 +303,15 @@ export class RSSParser {
         tracks,
         releaseDate,
         link,
-        funding: funding.length > 0 ? funding : undefined
+        funding: funding.length > 0 ? funding : undefined,
+        subtitle,
+        summary,
+        keywords: keywords.length > 0 ? keywords : undefined,
+        categories: categories.length > 0 ? categories : undefined,
+        explicit,
+        language,
+        copyright,
+        owner: owner && (owner.name || owner.email) ? owner : undefined
       };
       
     } catch (error) {

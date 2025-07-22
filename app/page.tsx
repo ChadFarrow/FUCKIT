@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { RSSParser, RSSAlbum, RSSTrack } from '@/lib/rss-parser';
+import { extractDominantColors, DominantColors, getContrastColor, adjustColorBrightness } from '@/lib/color-extractor';
 
 export default function HomePage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -14,6 +15,7 @@ export default function HomePage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [dominantColors, setDominantColors] = useState<DominantColors | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
@@ -105,6 +107,17 @@ export default function HomePage() {
           tracks: albumData.tracks.length,
           coverArt: albumData.coverArt
         });
+        
+        // Extract dominant colors from album artwork
+        if (albumData.coverArt) {
+          try {
+            const colors = await extractDominantColors(albumData.coverArt);
+            setDominantColors(colors);
+            console.log('Extracted dominant colors:', colors);
+          } catch (colorError) {
+            console.error('Error extracting colors:', colorError);
+          }
+        }
       } else {
         setError('Failed to load album data from RSS feed');
         console.log('RSS Parser returned null');
@@ -178,7 +191,14 @@ export default function HomePage() {
         ) : album ? (
           <div className="max-w-4xl mx-auto">
             {/* Album Header */}
-            <div className="flex flex-col md:flex-row gap-8 mb-8">
+            <div 
+              className="flex flex-col md:flex-row gap-8 mb-8 p-6 rounded-lg"
+              style={{
+                background: dominantColors 
+                  ? `linear-gradient(135deg, ${dominantColors.primary}20, ${dominantColors.secondary}20, ${dominantColors.tertiary}20)`
+                  : 'rgba(31, 41, 55, 0.5)'
+              }}
+            >
               <div className="flex-shrink-0">
                 {album.coverArt ? (
                   <Image 
@@ -200,8 +220,74 @@ export default function HomePage() {
               <div className="flex-1">
                 <h1 className="text-4xl font-bold mb-2">{album.title}</h1>
                 <p className="text-xl text-gray-400 mb-4">{album.artist}</p>
-                {album.description && (
-                  <p className="text-gray-300 mb-6">{album.description}</p>
+                {album.subtitle && (
+                  <p className="text-xl text-gray-300 mb-4 italic">{album.subtitle}</p>
+                )}
+                {(album.summary || album.description) && (
+                  <p className="text-gray-300 mb-6">{album.summary || album.description}</p>
+                )}
+                
+                                  {/* Dominant Colors */}
+                  {dominantColors && (
+                    <div className="mb-6">
+                      <span className="text-sm text-gray-400 mr-2">Album Colors:</span>
+                      <div className="inline-flex gap-2 mt-2">
+                        <div className="flex items-center gap-2">
+                          <div 
+                            className="w-6 h-6 rounded-full border border-gray-600"
+                            style={{ backgroundColor: dominantColors.primary }}
+                            title={`Primary: ${dominantColors.primary}`}
+                          />
+                          <span className="text-xs text-gray-300">{dominantColors.primary}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div 
+                            className="w-6 h-6 rounded-full border border-gray-600"
+                            style={{ backgroundColor: dominantColors.secondary }}
+                            title={`Secondary: ${dominantColors.secondary}`}
+                          />
+                          <span className="text-xs text-gray-300">{dominantColors.secondary}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div 
+                            className="w-6 h-6 rounded-full border border-gray-600"
+                            style={{ backgroundColor: dominantColors.tertiary }}
+                            title={`Tertiary: ${dominantColors.tertiary}`}
+                          />
+                          <span className="text-xs text-gray-300">{dominantColors.tertiary}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Categories and Keywords */}
+                  {(album.categories || album.keywords) && (
+                  <div className="mb-6">
+                    {album.categories && album.categories.length > 0 && (
+                      <div className="mb-3">
+                        <span className="text-sm text-gray-400 mr-2">Categories:</span>
+                        <div className="inline-flex flex-wrap gap-2">
+                          {album.categories.map((category, index) => (
+                            <span key={index} className="bg-gray-800 text-gray-300 px-2 py-1 rounded-full text-xs">
+                              {category}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {album.keywords && album.keywords.length > 0 && (
+                      <div>
+                        <span className="text-sm text-gray-400 mr-2">Tags:</span>
+                        <div className="inline-flex flex-wrap gap-2">
+                                                      {album.keywords.map((keyword: string, index: number) => (
+                            <span key={index} className="bg-gray-700 text-gray-300 px-2 py-1 rounded-full text-xs">
+                              #{keyword}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 )}
                 <div className="flex items-center gap-6 text-sm text-gray-400 mb-6">
                   <span>{album.tracks.length} tracks</span>
@@ -241,41 +327,119 @@ export default function HomePage() {
                   {album.tracks.map((track: any, index: number) => (
                     <div key={index} className="flex items-center justify-between p-3 hover:bg-gray-800 rounded-lg transition-colors group">
                       <div className="flex items-center gap-4">
-                        <div className="w-8 flex items-center justify-center">
-                          {currentTrack?.title === track.title && isPlaying ? (
-                            <button 
-                              onClick={togglePlayPause}
-                              className="text-green-400 hover:text-green-300"
-                            >
-                              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
-                              </svg>
-                            </button>
-                          ) : (
-                            <button 
-                              onClick={() => playTrack(track)}
-                              className="text-gray-400 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                              disabled={!track.url}
-                            >
-                              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M8 5v14l11-7z"/>
-                              </svg>
-                            </button>
-                          )}
-                          <span className="text-gray-400 text-sm group-hover:opacity-0 transition-opacity">
-                            {track.trackNumber || index + 1}
-                          </span>
-                        </div>
-                        <div>
+                        {/* Track artwork or play button */}
+                        {track.image ? (
+                          <div className="relative w-12 h-12 flex-shrink-0">
+                            <Image 
+                              src={track.image} 
+                              alt={track.title}
+                              width={48}
+                              height={48}
+                              className="rounded object-cover"
+                            />
+                            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all duration-200 flex items-center justify-center">
+                              {currentTrack?.title === track.title && isPlaying ? (
+                                <button 
+                                  onClick={togglePlayPause}
+                                  className="text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                >
+                                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                                  </svg>
+                                </button>
+                              ) : (
+                                <button 
+                                  onClick={() => playTrack(track)}
+                                  className="text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                  disabled={!track.url}
+                                >
+                                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8 5v14l11-7z"/>
+                                  </svg>
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="w-8 flex items-center justify-center">
+                            {currentTrack?.title === track.title && isPlaying ? (
+                              <button 
+                                onClick={togglePlayPause}
+                                className="text-green-400 hover:text-green-300"
+                              >
+                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                                </svg>
+                              </button>
+                            ) : (
+                              <button 
+                                onClick={() => playTrack(track)}
+                                className="text-gray-400 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                disabled={!track.url}
+                              >
+                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M8 5v14l11-7z"/>
+                                </svg>
+                              </button>
+                            )}
+                            <span className="text-gray-400 text-sm group-hover:opacity-0 transition-opacity">
+                              {track.trackNumber || index + 1}
+                            </span>
+                          </div>
+                        )}
+                        
+                        <div className="flex-1">
                           <p className={`font-medium ${currentTrack?.title === track.title ? 'text-green-400' : 'text-white'}`}>
                             {track.title}
                           </p>
+                          {track.subtitle && (
+                            <p className="text-sm text-gray-500 italic">{track.subtitle}</p>
+                          )}
                           <p className="text-sm text-gray-400">{album.artist}</p>
+                          {track.keywords && track.keywords.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mt-1">
+                              {track.keywords.slice(0, 3).map((keyword: string, idx: number) => (
+                                <span key={idx} className="bg-gray-700 text-gray-400 px-1 py-0.5 rounded text-xs">
+                                  #{keyword}
+                                </span>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       </div>
-                      <span className="text-sm text-gray-400">{formatDuration(track.duration)}</span>
+                      
+                      <div className="flex items-center gap-3">
+                        {track.explicit && (
+                          <span className="bg-red-600 text-white px-1 py-0.5 rounded text-xs font-bold">
+                            E
+                          </span>
+                        )}
+                        <span className="text-sm text-gray-400">{formatDuration(track.duration)}</span>
+                      </div>
                     </div>
                   ))}
+                </div>
+              </div>
+            )}
+            
+            {/* Footer Information */}
+            {(album.copyright || album.owner || album.language) && (
+              <div className="mt-12 pt-6 border-t border-gray-800">
+                <div className="text-xs text-gray-500 space-y-1">
+                  {album.copyright && (
+                    <p>© {album.copyright}</p>
+                  )}
+                  {album.owner && (
+                    <p>
+                      Owner: {album.owner.name}
+                      {album.owner.email && (
+                        <span> ({album.owner.email})</span>
+                      )}
+                    </p>
+                  )}
+                  {album.language && (
+                    <p>Language: {album.language}</p>
+                  )}
                 </div>
               </div>
             )}
