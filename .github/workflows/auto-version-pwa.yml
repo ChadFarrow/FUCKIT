@@ -1,10 +1,14 @@
 name: Auto-Version PWA on Deploy
 
+# Temporarily disabled to resolve deployment issues
+# on:
+#   push:
+#     branches: [ main, production ]
+#   pull_request:
+#     branches: [ main ]
+
 on:
-  push:
-    branches: [ main, production ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch: # Only run manually for now
 
 jobs:
   auto-version-and-deploy:
@@ -51,18 +55,10 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
-    # Add your deployment steps here
-    # Example for Vercel:
-    - name: Deploy to Vercel (example)
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: |
-        echo "🚀 Deploying PWA version ${{ env.PWA_VERSION }} to production"
-        # npx vercel --prod --token ${{ secrets.VERCEL_TOKEN }}
-        # Or your deployment command here
-    
     - name: Notify deployment
       if: success()
       run: |
-        echo "✅ PWA deployed successfully!"
+        echo "✅ PWA version updated successfully!"
         echo "📱 Version: ${{ env.PWA_VERSION }}"
+        echo "🔄 Vercel will auto-deploy from the updated commit"
         echo "🔄 Users will get update notifications within 30 seconds"

@@ -1,5 +1,5 @@
 // Dynamic cache versioning - update this with each deployment
-const APP_VERSION = '1.d8a9c2d'; // TODO: Update this with each deployment
+const APP_VERSION = '1.5e772e6'; // TODO: Update this with each deployment
 const CACHE_NAME = `doerfelverse-v${APP_VERSION}`;
 const STATIC_CACHE = `doerfelverse-static-v${APP_VERSION}`;
 const DYNAMIC_CACHE = `doerfelverse-dynamic-v${APP_VERSION}`;
