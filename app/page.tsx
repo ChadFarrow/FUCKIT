@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { RSSParser, RSSAlbum, RSSTrack } from '@/lib/rss-parser';
+import { RSSParser, RSSAlbum } from '@/lib/rss-parser';
 
 export default function HomePage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -19,17 +19,25 @@ export default function HomePage() {
       setIsLoading(true);
       setError(null);
       
+      console.log('Starting to load album data...');
+      
       // List of RSS feed URLs - you can add more feeds here
       const feedUrls = [
         'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml'
         // Add more feed URLs here
       ];
       
+      console.log('Feed URLs:', feedUrls);
+      
       const albumsData = await RSSParser.parseMultipleFeeds(feedUrls);
+      
+      console.log('Albums data received:', albumsData);
       
       if (albumsData && albumsData.length > 0) {
         setAlbums(albumsData);
+        console.log('Successfully set', albumsData.length, 'albums');
       } else {
+        console.log('No album data received');
         setError('Failed to load any album data from RSS feeds');
       }
     } catch (err) {
