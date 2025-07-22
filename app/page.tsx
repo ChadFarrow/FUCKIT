@@ -264,6 +264,38 @@ export default function HomePage() {
                     </div>
                   </div>
                 )}
+
+                {/* PodRoll Information */}
+                {album.podroll && album.podroll.length > 0 && (
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold mb-3 text-white">Recommended Shows (PodRoll)</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {album.podroll.map((podcastRec, index) => (
+                        <a
+                          key={index}
+                          href={podcastRec.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bg-gradient-to-r from-purple-600/20 to-blue-600/20 hover:from-purple-600/30 hover:to-blue-600/30 border border-purple-500/30 text-white p-4 rounded-lg transition-all transform hover:scale-[1.02] flex flex-col gap-2"
+                        >
+                          <div className="flex items-center gap-2">
+                            <svg className="w-4 h-4 text-purple-400" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            <span className="font-medium text-sm">
+                              {podcastRec.title || 'Recommended Podcast'}
+                            </span>
+                          </div>
+                          {podcastRec.description && (
+                            <p className="text-xs text-gray-300 leading-relaxed">
+                              {podcastRec.description}
+                            </p>
+                          )}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

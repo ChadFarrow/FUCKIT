@@ -198,10 +198,14 @@ export class RSSParser {
       const releaseDate = pubDateElement?.textContent?.trim() || new Date().toISOString();
       
       // Extract funding information
-      const fundingElements = channel.querySelectorAll('podcast\\:funding, funding');
       const funding: RSSFunding[] = [];
       
-      fundingElements.forEach(fundingElement => {
+      // Try both namespaced and non-namespaced versions for funding
+      const fundingElements1 = Array.from(channel.getElementsByTagName('podcast:funding'));
+      const fundingElements2 = Array.from(channel.getElementsByTagName('funding'));
+      const allFundingElements = [...fundingElements1, ...fundingElements2];
+      
+      allFundingElements.forEach(fundingElement => {
         const url = fundingElement.getAttribute('url') || fundingElement.textContent?.trim();
         const message = fundingElement.textContent?.trim() || fundingElement.getAttribute('message');
         
@@ -214,10 +218,14 @@ export class RSSParser {
       });
       
       // Extract PodRoll information  
-      const podrollElements = channel.querySelectorAll('podcast\\\\:podroll, podroll');
       const podroll: RSSPodRoll[] = [];
       
-      podrollElements.forEach(podrollElement => {
+      // Try both namespaced and non-namespaced versions
+      const podrollElements1 = Array.from(channel.getElementsByTagName('podcast:podroll'));
+      const podrollElements2 = Array.from(channel.getElementsByTagName('podroll'));
+      const allPodrollElements = [...podrollElements1, ...podrollElements2];
+      
+      allPodrollElements.forEach(podrollElement => {
         const url = podrollElement.getAttribute('url');
         const title = podrollElement.getAttribute('title') || podrollElement.textContent?.trim();
         const description = podrollElement.getAttribute('description');
