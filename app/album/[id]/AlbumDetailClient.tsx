@@ -332,6 +332,10 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             if (foundAlbum.podroll && foundAlbum.podroll.length > 0) {
               loadPodrollAlbums(foundAlbum.podroll);
             }
+            // Load Publisher feed albums if publisher exists
+            if (foundAlbum.publisher && foundAlbum.publisher.feedUrl) {
+              loadPublisherAlbums(foundAlbum.publisher.feedUrl);
+            }
           } else {
             setError('Album not found');
           }
@@ -349,6 +353,10 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
       if (initialAlbum.podroll && initialAlbum.podroll.length > 0) {
         loadPodrollAlbums(initialAlbum.podroll);
       }
+      // Load Publisher feed albums if publisher exists
+      if (initialAlbum.publisher && initialAlbum.publisher.feedUrl) {
+        loadPublisherAlbums(initialAlbum.publisher.feedUrl);
+      }
     }
   }, [albumTitle, initialAlbum]);
 
@@ -359,6 +367,33 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
       setPodrollAlbums(podrollAlbumsData);
     } catch (err) {
       console.error('Error loading PodRoll albums:', err);
+    }
+  };
+
+  const loadPublisherAlbums = async (publisherFeedUrl: string) => {
+    try {
+      console.log(`🏢 Loading albums from publisher feed: ${publisherFeedUrl}`);
+      const publisherAlbumsData = await RSSParser.parsePublisherFeedAlbums(publisherFeedUrl);
+      
+      // Add publisher albums to podroll albums (they're displayed in the same section)
+      setPodrollAlbums(prevAlbums => {
+        // Combine and deduplicate based on title+artist
+        const combined = [...prevAlbums];
+        const existingKeys = new Set(prevAlbums.map(album => `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`));
+        
+        publisherAlbumsData.forEach(album => {
+          const key = `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`;
+          if (!existingKeys.has(key)) {
+            combined.push(album);
+            existingKeys.add(key);
+          }
+        });
+        
+        console.log(`🎶 Added ${publisherAlbumsData.length} albums from publisher, total recommendations: ${combined.length}`);
+        return combined;
+      });
+    } catch (err) {
+      console.error('Error loading Publisher albums:', err);
     }
   };
 
@@ -475,6 +510,22 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               {album.explicit && <span className="bg-red-600 text-white px-2 py-1 rounded text-xs">EXPLICIT</span>}
             </div>
 
+            {/* Publisher Information */}
+            {album.publisher && (
+              <div className="mb-6">
+                <div className="flex items-center gap-2 text-sm text-gray-400">
+                  <span>More from this artist:</span>
+                  <Link
+                    href={`/publisher/${encodeURIComponent(album.publisher.feedGuid)}`}
+                    className="text-blue-400 hover:text-blue-300 transition-colors"
+                  >
+                    View Discography
+                  </Link>
+                  <span className="text-xs bg-gray-600 px-2 py-1 rounded">PC 2.0</span>
+                </div>
+              </div>
+            )}
+
             {/* Funding Information */}
             {album.funding && album.funding.length > 0 && (
               <div className="mt-6">
@@ -555,7 +606,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
           </div>
         </div>
 
-        {/* PodRoll Recommendations */}
+        {/* PodRoll and Publisher Recommendations */}
         {podrollAlbums.length > 0 && (
           <div className="bg-black/40 backdrop-blur-sm rounded-lg p-6 mt-8">
             <h2 className="text-xl font-semibold mb-4">You Might Also Like</h2>

@@ -154,11 +154,51 @@ export default function HomePage() {
       
       let albumsData: RSSAlbum[];
       try {
+        // Parse regular feeds first
         const parsePromise = RSSParser.parseMultipleFeeds(allFeeds);
-        albumsData = await Promise.race([parsePromise, timeoutPromise]) as RSSAlbum[];
-        console.log('📦 Albums data received:', albumsData);
+        const regularAlbums = await Promise.race([parsePromise, timeoutPromise]) as RSSAlbum[];
+        console.log('📦 Regular albums data received:', regularAlbums);
+
+        // Find albums with publisher information and load their publisher feeds
+        const publisherFeeds = new Set<string>();
+        regularAlbums.forEach(album => {
+          if (album.publisher && album.publisher.feedUrl) {
+            publisherFeeds.add(album.publisher.feedUrl);
+          }
+        });
+
+        console.log(`🏢 Found ${publisherFeeds.size} publisher feeds to load`);
+
+        // Load albums from publisher feeds
+        let publisherAlbums: RSSAlbum[] = [];
+        if (publisherFeeds.size > 0) {
+          const publisherPromises = Array.from(publisherFeeds).map(feedUrl => 
+            RSSParser.parsePublisherFeedAlbums(feedUrl)
+          );
+          const publisherResults = await Promise.allSettled(publisherPromises);
+          publisherAlbums = publisherResults
+            .filter((result): result is PromiseFulfilledResult<RSSAlbum[]> => result.status === 'fulfilled')
+            .flatMap(result => result.value);
+          
+          console.log(`🎶 Loaded ${publisherAlbums.length} albums from publisher feeds`);
+        }
+
+        // Combine regular albums and publisher feed albums, removing duplicates by title+artist
+        const allAlbums = [...regularAlbums];
+        const existingKeys = new Set(regularAlbums.map(album => `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`));
+        
+        publisherAlbums.forEach(album => {
+          const key = `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`;
+          if (!existingKeys.has(key)) {
+            allAlbums.push(album);
+            existingKeys.add(key);
+          }
+        });
+
+        albumsData = allAlbums;
+        console.log(`📦 Total albums after combining: ${albumsData.length}`);
       } catch (parseError) {
-        console.error('❌ RSSParser.parseMultipleFeeds failed:', parseError);
+        console.error('❌ Album parsing failed:', parseError);
         throw parseError;
       }
       

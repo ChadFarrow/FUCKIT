@@ -1,6 +1,6 @@
 /**
  * Bunny.net CDN Utilities
- * Handles CDN URL generation and optimization
+ * Smart CDN usage that only optimizes when beneficial
  */
 
 export interface CDNConfig {
@@ -16,13 +16,78 @@ const defaultCDNConfig: CDNConfig = {
   apiKey: process.env.BUNNY_CDN_API_KEY,
 };
 
+// Performance thresholds for CDN usage
+const CDN_THRESHOLDS = {
+  // Only use CDN for images larger than this (bytes)
+  MIN_IMAGE_SIZE: 50 * 1024, // 50KB
+  // Only use CDN for external domains (not local/relative URLs)
+  EXTERNAL_DOMAINS_ONLY: true,
+  // Domains that are already fast (don't need CDN)
+  FAST_DOMAINS: [
+    're-podtards.b-cdn.net', // Already on our CDN
+    'localhost',
+    '127.0.0.1',
+    'vercel.app',
+    'vercel.com',
+  ],
+  // Domains that are slow and benefit from CDN
+  SLOW_DOMAINS: [
+    'doerfelverse.com',
+    'sirtjthewrathful.com',
+    'thisisjdog.com',
+    'wavlake.com',
+  ]
+};
+
 /**
- * Generate a CDN URL for an image
+ * Check if a URL should use CDN based on performance analysis
+ * @param url - The URL to analyze
+ * @returns Whether CDN would improve performance
+ */
+function shouldUseCDNForPerformance(url: string): boolean {
+  if (!url) return false;
+
+  try {
+    const urlObj = new URL(url);
+    const domain = urlObj.hostname.toLowerCase();
+
+    // Don't use CDN if not configured
+    if (defaultCDNConfig.hostname === 'your-zone.b-cdn.net') {
+      return false;
+    }
+
+    // Don't use CDN for already fast domains
+    if (CDN_THRESHOLDS.FAST_DOMAINS.some(fast => domain.includes(fast))) {
+      return false;
+    }
+
+    // Don't use CDN for local/relative URLs
+    if (CDN_THRESHOLDS.EXTERNAL_DOMAINS_ONLY && 
+        (domain === 'localhost' || domain === '127.0.0.1' || url.startsWith('/'))) {
+      return false;
+    }
+
+    // Use CDN for known slow domains
+    if (CDN_THRESHOLDS.SLOW_DOMAINS.some(slow => domain.includes(slow))) {
+      return true;
+    }
+
+    // For other domains, be conservative - only use CDN if explicitly beneficial
+    return false;
+
+  } catch (error) {
+    // If URL parsing fails, don't use CDN
+    return false;
+  }
+}
+
+/**
+ * Smart CDN URL generator - only optimizes when beneficial
  * @param originalUrl - The original image URL
  * @param options - CDN optimization options
- * @returns The CDN-optimized URL
+ * @returns The optimized URL (CDN or original)
  */
-export function getCDNUrl(
+export function getSmartCDNUrl(
   originalUrl: string,
   options: {
     width?: number;
@@ -30,9 +95,15 @@ export function getCDNUrl(
     quality?: number;
     format?: 'webp' | 'jpeg' | 'png' | 'gif';
     fit?: 'cover' | 'contain' | 'fill' | 'inside' | 'outside';
+    forceCDN?: boolean; // Override performance check
   } = {}
 ): string {
   if (!originalUrl) return originalUrl;
+
+  // Check if CDN would actually improve performance
+  if (!options.forceCDN && !shouldUseCDNForPerformance(originalUrl)) {
+    return originalUrl;
+  }
 
   // If no CDN hostname is configured, return original URL
   if (defaultCDNConfig.hostname === 'your-zone.b-cdn.net') {
@@ -67,10 +138,27 @@ export function getCDNUrl(
 }
 
 /**
- * Generate a CDN URL for album artwork with optimal settings
+ * Legacy function for backward compatibility
+ * @deprecated Use getSmartCDNUrl instead
+ */
+export function getCDNUrl(
+  originalUrl: string,
+  options: {
+    width?: number;
+    height?: number;
+    quality?: number;
+    format?: 'webp' | 'jpeg' | 'png' | 'gif';
+    fit?: 'cover' | 'contain' | 'fill' | 'inside' | 'outside';
+  } = {}
+): string {
+  return getSmartCDNUrl(originalUrl, options);
+}
+
+/**
+ * Smart album artwork URL - only uses CDN when beneficial
  * @param originalUrl - The original artwork URL
  * @param size - The desired size (e.g., 'thumbnail', 'medium', 'large')
- * @returns The CDN-optimized artwork URL
+ * @returns The optimized artwork URL
  */
 export function getAlbumArtworkUrl(originalUrl: string, size: 'thumbnail' | 'medium' | 'large' = 'medium'): string {
   const sizeMap = {
@@ -79,7 +167,7 @@ export function getAlbumArtworkUrl(originalUrl: string, size: 'thumbnail' | 'med
     large: { width: 600, height: 600, quality: 90 },
   };
 
-  return getCDNUrl(originalUrl, {
+  return getSmartCDNUrl(originalUrl, {
     ...sizeMap[size],
     format: 'webp',
     fit: 'cover',
@@ -87,40 +175,18 @@ export function getAlbumArtworkUrl(originalUrl: string, size: 'thumbnail' | 'med
 }
 
 /**
- * Generate a CDN URL for track artwork
+ * Smart track artwork URL - only uses CDN when beneficial
  * @param originalUrl - The original artwork URL
- * @returns The CDN-optimized track artwork URL
+ * @returns The optimized track artwork URL
  */
 export function getTrackArtworkUrl(originalUrl: string): string {
-  return getCDNUrl(originalUrl, {
+  return getSmartCDNUrl(originalUrl, {
     width: 200,
     height: 200,
     quality: 85,
     format: 'webp',
     fit: 'cover',
   });
-}
-
-/**
- * Check if a URL should be processed through CDN
- * @param url - The URL to check
- * @returns Whether the URL should use CDN
- */
-export function shouldUseCDN(url: string): boolean {
-  if (!url) return false;
-  
-  // Don't process if CDN is not configured
-  if (defaultCDNConfig.hostname === 'your-zone.b-cdn.net') {
-    return false;
-  }
-  
-  // Only process image URLs
-  const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
-  const hasImageExtension = imageExtensions.some(ext => 
-    url.toLowerCase().includes(ext)
-  );
-  
-  return hasImageExtension;
 }
 
 /**

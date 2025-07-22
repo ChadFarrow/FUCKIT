@@ -1,0 +1,311 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { ArrowLeft, Play } from 'lucide-react';
+import { RSSParser, RSSAlbum, RSSPublisherItem } from '@/lib/rss-parser';
+import { getAlbumArtworkUrl } from '@/lib/cdn-utils';
+import { generateAlbumUrl } from '@/lib/url-utils';
+
+interface PublisherDetailClientProps {
+  publisherId: string;
+}
+
+// Map of known publisher IDs to their feed URLs
+const publisherFeedMap: { [key: string]: string } = {
+  '18bcbf10-6701-4ffb-b255-bc057390d738': 'https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738',
+  'aa909244-7555-4b52-ad88-7233860c6fb4': 'https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4',
+  // Add more known publishers here as needed
+};
+
+type FilterType = 'all' | 'albums' | 'eps' | 'singles';
+
+export default function PublisherDetailClient({ publisherId }: PublisherDetailClientProps) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [albums, setAlbums] = useState<RSSAlbum[]>([]);
+  const [publisherItems, setPublisherItems] = useState<RSSPublisherItem[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [publisherInfo, setPublisherInfo] = useState<{ title?: string; description?: string; artist?: string; coverArt?: string } | null>(null);
+  const [activeFilter, setActiveFilter] = useState<FilterType>('all');
+
+  useEffect(() => {
+    const loadPublisher = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        // Try to find the feed URL for this publisher
+        const feedUrl = publisherFeedMap[publisherId];
+        
+        if (!feedUrl) {
+          setError('Publisher feed not found');
+          return;
+        }
+
+        console.log(`🏢 Loading publisher feed: ${feedUrl}`);
+
+        // Load publisher feed info for artist details and image
+        const publisherFeedInfo = await RSSParser.parsePublisherFeedInfo(feedUrl);
+        
+        // Load publisher items
+        const items = await RSSParser.parsePublisherFeed(feedUrl);
+        setPublisherItems(items);
+
+        // Load all albums from the publisher feed
+        const albumsData = await RSSParser.parsePublisherFeedAlbums(feedUrl);
+        setAlbums(albumsData);
+
+        // Set publisher info using feed data
+        if (publisherFeedInfo) {
+          setPublisherInfo({
+            title: publisherFeedInfo.artist || publisherFeedInfo.title || `Artist: ${publisherId}`,
+            description: publisherFeedInfo.description || 'Independent artist and music creator',
+            artist: publisherFeedInfo.artist,
+            coverArt: publisherFeedInfo.coverArt
+          });
+        } else {
+          // Fallback to album data
+          setPublisherInfo({
+            title: albumsData.length > 0 ? albumsData[0].artist : `Artist: ${publisherId}`,
+            description: 'Independent artist and music creator',
+            artist: albumsData.length > 0 ? albumsData[0].artist : undefined
+          });
+        }
+
+      } catch (err) {
+        console.error('Error loading publisher:', err);
+        setError('Error loading publisher data');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadPublisher();
+  }, [publisherId]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
+        <div className="container mx-auto px-6 py-8">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+            <h1 className="text-2xl font-bold">Loading Publisher...</h1>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
+        <div className="container mx-auto px-6 py-8">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-4">{error}</h1>
+            <Link href="/" className="text-blue-400 hover:text-blue-300">
+              ← Back to Albums
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div 
+      className="min-h-screen text-white relative"
+      style={{
+        background: publisherInfo?.coverArt 
+          ? `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url('${publisherInfo.coverArt}') center/cover fixed`
+          : 'linear-gradient(to br, rgb(17, 24, 39), rgb(31, 41, 55), rgb(17, 24, 39))'
+      }}
+    >
+      <div className="container mx-auto px-6 py-8 relative z-10">
+        {/* Back button */}
+        <Link 
+          href="/" 
+          className="inline-flex items-center text-gray-400 hover:text-white mb-8 transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Albums
+        </Link>
+
+        {/* Artist Header */}
+        <div className="mb-12">
+          <div className="bg-black/40 backdrop-blur-sm rounded-lg p-8 border border-gray-700/50">
+            <h1 className="text-6xl font-bold mb-4 leading-tight text-white drop-shadow-lg">
+              {publisherInfo?.title || publisherInfo?.artist || `Artist: ${publisherId}`}
+            </h1>
+            <p className="text-xl text-gray-200 mb-6 leading-relaxed max-w-3xl drop-shadow-md">
+              {publisherInfo?.description}
+            </p>
+            
+            <div className="flex items-center gap-4 text-lg">
+              {(() => {
+                // Separate albums from EPs/singles (6 tracks or less) like main page
+                const albumsWithMultipleTracks = albums.filter(album => album.tracks.length > 6);
+                const epsAndSingles = albums.filter(album => album.tracks.length <= 6);
+                const eps = epsAndSingles.filter(album => album.tracks.length > 1);
+                const singles = epsAndSingles.filter(album => album.tracks.length === 1);
+
+                return (
+                  <>
+                    <button
+                      onClick={() => setActiveFilter('all')}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 ${
+                        activeFilter === 'all' 
+                          ? 'bg-white/20 text-white ring-2 ring-white/30' 
+                          : 'text-gray-300 hover:bg-white/10 hover:text-white'
+                      }`}
+                    >
+                      <span className="w-3 h-3 bg-gray-400 rounded-full"></span>
+                      <span className="font-medium">{albums.length}</span>
+                      <span>all</span>
+                    </button>
+                    {albumsWithMultipleTracks.length > 0 && (
+                      <button
+                        onClick={() => setActiveFilter('albums')}
+                        className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 ${
+                          activeFilter === 'albums' 
+                            ? 'bg-green-400/20 text-white ring-2 ring-green-400/50' 
+                            : 'text-gray-300 hover:bg-green-400/10 hover:text-white'
+                        }`}
+                      >
+                        <span className="w-3 h-3 bg-green-400 rounded-full"></span>
+                        <span className="font-medium">{albumsWithMultipleTracks.length}</span>
+                        <span>albums</span>
+                      </button>
+                    )}
+                    {eps.length > 0 && (
+                      <button
+                        onClick={() => setActiveFilter('eps')}
+                        className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 ${
+                          activeFilter === 'eps' 
+                            ? 'bg-blue-400/20 text-white ring-2 ring-blue-400/50' 
+                            : 'text-gray-300 hover:bg-blue-400/10 hover:text-white'
+                        }`}
+                      >
+                        <span className="w-3 h-3 bg-blue-400 rounded-full"></span>
+                        <span className="font-medium">{eps.length}</span>
+                        <span>EPs</span>
+                      </button>
+                    )}
+                    {singles.length > 0 && (
+                      <button
+                        onClick={() => setActiveFilter('singles')}
+                        className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 ${
+                          activeFilter === 'singles' 
+                            ? 'bg-purple-400/20 text-white ring-2 ring-purple-400/50' 
+                            : 'text-gray-300 hover:bg-purple-400/10 hover:text-white'
+                        }`}
+                      >
+                        <span className="w-3 h-3 bg-purple-400 rounded-full"></span>
+                        <span className="font-medium">{singles.length}</span>
+                        <span>singles</span>
+                      </button>
+                    )}
+                  </>
+                );
+              })()}
+            </div>
+          </div>
+        </div>
+
+        {/* Albums Grid */}
+        {albums.length > 0 ? (
+          <div className="bg-black/30 backdrop-blur-sm rounded-lg p-6 border border-gray-700/30">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-white">
+                {activeFilter === 'all' ? 'Discography' : 
+                 activeFilter === 'albums' ? 'Albums' :
+                 activeFilter === 'eps' ? 'EPs' :
+                 'Singles'}
+              </h2>
+              {activeFilter !== 'all' && (
+                <button
+                  onClick={() => setActiveFilter('all')}
+                  className="text-sm text-gray-400 hover:text-white transition-colors"
+                >
+                  Show all
+                </button>
+              )}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {albums
+                .filter(album => {
+                  if (activeFilter === 'all') return true;
+                  if (activeFilter === 'albums') return album.tracks.length > 6;
+                  if (activeFilter === 'eps') return album.tracks.length > 1 && album.tracks.length <= 6;
+                  if (activeFilter === 'singles') return album.tracks.length === 1;
+                  return true;
+                })
+                .sort((a, b) => new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime())
+                .map((album, index) => (
+                <Link 
+                  key={index}
+                  href={generateAlbumUrl(album.title)}
+                  className="bg-black/20 backdrop-blur-sm rounded-lg overflow-hidden group hover:bg-black/30 transition-all duration-300 border border-gray-700/50 hover:border-gray-600/50 block cursor-pointer"
+                >
+                  {/* Album Cover */}
+                  <div className="relative aspect-square">
+                    {album.coverArt ? (
+                      <Image 
+                        src={getAlbumArtworkUrl(album.coverArt, 'medium')} 
+                        alt={album.title}
+                        width={300}
+                        height={300}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-red-700 to-red-900 flex items-center justify-center">
+                        <span className="text-white text-lg font-bold text-center px-4">
+                          {album.title}
+                        </span>
+                      </div>
+                    )}
+                    
+                    {/* Play Button Overlay */}
+                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
+                      <div className="bg-white/80 hover:bg-white text-black rounded-full p-3 transform hover:scale-110 transition-all duration-200 shadow-lg">
+                        <Play className="w-6 h-6" />
+                      </div>
+                    </div>
+                    
+                    {/* Track Count Badge */}
+                    <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-full">
+                      {album.tracks.length} tracks
+                    </div>
+                  </div>
+                  
+                  {/* Album Info */}
+                  <div className="p-4">
+                    <h3 className="font-bold text-lg mb-1 group-hover:text-blue-400 transition-colors truncate">
+                      {album.title}
+                    </h3>
+                    <p className="text-gray-400 text-sm mb-2 truncate">{album.artist}</p>
+                    
+                    {/* Album Stats */}
+                    <div className="flex items-center justify-between text-xs text-gray-500">
+                      <span>{new Date(album.releaseDate).getFullYear()}</span>
+                      {album.explicit && (
+                        <span className="bg-red-600 text-white px-1 py-0.5 rounded text-xs font-bold">
+                          E
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <h2 className="text-2xl font-semibold mb-4">No Albums Found</h2>
+            <p className="text-gray-400">This publisher doesn't have any albums available.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

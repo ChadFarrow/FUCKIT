@@ -21,6 +21,19 @@ export interface RSSPodRoll {
   description?: string;
 }
 
+export interface RSSPublisher {
+  feedGuid: string;
+  feedUrl: string;
+  medium: string;
+}
+
+export interface RSSPublisherItem {
+  feedGuid: string;
+  feedUrl: string;
+  medium: string;
+  title?: string;
+}
+
 export interface RSSAlbum {
   title: string;
   artist: string;
@@ -43,6 +56,7 @@ export interface RSSAlbum {
     email?: string;
   };
   podroll?: RSSPodRoll[];
+  publisher?: RSSPublisher;
 }
 
 export class RSSParser {
@@ -178,11 +192,11 @@ export class RSSParser {
       
       // Extract keywords
       const keywordsEl = channel.getElementsByTagName('itunes:keywords')[0];
-      const keywords = keywordsEl?.textContent?.trim().split(',').map(k => k.trim()).filter(k => k) || [];
+      const keywords = keywordsEl?.textContent?.trim().split(',').map((k: string) => k.trim()).filter((k: string) => k) || [];
       
       // Extract categories
       const categoryElements = channel.getElementsByTagName('itunes:category');
-      const categories = Array.from(categoryElements).map(cat => cat.getAttribute('text')).filter(Boolean) as string[];
+      const categories = Array.from(categoryElements).map((cat: unknown) => (cat as Element).getAttribute('text')).filter(Boolean) as string[];
       
       // Extract owner info
       const ownerEl = channel.getElementsByTagName('itunes:owner')[0];
@@ -276,7 +290,7 @@ export class RSSParser {
         const trackExplicitEl = item.getElementsByTagName('itunes:explicit')[0];
         const trackExplicit = trackExplicitEl?.textContent?.trim().toLowerCase() === 'true';
         const trackKeywordsEl = item.getElementsByTagName('itunes:keywords')[0];
-        const trackKeywords = trackKeywordsEl?.textContent?.trim().split(',').map(k => k.trim()).filter(k => k) || [];
+        const trackKeywords = trackKeywordsEl?.textContent?.trim().split(',').map((k: string) => k.trim()).filter((k: string) => k) || [];
         
         tracks.push({
           title: trackTitle,
@@ -303,9 +317,10 @@ export class RSSParser {
       const fundingElements2 = Array.from(channel.getElementsByTagName('funding'));
       const allFundingElements = [...fundingElements1, ...fundingElements2];
       
-      allFundingElements.forEach(fundingElement => {
-        const url = fundingElement.getAttribute('url') || fundingElement.textContent?.trim();
-        const message = fundingElement.textContent?.trim() || fundingElement.getAttribute('message');
+      allFundingElements.forEach((fundingElement: unknown) => {
+        const element = fundingElement as Element;
+        const url = element.getAttribute('url') || element.textContent?.trim();
+        const message = element.textContent?.trim() || element.getAttribute('message');
         
         if (url) {
           funding.push({
@@ -323,17 +338,19 @@ export class RSSParser {
       const podrollElements2 = Array.from(channel.getElementsByTagName('podroll'));
       const allPodrollElements = [...podrollElements1, ...podrollElements2];
       
-      allPodrollElements.forEach(podrollElement => {
+      allPodrollElements.forEach((podrollElement: unknown) => {
+        const podrollEl = podrollElement as Element;
         // Look for podcast:remoteItem children within the podroll
-        const remoteItems1 = Array.from(podrollElement.getElementsByTagName('podcast:remoteItem'));
-        const remoteItems2 = Array.from(podrollElement.getElementsByTagName('remoteItem'));
+        const remoteItems1 = Array.from(podrollEl.getElementsByTagName('podcast:remoteItem'));
+        const remoteItems2 = Array.from(podrollEl.getElementsByTagName('remoteItem'));
         const allRemoteItems = [...remoteItems1, ...remoteItems2];
         
-        allRemoteItems.forEach(remoteItem => {
-          const feedUrl = remoteItem.getAttribute('feedUrl');
-          const feedGuid = remoteItem.getAttribute('feedGuid');
-          const title = remoteItem.getAttribute('title') || remoteItem.textContent?.trim();
-          const description = remoteItem.getAttribute('description');
+        allRemoteItems.forEach((remoteItem: unknown) => {
+          const remoteEl = remoteItem as Element;
+          const feedUrl = remoteEl.getAttribute('feedUrl');
+          const feedGuid = remoteEl.getAttribute('feedGuid');
+          const title = remoteEl.getAttribute('title') || remoteEl.textContent?.trim();
+          const description = remoteEl.getAttribute('description');
           
           if (feedUrl) {
             podroll.push({
@@ -345,9 +362,9 @@ export class RSSParser {
         });
         
         // Also check for direct url attributes on the podroll element (legacy format)
-        const directUrl = podrollElement.getAttribute('url');
-        const directTitle = podrollElement.getAttribute('title') || podrollElement.textContent?.trim();
-        const directDescription = podrollElement.getAttribute('description');
+        const directUrl = podrollEl.getAttribute('url');
+        const directTitle = podrollEl.getAttribute('title') || podrollEl.textContent?.trim();
+        const directDescription = podrollEl.getAttribute('description');
         
         if (directUrl) {
           podroll.push({
@@ -358,7 +375,30 @@ export class RSSParser {
         }
       });
       
-
+      // Extract Publisher information
+      let publisher: RSSPublisher | undefined = undefined;
+      
+      // Look for podcast:remoteItem with medium="publisher"
+      const remoteItems = Array.from(channel.getElementsByTagName('podcast:remoteItem'));
+      const publisherRemoteItem = remoteItems.find((item: unknown) => {
+        const element = item as Element;
+        return element.getAttribute('medium') === 'publisher';
+      });
+      
+      if (publisherRemoteItem) {
+        const element = publisherRemoteItem as Element;
+        const feedGuid = element.getAttribute('feedGuid');
+        const feedUrl = element.getAttribute('feedUrl');
+        const medium = element.getAttribute('medium');
+        
+        if (feedGuid && feedUrl && medium) {
+          publisher = {
+            feedGuid,
+            feedUrl,
+            medium
+          };
+        }
+      }
       
       return {
         title,
@@ -377,7 +417,8 @@ export class RSSParser {
         language,
         copyright,
         owner: owner && (owner.name || owner.email) ? owner : undefined,
-        podroll: podroll.length > 0 ? podroll : undefined
+        podroll: podroll.length > 0 ? podroll : undefined,
+        publisher: publisher
       };
       
     } catch (error) {
@@ -421,5 +462,197 @@ export class RSSParser {
     
     console.log(`✅ Successfully parsed ${successful.length} albums from ${feedUrls.length} feeds`);
     return successful.map(result => result.value);
+  }
+
+  static async parsePublisherFeedInfo(feedUrl: string): Promise<{ title?: string; description?: string; artist?: string; coverArt?: string } | null> {
+    try {
+      // For server-side fetching, always use direct URLs
+      // For client-side fetching, use the proxy
+      const isServer = typeof window === 'undefined';
+      
+      let response;
+      if (isServer) {
+        // Server-side: fetch directly
+        response = await fetch(feedUrl);
+      } else {
+        // Client-side: use proxy
+        const isAlreadyProxied = feedUrl.startsWith('/api/fetch-rss');
+        const proxyUrl = isAlreadyProxied ? feedUrl : `/api/fetch-rss?url=${encodeURIComponent(feedUrl)}`;
+        response = await fetch(proxyUrl);
+      }
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch publisher feed: ${response.status}`);
+      }
+      
+      const xmlText = await response.text();
+      
+      // Use different XML parsing based on environment
+      let xmlDoc: any;
+      if (typeof window !== 'undefined') {
+        // Browser environment
+        const parser = new DOMParser();
+        xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+      } else {
+        // Server environment - use xmldom
+        const { DOMParser } = require('@xmldom/xmldom');
+        const parser = new DOMParser();
+        xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+      }
+      
+      // Check for parsing errors
+      const parserError = xmlDoc.getElementsByTagName('parsererror')[0];
+      if (parserError) {
+        throw new Error('Invalid XML format');
+      }
+      
+      // Extract channel info
+      const channels = xmlDoc.getElementsByTagName('channel');
+      if (!channels || channels.length === 0) {
+        throw new Error('Invalid RSS feed: no channel found');
+      }
+      const channel = channels[0];
+      
+      const titleElement = channel.getElementsByTagName('title')[0];
+      const title = titleElement?.textContent?.trim() || '';
+      const descriptionElement = channel.getElementsByTagName('description')[0];
+      const description = descriptionElement?.textContent?.trim() || '';
+      
+      // Extract artist from title or author
+      let artist = title; // Use title as default artist name
+      const authorElements = channel.getElementsByTagName('itunes:author');
+      const authorElement = authorElements.length > 0 ? authorElements[0] : channel.getElementsByTagName('author')[0];
+      if (authorElement) {
+        artist = authorElement.textContent?.trim() || artist;
+      }
+      
+      // Extract cover art
+      let coverArt: string | null = null;
+      let imageElement: Element | null = channel.getElementsByTagName('itunes:image')[0] || null;
+      if (!imageElement) {
+        // Fallback to querySelector with escaped namespace
+        imageElement = channel.querySelector('itunes\\:image');
+      }
+      
+      if (imageElement) {
+        coverArt = imageElement.getAttribute('href') || null;
+      }
+      if (!coverArt) {
+        const imageUrl = channel.querySelector('image url');
+        if (imageUrl) {
+          coverArt = imageUrl.textContent?.trim() || null;
+        }
+      }
+      
+      return {
+        title,
+        description,
+        artist,
+        coverArt
+      };
+      
+    } catch (error) {
+      console.error('❌ Error parsing publisher feed info:', error);
+      return null;
+    }
+  }
+
+  static async parsePublisherFeed(feedUrl: string): Promise<RSSPublisherItem[]> {
+    try {
+      // For server-side fetching, always use direct URLs
+      // For client-side fetching, use the proxy
+      const isServer = typeof window === 'undefined';
+      
+      let response;
+      if (isServer) {
+        // Server-side: fetch directly
+        response = await fetch(feedUrl);
+      } else {
+        // Client-side: use proxy
+        const isAlreadyProxied = feedUrl.startsWith('/api/fetch-rss');
+        const proxyUrl = isAlreadyProxied ? feedUrl : `/api/fetch-rss?url=${encodeURIComponent(feedUrl)}`;
+        response = await fetch(proxyUrl);
+      }
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch publisher feed: ${response.status}`);
+      }
+      
+      const xmlText = await response.text();
+      
+      // Use different XML parsing based on environment
+      let xmlDoc: any;
+      if (typeof window !== 'undefined') {
+        // Browser environment
+        const parser = new DOMParser();
+        xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+      } else {
+        // Server environment - use xmldom
+        const { DOMParser } = require('@xmldom/xmldom');
+        const parser = new DOMParser();
+        xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+      }
+      
+      // Check for parsing errors
+      const parserError = xmlDoc.getElementsByTagName('parsererror')[0];
+      if (parserError) {
+        throw new Error('Invalid XML format');
+      }
+      
+      // Extract channel info
+      const channels = xmlDoc.getElementsByTagName('channel');
+      if (!channels || channels.length === 0) {
+        throw new Error('Invalid RSS feed: no channel found');
+      }
+      const channel = channels[0];
+      
+      const publisherItems: RSSPublisherItem[] = [];
+      
+      // Look for podcast:remoteItem elements with medium="music"
+      const remoteItems = Array.from(channel.getElementsByTagName('podcast:remoteItem'));
+      
+      remoteItems.forEach((item: unknown) => {
+        const element = item as Element;
+        const medium = element.getAttribute('medium');
+        const feedGuid = element.getAttribute('feedGuid');
+        const feedUrl = element.getAttribute('feedUrl');
+        const title = element.getAttribute('title') || element.textContent?.trim();
+        
+        if (medium === 'music' && feedGuid && feedUrl) {
+          publisherItems.push({
+            feedGuid,
+            feedUrl,
+            medium,
+            title
+          });
+        }
+      });
+      
+      console.log(`🏢 Found ${publisherItems.length} music items in publisher feed: ${feedUrl}`);
+      return publisherItems;
+      
+    } catch (error) {
+      console.error('❌ Error parsing publisher feed:', error);
+      return [];
+    }
+  }
+
+  static async parsePublisherFeedAlbums(feedUrl: string): Promise<RSSAlbum[]> {
+    console.log(`🏢 Parsing publisher feed for albums: ${feedUrl}`);
+    
+    const publisherItems = await this.parsePublisherFeed(feedUrl);
+    
+    if (publisherItems.length === 0) {
+      console.log(`📭 No music items found in publisher feed: ${feedUrl}`);
+      return [];
+    }
+    
+    const musicFeedUrls = publisherItems.map(item => item.feedUrl);
+    console.log(`🎵 Loading ${musicFeedUrls.length} music feeds from publisher...`);
+    
+    const albums = await this.parseMultipleFeeds(musicFeedUrls);
+    
+    console.log(`🎶 Loaded ${albums.length} albums from publisher feed`);
+    return albums;
   }
 }

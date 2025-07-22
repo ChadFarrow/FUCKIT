@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Simple in-memory cache (in production, use Redis or similar)
+// In-memory cache for RSS feeds
 const cache = new Map<string, { data: string; timestamp: number; ttl: number }>();
 
-// Cache TTL in milliseconds (1 minute for debugging)
+// Cache TTL: 1 minute
 const CACHE_TTL = 1 * 60 * 1000;
+
+// Rate limiting: track requests per domain
+const rateLimit = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
+const MAX_REQUESTS_PER_MINUTE = 10; // Conservative limit
 
 // Clean up expired cache entries every 10 minutes
 setInterval(() => {
@@ -15,6 +20,88 @@ setInterval(() => {
     }
   });
 }, 10 * 60 * 1000);
+
+// Clean up rate limit data every 5 minutes
+setInterval(() => {
+  const now = Date.now();
+  Array.from(rateLimit.entries()).forEach(([domain, data]) => {
+    if (now > data.resetTime) {
+      rateLimit.delete(domain);
+    }
+  });
+}, 5 * 60 * 1000);
+
+/**
+ * Check if we're rate limited for a domain
+ */
+function isRateLimited(url: string): boolean {
+  try {
+    const domain = new URL(url).hostname;
+    const now = Date.now();
+    const limit = rateLimit.get(domain);
+    
+    if (!limit) {
+      rateLimit.set(domain, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
+      return false;
+    }
+    
+    if (now > limit.resetTime) {
+      rateLimit.set(domain, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
+      return false;
+    }
+    
+    if (limit.count >= MAX_REQUESTS_PER_MINUTE) {
+      return true;
+    }
+    
+    limit.count++;
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Fetch with retry logic for rate limiting
+ */
+async function fetchWithRetry(url: string, maxRetries = 3): Promise<Response> {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      // Check rate limiting
+      if (isRateLimited(url)) {
+        const delay = Math.random() * 2000 + 1000; // 1-3 seconds
+        console.log(`⏳ Rate limited, waiting ${Math.round(delay)}ms before retry ${attempt}`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+      
+      const response = await fetch(url, {
+        headers: {
+          'User-Agent': 'DoerfelVerse/1.0 (Music RSS Reader)',
+        },
+        signal: AbortSignal.timeout(10000), // 10 second timeout
+      });
+
+      // If we get a 429, wait and retry
+      if (response.status === 429) {
+        const retryAfter = response.headers.get('Retry-After');
+        const delay = retryAfter ? parseInt(retryAfter) * 1000 : (attempt * 2000);
+        console.log(`🔄 429 error, waiting ${delay}ms before retry ${attempt}`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+        continue;
+      }
+
+      return response;
+    } catch (error) {
+      if (attempt === maxRetries) {
+        throw error;
+      }
+      console.log(`⚠️ Attempt ${attempt} failed, retrying...`);
+      await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+    }
+  }
+  
+  throw new Error('Max retries exceeded');
+}
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -55,13 +142,7 @@ export async function GET(request: NextRequest) {
   console.log(`🔄 Cache MISS for: ${url}`);
 
   try {
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'DoerfelVerse/1.0 (Music RSS Reader)',
-      },
-      // Add timeout and better error handling
-      signal: AbortSignal.timeout(10000), // 10 second timeout
-    });
+    const response = await fetchWithRetry(url);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
