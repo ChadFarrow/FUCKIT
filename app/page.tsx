@@ -198,7 +198,10 @@ export default function HomePage() {
             <h1 className="text-4xl font-bold">Into the ValueVerse</h1>
           </div>
           <p className="text-gray-400 text-lg mb-4">
-            A comprehensive collection of albums and music from The Doerfels family and their various projects.
+            This is a demo app I built as the "insert title" project to see what we could do with RSS feeds and music. All data here comes from RSS feeds on{' '}
+            <a href="https://podcastindex.org/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
+              podcastindex.org
+            </a>. This is also a demo of a site for The Doerfels that I added other music I like also and some stuff to help test. -ChadF
           </p>
           <div className="flex items-center gap-2 text-sm">
             {isLoading ? (
@@ -214,7 +217,6 @@ export default function HomePage() {
             ) : (
               <>
                 <span className="w-2 h-2 bg-green-400 rounded-full"></span>
-                <span className="text-green-400">{albums.length} album{albums.length !== 1 ? 's' : ''} loaded successfully</span>
               </>
             )}
           </div>

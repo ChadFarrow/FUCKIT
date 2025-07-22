@@ -54,13 +54,13 @@ export class RSSParser {
       let response;
       if (isAlreadyProxied) {
         // If it's already a proxy URL, we need to make it absolute for server-side fetching
-        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001';
         const absoluteUrl = `${baseUrl}${feedUrl}`;
         response = await fetch(absoluteUrl);
       } else {
         // For direct URLs, use the proxy
         const proxyUrl = `/api/fetch-rss?url=${encodeURIComponent(feedUrl)}`;
-        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001';
         const absoluteUrl = `${baseUrl}${proxyUrl}`;
         response = await fetch(absoluteUrl);
       }
