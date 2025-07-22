@@ -271,9 +271,9 @@ export default function HomePage() {
         ) : albums.length > 0 ? (
           <div className="max-w-7xl mx-auto">
             {(() => {
-              // Separate albums from singles
-              const albumsWithMultipleTracks = albums.filter(album => album.tracks.length > 1);
-              const singles = albums.filter(album => album.tracks.length === 1);
+              // Separate albums from EPs/singles (6 tracks or less)
+              const albumsWithMultipleTracks = albums.filter(album => album.tracks.length > 6);
+              const epsAndSingles = albums.filter(album => album.tracks.length <= 6);
               
               // Sort both by artist first, then by title within each artist (case-insensitive)
               albumsWithMultipleTracks.sort((a, b) => {
@@ -282,9 +282,19 @@ export default function HomePage() {
                 return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
               });
               
-              singles.sort((a, b) => {
+              epsAndSingles.sort((a, b) => {
+                // First sort by type: EPs (2-6 tracks) before Singles (1 track)
+                const aIsSingle = a.tracks.length === 1;
+                const bIsSingle = b.tracks.length === 1;
+                
+                if (aIsSingle && !bIsSingle) return 1; // b (EP) comes first
+                if (!aIsSingle && bIsSingle) return -1; // a (EP) comes first
+                
+                // Then sort by artist
                 const artistCompare = a.artist.toLowerCase().localeCompare(b.artist.toLowerCase());
                 if (artistCompare !== 0) return artistCompare;
+                
+                // Finally sort by title
                 return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
               });
               
@@ -386,12 +396,12 @@ export default function HomePage() {
                     </div>
                   )}
                   
-                  {/* Singles Grid */}
-                  {singles.length > 0 && (
+                  {/* EPs and Singles Grid */}
+                  {epsAndSingles.length > 0 && (
                     <div>
-                      <h2 className="text-2xl font-bold mb-6">Singles</h2>
+                      <h2 className="text-2xl font-bold mb-6">EPs and Singles</h2>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {singles.map((album, index) => (
+                        {epsAndSingles.map((album, index) => (
                           <Link 
                             key={`single-${index}`}
                             href={`/album/${encodeURIComponent(album.title)}`}
@@ -424,9 +434,9 @@ export default function HomePage() {
                                 </div>
                               </div>
                               
-                              {/* Single Badge */}
+                              {/* EP/Single Badge */}
                               <div className="absolute top-2 right-2 bg-purple-600/80 text-white text-xs px-2 py-1 rounded-full">
-                                Single
+                                {album.tracks.length === 1 ? 'Single' : `EP - ${album.tracks.length} tracks`}
                               </div>
                             </div>
                             
