@@ -278,9 +278,18 @@ export default function HomePage() {
               const albumsWithMultipleTracks = albums.filter(album => album.tracks.length > 1);
               const singles = albums.filter(album => album.tracks.length === 1);
               
-              // Sort both by title (case-insensitive)
-              albumsWithMultipleTracks.sort((a, b) => a.title.toLowerCase().localeCompare(b.title.toLowerCase()));
-              singles.sort((a, b) => a.title.toLowerCase().localeCompare(b.title.toLowerCase()));
+              // Sort both by artist first, then by title within each artist (case-insensitive)
+              albumsWithMultipleTracks.sort((a, b) => {
+                const artistCompare = a.artist.toLowerCase().localeCompare(b.artist.toLowerCase());
+                if (artistCompare !== 0) return artistCompare;
+                return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
+              });
+              
+              singles.sort((a, b) => {
+                const artistCompare = a.artist.toLowerCase().localeCompare(b.artist.toLowerCase());
+                if (artistCompare !== 0) return artistCompare;
+                return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
+              });
               
               return (
                 <>

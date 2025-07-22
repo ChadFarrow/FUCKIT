@@ -41,7 +41,7 @@ vercel              # Deploy to preview
 # Bunny.net CDN Configuration for re.podtards.com
 BUNNY_CDN_HOSTNAME=re-podtards.b-cdn.net
 BUNNY_CDN_ZONE=re-podtards
-BUNNY_CDN_API_KEY=52208757-f03f-47a3-ad5d-da1be0d11122
+BUNNY_CDN_API_KEY=d33f9b6a-779d-4cce-8767-cd050a2819bf
 
 # CDN URLs
 NEXT_PUBLIC_CDN_URL=https://re-podtards.b-cdn.net
@@ -63,7 +63,7 @@ NEXT_PUBLIC_IMAGE_DOMAIN=re.podtards.com
   "env": {
     "BUNNY_CDN_HOSTNAME": "re-podtards.b-cdn.net",
     "BUNNY_CDN_ZONE": "re-podtards", 
-    "BUNNY_CDN_API_KEY": "52208757-f03f-47a3-ad5d-da1be0d11122",
+    "BUNNY_CDN_API_KEY": "d33f9b6a-779d-4cce-8767-cd050a2819bf",
     "NEXT_PUBLIC_SITE_URL": "https://re.podtards.com",
     "NEXT_PUBLIC_API_URL": "https://re.podtards.com/api",
     "NEXT_PUBLIC_CDN_URL": "https://re-podtards.b-cdn.net"
@@ -277,9 +277,11 @@ cat .env.local
 ### Environment Variables Reference
 ```bash
 # Required for local development
+# ⚠️ SECURITY: Never commit real API keys to Git!
+# Use .env.local for actual keys (already gitignored)
 BUNNY_CDN_HOSTNAME=re-podtards.b-cdn.net
 BUNNY_CDN_ZONE=re-podtards
-BUNNY_CDN_API_KEY=52208757-f03f-47a3-ad5d-da1be0d11122
+BUNNY_CDN_API_KEY=YOUR_API_KEY_HERE
 NEXT_PUBLIC_CDN_URL=https://re-podtards.b-cdn.net
 NEXT_PUBLIC_SITE_URL=https://re.podtards.com
 NEXT_PUBLIC_API_URL=https://re.podtards.com/api

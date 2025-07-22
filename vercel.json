@@ -8,7 +8,7 @@
   "env": {
     "BUNNY_CDN_HOSTNAME": "re-podtards.b-cdn.net",
     "BUNNY_CDN_ZONE": "re-podtards", 
-    "BUNNY_CDN_API_KEY": "52208757-f03f-47a3-ad5d-da1be0d11122",
+    "BUNNY_CDN_API_KEY": "d33f9b6a-779d-4cce-8767-cd050a2819bf",
     "NEXT_PUBLIC_SITE_URL": "https://re.podtards.com",
     "NEXT_PUBLIC_API_URL": "https://re.podtards.com/api",
     "NEXT_PUBLIC_CDN_URL": "https://re-podtards.b-cdn.net"
