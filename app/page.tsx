@@ -98,10 +98,7 @@ export default function HomePage() {
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [customFeeds, setCustomFeeds] = useState<string[]>([]);
   const [isAddingFeed, setIsAddingFeed] = useState(false);
-  const [isClient, setIsClient] = useState(false);
-
   useEffect(() => {
-    setIsClient(true);
     console.log('🔄 useEffect triggered - starting to load albums');
     loadAlbumsData();
   }, []);
@@ -227,10 +224,10 @@ export default function HomePage() {
       {/* Main Content */}
       <div className="container mx-auto px-6 py-8">
         {/* Add RSS Feed Component */}
-        {isClient && <AddRSSFeed onAddFeed={handleAddFeed} isLoading={isAddingFeed} />}
+        <AddRSSFeed onAddFeed={handleAddFeed} isLoading={isAddingFeed} />
         
         {/* Custom Feeds Display */}
-        {isClient && customFeeds.length > 0 && (
+        {customFeeds.length > 0 && (
           <div className="bg-gray-800/30 backdrop-blur-sm border border-gray-700 rounded-lg p-4 mb-6">
             <h3 className="text-lg font-semibold mb-3 text-white">Custom RSS Feeds ({customFeeds.length})</h3>
             <div className="space-y-2">
@@ -256,7 +253,7 @@ export default function HomePage() {
           </div>
         )}
         
-        {!isClient || isLoading ? (
+        {isLoading ? (
           <div className="flex justify-center items-center py-12">
             <LoadingSpinner />
           </div>
