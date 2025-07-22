@@ -267,6 +267,8 @@ export class RSSParser {
       // Extract tracks from items
       const tracks: RSSTrack[] = [];
       
+      console.log(`🎵 Found ${items.length} items in RSS feed`);
+      
       for (let i = 0; i < items.length; i++) {
         const item = items[i];
         const trackTitle = item.getElementsByTagName('title')[0]?.textContent?.trim() || `Track ${i + 1}`;
@@ -322,8 +324,30 @@ export class RSSParser {
             }
           }
         }
+        // Try multiple ways to get the track URL
+        let url: string | undefined = undefined;
+        
+        // Method 1: Try enclosure tag (standard RSS)
         const enclosureElement = item.getElementsByTagName('enclosure')[0];
-        const url = enclosureElement?.getAttribute('url') || undefined;
+        if (enclosureElement) {
+          url = enclosureElement.getAttribute('url') || undefined;
+        }
+        
+        // Method 2: Try link tag (Wavlake format)
+        if (!url) {
+          const linkElement = item.getElementsByTagName('link')[0];
+          if (linkElement) {
+            url = linkElement.textContent?.trim() || undefined;
+          }
+        }
+        
+        // Method 3: Try media:content tag
+        if (!url) {
+          const mediaContent = item.getElementsByTagName('media:content')[0];
+          if (mediaContent) {
+            url = mediaContent.getAttribute('url') || undefined;
+          }
+        }
         
         // Extract track-specific metadata
         const trackSubtitle = item.getElementsByTagName('itunes:subtitle')[0]?.textContent?.trim();
@@ -361,6 +385,8 @@ export class RSSParser {
           explicit: trackExplicit,
           keywords: trackKeywords.length > 0 ? trackKeywords : undefined
         });
+        
+        console.log(`✅ Added track: "${trackTitle}" (${duration}) - URL: ${url ? 'Found' : 'Missing'}`);
       }
       
       // Extract release date
