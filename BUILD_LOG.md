@@ -232,6 +232,13 @@ FUCKIT/
 3. **Enable Asset Prefix:** Uncomment `assetPrefix` in `next.config.js`
 4. **Deploy:** `vercel --prod`
 
+#### 10. RSS Track Parsing Issues (Wavlake Feeds)
+**Problem:** Albums showing "EP - 0 tracks" due to missing track URLs
+**Solution:** Enhanced RSS parser to handle multiple URL extraction methods
+- Added fallback from `<link>` tags (Wavlake format)
+- Added `<media:content>` tag support
+- Added debugging logs for track parsing
+
 ### Debug Commands
 ```bash
 # Test RSS proxy
@@ -267,7 +274,13 @@ cat .env.local
 
 ## 🔄 Recent Updates
 
-### Latest Changes (Commit: 4ba603b) - January 22, 2025
+### Latest Changes (Commit: 7effca1) - January 22, 2025
+- ✅ **Fixed RSS Track Parsing** - Resolved "EP - 0 tracks" issue for Wavlake feeds
+- ✅ **Enhanced URL Extraction** - Added fallback methods for track URLs (link tags, media:content)
+- ✅ **Added Debug Logging** - Better visibility into RSS parsing process
+- ✅ **Production Deployment** - Successfully deployed track parsing fix
+
+### Previous Changes (Commit: 4ba603b) - January 22, 2025
 - ✅ **Created Static Asset Upload Script** - `scripts/upload-static-assets.mjs` for automated CDN uploads
 - ✅ **Successfully Uploaded Static Assets** - 17 files uploaded to Bunny.net Storage (100% success rate)
 - ✅ **CDN Configuration Identified** - Requires Pull Zone setup in Bunny.net dashboard
