@@ -34,20 +34,34 @@ export const extractDominantColors = async (imageUrl: string): Promise<DominantC
     // Get image data
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     
-    // Use ColorThief to get the palette
+    // Use ColorThief to get the palette with better sampling
     const colorThief = new ColorThief();
-    const palette = colorThief.getPalette(img, 3);
+    const palette = colorThief.getPalette(img, 5); // Get more colors for better selection
     
-    // Convert RGB arrays to hex strings
+    // Convert RGB arrays to hex strings and filter for vibrant colors
     const colors = palette.map(rgb => {
       const [r, g, b] = rgb;
-      return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+      return {
+        hex: `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`,
+        rgb: [r, g, b],
+        saturation: Math.max(r, g, b) - Math.min(r, g, b), // Calculate saturation
+        brightness: (r + g + b) / 3 // Calculate brightness
+      };
     });
 
+    // Filter out very dark colors and prioritize vibrant ones
+    const vibrantColors = colors.filter(color => 
+      color.brightness > 30 && // Not too dark
+      color.saturation > 20    // Has some color saturation
+    );
+
+    // If we have vibrant colors, use them; otherwise use the original palette
+    const selectedColors = vibrantColors.length >= 3 ? vibrantColors : colors;
+
     return {
-      primary: colors[0],
-      secondary: colors[1],
-      tertiary: colors[2]
+      primary: selectedColors[0]?.hex || colors[0].hex,
+      secondary: selectedColors[1]?.hex || colors[1].hex,
+      tertiary: selectedColors[2]?.hex || colors[2].hex
     };
   } catch (error) {
     console.error('Error extracting colors:', error);

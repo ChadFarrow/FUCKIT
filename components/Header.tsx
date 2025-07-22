@@ -31,12 +31,6 @@ export default function Header() {
               Trending
             </Link>
             <Link 
-              href="/music" 
-              className="text-gray-600 hover:text-primary-600 transition-colors"
-            >
-              Music
-            </Link>
-            <Link 
               href="/about" 
               className="text-gray-600 hover:text-primary-600 transition-colors"
             >

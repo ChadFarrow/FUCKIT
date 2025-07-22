@@ -113,7 +113,7 @@ export class RSSParser {
       
       // Extract categories
       const categoryElements = channel.getElementsByTagName('itunes:category');
-      const categories = Array.from(categoryElements).map(cat => cat.getAttribute('text')).filter(Boolean);
+      const categories = Array.from(categoryElements).map(cat => cat.getAttribute('text')).filter(Boolean) as string[];
       
       // Extract owner info
       const ownerEl = channel.getElementsByTagName('itunes:owner')[0];
@@ -150,7 +150,7 @@ export class RSSParser {
           trackNumber: index + 1,
           subtitle: trackSubtitle,
           summary: trackSummary,
-          image: trackImage,
+          image: trackImage || undefined,
           explicit: trackExplicit,
           keywords: trackKeywords.length > 0 ? trackKeywords : undefined
         });

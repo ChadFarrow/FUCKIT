@@ -113,7 +113,8 @@ export default function HomePage() {
           try {
             const colors = await extractDominantColors(albumData.coverArt);
             setDominantColors(colors);
-            console.log('Extracted dominant colors:', colors);
+            console.log('🎨 Extracted dominant colors:', colors);
+            console.log('🎨 Album cover URL:', albumData.coverArt);
           } catch (colorError) {
             console.error('Error extracting colors:', colorError);
           }
