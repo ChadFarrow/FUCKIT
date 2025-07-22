@@ -342,6 +342,7 @@ export default function HomePage() {
                 width={40} 
                 height={40}
                 className="object-cover"
+                priority
               />
             </div>
             <h1 className="text-4xl font-bold">Into the ValueVerse</h1>
@@ -576,7 +577,7 @@ export default function HomePage() {
                       width={300}
                       height={300}
                       className="w-full h-full object-cover"
-                      loading="lazy"
+                      loading={index < 8 ? undefined : "lazy"}
                       priority={index < 8} // Only prioritize first 8 images
                       onError={(e) => {
                         // Fallback to placeholder on error
@@ -681,7 +682,6 @@ export default function HomePage() {
                                 height={300}
                                 className="w-full h-full object-cover"
                                 loading="lazy"
-                                priority={false} // Never prioritize EPs/singles
                                 onError={(e) => {
                                   // Fallback to placeholder on error
                                   const target = e.target as HTMLImageElement;

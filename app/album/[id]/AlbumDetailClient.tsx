@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft, Play, Pause, SkipBack, SkipForward, Volume2 } from 'lucide-react';
 import { RSSAlbum } from '@/lib/rss-parser';
-import { getAlbumArtworkUrl, getTrackArtworkUrl } from '@/lib/cdn-utils';
+import { getAlbumArtworkUrl, getTrackArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { generateAlbumUrl, generatePublisherSlug } from '@/lib/url-utils';
 import { RSSParser } from '@/lib/rss-parser';
 
@@ -457,21 +457,18 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
         {/* Album Header */}
         <div className="flex flex-col md:flex-row gap-8 mb-12">
           <div className="flex-shrink-0 relative group">
-            {album.coverArt ? (
-              <Image 
-                src={getAlbumArtworkUrl(album.coverArt, 'large')} 
-                alt={album.title}
-                width={320}
-                height={320}
-                className="rounded-lg object-cover shadow-2xl"
-              />
-            ) : (
-              <div className="w-80 h-80 bg-gradient-to-br from-red-700 to-red-900 rounded-lg relative overflow-hidden flex items-center justify-center">
-                <div className="text-white text-2xl font-bold text-center px-4">
-                  {album.title}
-                </div>
-              </div>
-            )}
+            <Image 
+              src={getAlbumArtworkUrl(album.coverArt || '', 'large')} 
+              alt={album.title}
+              width={320}
+              height={320}
+              className="rounded-lg object-cover shadow-2xl"
+              onError={(e) => {
+                // Fallback to placeholder on error
+                const target = e.target as HTMLImageElement;
+                target.src = getPlaceholderImageUrl('large');
+              }}
+            />
             
             {/* Play Button Overlay */}
             <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
@@ -561,19 +558,26 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                 onClick={() => playTrack(index)}
               >
                 <div className="flex items-center gap-4">
-                  {track.image ? (
-                    <div className="relative w-12 h-12 flex-shrink-0">
+                  <div className="relative w-12 h-12 flex-shrink-0">
+                    {track.image ? (
                       <Image 
                         src={track.image} 
                         alt={track.title}
                         width={48}
                         height={48}
                         className="rounded object-cover"
+                        onError={(e) => {
+                          // Fallback to track number on error
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          target.nextElementSibling?.classList.remove('hidden');
+                        }}
                       />
-                    </div>
-                  ) : (
-                    <span className="text-gray-400 text-sm w-8 text-center">{track.trackNumber || index + 1}</span>
-                  )}
+                    ) : null}
+                    <span className={`text-gray-400 text-sm w-8 text-center ${track.image ? 'hidden' : ''}`}>
+                      {track.trackNumber || index + 1}
+                    </span>
+                  </div>
                   <div>
                     <p className="font-medium">{track.title}</p>
                     {track.subtitle && (
@@ -619,21 +623,18 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                 >
                   <div className="bg-white/5 hover:bg-white/10 rounded-lg p-3 transition-all duration-200 hover:scale-105">
                     <div className="aspect-square relative mb-3">
-                      {podrollAlbum.coverArt ? (
-                        <Image 
-                          src={getAlbumArtworkUrl(podrollAlbum.coverArt, 'thumbnail')} 
-                          alt={podrollAlbum.title}
-                          width={150}
-                          height={150}
-                          className="w-full h-full object-cover rounded-md"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-red-700 to-red-900 rounded-md flex items-center justify-center">
-                          <div className="text-white text-sm font-bold text-center px-2">
-                            {podrollAlbum.title}
-                          </div>
-                        </div>
-                      )}
+                      <Image 
+                        src={getAlbumArtworkUrl(podrollAlbum.coverArt || '', 'thumbnail')} 
+                        alt={podrollAlbum.title}
+                        width={150}
+                        height={150}
+                        className="w-full h-full object-cover rounded-md"
+                        onError={(e) => {
+                          // Fallback to placeholder on error
+                          const target = e.target as HTMLImageElement;
+                          target.src = getPlaceholderImageUrl('thumbnail');
+                        }}
+                      />
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 rounded-md transition-all duration-200 flex items-center justify-center">
                         <Play className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
                       </div>
@@ -658,15 +659,18 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
           <div className="container mx-auto flex items-center gap-4">
             {/* Current Track Info */}
             <div className="flex items-center gap-3 min-w-0 flex-1">
-              {album.coverArt && (
-                <Image 
-                  src={getAlbumArtworkUrl(album.coverArt, 'thumbnail')} 
-                  alt={album.title}
-                  width={48}
-                  height={48}
-                  className="rounded object-cover"
-                />
-              )}
+              <Image 
+                src={getAlbumArtworkUrl(album.coverArt || '', 'thumbnail')} 
+                alt={album.title}
+                width={48}
+                height={48}
+                className="rounded object-cover"
+                onError={(e) => {
+                  // Fallback to placeholder on error
+                  const target = e.target as HTMLImageElement;
+                  target.src = getPlaceholderImageUrl('thumbnail');
+                }}
+              />
               <div className="min-w-0">
                 <p className="font-medium truncate">
                   {album.tracks[currentTrackIndex]?.title || 'No track selected'}
