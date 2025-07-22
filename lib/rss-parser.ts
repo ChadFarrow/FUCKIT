@@ -119,51 +119,35 @@ export class RSSParser {
       // Extract cover art
       let coverArt: string | null = null;
       
-      // Debug: Log all image-related elements for "Ring That Bell"
-      if (title.includes('Ring That Bell')) {
-        console.log(`🔍 [${title}] DEBUG: Full channel XML snippet:`, channel.outerHTML.substring(0, 2000));
-        console.log(`🔍 [${title}] DEBUG: All itunes:image elements:`, channel.querySelectorAll('itunes\\:image'));
-        console.log(`🔍 [${title}] DEBUG: All image elements:`, channel.querySelectorAll('image'));
-        console.log(`🔍 [${title}] DEBUG: All image url elements:`, channel.querySelectorAll('image url'));
-        console.log(`🔍 [${title}] DEBUG: All elements with 'image' in tag name:`, 
-          Array.from(channel.getElementsByTagName('*')).filter(el => el.tagName.toLowerCase().includes('image')));
-      }
+
       
       // Use getElementsByTagName as it handles namespaces better than querySelector
-      let imageElement = channel.getElementsByTagName('itunes:image')[0];
+      let imageElement: Element | null = channel.getElementsByTagName('itunes:image')[0] || null;
       if (!imageElement) {
         // Fallback to querySelector with escaped namespace
         imageElement = channel.querySelector('itunes\\:image');
       }
       
-      console.log(`🎨 [${title}] Looking for iTunes image element...`, imageElement);
       if (imageElement) {
         coverArt = imageElement.getAttribute('href') || null;
-        console.log(`🎨 [${title}] Found iTunes image href:`, coverArt);
       }
       if (!coverArt) {
         const imageUrl = channel.querySelector('image url');
-        console.log(`🎨 [${title}] Looking for RSS image url element...`, imageUrl);
         if (imageUrl) {
           coverArt = imageUrl.textContent?.trim() || null;
-          console.log(`🎨 [${title}] Found RSS image url:`, coverArt);
         }
       }
       
       // Try additional selectors for different image formats
       if (!coverArt) {
         const altImageElement = channel.querySelector('image');
-        console.log(`🎨 [${title}] Looking for standard image element...`, altImageElement);
         if (altImageElement) {
           const altUrl = altImageElement.getAttribute('url') || altImageElement.getAttribute('href');
           if (altUrl) {
             coverArt = altUrl;
-            console.log(`🎨 [${title}] Found image via alt method:`, coverArt);
           }
         }
       }
-      
-      console.log(`🎨 [${title}] Final coverArt value:`, coverArt);
       
       // Extract additional channel metadata
       const subtitle = channel.getElementsByTagName('itunes:subtitle')[0]?.textContent?.trim();
@@ -321,8 +305,7 @@ export class RSSParser {
         }
       });
       
-      console.log('🎲 Found PodRoll entries:', podroll);
-      console.log('🎲 PodRoll details:', podroll.map(p => ({ url: p.url, title: p.title, description: p.description })));
+
       
       return {
         title,

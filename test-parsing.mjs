@@ -14,13 +14,13 @@ async function testParsing() {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
     
-    const channel = xmlDoc.querySelector('channel');
+    const channel = xmlDoc.getElementsByTagName('channel')[0];
     if (!channel) {
       console.log('No channel found');
       return;
     }
     
-    const title = channel.querySelector('title')?.textContent?.trim();
+    const title = channel.getElementsByTagName('title')[0]?.textContent?.trim();
     console.log('Channel title:', title);
     
     // Test different approaches to get iTunes image
@@ -33,12 +33,8 @@ async function testParsing() {
       console.log('  href:', method1.getAttribute('href'));
     }
     
-    // Method 2: querySelector with namespace escape
-    const method2 = channel.querySelector('itunes\\:image');
-    console.log('Method 2 (querySelector itunes\\:image):', method2 ? 'Found' : 'Not found');
-    if (method2) {
-      console.log('  href:', method2.getAttribute('href'));
-    }
+    // Method 2: querySelector with namespace escape (not available in xmldom)
+    console.log('Method 2 (querySelector): Not available in xmldom, skipping');
     
     // Method 3: Look for all elements and filter
     const allElements = Array.from(channel.getElementsByTagName('*'));
@@ -55,9 +51,7 @@ async function testParsing() {
     let coverArt = null;
     
     let imageElement = channel.getElementsByTagName('itunes:image')[0];
-    if (!imageElement) {
-      imageElement = channel.querySelector('itunes\\:image');
-    }
+    // Skip querySelector fallback since it's not available in xmldom
     
     if (imageElement) {
       coverArt = imageElement.getAttribute('href');
