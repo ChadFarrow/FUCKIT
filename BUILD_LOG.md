@@ -221,7 +221,16 @@ FUCKIT/
 
 #### 9. Production CDN Asset Loading Errors
 **Problem:** `OpaqueResponseBlocking` errors for JavaScript/CSS files from CDN
-**Solution:** Temporarily disable CDN asset prefix in `next.config.js` until static assets are uploaded to CDN
+**Solution:** 
+1. Upload static assets to Bunny.net Storage using `scripts/upload-static-assets.mjs`
+2. Configure CDN Pull Zone to pull from Storage zone
+3. Re-enable asset prefix in `next.config.js`
+
+**CDN Setup Instructions:**
+1. **Upload Assets:** `node scripts/upload-static-assets.mjs`
+2. **Configure Pull Zone:** In Bunny.net dashboard, create Pull Zone for `re-podtards` that pulls from `re-podtards-storage`
+3. **Enable Asset Prefix:** Uncomment `assetPrefix` in `next.config.js`
+4. **Deploy:** `vercel --prod`
 
 ### Debug Commands
 ```bash
@@ -258,7 +267,13 @@ cat .env.local
 
 ## 🔄 Recent Updates
 
-### Latest Changes (Commit: 21621b4) - January 22, 2025
+### Latest Changes (Commit: 4ba603b) - January 22, 2025
+- ✅ **Created Static Asset Upload Script** - `scripts/upload-static-assets.mjs` for automated CDN uploads
+- ✅ **Successfully Uploaded Static Assets** - 17 files uploaded to Bunny.net Storage (100% success rate)
+- ✅ **CDN Configuration Identified** - Requires Pull Zone setup in Bunny.net dashboard
+- ✅ **Production Site Working** - Temporarily serving assets from Vercel while CDN is configured
+
+### Previous Changes (Commit: 21621b4) - January 22, 2025
 - ✅ **Fixed Production CDN Asset Loading** - Resolved OpaqueResponseBlocking errors from Bunny.net CDN
 - ✅ **Static Asset Configuration** - Temporarily disabled CDN asset prefix to serve assets from Vercel
 - ✅ **Production Environment Variables** - Added all required env vars to Vercel production environment
@@ -287,7 +302,45 @@ cat .env.local
 - ✅ Added comprehensive error handling
 
 ### Next Steps
+- [ ] Configure Bunny.net CDN Pull Zone for static assets
+- [ ] Re-enable CDN asset prefix for production
 - [ ] Implement feed persistence (localStorage/database)
+
+---
+
+## 🚀 CDN Static Assets Setup
+
+### Current Status
+- ✅ **Static Assets Uploaded:** 17 files successfully uploaded to Bunny.net Storage
+- ✅ **Upload Script Created:** `scripts/upload-static-assets.mjs` for automated uploads
+- ⏳ **CDN Configuration:** Requires Pull Zone setup in Bunny.net dashboard
+
+### Bunny.net Configuration Required
+1. **Storage Zone:** `re-podtards-storage` (✅ Active)
+2. **CDN Zone:** `re-podtards` (✅ Active)
+3. **Pull Zone:** Needs to be configured to pull from Storage zone
+
+### Manual CDN Setup Steps
+1. **Login to Bunny.net Dashboard**
+2. **Go to CDN > Pull Zones**
+3. **Create New Pull Zone:**
+   - **Name:** `re-podtards-static`
+   - **Origin URL:** `https://ny.storage.bunnycdn.com/re-podtards-storage`
+   - **Zone:** `re-podtards`
+4. **Configure Settings:**
+   - **Cache Control:** `public, max-age=31536000, immutable`
+   - **Enable Gzip:** Yes
+   - **Enable Brotli:** Yes
+5. **Test Configuration:**
+   ```bash
+   curl -I "https://re-podtards.b-cdn.net/_next/static/chunks/main.js"
+   ```
+6. **Re-enable Asset Prefix:**
+   ```javascript
+   // In next.config.js
+   assetPrefix: process.env.NODE_ENV === 'production' ? process.env.NEXT_PUBLIC_CDN_URL || '' : '',
+   ```
+7. **Deploy:** `vercel --prod`
 - [ ] Add feed categories/tags
 - [ ] Implement user preferences
 - [ ] Add analytics tracking
