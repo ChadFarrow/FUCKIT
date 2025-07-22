@@ -48,21 +48,10 @@ export interface RSSAlbum {
 export class RSSParser {
   static async parseAlbumFeed(feedUrl: string): Promise<RSSAlbum | null> {
     try {
-      // Try direct fetch first (RSS feed has CORS headers), fallback to proxy
-      let response;
-      try {
-        response = await fetch(feedUrl, {
-          headers: {
-            'User-Agent': 'DoerfelVerse/1.0 (Music RSS Reader)',
-          },
-        });
-        if (!response.ok) throw new Error('Direct fetch failed');
-      } catch (directFetchError) {
-        console.log('Direct fetch failed, trying proxy:', directFetchError);
-        // Use CORS proxy as fallback
-        const proxyUrl = `/api/fetch-rss?url=${encodeURIComponent(feedUrl)}`;
-        response = await fetch(proxyUrl);
-      }
+      // Check if the URL is already a proxy URL to avoid double wrapping
+      const isAlreadyProxied = feedUrl.startsWith('/api/fetch-rss');
+      const proxyUrl = isAlreadyProxied ? feedUrl : `/api/fetch-rss?url=${encodeURIComponent(feedUrl)}`;
+      const response = await fetch(proxyUrl);
       
       if (!response.ok) {
         throw new Error(`Failed to fetch RSS feed: ${response.status}`);

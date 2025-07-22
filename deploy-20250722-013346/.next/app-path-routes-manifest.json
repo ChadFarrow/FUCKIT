@@ -1,8 +1,0 @@
-{
-  "/_not-found/page": "/_not-found",
-  "/api/fetch-rss/route": "/api/fetch-rss",
-  "/about/page": "/about",
-  "/test-jdog/page": "/test-jdog",
-  "/page": "/",
-  "/album/[id]/page": "/album/[id]"
-}

@@ -118,7 +118,9 @@ export default function HomePage() {
         setTimeout(() => reject(new Error('Feed loading timeout after 30 seconds')), 30000);
       });
       
-      const parsePromise = RSSParser.parseMultipleFeeds(feedUrls);
+      // Map all feedUrls to use the backend proxy
+      const proxiedFeedUrls = feedUrls.map(url => `/api/fetch-rss?url=${encodeURIComponent(url)}`);
+      const parsePromise = RSSParser.parseMultipleFeeds(proxiedFeedUrls);
       const albumsData = await Promise.race([parsePromise, timeoutPromise]) as RSSAlbum[];
       
       console.log('Albums data received:', albumsData);
@@ -137,7 +139,7 @@ export default function HomePage() {
         setError('Some feeds took too long to load. Showing available albums.');
         // Try to show any albums that did load before timeout
         try {
-          const quickParsePromise = RSSParser.parseMultipleFeeds(feedUrls.slice(0, 20)); // Try first 20 feeds
+          const quickParsePromise = RSSParser.parseMultipleFeeds(feedUrls.slice(0, 20).map(url => `/api/fetch-rss?url=${encodeURIComponent(url)}`)); // Try first 20 feeds
           const partialAlbums = await Promise.race([
             quickParsePromise,
             new Promise<RSSAlbum[]>((_, reject) => setTimeout(() => reject([]), 10000))

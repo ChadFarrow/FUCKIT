@@ -234,12 +234,15 @@ export default function AlbumDetailPage() {
         
         console.log(`🔄 Starting to parse ${feedUrls.length} feeds...`);
         
+        // When building feedUrls, map them to the proxy endpoint
+        const proxiedFeedUrls = feedUrls.map(url => `/api/fetch-rss?url=${encodeURIComponent(url)}`);
+        
         // Add timeout to prevent hanging
         const timeoutPromise = new Promise<never>((_, reject) => {
           setTimeout(() => reject(new Error('RSS parsing timeout')), 10000); // 10 second timeout
         });
         
-        const parsePromise = RSSParser.parseMultipleFeeds(feedUrls);
+        const parsePromise = RSSParser.parseMultipleFeeds(proxiedFeedUrls);
         const albumsData = await Promise.race([parsePromise, timeoutPromise]) as RSSAlbum[];
         
         console.log(`✅ Parsed ${albumsData.length} albums from feeds`);
@@ -282,8 +285,11 @@ export default function AlbumDetailPage() {
         const podrollUrls = podrollItems.map(item => item.url);
         console.log('Loading PodRoll albums from:', podrollUrls);
         
+        // Map podrollUrls to proxy endpoint
+        const proxiedPodrollUrls = podrollUrls.map(url => `/api/fetch-rss?url=${encodeURIComponent(url)}`);
+
         // Parse each PodRoll feed URL to get album data
-        const podrollAlbumsData = await RSSParser.parseMultipleFeeds(podrollUrls);
+        const podrollAlbumsData = await RSSParser.parseMultipleFeeds(proxiedPodrollUrls);
         console.log('PodRoll albums loaded:', podrollAlbumsData.length);
         console.log('PodRoll albums data:', podrollAlbumsData);
         setPodrollAlbums(podrollAlbumsData);

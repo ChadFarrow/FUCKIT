@@ -12,7 +12,7 @@ export default function TestJdogPage() {
     async function testJdogFeed() {
       try {
         console.log('Testing Jdog feed parsing...');
-        const result = await RSSParser.parseAlbumFeed('https://www.thisisjdog.com/media/ring-that-bell.xml');
+        const result = await RSSParser.parseAlbumFeed('/api/fetch-rss?url=' + encodeURIComponent('https://www.thisisjdog.com/media/ring-that-bell.xml'));
         console.log('Jdog parse result:', result);
         
         if (result) {

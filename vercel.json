@@ -1,5 +1,66 @@
 {
+  "version": 2,
   "buildCommand": "npm run build",
   "installCommand": "npm install",
-  "framework": "nextjs"
+  "framework": "nextjs",
+
+
+  "env": {
+    "BUNNY_CDN_HOSTNAME": "re-podtards.b-cdn.net",
+    "BUNNY_CDN_ZONE": "re-podtards", 
+    "BUNNY_CDN_API_KEY": "52208757-f03f-47a3-ad5d-da1be0d11122",
+    "NEXT_PUBLIC_SITE_URL": "https://re.podtards.com",
+    "NEXT_PUBLIC_API_URL": "https://re.podtards.com/api",
+    "NEXT_PUBLIC_CDN_URL": "https://re-podtards.b-cdn.net"
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options", 
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "https://re.podtards.com"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization"
+        }
+      ]
+    },
+    {
+      "source": "/_next/static/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ],
+  "functions": {
+    "app/api/fetch-rss/route.ts": {
+      "maxDuration": 30
+    }
+  }
 } 
