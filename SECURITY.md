@@ -20,6 +20,13 @@
 - ✅ `.env.local` - Local environment variables
 - ✅ `.env.example` - Template without real keys
 - ✅ `SECURITY.md` - This security guide
+- ✅ All environment files (`.env*`)
+- ✅ All key files (`*.key`, `*.pem`, `*.p12`, etc.)
+- ✅ All credential files (`secrets.json`, `credentials.json`, etc.)
+- ✅ SSH keys and certificates
+- ✅ Cloud service credentials (AWS, GCP, Azure)
+- ✅ Database files with potential credentials
+- ✅ Docker and Kubernetes secrets
 
 ### Files with Placeholder Keys:
 - ⚠️ `BUILD_LOG.md` - Contains placeholder for reference
@@ -62,6 +69,20 @@ BUNNY_CDN_API_KEY=your-actual-key-here
 - Regular security audits
 - Monitor API usage for unusual activity
 - Keep dependencies updated
+- Pre-commit security checks (automatic)
+- Enhanced pattern detection for sensitive data
+
+## Pre-commit Security Checks
+
+The `scripts/security-check.sh` script automatically checks for:
+- API keys and secrets
+- Database connection strings
+- Cloud service credentials (AWS, GCP, Azure)
+- Email addresses (with warnings)
+- Common sensitive data patterns
+- UUID format keys
+
+Run manually: `./scripts/security-check.sh`
 
 ---
 
