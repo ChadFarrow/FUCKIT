@@ -126,8 +126,52 @@ export default function AlbumDetailPage() {
         setIsLoading(true);
         setError(null);
         
-        // Load the specific feed for "Into The Doerfel-Verse"
-        const feedUrls = ['https://www.doerfelverse.com/feeds/intothedoerfelverse.xml'];
+        // Load all feeds and find the matching album
+        const feedUrls = [
+          // Main Doerfels feeds
+          'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml',
+          'https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml',
+          'https://www.doerfelverse.com/feeds/intothedoerfelverse.xml',
+          'https://www.doerfelverse.com/feeds/wrath-of-banjo.xml',
+          'https://www.doerfelverse.com/feeds/ben-doerfel.xml',
+          
+          // Additional Doerfels albums and projects
+          'https://www.doerfelverse.com/feeds/18sundays.xml',
+          'https://www.doerfelverse.com/feeds/alandace.xml',
+          'https://www.doerfelverse.com/feeds/autumn.xml',
+          'https://www.doerfelverse.com/feeds/christ-exalted.xml',
+          'https://www.doerfelverse.com/feeds/come-back-to-me.xml',
+          'https://www.doerfelverse.com/feeds/dead-time-live-2016.xml',
+          'https://www.doerfelverse.com/feeds/dfbv1.xml',
+          'https://www.doerfelverse.com/feeds/dfbv2.xml',
+          'https://www.doerfelverse.com/feeds/disco-swag.xml',
+          'https://www.doerfelverse.com/feeds/doerfels-pubfeed.xml',
+          'https://www.doerfelverse.com/feeds/first-married-christmas.xml',
+          'https://www.doerfelverse.com/feeds/generation-gap.xml',
+          'https://www.doerfelverse.com/feeds/heartbreak.xml',
+          'https://www.doerfelverse.com/feeds/merry-christmix.xml',
+          'https://www.doerfelverse.com/feeds/middle-season-let-go.xml',
+          'https://www.doerfelverse.com/feeds/phatty-the-grasshopper.xml',
+          'https://www.doerfelverse.com/feeds/possible.xml',
+          'https://www.doerfelverse.com/feeds/pour-over.xml',
+          'https://www.doerfelverse.com/feeds/psalm-54.xml',
+          'https://www.doerfelverse.com/feeds/sensitive-guy.xml',
+          'https://www.doerfelverse.com/feeds/they-dont-know.xml',
+          'https://www.doerfelverse.com/feeds/think-ep.xml',
+          'https://www.doerfelverse.com/feeds/underwater-single.xml',
+          'https://www.doerfelverse.com/feeds/unsound-existence.xml',
+          'https://www.doerfelverse.com/feeds/you-are-my-world.xml',
+          'https://www.doerfelverse.com/feeds/you-feel-like-home.xml',
+          'https://www.doerfelverse.com/feeds/your-chance.xml',
+          
+          // Ed Doerfel (Shredward) projects
+          'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml',
+          'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/CityBeach.xml',
+          'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml',
+          
+          // TJ Doerfel projects
+          'https://www.thisisjdog.com/media/ring-that-bell.xml'
+        ];
         
         const albumsData = await RSSParser.parseMultipleFeeds(feedUrls);
         
