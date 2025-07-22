@@ -143,12 +143,45 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             'music from the doerfel-verse': 'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml',
             'music from the doerfelverse': 'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml',
             'bloodshot lies': 'https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml',
+            'bloodshot lies album': 'https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml',
             'wrath of banjo': 'https://www.doerfelverse.com/feeds/wrath-of-banjo.xml',
+            'beware of banjo': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/07/Beware-of-Banjo.xml',
             'ben doerfel': 'https://www.doerfelverse.com/feeds/ben-doerfel.xml',
+            '18 sundays': 'https://www.doerfelverse.com/feeds/18sundays.xml',
+            'alandace': 'https://www.doerfelverse.com/feeds/alandace.xml',
+            'autumn': 'https://www.doerfelverse.com/feeds/autumn.xml',
+            'christ exalted': 'https://www.doerfelverse.com/feeds/christ-exalted.xml',
+            'come back to me': 'https://www.doerfelverse.com/feeds/come-back-to-me.xml',
+            'dead time live 2016': 'https://www.doerfelverse.com/feeds/dead-time-live-2016.xml',
+            'dfb v1': 'https://www.doerfelverse.com/feeds/dfbv1.xml',
+            'dfb v2': 'https://www.doerfelverse.com/feeds/dfbv2.xml',
+            'disco swag': 'https://www.doerfelverse.com/feeds/disco-swag.xml',
+            'doerfels pubfeed': 'https://www.doerfelverse.com/feeds/doerfels-pubfeed.xml',
+            'first married christmas': 'https://www.doerfelverse.com/feeds/first-married-christmas.xml',
+            'generation gap': 'https://www.doerfelverse.com/feeds/generation-gap.xml',
+            'heartbreak': 'https://www.doerfelverse.com/feeds/heartbreak.xml',
+            'merry christmix': 'https://www.doerfelverse.com/feeds/merry-christmix.xml',
+            'middle season let go': 'https://www.doerfelverse.com/feeds/middle-season-let-go.xml',
+            'phatty the grasshopper': 'https://www.doerfelverse.com/feeds/phatty-the-grasshopper.xml',
+            'possible': 'https://www.doerfelverse.com/feeds/possible.xml',
+            'pour over': 'https://www.doerfelverse.com/feeds/pour-over.xml',
+            'psalm 54': 'https://www.doerfelverse.com/feeds/psalm-54.xml',
+            'sensitive guy': 'https://www.doerfelverse.com/feeds/sensitive-guy.xml',
+            'they dont know': 'https://www.doerfelverse.com/feeds/they-dont-know.xml',
+            'think ep': 'https://www.doerfelverse.com/feeds/think-ep.xml',
+            'underwater single': 'https://www.doerfelverse.com/feeds/underwater-single.xml',
+            'unsound existence': 'https://www.doerfelverse.com/feeds/unsound-existence.xml',
+            'you are my world': 'https://www.doerfelverse.com/feeds/you-are-my-world.xml',
+            'you feel like home': 'https://www.doerfelverse.com/feeds/you-feel-like-home.xml',
+            'your chance': 'https://www.doerfelverse.com/feeds/your-chance.xml',
             'nostalgic': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml',
             'citybeach': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/CityBeach.xml',
             'kurtisdrums v1': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml',
             'ring that bell': 'https://www.thisisjdog.com/media/ring-that-bell.xml',
+            'tinderbox': 'https://wavlake.com/feed/music/d677db67-0310-4813-970e-e65927c689f1',
+            'nate johnivan': 'https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4',
+            'empty passenger seat': 'https://www.wavlake.com/feed/95ea253a-4058-402c-8503-204f6d3f1494',
+            'joe martin': 'https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738'
           };
           
           // Try to find a specific feed first
@@ -200,6 +233,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml',
               'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/CityBeach.xml',
               'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml',
+              'https://www.sirtjthewrathful.com/wp-content/uploads/2023/07/Beware-of-Banjo.xml',
               
               // TJ Doerfel projects
               'https://www.thisisjdog.com/media/ring-that-bell.xml',
@@ -239,15 +273,9 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             ];
           }
           
-          // Map to proxy URLs
-          const proxiedFeedUrls = feedUrls.map(url => `/api/fetch-rss?url=${encodeURIComponent(url)}`);
+          // Parse feeds - RSSParser will handle proxy internally
+          const albumsData = await RSSParser.parseMultipleFeeds(feedUrls);
           
-          // Parse feeds
-          const albumsData = await RSSParser.parseMultipleFeeds(proxiedFeedUrls);
-          
-          // Debug: Log all available albums
-          console.log('🔍 Available albums:', albumsData.map(a => ({ title: a.title, artist: a.artist })));
-          console.log('🎯 Searching for album:', decodedAlbumTitle);
           
           // Find the matching album with more flexible matching
           const foundAlbum = albumsData.find(a => {
@@ -256,19 +284,16 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             
             // Exact match
             if (a.title === decodedAlbumTitle || a.title === albumTitle) {
-              console.log('✅ Exact match found:', a.title);
               return true;
             }
             
             // Case-insensitive match
             if (albumTitleLower === searchTitleLower) {
-              console.log('✅ Case-insensitive match found:', a.title);
               return true;
             }
             
             // Contains match (search title contains album title or vice versa)
             if (albumTitleLower.includes(searchTitleLower) || searchTitleLower.includes(albumTitleLower)) {
-              console.log('✅ Contains match found:', a.title);
               return true;
             }
             
@@ -276,13 +301,11 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             const normalizedAlbum = albumTitleLower.replace(/[^a-z0-9]/g, '');
             const normalizedSearch = searchTitleLower.replace(/[^a-z0-9]/g, '');
             if (normalizedAlbum === normalizedSearch) {
-              console.log('✅ Normalized match found:', a.title);
               return true;
             }
             
             // Partial normalized match
             if (normalizedAlbum.includes(normalizedSearch) || normalizedSearch.includes(normalizedAlbum)) {
-              console.log('✅ Partial normalized match found:', a.title);
               return true;
             }
             
@@ -318,8 +341,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   const loadPodrollAlbums = async (podrollItems: { url: string; title?: string; description?: string }[]) => {
     try {
       const podrollUrls = podrollItems.map(item => item.url);
-      const proxiedPodrollUrls = podrollUrls.map(url => `/api/fetch-rss?url=${encodeURIComponent(url)}`);
-      const podrollAlbumsData = await RSSParser.parseMultipleFeeds(proxiedPodrollUrls);
+      const podrollAlbumsData = await RSSParser.parseMultipleFeeds(podrollUrls);
       setPodrollAlbums(podrollAlbumsData);
     } catch (err) {
       console.error('Error loading PodRoll albums:', err);
@@ -428,14 +450,6 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               >
                 {isPlaying && currentTrackIndex === 0 ? <Pause className="h-4 w-4 mr-2" /> : <Play className="h-4 w-4 mr-2" />}
                 {isPlaying && currentTrackIndex === 0 ? 'Pause' : 'Play Album'}
-              </button>
-              <button className="border border-gray-600 text-white px-6 py-3 rounded-full font-medium hover:bg-gray-800 transition-colors flex items-center">
-                <Heart className="h-4 w-4 mr-2" />
-                Save
-              </button>
-              <button className="border border-gray-600 text-white px-6 py-3 rounded-full font-medium hover:bg-gray-800 transition-colors flex items-center">
-                <Share2 className="h-4 w-4 mr-2" />
-                Share
               </button>
             </div>
 
