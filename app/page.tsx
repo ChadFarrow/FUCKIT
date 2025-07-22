@@ -112,7 +112,14 @@ export default function HomePage() {
       
       // Update progress as feeds load
       setLoadingProgress(0);
-      const albumsData = await RSSParser.parseMultipleFeeds(feedUrls);
+      
+      // Add timeout to prevent hanging
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error('Feed loading timeout after 30 seconds')), 30000);
+      });
+      
+      const parsePromise = RSSParser.parseMultipleFeeds(feedUrls);
+      const albumsData = await Promise.race([parsePromise, timeoutPromise]) as RSSAlbum[];
       
       console.log('Albums data received:', albumsData);
       
@@ -125,7 +132,25 @@ export default function HomePage() {
       }
     } catch (err) {
       console.error('Error loading albums:', err);
-      setError(`Error loading album data: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      // Check if it's a timeout error and show partial results if available
+      if (err instanceof Error && err.message.includes('timeout')) {
+        setError('Some feeds took too long to load. Showing available albums.');
+        // Try to show any albums that did load before timeout
+        try {
+          const quickParsePromise = RSSParser.parseMultipleFeeds(feedUrls.slice(0, 20)); // Try first 20 feeds
+          const partialAlbums = await Promise.race([
+            quickParsePromise,
+            new Promise<RSSAlbum[]>((_, reject) => setTimeout(() => reject([]), 10000))
+          ]) as RSSAlbum[];
+          if (partialAlbums.length > 0) {
+            setAlbums(partialAlbums);
+          }
+        } catch (partialErr) {
+          console.error('Even partial loading failed:', partialErr);
+        }
+      } else {
+        setError(`Error loading album data: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      }
     } finally {
       setIsLoading(false);
     }
