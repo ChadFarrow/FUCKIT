@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, Play, Pause, Heart, Share2, SkipBack, SkipForward, Volume2 } from 'lucide-react';
+import { ArrowLeft, Play, Pause, SkipBack, SkipForward, Volume2 } from 'lucide-react';
 import { RSSAlbum } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl, getTrackArtworkUrl } from '@/lib/cdn-utils';
 import { RSSParser } from '@/lib/rss-parser';
