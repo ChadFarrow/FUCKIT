@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { RSSParser, RSSAlbum } from '@/lib/rss-parser';
+import { getAlbumArtworkUrl } from '@/lib/cdn-utils';
 
 // Complete Doerfels RSS feed collection
 const feedUrls = [
@@ -50,7 +51,11 @@ const feedUrls = [
   'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml',
   
   // TJ Doerfel projects
-  'https://www.thisisjdog.com/media/ring-that-bell.xml'
+  'https://www.thisisjdog.com/media/ring-that-bell.xml',
+  
+  // Wavlake feeds
+  'https://wavlake.com/feed/music/d677db67-0310-4813-970e-e65927c689f1',
+  'https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4'
 ];
 
 export default function HomePage() {
@@ -171,7 +176,7 @@ export default function HomePage() {
                   <div className="relative aspect-square">
                     {album.coverArt ? (
                       <Image 
-                        src={album.coverArt} 
+                        src={getAlbumArtworkUrl(album.coverArt, 'medium')} 
                         alt={album.title}
                         width={300}
                         height={300}

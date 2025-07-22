@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft, Play, Pause, Heart, Share2, SkipBack, SkipForward, Volume2 } from 'lucide-react';
 import { RSSParser, RSSAlbum } from '@/lib/rss-parser';
+import { getAlbumArtworkUrl, getTrackArtworkUrl } from '@/lib/cdn-utils';
 
 export default function AlbumDetailPage() {
   const params = useParams();
@@ -169,7 +170,9 @@ export default function AlbumDetailPage() {
           'nostalgic': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml',
           'citybeach': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/CityBeach.xml',
           'kurtisdrums v1': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml',
-          'ring that bell': 'https://www.thisisjdog.com/media/ring-that-bell.xml'
+          'ring that bell': 'https://www.thisisjdog.com/media/ring-that-bell.xml',
+          'tinderbox': 'https://wavlake.com/feed/music/d677db67-0310-4813-970e-e65927c689f1',
+          'nate johnivan': 'https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4'
         };
         
         // Try to find a specific feed first
@@ -186,7 +189,13 @@ export default function AlbumDetailPage() {
             'https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml',
             'https://www.doerfelverse.com/feeds/intothedoerfelverse.xml',
             'https://www.doerfelverse.com/feeds/wrath-of-banjo.xml',
-            'https://www.doerfelverse.com/feeds/ben-doerfel.xml'
+            'https://www.doerfelverse.com/feeds/ben-doerfel.xml',
+            'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml',
+            'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/CityBeach.xml',
+            'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml',
+            'https://www.thisisjdog.com/media/ring-that-bell.xml',
+            'https://wavlake.com/feed/music/d677db67-0310-4813-970e-e65927c689f1',
+            'https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4'
           ];
           console.log(`🔍 No specific feed found for "${decodedAlbumTitle}", using fallback feeds`);
         }
@@ -316,7 +325,7 @@ export default function AlbumDetailPage() {
           <div className="flex-shrink-0">
             {album.coverArt ? (
               <Image 
-                src={album.coverArt} 
+                src={getAlbumArtworkUrl(album.coverArt, 'large')} 
                 alt={album.title}
                 width={320}
                 height={320}
@@ -463,7 +472,7 @@ export default function AlbumDetailPage() {
                     <div className="aspect-square relative mb-3">
                       {podrollAlbum.coverArt ? (
                         <Image 
-                          src={podrollAlbum.coverArt} 
+                          src={getAlbumArtworkUrl(podrollAlbum.coverArt, 'thumbnail')} 
                           alt={podrollAlbum.title}
                           width={150}
                           height={150}
@@ -502,7 +511,7 @@ export default function AlbumDetailPage() {
             <div className="flex items-center gap-3 min-w-0 flex-1">
               {album.coverArt && (
                 <Image 
-                  src={album.coverArt} 
+                  src={getAlbumArtworkUrl(album.coverArt, 'thumbnail')} 
                   alt={album.title}
                   width={48}
                   height={48}

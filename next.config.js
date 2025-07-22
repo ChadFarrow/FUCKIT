@@ -20,6 +20,19 @@ const nextConfig = {
         port: '',
         pathname: '/wp-content/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'wavlake.com',
+        port: '',
+        pathname: '/**',
+      },
+      // Bunny.net CDN
+      {
+        protocol: 'https',
+        hostname: process.env.BUNNY_CDN_HOSTNAME || 'your-zone.b-cdn.net',
+        port: '',
+        pathname: '/**',
+      },
     ],
     unoptimized: true, // Allow animated GIFs and other unoptimized images
   },

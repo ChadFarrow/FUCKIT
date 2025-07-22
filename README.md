@@ -8,8 +8,9 @@ A modern music streaming web application that fetches and plays music from RSS f
 - 🎵 **Audio Playback** - Full-featured music player with play/pause controls
 - 📱 **Responsive Design** - Beautiful, modern UI that works on all devices
 - ⚡ **Real-time Updates** - Live progress tracking and time display
-- 🎨 **Album Artwork** - Displays cover art from RSS feeds
+- 🎨 **Album Artwork** - Displays cover art from RSS feeds with CDN optimization
 - 🔍 **Track Management** - Complete track listing with durations
+- 🚀 **CDN Integration** - Bunny.net CDN for fast image delivery
 
 ## Tech Stack
 
@@ -46,7 +47,17 @@ yarn install
 cp env.example .env.local
 ```
 
-4. Run the development server:
+4. **Optional: Set up Bunny.net CDN** (recommended for production):
+   - Sign up at [Bunny.net](https://bunny.net/)
+   - Create a new CDN zone
+   - Add your CDN configuration to `.env.local`:
+   ```bash
+   BUNNY_CDN_HOSTNAME=your-zone.b-cdn.net
+   BUNNY_CDN_ZONE=your-zone
+   BUNNY_CDN_API_KEY=your-api-key
+   ```
+
+5. Run the development server:
 ```bash
 npm run dev
 # or
@@ -96,6 +107,12 @@ FUCKIT/
 - **Responsive Layout**: Works seamlessly on desktop and mobile
 - **Loading States**: Smooth loading animations and error handling
 - **Hover Effects**: Interactive elements with smooth transitions
+
+### CDN Integration
+- **Bunny.net CDN**: Optimized image delivery with automatic format conversion
+- **Image Optimization**: Automatic WebP conversion, resizing, and quality optimization
+- **Performance**: Faster image loading and reduced bandwidth usage
+- **Fallback Support**: Graceful fallback to original URLs if CDN is not configured
 
 ## Contributing
 
