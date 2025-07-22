@@ -96,6 +96,12 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'static.wixstatic.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
     unoptimized: process.env.NODE_ENV === 'development', // Optimize in production
     formats: ['image/webp', 'image/avif'],
