@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔄 Auto-updating PWA version for commit..."
+node scripts/auto-version-update.js
+
+# Add the updated service worker to the commit
+git add public/sw.js package.json
+
+echo "✅ PWA version updated automatically"

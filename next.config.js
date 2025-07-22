@@ -3,7 +3,7 @@ const nextConfig = {
   // Domain configuration for re.podtards.com deployment
   basePath: '',
   // CDN asset prefix - requires proper Pull Zone configuration in Bunny.net
-  assetPrefix: '', // process.env.NODE_ENV === 'production' ? process.env.NEXT_PUBLIC_CDN_URL || '' : '',
+  assetPrefix: process.env.NODE_ENV === 'production' ? process.env.NEXT_PUBLIC_CDN_URL || '' : '',
   
   // Image optimization configuration
   images: {

@@ -14,6 +14,7 @@
 ### Development
 ```bash
 npm run dev          # Start development server (localhost:3000)
+npm run dev-setup    # Check environment configuration
 npm run build        # Build for production
 npm start           # Start production server
 ```
@@ -86,6 +87,34 @@ NEXT_PUBLIC_IMAGE_DOMAIN=re.podtards.com
 - Domain is properly configured in Vercel dashboard
 - SSL certificate is active
 - DNS propagation completed
+
+---
+
+## 🔄 Environment-Based URL System
+
+### Local Development vs Production
+The site now automatically switches between URL sources based on the environment:
+
+**🏠 Local Development (localhost:3000):**
+- Uses original RSS feed URLs (e.g., `https://www.doerfelverse.com/feeds/...`)
+- Serves static assets locally
+- Fast development and testing
+
+**🚀 Production (re.podtards.com):**
+- Uses Bunny.net CDN URLs (e.g., `https://re-podtards.b-cdn.net/feeds/...`)
+- Serves static assets from CDN
+- Optimized for performance
+
+### Configuration
+- **Environment Detection:** `process.env.NODE_ENV === 'production'`
+- **URL Mapping:** `feedUrlMappings` array in `app/page.tsx`
+- **Asset Prefix:** Configured in `next.config.js`
+
+### Benefits
+- ✅ Seamless development workflow
+- ✅ No manual URL switching
+- ✅ CDN performance in production
+- ✅ Reliable local development
 
 ---
 

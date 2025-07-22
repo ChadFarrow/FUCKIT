@@ -78,10 +78,23 @@ export class RSSParser {
       }
       
       if (!response.ok) {
+        console.error(`❌ RSS feed fetch failed: ${feedUrl} - Status: ${response.status}`);
         throw new Error(`Failed to fetch RSS feed: ${response.status}`);
       }
       
       const xmlText = await response.text();
+      
+      // Debug: Check if we got valid XML
+      if (!xmlText || xmlText.trim().length === 0) {
+        console.error(`❌ Empty response from RSS feed: ${feedUrl}`);
+        throw new Error('Empty response from RSS feed');
+      }
+      
+      // Debug: Check if response looks like XML
+      if (!xmlText.includes('<') || !xmlText.includes('>')) {
+        console.error(`❌ Response does not look like XML for ${feedUrl}:`, xmlText.substring(0, 200));
+        throw new Error('Response is not valid XML');
+      }
       
       // Use different XML parsing based on environment
       let xmlDoc: any;

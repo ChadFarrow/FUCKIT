@@ -12,16 +12,34 @@
   "categories": ["music", "entertainment", "lifestyle"],
   "icons": [
     {
-      "src": "/logo.webp",
+      "src": "/icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/webp",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/logo.webp",
+      "src": "/icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/webp",
+      "type": "image/png",
       "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
   "screenshots": [
@@ -41,8 +59,9 @@
       "url": "/",
       "icons": [
         {
-          "src": "/logo.webp",
-          "sizes": "96x96"
+          "src": "/apple-touch-icon-76x76.png",
+          "sizes": "76x76",
+          "type": "image/png"
         }
       ]
     }

@@ -186,11 +186,17 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             'stay awhile': 'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml'
           };
           
+          // Convert URL slug back to title format (e.g., "stay-awhile" -> "stay awhile")
+          const convertSlugToTitle = (slug: string): string => {
+            return slug.replace(/-/g, ' ');
+          };
+          
           // Try to find a specific feed first
-          const normalizedTitle = decodedAlbumTitle.toLowerCase();
+          const titleFromSlug = convertSlugToTitle(decodedAlbumTitle);
+          const normalizedTitle = titleFromSlug.toLowerCase();
           const specificFeed = titleToFeedMap[normalizedTitle];
           
-          console.log(`🔍 Album lookup: "${decodedAlbumTitle}" → "${normalizedTitle}"`);
+          console.log(`🔍 Album lookup: "${decodedAlbumTitle}" → "${titleFromSlug}" → "${normalizedTitle}"`);
           console.log(`📋 Specific feed found:`, specificFeed);
           
           if (specificFeed) {
@@ -284,6 +290,11 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
           console.log(`📚 Found ${albumsData.length} albums in feeds`);
           console.log(`🔍 Looking for: "${decodedAlbumTitle}"`);
           
+          // Debug: Log all found albums
+          albumsData.forEach((album, index) => {
+            console.log(`📋 Album ${index + 1}: "${album.title}" by ${album.artist}`);
+          });
+          
           // Check if Generation Gap is in the results
           const hasGenerationGap = albumsData.find(a => a.title.toLowerCase().includes('generation'));
           if (hasGenerationGap) {
@@ -296,6 +307,12 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
           const foundAlbum = albumsData.find(a => {
             const albumTitleLower = a.title.toLowerCase();
             const searchTitleLower = decodedAlbumTitle.toLowerCase();
+            
+            // Special case for "Stay Awhile" - it's a track in "Music From The Doerfel-Verse"
+            if (searchTitleLower.includes('stay awhile') && albumTitleLower.includes('doerfel')) {
+              console.log(`🎯 Special match: "Stay Awhile" -> "${a.title}"`);
+              return true;
+            }
             
             // Exact match
             if (a.title === decodedAlbumTitle || a.title === albumTitle) {
