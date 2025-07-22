@@ -34,6 +34,24 @@ const nextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'www.wavlake.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'd12wklypp119aj.cloudfront.net',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'ableandthewolf.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
         hostname: 'whiterabbitrecords.org',
         port: '',
         pathname: '/wp-content/**',
@@ -63,6 +81,19 @@ const nextConfig = {
         protocol: 'http',
         hostname: 'localhost',
         port: '3000',
+        pathname: '/**',
+      },
+      // Additional CDN and image hosting domains
+      {
+        protocol: 'https',
+        hostname: 'd12wklypp119aj.cloudfront.net',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 're-podtards.b-cdn.net',
+        port: '',
         pathname: '/**',
       },
     ],
