@@ -209,7 +209,7 @@ export default function HomePage() {
                   className="object-cover"
                 />
               </div>
-              <h1 className="text-4xl font-bold mb-4">Into the ValueVerse</h1>
+              <h1 className="text-4xl font-bold">Into the ValueVerse</h1>
             </div>
             
             {/* Empty div for balance */}
