@@ -129,4 +129,72 @@ export function shouldUseCDN(url: string): boolean {
  */
 export function getCDNConfig(): CDNConfig {
   return { ...defaultCDNConfig };
+}
+
+/**
+ * Purge CDN cache for a specific URL
+ * @param url - The URL to purge from cache
+ * @returns Promise that resolves when purge is complete
+ */
+export async function purgeCDNCache(url: string): Promise<boolean> {
+  if (!defaultCDNConfig.apiKey || !defaultCDNConfig.zone) {
+    console.warn('CDN API key or zone not configured for purging');
+    return false;
+  }
+
+  try {
+    const response = await fetch(`https://api.bunny.net/pullzone/${defaultCDNConfig.zone}/purgeCache`, {
+      method: 'POST',
+      headers: {
+        'AccessKey': defaultCDNConfig.apiKey,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        url: url
+      })
+    });
+
+    if (response.ok) {
+      console.log(`✅ CDN cache purged for: ${url}`);
+      return true;
+    } else {
+      console.error(`❌ Failed to purge CDN cache: ${response.statusText}`);
+      return false;
+    }
+  } catch (error) {
+    console.error('Error purging CDN cache:', error);
+    return false;
+  }
+}
+
+/**
+ * Purge entire CDN cache
+ * @returns Promise that resolves when purge is complete
+ */
+export async function purgeEntireCDNCache(): Promise<boolean> {
+  if (!defaultCDNConfig.apiKey || !defaultCDNConfig.zone) {
+    console.warn('CDN API key or zone not configured for purging');
+    return false;
+  }
+
+  try {
+    const response = await fetch(`https://api.bunny.net/pullzone/${defaultCDNConfig.zone}/purgeCache`, {
+      method: 'POST',
+      headers: {
+        'AccessKey': defaultCDNConfig.apiKey,
+        'Content-Type': 'application/json',
+      }
+    });
+
+    if (response.ok) {
+      console.log('✅ Entire CDN cache purged');
+      return true;
+    } else {
+      console.error(`❌ Failed to purge entire CDN cache: ${response.statusText}`);
+      return false;
+    }
+  } catch (error) {
+    console.error('Error purging entire CDN cache:', error);
+    return false;
+  }
 } 

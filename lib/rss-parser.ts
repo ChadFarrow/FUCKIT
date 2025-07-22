@@ -196,6 +196,7 @@ export class RSSParser {
         // If duration is empty or just whitespace, use default
         if (!duration || duration.trim() === '') {
           duration = '0:00';
+          console.log(`⚠️ No duration found for track "${trackTitle}", using default`);
         } else {
           // Convert seconds to MM:SS format if needed
           const durationStr = duration.trim();
@@ -207,13 +208,29 @@ export class RSSParser {
               const secs = seconds % 60;
               duration = `${mins}:${secs.toString().padStart(2, '0')}`;
             }
-          } else if (durationStr.includes(':') && durationStr.split(':').length === 2) {
-            // It's already in MM:SS format, ensure it's valid
+          } else if (durationStr.includes(':')) {
             const parts = durationStr.split(':');
-            const mins = parseInt(parts[0]);
-            const secs = parseInt(parts[1]);
-            if (!isNaN(mins) && !isNaN(secs) && mins >= 0 && secs >= 0 && secs < 60) {
-              duration = `${mins}:${secs.toString().padStart(2, '0')}`;
+            if (parts.length === 2) {
+              // MM:SS format
+              const mins = parseInt(parts[0]);
+              const secs = parseInt(parts[1]);
+              if (!isNaN(mins) && !isNaN(secs) && mins >= 0 && secs >= 0 && secs < 60) {
+                duration = `${mins}:${secs.toString().padStart(2, '0')}`;
+              }
+            } else if (parts.length === 3) {
+              // HH:MM:SS format (like Wavlake uses)
+              const hours = parseInt(parts[0]);
+              const mins = parseInt(parts[1]);
+              const secs = parseInt(parts[2]);
+              if (!isNaN(hours) && !isNaN(mins) && !isNaN(secs) && 
+                  hours >= 0 && mins >= 0 && mins < 60 && secs >= 0 && secs < 60) {
+                const totalMinutes = hours * 60 + mins;
+                const originalDuration = duration;
+                duration = `${totalMinutes}:${secs.toString().padStart(2, '0')}`;
+                if (hours > 0) {
+                  console.log(`🔄 Converted HH:MM:SS "${originalDuration}" to MM:SS "${duration}" for "${trackTitle}"`);
+                }
+              }
             }
           }
         }
@@ -354,12 +371,25 @@ export class RSSParser {
   }
   
   static async parseMultipleFeeds(feedUrls: string[]): Promise<RSSAlbum[]> {
+    console.log(`🔄 Parsing ${feedUrls.length} RSS feeds...`);
     const promises = feedUrls.map(url => this.parseAlbumFeed(url));
     const results = await Promise.allSettled(promises);
     
-    return results
-      .filter((result): result is PromiseFulfilledResult<RSSAlbum> => 
-        result.status === 'fulfilled' && result.value !== null)
-      .map(result => result.value);
+    const successful = results.filter((result): result is PromiseFulfilledResult<RSSAlbum> => 
+      result.status === 'fulfilled' && result.value !== null);
+    
+    const failed = results.filter(result => result.status === 'rejected' || result.value === null);
+    
+    if (failed.length > 0) {
+      console.warn(`⚠️ Failed to parse ${failed.length} feeds out of ${feedUrls.length}`);
+      failed.forEach((result, index) => {
+        if (result.status === 'rejected') {
+          console.error(`❌ Failed to parse feed ${feedUrls[index]}: ${result.reason}`);
+        }
+      });
+    }
+    
+    console.log(`✅ Successfully parsed ${successful.length} albums from ${feedUrls.length} feeds`);
+    return successful.map(result => result.value);
   }
 }

@@ -1,0 +1,8 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/fetch-rss/route": "app/api/fetch-rss/route.js",
+  "/about/page": "app/about/page.js",
+  "/test-jdog/page": "app/test-jdog/page.js",
+  "/page": "app/page.js",
+  "/album/[id]/page": "app/album/[id]/page.js"
+}

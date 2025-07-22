@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "setup-cdn": "node scripts/setup-cdn.js",
+    "deploy": "./scripts/deploy.sh",
+    "auto-deploy": "./scripts/auto-deploy.sh"
   },
   "dependencies": {
     "@types/node": "^20",
