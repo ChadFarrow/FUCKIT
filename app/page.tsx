@@ -2,108 +2,38 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { RSSParser, RSSAlbum, RSSTrack } from '@/lib/rss-parser';
 
 export default function HomePage() {
   const [isLoading, setIsLoading] = useState(true);
-  const [album, setAlbum] = useState<RSSAlbum | null>(null);
+  const [albums, setAlbums] = useState<RSSAlbum[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [currentTrack, setCurrentTrack] = useState<RSSTrack | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
-    loadAlbumData();
+    loadAlbumsData();
   }, []);
 
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    const updateTime = () => setCurrentTime(audio.currentTime);
-    const updateDuration = () => setDuration(audio.duration);
-    const handleEnded = () => setIsPlaying(false);
-
-    audio.addEventListener('timeupdate', updateTime);
-    audio.addEventListener('loadedmetadata', updateDuration);
-    audio.addEventListener('ended', handleEnded);
-
-    return () => {
-      audio.removeEventListener('timeupdate', updateTime);
-      audio.removeEventListener('loadedmetadata', updateDuration);
-      audio.removeEventListener('ended', handleEnded);
-    };
-  }, [currentTrack]);
-
-  const formatTime = (seconds: number): string => {
-    if (isNaN(seconds)) return '0:00';
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const formatDuration = (duration: string): string => {
-    // If already formatted with colon, return as is
-    if (duration.includes(':')) return duration;
-    // If it's just seconds, convert to MM:SS format
-    const seconds = parseInt(duration);
-    if (!isNaN(seconds)) {
-      return formatTime(seconds);
-    }
-    return duration;
-  };
-
-  const playTrack = (track: RSSTrack) => {
-    if (!track.url) return;
-    
-    setCurrentTrack(track);
-    const audio = audioRef.current;
-    if (audio) {
-      audio.src = track.url;
-      audio.play();
-      setIsPlaying(true);
-    }
-  };
-
-  const togglePlayPause = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    if (isPlaying) {
-      audio.pause();
-      setIsPlaying(false);
-    } else {
-      audio.play();
-      setIsPlaying(true);
-    }
-  };
-
-  const seek = (time: number) => {
-    const audio = audioRef.current;
-    if (audio) {
-      audio.currentTime = time;
-    }
-  };
-
-  const loadAlbumData = async () => {
+  const loadAlbumsData = async () => {
     try {
       setIsLoading(true);
       setError(null);
       
-      const albumData = await RSSParser.parseAlbumFeed('https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml');
+      // List of RSS feed URLs - you can add more feeds here
+      const feedUrls = [
+        'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml'
+        // Add more feed URLs here
+      ];
       
-      if (albumData) {
-        setAlbum(albumData);
-        
+      const albumsData = await RSSParser.parseMultipleFeeds(feedUrls);
+      
+      if (albumsData && albumsData.length > 0) {
+        setAlbums(albumsData);
       } else {
-        setError('Failed to load album data from RSS feed');
+        setError('Failed to load any album data from RSS feeds');
       }
     } catch (err) {
-      console.error('Error loading album:', err);
+      console.error('Error loading albums:', err);
       setError(`Error loading album data: ${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
       setIsLoading(false);
@@ -111,14 +41,7 @@ export default function HomePage() {
   };
 
   return (
-    <div 
-      className="min-h-screen text-white relative"
-      style={{
-        background: album?.coverArt 
-          ? `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('${album.coverArt}') center/cover fixed`
-          : 'rgb(3, 7, 18)'
-      }}
-    >
+    <div className="min-h-screen text-white bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       {/* Header */}
       <header 
         className="border-b backdrop-blur-sm bg-black/30"
@@ -156,7 +79,7 @@ export default function HomePage() {
             ) : (
               <>
                 <span className="w-2 h-2 bg-green-400 rounded-full"></span>
-                <span className="text-green-400">RSS feed loaded successfully</span>
+                <span className="text-green-400">{albums.length} album{albums.length !== 1 ? 's' : ''} loaded successfully</span>
               </>
             )}
           </div>
@@ -164,365 +87,124 @@ export default function HomePage() {
       </header>
 
       {/* Main Content */}
-      <div className="container mx-auto px-6 py-8 pb-24">
+      <div className="container mx-auto px-6 py-8">
         {isLoading ? (
           <div className="flex justify-center items-center py-12">
             <LoadingSpinner />
           </div>
         ) : error ? (
           <div className="text-center py-12">
-            <h2 className="text-2xl font-semibold mb-4 text-red-400">Error Loading Album</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-red-400">Error Loading Albums</h2>
             <p className="text-gray-400">{error}</p>
             <button 
-              onClick={loadAlbumData}
+              onClick={loadAlbumsData}
               className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
               Retry
             </button>
           </div>
-        ) : album ? (
-          <div className="max-w-4xl mx-auto">
-            {/* Album Header */}
-            <div 
-              className="flex flex-col md:flex-row gap-8 mb-8 p-6 rounded-lg backdrop-blur-sm"
-              style={{
-                background: 'rgba(0, 0, 0, 0.4)'
-              }}
-            >
-              <div className="flex-shrink-0 relative group">
-                {album.coverArt ? (
-                  <Image 
-                    src={album.coverArt} 
-                    alt={album.title}
-                    width={300}
-                    height={300}
-                    className="rounded-lg object-cover"
-                  />
-                ) : (
-                  <div className="w-[300px] h-[300px] bg-gradient-to-br from-red-700 to-red-900 rounded-lg flex items-center justify-center">
-                    <span className="text-white text-xl font-bold text-center px-4">
-                      {album.title}
-                    </span>
-                  </div>
-                )}
-                
-                {/* Play Button Overlay */}
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 rounded-lg flex items-center justify-center">
-                  <button 
-                    onClick={() => {
-                      const firstTrack = album.tracks[0];
-                      if (firstTrack && firstTrack.url) {
-                        playTrack(firstTrack);
-                      }
-                    }}
-                    className="bg-white/80 hover:bg-white text-black rounded-full p-4 transform hover:scale-110 transition-all duration-200 shadow-lg"
-                    disabled={!album.tracks[0]?.url}
-                  >
-                    <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M8 5v14l11-7z"/>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              
-              <div className="flex-1">
-                <h1 className="text-4xl font-bold mb-2">{album.title}</h1>
-                <p className="text-xl text-gray-400 mb-4">{album.artist}</p>
-                {album.subtitle && (
-                  <p className="text-xl text-gray-300 mb-4 italic">{album.subtitle}</p>
-                )}
-                {(album.summary || album.description) && (
-                  <p className="text-gray-300 mb-6">{album.summary || album.description}</p>
-                )}
-                
-                
-
-                <div className="flex items-center gap-6 text-sm text-gray-400 mb-6">
-                  <span>{album.tracks.length} tracks</span>
-                  <span>{new Date(album.releaseDate).getFullYear()}</span>
-                </div>
-                
-                {/* Funding Information */}
-                {album.funding && album.funding.length > 0 && (
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold mb-3 text-white">Support This Artist</h3>
-                    <div className="flex flex-wrap gap-3">
-                      {album.funding.map((funding, index) => (
-                        <a
-                          key={index}
-                          href={funding.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-full text-sm font-medium transition-all transform hover:scale-105 flex items-center gap-2"
-                        >
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V16h-2.67v2.09c-2.04-.26-3.44-1.31-3.44-2.59 0-.66.53-1.19 1.19-1.19.66 0 1.19.53 1.19 1.19 0 .31-.12.59-.31.8.47.11 1.02.16 1.62.16s1.15-.05 1.62-.16c-.19-.21-.31-.49-.31-.8 0-.66.53-1.19 1.19-1.19.66 0 1.19.53 1.19 1.19 0 1.28-1.4 2.33-3.44 2.59V18.09zM15.5 11.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5.67-1.5 1.5-1.5 1.5.67 1.5 1.5z"/>
-                          </svg>
-                          {funding.message || 'Support'}
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* PodRoll Information */}
-                {album.podroll && album.podroll.length > 0 && (
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold mb-3 text-white">Recommended Shows (PodRoll)</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {album.podroll.map((podcastRec, index) => (
-                        <a
-                          key={index}
-                          href={podcastRec.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="bg-gradient-to-r from-purple-600/20 to-blue-600/20 hover:from-purple-600/30 hover:to-blue-600/30 border border-purple-500/30 text-white p-4 rounded-lg transition-all transform hover:scale-[1.02] flex flex-col gap-2"
-                        >
-                          <div className="flex items-center gap-2">
-                            <svg className="w-4 h-4 text-purple-400" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                            </svg>
-                            <span className="font-medium text-sm">
-                              {podcastRec.title || 'Recommended Podcast'}
-                            </span>
-                          </div>
-                          {podcastRec.description && (
-                            <p className="text-xs text-gray-300 leading-relaxed">
-                              {podcastRec.description}
-                            </p>
-                          )}
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Track List */}
-            {album.tracks.length > 0 && (
-              <div id="track-list" className="bg-black/30 backdrop-blur-sm rounded-lg p-6">
-                <h2 className="text-xl font-semibold mb-4">Tracks</h2>
-                <div className="space-y-2">
-                  {album.tracks.map((track: any, index: number) => (
-                    <div 
-                      key={index} 
-                      className="flex items-center justify-between p-3 rounded-lg transition-colors group hover:bg-white/10"
-                    >
-                      <div className="flex items-center gap-4">
-                        {/* Track artwork or play button */}
-                        {track.image ? (
-                          <div className="relative w-12 h-12 flex-shrink-0">
-                            <Image 
-                              src={track.image} 
-                              alt={track.title}
-                              width={48}
-                              height={48}
-                              className="rounded object-cover"
-                            />
-                            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all duration-200 flex items-center justify-center">
-                              {currentTrack?.title === track.title && isPlaying ? (
-                                <button 
-                                  onClick={togglePlayPause}
-                                  className="text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                                >
-                                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
-                                  </svg>
-                                </button>
-                              ) : (
-                                <button 
-                                  onClick={() => playTrack(track)}
-                                  className="text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                                  disabled={!track.url}
-                                >
-                                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M8 5v14l11-7z"/>
-                                  </svg>
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="w-8 flex items-center justify-center">
-                            {currentTrack?.title === track.title && isPlaying ? (
-                              <button 
-                                onClick={togglePlayPause}
-                                className="hover:opacity-80 text-green-400"
-                              >
-                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                  <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
-                                </svg>
-                              </button>
-                            ) : (
-                              <button 
-                                onClick={() => playTrack(track)}
-                                className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity"
-                                disabled={!track.url}
-                              >
-                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                  <path d="M8 5v14l11-7z"/>
-                                </svg>
-                              </button>
-                            )}
-                            <span className="text-gray-400 text-sm group-hover:opacity-0 transition-opacity">
-                              {track.trackNumber || index + 1}
-                            </span>
-                          </div>
-                        )}
-                        
-                        <div className="flex-1">
-                                                      <p 
-                              className={`font-medium ${
-                                currentTrack?.title === track.title 
-                                  ? 'text-green-400'
-                                  : 'text-white'
-                              }`}
-                            >
-                            {track.title}
-                          </p>
-                          {track.subtitle && (
-                            <p className="text-sm text-gray-500 italic">{track.subtitle}</p>
-                          )}
-                          
-                        </div>
+        ) : albums.length > 0 ? (
+          <div className="max-w-7xl mx-auto">
+            {/* Albums Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {albums.map((album, index) => (
+                <div 
+                  key={index}
+                  className="bg-black/20 backdrop-blur-sm rounded-lg overflow-hidden group hover:bg-black/30 transition-all duration-300 border border-gray-700/50 hover:border-gray-600/50"
+                >
+                  {/* Album Cover */}
+                  <div className="relative aspect-square">
+                    {album.coverArt ? (
+                      <Image 
+                        src={album.coverArt} 
+                        alt={album.title}
+                        width={300}
+                        height={300}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-red-700 to-red-900 flex items-center justify-center">
+                        <span className="text-white text-lg font-bold text-center px-4">
+                          {album.title}
+                        </span>
                       </div>
-                      
-                      <div className="flex items-center gap-3">
-                        {track.explicit && (
-                          <span className="bg-red-600 text-white px-1 py-0.5 rounded text-xs font-bold">
-                            E
+                    )}
+                    
+                    {/* Overlay with Play Button */}
+                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all duration-300 flex items-center justify-center">
+                      <a 
+                        href={`/album/${encodeURIComponent(album.title)}`}
+                        className="bg-white/90 hover:bg-white text-black rounded-full p-3 transform hover:scale-110 transition-all duration-200 shadow-lg opacity-0 group-hover:opacity-100"
+                      >
+                        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M8 5v14l11-7z"/>
+                        </svg>
+                      </a>
+                    </div>
+                    
+                    {/* Track Count Badge */}
+                    <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-full">
+                      {album.tracks.length} tracks
+                    </div>
+                  </div>
+                  
+                  {/* Album Info */}
+                  <div className="p-4">
+                    <h3 className="font-bold text-lg mb-1 group-hover:text-blue-400 transition-colors truncate">
+                      <a href={`/album/${encodeURIComponent(album.title)}`}>
+                        {album.title}
+                      </a>
+                    </h3>
+                    <p className="text-gray-400 text-sm mb-2 truncate">{album.artist}</p>
+                    
+                    {/* Album Subtitle */}
+                    {album.subtitle && (
+                      <p className="text-gray-300 text-xs mb-2 italic truncate">{album.subtitle}</p>
+                    )}
+                    
+                    {/* Album Stats */}
+                    <div className="flex items-center justify-between text-xs text-gray-500">
+                      <span>{new Date(album.releaseDate).getFullYear()}</span>
+                      {album.explicit && (
+                        <span className="bg-red-600 text-white px-1 py-0.5 rounded text-xs font-bold">
+                          E
+                        </span>
+                      )}
+                    </div>
+                    
+                    {/* Funding Links */}
+                    {album.funding && album.funding.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-1">
+                        {album.funding.slice(0, 2).map((funding, fundingIndex) => (
+                          <a
+                            key={fundingIndex}
+                            href={funding.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 hover:from-blue-500/30 hover:to-purple-500/30 text-white px-2 py-1 rounded text-xs transition-all"
+                          >
+                            💝 {funding.message || 'Support'}
+                          </a>
+                        ))}
+                        {album.funding.length > 2 && (
+                          <span className="text-xs text-gray-500 px-2 py-1">
+                            +{album.funding.length - 2} more
                           </span>
                         )}
-                        <span className="text-sm text-gray-400">{formatDuration(track.duration)}</span>
                       </div>
-                    </div>
-                  ))}
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
-            
-            {/* Footer Information */}
-            {(album.copyright || album.owner || album.language) && (
-              <div className="mt-12 pt-6 border-t border-gray-800">
-                <div className="text-xs text-gray-500 space-y-1">
-                  {album.copyright && (
-                    <p>© {album.copyright}</p>
-                  )}
-                  {album.owner && (
-                    <p>
-                      Owner: {album.owner.name}
-                      {album.owner.email && (
-                        <span> ({album.owner.email})</span>
-                      )}
-                    </p>
-                  )}
-                  {album.language && (
-                    <p>Language: {album.language}</p>
-                  )}
-                </div>
-              </div>
-            )}
+              ))}
+            </div>
           </div>
         ) : (
           <div className="text-center py-12">
-            <h2 className="text-2xl font-semibold mb-4">No Album Data</h2>
-            <p className="text-gray-400">Unable to load album information.</p>
+            <h2 className="text-2xl font-semibold mb-4">No Albums Found</h2>
+            <p className="text-gray-400">Unable to load any album information from the RSS feeds.</p>
           </div>
         )}
       </div>
-
-      {/* Audio Element */}
-      <audio ref={audioRef} />
-
-      {/* Music Player */}
-      <div 
-        className="fixed bottom-0 left-0 right-0 p-4 z-50 backdrop-blur-md"
-        style={{
-          background: 'rgba(0, 0, 0, 0.7)',
-          borderTop: '1px solid rgba(255, 255, 255, 0.1)'
-        }}
-      >
-          <div className="container mx-auto max-w-4xl">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4 flex-1">
-                {currentTrack && album?.coverArt ? (
-                  <Image 
-                    src={album.coverArt} 
-                    alt={currentTrack.title}
-                    width={48}
-                    height={48}
-                    className="rounded object-cover"
-                  />
-                ) : (
-                  <div className="w-12 h-12 bg-gray-700 rounded flex items-center justify-center">
-                    <svg className="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 3l3.01 2.18L19 3v11.5c-.64-.39-1.4-.55-2.2-.55C15.24 13.95 14 15.19 14 16.75s1.24 2.8 2.8 2.8c1.56 0 2.8-1.24 2.8-2.8V7l-4-2.25v7.5c-.64-.39-1.4-.55-2.2-.55C11.84 11.7 10.6 12.94 10.6 14.5s1.24 2.8 2.8 2.8c1.56 0 2.8-1.24 2.8-2.8V3z"/>
-                    </svg>
-                  </div>
-                )}
-                <div>
-                  <p className="font-medium text-white text-sm">
-                    {currentTrack ? currentTrack.title : 'No track selected'}
-                  </p>
-                  <p className="text-gray-400 text-xs">
-                    {currentTrack ? album?.artist : 'Choose a track to play'}
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-4 flex-1 justify-center">
-                <button 
-                  onClick={togglePlayPause}
-                  disabled={!currentTrack}
-                  className={`rounded-full p-2 transition-colors ${
-                    currentTrack 
-                      ? 'bg-white text-black hover:bg-gray-200' 
-                      : 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                  }`}
-                >
-                  {isPlaying ? (
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
-                    </svg>
-                  ) : (
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M8 5v14l11-7z"/>
-                    </svg>
-                  )}
-                </button>
-              </div>
-
-              <div className="flex items-center gap-2 flex-1 justify-end">
-                <span className="text-xs text-gray-400">
-                  {currentTrack ? formatTime(currentTime) : '0:00'}
-                </span>
-                                  <div 
-                    className="w-24 h-1 bg-gray-600 rounded-full overflow-hidden relative"
-                  >
-                    <div 
-                      className="h-full bg-white transition-all duration-100"
-                      style={{ 
-                        width: duration > 0 ? `${(currentTime / duration) * 100}%` : '0%'
-                      }}
-                    />
-                  <input
-                    type="range"
-                    min="0"
-                    max={duration || 0}
-                    value={currentTime}
-                    onChange={(e) => seek(Number(e.target.value))}
-                    disabled={!currentTrack}
-                    className="absolute inset-0 w-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
-                  />
-                </div>
-                <span className="text-xs text-gray-400">
-                  {currentTrack ? formatTime(duration) : '0:00'}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
     </div>
   );
-} 
+}

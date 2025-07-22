@@ -1,0 +1,22 @@
+# Exclude development files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Exclude test files
+**/*.test.js
+**/*.test.ts
+**/*.spec.js
+**/*.spec.ts
+
+# Exclude documentation
+README.md
+*.md
+
+# Exclude scripts
+scripts/
+
+# Exclude any temporary files
+*.tmp
+*.temp 
