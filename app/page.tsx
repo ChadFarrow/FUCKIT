@@ -7,7 +7,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import AddRSSFeed from '@/components/AddRSSFeed';
 import { RSSParser, RSSAlbum } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl } from '@/lib/cdn-utils';
-import { generateAlbumUrl } from '@/lib/url-utils';
+import { generateAlbumUrl, generatePublisherSlug } from '@/lib/url-utils';
 
 // Complete Doerfels RSS feed collection
 const feedUrls = [
@@ -362,6 +362,56 @@ export default function HomePage() {
               </div>
             </div>
           )}
+          
+          {/* Artists with Publisher Feeds */}
+          {(() => {
+            // Extract unique artists with publisher feeds
+            const artistsWithPublishers = albums
+              .filter(album => album.publisher && album.publisher.feedGuid)
+              .reduce((acc, album) => {
+                const key = album.publisher!.feedGuid;
+                if (!acc.has(key)) {
+                  acc.set(key, {
+                    name: album.artist,
+                    feedGuid: album.publisher!.feedGuid,
+                    albumCount: 1
+                  });
+                } else {
+                  acc.get(key)!.albumCount++;
+                }
+                return acc;
+              }, new Map<string, { name: string; feedGuid: string; albumCount: number }>());
+
+            const artists = Array.from(artistsWithPublishers.values()).sort((a, b) => 
+              a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+            );
+
+            return artists.length > 0 ? (
+              <div className="mb-8">
+                <h3 className="text-lg font-semibold mb-3 text-white flex items-center gap-2">
+                  <span>Artists</span>
+                  <span className="text-xs bg-blue-600/80 px-2 py-1 rounded">PC 2.0</span>
+                </h3>
+                <div className="space-y-1 max-h-48 overflow-y-auto">
+                  {artists.map((artist) => (
+                    <Link
+                      key={artist.feedGuid}
+                      href={`/publisher/${generatePublisherSlug({ title: artist.name, feedGuid: artist.feedGuid })}`}
+                      className="flex items-center justify-between bg-gray-800/30 hover:bg-gray-800/50 rounded p-2 transition-colors group"
+                      onClick={() => setIsSidebarOpen(false)}
+                    >
+                      <span className="text-sm text-gray-300 group-hover:text-white truncate flex-1">
+                        {artist.name}
+                      </span>
+                      <span className="text-xs text-gray-500 group-hover:text-gray-400 ml-2">
+                        {artist.albumCount} albums
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ) : null;
+          })()}
           
           {/* Feed Stats */}
           <div className="text-sm text-gray-400">

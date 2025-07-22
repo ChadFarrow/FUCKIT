@@ -44,7 +44,7 @@ const CDN_THRESHOLDS = {
  * @param url - The URL to analyze
  * @returns Whether CDN would improve performance
  */
-function shouldUseCDNForPerformance(url: string): boolean {
+export function shouldUseCDN(url: string): boolean {
   if (!url) return false;
 
   try {
@@ -101,7 +101,7 @@ export function getSmartCDNUrl(
   if (!originalUrl) return originalUrl;
 
   // Check if CDN would actually improve performance
-  if (!options.forceCDN && !shouldUseCDNForPerformance(originalUrl)) {
+  if (!options.forceCDN && !shouldUseCDN(originalUrl)) {
     return originalUrl;
   }
 

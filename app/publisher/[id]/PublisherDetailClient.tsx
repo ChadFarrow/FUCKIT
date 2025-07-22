@@ -31,12 +31,14 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
         setError(null);
         
         // Try to find the feed URL for this publisher
-        const feedUrl = publisherFeedMap[publisherId];
+        const publisherInfo = getPublisherInfo(publisherId);
         
-        if (!feedUrl) {
+        if (!publisherInfo) {
           setError('Publisher feed not found');
           return;
         }
+        
+        const feedUrl = publisherInfo.feedUrl;
 
         console.log(`🏢 Loading publisher feed: ${feedUrl}`);
 

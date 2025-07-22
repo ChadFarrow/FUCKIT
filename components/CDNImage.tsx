@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { getCDNUrl, shouldUseCDN } from '@/lib/cdn-utils';
+import { getCDNUrl } from '@/lib/cdn-utils';
 import { useState } from 'react';
 
 interface CDNImageProps {

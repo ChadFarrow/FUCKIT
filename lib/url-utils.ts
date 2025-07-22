@@ -16,4 +16,115 @@ export function generateAlbumSlug(title: string): string {
  */
 export function generateAlbumUrl(title: string): string {
   return `/album/${generateAlbumSlug(title)}`;
+}
+
+/**
+ * Generate a clean publisher slug from publisher info
+ * Uses title/artist name if available, otherwise falls back to a shortened ID
+ */
+export function generatePublisherSlug(publisherInfo: { title?: string; artist?: string; feedGuid?: string }): string {
+  // Try to use title or artist name first
+  const name = publisherInfo.title || publisherInfo.artist;
+  if (name) {
+    return generateAlbumSlug(name);
+  }
+  
+  // Fall back to a shortened version of the feedGuid
+  if (publisherInfo.feedGuid) {
+    return publisherInfo.feedGuid.split('-')[0]; // Use first part of UUID
+  }
+  
+  // Last resort: use the full feedGuid
+  return publisherInfo.feedGuid || 'unknown';
+}
+
+/**
+ * Generate publisher URL path
+ */
+export function generatePublisherUrl(publisherInfo: { title?: string; artist?: string; feedGuid?: string }): string {
+  return `/publisher/${generatePublisherSlug(publisherInfo)}`;
+}
+
+/**
+ * Create a mapping of clean slugs to feedGuids for publisher routing
+ * This allows us to use clean URLs while still being able to look up the original feedGuid
+ */
+export function createPublisherSlugMap(publishers: Array<{ title?: string; artist?: string; feedGuid?: string }>): Map<string, string> {
+  const slugMap = new Map<string, string>();
+  
+  publishers.forEach(publisher => {
+    if (publisher.feedGuid) {
+      const slug = generatePublisherSlug(publisher);
+      slugMap.set(slug, publisher.feedGuid);
+    }
+  });
+  
+  return slugMap;
+}
+
+/**
+ * Extract a clean slug from a URL path
+ */
+export function extractSlugFromPath(path: string): string {
+  return path.split('/').pop() || '';
+}
+
+/**
+ * Generate a more readable URL for any entity
+ */
+export function generateCleanUrl(type: 'album' | 'publisher', identifier: string | { title?: string; artist?: string; feedGuid?: string }): string {
+  if (type === 'album') {
+    return generateAlbumUrl(identifier as string);
+  } else {
+    return generatePublisherUrl(identifier as { title?: string; artist?: string; feedGuid?: string });
+  }
+}
+
+/**
+ * Known publisher mappings for routing
+ * Maps clean slugs to their corresponding feed URLs
+ */
+export const KNOWN_PUBLISHERS: { [slug: string]: { feedGuid: string; feedUrl: string; name?: string } } = {
+  // Nate Johnivan
+  'nate-johnivan': {
+    feedGuid: 'aa909244-7555-4b52-ad88-7233860c6fb4',
+    feedUrl: 'https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4',
+    name: 'Nate Johnivan'
+  },
+  // Joe Martin
+  'joe-martin': {
+    feedGuid: '18bcbf10-6701-4ffb-b255-bc057390d738',
+    feedUrl: 'https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738',
+    name: 'Joe Martin'
+  },
+  // Fallback for UUID-based URLs (backward compatibility)
+  '18bcbf10': {
+    feedGuid: '18bcbf10-6701-4ffb-b255-bc057390d738',
+    feedUrl: 'https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738',
+    name: 'Joe Martin'
+  },
+  'aa909244': {
+    feedGuid: 'aa909244-7555-4b52-ad88-7233860c6fb4',
+    feedUrl: 'https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4',
+    name: 'Nate Johnivan'
+  }
+};
+
+/**
+ * Get publisher info from a slug (clean URL or UUID)
+ */
+export function getPublisherInfo(slug: string): { feedGuid: string; feedUrl: string; name?: string } | null {
+  // First try exact match
+  if (KNOWN_PUBLISHERS[slug]) {
+    return KNOWN_PUBLISHERS[slug];
+  }
+  
+  // Try to find by partial UUID match
+  for (const [key, publisher] of Object.entries(KNOWN_PUBLISHERS)) {
+    if (publisher.feedGuid.startsWith(slug) || slug.startsWith(publisher.feedGuid.split('-')[0])) {
+      return publisher;
+    }
+  }
+  
+  return null;
 } 
