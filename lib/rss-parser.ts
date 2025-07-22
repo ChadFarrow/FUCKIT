@@ -5,6 +5,11 @@ export interface RSSTrack {
   trackNumber?: number;
 }
 
+export interface RSSFunding {
+  url: string;
+  message?: string;
+}
+
 export interface RSSAlbum {
   title: string;
   artist: string;
@@ -14,6 +19,7 @@ export interface RSSAlbum {
   releaseDate: string;
   duration?: string;
   link?: string;
+  funding?: RSSFunding[];
 }
 
 export class RSSParser {
@@ -96,6 +102,24 @@ export class RSSParser {
       const pubDateElement = channel.querySelector('pubDate, lastBuildDate');
       const releaseDate = pubDateElement?.textContent?.trim() || new Date().toISOString();
       
+      // Extract funding information
+      const fundingElements = channel.querySelectorAll('podcast\\:funding, funding');
+      const funding: RSSFunding[] = [];
+      
+      fundingElements.forEach(fundingElement => {
+        const url = fundingElement.getAttribute('url') || fundingElement.textContent?.trim();
+        const message = fundingElement.textContent?.trim() || fundingElement.getAttribute('message');
+        
+        if (url) {
+          funding.push({
+            url: url,
+            message: message || undefined
+          });
+        }
+      });
+      
+      console.log('Found funding information:', funding);
+      
       return {
         title,
         artist,
@@ -103,7 +127,8 @@ export class RSSParser {
         coverArt,
         tracks,
         releaseDate,
-        link
+        link,
+        funding: funding.length > 0 ? funding : undefined
       };
       
     } catch (error) {

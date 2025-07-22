@@ -159,7 +159,7 @@ export default function HomePage() {
       </header>
 
       {/* Main Content */}
-      <div className="container mx-auto px-6 py-8">
+      <div className="container mx-auto px-6 py-8 pb-24">
         {isLoading ? (
           <div className="flex justify-center items-center py-12">
             <LoadingSpinner />
@@ -208,18 +208,34 @@ export default function HomePage() {
                   <span>{new Date(album.releaseDate).getFullYear()}</span>
                 </div>
                 
-                <Link 
-                  href={`/album/bloodshot-lies`}
-                  className="bg-white text-black px-6 py-3 rounded-full font-medium hover:bg-gray-200 transition-colors inline-block"
-                >
-                  View Album
-                </Link>
+                {/* Funding Information */}
+                {album.funding && album.funding.length > 0 && (
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold mb-3 text-white">Support This Artist</h3>
+                    <div className="flex flex-wrap gap-3">
+                      {album.funding.map((funding, index) => (
+                        <a
+                          key={index}
+                          href={funding.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-full text-sm font-medium transition-all transform hover:scale-105 flex items-center gap-2"
+                        >
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V16h-2.67v2.09c-2.04-.26-3.44-1.31-3.44-2.59 0-.66.53-1.19 1.19-1.19.66 0 1.19.53 1.19 1.19 0 .31-.12.59-.31.8.47.11 1.02.16 1.62.16s1.15-.05 1.62-.16c-.19-.21-.31-.49-.31-.8 0-.66.53-1.19 1.19-1.19.66 0 1.19.53 1.19 1.19 0 1.28-1.4 2.33-3.44 2.59V18.09zM15.5 11.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5.67-1.5 1.5-1.5 1.5.67 1.5 1.5z"/>
+                          </svg>
+                          {funding.message || 'Support'}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
             {/* Track List */}
             {album.tracks.length > 0 && (
-              <div className="bg-gray-900 rounded-lg p-6">
+              <div id="track-list" className="bg-gray-900 rounded-lg p-6">
                 <h2 className="text-xl font-semibold mb-4">Tracks</h2>
                 <div className="space-y-2">
                   {album.tracks.map((track: any, index: number) => (
@@ -276,12 +292,11 @@ export default function HomePage() {
       <audio ref={audioRef} />
 
       {/* Music Player */}
-      {currentTrack && (
-        <div className="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800 p-4">
+      <div className="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800 p-4 z-50">
           <div className="container mx-auto max-w-4xl">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4 flex-1">
-                {album?.coverArt && (
+                {currentTrack && album?.coverArt ? (
                   <Image 
                     src={album.coverArt} 
                     alt={currentTrack.title}
@@ -289,17 +304,32 @@ export default function HomePage() {
                     height={48}
                     className="rounded object-cover"
                   />
+                ) : (
+                  <div className="w-12 h-12 bg-gray-700 rounded flex items-center justify-center">
+                    <svg className="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 3l3.01 2.18L19 3v11.5c-.64-.39-1.4-.55-2.2-.55C15.24 13.95 14 15.19 14 16.75s1.24 2.8 2.8 2.8c1.56 0 2.8-1.24 2.8-2.8V7l-4-2.25v7.5c-.64-.39-1.4-.55-2.2-.55C11.84 11.7 10.6 12.94 10.6 14.5s1.24 2.8 2.8 2.8c1.56 0 2.8-1.24 2.8-2.8V3z"/>
+                    </svg>
+                  </div>
                 )}
                 <div>
-                  <p className="font-medium text-white text-sm">{currentTrack.title}</p>
-                  <p className="text-gray-400 text-xs">{album?.artist}</p>
+                  <p className="font-medium text-white text-sm">
+                    {currentTrack ? currentTrack.title : 'No track selected'}
+                  </p>
+                  <p className="text-gray-400 text-xs">
+                    {currentTrack ? album?.artist : 'Choose a track to play'}
+                  </p>
                 </div>
               </div>
               
               <div className="flex items-center gap-4 flex-1 justify-center">
                 <button 
                   onClick={togglePlayPause}
-                  className="bg-white text-black rounded-full p-2 hover:bg-gray-200 transition-colors"
+                  disabled={!currentTrack}
+                  className={`rounded-full p-2 transition-colors ${
+                    currentTrack 
+                      ? 'bg-white text-black hover:bg-gray-200' 
+                      : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                  }`}
                 >
                   {isPlaying ? (
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -314,7 +344,9 @@ export default function HomePage() {
               </div>
 
               <div className="flex items-center gap-2 flex-1 justify-end">
-                <span className="text-xs text-gray-400">{formatTime(currentTime)}</span>
+                <span className="text-xs text-gray-400">
+                  {currentTrack ? formatTime(currentTime) : '0:00'}
+                </span>
                 <div className="w-24 h-1 bg-gray-700 rounded-full overflow-hidden relative">
                   <div 
                     className="h-full bg-white transition-all duration-100"
@@ -326,15 +358,17 @@ export default function HomePage() {
                     max={duration || 0}
                     value={currentTime}
                     onChange={(e) => seek(Number(e.target.value))}
-                    className="absolute inset-0 w-full opacity-0 cursor-pointer"
+                    disabled={!currentTrack}
+                    className="absolute inset-0 w-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
                   />
                 </div>
-                <span className="text-xs text-gray-400">{formatTime(duration)}</span>
+                <span className="text-xs text-gray-400">
+                  {currentTrack ? formatTime(duration) : '0:00'}
+                </span>
               </div>
             </div>
           </div>
         </div>
-      )}
     </div>
   );
 } 
