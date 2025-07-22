@@ -161,6 +161,11 @@ export function getCDNUrl(
  * @returns The optimized artwork URL
  */
 export function getAlbumArtworkUrl(originalUrl: string, size: 'thumbnail' | 'medium' | 'large' = 'medium'): string {
+  // If no URL provided, return a placeholder
+  if (!originalUrl) {
+    return getPlaceholderImageUrl(size);
+  }
+
   const sizeMap = {
     thumbnail: { width: 150, height: 150, quality: 80 },
     medium: { width: 300, height: 300, quality: 85 },
@@ -172,6 +177,24 @@ export function getAlbumArtworkUrl(originalUrl: string, size: 'thumbnail' | 'med
     format: 'webp',
     fit: 'cover',
   });
+}
+
+/**
+ * Get a placeholder image URL for missing artwork
+ * @param size - The desired size
+ * @returns A placeholder image URL
+ */
+export function getPlaceholderImageUrl(size: 'thumbnail' | 'medium' | 'large' = 'medium'): string {
+  const sizeMap = {
+    thumbnail: { width: 150, height: 150 },
+    medium: { width: 300, height: 300 },
+    large: { width: 600, height: 600 },
+  };
+
+  const { width, height } = sizeMap[size];
+  
+  // Use a gradient placeholder that looks like a music album
+  return `https://via.placeholder.com/${width}x${height}/1f2937/ffffff?text=🎵`;
 }
 
 /**

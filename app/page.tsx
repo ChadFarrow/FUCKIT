@@ -6,7 +6,7 @@ import Link from 'next/link';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import AddRSSFeed from '@/components/AddRSSFeed';
 import { RSSParser, RSSAlbum } from '@/lib/rss-parser';
-import { getAlbumArtworkUrl } from '@/lib/cdn-utils';
+import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { generateAlbumUrl, generatePublisherSlug } from '@/lib/url-utils';
 
 // Complete Doerfels RSS feed collection
@@ -570,23 +570,20 @@ export default function HomePage() {
                 >
                   {/* Album Cover */}
                   <div className="relative aspect-square">
-                    {album.coverArt ? (
-                      <Image 
-                        src={getAlbumArtworkUrl(album.coverArt, 'medium')} 
-                        alt={album.title}
-                        width={300}
-                        height={300}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                        priority={index < 8} // Only prioritize first 8 images
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-red-700 to-red-900 flex items-center justify-center">
-                        <span className="text-white text-lg font-bold text-center px-4">
-                          {album.title}
-                        </span>
-                      </div>
-                    )}
+                    <Image 
+                      src={getAlbumArtworkUrl(album.coverArt || '', 'medium')} 
+                      alt={album.title}
+                      width={300}
+                      height={300}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                      priority={index < 8} // Only prioritize first 8 images
+                      onError={(e) => {
+                        // Fallback to placeholder on error
+                        const target = e.target as HTMLImageElement;
+                        target.src = getPlaceholderImageUrl('medium');
+                      }}
+                    />
                     
                     {/* Play Button Overlay - Always Visible */}
                     <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
@@ -677,23 +674,20 @@ export default function HomePage() {
                           >
                             {/* Album Cover */}
                             <div className="relative aspect-square">
-                              {album.coverArt ? (
-                                <Image 
-                                  src={getAlbumArtworkUrl(album.coverArt, 'medium')} 
-                                  alt={album.title}
-                                  width={300}
-                                  height={300}
-                                  className="w-full h-full object-cover"
-                                  loading="lazy"
-                                  priority={false} // Never prioritize EPs/singles
-                                />
-                              ) : (
-                                <div className="w-full h-full bg-gradient-to-br from-red-700 to-red-900 flex items-center justify-center">
-                                  <span className="text-white text-lg font-bold text-center px-4">
-                                    {album.title}
-                                  </span>
-                                </div>
-                              )}
+                              <Image 
+                                src={getAlbumArtworkUrl(album.coverArt || '', 'medium')} 
+                                alt={album.title}
+                                width={300}
+                                height={300}
+                                className="w-full h-full object-cover"
+                                loading="lazy"
+                                priority={false} // Never prioritize EPs/singles
+                                onError={(e) => {
+                                  // Fallback to placeholder on error
+                                  const target = e.target as HTMLImageElement;
+                                  target.src = getPlaceholderImageUrl('medium');
+                                }}
+                              />
                               
                               {/* Play Button Overlay - Always Visible */}
                               <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">

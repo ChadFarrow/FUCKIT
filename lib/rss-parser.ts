@@ -145,12 +145,13 @@ export class RSSParser {
         }
       }
       
-      // Extract cover art
+      // Extract tracks from items first (needed for cover art fallback)
+      const items = xmlDoc.getElementsByTagName('item');
+      
+      // Extract cover art with enhanced fallback logic
       let coverArt: string | null = null;
       
-
-      
-      // Use getElementsByTagName as it handles namespaces better than querySelector
+      // Method 1: Try channel-level itunes:image
       let imageElement: Element | null = channel.getElementsByTagName('itunes:image')[0] || null;
       if (!imageElement) {
         // Fallback to querySelector with escaped namespace
@@ -160,6 +161,8 @@ export class RSSParser {
       if (imageElement) {
         coverArt = imageElement.getAttribute('href') || null;
       }
+      
+      // Method 2: Try channel-level image url
       if (!coverArt) {
         const imageUrl = channel.querySelector('image url');
         if (imageUrl) {
@@ -167,7 +170,7 @@ export class RSSParser {
         }
       }
       
-      // Try additional selectors for different image formats
+      // Method 3: Try channel-level image attributes
       if (!coverArt) {
         const altImageElement = channel.querySelector('image');
         if (altImageElement) {
@@ -176,6 +179,62 @@ export class RSSParser {
             coverArt = altUrl;
           }
         }
+      }
+      
+      // Method 4: Try to get artwork from first item if channel-level fails
+      if (!coverArt) {
+        const firstItem = items[0];
+        if (firstItem) {
+          // Try item-level itunes:image
+          const itemImageElement = firstItem.getElementsByTagName('itunes:image')[0];
+          if (itemImageElement) {
+            coverArt = itemImageElement.getAttribute('href') || null;
+          }
+          
+          // Try item-level media:content
+          if (!coverArt) {
+            const mediaContent = firstItem.getElementsByTagName('media:content')[0];
+            if (mediaContent && mediaContent.getAttribute('type')?.startsWith('image/')) {
+              coverArt = mediaContent.getAttribute('url') || null;
+            }
+          }
+          
+          // Try item-level enclosure
+          if (!coverArt) {
+            const enclosure = firstItem.getElementsByTagName('enclosure')[0];
+            if (enclosure && enclosure.getAttribute('type')?.startsWith('image/')) {
+              coverArt = enclosure.getAttribute('url') || null;
+            }
+          }
+        }
+      }
+      
+      // Method 5: Try to extract from description if it contains an image
+      if (!coverArt) {
+        const description = channel.getElementsByTagName('description')[0]?.textContent || '';
+        const imgMatch = description.match(/<img[^>]+src=["']([^"']+)["'][^>]*>/i);
+        if (imgMatch) {
+          coverArt = imgMatch[1];
+        }
+      }
+      
+      // Clean up the cover art URL
+      if (coverArt) {
+        // Remove any query parameters that might cause issues
+        try {
+          const url = new URL(coverArt);
+          coverArt = `${url.protocol}//${url.host}${url.pathname}`;
+        } catch (error) {
+          // If URL parsing fails, keep the original
+          console.warn('Invalid cover art URL:', coverArt);
+        }
+      }
+      
+      // Debug: Log cover art extraction results
+      if (coverArt) {
+        console.log(`🎨 Found cover art for "${title}": ${coverArt}`);
+      } else {
+        console.warn(`⚠️ No cover art found for "${title}"`);
       }
       
       // Extract additional channel metadata
@@ -206,7 +265,6 @@ export class RSSParser {
       } : undefined;
 
       // Extract tracks from items
-      const items = xmlDoc.getElementsByTagName('item');
       const tracks: RSSTrack[] = [];
       
       for (let i = 0; i < items.length; i++) {
