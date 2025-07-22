@@ -218,35 +218,7 @@ export default function HomePage() {
                 )}
                 
                 
-                  {/* Categories and Keywords */}
-                  {(album.categories || album.keywords) && (
-                  <div className="mb-6">
-                    {album.categories && album.categories.length > 0 && (
-                      <div className="mb-3">
-                        <span className="text-sm text-gray-400 mr-2">Categories:</span>
-                        <div className="inline-flex flex-wrap gap-2">
-                          {album.categories.map((category, index) => (
-                            <span key={index} className="bg-gray-800 text-gray-300 px-2 py-1 rounded-full text-xs">
-                              {category}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    {album.keywords && album.keywords.length > 0 && (
-                      <div>
-                        <span className="text-sm text-gray-400 mr-2">Tags:</span>
-                        <div className="inline-flex flex-wrap gap-2">
-                                                      {album.keywords.map((keyword: string, index: number) => (
-                            <span key={index} className="bg-gray-700 text-gray-300 px-2 py-1 rounded-full text-xs">
-                              {keyword}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
+
                 <div className="flex items-center gap-6 text-sm text-gray-400 mb-6">
                   <span>{album.tracks.length} tracks</span>
                   <span>{new Date(album.releaseDate).getFullYear()}</span>
@@ -285,8 +257,7 @@ export default function HomePage() {
                   {album.tracks.map((track: any, index: number) => (
                     <div 
                       key={index} 
-                      className="flex items-center justify-between p-3 rounded-lg transition-colors group"
-                      className="hover:bg-white/10 transition-colors"
+                      className="flex items-center justify-between p-3 rounded-lg transition-colors group hover:bg-white/10"
                     >
                       <div className="flex items-center gap-4">
                         {/* Track artwork or play button */}
@@ -363,15 +334,7 @@ export default function HomePage() {
                           {track.subtitle && (
                             <p className="text-sm text-gray-500 italic">{track.subtitle}</p>
                           )}
-                          {track.keywords && track.keywords.length > 0 && (
-                            <div className="flex flex-wrap gap-1 mt-1">
-                              {track.keywords.slice(0, 3).map((keyword: string, idx: number) => (
-                                <span key={idx} className="bg-gray-700 text-gray-400 px-1 py-0.5 rounded text-xs">
-                                  {keyword}
-                                </span>
-                              ))}
-                            </div>
-                          )}
+                          
                         </div>
                       </div>
                       
@@ -464,21 +427,9 @@ export default function HomePage() {
                   disabled={!currentTrack}
                   className={`rounded-full p-2 transition-colors ${
                     currentTrack 
-                      ? 'hover:bg-gray-200' 
-                      : 'cursor-not-allowed'
+                      ? 'bg-white text-black hover:bg-gray-200' 
+                      : 'bg-gray-600 text-gray-400 cursor-not-allowed'
                   }`}
-                  style={{
-                    background: currentTrack 
-                      ? dominantColors 
-                        ? dominantColors.primary
-                        : 'white'
-                      : 'rgb(55, 65, 81)',
-                    color: currentTrack 
-                      ? dominantColors 
-                        ? getContrastColor(dominantColors.primary)
-                        : 'black'
-                      : 'rgb(156, 163, 175)'
-                  }}
                 >
                   {isPlaying ? (
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -497,14 +448,12 @@ export default function HomePage() {
                   {currentTrack ? formatTime(currentTime) : '0:00'}
                 </span>
                                   <div 
-                    className="w-24 h-1 rounded-full overflow-hidden relative"
-                    style={{ background: dominantColors ? `${dominantColors.tertiary}30` : 'rgb(55, 65, 81)' }}
+                    className="w-24 h-1 bg-gray-600 rounded-full overflow-hidden relative"
                   >
                     <div 
-                      className="h-full transition-all duration-100"
+                      className="h-full bg-white transition-all duration-100"
                       style={{ 
-                        width: duration > 0 ? `${(currentTime / duration) * 100}%` : '0%',
-                        background: dominantColors ? dominantColors.secondary : 'white'
+                        width: duration > 0 ? `${(currentTime / duration) * 100}%` : '0%'
                       }}
                     />
                   <input
