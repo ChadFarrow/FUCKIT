@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { ArrowLeft, Play, Pause, SkipBack, SkipForward, Volume2 } from 'lucide-react';
 import { RSSAlbum } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl, getTrackArtworkUrl } from '@/lib/cdn-utils';
-import { generateAlbumUrl } from '@/lib/url-utils';
+import { generateAlbumUrl, generatePublisherSlug } from '@/lib/url-utils';
 import { RSSParser } from '@/lib/rss-parser';
 
 interface AlbumDetailClientProps {
@@ -516,7 +516,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                 <div className="flex items-center gap-2 text-sm text-gray-400">
                   <span>More from this artist:</span>
                   <Link
-                    href={`/publisher/${encodeURIComponent(album.publisher.feedGuid)}`}
+                    href={`/publisher/${generatePublisherSlug({ feedGuid: album.publisher.feedGuid })}`}
                     className="text-blue-400 hover:text-blue-300 transition-colors"
                   >
                     View Discography

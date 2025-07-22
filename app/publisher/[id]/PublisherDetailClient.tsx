@@ -6,18 +6,13 @@ import Image from 'next/image';
 import { ArrowLeft, Play } from 'lucide-react';
 import { RSSParser, RSSAlbum, RSSPublisherItem } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl } from '@/lib/cdn-utils';
-import { generateAlbumUrl } from '@/lib/url-utils';
+import { generateAlbumUrl, getPublisherInfo } from '@/lib/url-utils';
 
 interface PublisherDetailClientProps {
   publisherId: string;
 }
 
-// Map of known publisher IDs to their feed URLs
-const publisherFeedMap: { [key: string]: string } = {
-  '18bcbf10-6701-4ffb-b255-bc057390d738': 'https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738',
-  'aa909244-7555-4b52-ad88-7233860c6fb4': 'https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4',
-  // Add more known publishers here as needed
-};
+// Publisher feed mapping is now handled by getPublisherInfo function
 
 type FilterType = 'all' | 'albums' | 'eps' | 'singles';
 
