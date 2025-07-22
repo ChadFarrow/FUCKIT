@@ -407,7 +407,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
 
         {/* Album Header */}
         <div className="flex flex-col md:flex-row gap-8 mb-12">
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 relative group">
             {album.coverArt ? (
               <Image 
                 src={getAlbumArtworkUrl(album.coverArt, 'large')} 
@@ -423,6 +423,24 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                 </div>
               </div>
             )}
+            
+            {/* Play Button Overlay */}
+            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
+              <button
+                onClick={playAlbum}
+                className="bg-white/80 hover:bg-white text-black rounded-full p-4 transform hover:scale-110 transition-all duration-200 shadow-lg"
+              >
+                {isPlaying && currentTrackIndex === 0 ? (
+                  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                  </svg>
+                ) : (
+                  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                )}
+              </button>
+            </div>
           </div>
           
           <div className="flex-1">
@@ -441,16 +459,6 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               <span>{new Date(album.releaseDate).getFullYear()}</span>
               <span>{album.tracks.length} tracks</span>
               {album.explicit && <span className="bg-red-600 text-white px-2 py-1 rounded text-xs">EXPLICIT</span>}
-            </div>
-            
-            <div className="flex gap-4 flex-wrap">
-              <button 
-                onClick={playAlbum}
-                className="bg-white text-black px-6 py-3 rounded-full font-medium hover:bg-gray-200 transition-colors flex items-center"
-              >
-                {isPlaying && currentTrackIndex === 0 ? <Pause className="h-4 w-4 mr-2" /> : <Play className="h-4 w-4 mr-2" />}
-                {isPlaying && currentTrackIndex === 0 ? 'Pause' : 'Play Album'}
-              </button>
             </div>
 
             {/* Funding Information */}
