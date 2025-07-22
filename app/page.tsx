@@ -55,6 +55,9 @@ const feedUrls = [
   // TJ Doerfel projects
   'https://www.thisisjdog.com/media/ring-that-bell.xml',
   
+  // Able and the Wolf
+  'https://ableandthewolf.com/static/media/feed.xml',
+  
   // Wavlake feeds - Nate Johnivan collection
   'https://wavlake.com/feed/music/d677db67-0310-4813-970e-e65927c689f1', // Tinderbox
   'https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4', // Artist feed

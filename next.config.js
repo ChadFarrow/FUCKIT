@@ -2,8 +2,7 @@
 const nextConfig = {
   // Domain configuration for re.podtards.com deployment
   basePath: '',
-  // Temporarily disable CDN asset prefix until static assets are uploaded
-  assetPrefix: '', // process.env.NODE_ENV === 'production' ? process.env.NEXT_PUBLIC_CDN_URL || '' : '',
+  assetPrefix: process.env.NODE_ENV === 'production' ? process.env.NEXT_PUBLIC_CDN_URL || '' : '',
   
   // Image optimization configuration
   images: {
