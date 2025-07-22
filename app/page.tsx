@@ -46,6 +46,7 @@ const feedUrls = [
   'https://www.doerfelverse.com/feeds/you-are-my-world.xml',
   'https://www.doerfelverse.com/feeds/you-feel-like-home.xml',
   'https://www.doerfelverse.com/feeds/your-chance.xml',
+  'https://re-podtards.b-cdn.net/feeds/opus.xml',
   
   // Ed Doerfel (Shredward) projects
   'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml',
@@ -56,7 +57,21 @@ const feedUrls = [
   'https://www.thisisjdog.com/media/ring-that-bell.xml',
   
   // Able and the Wolf
-  'https://ableandthewolf.com/static/media/feed.xml',
+  'https://re-podtards.b-cdn.net/feeds/ableandthewolf-feed.xml',
+  
+  // Death Dreams
+  'https://re-podtards.b-cdn.net/feeds/deathdreams.xml',
+  'https://re-podtards.b-cdn.net/feeds/waytogo.xml',
+  
+  // Vance Latta
+  'https://re-podtards.b-cdn.net/feeds/vance-latta-love-in-its-purest-form.xml',
+  
+  // C Kostra
+  'https://re-podtards.b-cdn.net/feeds/c-kostra-now-i-feel-it.xml',
+  
+  // Mellow Cassette
+  'https://re-podtards.b-cdn.net/feeds/mellow-cassette-pilot.xml',
+  'https://re-podtards.b-cdn.net/feeds/mellow-cassette-radio-brigade.xml',
   
   // Wavlake feeds - Nate Johnivan collection
   'https://wavlake.com/feed/music/d677db67-0310-4813-970e-e65927c689f1', // Tinderbox
@@ -75,6 +90,7 @@ const feedUrls = [
   'https://wavlake.com/feed/music/9720d58b-22a5-4047-81de-f1940fec41c7',
   'https://wavlake.com/feed/music/21536269-5192-49e7-a819-fab00f4a159e',
   'https://wavlake.com/feed/music/624b19ac-5d8b-4fd6-8589-0eef7bcb9c9e',
+  'https://re-podtards.b-cdn.net/feeds/wavlake-997060e3-9dc1-4cd8-b3c1-3ae06d54bb03.xml',
   
   // White Rabbit Records - DISABLED: Domain is down (ENOTFOUND)
   // 'https://whiterabbitrecords.org/wp-content/uploads/2023/04/Empty-Passenger-Seat.xml',
@@ -528,8 +544,15 @@ export default function HomePage() {
               const albumsWithMultipleTracks = albums.filter(album => album.tracks.length > 6);
               const epsAndSingles = albums.filter(album => album.tracks.length <= 6);
               
-              // Sort albums: Pin "Bloodshot Lies" first, then by artist/title
+              // Sort albums: Pin "Stay Awhile" first, then "Bloodshot Lies", then by artist/title
               albumsWithMultipleTracks.sort((a, b) => {
+                // Check if either album is "Stay Awhile" (case-insensitive)
+                const aIsStayAwhile = a.title.toLowerCase().includes('stay awhile');
+                const bIsStayAwhile = b.title.toLowerCase().includes('stay awhile');
+                
+                if (aIsStayAwhile && !bIsStayAwhile) return -1; // a comes first
+                if (!aIsStayAwhile && bIsStayAwhile) return 1; // b comes first
+                
                 // Check if either album is "Bloodshot Lies" (case-insensitive)
                 const aIsBloodshot = a.title.toLowerCase().includes('bloodshot lie');
                 const bIsBloodshot = b.title.toLowerCase().includes('bloodshot lie');

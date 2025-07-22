@@ -182,7 +182,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             'tinderbox': 'https://wavlake.com/feed/music/d677db67-0310-4813-970e-e65927c689f1',
             'nate johnivan': 'https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4',
             'empty passenger seat': 'https://www.wavlake.com/feed/95ea253a-4058-402c-8503-204f6d3f1494',
-            'joe martin': 'https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738'
+            'joe martin': 'https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738',
+            'stay awhile': 'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml'
           };
           
           // Try to find a specific feed first
