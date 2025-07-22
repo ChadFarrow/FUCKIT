@@ -13,6 +13,8 @@ export async function GET(request: NextRequest) {
       headers: {
         'User-Agent': 'DoerfelVerse/1.0 (Music RSS Reader)',
       },
+      // Add timeout and better error handling
+      signal: AbortSignal.timeout(10000), // 10 second timeout
     });
 
     if (!response.ok) {
@@ -32,8 +34,15 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error fetching RSS feed:', error);
+    
+    // Return a more specific error message
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { error: 'Failed to fetch RSS feed' },
+      { 
+        error: 'Failed to fetch RSS feed',
+        details: errorMessage,
+        url: url 
+      },
       { status: 500 }
     );
   }

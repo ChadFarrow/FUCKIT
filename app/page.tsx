@@ -71,8 +71,8 @@ const feedUrls = [
   'https://wavlake.com/feed/music/21536269-5192-49e7-a819-fab00f4a159e',
   'https://wavlake.com/feed/music/624b19ac-5d8b-4fd6-8589-0eef7bcb9c9e',
   
-  // White Rabbit Records
-  'https://whiterabbitrecords.org/wp-content/uploads/2023/04/Empty-Passenger-Seat.xml',
+  // White Rabbit Records - DISABLED: Domain is down (ENOTFOUND)
+  // 'https://whiterabbitrecords.org/wp-content/uploads/2023/04/Empty-Passenger-Seat.xml',
   
   // Joe Martin (Wavlake) - Complete collection
   'https://www.wavlake.com/feed/95ea253a-4058-402c-8503-204f6d3f1494', // Empty Passenger Seat

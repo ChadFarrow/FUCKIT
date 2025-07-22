@@ -212,7 +212,7 @@ export default function AlbumDetailPage() {
             'https://wavlake.com/feed/music/9720d58b-22a5-4047-81de-f1940fec41c7',
             'https://wavlake.com/feed/music/21536269-5192-49e7-a819-fab00f4a159e',
             'https://wavlake.com/feed/music/624b19ac-5d8b-4fd6-8589-0eef7bcb9c9e',
-            'https://whiterabbitrecords.org/wp-content/uploads/2023/04/Empty-Passenger-Seat.xml',
+            // 'https://whiterabbitrecords.org/wp-content/uploads/2023/04/Empty-Passenger-Seat.xml', // Domain down
             'https://www.wavlake.com/feed/95ea253a-4058-402c-8503-204f6d3f1494',
             'https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738',
             'https://wavlake.com/feed/music/1c7917cc-357c-4eaf-ab54-1a7cda504976',
