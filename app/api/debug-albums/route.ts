@@ -10,8 +10,7 @@ export async function GET(request: NextRequest) {
       'https://www.doerfelverse.com/feeds/intothedoerfelverse.xml',
     ];
     
-    const proxiedFeedUrls = testFeeds.map(url => `/api/fetch-rss?url=${encodeURIComponent(url)}`);
-    const albums = await RSSParser.parseMultipleFeeds(proxiedFeedUrls);
+    const albums = await RSSParser.parseMultipleFeeds(testFeeds);
     
     return NextResponse.json({
       message: 'Debug albums parsed',
