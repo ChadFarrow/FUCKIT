@@ -40,13 +40,13 @@ export default function OfflinePage() {
 
         {/* Actions */}
         <div className="space-y-4">
-          <button
-            onClick={() => window.location.reload()}
+          <a
+            href="/"
             className="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center"
           >
             <RefreshCw className="h-4 w-4 mr-2" />
             Try Again
-          </button>
+          </a>
           
           <Link
             href="/"
