@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import AddRSSFeed from '@/components/AddRSSFeed';
 import { RSSParser, RSSAlbum } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl } from '@/lib/cdn-utils';
+import { generateAlbumUrl } from '@/lib/url-utils';
 
 // Complete Doerfels RSS feed collection
 const feedUrls = [
@@ -100,6 +101,11 @@ export default function HomePage() {
   const [isAddingFeed, setIsAddingFeed] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
+  // Audio player state for main page
+  const [currentPlayingAlbum, setCurrentPlayingAlbum] = useState<string | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  
   useEffect(() => {
     console.log('🔄 useEffect triggered - starting to load albums');
     loadAlbumsData();
@@ -176,8 +182,44 @@ export default function HomePage() {
     }
   };
 
+  const playAlbum = (album: RSSAlbum, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Find the first playable track
+    const firstTrack = album.tracks.find(track => track.url);
+    
+    if (firstTrack && firstTrack.url && audioRef.current) {
+      if (currentPlayingAlbum === album.title && isPlaying) {
+        // Pause current album
+        audioRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        // Play this album
+        audioRef.current.src = firstTrack.url;
+        audioRef.current.play().then(() => {
+          setCurrentPlayingAlbum(album.title);
+          setIsPlaying(true);
+        }).catch(err => {
+          console.error('Error playing audio:', err);
+        });
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen text-white bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      {/* Hidden audio element for main page playback */}
+      <audio
+        ref={audioRef}
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+        onEnded={() => {
+          setIsPlaying(false);
+          setCurrentPlayingAlbum(null);
+        }}
+      />
+      
       {/* Header */}
       <header 
         className="border-b backdrop-blur-sm bg-black/30 relative z-20"
@@ -363,7 +405,7 @@ export default function HomePage() {
                         {albumsWithMultipleTracks.map((album, index) => (
                 <Link 
                   key={index}
-                  href={`/album/${encodeURIComponent(album.title)}`}
+                  href={generateAlbumUrl(album.title)}
                   className="bg-black/20 backdrop-blur-sm rounded-lg overflow-hidden group hover:bg-black/30 transition-all duration-300 border border-gray-700/50 hover:border-gray-600/50 block cursor-pointer"
                 >
                   {/* Album Cover */}
@@ -386,11 +428,20 @@ export default function HomePage() {
                     
                     {/* Play Button Overlay - Always Visible */}
                     <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
-                      <div className="bg-white/80 hover:bg-white text-black rounded-full p-3 transform hover:scale-110 transition-all duration-200 shadow-lg">
-                        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M8 5v14l11-7z"/>
-                        </svg>
-                      </div>
+                      <button
+                        onClick={(e) => playAlbum(album, e)}
+                        className="bg-white/80 hover:bg-white text-black rounded-full p-3 transform hover:scale-110 transition-all duration-200 shadow-lg"
+                      >
+                        {currentPlayingAlbum === album.title && isPlaying ? (
+                          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                          </svg>
+                        ) : (
+                          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                          </svg>
+                        )}
+                      </button>
                     </div>
                     
                     {/* Track Count Badge */}
@@ -459,7 +510,7 @@ export default function HomePage() {
                         {epsAndSingles.map((album, index) => (
                           <Link 
                             key={`single-${index}`}
-                            href={`/album/${encodeURIComponent(album.title)}`}
+                            href={generateAlbumUrl(album.title)}
                             className="bg-black/20 backdrop-blur-sm rounded-lg overflow-hidden group hover:bg-black/30 transition-all duration-300 border border-gray-700/50 hover:border-gray-600/50 block cursor-pointer"
                           >
                             {/* Album Cover */}
@@ -482,11 +533,20 @@ export default function HomePage() {
                               
                               {/* Play Button Overlay - Always Visible */}
                               <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
-                                <div className="bg-white/80 hover:bg-white text-black rounded-full p-3 transform hover:scale-110 transition-all duration-200 shadow-lg">
-                                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M8 5v14l11-7z"/>
-                                  </svg>
-                                </div>
+                                <button
+                                  onClick={(e) => playAlbum(album, e)}
+                                  className="bg-white/80 hover:bg-white text-black rounded-full p-3 transform hover:scale-110 transition-all duration-200 shadow-lg"
+                                >
+                                  {currentPlayingAlbum === album.title && isPlaying ? (
+                                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                      <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                                    </svg>
+                                  ) : (
+                                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                      <path d="M8 5v14l11-7z"/>
+                                    </svg>
+                                  )}
+                                </button>
                               </div>
                               
                               {/* EP/Single Badge */}

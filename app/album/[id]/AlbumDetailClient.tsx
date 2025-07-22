@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { ArrowLeft, Play, Pause, SkipBack, SkipForward, Volume2 } from 'lucide-react';
 import { RSSAlbum } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl, getTrackArtworkUrl } from '@/lib/cdn-utils';
+import { generateAlbumUrl } from '@/lib/url-utils';
 import { RSSParser } from '@/lib/rss-parser';
 
 interface AlbumDetailClientProps {
@@ -188,6 +189,9 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
           const normalizedTitle = decodedAlbumTitle.toLowerCase();
           const specificFeed = titleToFeedMap[normalizedTitle];
           
+          console.log(`🔍 Album lookup: "${decodedAlbumTitle}" → "${normalizedTitle}"`);
+          console.log(`📋 Specific feed found:`, specificFeed);
+          
           if (specificFeed) {
             feedUrls = [specificFeed];
           } else {
@@ -276,6 +280,16 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
           // Parse feeds - RSSParser will handle proxy internally
           const albumsData = await RSSParser.parseMultipleFeeds(feedUrls);
           
+          console.log(`📚 Found ${albumsData.length} albums in feeds`);
+          console.log(`🔍 Looking for: "${decodedAlbumTitle}"`);
+          
+          // Check if Generation Gap is in the results
+          const hasGenerationGap = albumsData.find(a => a.title.toLowerCase().includes('generation'));
+          if (hasGenerationGap) {
+            console.log(`✅ Found Generation Gap-like album: "${hasGenerationGap.title}"`);
+          } else {
+            console.log(`❌ No Generation Gap found in results`);
+          }
           
           // Find the matching album with more flexible matching
           const foundAlbum = albumsData.find(a => {
@@ -549,7 +563,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               {podrollAlbums.map((podrollAlbum, index) => (
                 <Link
                   key={index}
-                  href={`/album/${encodeURIComponent(podrollAlbum.title)}`}
+                  href={generateAlbumUrl(podrollAlbum.title)}
                   className="group block"
                 >
                   <div className="bg-white/5 hover:bg-white/10 rounded-lg p-3 transition-all duration-200 hover:scale-105">

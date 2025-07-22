@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { RSSParser, RSSAlbum } from '@/lib/rss-parser';
 import AlbumDetailClient from './AlbumDetailClient';
+import { generateAlbumSlug } from '@/lib/url-utils';
 
 // Dynamic generation - disable static generation for now
 // export async function generateStaticParams() {
@@ -11,7 +12,8 @@ import AlbumDetailClient from './AlbumDetailClient';
 // Generate metadata for each album
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
-  const albumTitle = decodeURIComponent(id);
+  // Convert slug back to title format for display
+  const albumTitle = id.replace(/-/g, ' ');
   
   try {
     // Try to fetch album data for metadata
@@ -48,7 +50,8 @@ async function getAlbumData(albumTitle: string): Promise<RSSAlbum | null> {
 
 export default async function AlbumDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const albumTitle = decodeURIComponent(id);
+  // Convert slug back to title format for display
+  const albumTitle = id.replace(/-/g, ' ');
   const album = await getAlbumData(albumTitle);
   
   return <AlbumDetailClient albumTitle={albumTitle} initialAlbum={album} />;
