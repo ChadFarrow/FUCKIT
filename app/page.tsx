@@ -217,7 +217,7 @@ export default function HomePage() {
           </div>
           
           {/* Description */}
-          <p className="text-gray-400 text-lg mb-4">
+          <p className="text-gray-400 text-lg mb-4 mt-6">
             This is a demo app I built as the "insert title" project to see what we could do with RSS feeds and music. All data here comes from RSS feeds on{' '}
             <a href="https://podcastindex.org/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
               podcastindex.org
