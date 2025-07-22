@@ -10,6 +10,17 @@ export const metadata: Metadata = {
   description: 'Discover and listen to music and podcasts from the Doerfel family and friends',
   manifest: '/manifest.json',
   themeColor: '#1f2937',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'DoerfelVerse',
+  },
+  other: {
+    'apple-mobile-web-app-capable': 'yes',
+    'apple-mobile-web-app-status-bar-style': 'default',
+    'apple-mobile-web-app-title': 'DoerfelVerse',
+    'mobile-web-app-capable': 'yes',
+  },
 }
 
 export const viewport = {
