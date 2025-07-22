@@ -214,11 +214,7 @@ export default function HomePage() {
                 <span className="w-2 h-2 bg-red-400 rounded-full"></span>
                 <span className="text-red-400">{error}</span>
               </>
-            ) : (
-              <>
-                <span className="w-2 h-2 bg-green-400 rounded-full"></span>
-              </>
-            )}
+            ) : null}
           </div>
                 </div>
       </header>
