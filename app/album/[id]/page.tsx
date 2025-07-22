@@ -126,61 +126,92 @@ export default function AlbumDetailPage() {
         setIsLoading(true);
         setError(null);
         
-        // Load all feeds and find the matching album
-        const feedUrls = [
-          // Main Doerfels feeds
-          'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml',
-          'https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml',
-          'https://www.doerfelverse.com/feeds/intothedoerfelverse.xml',
-          'https://www.doerfelverse.com/feeds/wrath-of-banjo.xml',
-          'https://www.doerfelverse.com/feeds/ben-doerfel.xml',
-          
-          // Additional Doerfels albums and projects
-          'https://www.doerfelverse.com/feeds/18sundays.xml',
-          'https://www.doerfelverse.com/feeds/alandace.xml',
-          'https://www.doerfelverse.com/feeds/autumn.xml',
-          'https://www.doerfelverse.com/feeds/christ-exalted.xml',
-          'https://www.doerfelverse.com/feeds/come-back-to-me.xml',
-          'https://www.doerfelverse.com/feeds/dead-time-live-2016.xml',
-          'https://www.doerfelverse.com/feeds/dfbv1.xml',
-          'https://www.doerfelverse.com/feeds/dfbv2.xml',
-          'https://www.doerfelverse.com/feeds/disco-swag.xml',
-          'https://www.doerfelverse.com/feeds/doerfels-pubfeed.xml',
-          'https://www.doerfelverse.com/feeds/first-married-christmas.xml',
-          'https://www.doerfelverse.com/feeds/generation-gap.xml',
-          'https://www.doerfelverse.com/feeds/heartbreak.xml',
-          'https://www.doerfelverse.com/feeds/merry-christmix.xml',
-          'https://www.doerfelverse.com/feeds/middle-season-let-go.xml',
-          'https://www.doerfelverse.com/feeds/phatty-the-grasshopper.xml',
-          'https://www.doerfelverse.com/feeds/possible.xml',
-          'https://www.doerfelverse.com/feeds/pour-over.xml',
-          'https://www.doerfelverse.com/feeds/psalm-54.xml',
-          'https://www.doerfelverse.com/feeds/sensitive-guy.xml',
-          'https://www.doerfelverse.com/feeds/they-dont-know.xml',
-          'https://www.doerfelverse.com/feeds/think-ep.xml',
-          'https://www.doerfelverse.com/feeds/underwater-single.xml',
-          'https://www.doerfelverse.com/feeds/unsound-existence.xml',
-          'https://www.doerfelverse.com/feeds/you-are-my-world.xml',
-          'https://www.doerfelverse.com/feeds/you-feel-like-home.xml',
-          'https://www.doerfelverse.com/feeds/your-chance.xml',
-          
-          // Ed Doerfel (Shredward) projects
-          'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml',
-          'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/CityBeach.xml',
-          'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml',
-          
-          // TJ Doerfel projects
-          'https://www.thisisjdog.com/media/ring-that-bell.xml'
-        ];
+        // Smart feed selection based on album title
+        const decodedAlbumTitle = decodeURIComponent(albumTitle);
+        let feedUrls: string[] = [];
         
-        const albumsData = await RSSParser.parseMultipleFeeds(feedUrls);
+        // Map album titles to their specific feeds
+        const titleToFeedMap: { [key: string]: string } = {
+          'into the doerfel-verse': 'https://www.doerfelverse.com/feeds/intothedoerfelverse.xml',
+          'into the doerfelverse': 'https://www.doerfelverse.com/feeds/intothedoerfelverse.xml',
+          'music from the doerfel-verse': 'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml',
+          'music from the doerfelverse': 'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml',
+          'bloodshot lies': 'https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml',
+          'wrath of banjo': 'https://www.doerfelverse.com/feeds/wrath-of-banjo.xml',
+          'ben doerfel': 'https://www.doerfelverse.com/feeds/ben-doerfel.xml',
+          '18 sundays': 'https://www.doerfelverse.com/feeds/18sundays.xml',
+          'alandace': 'https://www.doerfelverse.com/feeds/alandace.xml',
+          'autumn': 'https://www.doerfelverse.com/feeds/autumn.xml',
+          'christ exalted': 'https://www.doerfelverse.com/feeds/christ-exalted.xml',
+          'come back to me': 'https://www.doerfelverse.com/feeds/come-back-to-me.xml',
+          'dead time live 2016': 'https://www.doerfelverse.com/feeds/dead-time-live-2016.xml',
+          'dfb v1': 'https://www.doerfelverse.com/feeds/dfbv1.xml',
+          'dfb v2': 'https://www.doerfelverse.com/feeds/dfbv2.xml',
+          'disco swag': 'https://www.doerfelverse.com/feeds/disco-swag.xml',
+          'doerfels pubfeed': 'https://www.doerfelverse.com/feeds/doerfels-pubfeed.xml',
+          'first married christmas': 'https://www.doerfelverse.com/feeds/first-married-christmas.xml',
+          'generation gap': 'https://www.doerfelverse.com/feeds/generation-gap.xml',
+          'heartbreak': 'https://www.doerfelverse.com/feeds/heartbreak.xml',
+          'merry christmix': 'https://www.doerfelverse.com/feeds/merry-christmix.xml',
+          'middle season let go': 'https://www.doerfelverse.com/feeds/middle-season-let-go.xml',
+          'phatty the grasshopper': 'https://www.doerfelverse.com/feeds/phatty-the-grasshopper.xml',
+          'possible': 'https://www.doerfelverse.com/feeds/possible.xml',
+          'pour over': 'https://www.doerfelverse.com/feeds/pour-over.xml',
+          'psalm 54': 'https://www.doerfelverse.com/feeds/psalm-54.xml',
+          'sensitive guy': 'https://www.doerfelverse.com/feeds/sensitive-guy.xml',
+          'they dont know': 'https://www.doerfelverse.com/feeds/they-dont-know.xml',
+          'think ep': 'https://www.doerfelverse.com/feeds/think-ep.xml',
+          'underwater single': 'https://www.doerfelverse.com/feeds/underwater-single.xml',
+          'unsound existence': 'https://www.doerfelverse.com/feeds/unsound-existence.xml',
+          'you are my world': 'https://www.doerfelverse.com/feeds/you-are-my-world.xml',
+          'you feel like home': 'https://www.doerfelverse.com/feeds/you-feel-like-home.xml',
+          'your chance': 'https://www.doerfelverse.com/feeds/your-chance.xml',
+          'nostalgic': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml',
+          'citybeach': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/CityBeach.xml',
+          'kurtisdrums v1': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml',
+          'ring that bell': 'https://www.thisisjdog.com/media/ring-that-bell.xml'
+        };
+        
+        // Try to find a specific feed first
+        const normalizedTitle = decodedAlbumTitle.toLowerCase();
+        const specificFeed = titleToFeedMap[normalizedTitle];
+        
+        if (specificFeed) {
+          feedUrls = [specificFeed];
+          console.log(`🎯 Loading specific feed for "${decodedAlbumTitle}": ${specificFeed}`);
+        } else {
+          // Fallback to main feeds if no specific match
+          feedUrls = [
+            'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml',
+            'https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml',
+            'https://www.doerfelverse.com/feeds/intothedoerfelverse.xml',
+            'https://www.doerfelverse.com/feeds/wrath-of-banjo.xml',
+            'https://www.doerfelverse.com/feeds/ben-doerfel.xml'
+          ];
+          console.log(`🔍 No specific feed found for "${decodedAlbumTitle}", using fallback feeds`);
+        }
+        
+        console.log(`🔄 Starting to parse ${feedUrls.length} feeds...`);
+        
+        // Add timeout to prevent hanging
+        const timeoutPromise = new Promise<never>((_, reject) => {
+          setTimeout(() => reject(new Error('RSS parsing timeout')), 10000); // 10 second timeout
+        });
+        
+        const parsePromise = RSSParser.parseMultipleFeeds(feedUrls);
+        const albumsData = await Promise.race([parsePromise, timeoutPromise]) as RSSAlbum[];
+        
+        console.log(`✅ Parsed ${albumsData.length} albums from feeds`);
         
         // More flexible title matching with URL decoding
-        const decodedAlbumTitle = decodeURIComponent(albumTitle);
         const foundAlbum = albumsData.find(a => {
           const normalizedTitle = a.title.toLowerCase().replace(/[^a-z0-9]/g, '');
           const normalizedSearch = decodedAlbumTitle.toLowerCase().replace(/[^a-z0-9]/g, '');
-          return normalizedTitle === normalizedSearch || a.title === decodedAlbumTitle || a.title === albumTitle;
+          const match = normalizedTitle === normalizedSearch || a.title === decodedAlbumTitle || a.title === albumTitle;
+          if (match) {
+            console.log(`🎯 Found matching album: "${a.title}" for search: "${decodedAlbumTitle}"`);
+          }
+          return match;
         });
         
         if (foundAlbum) {
@@ -213,6 +244,7 @@ export default function AlbumDetailPage() {
         // Parse each PodRoll feed URL to get album data
         const podrollAlbumsData = await RSSParser.parseMultipleFeeds(podrollUrls);
         console.log('PodRoll albums loaded:', podrollAlbumsData.length);
+        console.log('PodRoll albums data:', podrollAlbumsData);
         setPodrollAlbums(podrollAlbumsData);
       } catch (err) {
         console.error('Error loading PodRoll albums:', err);
