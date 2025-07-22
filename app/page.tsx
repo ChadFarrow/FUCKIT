@@ -6,10 +6,58 @@ import Link from 'next/link';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { RSSParser, RSSAlbum } from '@/lib/rss-parser';
 
+// Complete Doerfels RSS feed collection
+const feedUrls = [
+  // Main Doerfels feeds
+  'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml',
+  'https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml',
+  'https://www.doerfelverse.com/feeds/intothedoerfelverse.xml',
+  'https://www.doerfelverse.com/feeds/wrath-of-banjo.xml',
+  'https://www.doerfelverse.com/feeds/ben-doerfel.xml',
+  
+  // Additional Doerfels albums and projects
+  'https://www.doerfelverse.com/feeds/18sundays.xml',
+  'https://www.doerfelverse.com/feeds/alandace.xml',
+  'https://www.doerfelverse.com/feeds/autumn.xml',
+  'https://www.doerfelverse.com/feeds/christ-exalted.xml',
+  'https://www.doerfelverse.com/feeds/come-back-to-me.xml',
+  'https://www.doerfelverse.com/feeds/dead-time-live-2016.xml',
+  'https://www.doerfelverse.com/feeds/dfbv1.xml',
+  'https://www.doerfelverse.com/feeds/dfbv2.xml',
+  'https://www.doerfelverse.com/feeds/disco-swag.xml',
+  'https://www.doerfelverse.com/feeds/doerfels-pubfeed.xml',
+  'https://www.doerfelverse.com/feeds/first-married-christmas.xml',
+  'https://www.doerfelverse.com/feeds/generation-gap.xml',
+  'https://www.doerfelverse.com/feeds/heartbreak.xml',
+  'https://www.doerfelverse.com/feeds/merry-christmix.xml',
+  'https://www.doerfelverse.com/feeds/middle-season-let-go.xml',
+  'https://www.doerfelverse.com/feeds/phatty-the-grasshopper.xml',
+  'https://www.doerfelverse.com/feeds/possible.xml',
+  'https://www.doerfelverse.com/feeds/pour-over.xml',
+  'https://www.doerfelverse.com/feeds/psalm-54.xml',
+  'https://www.doerfelverse.com/feeds/sensitive-guy.xml',
+  'https://www.doerfelverse.com/feeds/they-dont-know.xml',
+  'https://www.doerfelverse.com/feeds/think-ep.xml',
+  'https://www.doerfelverse.com/feeds/underwater-single.xml',
+  'https://www.doerfelverse.com/feeds/unsound-existence.xml',
+  'https://www.doerfelverse.com/feeds/you-are-my-world.xml',
+  'https://www.doerfelverse.com/feeds/you-feel-like-home.xml',
+  'https://www.doerfelverse.com/feeds/your-chance.xml',
+  
+  // Ed Doerfel (Shredward) projects
+  'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml',
+  'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/CityBeach.xml',
+  'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml',
+  
+  // TJ Doerfel projects
+  'https://www.thisisjdog.com/media/ring-that-bell.xml'
+];
+
 export default function HomePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [albums, setAlbums] = useState<RSSAlbum[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [loadingProgress, setLoadingProgress] = useState(0);
 
   useEffect(() => {
     loadAlbumsData();
@@ -22,19 +70,11 @@ export default function HomePage() {
       
       console.log('Starting to load album data...');
       
-      // List of RSS feed URLs - you can add more feeds here
-      const feedUrls = [
-        'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml',
-        'https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml',
-        'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml',
-        'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/CityBeach.xml',
-        'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml',
-        'https://www.thisisjdog.com/media/ring-that-bell.xml'
-        // Add more feed URLs here
-      ];
-      
       console.log('Feed URLs:', feedUrls);
+      console.log('Loading', feedUrls.length, 'feeds...');
       
+      // Update progress as feeds load
+      setLoadingProgress(0);
       const albumsData = await RSSParser.parseMultipleFeeds(feedUrls);
       
       console.log('Albums data received:', albumsData);
@@ -77,13 +117,13 @@ export default function HomePage() {
             <h1 className="text-4xl font-bold">Into the ValueVerse</h1>
           </div>
           <p className="text-gray-400 text-lg mb-4">
-            A collection of albums and music from The Doerfels fanbase and beyond.
+            A comprehensive collection of albums and music from The Doerfels family and their various projects.
           </p>
           <div className="flex items-center gap-2 text-sm">
             {isLoading ? (
               <>
                 <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
-                <span className="text-yellow-400">Loading RSS feed...</span>
+                <span className="text-yellow-400">Loading {feedUrls.length} RSS feeds...</span>
               </>
             ) : error ? (
               <>
