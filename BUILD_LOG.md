@@ -207,6 +207,22 @@ FUCKIT/
 **Problem:** Images not loading
 **Solution:** Check Bunny.net API key and zone configuration
 
+#### 6. Development Server Webpack Errors
+**Problem:** `TypeError: __webpack_modules__[moduleId] is not a function`
+**Solution:** Clear `.next` cache: `rm -rf .next && npm run dev`
+
+#### 7. Image Priority Conflicts
+**Problem:** `Image with src "..." has both "priority" and "loading='lazy'" properties`
+**Solution:** Use conditional loading: `loading={priority ? undefined : "lazy"}`
+
+#### 8. Multiple Lockfiles Warning
+**Problem:** `Warning: Found multiple lockfiles`
+**Solution:** Remove conflicting package-lock.json files from parent directories
+
+#### 9. Production CDN Asset Loading Errors
+**Problem:** `OpaqueResponseBlocking` errors for JavaScript/CSS files from CDN
+**Solution:** Temporarily disable CDN asset prefix in `next.config.js` until static assets are uploaded to CDN
+
 ### Debug Commands
 ```bash
 # Test RSS proxy
@@ -229,6 +245,9 @@ cat .env.local
 - **CDN integration** working
 - **Custom domain** active
 - **Passphrase protection** implemented
+- **Development server** running cleanly (no warnings)
+- **Image optimization** fully functional
+- **Error handling** comprehensive
 
 ### Load Times
 - **Initial page load:** ~2-3 seconds
@@ -239,7 +258,23 @@ cat .env.local
 
 ## 🔄 Recent Updates
 
-### Latest Changes (Commit: 9b8ab95)
+### Latest Changes (Commit: 21621b4) - January 22, 2025
+- ✅ **Fixed Production CDN Asset Loading** - Resolved OpaqueResponseBlocking errors from Bunny.net CDN
+- ✅ **Static Asset Configuration** - Temporarily disabled CDN asset prefix to serve assets from Vercel
+- ✅ **Production Environment Variables** - Added all required env vars to Vercel production environment
+- ✅ **RSS API Functionality** - Confirmed API working correctly in production (41 items returned from test feed)
+- ✅ **Production Deployment** - Successfully deployed with working static assets and API endpoints
+
+### Previous Changes (Commit: a6706b8) - January 22, 2025
+- ✅ **Fixed Development Server Issues** - Resolved webpack module loading errors
+- ✅ **Image Priority Optimization** - Fixed conflicts between `priority` and `loading="lazy"` props
+- ✅ **LCP Image Enhancement** - Added priority loading for logo image (above-the-fold element)
+- ✅ **Error Handling Improvements** - Enhanced image fallback handling for missing artwork
+- ✅ **Lockfile Cleanup** - Removed conflicting package-lock.json files from parent directories
+- ✅ **Album Detail Improvements** - Better error handling for track and album images
+- ✅ **Development Experience** - Eliminated console warnings and errors
+
+### Previous Changes (Commit: 9b8ab95)
 - ✅ **API Response Caching** - RSS feed responses cached for 5 minutes
 - ✅ **Static Site Generation** - Album pages pre-generated at build time
 - ✅ **Service Worker Caching** - Offline functionality with intelligent caching
@@ -300,7 +335,8 @@ NEXT_PUBLIC_API_URL=https://re.podtards.com/api
 
 ---
 
-*Last Updated: January 2025*  
+*Last Updated: January 22, 2025*  
 *Build Status: ✅ Production Ready*  
 *Domain Status: ✅ Active*  
-*CDN Status: ✅ Operational* 
+*CDN Status: ✅ Operational*  
+*Development Status: ✅ Clean (No Warnings)* 
