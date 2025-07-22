@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import AddRSSFeed from '@/components/AddRSSFeed';
 import { RSSParser, RSSAlbum } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl } from '@/lib/cdn-utils';
 
@@ -95,20 +96,41 @@ export default function HomePage() {
   const [albums, setAlbums] = useState<RSSAlbum[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loadingProgress, setLoadingProgress] = useState(0);
+  const [customFeeds, setCustomFeeds] = useState<string[]>([]);
+  const [isAddingFeed, setIsAddingFeed] = useState(false);
 
   useEffect(() => {
     loadAlbumsData();
   }, []);
 
-  const loadAlbumsData = async () => {
+  const handleAddFeed = async (feedUrl: string) => {
+    setIsAddingFeed(true);
+    try {
+      // Add to custom feeds
+      const newCustomFeeds = [...customFeeds, feedUrl];
+      setCustomFeeds(newCustomFeeds);
+      
+      // Reload with the new feed
+      await loadAlbumsData(newCustomFeeds);
+    } catch (err) {
+      console.error('Error adding feed:', err);
+      setError('Failed to add RSS feed. Please check the URL and try again.');
+    } finally {
+      setIsAddingFeed(false);
+    }
+  };
+
+  const loadAlbumsData = async (additionalFeeds: string[] = []) => {
     try {
       setIsLoading(true);
       setError(null);
       
       console.log('Starting to load album data...');
       
-      console.log('Feed URLs:', feedUrls);
-      console.log('Loading', feedUrls.length, 'feeds...');
+      // Combine default feeds with custom feeds
+      const allFeeds = [...feedUrls, ...additionalFeeds];
+      console.log('Feed URLs:', allFeeds);
+      console.log('Loading', allFeeds.length, 'feeds...');
       
       // Update progress as feeds load
       setLoadingProgress(0);
@@ -119,7 +141,7 @@ export default function HomePage() {
       });
       
       // Map all feedUrls to use the backend proxy
-      const proxiedFeedUrls = feedUrls.map(url => `/api/fetch-rss?url=${encodeURIComponent(url)}`);
+      const proxiedFeedUrls = allFeeds.map(url => `/api/fetch-rss?url=${encodeURIComponent(url)}`);
       const parsePromise = RSSParser.parseMultipleFeeds(proxiedFeedUrls);
       const albumsData = await Promise.race([parsePromise, timeoutPromise]) as RSSAlbum[];
       
@@ -139,7 +161,8 @@ export default function HomePage() {
         setError('Some feeds took too long to load. Showing available albums.');
         // Try to show any albums that did load before timeout
         try {
-          const quickParsePromise = RSSParser.parseMultipleFeeds(feedUrls.slice(0, 20).map(url => `/api/fetch-rss?url=${encodeURIComponent(url)}`)); // Try first 20 feeds
+          const allFeeds = [...feedUrls, ...additionalFeeds];
+          const quickParsePromise = RSSParser.parseMultipleFeeds(allFeeds.slice(0, 20).map(url => `/api/fetch-rss?url=${encodeURIComponent(url)}`)); // Try first 20 feeds
           const partialAlbums = await Promise.race([
             quickParsePromise,
             new Promise<RSSAlbum[]>((_, reject) => setTimeout(() => reject([]), 10000))
@@ -187,7 +210,7 @@ export default function HomePage() {
             {isLoading ? (
               <>
                 <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
-                <span className="text-yellow-400">Loading {feedUrls.length} RSS feeds...</span>
+                <span className="text-yellow-400">Loading {feedUrls.length + customFeeds.length} RSS feeds...</span>
               </>
             ) : error ? (
               <>
@@ -201,11 +224,41 @@ export default function HomePage() {
               </>
             )}
           </div>
-        </div>
+                </div>
       </header>
-
+      
       {/* Main Content */}
       <div className="container mx-auto px-6 py-8">
+        {/* Add RSS Feed Component */}
+        <AddRSSFeed onAddFeed={handleAddFeed} isLoading={isAddingFeed} />
+        
+        {/* Custom Feeds Display */}
+        {customFeeds.length > 0 && (
+          <div className="bg-gray-800/30 backdrop-blur-sm border border-gray-700 rounded-lg p-4 mb-6">
+            <h3 className="text-lg font-semibold mb-3 text-white">Custom RSS Feeds ({customFeeds.length})</h3>
+            <div className="space-y-2">
+              {customFeeds.map((feed, index) => (
+                <div key={index} className="flex items-center justify-between bg-gray-700/50 rounded p-2">
+                  <span className="text-sm text-gray-300 truncate flex-1">{feed}</span>
+                  <button
+                    onClick={() => {
+                      const newCustomFeeds = customFeeds.filter((_, i) => i !== index);
+                      setCustomFeeds(newCustomFeeds);
+                      loadAlbumsData(newCustomFeeds);
+                    }}
+                    className="ml-2 text-red-400 hover:text-red-300 transition-colors"
+                    title="Remove feed"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        
         {isLoading ? (
           <div className="flex justify-center items-center py-12">
             <LoadingSpinner />
@@ -215,7 +268,7 @@ export default function HomePage() {
             <h2 className="text-2xl font-semibold mb-4 text-red-400">Error Loading Albums</h2>
             <p className="text-gray-400">{error}</p>
             <button 
-              onClick={loadAlbumsData}
+              onClick={() => loadAlbumsData(customFeeds)}
               className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
               Retry
