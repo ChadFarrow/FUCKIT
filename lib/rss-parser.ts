@@ -15,6 +15,12 @@ export interface RSSFunding {
   message?: string;
 }
 
+export interface RSSPodRoll {
+  url: string;
+  title?: string;
+  description?: string;
+}
+
 export interface RSSAlbum {
   title: string;
   artist: string;
@@ -36,6 +42,7 @@ export interface RSSAlbum {
     name?: string;
     email?: string;
   };
+  podroll?: RSSPodRoll[];
 }
 
 export class RSSParser {
@@ -68,6 +75,21 @@ export class RSSParser {
       const title = channel.querySelector('title')?.textContent?.trim() || 'Unknown Album';
       const description = channel.querySelector('description')?.textContent?.trim() || '';
       const link = channel.querySelector('link')?.textContent?.trim() || '';
+      
+      // Helper function to clean HTML content
+      const cleanHtmlContent = (content: string | null | undefined): string | undefined => {
+        if (!content) return undefined;
+        // Remove HTML tags and decode HTML entities
+        return content
+          .replace(/<[^>]*>/g, '') // Remove HTML tags
+          .replace(/&nbsp;/g, ' ') // Replace &nbsp; with space
+          .replace(/&amp;/g, '&') // Replace &amp; with &
+          .replace(/&lt;/g, '<') // Replace &lt; with <
+          .replace(/&gt;/g, '>') // Replace &gt; with >
+          .replace(/&quot;/g, '"') // Replace &quot; with "
+          .replace(/&#39;/g, "'") // Replace &#39; with '
+          .trim();
+      };
       
       // Extract artist from title or author
       let artist = 'Unknown Artist';
@@ -136,6 +158,21 @@ export class RSSParser {
         // Extract track-specific metadata
         const trackSubtitle = item.getElementsByTagName('itunes:subtitle')[0]?.textContent?.trim();
         const trackSummary = item.getElementsByTagName('itunes:summary')[0]?.textContent?.trim();
+        
+        // Helper function to clean HTML content
+        const cleanHtmlContent = (content: string | null | undefined): string | undefined => {
+          if (!content) return undefined;
+          // Remove HTML tags and decode HTML entities
+          return content
+            .replace(/<[^>]*>/g, '') // Remove HTML tags
+            .replace(/&nbsp;/g, ' ') // Replace &nbsp; with space
+            .replace(/&amp;/g, '&') // Replace &amp; with &
+            .replace(/&lt;/g, '<') // Replace &lt; with <
+            .replace(/&gt;/g, '>') // Replace &gt; with >
+            .replace(/&quot;/g, '"') // Replace &quot; with "
+            .replace(/&#39;/g, "'") // Replace &#39; with '
+            .trim();
+        };
         const trackImageEl = item.getElementsByTagName('itunes:image')[0];
         const trackImage = trackImageEl?.getAttribute('href') || trackImageEl?.getAttribute('url');
         const trackExplicitEl = item.getElementsByTagName('itunes:explicit')[0];
@@ -148,8 +185,8 @@ export class RSSParser {
           duration: duration,
           url: url,
           trackNumber: index + 1,
-          subtitle: trackSubtitle,
-          summary: trackSummary,
+          subtitle: cleanHtmlContent(trackSubtitle),
+          summary: cleanHtmlContent(trackSummary),
           image: trackImage || undefined,
           explicit: trackExplicit,
           keywords: trackKeywords.length > 0 ? trackKeywords : undefined
@@ -176,24 +213,44 @@ export class RSSParser {
         }
       });
       
+      // Extract PodRoll information  
+      const podrollElements = channel.querySelectorAll('podcast\\\\:podroll, podroll');
+      const podroll: RSSPodRoll[] = [];
+      
+      podrollElements.forEach(podrollElement => {
+        const url = podrollElement.getAttribute('url');
+        const title = podrollElement.getAttribute('title') || podrollElement.textContent?.trim();
+        const description = podrollElement.getAttribute('description');
+        
+        if (url) {
+          podroll.push({
+            url: url,
+            title: title || undefined,
+            description: description || undefined
+          });
+        }
+      });
+      
+      console.log('🎲 Found PodRoll entries:', podroll);
       
       return {
         title,
         artist,
-        description,
+        description: cleanHtmlContent(description) || '',
         coverArt,
         tracks,
         releaseDate,
         link,
         funding: funding.length > 0 ? funding : undefined,
-        subtitle,
-        summary,
+        subtitle: cleanHtmlContent(subtitle),
+        summary: cleanHtmlContent(summary),
         keywords: keywords.length > 0 ? keywords : undefined,
         categories: categories.length > 0 ? categories : undefined,
         explicit,
         language,
         copyright,
-        owner: owner && (owner.name || owner.email) ? owner : undefined
+        owner: owner && (owner.name || owner.email) ? owner : undefined,
+        podroll: podroll.length > 0 ? podroll : undefined
       };
       
     } catch (error) {

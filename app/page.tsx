@@ -189,7 +189,7 @@ export default function HomePage() {
                 background: 'rgba(0, 0, 0, 0.4)'
               }}
             >
-              <div className="flex-shrink-0">
+              <div className="flex-shrink-0 relative group">
                 {album.coverArt ? (
                   <Image 
                     src={album.coverArt} 
@@ -205,6 +205,24 @@ export default function HomePage() {
                     </span>
                   </div>
                 )}
+                
+                {/* Play Button Overlay */}
+                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 rounded-lg flex items-center justify-center">
+                  <button 
+                    onClick={() => {
+                      const firstTrack = album.tracks[0];
+                      if (firstTrack && firstTrack.url) {
+                        playTrack(firstTrack);
+                      }
+                    }}
+                    className="bg-white/80 hover:bg-white text-black rounded-full p-4 transform hover:scale-110 transition-all duration-200 shadow-lg"
+                    disabled={!album.tracks[0]?.url}
+                  >
+                    <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                  </button>
+                </div>
               </div>
               
               <div className="flex-1">
@@ -251,7 +269,7 @@ export default function HomePage() {
 
             {/* Track List */}
             {album.tracks.length > 0 && (
-              <div id="track-list" className="bg-gray-900 rounded-lg p-6">
+              <div id="track-list" className="bg-black/30 backdrop-blur-sm rounded-lg p-6">
                 <h2 className="text-xl font-semibold mb-4">Tracks</h2>
                 <div className="space-y-2">
                   {album.tracks.map((track: any, index: number) => (
