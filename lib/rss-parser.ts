@@ -48,21 +48,19 @@ export interface RSSAlbum {
 export class RSSParser {
   static async parseAlbumFeed(feedUrl: string): Promise<RSSAlbum | null> {
     try {
-      // Check if the URL is already a proxy URL to avoid double wrapping
-      const isAlreadyProxied = feedUrl.startsWith('/api/fetch-rss');
+      // For server-side fetching, always use direct URLs
+      // For client-side fetching, use the proxy
+      const isServer = typeof window === 'undefined';
       
       let response;
-      if (isAlreadyProxied) {
-        // If it's already a proxy URL, we need to make it absolute for server-side fetching
-        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001';
-        const absoluteUrl = `${baseUrl}${feedUrl}`;
-        response = await fetch(absoluteUrl);
+      if (isServer) {
+        // Server-side: fetch directly
+        response = await fetch(feedUrl);
       } else {
-        // For direct URLs, use the proxy
-        const proxyUrl = `/api/fetch-rss?url=${encodeURIComponent(feedUrl)}`;
-        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001';
-        const absoluteUrl = `${baseUrl}${proxyUrl}`;
-        response = await fetch(absoluteUrl);
+        // Client-side: use proxy
+        const isAlreadyProxied = feedUrl.startsWith('/api/fetch-rss');
+        const proxyUrl = isAlreadyProxied ? feedUrl : `/api/fetch-rss?url=${encodeURIComponent(feedUrl)}`;
+        response = await fetch(proxyUrl);
       }
       
       if (!response.ok) {

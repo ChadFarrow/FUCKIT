@@ -141,13 +141,12 @@ export default function HomePage() {
         setTimeout(() => reject(new Error('Feed loading timeout after 30 seconds')), 30000);
       });
       
-      // Map all feedUrls to use the backend proxy
-      const proxiedFeedUrls = allFeeds.map(url => `/api/fetch-rss?url=${encodeURIComponent(url)}`);
-      console.log('🔗 Proxied URLs:', proxiedFeedUrls.slice(0, 3), '...');
+      // Pass the original URLs to RSSParser - it will handle proxy conversion internally
+      console.log('🔗 Original URLs:', allFeeds.slice(0, 3), '...');
       
       let albumsData: RSSAlbum[];
       try {
-        const parsePromise = RSSParser.parseMultipleFeeds(proxiedFeedUrls);
+        const parsePromise = RSSParser.parseMultipleFeeds(allFeeds);
         albumsData = await Promise.race([parsePromise, timeoutPromise]) as RSSAlbum[];
         console.log('📦 Albums data received:', albumsData);
       } catch (parseError) {
