@@ -372,7 +372,16 @@ cat .env.local
 
 ## 🔄 Recent Updates
 
-### Latest Changes - January 22, 2025
+### Latest Changes - January 23, 2025 (v1.0.0-stable)
+- ✅ **🎨 Rotating Background System** - Dynamic album artwork backgrounds on desktop with mobile optimization
+- ✅ **🎵 Persistent Audio Playback** - Music continues playing across page navigation with global state management
+- ✅ **🎵 IROH Publisher Feed** - Added complete IROH artist feed integration with publisher page support
+- ✅ **🎨 Album Page Background Fixes** - Reactive background updates that match current album artwork
+- ✅ **📱 Mobile Performance Optimization** - Solid gradient backgrounds on mobile for better performance
+- ✅ **🔧 Audio State Management** - Global localStorage-based audio state persistence
+- ✅ **🎯 Stable Version Tagged** - Created v1.0.0-stable tag and backup branch for safe experimentation
+
+### Previous Changes - January 22, 2025
 - ✅ **PWA Implementation Complete** - Added full Progressive Web App functionality
 - ✅ **Automated Version System** - Git commit-based versioning for instant updates
 - ✅ **30-Second Updates** - Users get notifications within 30 seconds of deployment
@@ -560,22 +569,29 @@ NEXT_PUBLIC_API_URL=https://re.podtards.com/api
 - ✅ **Image Loading:** All album artwork loading without 400 errors
 - ✅ **RSS Feed Count:** 75+ feeds successfully parsed and displayed
 
-### Current Stable Features
-- **RSS Feed Parsing:** 100+ feeds with Podcasting 2.0 support
-- **Album Display:** Grid layout with cover art and metadata
-- **Search Functionality:** Cross-album search with real-time results
-- **PodRoll Integration:** Related album recommendations
-- **Publisher Support:** Multi-feed artist/publisher relationships
-- **Progressive Web App:** Full PWA with 30-second updates
-- **CDN Integration:** Bunny.net image optimization and caching
-- **Responsive Design:** Mobile-first design for all devices
+### Current Stable Features (v1.0.0-stable)
+- **🎵 RSS Feed Parsing:** 100+ feeds with Podcasting 2.0 support
+- **🎨 Album Display:** Grid layout with cover art and metadata
+- **🔍 Search Functionality:** Cross-album search with real-time results
+- **🎶 PodRoll Integration:** Related album recommendations
+- **👤 Publisher Support:** Multi-feed artist/publisher relationships with IROH integration
+- **📱 Progressive Web App:** Full PWA with 30-second updates
+- **🌐 CDN Integration:** Bunny.net image optimization and caching
+- **📱 Responsive Design:** Mobile-first design for all devices
+- **🎨 Dynamic Backgrounds:** Rotating album artwork on desktop, optimized for mobile
+- **🎵 Persistent Audio:** Music continues playing across page navigation
+- **🎨 Reactive Album Backgrounds:** Album pages update background automatically
+- **🔧 Global Audio State:** localStorage-based audio state management
 
 ---
 
-*Last Updated: January 22, 2025*  
+*Last Updated: January 23, 2025*  
+*Version: v1.0.0-stable*  
 *Build Status: ✅ Production Ready*  
 *Domain Status: ✅ Active*  
 *CDN Status: ✅ Operational*  
 *PWA Status: ✅ Fully Functional*  
 *Development Status: ✅ Clean (No Warnings)*  
-*Testing Status: ✅ All Features Verified* 
+*Testing Status: ✅ All Features Verified*  
+*Audio System: ✅ Persistent Playback*  
+*Background System: ✅ Dynamic & Responsive* 

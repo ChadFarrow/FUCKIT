@@ -2,7 +2,8 @@
 
 A modern PWA (Progressive Web App) built with Next.js for discovering and streaming music and podcasts from RSS feeds. Experience the DoerfelVerse collection and curated indie artists with a native app-like experience.
 
-🌐 **Live Site:** [re.podtards.com](https://re.podtards.com)
+🌐 **Live Site:** [re.podtards.com](https://re.podtards.com)  
+📦 **Current Version:** v1.0.0-stable
 
 ## ✨ Features
 
@@ -11,6 +12,14 @@ A modern PWA (Progressive Web App) built with Next.js for discovering and stream
 - Individual album pages with full-featured audio players
 - Track navigation, progress bars, and volume controls
 - Podcasting 2.0 support with funding links and publisher metadata
+- **Persistent audio playback** across page navigation
+- **Global audio state management** with localStorage
+
+### 🎨 **Dynamic Visual Experience**
+- **Rotating album artwork backgrounds** on desktop (mobile-optimized)
+- **Reactive album page backgrounds** that update automatically
+- **Mobile-optimized solid backgrounds** for better performance
+- **Smooth transitions** and immersive visual experience
 
 ### 📱 **Progressive Web App (PWA)**
 - **Install as native app** on iOS and Android devices
@@ -24,12 +33,14 @@ A modern PWA (Progressive Web App) built with Next.js for discovering and stream
 - **RSS feed caching** on CDN for lightning-fast loading
 - **Environment-aware URLs** (dev vs production)
 - **Progressive image loading** with WebP support
+- **Mobile performance optimization** with device-specific features
 
 ### 🚀 **Developer Experience**
 - **Automated PWA versioning** on every deployment
 - **Git-based version generation** for cache busting
 - **Comprehensive error handling** and debugging
 - **TypeScript throughout** for type safety
+- **Stable version tagging** for safe experimentation
 
 ## 🏗️ Architecture
 
@@ -49,6 +60,12 @@ A modern PWA (Progressive Web App) built with Next.js for discovering and stream
 - **Web App Manifest** with proper icons and metadata
 - **Automatic updates** with user notifications
 - **Offline support** with fallback pages
+
+### **Audio System**
+- **Global audio state management** with localStorage persistence
+- **Cross-page audio playback** without interruption
+- **Media Session API** for iOS lock screen controls
+- **Automatic track progression** and playlist management
 
 ## 🚀 Quick Start
 
