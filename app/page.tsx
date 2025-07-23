@@ -129,6 +129,7 @@ export default function HomePage() {
   // Audio player state for main page
   const [currentPlayingAlbum, setCurrentPlayingAlbum] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
   const hasLoadedRef = useRef(false);
   
@@ -325,15 +326,42 @@ export default function HomePage() {
         audioRef.current.pause();
         setIsPlaying(false);
       } else {
-        // Play this album
+        // Play this album from the beginning
         audioRef.current.src = firstTrack.url;
         audioRef.current.play().then(() => {
           setCurrentPlayingAlbum(album.title);
+          setCurrentTrackIndex(0);
           setIsPlaying(true);
         }).catch(err => {
           console.error('Error playing audio:', err);
         });
       }
+    }
+  };
+
+  const playNextTrack = () => {
+    if (!currentPlayingAlbum || !audioRef.current) return;
+    
+    // Find the current album
+    const currentAlbum = albums.find(album => album.title === currentPlayingAlbum);
+    if (!currentAlbum) return;
+    
+    // Check if there's a next track
+    if (currentTrackIndex < currentAlbum.tracks.length - 1) {
+      const nextTrack = currentAlbum.tracks[currentTrackIndex + 1];
+      if (nextTrack && nextTrack.url) {
+        audioRef.current.src = nextTrack.url;
+        audioRef.current.play().then(() => {
+          setCurrentTrackIndex(currentTrackIndex + 1);
+        }).catch(err => {
+          console.error('Error playing next track:', err);
+        });
+      }
+    } else {
+      // Album ended, reset
+      setIsPlaying(false);
+      setCurrentPlayingAlbum(null);
+      setCurrentTrackIndex(0);
     }
   };
 
@@ -344,10 +372,7 @@ export default function HomePage() {
         ref={audioRef}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
-        onEnded={() => {
-          setIsPlaying(false);
-          setCurrentPlayingAlbum(null);
-        }}
+        onEnded={playNextTrack}
         preload="metadata"
         crossOrigin="anonymous"
         playsInline
