@@ -184,7 +184,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             'empty passenger seat': 'https://www.wavlake.com/feed/95ea253a-4058-402c-8503-204f6d3f1494',
             'joe martin': 'https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738',
             'stay awhile': 'https://ableandthewolf.com/static/media/feed.xml',
-            'now i feel it': 'https://music.behindthesch3m3s.com/wp-content/uploads/c_kostra/now i feel it.xml'
+            'now i feel it': 'https://music.behindthesch3m3s.com/wp-content/uploads/c_kostra/now i feel it.xml',
+            'they ride': 'https://wavlake.com/feed/music/997060e3-9dc1-4cd8-b3c1-3ae06d54bb03'
           };
           
           // Convert URL slug back to title format (e.g., "stay-awhile" -> "stay awhile")
