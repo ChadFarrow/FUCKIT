@@ -28,6 +28,25 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   const [volume, setVolume] = useState(1);
   const audioRef = useRef<HTMLAudioElement>(null);
 
+  // Update Media Session API for iOS lock screen controls
+  const updateMediaSession = (track: any) => {
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: track.title,
+        artist: album?.artist || 'Unknown Artist',
+        album: album?.title || 'Unknown Album',
+        artwork: [
+          { src: album?.coverArt || '', sizes: '512x512', type: 'image/jpeg' }
+        ]
+      });
+
+      navigator.mediaSession.setActionHandler('play', () => togglePlay());
+      navigator.mediaSession.setActionHandler('pause', () => togglePlay());
+      navigator.mediaSession.setActionHandler('previoustrack', () => prevTrack());
+      navigator.mediaSession.setActionHandler('nexttrack', () => nextTrack());
+    }
+  };
+
   const formatDuration = (duration: string): string => {
     if (!duration) return '0:00';
     
@@ -53,43 +72,53 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   };
 
   // Audio player functions
-  const togglePlay = () => {
-    if (audioRef.current) {
+  const togglePlay = async () => {
+    if (!audioRef.current) return;
+    
+    try {
       if (isPlaying) {
         audioRef.current.pause();
       } else {
-        audioRef.current.play();
+        // iOS requires user gesture protection
+        await audioRef.current.play();
       }
-      setIsPlaying(!isPlaying);
+    } catch (error) {
+      console.error('Audio playback failed:', error);
+      // Handle iOS autoplay rejection silently
     }
   };
 
-  const playTrack = (index: number) => {
-    if (album && album.tracks[index] && album.tracks[index].url) {
+  const playTrack = async (index: number) => {
+    if (!album || !album.tracks[index] || !album.tracks[index].url || !audioRef.current) return;
+    
+    try {
       setCurrentTrackIndex(index);
-      if (audioRef.current) {
-        audioRef.current.src = album.tracks[index].url;
-        audioRef.current.play();
-        setIsPlaying(true);
-      }
+      audioRef.current.src = album.tracks[index].url;
+      await audioRef.current.play();
+      setIsPlaying(true);
+      // Update Media Session for lock screen controls
+      updateMediaSession(album.tracks[index]);
+    } catch (error) {
+      console.error('Audio playback failed:', error);
+      setIsPlaying(false);
     }
   };
 
-  const playAlbum = () => {
+  const playAlbum = async () => {
     if (album && album.tracks.length > 0) {
-      playTrack(0);
+      await playTrack(0);
     }
   };
 
-  const nextTrack = () => {
+  const nextTrack = async () => {
     if (album && currentTrackIndex < album.tracks.length - 1) {
-      playTrack(currentTrackIndex + 1);
+      await playTrack(currentTrackIndex + 1);
     }
   };
 
-  const prevTrack = () => {
+  const prevTrack = async () => {
     if (album && currentTrackIndex > 0) {
-      playTrack(currentTrackIndex - 1);
+      await playTrack(currentTrackIndex - 1);
     }
   };
 
@@ -106,6 +135,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   };
 
   const handleEnded = () => {
+    // Don't await here to avoid blocking the event handler
     nextTrack();
   };
 
@@ -382,16 +412,28 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                 '. (the last transmission?)'
               ];
               
-              // Sort tracks by the correct order
+              // Sort tracks by the correct order with better matching
               processedAlbum.tracks = foundAlbum.tracks.sort((a, b) => {
-                const aIndex = correctTrackOrder.findIndex(title => 
-                  a.title.toLowerCase().includes(title.toLowerCase()) ||
-                  title.toLowerCase().includes(a.title.toLowerCase())
-                );
-                const bIndex = correctTrackOrder.findIndex(title => 
-                  b.title.toLowerCase().includes(title.toLowerCase()) ||
-                  title.toLowerCase().includes(b.title.toLowerCase())
-                );
+                const aTitle = a.title.toLowerCase().trim();
+                const bTitle = b.title.toLowerCase().trim();
+                
+                const aIndex = correctTrackOrder.findIndex(title => {
+                  const correctTitle = title.toLowerCase().trim();
+                  return aTitle === correctTitle || 
+                         aTitle.includes(correctTitle) || 
+                         correctTitle.includes(aTitle) ||
+                         aTitle.replace(/[^a-z0-9]/g, '') === correctTitle.replace(/[^a-z0-9]/g, '');
+                });
+                
+                const bIndex = correctTrackOrder.findIndex(title => {
+                  const correctTitle = title.toLowerCase().trim();
+                  return bTitle === correctTitle || 
+                         bTitle.includes(correctTitle) || 
+                         correctTitle.includes(bTitle) ||
+                         bTitle.replace(/[^a-z0-9]/g, '') === correctTitle.replace(/[^a-z0-9]/g, '');
+                });
+                
+                console.log(`🔍 Track sorting: "${a.title}" -> index ${aIndex}, "${b.title}" -> index ${bIndex}`);
                 
                 // If both found, sort by index
                 if (aIndex !== -1 && bIndex !== -1) {
@@ -522,6 +564,9 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
         onEnded={handleEnded}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
+        preload="metadata"
+        crossOrigin="anonymous"
+        playsInline
       />
 
       <div className="container mx-auto px-6 py-8 pb-32">
