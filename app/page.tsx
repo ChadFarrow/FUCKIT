@@ -348,6 +348,9 @@ export default function HomePage() {
           setIsPlaying(false);
           setCurrentPlayingAlbum(null);
         }}
+        preload="metadata"
+        crossOrigin="anonymous"
+        playsInline
         style={{ display: 'none' }}
       />
       
