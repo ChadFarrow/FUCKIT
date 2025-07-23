@@ -31,11 +31,13 @@ const CDN_THRESHOLDS = {
     'vercel.com',
   ],
   // Domains that are slow and benefit from CDN
+  // Note: Only include domains that are properly configured in the CDN Pull Zone
   SLOW_DOMAINS: [
     'doerfelverse.com',
     'sirtjthewrathful.com',
     'thisisjdog.com',
     'wavlake.com',
+    // 'ableandthewolf.com', // Temporarily disabled - CDN not configured for this domain
   ]
 };
 

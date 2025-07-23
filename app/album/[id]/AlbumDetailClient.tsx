@@ -31,6 +31,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
 
   // Background state
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState(false);
 
   // Update Media Session API for iOS lock screen controls
   const updateMediaSession = (track: any) => {
@@ -174,6 +175,11 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
     }
   };
 
+  // Initialize client state
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   // Initialize audio state from localStorage
   useEffect(() => {
     const globalState = getGlobalAudioState();
@@ -198,21 +204,48 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
 
   // Update background when album data changes
   useEffect(() => {
+    console.log('🎨 Background update triggered:', { 
+      albumTitle: album?.title, 
+      coverArt: album?.coverArt,
+      hasCoverArt: !!album?.coverArt 
+    });
+    
     if (album?.coverArt) {
+      console.log('🖼️ Loading background image:', album.coverArt);
+      
       // Preload the image to ensure it's available for background
       const img = new window.Image();
       img.onload = () => {
+        console.log('✅ Background image loaded successfully:', album.coverArt);
         setBackgroundImage(album.coverArt);
       };
-      img.onerror = () => {
+      img.onerror = (error) => {
+        console.error('❌ Background image failed to load:', album.coverArt, error);
         // Fallback to gradient if image fails to load
         setBackgroundImage(null);
       };
       img.src = album.coverArt;
     } else {
+      console.log('🚫 No cover art available, using gradient background');
       setBackgroundImage(null);
     }
   }, [album?.coverArt]);
+
+  // Debug background application - temporarily force image background for testing
+  const backgroundStyle = backgroundImage && isClient ? {
+    background: `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url('${backgroundImage}') center/cover fixed`,
+    backgroundAttachment: 'fixed'
+  } : {
+    background: 'linear-gradient(to bottom right, rgb(17, 24, 39), rgb(31, 41, 55), rgb(17, 24, 39))'
+  };
+
+  console.log('🎨 Background style applied:', {
+    backgroundImage,
+    isClient,
+    windowWidth: typeof window !== 'undefined' ? window.innerWidth : 'undefined',
+    style: backgroundStyle,
+    willUseImage: !!(backgroundImage && isClient)
+  });
 
   // Load album data if not provided initially
   useEffect(() => {
@@ -616,11 +649,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   return (
     <div 
       className="min-h-screen text-white relative"
-      style={backgroundImage ? {
-        background: `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url('${backgroundImage}') center/cover fixed`
-      } : {
-        background: 'linear-gradient(to bottom right, rgb(17, 24, 39), rgb(31, 41, 55), rgb(17, 24, 39))'
-      }}
+      style={backgroundStyle}
     >
       {/* Hidden audio element */}
       <audio
