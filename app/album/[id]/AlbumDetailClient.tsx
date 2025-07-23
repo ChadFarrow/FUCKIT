@@ -356,7 +356,58 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
           });
           
           if (foundAlbum) {
-            setAlbum(foundAlbum);
+            // Custom track ordering for concept albums
+            let processedAlbum = { ...foundAlbum };
+            
+            // Fix track order for "They Ride" by IROH (concept album)
+            if (foundAlbum.title.toLowerCase() === 'they ride' && foundAlbum.artist.toLowerCase() === 'iroh') {
+              console.log('🎵 Applying custom track order for "They Ride" concept album');
+              
+              // Define the correct track order from YouTube Music
+              const correctTrackOrder = [
+                '-',
+                'Heaven Knows', 
+                '....',
+                'The Fever',
+                '.',
+                // 'In Exile' - missing from this version
+                '-.--',
+                'The Seed Man',
+                '.-.',
+                'Renfield',
+                '..',
+                'They Ride',
+                '-..',
+                'Pedal Down (feat. Rob Montgomery)',
+                '. (The Last Transmission?)'
+              ];
+              
+              // Sort tracks by the correct order
+              processedAlbum.tracks = foundAlbum.tracks.sort((a, b) => {
+                const aIndex = correctTrackOrder.findIndex(title => 
+                  a.title.toLowerCase().includes(title.toLowerCase()) ||
+                  title.toLowerCase().includes(a.title.toLowerCase())
+                );
+                const bIndex = correctTrackOrder.findIndex(title => 
+                  b.title.toLowerCase().includes(title.toLowerCase()) ||
+                  title.toLowerCase().includes(b.title.toLowerCase())
+                );
+                
+                // If both found, sort by index
+                if (aIndex !== -1 && bIndex !== -1) {
+                  return aIndex - bIndex;
+                }
+                // If only one found, prioritize it
+                if (aIndex !== -1) return -1;
+                if (bIndex !== -1) return 1;
+                // If neither found, keep original order
+                return 0;
+              });
+              
+              console.log('✅ Track order corrected for "They Ride"');
+            }
+            
+            setAlbum(processedAlbum);
             // Load PodRoll albums if they exist
             if (foundAlbum.podroll && foundAlbum.podroll.length > 0) {
               loadPodrollAlbums(foundAlbum.podroll);
