@@ -21,6 +21,9 @@ module.exports = {
           900: '#831843',
         },
       },
+      transitionDuration: {
+        '2000': '2000ms',
+      },
     },
   },
   plugins: [],
