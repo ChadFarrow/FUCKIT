@@ -1,203 +1,184 @@
-# Bunny.net CDN Setup Guide
+# 🔧 CDN Upload Issue Resolution Guide
 
-This guide will help you set up Bunny.net as a CDN for your Next.js podcast and music hub application.
+## 🚨 Current Issue
+The CDN is returning 404 errors for RSS feeds because the Bunny.net Pull Zone is configured to pull from Vercel instead of the Bunny.net Storage zone.
 
-## 🚀 Quick Setup
+## 📊 Diagnosis Results
+- ✅ **CDN Zone**: Working (re-podtards-cdn.b-cdn.net)
+- ✅ **Storage Zone**: Working (re-podtards-storage)
+- ❌ **Pull Zone Configuration**: Incorrect (pulling from Vercel instead of Storage)
+- ❌ **API Keys**: Invalid or expired
 
-1. **Run the setup script:**
+## 🔧 Immediate Fix (Deployed)
+The site is now working with original RSS feed URLs while the CDN is being reconfigured.
+
+### Current Status
+- ✅ **Site**: https://re.podtards.com - Working correctly
+- ✅ **RSS Feeds**: Using original URLs via proxy
+- ✅ **All Features**: Functional (backgrounds, audio, search, etc.)
+- ⏳ **CDN**: Temporarily disabled until configuration is fixed
+
+## 🛠️ Permanent Solution Options
+
+### Option 1: Reconfigure CDN Pull Zone (Recommended)
+
+1. **Login to Bunny.net Dashboard**
+   - Go to: https://dash.bunny.net/
+   - Navigate to: CDN → Pull Zones
+
+2. **Find the "re-podtards" Pull Zone**
+   - Look for Pull Zone ID: `4228588` (from CDN headers)
+   - Current Origin: `https://re.podtards.com` (Vercel)
+
+3. **Update Pull Zone Configuration**
+   - **Origin URL**: Change to `https://ny.storage.bunnycdn.com/re-podtards-storage`
+   - **Origin Type**: Storage Zone
+   - **Zone**: re-podtards-storage
+
+4. **Configure Settings**
+   - **Cache Control**: `public, max-age=3600, s-maxage=86400`
+   - **Enable Gzip**: Yes
+   - **Enable Brotli**: Yes
+   - **Custom Headers**: Add CORS headers if needed
+
+5. **Test Configuration**
    ```bash
-   npm run setup-cdn
+   curl -I "https://re-podtards-cdn.b-cdn.net/feeds/music-from-the-doerfelverse.xml"
    ```
 
-2. **Follow the prompts** to enter your Bunny.net credentials
-
-3. **Restart your development server:**
-   ```bash
-   npm run dev
+6. **Re-enable CDN in Code**
+   ```javascript
+   // In app/page.tsx
+   const isProduction = process.env.NODE_ENV === 'production';
    ```
 
-## 📋 Manual Setup Steps
+### Option 2: Upload RSS Feeds Directly to CDN
 
-### 1. Create Bunny.net Account
+If Pull Zone reconfiguration doesn't work, use the direct upload script:
 
-1. Sign up at [bunny.net](https://bunny.net/)
-2. Choose a plan (Standard Tier is recommended for most use cases)
+1. **Update API Keys**
+   - Get valid API keys from Bunny.net dashboard
+   - Update `.env.local` with correct keys
 
-### 2. Create a Pull Zone
+2. **Run Upload Script**
+   ```bash
+   node scripts/upload-rss-to-cdn-direct.js
+   ```
 
-1. Go to your Bunny.net dashboard
-2. Click "Add Pull Zone"
-3. Configure with these settings:
-   - **Pull Zone Name**: Choose a name (e.g., `your-app-cdn`)
-   - **Origin Type**: Select "Origin URL"
-   - **Origin URL**: Your website URL (e.g., `https://yourdomain.com`)
-   - **Choose Tier**: Standard Tier
-   - **Pricing Zones**: Select the zones you want to serve content from
+3. **Test Uploaded Feeds**
+   ```bash
+   curl -I "https://re-podtards-cdn.b-cdn.net/feeds/music-from-the-doerfelverse.xml"
+   ```
 
-### 3. Configure Environment Variables
+### Option 3: Use Bunny.net Storage API
 
-Create a `.env.local` file in your project root:
+1. **Get Storage API Key**
+   - Go to: Storage → re-podtards-storage → API
+   - Copy the API key
 
-```env
-# Podcast Index API Credentials
-PODCAST_INDEX_API_KEY=your-api-key-here
-PODCAST_INDEX_API_SECRET=your-api-secret-here
+2. **Upload RSS Feeds**
+   ```bash
+   node scripts/upload-all-rss-feeds.js
+   ```
 
-# Bunny.net CDN Configuration
-BUNNY_CDN_HOSTNAME=your-zone.b-cdn.net
-BUNNY_CDN_ZONE=your-zone
-BUNNY_CDN_API_KEY=your-api-key-here
-```
+3. **Configure Pull Zone**
+   - Set Origin to Storage zone URL
 
-### 4. Get Your API Key (Optional)
+## 🔑 Required API Keys
 
-For cache purging functionality:
-1. Go to your Bunny.net dashboard
-2. Navigate to "API" section
-3. Generate an API key
-4. Add it to your `.env.local` file
-
-## 🖼️ Using CDN in Your Components
-
-### Replace Image Components
-
-Instead of using Next.js `Image` directly, use the `CDNImage` component:
-
-```tsx
-import CDNImage from '@/components/CDNImage';
-
-// Before
-<Image src="/album-art.jpg" alt="Album Art" width={300} height={300} />
-
-// After
-<CDNImage src="/album-art.jpg" alt="Album Art" width={300} height={300} />
-```
-
-### Using CDN Utilities
-
-```tsx
-import { getCDNUrl, getAlbumArtworkUrl, purgeCDNCache } from '@/lib/cdn-utils';
-
-// Generate optimized CDN URL
-const optimizedUrl = getCDNUrl('https://example.com/image.jpg', {
-  width: 300,
-  height: 300,
-  quality: 85,
-  format: 'webp'
-});
-
-// Get album artwork with optimal settings
-const artworkUrl = getAlbumArtworkUrl('https://example.com/album.jpg', 'large');
-
-// Purge cache when content updates
-await purgeCDNCache('https://example.com/image.jpg');
-```
-
-## 🔧 CDN Configuration Options
-
-### Image Optimization Parameters
-
-- `width`: Target width in pixels
-- `height`: Target height in pixels
-- `quality`: JPEG quality (1-100)
-- `format`: Output format (`webp`, `jpeg`, `png`, `gif`)
-- `fit`: Resize mode (`cover`, `contain`, `fill`, `inside`, `outside`)
-
-### Predefined Functions
-
-- `getAlbumArtworkUrl(url, size)`: Optimized album artwork
-  - `size`: `'thumbnail'` (150x150), `'medium'` (300x300), `'large'` (600x600)
-- `getTrackArtworkUrl(url)`: Optimized track artwork (200x200)
-
-## 🧪 Testing Your CDN Setup
-
-1. **Check Network Requests**: Open browser dev tools and look for requests to your CDN domain
-2. **Verify Image Optimization**: Check that images are being served with optimization parameters
-3. **Test Fallback**: Temporarily disable CDN to ensure fallback works
-
-### Debug Commands
-
+### Current Environment Variables
 ```bash
-# Check CDN configuration
-node -e "console.log(require('./lib/cdn-utils').getCDNConfig())"
+# CDN Configuration
+BUNNY_CDN_HOSTNAME=re-podtards-cdn.b-cdn.net
+BUNNY_CDN_ZONE=re-podtards
+BUNNY_CDN_API_KEY=your-cdn-api-key-here
 
-# Test CDN URL generation
-node -e "console.log(require('./lib/cdn-utils').getCDNUrl('https://example.com/image.jpg', {width: 300}))"
+# Storage Configuration
+BUNNY_STORAGE_API_KEY=your-storage-key
+BUNNY_STORAGE_HOSTNAME=ny.storage.bunnycdn.com
+BUNNY_STORAGE_ZONE=re-podtards-storage
 ```
 
-## 🚨 Troubleshooting
+### How to Get New API Keys
+1. **CDN API Key**: CDN → API → Generate new key
+2. **Storage API Key**: Storage → re-podtards-storage → API → Copy key
 
-### Common Issues
+## 📋 Verification Steps
 
-1. **Images not loading through CDN**
-   - Check that `BUNNY_CDN_HOSTNAME` is set correctly
-   - Verify the pull zone is active in Bunny.net dashboard
-   - Ensure the origin URL is accessible
-
-2. **CDN cache not updating**
-   - Use the purge functions to clear cache
-   - Check that the API key has purge permissions
-
-3. **Performance issues**
-   - Monitor Bunny.net dashboard for bandwidth usage
-   - Consider upgrading to High Volume Tier if needed
-
-### Error Messages
-
-- `"CDN API key or zone not configured"`: Set up environment variables
-- `"Invalid URL for CDN processing"`: Check URL format
-- `"Failed to purge CDN cache"`: Verify API key and permissions
-
-## 📊 Monitoring
-
-Monitor your CDN performance in the Bunny.net dashboard:
-- Bandwidth usage
-- Cache hit rates
-- Geographic distribution
-- Error rates
-
-## 🔄 Cache Management
-
-### Automatic Purge on Content Update
-
-```tsx
-// In your content management functions
-import { purgeCDNCache } from '@/lib/cdn-utils';
-
-async function updateAlbumArtwork(albumId: string, newImageUrl: string) {
-  // Update your database
-  await updateAlbum(albumId, { imageUrl: newImageUrl });
-  
-  // Purge old image from CDN cache
-  await purgeCDNCache(oldImageUrl);
-}
+### 1. Test CDN Zone
+```bash
+curl -I "https://re-podtards-cdn.b-cdn.net/"
 ```
 
-### Manual Cache Purge
-
-```tsx
-import { purgeEntireCDNCache } from '@/lib/cdn-utils';
-
-// Purge entire cache (use sparingly)
-await purgeEntireCDNCache();
+### 2. Test Storage Zone
+```bash
+curl -s -H "AccessKey: YOUR_STORAGE_API_KEY" \
+  "https://ny.storage.bunnycdn.com/re-podtards-storage/"
 ```
 
-## 💰 Cost Optimization
+### 3. Test Pull Zone
+```bash
+curl -I "https://re-podtards-cdn.b-cdn.net/feeds/music-from-the-doerfelverse.xml"
+```
 
-- **Standard Tier**: Good for most use cases, $10/TB
-- **High Volume Tier**: Better for large files, $5/TB
-- **Geographic Zones**: Choose only the zones you need
-- **Cache Settings**: Optimize cache duration for your content type
+### 4. Test Site Functionality
+- Visit: https://re.podtards.com
+- Check RSS feed loading
+- Verify album pages work
+- Test background images
 
-## 🔒 Security
+## 🚀 Deployment Steps
 
-- Keep your API key secure
-- Use environment variables, never commit secrets
-- Consider IP restrictions in Bunny.net dashboard
-- Monitor for unusual traffic patterns
+### After CDN Configuration
+1. **Re-enable CDN**
+   ```javascript
+   // In app/page.tsx
+   const isProduction = process.env.NODE_ENV === 'production';
+   ```
 
-## 📚 Additional Resources
+2. **Deploy to Production**
+   ```bash
+   git add .
+   git commit -m "Re-enable CDN after configuration fix"
+   git push
+   vercel --prod
+   ```
 
-- [Bunny.net Documentation](https://docs.bunny.net/)
-- [Next.js Image Optimization](https://nextjs.org/docs/basic-features/image-optimization)
-- [CDN Best Practices](https://docs.bunny.net/docs/cdn) 
+3. **Verify Deployment**
+   - Check site loads correctly
+   - Verify RSS feeds load from CDN
+   - Test all features work
+
+## 📞 Support Resources
+
+### Bunny.net Documentation
+- [Pull Zones](https://docs.bunny.net/docs/cdn#pull-zones)
+- [Storage API](https://docs.bunny.net/docs/storage-api)
+- [CDN API](https://docs.bunny.net/docs/cdn-api)
+
+### Current Working URLs
+- **Site**: https://re.podtards.com
+- **CDN**: https://re-podtards-cdn.b-cdn.net
+- **Storage**: https://ny.storage.bunnycdn.com/re-podtards-storage
+
+## 🎯 Success Criteria
+
+The CDN upload issue is resolved when:
+- ✅ RSS feeds load from CDN URLs
+- ✅ No 404 errors on CDN requests
+- ✅ Site performance is improved
+- ✅ All features work correctly
+- ✅ Background images load properly
+
+## 🔄 Next Steps
+
+1. **Choose a solution option** (Pull Zone reconfiguration recommended)
+2. **Update API keys** if needed
+3. **Configure CDN** according to chosen option
+4. **Test thoroughly** before re-enabling CDN
+5. **Deploy changes** and verify functionality
+
+---
+
+*Last Updated: January 23, 2025*  
+*Status: Temporary fix deployed, permanent solution pending CDN configuration* 

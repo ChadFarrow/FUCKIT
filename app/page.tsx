@@ -190,18 +190,97 @@ export default function HomePage() {
   useEffect(() => {
     const globalState = getGlobalAudioState();
     if (globalState.isPlaying && globalState.currentAlbum && globalState.trackUrl) {
-      // Restore audio state
-      setCurrentPlayingAlbum(globalState.currentAlbum);
-      setCurrentTrackIndex(globalState.currentTrackIndex);
-      setIsPlaying(globalState.isPlaying);
-      
-      // Restore audio element state
+      // Only restore state if we have a valid audio element and it can actually play
       if (audioRef.current) {
+        // Set up the audio element
         audioRef.current.src = globalState.trackUrl;
         audioRef.current.currentTime = globalState.currentTime;
         audioRef.current.volume = globalState.volume;
+        
+        // Check if the audio is actually ready to play
+        const checkAudioReady = () => {
+          if (audioRef.current && audioRef.current.readyState >= 2) {
+            // Audio is ready, restore state
+            setCurrentPlayingAlbum(globalState.currentAlbum);
+            setCurrentTrackIndex(globalState.currentTrackIndex);
+            
+            // Only set as playing if the audio is actually playing
+            if (audioRef.current && !audioRef.current.paused) {
+              setIsPlaying(true);
+            } else {
+              // Audio is not actually playing, clear the playing state
+              setIsPlaying(false);
+              updateGlobalAudioState({ isPlaying: false });
+            }
+          } else {
+            // Audio not ready yet, try again in a moment
+            setTimeout(checkAudioReady, 100);
+          }
+        };
+        
+        checkAudioReady();
+      } else {
+        // No audio element available, clear the playing state
+        setIsPlaying(false);
+        updateGlobalAudioState({ isPlaying: false });
       }
     }
+  }, []);
+
+  // Audio event listeners to properly track state
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const handlePlay = () => {
+      setIsPlaying(true);
+      updateGlobalAudioState({ isPlaying: true }, audioRef.current || undefined);
+    };
+
+    const handlePause = () => {
+      setIsPlaying(false);
+      updateGlobalAudioState({ isPlaying: false }, audioRef.current || undefined);
+    };
+
+    const handleEnded = () => {
+      // Try to play next track, or reset if no more tracks
+      playNextTrack();
+    };
+
+    const handleError = () => {
+      console.error('Audio playback error');
+      setIsPlaying(false);
+      setCurrentPlayingAlbum(null);
+      updateGlobalAudioState({ 
+        isPlaying: false, 
+        currentAlbum: null, 
+        trackUrl: null 
+      });
+    };
+
+    // Add event listeners
+    audio.addEventListener('play', handlePlay);
+    audio.addEventListener('pause', handlePause);
+    audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('error', handleError);
+
+    // Cleanup
+    return () => {
+      audio.removeEventListener('play', handlePlay);
+      audio.removeEventListener('pause', handlePause);
+      audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('error', handleError);
+    };
+  }, [currentPlayingAlbum, currentTrackIndex]); // Re-add listeners when album/track changes
+
+  // Cleanup effect - clear audio state on unmount if not playing
+  useEffect(() => {
+    return () => {
+      // If we're unmounting and audio is not actually playing, clear the state
+      if (audioRef.current && audioRef.current.paused) {
+        clearGlobalAudioState();
+      }
+    };
   }, []);
 
   // Rotating background effect - optimized for all devices
@@ -467,6 +546,17 @@ export default function HomePage() {
       setCurrentTrackIndex(0);
       clearGlobalAudioState();
     }
+  };
+
+  const resetAudioState = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = '';
+    }
+    setIsPlaying(false);
+    setCurrentPlayingAlbum(null);
+    setCurrentTrackIndex(0);
+    clearGlobalAudioState();
   };
 
   return (
