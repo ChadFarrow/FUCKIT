@@ -847,6 +847,119 @@ export default function HomePage() {
           </div>
         )}
       </div>
+      
+      {/* Now Playing Bar - Fixed at bottom */}
+      {currentPlayingAlbum && (
+        <div className="fixed bottom-0 left-0 right-0 bg-black/90 backdrop-blur-sm border-t border-gray-700 p-4 z-50">
+          <div className="container mx-auto flex items-center gap-4">
+            {/* Current Album Info */}
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              {(() => {
+                const currentAlbum = albums.find(album => album.title === currentPlayingAlbum);
+                const currentTrack = currentAlbum?.tracks[currentTrackIndex];
+                return (
+                  <>
+                    <Image 
+                      src={getAlbumArtworkUrl(currentAlbum?.coverArt || '', 'thumbnail')} 
+                      alt={currentPlayingAlbum}
+                      width={48}
+                      height={48}
+                      className="rounded object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = getPlaceholderImageUrl('thumbnail');
+                      }}
+                    />
+                    <div className="min-w-0">
+                      <p className="font-medium truncate">
+                        {currentTrack?.title || 'Unknown Track'}
+                      </p>
+                      <p className="text-sm text-gray-400 truncate">
+                        {currentAlbum?.artist || 'Unknown Artist'} • {currentPlayingAlbum}
+                      </p>
+                    </div>
+                  </>
+                );
+              })()}
+            </div>
+            
+            {/* Playback Controls */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => {
+                  if (audioRef.current) {
+                    if (isPlaying) {
+                      audioRef.current.pause();
+                    } else {
+                      audioRef.current.play();
+                    }
+                  }
+                }}
+                className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 transition-colors"
+              >
+                {isPlaying ? (
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                  </svg>
+                ) : (
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                )}
+              </button>
+              
+              <button
+                onClick={() => {
+                  if (currentTrackIndex > 0) {
+                    const currentAlbum = albums.find(album => album.title === currentPlayingAlbum);
+                    if (currentAlbum && audioRef.current) {
+                      const prevTrack = currentAlbum.tracks[currentTrackIndex - 1];
+                      if (prevTrack && prevTrack.url) {
+                        audioRef.current.src = prevTrack.url;
+                        audioRef.current.play().then(() => {
+                          setCurrentTrackIndex(currentTrackIndex - 1);
+                        });
+                      }
+                    }
+                  }
+                }}
+                className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 transition-colors"
+                disabled={currentTrackIndex === 0}
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
+                </svg>
+              </button>
+              
+              <button
+                onClick={playNextTrack}
+                className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 transition-colors"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+                </svg>
+              </button>
+            </div>
+            
+            {/* Close Button */}
+            <button
+              onClick={() => {
+                if (audioRef.current) {
+                  audioRef.current.pause();
+                }
+                setIsPlaying(false);
+                setCurrentPlayingAlbum(null);
+                setCurrentTrackIndex(0);
+              }}
+              className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 transition-colors"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
