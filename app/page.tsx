@@ -11,8 +11,8 @@ import { generateAlbumUrl, generatePublisherSlug } from '@/lib/url-utils';
 
 // Environment-based RSS feed configuration
 // CDN zone found: re-podtards-cdn (working correctly)
-// CDN is configured as Pull Zone - will cache RSS feeds automatically
-const isProduction = process.env.NODE_ENV === 'production';
+// Temporarily use original URLs for RSS feeds (CDN Pull Zone doesn't have RSS feeds yet)
+const isProduction = false; // process.env.NODE_ENV === 'production';
 
 // Clean, verified RSS feed URL mappings: [originalUrl, cdnUrl]
 const feedUrlMappings = [
