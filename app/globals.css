@@ -80,4 +80,17 @@
   .pb-safe-plus {
     padding-bottom: calc(1rem + env(safe-area-inset-bottom));
   }
+}
+
+/* PWA Standalone Mode Adjustments */
+@media (display-mode: standalone) {
+  /* Ensure the player bar is visible in standalone mode */
+  .fixed.bottom-0 {
+    bottom: env(safe-area-inset-bottom);
+  }
+  
+  /* Add padding to body for standalone mode */
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 } 
