@@ -137,7 +137,10 @@ export default function HomePage() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const hasLoadedRef = useRef(false);
   
-  // Removed rotating background state for better mobile performance
+  // Rotating background state
+  const [currentBackgroundIndex, setCurrentBackgroundIndex] = useState(0);
+  const [backgroundAlbums, setBackgroundAlbums] = useState<RSSAlbum[]>([]);
+  const backgroundIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setIsClient(true);
@@ -199,8 +202,34 @@ export default function HomePage() {
     }
   }, []);
 
-  // Removed rotating background effect for better mobile performance
-  // Using solid background color instead
+  // Rotating background effect - optimized for all devices
+  useEffect(() => {
+    if (albums.length > 0) {
+      // Filter albums with good cover art for background rotation
+      const albumsWithArt = albums.filter(album => 
+        album.coverArt && 
+        album.coverArt !== getPlaceholderImageUrl('large') &&
+        !album.coverArt.includes('placeholder')
+      );
+      
+      // Take first 8 albums with art for rotation (reduced for better performance)
+      const rotationAlbums = albumsWithArt.slice(0, 8);
+      setBackgroundAlbums(rotationAlbums);
+      
+      // Start rotation if we have albums with art and not on mobile
+      if (rotationAlbums.length > 1 && typeof window !== 'undefined' && window.innerWidth > 768) {
+        backgroundIntervalRef.current = setInterval(() => {
+          setCurrentBackgroundIndex(prev => (prev + 1) % rotationAlbums.length);
+        }, 10000); // Change every 10 seconds (increased for better performance)
+      }
+    }
+
+    return () => {
+      if (backgroundIntervalRef.current) {
+        clearInterval(backgroundIntervalRef.current);
+      }
+    };
+  }, [albums]);
 
   const handleAddFeed = async (feedUrl: string) => {
     setIsAddingFeed(true);
@@ -409,8 +438,30 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen text-white bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-      {/* Content */}
+    <div className="min-h-screen text-white relative overflow-hidden">
+      {/* Rotating Background - Desktop Only */}
+      {backgroundAlbums.length > 0 && typeof window !== 'undefined' && window.innerWidth > 768 && (
+        <div className="fixed inset-0 z-0">
+          {backgroundAlbums.map((album, index) => (
+            <div
+              key={`${album.title}-${index}`}
+              className={`absolute inset-0 transition-opacity duration-3000 ease-in-out ${
+                index === currentBackgroundIndex ? 'opacity-100' : 'opacity-0'
+              }`}
+              style={{
+                background: `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('${album.coverArt}') center/cover fixed`,
+              }}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Fallback gradient background */}
+      {(!backgroundAlbums.length || (typeof window !== 'undefined' && window.innerWidth <= 768)) && (
+        <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 z-0" />
+      )}
+
+      {/* Content overlay */}
       <div className="relative z-10">
         {/* Hidden audio element for main page playback */}
         <audio
@@ -902,36 +953,44 @@ export default function HomePage() {
 {currentPlayingAlbum && (
   <div className="fixed bottom-0 left-0 right-0 backdrop-blur-md bg-gradient-to-t from-black/60 via-black/40 to-transparent border-t border-white/10 p-4 z-50 shadow-2xl">
     <div className="container mx-auto flex items-center gap-4 bg-white/5 rounded-xl p-4 backdrop-blur-sm border border-white/10">
-      {/* Current Album Info */}
-      <div className="flex items-center gap-3 min-w-0 flex-1">
-        {(() => {
-          const currentAlbum = albums.find(album => album.title === currentPlayingAlbum);
-          const currentTrack = currentAlbum?.tracks[currentTrackIndex];
-          return (
-            <>
-              <Image 
-                src={getAlbumArtworkUrl(currentAlbum?.coverArt || '', 'thumbnail')} 
-                alt={currentPlayingAlbum}
-                width={48}
-                height={48}
-                className="rounded object-cover"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = getPlaceholderImageUrl('thumbnail');
-                }}
-              />
-              <div className="min-w-0">
-                <p className="font-medium truncate">
-                  {currentTrack?.title || 'Unknown Track'}
-                </p>
-                <p className="text-sm text-gray-400 truncate">
-                  {currentAlbum?.artist || 'Unknown Artist'} • {currentPlayingAlbum}
-                </p>
-              </div>
-            </>
-          );
-        })()}
-      </div>
+      {/* Current Album Info - Clickable */}
+      {(() => {
+        const currentAlbum = albums.find(album => album.title === currentPlayingAlbum);
+        const currentTrack = currentAlbum?.tracks[currentTrackIndex];
+        return currentAlbum ? (
+          <Link
+            href={generateAlbumUrl(currentAlbum.title)}
+            className="flex items-center gap-3 min-w-0 flex-1 hover:bg-white/10 rounded-lg p-2 -m-2 transition-colors cursor-pointer"
+          >
+            <Image 
+              src={getAlbumArtworkUrl(currentAlbum.coverArt || '', 'thumbnail')} 
+              alt={currentPlayingAlbum}
+              width={48}
+              height={48}
+              className="rounded object-cover"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = getPlaceholderImageUrl('thumbnail');
+              }}
+            />
+            <div className="min-w-0">
+              <p className="font-medium truncate">
+                {currentTrack?.title || 'Unknown Track'}
+              </p>
+              <p className="text-sm text-gray-400 truncate">
+                {currentAlbum.artist || 'Unknown Artist'} • {currentPlayingAlbum}
+              </p>
+            </div>
+          </Link>
+        ) : (
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <div className="min-w-0">
+              <p className="font-medium truncate">Unknown Track</p>
+              <p className="text-sm text-gray-400 truncate">Unknown Artist</p>
+            </div>
+          </div>
+        );
+      })()}
       
       {/* Playback Controls */}
       <div className="flex items-center gap-3">
