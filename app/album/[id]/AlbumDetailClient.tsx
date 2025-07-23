@@ -393,7 +393,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             if (foundAlbum.title.toLowerCase() === 'they ride' && foundAlbum.artist.toLowerCase() === 'iroh') {
               console.log('🎵 Applying custom track order for "They Ride" concept album');
               
-              // Define the correct track order from YouTube Music
+              // Define the correct track order from YouTube Music (using exact RSS feed titles)
               const correctTrackOrder = [
                 '-',
                 'Heaven Knows', 
@@ -408,8 +408,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                 '..',
                 'They Ride',
                 '-..',
-                'Pedal Down (feat. Rob Montgomery)',
-                '. (the last transmission?)'
+                'Pedal Down ( feat. Rob Montgomery )',
+                '. ( The Last Transmission? )'
               ];
               
               // Sort tracks by the correct order with better matching
