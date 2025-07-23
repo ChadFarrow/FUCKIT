@@ -370,7 +370,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                 '....',
                 'The Fever',
                 '.',
-                // 'In Exile' - missing from this version
+                'In Exile',
                 '-.--',
                 'The Seed Man',
                 '.-.',
@@ -379,7 +379,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                 'They Ride',
                 '-..',
                 'Pedal Down (feat. Rob Montgomery)',
-                '. (The Last Transmission?)'
+                '. (the last transmission?)'
               ];
               
               // Sort tracks by the correct order
