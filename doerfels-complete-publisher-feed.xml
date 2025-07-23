@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" 
+     xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+     xmlns:podcast="https://github.com/Podcastindex-org/podcast-namespace/blob/main/docs/1.0.md" 
+     version="2.0">
+  <channel>
+    <title>The Doerfels</title>
+    <description>The Doerfels.(pronounced door-fulls) The last name of brothers who grew up playing in a band together. Check out our music and podcast: Into The Doerfel-Verse www.doerfelverse.com</description>
+    <itunes:image href="https://www.doerfelverse.com/art/doerfels-hockeystick.png"/>
+    <link>https://www.doerfelverse.com/</link>
+    <generator>Sovereign Feeds</generator>
+    <podcast:medium>publisher</podcast:medium>
+    <podcast:guid>the-doerfels-complete</podcast:guid>
+    
+    <image>
+      <url>https://www.doerfelverse.com/art/doerfels-hockeystick.png</url>
+      <link>https://www.doerfelverse.com/</link>
+      <title>The Doerfels</title>
+      <description>The Doerfels.(pronounced door-fulls) The last name of brothers who grew up playing in a band together. Check out our music and podcast: Into The Doerfel-Verse www.doerfelverse.com</description>
+      <width>144</width>
+      <height>144</height>
+    </image>
+    
+    <podcast:value type="lightning" method="keysend" suggested="0.00000005000">
+      <podcast:valueRecipient name="The Doerfels" type="node" address="031ce2f133b570edf1c776e571e27d22a715dc6ea73956f0e79f4272d81d9dc0d5" split="100"/>
+      <podcast:valueRecipient name="Sovereign Feeds" address="035ad2c954e264004986da2d9499e1732e5175e1dcef2453c921c6cdcc3536e9d8" type="node" fee="true" split="5"/>
+    </podcast:value>
+    
+    <itunes:category text="Music"/>
+    <podcast:block>no</podcast:block>
+    
+    <!-- Cross-promotion feeds (podroll) -->
+    <podcast:podroll>
+      <podcast:remoteItem feedGuid="5bb8f186-2460-54dc-911d-54f642e8adf6" feedUrl="https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/CityBeach.xml"/>
+      <podcast:remoteItem feedGuid="08604071-83cc-5810-bec2-bea0f0cd0033" feedUrl="https://www.doerfelverse.com/feeds/ben-doerfel.xml"/>
+      <podcast:remoteItem feedGuid="69c634ad-afea-5826-ad9a-8e1f06d6470b" feedUrl="https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml"/>
+      <podcast:remoteItem feedGuid="4a483a4b-867c-50d5-a61a-e99fe03ea57e" feedUrl="https://www.doerfelverse.com/feeds/wrath-of-banjo.xml"/>
+      <podcast:remoteItem feedGuid="1e7ed1fa-0456-5860-9b34-825d1335d8f8" feedUrl="https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml"/>
+      <podcast:remoteItem feedGuid="f511794d-437f-5cbd-8fcd-c541652a7931" feedUrl="https://www.doerfelverse.com/artists/opus/opus/opus.xml"/>
+      <podcast:remoteItem feedGuid="1bb0f289-877b-5460-ab92-f8e25a2d4c89" feedUrl="https://www.doerfelverse.com/feeds/dfbv1.xml"/>
+    </podcast:podroll>
+    
+    <itunes:owner>
+      <itunes:email/>
+      <itunes:name/>
+    </itunes:owner>
+    
+    <podcast:funding url="https://www.paypal.com/donate/?hosted_button_id=ATL9BD9EQRSNN">Support our music here, value for value!</podcast:funding>
+
+    <!-- EXISTING ALBUMS FROM CURRENT PUBLISHER FEED -->
+    <podcast:remoteItem feedGuid="2b62ef49-fcff-523c-b81a-0a7dde2b0609" feedUrl="https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml" feedImg="https://www.doerfelverse.com/art/carol-of-the-bells.png"/>
+    <podcast:remoteItem feedGuid="41aace28-8679-5ef1-9958-75cf76c2b5f0" feedUrl="https://www.doerfelverse.com/feeds/intothedoerfelverse.xml" feedImg="https://www.doerfelverse.com/art/v4v-music-podcast.png"/>
+    <podcast:remoteItem feedGuid="514d7a21-041e-5e5f-b7d6-71aa7c7584db" feedUrl="https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Dont-Forget-Me.xml" feedImg="https://www.doerfelverse.com/art/dont-forget-me-art.jpg"/>
+    <podcast:remoteItem feedGuid="f7d933c8-032a-52e5-9598-e34d833a3e8e" feedUrl="https://www.doerfelverse.com/feeds/they-dont-know.xml" feedImg="https://www.doerfelverse.com/art/theydontknowart.png"/>
+    <podcast:remoteItem feedGuid="b8b6971e-403e-568f-a4e6-7aa2b45e50d4" feedUrl="https://www.sirtjthewrathful.com/wp-content/uploads/2023/07/Bloodshot-Lies.xml" feedImg="https://www.doerfelverse.com/art/bloodshot-lies.png"/>
+    <podcast:remoteItem feedGuid="de196d3e-276d-5b5f-aa30-34d747e5f6a7" feedUrl="https://www.doerfelverse.com/feeds/disco-swag.xml" feedImg="https://www.doerfelverse.com/art/disco-swag.png"/>
+    <podcast:remoteItem feedGuid="4ab3741a-4a10-5631-a026-a9d0eb62fe11" feedUrl="https://www.doerfelverse.com/feeds/your-chance.xml" feedImg="https://www.doerfelverse.com/art/your-chance.png"/>
+    <podcast:remoteItem feedGuid="af99d1b4-e10e-503f-8321-8d748bdc76f8" feedUrl="https://www.doerfelverse.com/feeds/think-ep.xml" feedImg="https://www.doerfelverse.com/art/think-ep.png"/>
+    <podcast:remoteItem feedGuid="d4608e6e-024c-5482-befc-7bee3753167d" feedUrl="https://www.doerfelverse.com/feeds/dead-time-live-2016.xml" feedImg="https://www.doerfelverse.com/art/dead-time-live-2016.png"/>
+    <podcast:remoteItem feedGuid="d0301653-1667-5a06-82b6-f4f15b0ed33d" feedUrl="https://www.sirtjthewrathful.com/media/figured-you-out-single.xml" feedImg="https://www.doerfelverse.com/art/figured-you-out.png"/>
+    <podcast:remoteItem feedGuid="c2095619-a9d0-5e7c-80e1-59e520ce55d3" feedUrl="https://www.doerfelverse.com/feeds/underwater-single.xml" feedImg="https://www.doerfelverse.com/art/underwater.jpg"/>
+    <podcast:remoteItem feedGuid="d13eab76-a4c4-5e4b-a0fb-25ed1386bc51" feedUrl="https://www.doerfelverse.com/feeds/possible.xml" feedImg="https://www.doerfelverse.com/art/possible.jpeg"/>
+    <podcast:remoteItem feedGuid="8443bcf4-2266-5e29-81fb-8912e846968c" feedUrl="https://www.sirtjthewrathful.com/media/3years.xml" feedImg="https://www.sirtjthewrathful.com/media/3yearsart.jpg"/>
+    <podcast:remoteItem feedGuid="bba99401-378c-5540-bf95-c456b3d4de26" feedUrl="https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/So-Far-Away.xml" feedImg="https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/So-Far-Away_artwork-scaled.jpg"/>
+    <podcast:remoteItem feedGuid="5bb8f186-2460-54dc-911d-54f642e8adf6" feedUrl="https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/CityBeach.xml" feedImg="https://www.doerfelverse.com/art/city-beach.png"/>
+    <podcast:remoteItem feedGuid="08604071-83cc-5810-bec2-bea0f0cd0033" feedUrl="https://www.doerfelverse.com/feeds/ben-doerfel.xml" feedImg="https://www.doerfelverse.com/art/ben-doerfel.png"/>
+    <podcast:remoteItem feedGuid="69c634ad-afea-5826-ad9a-8e1f06d6470b" feedUrl="https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml" feedImg="https://www.doerfelverse.com/art/kurtisdrums.png"/>
+    <podcast:remoteItem feedGuid="4a483a4b-867c-50d5-a61a-e99fe03ea57e" feedUrl="https://www.doerfelverse.com/feeds/wrath-of-banjo.xml" feedImg="https://www.doerfelverse.com/art/wrath-of-banjo.png"/>
+    <podcast:remoteItem feedGuid="1e7ed1fa-0456-5860-9b34-825d1335d8f8" feedUrl="https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml" feedImg="https://www.doerfelverse.com/art/nostalgic.png"/>
+    <podcast:remoteItem feedGuid="f511794d-437f-5cbd-8fcd-c541652a7931" feedUrl="https://www.doerfelverse.com/artists/opus/opus/opus.xml" feedImg="https://www.doerfelverse.com/art/opus.png"/>
+    <podcast:remoteItem feedGuid="1bb0f289-877b-5460-ab92-f8e25a2d4c89" feedUrl="https://www.doerfelverse.com/feeds/dfbv1.xml" feedImg="https://www.doerfelverse.com/art/dfbv1.png"/>
+    <podcast:remoteItem feedGuid="dda7c0ba-d99e-5f37-850f-0a51e4b00c96" feedUrl="https://sirtjthewrathful.com/tracks/thoughtitwasreal.xml" feedImg="https://www.doerfelverse.com/art/thought-it-was-real.jpg"/>
+    <podcast:remoteItem feedGuid="35b37cb1-4d1f-51dd-8e9b-d78c2a66f7bf" feedUrl="https://doerfelverse.com/feeds/come-back-to-me.xml" feedImg="https://www.doerfelverse.com/art/come-back-to-me-art.jpeg"/>
+    <podcast:remoteItem feedGuid="1c5c3a95-0a22-5f27-9ccc-9e9e24e2cf23" feedUrl="https://www.sirtjthewrathful.com/tracks/emo-stormtrooper.xml" feedImg="https://www.doerfelverse.com/art/emo-stormtrooper.jpg"/>
+    <podcast:remoteItem feedGuid="a2b43a5b-a9e4-59d7-8e55-ad0c1a0c2fd7" feedUrl="https://www.thisisjdog.com/media/ring-that-bell.xml" feedImg="https://www.doerfelverse.com/art/ring-that-bell.jpg"/>
+
+    <!-- NEWLY ADDED MISSING ALBUMS (18 feeds) -->
+    <podcast:remoteItem feedGuid="910874e0-86cc-5d95-9589-a9948c32880a" feedUrl="https://www.doerfelverse.com/feeds/18sundays.xml" feedImg="https://www.doerfelverse.com/art/18sundays.gif"/>
+    <podcast:remoteItem feedGuid="a40615ac-1b3c-5c76-8961-6bbc86e20439" feedUrl="https://www.doerfelverse.com/feeds/alandace.xml" feedImg="https://www.doerfelverse.com/art/alandace.gif"/>
+    <podcast:remoteItem feedGuid="47768d25-74d9-5ba4-82db-aeaa7f50e29c" feedUrl="https://www.doerfelverse.com/feeds/autumn.xml" feedImg="https://www.doerfelverse.com/art/autumn.gif"/>
+    <podcast:remoteItem feedGuid="1aeccb22-0dce-57e8-80fb-01053f506763" feedUrl="https://www.doerfelverse.com/feeds/christ-exalted.xml" feedImg="https://www.doerfelverse.com/art/christ-exalted.png"/>
+    <podcast:remoteItem feedGuid="3d929593-c368-5a59-aefd-50ec8d788874" feedUrl="https://www.doerfelverse.com/feeds/come-back-to-me.xml" feedImg="https://www.doerfelverse.com/art/come-back-to-me-art.jpeg"/>
+    <podcast:remoteItem feedGuid="6bf3785f-e053-57f4-9f70-261ee5e3747f" feedUrl="https://www.doerfelverse.com/feeds/dfbv2.xml" feedImg="https://www.doerfelverse.com/art/dfbv2.png"/>
+    <podcast:remoteItem feedGuid="a3d6d7d5-4b5d-5161-b119-cf5e99d35fda" feedUrl="https://www.doerfelverse.com/feeds/first-married-christmas.xml" feedImg="https://www.doerfelverse.com/art/first-christmas-art.jpg"/>
+    <podcast:remoteItem feedGuid="e0658b29-1cd3-55b8-ac51-0997764ce334" feedUrl="https://www.doerfelverse.com/feeds/generation-gap.xml" feedImg="https://www.doerfelverse.com/art/generation-gap.png"/>
+    <podcast:remoteItem feedGuid="f275657c-4b58-563a-ad3b-91b65035b3d8" feedUrl="https://www.doerfelverse.com/feeds/merry-christmix.xml" feedImg="https://www.doerfelverse.com/art/kurtisdrums-christmix.png"/>
+    <podcast:remoteItem feedGuid="3074902b-b2dc-5877-bfc3-30f5df0fbe6a" feedUrl="https://www.doerfelverse.com/feeds/middle-season-let-go.xml" feedImg="https://www.doerfelverse.com/art/let-go-art.png"/>
+    <podcast:remoteItem feedGuid="94c8a0bf-f76e-5f8c-ba1d-c0c15a642271" feedUrl="https://www.doerfelverse.com/feeds/phatty-the-grasshopper.xml" feedImg="https://www.doerfelverse.com/art/phatty-the-grasshopper.png"/>
+    <podcast:remoteItem feedGuid="b84c3345-55db-54e0-ac41-4b1cc6f3df67" feedUrl="https://www.doerfelverse.com/feeds/pour-over.xml" feedImg="https://www.doerfelverse.com/art/pour-over.png"/>
+    <podcast:remoteItem feedGuid="8c5dd9fd-4257-5e7b-9e94-643e6aa4ca1c" feedUrl="https://www.doerfelverse.com/feeds/psalm-54.xml" feedImg="https://www.doerfelverse.com/art/psalm-54-art.png"/>
+    <podcast:remoteItem feedGuid="6eef0b66-bb86-5d0c-b260-099bcc920b7c" feedUrl="https://www.doerfelverse.com/feeds/sensitive-guy.xml" feedImg="https://www.doerfelverse.com/art/sensitive-guy.png"/>
+    <podcast:remoteItem feedGuid="00addc23-7769-5471-bb9a-c0acb6f27437" feedUrl="https://www.doerfelverse.com/feeds/unsound-existence.xml" feedImg="https://www.doerfelverse.com/art/unsound-existence.png"/>
+    <podcast:remoteItem feedGuid="3679b281-4f40-5463-aa5a-6ea91b8a4957" feedUrl="https://www.doerfelverse.com/feeds/you-are-my-world.xml" feedImg="https://www.doerfelverse.com/art/you-are-my-world.gif"/>
+    <podcast:remoteItem feedGuid="141b86d8-76bc-581a-adf1-2f836a4dde91" feedUrl="https://www.doerfelverse.com/feeds/you-feel-like-home.xml" feedImg="https://www.doerfelverse.com/art/you-feel-like-home-art.jpg"/>
+    <podcast:remoteItem feedGuid="e2d6766a-5c28-5cbd-b678-4d7595646e4e" feedUrl="https://www.doerfelverse.com/feeds/heartbreak.xml" feedImg="https://www.doerfelverse.com/art/heartbreakart.jpg"/>
+
+  </channel>
+</rss>

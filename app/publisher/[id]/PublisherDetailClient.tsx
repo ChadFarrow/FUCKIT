@@ -45,20 +45,28 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
         console.log(`🏢 Publisher info found:`, publisherInfo);
         console.log(`🏢 Loading publisher feed: ${feedUrl}`);
 
+        // Add timeout to prevent infinite loading
+        const timeoutPromise = new Promise<never>((_, reject) => {
+          setTimeout(() => reject(new Error('Loading timeout - taking too long')), 30000); // 30 second timeout
+        });
+
         // Load publisher feed info for artist details and image
         console.log(`🏢 Loading publisher feed info...`);
-        const publisherFeedInfo = await RSSParser.parsePublisherFeedInfo(feedUrl);
+        const feedInfoPromise = RSSParser.parsePublisherFeedInfo(feedUrl);
+        const publisherFeedInfo = await Promise.race([feedInfoPromise, timeoutPromise]);
         console.log(`🏢 Publisher feed info:`, publisherFeedInfo);
         
         // Load publisher items
         console.log(`🏢 Loading publisher items...`);
-        const items = await RSSParser.parsePublisherFeed(feedUrl);
+        const itemsPromise = RSSParser.parsePublisherFeed(feedUrl);
+        const items = await Promise.race([itemsPromise, timeoutPromise]);
         console.log(`🏢 Publisher items:`, items);
         setPublisherItems(items);
 
-        // Load all albums from the publisher feed
+        // Load all albums from the publisher feed with timeout
         console.log(`🏢 Loading publisher albums...`);
-        const albumsData = await RSSParser.parsePublisherFeedAlbums(feedUrl);
+        const albumsPromise = RSSParser.parsePublisherFeedAlbums(feedUrl);
+        const albumsData = await Promise.race([albumsPromise, timeoutPromise]);
         console.log(`🏢 Publisher albums loaded:`, albumsData.length, 'albums');
         setAlbums(albumsData);
 
@@ -83,7 +91,11 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
 
       } catch (err) {
         console.error('❌ Error loading publisher:', err);
-        setError('Error loading publisher data');
+        if (err instanceof Error && err.message.includes('timeout')) {
+          setError('Loading timeout - publisher has many albums. Please try again.');
+        } else {
+          setError('Error loading publisher data');
+        }
       } finally {
         setIsLoading(false);
       }

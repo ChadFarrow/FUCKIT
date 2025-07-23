@@ -778,9 +778,30 @@ export class RSSParser {
     const musicFeedUrls = publisherItems.map(item => item.feedUrl);
     console.log(`🎵 Loading ${musicFeedUrls.length} music feeds from publisher...`);
     
-    const albums = await this.parseMultipleFeeds(musicFeedUrls);
+    // For publisher feeds, use smaller batch size to prevent timeouts
+    const batchSize = 3; // Reduced from 20 for publisher feeds
+    const allAlbums: RSSAlbum[] = [];
     
-    console.log(`🎶 Loaded ${albums.length} albums from publisher feed`);
-    return albums;
+    for (let i = 0; i < musicFeedUrls.length; i += batchSize) {
+      const batch = musicFeedUrls.slice(i, i + batchSize);
+      console.log(`📦 Processing publisher batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(musicFeedUrls.length / batchSize)} (${batch.length} feeds)`);
+      
+      try {
+        const batchAlbums = await this.parseMultipleFeeds(batch);
+        allAlbums.push(...batchAlbums);
+        console.log(`✅ Batch ${Math.floor(i / batchSize) + 1} completed: ${batchAlbums.length} albums`);
+      } catch (error) {
+        console.error(`❌ Error in publisher batch ${Math.floor(i / batchSize) + 1}:`, error);
+        // Continue with next batch instead of failing completely
+      }
+      
+      // Small delay between batches to prevent overwhelming the server
+      if (i + batchSize < musicFeedUrls.length) {
+        await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay
+      }
+    }
+    
+    console.log(`🎶 Loaded ${allAlbums.length} albums from publisher feed`);
+    return allAlbums;
   }
 }

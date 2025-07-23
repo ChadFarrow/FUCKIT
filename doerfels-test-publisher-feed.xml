@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" 
+     xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+     xmlns:podcast="https://github.com/Podcastindex-org/podcast-namespace/blob/main/docs/1.0.md" 
+     version="2.0">
+  <channel>
+    <title>The Doerfels - Test Feed</title>
+    <description>Test publisher feed for The Doerfels - includes a subset of albums for validation testing.</description>
+    <itunes:image href="https://www.doerfelverse.com/art/doerfels-hockeystick.png"/>
+    <link>https://www.doerfelverse.com/</link>
+    <generator>Sovereign Feeds</generator>
+    <podcast:medium>publisher</podcast:medium>
+    <podcast:guid>the-doerfels-test-feed</podcast:guid>
+    
+    <image>
+      <url>https://www.doerfelverse.com/art/doerfels-hockeystick.png</url>
+      <link>https://www.doerfelverse.com/</link>
+      <title>The Doerfels - Test Feed</title>
+      <description>Test publisher feed for The Doerfels - includes a subset of albums for validation testing.</description>
+      <width>144</width>
+      <height>144</height>
+    </image>
+    
+    <podcast:value type="lightning" method="keysend" suggested="0.00000005000">
+      <podcast:valueRecipient name="The Doerfels" type="node" address="031ce2f133b570edf1c776e571e27d22a715dc6ea73956f0e79f4272d81d9dc0d5" split="100"/>
+      <podcast:valueRecipient name="Sovereign Feeds" address="035ad2c954e264004986da2d9499e1732e5175e1dcef2453c921c6cdcc3536e9d8" type="node" fee="true" split="5"/>
+    </podcast:value>
+    
+    <itunes:category text="Music"/>
+    <podcast:block>no</podcast:block>
+    
+    <itunes:owner>
+      <itunes:email/>
+      <itunes:name/>
+    </itunes:owner>
+    
+    <podcast:funding url="https://www.paypal.com/donate/?hosted_button_id=ATL9BD9EQRSNN">Support our music here, value for value!</podcast:funding>
+
+    <!-- TEST SELECTION: Mix of existing and newly added albums -->
+    
+    <!-- Core existing albums for baseline testing -->
+    <podcast:remoteItem feedGuid="2b62ef49-fcff-523c-b81a-0a7dde2b0609" feedUrl="https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml" feedImg="https://www.doerfelverse.com/art/carol-of-the-bells.png"/>
+    <podcast:remoteItem feedGuid="b8b6971e-403e-568f-a4e6-7aa2b45e50d4" feedUrl="https://www.sirtjthewrathful.com/wp-content/uploads/2023/07/Bloodshot-Lies.xml" feedImg="https://www.doerfelverse.com/art/bloodshot-lies.png"/>
+    <podcast:remoteItem feedGuid="41aace28-8679-5ef1-9958-75cf76c2b5f0" feedUrl="https://www.doerfelverse.com/feeds/intothedoerfelverse.xml" feedImg="https://www.doerfelverse.com/art/v4v-music-podcast.png"/>
+    
+    <!-- Recently added albums to test new functionality -->
+    <podcast:remoteItem feedGuid="910874e0-86cc-5d95-9589-a9948c32880a" feedUrl="https://www.doerfelverse.com/feeds/18sundays.xml" feedImg="https://www.doerfelverse.com/art/18sundays.gif"/>
+    <podcast:remoteItem feedGuid="47768d25-74d9-5ba4-82db-aeaa7f50e29c" feedUrl="https://www.doerfelverse.com/feeds/autumn.xml" feedImg="https://www.doerfelverse.com/art/autumn.gif"/>
+    <podcast:remoteItem feedGuid="6eef0b66-bb86-5d0c-b260-099bcc920b7c" feedUrl="https://www.doerfelverse.com/feeds/sensitive-guy.xml" feedImg="https://www.doerfelverse.com/art/sensitive-guy.png"/>
+    
+    <!-- Christmas albums for variety -->
+    <podcast:remoteItem feedGuid="a3d6d7d5-4b5d-5161-b119-cf5e99d35fda" feedUrl="https://www.doerfelverse.com/feeds/first-married-christmas.xml" feedImg="https://www.doerfelverse.com/art/first-christmas-art.jpg"/>
+    <podcast:remoteItem feedGuid="f275657c-4b58-563a-ad3b-91b65035b3d8" feedUrl="https://www.doerfelverse.com/feeds/merry-christmix.xml" feedImg="https://www.doerfelverse.com/art/kurtisdrums-christmix.png"/>
+
+  </channel>
+</rss>
