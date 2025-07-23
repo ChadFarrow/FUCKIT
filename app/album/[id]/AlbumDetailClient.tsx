@@ -583,8 +583,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
         </Link>
 
         {/* Album Header */}
-        <div className="flex flex-col md:flex-row gap-8 mb-12">
-          <div className="flex-shrink-0 relative group">
+        <div className="flex flex-col md:flex-row gap-8 mb-12 items-center md:items-start">
+          <div className="flex-shrink-0 relative group mx-auto md:mx-0">
             <Image 
               src={getAlbumArtworkUrl(album.coverArt || '', 'large')} 
               alt={album.title}
@@ -617,7 +617,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             </div>
           </div>
           
-          <div className="flex-1">
+          <div className="flex-1 text-center md:text-left">
             <h1 className="text-4xl font-bold mb-2">{album.title}</h1>
             <p className="text-xl text-gray-400 mb-4">{album.artist}</p>
             
