@@ -353,6 +353,9 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               // Joe Martin (Wavlake) - Complete collection
               'https://www.wavlake.com/feed/95ea253a-4058-402c-8503-204f6d3f1494',
               'https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738',
+              
+              // IROH (Wavlake) - Publisher feed
+              'https://wavlake.com/feed/artist/8a9c2e54-785a-4128-9412-737610f5d00a',
               'https://wavlake.com/feed/music/1c7917cc-357c-4eaf-ab54-1a7cda504976',
               'https://wavlake.com/feed/music/e1f9dfcb-ee9b-4a6d-aee7-189043917fb5',
               'https://wavlake.com/feed/music/d4f791c3-4d0c-4fbd-a543-c136ee78a9de',

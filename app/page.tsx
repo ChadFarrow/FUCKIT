@@ -94,6 +94,9 @@ const feedUrlMappings = [
   // Joe Martin (Wavlake) - verified working
   ['https://www.wavlake.com/feed/95ea253a-4058-402c-8503-204f6d3f1494', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-95ea253a-4058-402c-8503-204f6d3f1494.xml'],
   ['https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-artist-18bcbf10-6701-4ffb-b255-bc057390d738.xml'],
+  
+  // IROH (Wavlake) - verified working
+  ['https://wavlake.com/feed/artist/8a9c2e54-785a-4128-9412-737610f5d00a', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-artist-8a9c2e54-785a-4128-9412-737610f5d00a.xml'],
   ['https://wavlake.com/feed/music/1c7917cc-357c-4eaf-ab54-1a7cda504976', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-1c7917cc-357c-4eaf-ab54-1a7cda504976.xml'],
   ['https://wavlake.com/feed/music/e1f9dfcb-ee9b-4a6d-aee7-189043917fb5', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-e1f9dfcb-ee9b-4a6d-aee7-189043917fb5.xml'],
   ['https://wavlake.com/feed/music/d4f791c3-4d0c-4fbd-a543-c136ee78a9de', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-d4f791c3-4d0c-4fbd-a543-c136ee78a9de.xml'],
@@ -429,7 +432,7 @@ export default function HomePage() {
         
         {/* Header */}
         <header 
-          className="border-b backdrop-blur-sm bg-black/30 pt-safe"
+          className="border-b backdrop-blur-sm bg-black/30 pt-safe-plus pt-12"
           style={{
             borderColor: 'rgba(255, 255, 255, 0.1)'
           }}
