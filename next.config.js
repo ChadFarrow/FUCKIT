@@ -61,12 +61,18 @@ const nextConfig = {
         port: '',
         pathname: '/wp-content/**',
       },
-      {
-        protocol: 'https',
-        hostname: 'feed.falsefinish.club',
-        port: '',
-        pathname: '/**',
-      },
+                      {
+                  protocol: 'https',
+                  hostname: 'feed.falsefinish.club',
+                  port: '',
+                  pathname: '/**',
+                },
+                {
+                  protocol: 'https',
+                  hostname: 'f4.bcbits.com',
+                  port: '',
+                  pathname: '/**',
+                },
       // Bunny.net CDN - Dynamic hostname support
       {
         protocol: 'https',
