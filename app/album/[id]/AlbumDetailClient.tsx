@@ -172,6 +172,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             'into the doerfel-verse': 'https://www.doerfelverse.com/feeds/intothedoerfelverse.xml',
             'into the doerfelverse': 'https://www.doerfelverse.com/feeds/intothedoerfelverse.xml',
             'music from the doerfel-verse': 'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml',
+            'music-from-the-doerfel-verse': 'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml',
             'music from the doerfelverse': 'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml',
             'bloodshot lies': 'https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml',
             'bloodshot lies album': 'https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml',
