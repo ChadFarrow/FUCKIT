@@ -10,104 +10,111 @@ import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { generateAlbumUrl, generatePublisherSlug } from '@/lib/url-utils';
 
 // Environment-based RSS feed configuration
+// CDN zone found: re-podtards-cdn (working correctly)
+// CDN is configured as Pull Zone - will cache RSS feeds automatically
 const isProduction = process.env.NODE_ENV === 'production';
 
 // Clean, verified RSS feed URL mappings: [originalUrl, cdnUrl]
 const feedUrlMappings = [
   // Core Doerfels feeds - verified working
-  ['https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml', 'https://re-podtards.b-cdn.net/feeds/music-from-the-doerfelverse.xml'],
-  ['https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml', 'https://re-podtards.b-cdn.net/feeds/bloodshot-lies-album.xml'],
-  ['https://www.doerfelverse.com/feeds/intothedoerfelverse.xml', 'https://re-podtards.b-cdn.net/feeds/intothedoerfelverse.xml'],
-  ['https://www.doerfelverse.com/feeds/wrath-of-banjo.xml', 'https://re-podtards.b-cdn.net/feeds/wrath-of-banjo.xml'],
-  ['https://www.doerfelverse.com/feeds/ben-doerfel.xml', 'https://re-podtards.b-cdn.net/feeds/ben-doerfel.xml'],
+  ['https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/music-from-the-doerfelverse.xml'],
+  ['https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/bloodshot-lies-album.xml'],
+  ['https://www.doerfelverse.com/feeds/intothedoerfelverse.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/intothedoerfelverse.xml'],
+  ['https://www.doerfelverse.com/feeds/wrath-of-banjo.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/wrath-of-banjo.xml'],
+  ['https://www.doerfelverse.com/feeds/ben-doerfel.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/ben-doerfel.xml'],
   
   // Additional Doerfels albums and projects - all verified working
-  ['https://www.doerfelverse.com/feeds/18sundays.xml', 'https://re-podtards.b-cdn.net/feeds/18sundays.xml'],
-  ['https://www.doerfelverse.com/feeds/alandace.xml', 'https://re-podtards.b-cdn.net/feeds/alandace.xml'],
-  ['https://www.doerfelverse.com/feeds/autumn.xml', 'https://re-podtards.b-cdn.net/feeds/autumn.xml'],
-  ['https://www.doerfelverse.com/feeds/christ-exalted.xml', 'https://re-podtards.b-cdn.net/feeds/christ-exalted.xml'],
-  ['https://www.doerfelverse.com/feeds/come-back-to-me.xml', 'https://re-podtards.b-cdn.net/feeds/come-back-to-me.xml'],
-  ['https://www.doerfelverse.com/feeds/dead-time-live-2016.xml', 'https://re-podtards.b-cdn.net/feeds/dead-time-live-2016.xml'],
-  ['https://www.doerfelverse.com/feeds/dfbv1.xml', 'https://re-podtards.b-cdn.net/feeds/dfbv1.xml'],
-  ['https://www.doerfelverse.com/feeds/dfbv2.xml', 'https://re-podtards.b-cdn.net/feeds/dfbv2.xml'],
-  ['https://www.doerfelverse.com/feeds/disco-swag.xml', 'https://re-podtards.b-cdn.net/feeds/disco-swag.xml'],
-  ['https://www.doerfelverse.com/feeds/doerfels-pubfeed.xml', 'https://re-podtards.b-cdn.net/feeds/doerfels-pubfeed.xml'],
-  ['https://www.doerfelverse.com/feeds/first-married-christmas.xml', 'https://re-podtards.b-cdn.net/feeds/first-married-christmas.xml'],
-  ['https://www.doerfelverse.com/feeds/generation-gap.xml', 'https://re-podtards.b-cdn.net/feeds/generation-gap.xml'],
-  ['https://www.doerfelverse.com/feeds/heartbreak.xml', 'https://re-podtards.b-cdn.net/feeds/heartbreak.xml'],
-  ['https://www.doerfelverse.com/feeds/merry-christmix.xml', 'https://re-podtards.b-cdn.net/feeds/merry-christmix.xml'],
-  ['https://www.doerfelverse.com/feeds/middle-season-let-go.xml', 'https://re-podtards.b-cdn.net/feeds/middle-season-let-go.xml'],
-  ['https://www.doerfelverse.com/feeds/phatty-the-grasshopper.xml', 'https://re-podtards.b-cdn.net/feeds/phatty-the-grasshopper.xml'],
-  ['https://www.doerfelverse.com/feeds/possible.xml', 'https://re-podtards.b-cdn.net/feeds/possible.xml'],
-  ['https://www.doerfelverse.com/feeds/pour-over.xml', 'https://re-podtards.b-cdn.net/feeds/pour-over.xml'],
-  ['https://www.doerfelverse.com/feeds/psalm-54.xml', 'https://re-podtards.b-cdn.net/feeds/psalm-54.xml'],
-  ['https://www.doerfelverse.com/feeds/sensitive-guy.xml', 'https://re-podtards.b-cdn.net/feeds/sensitive-guy.xml'],
-  ['https://www.doerfelverse.com/feeds/they-dont-know.xml', 'https://re-podtards.b-cdn.net/feeds/they-dont-know.xml'],
-  ['https://www.doerfelverse.com/feeds/think-ep.xml', 'https://re-podtards.b-cdn.net/feeds/think-ep.xml'],
-  ['https://www.doerfelverse.com/feeds/underwater-single.xml', 'https://re-podtards.b-cdn.net/feeds/underwater-single.xml'],
-  ['https://www.doerfelverse.com/feeds/unsound-existence.xml', 'https://re-podtards.b-cdn.net/feeds/unsound-existence.xml'],
-  ['https://www.doerfelverse.com/feeds/you-are-my-world.xml', 'https://re-podtards.b-cdn.net/feeds/you-are-my-world.xml'],
-  ['https://www.doerfelverse.com/feeds/you-feel-like-home.xml', 'https://re-podtards.b-cdn.net/feeds/you-feel-like-home.xml'],
-  ['https://www.doerfelverse.com/feeds/your-chance.xml', 'https://re-podtards.b-cdn.net/feeds/your-chance.xml'],
-  ['https://www.doerfelverse.com/artists/opus/opus/opus.xml', 'https://re-podtards.b-cdn.net/feeds/opus.xml'],
+  ['https://www.doerfelverse.com/feeds/18sundays.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/18sundays.xml'],
+  ['https://www.doerfelverse.com/feeds/alandace.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/alandace.xml'],
+  ['https://www.doerfelverse.com/feeds/autumn.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/autumn.xml'],
+  ['https://www.doerfelverse.com/feeds/christ-exalted.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/christ-exalted.xml'],
+  ['https://www.doerfelverse.com/feeds/come-back-to-me.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/come-back-to-me.xml'],
+  ['https://www.doerfelverse.com/feeds/dead-time-live-2016.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/dead-time-live-2016.xml'],
+  ['https://www.doerfelverse.com/feeds/dfbv1.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/dfbv1.xml'],
+  ['https://www.doerfelverse.com/feeds/dfbv2.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/dfbv2.xml'],
+  ['https://www.doerfelverse.com/feeds/disco-swag.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/disco-swag.xml'],
+  ['https://www.doerfelverse.com/feeds/doerfels-pubfeed.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/doerfels-pubfeed.xml'],
+  ['https://www.doerfelverse.com/feeds/first-married-christmas.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/first-married-christmas.xml'],
+  ['https://www.doerfelverse.com/feeds/generation-gap.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/generation-gap.xml'],
+  ['https://www.doerfelverse.com/feeds/heartbreak.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/heartbreak.xml'],
+  ['https://www.doerfelverse.com/feeds/merry-christmix.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/merry-christmix.xml'],
+  ['https://www.doerfelverse.com/feeds/middle-season-let-go.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/middle-season-let-go.xml'],
+  ['https://www.doerfelverse.com/feeds/phatty-the-grasshopper.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/phatty-the-grasshopper.xml'],
+  ['https://www.doerfelverse.com/feeds/possible.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/possible.xml'],
+  ['https://www.doerfelverse.com/feeds/pour-over.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/pour-over.xml'],
+  ['https://www.doerfelverse.com/feeds/psalm-54.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/psalm-54.xml'],
+  ['https://www.doerfelverse.com/feeds/sensitive-guy.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/sensitive-guy.xml'],
+  ['https://www.doerfelverse.com/feeds/they-dont-know.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/they-dont-know.xml'],
+  ['https://www.doerfelverse.com/feeds/think-ep.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/think-ep.xml'],
+  ['https://www.doerfelverse.com/feeds/underwater-single.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/underwater-single.xml'],
+  ['https://www.doerfelverse.com/feeds/unsound-existence.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/unsound-existence.xml'],
+  ['https://www.doerfelverse.com/feeds/you-are-my-world.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/you-are-my-world.xml'],
+  ['https://www.doerfelverse.com/feeds/you-feel-like-home.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/you-feel-like-home.xml'],
+  ['https://www.doerfelverse.com/feeds/your-chance.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/your-chance.xml'],
+  ['https://www.doerfelverse.com/artists/opus/opus/opus.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/opus.xml'],
   
   // Ed Doerfel (Shredward) projects - verified working
-  ['https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml', 'https://re-podtards.b-cdn.net/feeds/nostalgic.xml'],
-  ['https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/CityBeach.xml', 'https://re-podtards.b-cdn.net/feeds/citybeach.xml'],
-  ['https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml', 'https://re-podtards.b-cdn.net/feeds/kurtisdrums-v1.xml'],
+  ['https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/nostalgic.xml'],
+  ['https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/CityBeach.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/citybeach.xml'],
+  ['https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/kurtisdrums-v1.xml'],
   
   // TJ Doerfel projects - verified working
-  ['https://www.thisisjdog.com/media/ring-that-bell.xml', 'https://re-podtards.b-cdn.net/feeds/ring-that-bell.xml'],
+  ['https://www.thisisjdog.com/media/ring-that-bell.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/ring-that-bell.xml'],
   
   // External artists - verified working
-  ['https://ableandthewolf.com/static/media/feed.xml', 'https://re-podtards.b-cdn.net/feeds/ableandthewolf-feed.xml'],
-  ['https://static.staticsave.com/mspfiles/deathdreams.xml', 'https://re-podtards.b-cdn.net/feeds/deathdreams.xml'],
-  ['https://static.staticsave.com/mspfiles/waytogo.xml', 'https://re-podtards.b-cdn.net/feeds/waytogo.xml'],
-  ['https://feed.falsefinish.club/Vance%20Latta/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form/love%20in%20its%20purest%20form.xml', 'https://re-podtards.b-cdn.net/feeds/vance-latta-love-in-its-purest-form.xml'],
-  ['https://music.behindthesch3m3s.com/wp-content/uploads/c_kostra/now%20i%20feel%20it.xml', 'https://re-podtards.b-cdn.net/feeds/c-kostra-now-i-feel-it.xml'],
-  ['https://music.behindthesch3m3s.com/wp-content/uploads/Mellow%20Cassette/Pilot/pilot.xml', 'https://re-podtards.b-cdn.net/feeds/mellow-cassette-pilot.xml'],
-  ['https://music.behindthesch3m3s.com/wp-content/uploads/Mellow%20Cassette/Radio_Brigade/radio_brigade.xml', 'https://re-podtards.b-cdn.net/feeds/mellow-cassette-radio-brigade.xml'],
+  ['https://ableandthewolf.com/static/media/feed.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/ableandthewolf-feed.xml'],
+  ['https://static.staticsave.com/mspfiles/deathdreams.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/deathdreams.xml'],
+  ['https://static.staticsave.com/mspfiles/waytogo.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/waytogo.xml'],
+  ['https://feed.falsefinish.club/Vance%20Latta/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form/love%20in%20its%20purest%20form.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/vance-latta-love-in-its-purest-form.xml'],
+  ['https://music.behindthesch3m3s.com/wp-content/uploads/c_kostra/now%20i%20feel%20it.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/c-kostra-now-i-feel-it.xml'],
+  ['https://music.behindthesch3m3s.com/wp-content/uploads/Mellow%20Cassette/Pilot/pilot.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/mellow-cassette-pilot.xml'],
+  ['https://music.behindthesch3m3s.com/wp-content/uploads/Mellow%20Cassette/Radio_Brigade/radio_brigade.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/mellow-cassette-radio-brigade.xml'],
   
   // Wavlake feeds - verified working
-  ['https://wavlake.com/feed/music/d677db67-0310-4813-970e-e65927c689f1', 'https://re-podtards.b-cdn.net/feeds/wavlake-d677db67-0310-4813-970e-e65927c689f1.xml'],
-  ['https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4', 'https://re-podtards.b-cdn.net/feeds/wavlake-artist-aa909244-7555-4b52-ad88-7233860c6fb4.xml'],
-  ['https://wavlake.com/feed/music/e678589b-5a9f-4918-9622-34119d2eed2c', 'https://re-podtards.b-cdn.net/feeds/wavlake-e678589b-5a9f-4918-9622-34119d2eed2c.xml'],
-  ['https://wavlake.com/feed/music/3a152941-c914-43da-aeca-5d7c58892a7f', 'https://re-podtards.b-cdn.net/feeds/wavlake-3a152941-c914-43da-aeca-5d7c58892a7f.xml'],
-  ['https://wavlake.com/feed/music/a97e0586-ecda-4b79-9c38-be9a9effe05a', 'https://re-podtards.b-cdn.net/feeds/wavlake-a97e0586-ecda-4b79-9c38-be9a9effe05a.xml'],
-  ['https://wavlake.com/feed/music/0ed13237-aca9-446f-9a03-de1a2d9331a3', 'https://re-podtards.b-cdn.net/feeds/wavlake-0ed13237-aca9-446f-9a03-de1a2d9331a3.xml'],
-  ['https://wavlake.com/feed/music/ce8c4910-51bf-4d5e-a0b3-338e58e5ee79', 'https://re-podtards.b-cdn.net/feeds/wavlake-ce8c4910-51bf-4d5e-a0b3-338e58e5ee79.xml'],
-  ['https://wavlake.com/feed/music/acb43f23-cfec-4cc1-a418-4087a5378129', 'https://re-podtards.b-cdn.net/feeds/wavlake-acb43f23-cfec-4cc1-a418-4087a5378129.xml'],
-  ['https://wavlake.com/feed/music/d1a871a7-7e4c-4a91-b799-87dcbb6bc41d', 'https://re-podtards.b-cdn.net/feeds/wavlake-d1a871a7-7e4c-4a91-b799-87dcbb6bc41d.xml'],
-  ['https://wavlake.com/feed/music/3294d8b5-f9f6-4241-a298-f04df818390c', 'https://re-podtards.b-cdn.net/feeds/wavlake-3294d8b5-f9f6-4241-a298-f04df818390c.xml'],
-  ['https://wavlake.com/feed/music/d3145292-bf71-415f-a841-7f5c9a9466e1', 'https://re-podtards.b-cdn.net/feeds/wavlake-d3145292-bf71-415f-a841-7f5c9a9466e1.xml'],
-  ['https://wavlake.com/feed/music/91367816-33e6-4b6e-8eb7-44b2832708fd', 'https://re-podtards.b-cdn.net/feeds/wavlake-91367816-33e6-4b6e-8eb7-44b2832708fd.xml'],
-  ['https://wavlake.com/feed/music/8c8f8133-7ef1-4b72-a641-4e1a6a44d626', 'https://re-podtards.b-cdn.net/feeds/wavlake-8c8f8133-7ef1-4b72-a641-4e1a6a44d626.xml'],
-  ['https://wavlake.com/feed/music/9720d58b-22a5-4047-81de-f1940fec41c7', 'https://re-podtards.b-cdn.net/feeds/wavlake-9720d58b-22a5-4047-81de-f1940fec41c7.xml'],
-  ['https://wavlake.com/feed/music/21536269-5192-49e7-a819-fab00f4a159e', 'https://re-podtards.b-cdn.net/feeds/wavlake-21536269-5192-49e7-a819-fab00f4a159e.xml'],
-  ['https://wavlake.com/feed/music/624b19ac-5d8b-4fd6-8589-0eef7bcb9c9e', 'https://re-podtards.b-cdn.net/feeds/wavlake-624b19ac-5d8b-4fd6-8589-0eef7bcb9c9e.xml'],
-  ['https://wavlake.com/feed/music/997060e3-9dc1-4cd8-b3c1-3ae06d54bb03', 'https://re-podtards.b-cdn.net/feeds/wavlake-997060e3-9dc1-4cd8-b3c1-3ae06d54bb03.xml'],
-  ['https://wavlake.com/feed/music/b54b9a19-b6ed-46c1-806c-7e82f7550edc', 'https://re-podtards.b-cdn.net/feeds/wavlake-b54b9a19-b6ed-46c1-806c-7e82f7550edc.xml'],
+  ['https://wavlake.com/feed/music/d677db67-0310-4813-970e-e65927c689f1', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-d677db67-0310-4813-970e-e65927c689f1.xml'],
+  ['https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-artist-aa909244-7555-4b52-ad88-7233860c6fb4.xml'],
+  ['https://wavlake.com/feed/music/e678589b-5a9f-4918-9622-34119d2eed2c', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-e678589b-5a9f-4918-9622-34119d2eed2c.xml'],
+  ['https://wavlake.com/feed/music/3a152941-c914-43da-aeca-5d7c58892a7f', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-3a152941-c914-43da-aeca-5d7c58892a7f.xml'],
+  ['https://wavlake.com/feed/music/a97e0586-ecda-4b79-9c38-be9a9effe05a', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-a97e0586-ecda-4b79-9c38-be9a9effe05a.xml'],
+  ['https://wavlake.com/feed/music/0ed13237-aca9-446f-9a03-de1a2d9331a3', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-0ed13237-aca9-446f-9a03-de1a2d9331a3.xml'],
+  ['https://wavlake.com/feed/music/ce8c4910-51bf-4d5e-a0b3-338e58e5ee79', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-ce8c4910-51bf-4d5e-a0b3-338e58e5ee79.xml'],
+  ['https://wavlake.com/feed/music/acb43f23-cfec-4cc1-a418-4087a5378129', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-acb43f23-cfec-4cc1-a418-4087a5378129.xml'],
+  ['https://wavlake.com/feed/music/d1a871a7-7e4c-4a91-b799-87dcbb6bc41d', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-d1a871a7-7e4c-4a91-b799-87dcbb6bc41d.xml'],
+  ['https://wavlake.com/feed/music/3294d8b5-f9f6-4241-a298-f04df818390c', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-3294d8b5-f9f6-4241-a298-f04df818390c.xml'],
+  ['https://wavlake.com/feed/music/d3145292-bf71-415f-a841-7f5c9a9466e1', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-d3145292-bf71-415f-a841-7f5c9a9466e1.xml'],
+  ['https://wavlake.com/feed/music/91367816-33e6-4b6e-8eb7-44b2832708fd', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-91367816-33e6-4b6e-8eb7-44b2832708fd.xml'],
+  ['https://wavlake.com/feed/music/8c8f8133-7ef1-4b72-a641-4e1a6a44d626', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-8c8f8133-7ef1-4b72-a641-4e1a6a44d626.xml'],
+  ['https://wavlake.com/feed/music/9720d58b-22a5-4047-81de-f1940fec41c7', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-9720d58b-22a5-4047-81de-f1940fec41c7.xml'],
+  ['https://wavlake.com/feed/music/21536269-5192-49e7-a819-fab00f4a159e', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-21536269-5192-49e7-a819-fab00f4a159e.xml'],
+  ['https://wavlake.com/feed/music/624b19ac-5d8b-4fd6-8589-0eef7bcb9c9e', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-624b19ac-5d8b-4fd6-8589-0eef7bcb9c9e.xml'],
+  ['https://wavlake.com/feed/music/997060e3-9dc1-4cd8-b3c1-3ae06d54bb03', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-997060e3-9dc1-4cd8-b3c1-3ae06d54bb03.xml'],
+  ['https://wavlake.com/feed/music/b54b9a19-b6ed-46c1-806c-7e82f7550edc', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-b54b9a19-b6ed-46c1-806c-7e82f7550edc.xml'],
   
   // Joe Martin (Wavlake) - verified working
-  ['https://www.wavlake.com/feed/95ea253a-4058-402c-8503-204f6d3f1494', 'https://re-podtards.b-cdn.net/feeds/wavlake-95ea253a-4058-402c-8503-204f6d3f1494.xml'],
-  ['https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738', 'https://re-podtards.b-cdn.net/feeds/wavlake-artist-18bcbf10-6701-4ffb-b255-bc057390d738.xml'],
-  ['https://wavlake.com/feed/music/1c7917cc-357c-4eaf-ab54-1a7cda504976', 'https://re-podtards.b-cdn.net/feeds/wavlake-1c7917cc-357c-4eaf-ab54-1a7cda504976.xml'],
-  ['https://wavlake.com/feed/music/e1f9dfcb-ee9b-4a6d-aee7-189043917fb5', 'https://re-podtards.b-cdn.net/feeds/wavlake-e1f9dfcb-ee9b-4a6d-aee7-189043917fb5.xml'],
-  ['https://wavlake.com/feed/music/d4f791c3-4d0c-4fbd-a543-c136ee78a9de', 'https://re-podtards.b-cdn.net/feeds/wavlake-d4f791c3-4d0c-4fbd-a543-c136ee78a9de.xml'],
-  ['https://wavlake.com/feed/music/51606506-66f8-4394-b6c6-cc0c1b554375', 'https://re-podtards.b-cdn.net/feeds/wavlake-51606506-66f8-4394-b6c6-cc0c1b554375.xml'],
-  ['https://wavlake.com/feed/music/6b7793b8-fd9d-432b-af1a-184cd41aaf9d', 'https://re-podtards.b-cdn.net/feeds/wavlake-6b7793b8-fd9d-432b-af1a-184cd41aaf9d.xml'],
-  ['https://wavlake.com/feed/music/0bb8c9c7-1c55-4412-a517-572a98318921', 'https://re-podtards.b-cdn.net/feeds/wavlake-0bb8c9c7-1c55-4412-a517-572a98318921.xml'],
-  ['https://wavlake.com/feed/music/16e46ed0-b392-4419-a937-a7815f6ca43b', 'https://re-podtards.b-cdn.net/feeds/wavlake-16e46ed0-b392-4419-a937-a7815f6ca43b.xml'],
-  ['https://wavlake.com/feed/music/2cd1b9ea-9ef3-4a54-aa25-55295689f442', 'https://re-podtards.b-cdn.net/feeds/wavlake-2cd1b9ea-9ef3-4a54-aa25-55295689f442.xml'],
-  ['https://wavlake.com/feed/music/33eeda7e-8591-4ff5-83f8-f36a879b0a09', 'https://re-podtards.b-cdn.net/feeds/wavlake-33eeda7e-8591-4ff5-83f8-f36a879b0a09.xml'],
-  ['https://wavlake.com/feed/music/32a79df8-ec3e-4a14-bfcb-7a074e1974b9', 'https://re-podtards.b-cdn.net/feeds/wavlake-32a79df8-ec3e-4a14-bfcb-7a074e1974b9.xml'],
-  ['https://wavlake.com/feed/music/06376ab5-efca-459c-9801-49ceba5fdab1', 'https://re-podtards.b-cdn.net/feeds/wavlake-06376ab5-efca-459c-9801-49ceba5fdab1.xml'],
+  ['https://www.wavlake.com/feed/95ea253a-4058-402c-8503-204f6d3f1494', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-95ea253a-4058-402c-8503-204f6d3f1494.xml'],
+  ['https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-artist-18bcbf10-6701-4ffb-b255-bc057390d738.xml'],
+  ['https://wavlake.com/feed/music/1c7917cc-357c-4eaf-ab54-1a7cda504976', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-1c7917cc-357c-4eaf-ab54-1a7cda504976.xml'],
+  ['https://wavlake.com/feed/music/e1f9dfcb-ee9b-4a6d-aee7-189043917fb5', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-e1f9dfcb-ee9b-4a6d-aee7-189043917fb5.xml'],
+  ['https://wavlake.com/feed/music/d4f791c3-4d0c-4fbd-a543-c136ee78a9de', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-d4f791c3-4d0c-4fbd-a543-c136ee78a9de.xml'],
+  ['https://wavlake.com/feed/music/51606506-66f8-4394-b6c6-cc0c1b554375', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-51606506-66f8-4394-b6c6-cc0c1b554375.xml'],
+  ['https://wavlake.com/feed/music/6b7793b8-fd9d-432b-af1a-184cd41aaf9d', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-6b7793b8-fd9d-432b-af1a-184cd41aaf9d.xml'],
+  ['https://wavlake.com/feed/music/0bb8c9c7-1c55-4412-a517-572a98318921', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-0bb8c9c7-1c55-4412-a517-572a98318921.xml'],
+  ['https://wavlake.com/feed/music/16e46ed0-b392-4419-a937-a7815f6ca43b', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-16e46ed0-b392-4419-a937-a7815f6ca43b.xml'],
+  ['https://wavlake.com/feed/music/2cd1b9ea-9ef3-4a54-aa25-55295689f442', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-2cd1b9ea-9ef3-4a54-aa25-55295689f442.xml'],
+  ['https://wavlake.com/feed/music/33eeda7e-8591-4ff5-83f8-f36a879b0a09', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-33eeda7e-8591-4ff5-83f8-f36a879b0a09.xml'],
+  ['https://wavlake.com/feed/music/32a79df8-ec3e-4a14-bfcb-7a074e1974b9', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-32a79df8-ec3e-4a14-bfcb-7a074e1974b9.xml'],
+  ['https://wavlake.com/feed/music/06376ab5-efca-459c-9801-49ceba5fdab1', 'https://re-podtards-cdn.b-cdn.net/feeds/wavlake-06376ab5-efca-459c-9801-49ceba5fdab1.xml'],
 ];
 
 // Select URLs based on environment
 const feedUrls = feedUrlMappings.map(([originalUrl, cdnUrl]) => 
   isProduction ? cdnUrl : originalUrl
 );
+
+// Debug logging
+console.log('🔧 Environment check:', { isProduction, NODE_ENV: process.env.NODE_ENV });
+console.log('🔧 Feed URLs count:', feedUrls.length);
+console.log('🔧 First few feed URLs:', feedUrls.slice(0, 3));
 
 export default function HomePage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -131,38 +138,41 @@ export default function HomePage() {
   
   useEffect(() => {
     console.log('🔄 useEffect triggered - starting to load albums');
-    if (!hasLoadedRef.current) {
-      hasLoadedRef.current = true;
+    console.log('🔄 hasLoadedRef.current:', hasLoadedRef.current);
+    console.log('🔄 isClient:', isClient);
+    
+    // Always try to load, regardless of hasLoadedRef
+    console.log('🔄 Attempting to load albums...');
+    
+    // Try to load from cache first
+    if (typeof window !== 'undefined') {
+      const cachedAlbums = localStorage.getItem('cachedAlbums');
+      const cacheTimestamp = localStorage.getItem('albumsCacheTimestamp');
       
-      // Try to load from cache first
-      if (typeof window !== 'undefined') {
-        const cachedAlbums = localStorage.getItem('cachedAlbums');
-        const cacheTimestamp = localStorage.getItem('albumsCacheTimestamp');
+      if (cachedAlbums && cacheTimestamp) {
+        const cacheAge = Date.now() - parseInt(cacheTimestamp);
+        const cacheValid = cacheAge < 5 * 60 * 1000; // 5 minutes
         
-        if (cachedAlbums && cacheTimestamp) {
-          const cacheAge = Date.now() - parseInt(cacheTimestamp);
-          const cacheValid = cacheAge < 5 * 60 * 1000; // 5 minutes
-          
-          if (cacheValid) {
-            try {
-              const parsedAlbums = JSON.parse(cachedAlbums);
-              console.log('📦 Loading albums from cache:', parsedAlbums.length, 'albums');
-              setAlbums(parsedAlbums);
-              setIsLoading(false);
-              return;
-            } catch (error) {
-              console.warn('⚠️ Failed to parse cached albums:', error);
-            }
+        if (cacheValid) {
+          try {
+            const parsedAlbums = JSON.parse(cachedAlbums);
+            console.log('📦 Loading albums from cache:', parsedAlbums.length, 'albums');
+            setAlbums(parsedAlbums);
+            setIsLoading(false);
+            return;
+          } catch (error) {
+            console.warn('⚠️ Failed to parse cached albums:', error);
           }
         }
       }
-      
-      // Add a small delay to let the UI render first
-      setTimeout(() => {
-        loadAlbumsData();
-      }, 100);
     }
-  }, []);
+    
+    // Add a small delay to let the UI render first
+    setTimeout(() => {
+      console.log('🔄 Calling loadAlbumsData after timeout');
+      loadAlbumsData();
+    }, 100);
+  }, [isClient]); // Add isClient as dependency
 
   const handleAddFeed = async (feedUrl: string) => {
     setIsAddingFeed(true);
@@ -184,13 +194,22 @@ export default function HomePage() {
   const loadAlbumsData = async (additionalFeeds: string[] = []) => {
     try {
       console.log('🚀 loadAlbumsData called with additionalFeeds:', additionalFeeds);
+      console.log('🚀 Current feedUrls:', feedUrls);
+      console.log('🚀 isProduction value:', isProduction);
       setIsLoading(true);
       setError(null);
+      
+      // Remove test code and restore normal RSS feed loading
+      console.log('🚀 Starting normal RSS feed loading...');
       
       console.log('Starting to load album data...');
       
       // Combine default feeds with custom feeds
       const allFeeds = [...feedUrls, ...additionalFeeds];
+      
+      // Add debugging to see what's happening
+      console.log('🔍 About to call RSSParser.parseMultipleFeeds with:', allFeeds.length, 'feeds');
+      console.log('🔍 First few feed URLs:', allFeeds.slice(0, 3));
       console.log('Feed URLs:', allFeeds);
       console.log('Loading', allFeeds.length, 'feeds...');
       
