@@ -184,7 +184,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             'empty passenger seat': 'https://www.wavlake.com/feed/95ea253a-4058-402c-8503-204f6d3f1494',
             'joe martin': 'https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738',
             'stay awhile': 'https://ableandthewolf.com/static/media/feed.xml',
-            'now i feel it': 'https://music.behindthesch3m3s.com/wp-content/uploads/c_kostra/now%20i%20feel%20it.xml'
+            'now i feel it': 'https://music.behindthesch3m3s.com/wp-content/uploads/c_kostra/now i feel it.xml'
           };
           
           // Convert URL slug back to title format (e.g., "stay-awhile" -> "stay awhile")
@@ -255,7 +255,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               'https://static.staticsave.com/mspfiles/deathdreams.xml',
               'https://static.staticsave.com/mspfiles/waytogo.xml',
               'https://feed.falsefinish.club/Vance%20Latta/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form/love%20in%20its%20purest%20form.xml',
-              'https://music.behindthesch3m3s.com/wp-content/uploads/c_kostra/now%20i%20feel%20it.xml',
+              'https://music.behindthesch3m3s.com/wp-content/uploads/c_kostra/now i feel it.xml',
               'https://music.behindthesch3m3s.com/wp-content/uploads/Mellow%20Cassette/Pilot/pilot.xml',
               'https://music.behindthesch3m3s.com/wp-content/uploads/Mellow%20Cassette/Radio_Brigade/radio_brigade.xml',
               
