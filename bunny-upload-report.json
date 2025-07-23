@@ -1,9 +1,9 @@
 {
   "totalFeeds": 36,
-  "processedFeeds": 35,
-  "totalImages": 125,
-  "uploadedImages": 124,
-  "failedImages": 1,
+  "processedFeeds": 36,
+  "totalImages": 126,
+  "uploadedImages": 126,
+  "failedImages": 0,
   "albums": [
     {
       "title": "Music From The Doerfel-Verse",
@@ -569,8 +569,19 @@
         {
           "originalImage": "https://www.doerfelverse.com/art/theydontknowart.png",
           "cdnImage": "https://re-podtards.b-cdn.net/albums/your-chance-track.png"
+        },
+        {
+          "originalImage": "https://www.doerfelverse.com/art/worth-fighting-for.png",
+          "cdnImage": "https://re-podtards.b-cdn.net/albums/your-chance-track.png"
         }
       ]
+    },
+    {
+      "title": "Nostalgic",
+      "artist": "CityBeach",
+      "originalArtwork": "https://www.doerfelverse.com/art/nostalgic.png",
+      "cdnArtwork": "https://re-podtards.b-cdn.net/albums/nostalgic-artwork.png",
+      "tracks": []
     },
     {
       "title": "CityBeach",

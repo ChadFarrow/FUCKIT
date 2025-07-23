@@ -80,6 +80,16 @@
   .pb-safe-plus {
     padding-bottom: calc(1rem + env(safe-area-inset-bottom));
   }
+  
+  /* Top safe area for iPhone dynamic island */
+  .pt-safe {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  /* Add extra padding on top of safe area for better spacing */
+  .pt-safe-plus {
+    padding-top: calc(1rem + env(safe-area-inset-top));
+  }
 }
 
 /* PWA Standalone Mode Adjustments */
