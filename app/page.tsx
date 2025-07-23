@@ -907,8 +907,8 @@ export default function HomePage() {
 
 {/* Now Playing Bar - Fixed at bottom */}
 {currentPlayingAlbum && (
-  <div className="fixed bottom-0 left-0 right-0 bg-black/90 backdrop-blur-sm border-t border-gray-700 p-4 z-50">
-    <div className="container mx-auto flex items-center gap-4">
+  <div className="fixed bottom-0 left-0 right-0 backdrop-blur-md bg-gradient-to-t from-black/60 via-black/40 to-transparent border-t border-white/10 p-4 z-50 shadow-2xl">
+    <div className="container mx-auto flex items-center gap-4 bg-white/5 rounded-xl p-4 backdrop-blur-sm border border-white/10">
       {/* Current Album Info */}
       <div className="flex items-center gap-3 min-w-0 flex-1">
         {(() => {
