@@ -540,7 +540,24 @@ export class RSSParser {
       const batch = feedUrls.slice(i, i + batchSize);
       console.log(`📦 Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(feedUrls.length / batchSize)} (${batch.length} feeds)`);
       
-      const promises = batch.map(url => this.parseAlbumFeed(url));
+      const promises = batch.map(async (url) => {
+        try {
+          return await this.parseAlbumFeed(url);
+        } catch (error) {
+          // Enhanced error handling for NetworkError
+          if (error instanceof TypeError && error.message.includes('NetworkError')) {
+            console.error(`❌ NetworkError when attempting to fetch resource.`);
+            console.log('🔍 Error details:', {
+              message: error.message,
+              stack: error.stack,
+              feedUrl: url
+            });
+            return null;
+          }
+          throw error;
+        }
+      });
+      
       const batchResults = await Promise.allSettled(promises);
       
       const successful = batchResults.filter((result): result is PromiseFulfilledResult<RSSAlbum> => 

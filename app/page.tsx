@@ -67,7 +67,8 @@ const feedUrlMappings = [
   ['https://ableandthewolf.com/static/media/feed.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/ableandthewolf-feed.xml'],
   ['https://static.staticsave.com/mspfiles/deathdreams.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/deathdreams.xml'],
   ['https://static.staticsave.com/mspfiles/waytogo.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/waytogo.xml'],
-  ['https://feed.falsefinish.club/Vance%20Latta/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form/love%20in%20its%20purest%20form.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/vance-latta-love-in-its-purest-form.xml'],
+  // Temporarily disabled due to NetworkError issues
+  // ['https://feed.falsefinish.club/Vance%20Latta/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form/love%20in%20its%20purest%20form.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/vance-latta-love-in-its-purest-form.xml'],
   ['https://music.behindthesch3m3s.com/wp-content/uploads/c_kostra/now%20i%20feel%20it.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/c-kostra-now-i-feel-it.xml'],
   ['https://music.behindthesch3m3s.com/wp-content/uploads/Mellow%20Cassette/Pilot/pilot.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/mellow-cassette-pilot.xml'],
   ['https://music.behindthesch3m3s.com/wp-content/uploads/Mellow%20Cassette/Radio_Brigade/radio_brigade.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/mellow-cassette-radio-brigade.xml'],
