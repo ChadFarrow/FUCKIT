@@ -366,7 +366,12 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen text-white bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <div 
+      className="min-h-screen text-white relative"
+      style={{
+        background: 'linear-gradient(to br, rgb(17, 24, 39), rgb(31, 41, 55), rgb(17, 24, 39))'
+      }}
+    >
       {/* Hidden audio element for main page playback */}
       <audio
         ref={audioRef}
