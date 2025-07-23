@@ -97,6 +97,12 @@ export const KNOWN_PUBLISHERS: { [slug: string]: { feedGuid: string; feedUrl: st
     feedUrl: 'https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738',
     name: 'Joe Martin'
   },
+  // IROH
+  'iroh': {
+    feedGuid: '8a9c2e54-785a-4128-9412-737610f5d00a',
+    feedUrl: 'https://wavlake.com/feed/artist/8a9c2e54-785a-4128-9412-737610f5d00a',
+    name: 'IROH'
+  },
   // Fallback for UUID-based URLs (backward compatibility)
   '18bcbf10': {
     feedGuid: '18bcbf10-6701-4ffb-b255-bc057390d738',
@@ -107,6 +113,11 @@ export const KNOWN_PUBLISHERS: { [slug: string]: { feedGuid: string; feedUrl: st
     feedGuid: 'aa909244-7555-4b52-ad88-7233860c6fb4',
     feedUrl: 'https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4',
     name: 'Nate Johnivan'
+  },
+  '8a9c2e54': {
+    feedGuid: '8a9c2e54-785a-4128-9412-737610f5d00a',
+    feedUrl: 'https://wavlake.com/feed/artist/8a9c2e54-785a-4128-9412-737610f5d00a',
+    name: 'IROH'
   }
 };
 
