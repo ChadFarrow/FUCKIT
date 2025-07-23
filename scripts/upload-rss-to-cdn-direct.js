@@ -1,15 +1,28 @@
-const fs = require('fs');
-const path = require('path');
-require('dotenv').config({ path: '.env.local' });
+#!/usr/bin/env node
 
-// CDN Configuration
-const CDN_HOSTNAME = 're-podtards-cdn.b-cdn.net';
-const CDN_ZONE = 're-podtards-cdn';
+/**
+ * Upload RSS Feeds Directly to Bunny.net CDN
+ * This script uploads RSS feeds directly to the CDN zone instead of using Storage
+ */
+
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config({ path: '.env.local' });
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Configuration
 const CDN_API_KEY = process.env.BUNNY_CDN_API_KEY;
+const CDN_ZONE_ID = process.env.BUNNY_CDN_ZONE_ID || '4228588'; // From the CDN headers
+const CDN_HOSTNAME = process.env.BUNNY_CDN_HOSTNAME || 're-podtards-cdn.b-cdn.net';
 
-// RSS Feed URLs
-const feedUrls = [
-  // Doerfelverse feeds
+// RSS feeds to upload
+const RSS_FEEDS = [
   'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml',
   'https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml',
   'https://www.doerfelverse.com/feeds/intothedoerfelverse.xml',
@@ -42,162 +55,126 @@ const feedUrls = [
   'https://www.doerfelverse.com/feeds/you-are-my-world.xml',
   'https://www.doerfelverse.com/feeds/you-feel-like-home.xml',
   'https://www.doerfelverse.com/feeds/your-chance.xml',
-  
-  // External feeds
   'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml',
   'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/CityBeach.xml',
   'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml',
   'https://www.thisisjdog.com/media/ring-that-bell.xml',
-  
-  // Wavlake feeds
-  'https://wavlake.com/feed/music/d677db67-0310-4813-970e-e65927c689f1',
-  'https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4',
-  'https://wavlake.com/feed/music/e678589b-5a9f-4918-9622-34119d2eed2c',
-  'https://wavlake.com/feed/music/3a152941-c914-43da-aeca-5d7c58892a7f',
-  'https://wavlake.com/feed/music/a97e0586-ecda-4b79-9c38-be9a9effe05a',
-  'https://wavlake.com/feed/music/0ed13237-aca9-446f-9a03-de1a2d9331a3',
-  'https://wavlake.com/feed/music/ce8c4910-51bf-4d5e-a0b3-338e58e5ee79',
-  'https://wavlake.com/feed/music/acb43f23-cfec-4cc1-a418-4087a5378129',
-  'https://wavlake.com/feed/music/d1a871a7-7e4c-4a91-b799-87dcbb6bc41d',
-  'https://wavlake.com/feed/music/3294d8b5-f9f6-4241-a298-f04df818390c',
-  'https://wavlake.com/feed/music/d3145292-bf71-415f-a841-7f5c9a9466e1',
-  'https://wavlake.com/feed/music/91367816-33e6-4b6e-8eb7-44b2832708fd',
-  'https://wavlake.com/feed/music/8c8f8133-7ef1-4b72-a641-4e1a6a44d626',
-  'https://wavlake.com/feed/music/9720d58b-22a5-4047-81de-f1940fec41c7',
-  'https://wavlake.com/feed/music/21536269-5192-49e7-a819-fab00f4a159e',
-  'https://wavlake.com/feed/music/624b19ac-5d8b-4fd6-8589-0eef7bcb9c9e',
-  'https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738',
-  'https://wavlake.com/feed/music/1c7917cc-357c-4eaf-ab54-1a7cda504976',
-  'https://wavlake.com/feed/music/e1f9dfcb-ee9b-4a6d-aee7-189043917fb5',
-  'https://wavlake.com/feed/music/d4f791c3-4d0c-4fbd-a543-c136ee78a9de',
-  'https://wavlake.com/feed/music/51606506-66f8-4394-b6c6-cc0c1b554375',
-  'https://wavlake.com/feed/music/6b7793b8-fd9d-432b-af1a-184cd41aaf9d',
-  'https://wavlake.com/feed/music/0bb8c9c7-1c55-4412-a517-572a98318921',
-  'https://wavlake.com/feed/music/16e46ed0-b392-4419-a937-a7815f6ca43b',
-  'https://wavlake.com/feed/music/2cd1b9ea-9ef3-4a54-aa25-55295689f442',
-  'https://wavlake.com/feed/music/33eeda7e-8591-4ff5-83f8-f36a879b0a09',
-  'https://wavlake.com/feed/music/32a79df8-ec3e-4a14-bfcb-7a074e1974b9',
-  'https://wavlake.com/feed/music/06376ab5-efca-459c-9801-49ceba5fdab1',
-  
-  // IROH feed
-  'https://wavlake.com/feed/artist/8a9c2e54-785a-4128-9412-737610f5d00a'
+  'https://ableandthewolf.com/static/media/feed.xml',
+  'https://static.staticsave.com/mspfiles/deathdreams.xml',
+  'https://static.staticsave.com/mspfiles/waytogo.xml',
+  'https://music.behindthesch3m3s.com/wp-content/uploads/c_kostra/now%20i%20feel%20it.xml',
+  'https://music.behindthesch3m3s.com/wp-content/uploads/Mellow%20Cassette/Pilot/pilot.xml',
+  'https://music.behindthesch3m3s.com/wp-content/uploads/Mellow%20Cassette/Radio_Brigade/radio_brigade.xml'
 ];
 
-async function downloadFeed(url) {
+// Generate CDN filenames
+function generateCdnFilename(originalUrl) {
+  const url = new URL(originalUrl);
+  const pathname = url.pathname;
+  const filename = pathname.split('/').pop();
+  
+  // Clean up filename for CDN
+  let cleanName = filename.replace(/[^a-zA-Z0-9.-]/g, '-');
+  if (!cleanName.endsWith('.xml')) {
+    cleanName += '.xml';
+  }
+  
+  return `feeds/${cleanName}`;
+}
+
+// Fetch RSS feed content
+async function fetchRssFeed(url) {
   try {
+    console.log(`📡 Fetching: ${url}`);
     const response = await fetch(url);
+    
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
-    return await response.text();
+    
+    const content = await response.text();
+    console.log(`✅ Fetched ${content.length} characters`);
+    return content;
   } catch (error) {
-    console.error(`❌ Failed to download ${url}:`, error.message);
+    console.error(`❌ Failed to fetch ${url}:`, error.message);
     return null;
   }
 }
 
-async function uploadToCDN(fileName, content) {
+// Upload to CDN via API
+async function uploadToCdn(filename, content) {
   try {
-    const response = await fetch(`https://${CDN_HOSTNAME}/${fileName}`, {
+    const uploadUrl = `https://api.bunny.net/storagezone/${CDN_ZONE_ID}/files/${filename}`;
+    
+    const response = await fetch(uploadUrl, {
       method: 'PUT',
       headers: {
         'AccessKey': CDN_API_KEY,
         'Content-Type': 'application/xml',
-        'Cache-Control': 'public, max-age=3600'
+        'Content-Length': content.length.toString()
       },
       body: content
     });
-
+    
     if (response.ok) {
-      return `https://${CDN_HOSTNAME}/${fileName}`;
+      console.log(`✅ Uploaded: ${filename}`);
+      return true;
     } else {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      const errorText = await response.text();
+      console.error(`❌ Upload failed for ${filename}: ${response.status} - ${errorText}`);
+      return false;
     }
   } catch (error) {
-    console.error(`❌ Failed to upload ${fileName}:`, error.message);
-    return null;
+    console.error(`❌ Upload error for ${filename}:`, error.message);
+    return false;
   }
 }
 
-function getFileName(url) {
-  const urlObj = new URL(url);
-  const pathParts = urlObj.pathname.split('/');
-  let fileName = pathParts[pathParts.length - 1];
+// Main upload function
+async function uploadRssFeeds() {
+  console.log('🚀 Starting RSS Feed Upload to CDN...\n');
   
-  // Handle Wavlake feeds
-  if (url.includes('wavlake.com')) {
-    const feedId = url.split('/').pop();
-    fileName = `wavlake-${feedId}.xml`;
-  }
-  
-  // Ensure .xml extension
-  if (!fileName.endsWith('.xml')) {
-    fileName += '.xml';
-  }
-  
-  return `feeds/${fileName}`;
-}
-
-async function main() {
-  console.log('🚀 Starting RSS feed upload to CDN...\n');
-  console.log(`📡 CDN Configuration:`);
-  console.log(`   Hostname: ${CDN_HOSTNAME}`);
-  console.log(`   Zone: ${CDN_ZONE}`);
-  console.log(`   API Key: ${CDN_API_KEY ? '✅ Set' : '❌ Missing'}\n`);
-
   if (!CDN_API_KEY) {
-    console.error('❌ CDN API key not found in .env.local');
+    console.error('❌ BUNNY_CDN_API_KEY not found in environment variables');
     process.exit(1);
   }
-
+  
+  console.log(`📦 CDN Zone ID: ${CDN_ZONE_ID}`);
+  console.log(`🌐 CDN Hostname: ${CDN_HOSTNAME}\n`);
+  
   let successCount = 0;
   let failCount = 0;
-
-  for (let i = 0; i < feedUrls.length; i++) {
-    const url = feedUrls[i];
-    const fileName = getFileName(url);
+  
+  for (const feedUrl of RSS_FEEDS) {
+    const content = await fetchRssFeed(feedUrl);
     
-    console.log(`📄 Processing [${i + 1}/${feedUrls.length}]: ${fileName}`);
-    
-    // Download feed
-    console.log(`📥 Downloading: ${url}`);
-    const content = await downloadFeed(url);
-    
-    if (!content) {
-      console.log(`❌ Skipping ${fileName} due to download failure\n`);
-      failCount++;
-      continue;
-    }
-    
-    console.log(`✅ Downloaded ${content.length} bytes`);
-    
-    // Upload to CDN
-    console.log(`📤 Uploading to CDN: ${fileName}`);
-    const cdnUrl = await uploadToCDN(fileName, content);
-    
-    if (cdnUrl) {
-      console.log(`✅ Uploaded successfully: ${cdnUrl}`);
-      successCount++;
+    if (content) {
+      const filename = generateCdnFilename(feedUrl);
+      const success = await uploadToCdn(filename, content);
+      
+      if (success) {
+        successCount++;
+      } else {
+        failCount++;
+      }
     } else {
-      console.log(`❌ Upload failed for ${fileName}`);
       failCount++;
     }
     
-    console.log(`📊 Progress: ${i + 1}/${feedUrls.length} complete\n`);
+    // Small delay to avoid rate limiting
+    await new Promise(resolve => setTimeout(resolve, 100));
   }
-
-  console.log('============================================================');
-  console.log('📊 UPLOAD SUMMARY');
-  console.log('============================================================');
-  console.log(`✅ Successful uploads: ${successCount}`);
-  console.log(`❌ Failed uploads: ${failCount}`);
-  console.log(`📄 Total feeds: ${feedUrls.length}`);
-  console.log(`📊 Success rate: ${((successCount / feedUrls.length) * 100).toFixed(1)}%`);
+  
+  console.log('\n📊 Upload Summary:');
+  console.log(`✅ Successful: ${successCount}`);
+  console.log(`❌ Failed: ${failCount}`);
+  console.log(`📈 Success Rate: ${((successCount / RSS_FEEDS.length) * 100).toFixed(1)}%`);
   
   if (successCount > 0) {
-    console.log('\n🎉 RSS feeds uploaded to CDN successfully!');
-    console.log('💡 You can now enable CDN in your app for faster RSS loading.');
+    console.log('\n🎉 RSS feeds uploaded successfully!');
+    console.log(`🌐 Test URL: https://${CDN_HOSTNAME}/feeds/music-from-the-doerfelverse.xml`);
   }
 }
 
-main().catch(console.error); 
+// Run the upload
+uploadRssFeeds().catch(console.error); 

@@ -12,8 +12,8 @@ import { generateAlbumUrl, generatePublisherSlug } from '@/lib/url-utils';
 import { getGlobalAudioState, updateGlobalAudioState, clearGlobalAudioState } from '@/lib/audio-state';
 
 // Environment-based RSS feed configuration
-// CDN zone: re-podtards-cdn (Pull Zone - working correctly)
-// Using original URLs for RSS feeds (CDN Pull Zone caches main site content)
+// CDN zone: re-podtards-cdn (Pull Zone - needs reconfiguration)
+// Temporarily using original URLs until CDN Pull Zone is configured to pull from Storage
 const isProduction = false; // process.env.NODE_ENV === 'production';
 
 // Clean, verified RSS feed URL mappings: [originalUrl, cdnUrl]
