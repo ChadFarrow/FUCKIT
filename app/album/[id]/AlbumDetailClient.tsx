@@ -217,7 +217,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             'now i feel it': 'https://music.behindthesch3m3s.com/wp-content/uploads/c_kostra/now i feel it.xml',
             'they ride': 'https://wavlake.com/feed/music/997060e3-9dc1-4cd8-b3c1-3ae06d54bb03',
             'more': 'https://wavlake.com/feed/music/b54b9a19-b6ed-46c1-806c-7e82f7550edc',
-            'love in its purest form': 'https://feed.falsefinish.club/Vance%20Latta/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form/love%20in%20its%20purest%20form.xml'
+            'love in its purest form': 'https://feed.falsefinish.club/Vance%20Latta/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form/love%20in%20its%20purest%20form.xml',
+            'opus': 'https://www.doerfelverse.com/artists/opus/opus/opus.xml'
           };
           
           // Convert URL slug back to title format (e.g., "stay-awhile" -> "stay awhile")
