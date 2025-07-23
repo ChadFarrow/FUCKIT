@@ -187,7 +187,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             'dfb v1': 'https://www.doerfelverse.com/feeds/dfbv1.xml',
             'dfb v2': 'https://www.doerfelverse.com/feeds/dfbv2.xml',
             'disco swag': 'https://www.doerfelverse.com/feeds/disco-swag.xml',
-            'doerfels pubfeed': 'https://www.doerfelverse.com/feeds/doerfels-pubfeed.xml',
+            'doerfels pubfeed': 'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml', // Use main album feed instead of publisher feed
             'first married christmas': 'https://www.doerfelverse.com/feeds/first-married-christmas.xml',
             'generation gap': 'https://www.doerfelverse.com/feeds/generation-gap.xml',
             'heartbreak': 'https://www.doerfelverse.com/feeds/heartbreak.xml',
@@ -210,9 +210,9 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             'kurtisdrums v1': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml',
             'ring that bell': 'https://www.thisisjdog.com/media/ring-that-bell.xml',
             'tinderbox': 'https://wavlake.com/feed/music/d677db67-0310-4813-970e-e65927c689f1',
-            'nate johnivan': 'https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4',
+            'nate johnivan': 'https://wavlake.com/feed/music/e678589b-5a9f-4918-9622-34119d2eed2c', // Nate Johnivan album
             'empty passenger seat': 'https://www.wavlake.com/feed/95ea253a-4058-402c-8503-204f6d3f1494',
-            'joe martin': 'https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738',
+            'joe martin': 'https://wavlake.com/feed/music/95ea253a-4058-402c-8503-204f6d3f1494', // Empty Passenger Seat album
             'stay awhile': 'https://ableandthewolf.com/static/media/feed.xml',
             'now i feel it': 'https://music.behindthesch3m3s.com/wp-content/uploads/c_kostra/now i feel it.xml',
             'they ride': 'https://wavlake.com/feed/music/997060e3-9dc1-4cd8-b3c1-3ae06d54bb03',
