@@ -28,7 +28,7 @@ const CDN_THRESHOLDS = {
   ],
   // Skip domains that are already fast
   FAST_DOMAINS: [
-    're-podtards.b-cdn.net', // Already on our CDN
+    're-podtards-cdn.b-cdn.net', // Already on our CDN
     'localhost',
     '127.0.0.1',
     'vercel.app',
@@ -196,7 +196,7 @@ async function uploadToBunny(imageBuffer, filename, storageConfig) {
     }
 
     // Return the storage URL that can be accessed via CDN
-    const cdnUrl = `https://re-podtards.b-cdn.net/albums/${filename}`;
+    const cdnUrl = `https://re-podtards-cdn.b-cdn.net/albums/${filename}`;
     console.log(`✅ Uploaded: ${cdnUrl}`);
     return cdnUrl;
   } catch (error) {

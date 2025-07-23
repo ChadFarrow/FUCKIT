@@ -8,7 +8,7 @@
 const https = require('https');
 
 // Configuration
-const CDN_URL = 'https://re-podtards.b-cdn.net';
+const CDN_URL = 'https://re-podtards-cdn.b-cdn.net';
 const STORAGE_URL = 'https://ny.storage.bunnycdn.com/re-podtards-storage';
 const TEST_FEED = '/feeds/music-from-the-doerfelverse.xml';
 

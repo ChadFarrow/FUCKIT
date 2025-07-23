@@ -61,8 +61,8 @@ async function showUsage() {
   console.log('   vercel --prod              - Deploy to production');
   
   console.log('\n🔧 Environment Variables (for .env.local):');
-  console.log('   NEXT_PUBLIC_CDN_URL=https://re-podtards.b-cdn.net');
-  console.log('   BUNNY_CDN_HOSTNAME=re-podtards.b-cdn.net');
+  console.log('   NEXT_PUBLIC_CDN_URL=https://re-podtards-cdn.b-cdn.net');
+console.log('   BUNNY_CDN_HOSTNAME=re-podtards-cdn.b-cdn.net');
   console.log('   BUNNY_STORAGE_API_KEY=your_storage_api_key');
   console.log('   BUNNY_STORAGE_ZONE=re-podtards-storage');
   

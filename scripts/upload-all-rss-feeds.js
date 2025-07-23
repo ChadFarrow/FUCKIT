@@ -13,7 +13,7 @@ const path = require('path');
 const BUNNY_STORAGE_API_KEY = '62d305ab-39a0-48c1-96a30779ca9b-e0f9-4752';
 const BUNNY_STORAGE_HOSTNAME = 'ny.storage.bunnycdn.com';
 const BUNNY_STORAGE_ZONE = 're-podtards-storage';
-const BUNNY_CDN_URL = 'https://re-podtards.b-cdn.net';
+const BUNNY_CDN_URL = 'https://re-podtards-cdn.b-cdn.net';
 
 // ALL RSS feeds from the feedUrls array (excluding already uploaded CDN URLs)
 const rssFeeds = [

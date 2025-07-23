@@ -81,7 +81,7 @@ async function uploadFileToStorage(filePath, storagePath, storageConfig) {
     }
 
     // Return the CDN URL that can be accessed via CDN
-    const cdnUrl = `https://re-podtards.b-cdn.net/${storagePath}`;
+    const cdnUrl = `https://re-podtards-cdn.b-cdn.net/${storagePath}`;
     console.log(`✅ Uploaded: ${cdnUrl}`);
     return cdnUrl;
   } catch (error) {

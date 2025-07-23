@@ -29,11 +29,11 @@ async function setupCDN() {
   let hostname, zone, apiKey;
   
   if (useDefaults.toLowerCase() === 'y' || useDefaults.toLowerCase() === 'yes') {
-    hostname = 're-podtards.b-cdn.net';
+    hostname = 're-podtards-cdn.b-cdn.net';
     zone = 're-podtards';
     apiKey = await question('Enter your Bunny.net API key (for cache purging): ');
   } else {
-    hostname = await question('Enter your CDN hostname (e.g., re-podtards.b-cdn.net): ');
+    hostname = await question('Enter your CDN hostname (e.g., re-podtards-cdn.b-cdn.net): ');
     zone = await question('Enter your pull zone name (e.g., re-podtards): ');
     apiKey = await question('Enter your Bunny.net API key (optional, for purging): ');
   }

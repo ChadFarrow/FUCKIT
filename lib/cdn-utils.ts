@@ -24,7 +24,7 @@ const CDN_THRESHOLDS = {
   EXTERNAL_DOMAINS_ONLY: true,
   // Domains that are already fast (don't need CDN)
   FAST_DOMAINS: [
-    're-podtards.b-cdn.net', // Already on our CDN
+    're-podtards-cdn.b-cdn.net', // Already on our CDN
     'localhost',
     '127.0.0.1',
     'vercel.app',

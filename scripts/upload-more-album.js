@@ -10,7 +10,7 @@ const https = require('https');
 const BUNNY_STORAGE_API_KEY = '62d305ab-39a0-48c1-96a30779ca9b-e0f9-4752';
 const BUNNY_STORAGE_HOSTNAME = 'ny.storage.bunnycdn.com';
 const BUNNY_STORAGE_ZONE = 're-podtards-storage';
-const BUNNY_CDN_URL = 'https://re-podtards.b-cdn.net';
+const BUNNY_CDN_URL = 'https://re-podtards-cdn.b-cdn.net';
 
 const feedUrl = 'https://wavlake.com/feed/music/b54b9a19-b6ed-46c1-806c-7e82f7550edc';
 const filename = 'wavlake-b54b9a19-b6ed-46c1-806c-7e82f7550edc.xml';

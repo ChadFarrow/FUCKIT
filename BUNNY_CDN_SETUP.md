@@ -41,7 +41,7 @@ Zone: re-podtards
 ### Step 4: Test the Configuration
 ```bash
 # Test RSS feed access
-curl -I "https://re-podtards.b-cdn.net/feeds/music-from-the-doerfelverse.xml"
+curl -I "https://re-podtards-cdn.b-cdn.net/feeds/music-from-the-doerfelverse.xml"
 
 # Should return HTTP 200 instead of 403
 ```
@@ -74,7 +74,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 1. **Test CDN Access:**
    ```bash
-   curl -I "https://re-podtards.b-cdn.net/feeds/music-from-the-doerfelverse.xml"
+   curl -I "https://re-podtards-cdn.b-cdn.net/feeds/music-from-the-doerfelverse.xml"
    ```
 
 2. **Check Browser Network Tab:**
@@ -94,7 +94,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 ### Environment Variables:
 ```bash
-BUNNY_CDN_HOSTNAME=re-podtards.b-cdn.net
+BUNNY_CDN_HOSTNAME=re-podtards-cdn.b-cdn.net
 BUNNY_CDN_ZONE=re-podtards
 BUNNY_CDN_API_KEY=your-api-key
 BUNNY_STORAGE_API_KEY=your-storage-key
@@ -107,7 +107,7 @@ BUNNY_STORAGE_ZONE=re-podtards-storage
 curl -I "https://ny.storage.bunnycdn.com/re-podtards-storage/feeds/music-from-the-doerfelverse.xml"
 
 # Test CDN access (should return 200 after Pull Zone setup)
-curl -I "https://re-podtards.b-cdn.net/feeds/music-from-the-doerfelverse.xml"
+curl -I "https://re-podtards-cdn.b-cdn.net/feeds/music-from-the-doerfelverse.xml"
 ```
 
 ## 🎯 **Expected Result**

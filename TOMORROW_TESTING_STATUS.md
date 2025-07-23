@@ -18,7 +18,7 @@
 ### 🖼️ **Album Artwork on Bunny.net**
 - **Total Images:** 126 images successfully uploaded (100% success rate)
 - **Storage Location:** `re-podtards-storage/albums/`
-- **CDN URLs:** `https://re-podtards.b-cdn.net/albums/`
+- **CDN URLs:** `https://re-podtards-cdn.b-cdn.net/albums/`
 - **Formats:** PNG, JPG, JPEG, GIF
 - **Optimization:** All images optimized for CDN delivery
 
@@ -122,8 +122,8 @@ curl -I "https://re-podtards-cdn.b-cdn.net/"
 isProduction = process.env.NODE_ENV === 'production'
 
 # CDN URLs
-NEXT_PUBLIC_CDN_URL=https://re-podtards.b-cdn.net
-BUNNY_CDN_HOSTNAME=re-podtards.b-cdn.net
+NEXT_PUBLIC_CDN_URL=https://re-podtards-cdn.b-cdn.net
+BUNNY_CDN_HOSTNAME=re-podtards-cdn.b-cdn.net
 BUNNY_CDN_ZONE=re-podtards
 
 # Storage Configuration
@@ -132,9 +132,9 @@ BUNNY_STORAGE_ZONE=re-podtards-storage
 ```
 
 ### **URL Mappings**
-- **RSS Feeds:** `https://re-podtards.b-cdn.net/feeds/`
-- **Album Artwork:** `https://re-podtards.b-cdn.net/albums/`
-- **Static Assets:** `https://re-podtards.b-cdn.net/_next/`
+- **RSS Feeds:** `https://re-podtards-cdn.b-cdn.net/feeds/`
+- **Album Artwork:** `https://re-podtards-cdn.b-cdn.net/albums/`
+- **Static Assets:** `https://re-podtards-cdn.b-cdn.net/_next/`
 
 ---
 
@@ -184,7 +184,7 @@ BUNNY_STORAGE_ZONE=re-podtards-storage
 
 ### **Testing URLs**
 - **Main Site:** https://re.podtards.com
-- **CDN Test:** https://re-podtards.b-cdn.net/feeds/music-from-the-doerfelverse.xml
+- **CDN Test:** https://re-podtards-cdn.b-cdn.net/feeds/music-from-the-doerfelverse.xml
 - **Storage Test:** https://ny.storage.bunnycdn.com/re-podtards-storage/feeds/
 
 ---

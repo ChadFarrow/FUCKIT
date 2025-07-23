@@ -212,8 +212,8 @@ async function performBackgroundSync() {
   try {
     // Preload frequently accessed RSS feeds
     const feedUrls = [
-      '/api/fetch-rss?url=https://re-podtards.b-cdn.net/feeds/music-from-the-doerfelverse.xml',
-      '/api/fetch-rss?url=https://re-podtards.b-cdn.net/feeds/bloodshot-lies-album.xml'
+      '/api/fetch-rss?url=https://re-podtards-cdn.b-cdn.net/feeds/music-from-the-doerfelverse.xml',
+'/api/fetch-rss?url=https://re-podtards-cdn.b-cdn.net/feeds/bloodshot-lies-album.xml'
     ];
     
     const cache = await caches.open(DYNAMIC_CACHE);

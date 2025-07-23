@@ -76,7 +76,7 @@ const nextConfig = {
       // Bunny.net CDN - Dynamic hostname support
       {
         protocol: 'https',
-        hostname: process.env.BUNNY_CDN_HOSTNAME || 're-podtards.b-cdn.net',
+        hostname: process.env.BUNNY_CDN_HOSTNAME || 're-podtards-cdn.b-cdn.net',
         port: '',
         pathname: '/**',
       },
@@ -109,7 +109,7 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 're-podtards.b-cdn.net',
+        hostname: 're-podtards-cdn.b-cdn.net',
         port: '',
         pathname: '/**',
       },

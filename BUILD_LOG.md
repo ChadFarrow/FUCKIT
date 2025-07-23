@@ -49,7 +49,7 @@ npm run prebuild        # Auto-version before build (runs automatically)
 ### Local Environment (.env.local)
 ```bash
 # Bunny.net CDN Configuration for re.podtards.com
-BUNNY_CDN_HOSTNAME=re-podtards.b-cdn.net
+BUNNY_CDN_HOSTNAME=re-podtards-cdn.b-cdn.net
 BUNNY_CDN_ZONE=re-podtards
 BUNNY_CDN_API_KEY=your-cdn-api-key-here
 
@@ -59,7 +59,7 @@ BUNNY_STORAGE_HOSTNAME=ny.storage.bunnycdn.com
 BUNNY_STORAGE_ZONE=re-podtards-storage
 
 # CDN URLs
-NEXT_PUBLIC_CDN_URL=https://re-podtards.b-cdn.net
+NEXT_PUBLIC_CDN_URL=https://re-podtards-cdn.b-cdn.net
 
 # Site Configuration  
 NEXT_PUBLIC_SITE_URL=https://re.podtards.com
@@ -77,7 +77,7 @@ NEXT_PUBLIC_IMAGE_DOMAIN=re.podtards.com
 {
   "buildCommand": "npm run prebuild && npm run build",
   "env": {
-    "BUNNY_CDN_HOSTNAME": "re-podtards.b-cdn.net",
+    "BUNNY_CDN_HOSTNAME": "re-podtards-cdn.b-cdn.net",
     "BUNNY_CDN_ZONE": "re-podtards", 
     "BUNNY_CDN_API_KEY": "your-cdn-api-key-here",
     "BUNNY_STORAGE_API_KEY": "@bunny-storage-api-key",
@@ -85,7 +85,7 @@ NEXT_PUBLIC_IMAGE_DOMAIN=re.podtards.com
     "BUNNY_STORAGE_ZONE": "re-podtards-storage",
     "NEXT_PUBLIC_SITE_URL": "https://re.podtards.com",
     "NEXT_PUBLIC_API_URL": "https://re.podtards.com/api",
-    "NEXT_PUBLIC_CDN_URL": "https://re-podtards.b-cdn.net"
+    "NEXT_PUBLIC_CDN_URL": "https://re-podtards-cdn.b-cdn.net"
   }
 }
 ```
@@ -119,7 +119,7 @@ The site now automatically switches between URL sources based on the environment
 - Fast development and testing
 
 **🚀 Production (re.podtards.com):**
-- Uses Bunny.net CDN URLs (e.g., `https://re-podtards.b-cdn.net/feeds/...`)
+- Uses Bunny.net CDN URLs (e.g., `https://re-podtards-cdn.b-cdn.net/feeds/...`)
 - Serves static assets from CDN
 - Optimized for performance
 
@@ -202,7 +202,7 @@ FUCKIT/
 
 ### Bunny.net CDN
 - **API Key:** [REDACTED - See .env.local]
-- **Hostname:** re-podtards.b-cdn.net
+- **Hostname:** re-podtards-cdn.b-cdn.net
 - **Zone:** re-podtards
 - **Storage Zone:** re-podtards-storage
 - **Status:** Active ✅
@@ -316,7 +316,7 @@ FUCKIT/
 - Added `d12wklypp119aj.cloudfront.net` (Wavlake CDN)
 - Added `ableandthewolf.com` (artist domain)
 - Added `www.wavlake.com` (Wavlake www subdomain)
-- Added `re-podtards.b-cdn.net` (Bunny CDN)
+- Added `re-podtards-cdn.b-cdn.net` (Bunny CDN)
 
 #### 12. Stay Awhile Album Pinning and Mapping
 **Problem:** Stay Awhile album not pinned to top and album detail page not loading
@@ -492,7 +492,7 @@ cat .env.local
    - **Enable Brotli:** Yes
 5. **Test Configuration:**
    ```bash
-   curl -I "https://re-podtards.b-cdn.net/_next/static/chunks/main.js"
+   curl -I "https://re-podtards-cdn.b-cdn.net/_next/static/chunks/main.js"
    ```
 6. **Re-enable Asset Prefix:**
    ```javascript
@@ -526,10 +526,10 @@ cat .env.local
 # Required for local development
 # ⚠️ SECURITY: Never commit real API keys to Git!
 # Use .env.local for actual keys (already gitignored)
-BUNNY_CDN_HOSTNAME=re-podtards.b-cdn.net
+BUNNY_CDN_HOSTNAME=re-podtards-cdn.b-cdn.net
 BUNNY_CDN_ZONE=re-podtards
 BUNNY_CDN_API_KEY=YOUR_API_KEY_HERE
-NEXT_PUBLIC_CDN_URL=https://re-podtards.b-cdn.net
+NEXT_PUBLIC_CDN_URL=https://re-podtards-cdn.b-cdn.net
 NEXT_PUBLIC_SITE_URL=https://re.podtards.com
 NEXT_PUBLIC_API_URL=https://re.podtards.com/api
 ```

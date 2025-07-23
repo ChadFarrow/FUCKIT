@@ -27,7 +27,7 @@ Your site **https://re.podtards.com** is now working correctly with Bunny.net CD
 ### **Problem Identified**
 ```
 Error: "Domain suspended or not configured"
-CDN URL: https://re-podtards.b-cdn.net
+CDN URL: https://re-podtards-cdn.b-cdn.net
 Status: HTTP 403 Forbidden
 ```
 

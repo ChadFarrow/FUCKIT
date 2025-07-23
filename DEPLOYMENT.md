@@ -28,7 +28,7 @@ This guide walks you through deploying the music app to `re.podtards.com` with B
 
 ### 1.3 Get Your CDN Details
 Note down:
-- **CDN Hostname**: `re-podtards.b-cdn.net` (or your custom domain)
+- **CDN Hostname**: `re-podtards-cdn.b-cdn.net` (or your custom domain)
 - **Zone Name**: `re-podtards`
 - **API Key**: Found in Account Settings > API
 
@@ -40,12 +40,12 @@ Add these environment variables in your Vercel dashboard:
 
 ```bash
 # Bunny.net CDN Configuration
-BUNNY_CDN_HOSTNAME=re-podtards.b-cdn.net
+BUNNY_CDN_HOSTNAME=re-podtards-cdn.b-cdn.net
 BUNNY_CDN_ZONE=re-podtards
 BUNNY_CDN_API_KEY=your-bunny-api-key-here
 
 # CDN URLs
-NEXT_PUBLIC_CDN_URL=https://re-podtards.b-cdn.net
+NEXT_PUBLIC_CDN_URL=https://re-podtards-cdn.b-cdn.net
 
 # Site Configuration
 NEXT_PUBLIC_SITE_URL=https://re.podtards.com
@@ -56,10 +56,10 @@ NODE_ENV=production
 ### Vercel Secret Variables:
 Set these as secrets in Vercel:
 ```bash
-vercel secrets add bunny_cdn_hostname "re-podtards.b-cdn.net"
+vercel secrets add bunny_cdn_hostname "re-podtards-cdn.b-cdn.net"
 vercel secrets add bunny_cdn_zone "re-podtards"
 vercel secrets add bunny_cdn_api_key "your-actual-api-key"
-vercel secrets add next_public_cdn_url "https://re-podtards.b-cdn.net"
+vercel secrets add next_public_cdn_url "https://re-podtards-cdn.b-cdn.net"
 ```
 
 ## Step 3: DNS Configuration
@@ -101,7 +101,7 @@ vercel domains add re.podtards.com
 
 ### 5.2 Test CDN Integration
 - Check browser DevTools Network tab
-- Verify images are loading from `re-podtards.b-cdn.net`
+- Verify images are loading from `re-podtards-cdn.b-cdn.net`
 - Test image optimization (WebP format)
 
 ### 5.3 Performance Check
@@ -113,7 +113,7 @@ vercel domains add re.podtards.com
 
 ### 6.1 Custom CDN Domain
 If you want images served from your domain:
-1. Add `cdn.re.podtards.com` CNAME to `re-podtards.b-cdn.net`
+1. Add `cdn.re.podtards.com` CNAME to `re-podtards-cdn.b-cdn.net`
 2. Update environment variable:
    ```bash
    BUNNY_CDN_HOSTNAME=cdn.re.podtards.com
@@ -125,7 +125,7 @@ The app includes cache purging utilities:
 import { purgeCDNCache, purgeEntireCDNCache } from '@/lib/cdn-utils';
 
 // Purge specific URL
-await purgeCDNCache('https://re-podtards.b-cdn.net/path/to/image.jpg');
+await purgeCDNCache('https://re-podtards-cdn.b-cdn.net/path/to/image.jpg');
 
 // Purge entire cache
 await purgeEntireCDNCache();
@@ -160,7 +160,7 @@ dig re.podtards.com
 curl -I https://re.podtards.com
 
 # Check CDN
-curl -I https://re-podtards.b-cdn.net
+curl -I https://re-podtards-cdn.b-cdn.net
 
 # View deployment logs
 vercel logs
