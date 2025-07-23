@@ -134,10 +134,7 @@ export default function HomePage() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const hasLoadedRef = useRef(false);
   
-  // Rotating background state
-  const [currentBackgroundIndex, setCurrentBackgroundIndex] = useState(0);
-  const [backgroundAlbums, setBackgroundAlbums] = useState<RSSAlbum[]>([]);
-  const backgroundIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  // Removed rotating background state for better mobile performance
 
   useEffect(() => {
     setIsClient(true);
@@ -199,34 +196,8 @@ export default function HomePage() {
     }
   }, []);
 
-  // Rotating background effect
-  useEffect(() => {
-    if (albums.length > 0) {
-      // Filter albums with good cover art for background rotation
-      const albumsWithArt = albums.filter(album => 
-        album.coverArt && 
-        album.coverArt !== getPlaceholderImageUrl('large') &&
-        !album.coverArt.includes('placeholder')
-      );
-      
-      // Take first 10 albums with art for rotation
-      const rotationAlbums = albumsWithArt.slice(0, 10);
-      setBackgroundAlbums(rotationAlbums);
-      
-      // Start rotation if we have albums with art
-      if (rotationAlbums.length > 1) {
-        backgroundIntervalRef.current = setInterval(() => {
-          setCurrentBackgroundIndex(prev => (prev + 1) % rotationAlbums.length);
-        }, 8000); // Change every 8 seconds
-      }
-    }
-
-    return () => {
-      if (backgroundIntervalRef.current) {
-        clearInterval(backgroundIntervalRef.current);
-      }
-    };
-  }, [albums]);
+  // Removed rotating background effect for better mobile performance
+  // Using solid background color instead
 
   const handleAddFeed = async (feedUrl: string) => {
     setIsAddingFeed(true);
@@ -435,30 +406,8 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen text-white relative overflow-hidden">
-      {/* Rotating Background */}
-      {backgroundAlbums.length > 0 && (
-        <div className="fixed inset-0 z-0">
-          {backgroundAlbums.map((album, index) => (
-            <div
-              key={`${album.title}-${index}`}
-              className={`absolute inset-0 transition-opacity duration-2000 ease-in-out ${
-                index === currentBackgroundIndex ? 'opacity-100' : 'opacity-0'
-              }`}
-              style={{
-                background: `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('${album.coverArt}') center/cover fixed`,
-              }}
-            />
-          ))}
-        </div>
-      )}
-
-      {/* Fallback gradient background */}
-      {backgroundAlbums.length === 0 && (
-        <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 z-0" />
-      )}
-
-      {/* Content overlay */}
+    <div className="min-h-screen text-white bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      {/* Content */}
       <div className="relative z-10">
         {/* Hidden audio element for main page playback */}
         <audio
@@ -480,7 +429,7 @@ export default function HomePage() {
         
         {/* Header */}
         <header 
-          className="border-b backdrop-blur-sm bg-black/30"
+          className="border-b backdrop-blur-sm bg-black/30 pt-safe"
           style={{
             borderColor: 'rgba(255, 255, 255, 0.1)'
           }}
