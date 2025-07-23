@@ -23,6 +23,7 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
   const [error, setError] = useState<string | null>(null);
   const [publisherInfo, setPublisherInfo] = useState<{ title?: string; description?: string; artist?: string; coverArt?: string } | null>(null);
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
+  const [albumsLoading, setAlbumsLoading] = useState(false);
 
   useEffect(() => {
     const loadPublisher = async () => {
@@ -45,32 +46,12 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
         console.log(`🏢 Publisher info found:`, publisherInfo);
         console.log(`🏢 Loading publisher feed: ${feedUrl}`);
 
-        // Add timeout to prevent infinite loading
-        const timeoutPromise = new Promise<never>((_, reject) => {
-          setTimeout(() => reject(new Error('Loading timeout - taking too long')), 30000); // 30 second timeout
-        });
-
-        // Load publisher feed info for artist details and image
+        // Load publisher feed info for artist details and image (fast)
         console.log(`🏢 Loading publisher feed info...`);
-        const feedInfoPromise = RSSParser.parsePublisherFeedInfo(feedUrl);
-        const publisherFeedInfo = await Promise.race([feedInfoPromise, timeoutPromise]);
+        const publisherFeedInfo = await RSSParser.parsePublisherFeedInfo(feedUrl);
         console.log(`🏢 Publisher feed info:`, publisherFeedInfo);
         
-        // Load publisher items
-        console.log(`🏢 Loading publisher items...`);
-        const itemsPromise = RSSParser.parsePublisherFeed(feedUrl);
-        const items = await Promise.race([itemsPromise, timeoutPromise]);
-        console.log(`🏢 Publisher items:`, items);
-        setPublisherItems(items);
-
-        // Load all albums from the publisher feed with timeout
-        console.log(`🏢 Loading publisher albums...`);
-        const albumsPromise = RSSParser.parsePublisherFeedAlbums(feedUrl);
-        const albumsData = await Promise.race([albumsPromise, timeoutPromise]);
-        console.log(`🏢 Publisher albums loaded:`, albumsData.length, 'albums');
-        setAlbums(albumsData);
-
-        // Set publisher info using feed data
+        // Set publisher info immediately so page shows content
         if (publisherFeedInfo) {
           setPublisherInfo({
             title: publisherFeedInfo.artist || publisherFeedInfo.title || `Artist: ${publisherId}`,
@@ -79,24 +60,44 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
             coverArt: publisherFeedInfo.coverArt
           });
         } else {
-          // Fallback to album data
+          // Fallback to basic info
           setPublisherInfo({
-            title: albumsData.length > 0 ? albumsData[0].artist : `Artist: ${publisherId}`,
+            title: `Artist: ${publisherId}`,
             description: 'Independent artist and music creator',
-            artist: albumsData.length > 0 ? albumsData[0].artist : undefined
+            artist: publisherId
           });
+        }
+        
+        // Stop loading state early so page shows content
+        setIsLoading(false);
+        
+        // Load publisher items and albums in background
+        setAlbumsLoading(true);
+        
+        try {
+          // Load publisher items
+          console.log(`🏢 Loading publisher items...`);
+          const items = await RSSParser.parsePublisherFeed(feedUrl);
+          console.log(`🏢 Publisher items:`, items);
+          setPublisherItems(items);
+
+          // Load all albums from the publisher feed
+          console.log(`🏢 Loading publisher albums...`);
+          const albumsData = await RSSParser.parsePublisherFeedAlbums(feedUrl);
+          console.log(`🏢 Publisher albums loaded:`, albumsData.length, 'albums');
+          setAlbums(albumsData);
+        } catch (albumError) {
+          console.error('❌ Error loading albums:', albumError);
+          // Don't show error to user, just show empty album list
+        } finally {
+          setAlbumsLoading(false);
         }
 
         console.log(`✅ Publisher loaded successfully: ${publisherId}`);
 
       } catch (err) {
         console.error('❌ Error loading publisher:', err);
-        if (err instanceof Error && err.message.includes('timeout')) {
-          setError('Loading timeout - publisher has many albums. Please try again.');
-        } else {
-          setError('Error loading publisher data');
-        }
-      } finally {
+        setError('Error loading publisher data');
         setIsLoading(false);
       }
     };
@@ -233,7 +234,17 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
         </div>
 
         {/* Albums Grid */}
-        {albums.length > 0 ? (
+        {albumsLoading ? (
+          <div className="bg-black/30 backdrop-blur-sm rounded-lg p-6 border border-gray-700/30">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-white">Discography</h2>
+            </div>
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-4"></div>
+              <p className="text-gray-400">Loading albums...</p>
+            </div>
+          </div>
+        ) : albums.length > 0 ? (
           <div className="bg-black/30 backdrop-blur-sm rounded-lg p-6 border border-gray-700/30">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-white">
