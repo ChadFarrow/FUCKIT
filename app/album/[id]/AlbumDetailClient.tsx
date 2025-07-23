@@ -183,7 +183,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             'nate johnivan': 'https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4',
             'empty passenger seat': 'https://www.wavlake.com/feed/95ea253a-4058-402c-8503-204f6d3f1494',
             'joe martin': 'https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738',
-            'stay awhile': 'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml'
+            'stay awhile': 'https://ableandthewolf.com/static/media/feed.xml',
+            'now i feel it': 'https://music.behindthesch3m3s.com/wp-content/uploads/c_kostra/now%20i%20feel%20it.xml'
           };
           
           // Convert URL slug back to title format (e.g., "stay-awhile" -> "stay awhile")
@@ -249,6 +250,15 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               // TJ Doerfel projects
               'https://www.thisisjdog.com/media/ring-that-bell.xml',
               
+              // External artists
+              'https://ableandthewolf.com/static/media/feed.xml',
+              'https://static.staticsave.com/mspfiles/deathdreams.xml',
+              'https://static.staticsave.com/mspfiles/waytogo.xml',
+              'https://feed.falsefinish.club/Vance%20Latta/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form/love%20in%20its%20purest%20form.xml',
+              'https://music.behindthesch3m3s.com/wp-content/uploads/c_kostra/now%20i%20feel%20it.xml',
+              'https://music.behindthesch3m3s.com/wp-content/uploads/Mellow%20Cassette/Pilot/pilot.xml',
+              'https://music.behindthesch3m3s.com/wp-content/uploads/Mellow%20Cassette/Radio_Brigade/radio_brigade.xml',
+              
               // Wavlake feeds - Nate Johnivan collection
               'https://wavlake.com/feed/music/d677db67-0310-4813-970e-e65927c689f1',
               'https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4',
@@ -308,8 +318,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             const albumTitleLower = a.title.toLowerCase();
             const searchTitleLower = decodedAlbumTitle.toLowerCase();
             
-            // Special case for "Stay Awhile" - it's a track in "Music From The Doerfel-Verse"
-            if (searchTitleLower.includes('stay awhile') && albumTitleLower.includes('doerfel')) {
+            // Special case for "Stay Awhile" - it's its own album from Able and the Wolf
+            if (searchTitleLower.includes('stay awhile') && albumTitleLower.includes('stay awhile')) {
               console.log(`🎯 Special match: "Stay Awhile" -> "${a.title}"`);
               return true;
             }
