@@ -29,6 +29,9 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   const [volume, setVolume] = useState(1);
   const audioRef = useRef<HTMLAudioElement>(null);
 
+  // Background state
+  const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
+
   // Update Media Session API for iOS lock screen controls
   const updateMediaSession = (track: any) => {
     if ('mediaSession' in navigator) {
@@ -192,6 +195,24 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
       }
     }
   }, [album]);
+
+  // Update background when album data changes
+  useEffect(() => {
+    if (album?.coverArt) {
+      // Preload the image to ensure it's available for background
+      const img = new window.Image();
+      img.onload = () => {
+        setBackgroundImage(album.coverArt);
+      };
+      img.onerror = () => {
+        // Fallback to gradient if image fails to load
+        setBackgroundImage(null);
+      };
+      img.src = album.coverArt;
+    } else {
+      setBackgroundImage(null);
+    }
+  }, [album?.coverArt]);
 
   // Load album data if not provided initially
   useEffect(() => {
@@ -595,8 +616,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   return (
     <div 
       className="min-h-screen text-white relative"
-      style={album?.coverArt ? {
-        background: `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url('${album.coverArt}') center/cover fixed`
+      style={backgroundImage ? {
+        background: `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url('${backgroundImage}') center/cover fixed`
       } : {
         background: 'linear-gradient(to bottom right, rgb(17, 24, 39), rgb(31, 41, 55), rgb(17, 24, 39))'
       }}
