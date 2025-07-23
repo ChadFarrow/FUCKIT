@@ -554,10 +554,10 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   return (
     <div 
       className="min-h-screen text-white relative"
-      style={{
-        background: album?.coverArt 
-          ? `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url('${album.coverArt}') center/cover fixed`
-          : 'linear-gradient(to br, rgb(17, 24, 39), rgb(31, 41, 55), rgb(17, 24, 39))'
+      style={album?.coverArt ? {
+        background: `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url('${album.coverArt}') center/cover fixed`
+      } : {
+        background: 'linear-gradient(to bottom right, rgb(17, 24, 39), rgb(31, 41, 55), rgb(17, 24, 39))'
       }}
     >
       {/* Hidden audio element */}
