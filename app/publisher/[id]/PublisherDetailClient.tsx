@@ -30,27 +30,36 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
         setIsLoading(true);
         setError(null);
         
+        console.log(`🏢 Loading publisher: ${publisherId}`);
+        
         // Try to find the feed URL for this publisher
         const publisherInfo = getPublisherInfo(publisherId);
         
         if (!publisherInfo) {
+          console.error(`❌ Publisher not found: ${publisherId}`);
           setError('Publisher feed not found');
           return;
         }
         
         const feedUrl = publisherInfo.feedUrl;
-
+        console.log(`🏢 Publisher info found:`, publisherInfo);
         console.log(`🏢 Loading publisher feed: ${feedUrl}`);
 
         // Load publisher feed info for artist details and image
+        console.log(`🏢 Loading publisher feed info...`);
         const publisherFeedInfo = await RSSParser.parsePublisherFeedInfo(feedUrl);
+        console.log(`🏢 Publisher feed info:`, publisherFeedInfo);
         
         // Load publisher items
+        console.log(`🏢 Loading publisher items...`);
         const items = await RSSParser.parsePublisherFeed(feedUrl);
+        console.log(`🏢 Publisher items:`, items);
         setPublisherItems(items);
 
         // Load all albums from the publisher feed
+        console.log(`🏢 Loading publisher albums...`);
         const albumsData = await RSSParser.parsePublisherFeedAlbums(feedUrl);
+        console.log(`🏢 Publisher albums loaded:`, albumsData.length, 'albums');
         setAlbums(albumsData);
 
         // Set publisher info using feed data
@@ -70,8 +79,10 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
           });
         }
 
+        console.log(`✅ Publisher loaded successfully: ${publisherId}`);
+
       } catch (err) {
-        console.error('Error loading publisher:', err);
+        console.error('❌ Error loading publisher:', err);
         setError('Error loading publisher data');
       } finally {
         setIsLoading(false);
