@@ -584,14 +584,15 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
         </Link>
 
         {/* Album Header */}
-        <div className="flex flex-col md:flex-row gap-8 mb-12 items-center md:items-start">
-          <div className="flex-shrink-0 relative group mx-auto md:mx-0">
+        <div className="flex flex-col gap-6 mb-8">
+          {/* Mobile: Album Art */}
+          <div className="relative group mx-auto">
             <Image 
               src={getAlbumArtworkUrl(album.coverArt || '', 'large')} 
               alt={album.title}
-              width={320}
-              height={320}
-              className="rounded-lg object-cover shadow-2xl"
+              width={280}
+              height={280}
+              className="rounded-lg object-cover shadow-2xl mx-auto"
               onError={(e) => {
                 // Fallback to placeholder on error
                 const target = e.target as HTMLImageElement;
@@ -618,45 +619,44 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             </div>
           </div>
           
-          <div className="flex-1 text-center md:text-left">
-            <h1 className="text-4xl font-bold mb-2">{album.title}</h1>
-            <p className="text-xl text-gray-400 mb-4">{album.artist}</p>
+          {/* Album Info */}
+          <div className="text-center space-y-4">
+            <h1 className="text-3xl md:text-4xl font-bold leading-tight">{album.title}</h1>
+            <p className="text-xl text-gray-300">{album.artist}</p>
             
             {album.subtitle && (
-              <p className="text-lg text-gray-300 mb-4 italic">{album.subtitle}</p>
+              <p className="text-lg text-gray-300 italic">{album.subtitle}</p>
             )}
             
-            {(album.summary || album.description) && (
-              <p className="text-gray-300 mb-6">{album.summary || album.description}</p>
-            )}
-            
-            <div className="flex items-center gap-6 text-sm text-gray-400 mb-6">
+            <div className="flex items-center justify-center gap-6 text-sm text-gray-400">
               <span>{new Date(album.releaseDate).getFullYear()}</span>
               <span>{album.tracks.length} tracks</span>
               {album.explicit && <span className="bg-red-600 text-white px-2 py-1 rounded text-xs">EXPLICIT</span>}
             </div>
+            
+            {(album.summary || album.description) && (
+              <p className="text-gray-300 text-center max-w-lg mx-auto leading-relaxed">{album.summary || album.description}</p>
+            )}
 
             {/* Publisher Information */}
             {album.publisher && (
-              <div className="mb-6">
-                <div className="flex items-center gap-2 text-sm text-gray-400">
-                  <span>More from this artist:</span>
-                  <Link
-                    href={`/publisher/${generatePublisherSlug({ feedGuid: album.publisher.feedGuid })}`}
-                    className="text-blue-400 hover:text-blue-300 transition-colors"
-                  >
-                    View Discography
-                  </Link>
-                  <span className="text-xs bg-gray-600 px-2 py-1 rounded">PC 2.0</span>
-                </div>
+              <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
+                <span>More from this artist:</span>
+                <Link
+                  href={`/publisher/${generatePublisherSlug({ feedGuid: album.publisher.feedGuid })}`}
+                  className="text-blue-400 hover:text-blue-300 transition-colors"
+                >
+                  View Discography
+                </Link>
+                <span className="text-xs bg-gray-600 px-2 py-1 rounded">PC 2.0</span>
               </div>
             )}
 
             {/* Funding Information */}
             {album.funding && album.funding.length > 0 && (
-              <div className="mt-6">
-                <h3 className="text-lg font-semibold mb-3 text-white">Support This Artist</h3>
-                <div className="flex flex-wrap gap-3">
+              <div>
+                <h3 className="text-lg font-semibold mb-3 text-white text-center">Support This Artist</h3>
+                <div className="flex flex-wrap justify-center gap-3">
                   {album.funding.map((funding, index) => (
                     <a
                       key={index}
@@ -675,26 +675,26 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
         </div>
 
         {/* Track List */}
-        <div className="bg-black/40 backdrop-blur-sm rounded-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">Tracks</h2>
+        <div className="bg-black/40 backdrop-blur-sm rounded-lg p-4 md:p-6">
+          <h2 className="text-xl font-semibold mb-4 text-center md:text-left">Tracks</h2>
           <div className="space-y-2">
             {album.tracks.map((track, index) => (
               <div 
                 key={index} 
-                className={`flex items-center justify-between p-3 hover:bg-white/10 rounded-lg transition-colors group cursor-pointer ${
+                className={`flex items-center justify-between p-4 hover:bg-white/10 rounded-lg transition-colors group cursor-pointer ${
                   currentTrackIndex === index ? 'bg-white/20' : ''
                 }`}
                 onClick={() => playTrack(index)}
               >
-                <div className="flex items-center gap-4">
-                  <div className="relative w-12 h-12 flex-shrink-0">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <div className="relative w-10 h-10 md:w-12 md:h-12 flex-shrink-0">
                     {track.image ? (
                       <Image 
                         src={track.image} 
                         alt={track.title}
                         width={48}
                         height={48}
-                        className="rounded object-cover"
+                        className="rounded object-cover w-full h-full"
                         onError={(e) => {
                           // Fallback to track number on error
                           const target = e.target as HTMLImageElement;
@@ -703,29 +703,31 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                         }}
                       />
                     ) : null}
-                    <span className={`text-gray-400 text-sm w-8 text-center ${track.image ? 'hidden' : ''}`}>
-                      {track.trackNumber || index + 1}
-                    </span>
+                    <div className={`absolute inset-0 flex items-center justify-center ${track.image ? 'hidden' : ''}`}>
+                      <span className="text-gray-400 text-sm font-medium">
+                        {track.trackNumber || index + 1}
+                      </span>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-medium">{track.title}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium truncate text-sm md:text-base">{track.title}</p>
                     {track.subtitle && (
-                      <p className="text-sm text-gray-400 italic">{track.subtitle}</p>
+                      <p className="text-xs md:text-sm text-gray-400 italic truncate">{track.subtitle}</p>
                     )}
-                    <p className="text-sm text-gray-400">{album.artist}</p>
+                    <p className="text-xs md:text-sm text-gray-400 truncate">{album.artist}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
                   {track.explicit && (
                     <span className="bg-red-600 text-white px-1 py-0.5 rounded text-xs font-bold">
                       E
                     </span>
                   )}
-                  <span className="text-sm text-gray-400">
+                  <span className="text-xs md:text-sm text-gray-400">
                     {formatDuration(track.duration)}
                   </span>
                   <button 
-                    className="text-gray-400 hover:text-white transition-colors opacity-0 group-hover:opacity-100"
+                    className="text-gray-400 hover:text-white transition-colors p-1 md:opacity-0 md:group-hover:opacity-100"
                     onClick={(e) => {
                       e.stopPropagation();
                       playTrack(index);
