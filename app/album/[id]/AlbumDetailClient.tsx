@@ -8,6 +8,7 @@ import { RSSAlbum } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl, getTrackArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { generateAlbumUrl, generatePublisherSlug } from '@/lib/url-utils';
 import { RSSParser } from '@/lib/rss-parser';
+import { getGlobalAudioState, updateGlobalAudioState, clearGlobalAudioState } from '@/lib/audio-state';
 
 interface AlbumDetailClientProps {
   albumTitle: string;
@@ -78,9 +79,11 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
     try {
       if (isPlaying) {
         audioRef.current.pause();
+        updateGlobalAudioState({ isPlaying: false }, audioRef.current);
       } else {
         // iOS requires user gesture protection
         await audioRef.current.play();
+        updateGlobalAudioState({ isPlaying: true }, audioRef.current);
       }
     } catch (error) {
       console.error('Audio playback failed:', error);
@@ -96,6 +99,15 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
       audioRef.current.src = album.tracks[index].url;
       await audioRef.current.play();
       setIsPlaying(true);
+      
+      // Update global state
+      updateGlobalAudioState({
+        isPlaying: true,
+        currentAlbum: album.title,
+        currentTrackIndex: index,
+        trackUrl: album.tracks[index].url,
+      }, audioRef.current);
+      
       // Update Media Session for lock screen controls
       updateMediaSession(album.tracks[index]);
     } catch (error) {
@@ -125,12 +137,16 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   const handleTimeUpdate = () => {
     if (audioRef.current) {
       setCurrentTime(audioRef.current.currentTime);
+      // Update global state with current time
+      updateGlobalAudioState({ currentTime: audioRef.current.currentTime }, audioRef.current);
     }
   };
 
   const handleLoadedMetadata = () => {
     if (audioRef.current) {
       setDuration(audioRef.current.duration);
+      // Update global state with duration
+      updateGlobalAudioState({ duration: audioRef.current.duration }, audioRef.current);
     }
   };
 
@@ -154,6 +170,28 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
       audioRef.current.volume = newVolume;
     }
   };
+
+  // Initialize audio state from localStorage
+  useEffect(() => {
+    const globalState = getGlobalAudioState();
+    if (globalState.isPlaying && globalState.currentAlbum && globalState.trackUrl) {
+      // Restore audio state if it matches this album
+      if (album && globalState.currentAlbum === album.title) {
+        setCurrentTrackIndex(globalState.currentTrackIndex);
+        setCurrentTime(globalState.currentTime);
+        setDuration(globalState.duration);
+        setVolume(globalState.volume);
+        
+        // Restore audio element state
+        if (audioRef.current) {
+          audioRef.current.src = globalState.trackUrl;
+          audioRef.current.currentTime = globalState.currentTime;
+          audioRef.current.volume = globalState.volume;
+          setIsPlaying(globalState.isPlaying);
+        }
+      }
+    }
+  }, [album]);
 
   // Load album data if not provided initially
   useEffect(() => {

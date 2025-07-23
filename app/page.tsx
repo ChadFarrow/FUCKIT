@@ -8,6 +8,7 @@ import AddRSSFeed from '@/components/AddRSSFeed';
 import { RSSParser, RSSAlbum } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { generateAlbumUrl, generatePublisherSlug } from '@/lib/url-utils';
+import { getGlobalAudioState, updateGlobalAudioState, clearGlobalAudioState } from '@/lib/audio-state';
 
 // Environment-based RSS feed configuration
 // CDN zone found: re-podtards-cdn (working correctly)
@@ -179,6 +180,24 @@ export default function HomePage() {
       loadAlbumsData();
     }, 100);
   }, [isClient]); // Add isClient as dependency
+
+  // Initialize audio state from localStorage
+  useEffect(() => {
+    const globalState = getGlobalAudioState();
+    if (globalState.isPlaying && globalState.currentAlbum && globalState.trackUrl) {
+      // Restore audio state
+      setCurrentPlayingAlbum(globalState.currentAlbum);
+      setCurrentTrackIndex(globalState.currentTrackIndex);
+      setIsPlaying(globalState.isPlaying);
+      
+      // Restore audio element state
+      if (audioRef.current) {
+        audioRef.current.src = globalState.trackUrl;
+        audioRef.current.currentTime = globalState.currentTime;
+        audioRef.current.volume = globalState.volume;
+      }
+    }
+  }, []);
 
   // Rotating background effect
   useEffect(() => {
@@ -359,6 +378,7 @@ export default function HomePage() {
         // Pause current album
         audioRef.current.pause();
         setIsPlaying(false);
+        updateGlobalAudioState({ isPlaying: false }, audioRef.current || undefined);
       } else {
         // Play this album from the beginning
         audioRef.current.src = firstTrack.url;
@@ -366,6 +386,14 @@ export default function HomePage() {
           setCurrentPlayingAlbum(album.title);
           setCurrentTrackIndex(0);
           setIsPlaying(true);
+          
+          // Update global state
+          updateGlobalAudioState({
+            isPlaying: true,
+            currentAlbum: album.title,
+            currentTrackIndex: 0,
+            trackUrl: firstTrack.url,
+          }, audioRef.current || undefined);
         }).catch(err => {
           console.error('Error playing audio:', err);
         });
@@ -387,6 +415,12 @@ export default function HomePage() {
         audioRef.current.src = nextTrack.url;
         audioRef.current.play().then(() => {
           setCurrentTrackIndex(currentTrackIndex + 1);
+          
+          // Update global state
+          updateGlobalAudioState({
+            currentTrackIndex: currentTrackIndex + 1,
+            trackUrl: nextTrack.url,
+          }, audioRef.current || undefined);
         }).catch(err => {
           console.error('Error playing next track:', err);
         });
@@ -396,6 +430,7 @@ export default function HomePage() {
       setIsPlaying(false);
       setCurrentPlayingAlbum(null);
       setCurrentTrackIndex(0);
+      clearGlobalAudioState();
     }
   };
 
@@ -428,8 +463,14 @@ export default function HomePage() {
         {/* Hidden audio element for main page playback */}
         <audio
           ref={audioRef}
-          onPlay={() => setIsPlaying(true)}
-          onPause={() => setIsPlaying(false)}
+          onPlay={() => {
+            setIsPlaying(true);
+            updateGlobalAudioState({ isPlaying: true }, audioRef.current || undefined);
+          }}
+          onPause={() => {
+            setIsPlaying(false);
+            updateGlobalAudioState({ isPlaying: false }, audioRef.current || undefined);
+          }}
           onEnded={playNextTrack}
           preload="metadata"
           crossOrigin="anonymous"
@@ -1007,6 +1048,7 @@ export default function HomePage() {
           setIsPlaying(false);
           setCurrentPlayingAlbum(null);
           setCurrentTrackIndex(0);
+          clearGlobalAudioState();
         }}
         className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 transition-colors"
       >
