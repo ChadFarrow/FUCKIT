@@ -571,7 +571,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
         playsInline
       />
 
-      <div className="container mx-auto px-6 py-8 pb-32">
+      <div className="container mx-auto px-6 py-8 pb-40">
         {/* Back button */}
         <Link 
           href="/" 
@@ -782,32 +782,58 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
 
       {/* Fixed Audio Player Bar */}
       {album.tracks.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 bg-black/90 backdrop-blur-sm border-t border-gray-700 p-4">
-          <div className="container mx-auto flex items-center gap-4">
-            {/* Current Track Info */}
-            <div className="flex items-center gap-3 min-w-0 flex-1">
+        <div className="fixed bottom-0 left-0 right-0 bg-black/90 backdrop-blur-sm border-t border-gray-700 p-4 pb-safe">
+          <div className="container mx-auto flex flex-col md:flex-row items-center gap-4">
+            {/* Mobile Layout: Track Info + Controls Row */}
+            <div className="flex items-center gap-3 w-full md:w-auto md:flex-1">
               <Image 
                 src={getAlbumArtworkUrl(album.coverArt || '', 'thumbnail')} 
                 alt={album.title}
                 width={48}
                 height={48}
-                className="rounded object-cover"
+                className="rounded object-cover hidden md:block"
                 onError={(e) => {
                   // Fallback to placeholder on error
                   const target = e.target as HTMLImageElement;
                   target.src = getPlaceholderImageUrl('thumbnail');
                 }}
               />
-              <div className="min-w-0">
-                <p className="font-medium truncate">
+              <div className="min-w-0 flex-1 md:flex-initial">
+                <p className="font-medium truncate text-sm md:text-base">
                   {album.tracks[currentTrackIndex]?.title || 'No track selected'}
                 </p>
-                <p className="text-sm text-gray-400 truncate">{album.artist}</p>
+                <p className="text-xs md:text-sm text-gray-400 truncate">{album.artist}</p>
+              </div>
+              
+              {/* Mobile Playback Controls */}
+              <div className="flex items-center gap-2 md:hidden">
+                <button 
+                  onClick={prevTrack}
+                  className="text-gray-400 hover:text-white transition-colors p-2"
+                  disabled={currentTrackIndex === 0}
+                >
+                  <SkipBack className="h-5 w-5" />
+                </button>
+                
+                <button 
+                  onClick={togglePlay}
+                  className="bg-white text-black rounded-full p-2 hover:bg-gray-200 transition-colors"
+                >
+                  {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
+                </button>
+                
+                <button 
+                  onClick={nextTrack}
+                  className="text-gray-400 hover:text-white transition-colors p-2"
+                  disabled={currentTrackIndex === album.tracks.length - 1}
+                >
+                  <SkipForward className="h-5 w-5" />
+                </button>
               </div>
             </div>
 
-            {/* Playback Controls */}
-            <div className="flex items-center gap-4">
+            {/* Desktop Playback Controls */}
+            <div className="hidden md:flex items-center gap-4">
               <button 
                 onClick={prevTrack}
                 className="text-gray-400 hover:text-white transition-colors"
@@ -832,8 +858,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               </button>
             </div>
 
-            {/* Progress Bar */}
-            <div className="flex items-center gap-2 flex-1 max-w-md">
+            {/* Progress Bar - Full Width on Mobile */}
+            <div className="flex items-center gap-2 w-full md:flex-1 md:max-w-md">
               <span className="text-xs text-gray-400 w-10">{formatTime(currentTime)}</span>
               <input
                 type="range"
@@ -846,8 +872,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               <span className="text-xs text-gray-400 w-10">{formatTime(duration)}</span>
             </div>
 
-            {/* Volume Control */}
-            <div className="flex items-center gap-2">
+            {/* Volume Control - Desktop Only */}
+            <div className="hidden md:flex items-center gap-2">
               <Volume2 className="h-4 w-4 text-gray-400" />
               <input
                 type="range"

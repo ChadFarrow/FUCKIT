@@ -68,4 +68,16 @@
     cursor: pointer;
     border: none;
   }
+}
+
+@layer utilities {
+  /* iOS Safe Area Support */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  /* Add extra padding on top of safe area for better spacing */
+  .pb-safe-plus {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
 } 
