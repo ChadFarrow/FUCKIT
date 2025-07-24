@@ -17,6 +17,8 @@ interface PublisherDetailClientProps {
 type FilterType = 'all' | 'albums' | 'eps' | 'singles';
 
 export default function PublisherDetailClient({ publisherId }: PublisherDetailClientProps) {
+  console.log('🎯 PublisherDetailClient component loaded with publisherId:', publisherId);
+  
   const [isLoading, setIsLoading] = useState(true);
   const [albums, setAlbums] = useState<RSSAlbum[]>([]);
   const [publisherItems, setPublisherItems] = useState<RSSPublisherItem[]>([]);
@@ -26,6 +28,8 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
   const [albumsLoading, setAlbumsLoading] = useState(false);
 
   useEffect(() => {
+    console.log('🎯 PublisherDetailClient useEffect triggered');
+    
     const loadPublisher = async () => {
       try {
         setIsLoading(true);
