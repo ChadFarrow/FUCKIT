@@ -731,6 +731,81 @@ export class RSSParser {
 
   static async parsePublisherFeed(feedUrl: string): Promise<RSSPublisherItem[]> {
     try {
+      // Handle special cases
+      if (feedUrl === 'iroh-aggregated') {
+        console.log('🎵 Loading IROH aggregated feed from Wavlake...');
+        // For IROH, we need to fetch the main artist feed and extract music items
+        const isServer = typeof window === 'undefined';
+        
+        let response;
+        if (isServer) {
+          // Server-side: fetch directly
+          response = await fetch('https://wavlake.com/feed/artist/8a9c2e54-785a-4128-9412-737610f5d00a');
+        } else {
+          // Client-side: use proxy
+          const proxyUrl = `/api/fetch-rss?url=${encodeURIComponent('https://wavlake.com/feed/artist/8a9c2e54-785a-4128-9412-737610f5d00a')}`;
+          response = await fetch(proxyUrl);
+        }
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch IROH artist feed: ${response.status}`);
+        }
+        
+        const xmlText = await response.text();
+        
+        // Use different XML parsing based on environment
+        let xmlDoc: any;
+        if (typeof window !== 'undefined') {
+          // Browser environment
+          const parser = new DOMParser();
+          xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+        } else {
+          // Server environment - use xmldom
+          const { DOMParser } = await import('@xmldom/xmldom');
+          const parser = new DOMParser();
+          xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+        }
+        
+        // Check for parsing errors
+        const parserError = xmlDoc.getElementsByTagName('parsererror')[0];
+        if (parserError) {
+          throw new Error('Invalid XML format');
+        }
+        
+        // Extract channel info
+        const channels = xmlDoc.getElementsByTagName('channel');
+        if (!channels || channels.length === 0) {
+          throw new Error('Invalid RSS feed: no channel found');
+        }
+        const channel = channels[0];
+        
+        const publisherItems: RSSPublisherItem[] = [];
+        
+        // Look for podcast:remoteItem elements with medium="music"
+        const remoteItems = Array.from(channel.getElementsByTagName('podcast:remoteItem'));
+        
+        remoteItems.forEach((item: unknown) => {
+          const element = item as Element;
+          const medium = element.getAttribute('medium');
+          const feedGuid = element.getAttribute('feedGuid');
+          const feedUrl = element.getAttribute('feedUrl');
+          const title = element.getAttribute('title') || element.textContent?.trim();
+          
+          if (medium === 'music' && feedGuid && feedUrl) {
+            publisherItems.push({
+              feedGuid,
+              feedUrl,
+              medium,
+              title
+            });
+          }
+        });
+        
+        console.log(`🏢 Found ${publisherItems.length} music items in IROH aggregated feed`);
+        return publisherItems;
+      }
+      
+      // For regular feeds, use the original logic
       // For server-side fetching, always use direct URLs
       // For client-side fetching, use the proxy
       const isServer = typeof window === 'undefined';
