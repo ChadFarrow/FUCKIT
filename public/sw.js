@@ -1,8 +1,16 @@
 // Dynamic cache versioning - update this with each deployment
-const APP_VERSION = '1.5e772e6'; // TODO: Update this with each deployment
+const APP_VERSION = '1.6.0'; // TODO: Update this with each deployment
 const CACHE_NAME = `doerfelverse-v${APP_VERSION}`;
 const STATIC_CACHE = `doerfelverse-static-v${APP_VERSION}`;
 const DYNAMIC_CACHE = `doerfelverse-dynamic-v${APP_VERSION}`;
+const API_CACHE = `doerfelverse-api-v${APP_VERSION}`;
+
+// Cache expiration times
+const CACHE_EXPIRATION = {
+  api: 5 * 60 * 1000, // 5 minutes for API calls
+  static: 24 * 60 * 60 * 1000, // 24 hours for static assets
+  dynamic: 60 * 60 * 1000 // 1 hour for dynamic content
+};
 
 // Files to cache immediately
 const STATIC_FILES = [
@@ -30,7 +38,9 @@ self.addEventListener('install', (event) => {
       .then(() => {
         console.log(`✅ Service Worker v${APP_VERSION} installed`);
         // Force immediate activation of new service worker
-        return self.skipWaiting();
+        // Don't skip waiting - let the user control when to update
+        console.log('⏳ Waiting for all tabs to close before activating...');
+        return Promise.resolve();
       })
   );
 });
@@ -44,15 +54,16 @@ self.addEventListener('activate', (event) => {
       caches.keys().then((cacheNames) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
-            if (cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
+            // Delete all caches that don't belong to current version
+            if (!cacheName.includes(APP_VERSION)) {
               console.log('🗑️ Deleting old cache:', cacheName);
               return caches.delete(cacheName);
             }
           })
         );
       }),
-      // Take control of all clients immediately
-      self.clients.claim()
+      // Don't claim immediately - wait for page reload
+      console.log('✅ Service Worker activated, will control pages on reload')
     ]).then(() => {
       console.log(`✅ Service Worker v${APP_VERSION} activated and controlling all pages`);
       // Notify all clients about the update
@@ -92,34 +103,59 @@ self.addEventListener('fetch', (event) => {
   }
 });
 
-// Handle API requests (RSS feeds, etc.)
+// Handle API requests (RSS feeds, etc.) - Network first with smart caching
 async function handleApiRequest(request) {
-  const cacheKey = `api-${new URL(request.url).pathname}-${new Date().getHours()}`; // Hourly cache
+  const url = new URL(request.url);
+  const cacheKey = request.url;
   
   try {
-    // Try network first
+    // Always try network first for API requests
     const networkResponse = await fetch(request);
     if (networkResponse.ok) {
-      // Cache successful responses for 1 hour
-      const cache = await caches.open(DYNAMIC_CACHE);
-      cache.put(cacheKey, networkResponse.clone());
+      // Only cache successful responses
+      const cache = await caches.open(API_CACHE);
+      const responseToCache = networkResponse.clone();
+      
+      // Add timestamp to cached response
+      const headers = new Headers(responseToCache.headers);
+      headers.set('sw-cached-at', new Date().toISOString());
+      
+      const cachedResponse = new Response(responseToCache.body, {
+        status: responseToCache.status,
+        statusText: responseToCache.statusText,
+        headers: headers
+      });
+      
+      cache.put(cacheKey, cachedResponse);
       return networkResponse;
     }
   } catch (error) {
-    console.log('📶 Network failed for API request, trying cache');
+    console.log('📶 Network failed for API request, checking cache');
   }
 
-  // Fallback to cache
-  const cache = await caches.open(DYNAMIC_CACHE);
+  // Check cache with expiration
+  const cache = await caches.open(API_CACHE);
   const cachedResponse = await cache.match(cacheKey);
+  
   if (cachedResponse) {
-    return cachedResponse;
+    const cachedAt = cachedResponse.headers.get('sw-cached-at');
+    if (cachedAt) {
+      const age = Date.now() - new Date(cachedAt).getTime();
+      if (age < CACHE_EXPIRATION.api) {
+        console.log('📦 Serving from cache (age:', Math.round(age / 1000), 'seconds)');
+        return cachedResponse;
+      } else {
+        console.log('🗑️ Cache expired, removing old entry');
+        cache.delete(cacheKey);
+      }
+    }
   }
 
-  // No cache available
-  return new Response('Offline - No cached data available', { 
+  // No valid cache available
+  return new Response(JSON.stringify({ error: 'Offline - No cached data available' }), { 
     status: 503, 
-    statusText: 'Service Unavailable' 
+    statusText: 'Service Unavailable',
+    headers: { 'Content-Type': 'application/json' }
   });
 }
 
@@ -199,40 +235,8 @@ async function handlePageRequest(request) {
   });
 }
 
-// Handle background sync
-self.addEventListener('sync', (event) => {
-  console.log('🔄 Background sync triggered:', event.tag);
-  
-  if (event.tag === 'background-sync') {
-    event.waitUntil(performBackgroundSync());
-  }
-});
-
-async function performBackgroundSync() {
-  try {
-    // Preload frequently accessed RSS feeds
-    const feedUrls = [
-      '/api/fetch-rss?url=https://re-podtards-cdn.b-cdn.net/feeds/music-from-the-doerfelverse.xml',
-'/api/fetch-rss?url=https://re-podtards-cdn.b-cdn.net/feeds/bloodshot-lies-album.xml'
-    ];
-    
-    const cache = await caches.open(DYNAMIC_CACHE);
-    
-    for (const url of feedUrls) {
-      try {
-        const response = await fetch(url);
-        if (response.ok) {
-          await cache.put(url, response);
-          console.log('📦 Background cached:', url);
-        }
-      } catch (error) {
-        console.log('⚠️ Background sync failed for:', url);
-      }
-    }
-  } catch (error) {
-    console.error('❌ Background sync error:', error);
-  }
-}
+// Background sync disabled to prevent conflicts
+// Background sync can cause race conditions with foreground requests
 
 // Handle push notifications
 self.addEventListener('push', (event) => {

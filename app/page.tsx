@@ -15,7 +15,7 @@ import { getVersionString } from '@/lib/version';
 // Environment-based RSS feed configuration
 // CDN zone: re-podtards-cdn (Pull Zone - needs reconfiguration)
 // Temporarily using original URLs until CDN Pull Zone is configured to pull from Storage
-const isProduction = false; // process.env.NODE_ENV === 'production';
+const isProduction = process.env.NODE_ENV === 'production';
 
 // Clean, verified RSS feed URL mappings: [originalUrl, cdnUrl]
 const feedUrlMappings = [
@@ -381,30 +381,58 @@ export default function HomePage() {
       // Update progress as feeds load
       setLoadingProgress(0);
       
-      // Add timeout to prevent hanging
-      const timeoutPromise = new Promise<never>((_, reject) => {
-        setTimeout(() => reject(new Error('Feed loading timeout after 30 seconds')), 30000);
-      });
+      // Progressive loading configuration
+      const BATCH_SIZE = 20;
+      const BATCH_DELAY = 100; // Small delay between batches to prevent overwhelming
       
-      // Pass the original URLs to RSSParser - it will handle proxy conversion internally
-      console.log('🔗 Original URLs:', allFeeds.slice(0, 3), '...');
+      let albumsData: RSSAlbum[] = [];
       
-      let albumsData: RSSAlbum[];
       try {
-        // Parse regular feeds first
-        const parsePromise = RSSParser.parseMultipleFeeds(allFeeds);
-        const regularAlbums = await Promise.race([parsePromise, timeoutPromise]) as RSSAlbum[];
-        console.log('📦 Regular albums data received:', regularAlbums);
-
-        // Set albums immediately for faster UI response
-        if (regularAlbums && regularAlbums.length > 0) {
-          setAlbums(regularAlbums);
-          console.log('✅ Set initial albums:', regularAlbums.length, 'albums');
+        // Process feeds in batches for progressive loading
+        console.log(`📊 Loading ${allFeeds.length} feeds in batches of ${BATCH_SIZE}`);
+        
+        for (let i = 0; i < allFeeds.length; i += BATCH_SIZE) {
+          const batch = allFeeds.slice(i, i + BATCH_SIZE);
+          const batchNumber = Math.floor(i / BATCH_SIZE) + 1;
+          const totalBatches = Math.ceil(allFeeds.length / BATCH_SIZE);
+          
+          console.log(`🔄 Loading batch ${batchNumber}/${totalBatches} (${batch.length} feeds)`);
+          
+          try {
+            // Parse batch with individual timeout
+            const batchPromise = RSSParser.parseMultipleFeeds(batch);
+            const batchTimeout = new Promise<never>((_, reject) => {
+              setTimeout(() => reject(new Error(`Batch ${batchNumber} timeout`)), 15000);
+            });
+            
+            const batchAlbums = await Promise.race([batchPromise, batchTimeout]) as RSSAlbum[];
+            
+            if (batchAlbums && batchAlbums.length > 0) {
+              albumsData = [...albumsData, ...batchAlbums];
+              setAlbums(albumsData);
+              
+              // Update progress
+              const progress = Math.min(((i + BATCH_SIZE) / allFeeds.length) * 100, 100);
+              setLoadingProgress(progress);
+              
+              console.log(`✅ Batch ${batchNumber} loaded: ${batchAlbums.length} albums (total: ${albumsData.length})`);
+            }
+            
+            // Small delay between batches to prevent rate limiting
+            if (i + BATCH_SIZE < allFeeds.length) {
+              await new Promise(resolve => setTimeout(resolve, BATCH_DELAY));
+            }
+          } catch (batchError) {
+            console.warn(`⚠️ Batch ${batchNumber} failed:`, batchError);
+            // Continue with next batch instead of failing completely
+          }
         }
+        
+        console.log(`📦 Total albums loaded: ${albumsData.length}`);
 
         // Load publisher feeds in background (non-blocking)
         const publisherFeeds = new Set<string>();
-        regularAlbums.forEach(album => {
+        albumsData.forEach((album: RSSAlbum) => {
           if (album.publisher && album.publisher.feedUrl) {
             publisherFeeds.add(album.publisher.feedUrl);
           }
@@ -414,31 +442,51 @@ export default function HomePage() {
 
         // Load publisher feeds asynchronously without blocking the UI
         if (publisherFeeds.size > 0) {
-          // Don't await this - let it run in background
-          RSSParser.parseMultipleFeeds(Array.from(publisherFeeds))
-            .then(publisherAlbums => {
-              console.log(`🎶 Loaded ${publisherAlbums.length} albums from publisher feeds`);
+          // Process publisher feeds in batches too
+          const publisherFeedArray = Array.from(publisherFeeds);
+          
+          const loadPublisherFeeds = async () => {
+            const publisherAlbums: RSSAlbum[] = [];
+            
+            for (let i = 0; i < publisherFeedArray.length; i += BATCH_SIZE) {
+              const batch = publisherFeedArray.slice(i, i + BATCH_SIZE);
               
-              // Combine with existing albums
-              const existingAlbums = albums;
-              const existingKeys = new Set(existingAlbums.map(album => `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`));
-              
-              const newAlbums = publisherAlbums.filter(album => {
-                const key = `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`;
-                return !existingKeys.has(key);
-              });
-              
-              if (newAlbums.length > 0) {
-                setAlbums(prev => [...prev, ...newAlbums]);
-                console.log(`✅ Added ${newAlbums.length} new albums from publisher feeds`);
+              try {
+                const batchAlbums = await RSSParser.parseMultipleFeeds(batch);
+                publisherAlbums.push(...batchAlbums);
+              } catch (error) {
+                console.warn(`⚠️ Publisher batch failed:`, error);
               }
-            })
-            .catch(error => {
-              console.warn('⚠️ Failed to load publisher feeds:', error);
+              
+              // Small delay between batches
+              if (i + BATCH_SIZE < publisherFeedArray.length) {
+                await new Promise(resolve => setTimeout(resolve, BATCH_DELAY));
+              }
+            }
+            
+            console.log(`🎶 Loaded ${publisherAlbums.length} albums from publisher feeds`);
+            
+            // Combine with existing albums
+            const existingKeys = new Set(
+              albumsData.map(album => `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`)
+            );
+            
+            const newAlbums = publisherAlbums.filter(album => {
+              const key = `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`;
+              return !existingKeys.has(key);
             });
+            
+            if (newAlbums.length > 0) {
+              setAlbums(prev => [...prev, ...newAlbums]);
+              console.log(`✅ Added ${newAlbums.length} new albums from publisher feeds`);
+            }
+          };
+          
+          // Don't await this - let it run in background
+          loadPublisherFeeds().catch(error => {
+            console.warn('⚠️ Failed to load publisher feeds:', error);
+          });
         }
-
-        albumsData = regularAlbums;
         console.log(`📦 Total albums after initial load: ${albumsData.length}`);
       } catch (parseError) {
         console.error('❌ Album parsing failed:', parseError);
@@ -589,16 +637,6 @@ export default function HomePage() {
     }
   };
 
-  const resetAudioState = () => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.src = '';
-    }
-    setIsPlaying(false);
-    setCurrentPlayingAlbum(null);
-    setCurrentTrackIndex(0);
-    clearGlobalAudioState();
-  };
 
   return (
     <div className="min-h-screen text-white relative overflow-hidden">
@@ -701,6 +739,7 @@ export default function HomePage() {
                     <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
                     <span className="text-yellow-400">
                       Loading {albums.length > 0 ? `${albums.length} albums` : `${feedUrls.length + customFeeds.length} RSS feeds`}...
+                      {loadingProgress > 0 && ` (${Math.round(loadingProgress)}%)`}
                     </span>
                   </div>
                 ) : error ? (
@@ -862,8 +901,27 @@ export default function HomePage() {
         {/* Main Content */}
         <div className="container mx-auto px-6 py-8">
           {isLoading ? (
-            <div className="flex justify-center items-center py-12">
+            <div className="flex flex-col items-center justify-center py-12 gap-4">
               <LoadingSpinner />
+              {loadingProgress > 0 && (
+                <div className="w-full max-w-md">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm text-gray-400">Loading feeds...</span>
+                    <span className="text-sm text-gray-400">{Math.round(loadingProgress)}%</span>
+                  </div>
+                  <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div 
+                      className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${loadingProgress}%` }}
+                    />
+                  </div>
+                  {albums.length > 0 && (
+                    <p className="text-center text-sm text-gray-400 mt-2">
+                      {albums.length} albums loaded so far...
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           ) : error ? (
             <div className="text-center py-12">

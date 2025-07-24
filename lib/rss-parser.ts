@@ -60,6 +60,44 @@ export interface RSSAlbum {
 }
 
 export class RSSParser {
+  // Retry configuration
+  private static readonly MAX_RETRIES = 3;
+  private static readonly RETRY_DELAY_BASE = 1000; // 1 second base delay
+  
+  // Retry wrapper with exponential backoff
+  private static async withRetry<T>(
+    operation: () => Promise<T>,
+    maxRetries: number = this.MAX_RETRIES,
+    context: string = ''
+  ): Promise<T> {
+    let lastError: Error | null = null;
+    
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        return await operation();
+      } catch (error) {
+        lastError = error as Error;
+        
+        // Don't retry on certain errors
+        if (error instanceof Error && (
+          error.message.includes('Invalid RSS feed') ||
+          error.message.includes('Empty response') ||
+          error.message.includes('not valid XML')
+        )) {
+          throw error;
+        }
+        
+        if (attempt < maxRetries) {
+          const delay = this.RETRY_DELAY_BASE * Math.pow(2, attempt);
+          console.log(`🔄 Retry ${attempt + 1}/${maxRetries} for ${context} after ${delay}ms`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
+      }
+    }
+    
+    throw lastError || new Error('Operation failed after retries');
+  }
+  
   static async parseAlbumFeed(feedUrl: string): Promise<RSSAlbum | null> {
     try {
       // For server-side fetching, always use direct URLs
@@ -542,7 +580,12 @@ export class RSSParser {
       
       const promises = batch.map(async (url) => {
         try {
-          return await this.parseAlbumFeed(url);
+          // Use retry logic for each feed
+          return await this.withRetry(
+            () => this.parseAlbumFeed(url),
+            2, // Use 2 retries for batch processing to avoid too much delay
+            `feed ${url}`
+          );
         } catch (error) {
           // Enhanced error handling for NetworkError
           if (error instanceof TypeError && error.message.includes('NetworkError')) {
@@ -554,7 +597,8 @@ export class RSSParser {
             });
             return null;
           }
-          throw error;
+          console.error(`❌ Failed to parse feed ${url} after retries:`, error);
+          return null;
         }
       });
       
