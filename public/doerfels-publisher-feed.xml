@@ -64,6 +64,45 @@
 		<!-- Merry Christmix -->
 		<podcast:remoteItem medium="music" feedGuid="f275657c-4b58-563a-ad3b-91b65035b3d8" feedUrl="https://www.doerfelverse.com/feeds/merry-christmix.xml"/>
 		
+		<!-- Dead Time Live 2016 -->
+		<podcast:remoteItem medium="music" feedGuid="dead-time-live-2016-guid" feedUrl="https://www.doerfelverse.com/feeds/dead-time-live-2016.xml"/>
+		
+		<!-- Disco Swag -->
+		<podcast:remoteItem medium="music" feedGuid="disco-swag-guid" feedUrl="https://www.doerfelverse.com/feeds/disco-swag.xml"/>
+		
+		<!-- Phatty the Grasshopper -->
+		<podcast:remoteItem medium="music" feedGuid="phatty-grasshopper-guid" feedUrl="https://www.doerfelverse.com/feeds/phatty-the-grasshopper.xml"/>
+		
+		<!-- Possible -->
+		<podcast:remoteItem medium="music" feedGuid="possible-guid" feedUrl="https://www.doerfelverse.com/feeds/possible.xml"/>
+		
+		<!-- Pour Over -->
+		<podcast:remoteItem medium="music" feedGuid="pour-over-guid" feedUrl="https://www.doerfelverse.com/feeds/pour-over.xml"/>
+		
+		<!-- Psalm 54 -->
+		<podcast:remoteItem medium="music" feedGuid="psalm-54-guid" feedUrl="https://www.doerfelverse.com/feeds/psalm-54.xml"/>
+		
+		<!-- They Don't Know -->
+		<podcast:remoteItem medium="music" feedGuid="they-dont-know-guid" feedUrl="https://www.doerfelverse.com/feeds/they-dont-know.xml"/>
+		
+		<!-- Think EP -->
+		<podcast:remoteItem medium="music" feedGuid="think-ep-guid" feedUrl="https://www.doerfelverse.com/feeds/think-ep.xml"/>
+		
+		<!-- Underwater Single -->
+		<podcast:remoteItem medium="music" feedGuid="underwater-single-guid" feedUrl="https://www.doerfelverse.com/feeds/underwater-single.xml"/>
+		
+		<!-- Unsound Existence -->
+		<podcast:remoteItem medium="music" feedGuid="unsound-existence-guid" feedUrl="https://www.doerfelverse.com/feeds/unsound-existence.xml"/>
+		
+		<!-- You Are My World -->
+		<podcast:remoteItem medium="music" feedGuid="you-are-my-world-guid" feedUrl="https://www.doerfelverse.com/feeds/you-are-my-world.xml"/>
+		
+		<!-- You Feel Like Home -->
+		<podcast:remoteItem medium="music" feedGuid="you-feel-like-home-guid" feedUrl="https://www.doerfelverse.com/feeds/you-feel-like-home.xml"/>
+		
+		<!-- Your Chance -->
+		<podcast:remoteItem medium="music" feedGuid="your-chance-guid" feedUrl="https://www.doerfelverse.com/feeds/your-chance.xml"/>
+		
 		<itunes:summary>The Doerfels are a family band from Buffalo, NY, creating original music across multiple genres including folk, rock, and acoustic. Their catalog includes albums like "Bloodshot Lies", "Stay Awhile", and many more.</itunes:summary>
 		<itunes:owner>
 			<itunes:name>The Doerfels</itunes:name>

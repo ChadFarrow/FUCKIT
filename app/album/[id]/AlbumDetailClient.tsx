@@ -780,37 +780,66 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                 onClick={() => playTrack(index)}
               >
                 <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <div className="relative w-10 h-10 md:w-12 md:h-12 flex-shrink-0">
+                  <div className="relative w-10 h-10 md:w-12 md:h-12 flex-shrink-0 overflow-hidden rounded">
                     {track.image ? (
-                      <Image 
-                        src={track.image} 
-                        alt={track.title}
-                        width={48}
-                        height={48}
-                        className="rounded object-cover w-full h-full"
-                        onError={(e) => {
-                          // Fallback to track number on error
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          target.nextElementSibling?.classList.remove('hidden');
-                        }}
-                      />
-                    ) : null}
-                    <div className={`absolute inset-0 flex items-center justify-center ${track.image ? 'hidden' : ''}`}>
-                      <span className="text-gray-400 text-sm font-medium">
-                        {track.trackNumber || index + 1}
-                      </span>
-                    </div>
+                      <>
+                        <Image 
+                          src={track.image} 
+                          alt={track.title}
+                          width={48}
+                          height={48}
+                          className="absolute inset-0 w-full h-full object-cover"
+                          onError={(e) => {
+                            // Fallback to track number on error
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            target.nextElementSibling?.classList.remove('hidden');
+                          }}
+                        />
+                        {/* Play Button Overlay - On top of image */}
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity duration-200">
+                          <button 
+                            className="bg-white text-black rounded-full p-1 transform hover:scale-110 transition-all duration-200 shadow-lg"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              playTrack(index);
+                            }}
+                          >
+                            {currentTrackIndex === index && isPlaying ? (
+                              <Pause className="h-3 w-3" />
+                            ) : (
+                              <Play className="h-3 w-3" />
+                            )}
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        {/* Track number fallback background */}
+                        <div className="absolute inset-0 bg-gray-800 flex items-center justify-center">
+                          <span className="text-gray-400 text-sm font-medium">
+                            {track.trackNumber || index + 1}
+                          </span>
+                        </div>
+                        {/* Play Button Overlay - On track number */}
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity duration-200">
+                          <button 
+                            className="bg-white text-black rounded-full p-1 transform hover:scale-110 transition-all duration-200 shadow-lg"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              playTrack(index);
+                            }}
+                          >
+                            {currentTrackIndex === index && isPlaying ? (
+                              <Pause className="h-3 w-3" />
+                            ) : (
+                              <Play className="h-3 w-3" />
+                            )}
+                          </button>
+                        </div>
+                      </>
+                    )}
                   </div>
-                  <button 
-                    className="text-gray-400 hover:text-white transition-colors p-1 flex-shrink-0"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      playTrack(index);
-                    }}
-                  >
-                    {currentTrackIndex === index && isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-                  </button>
                   <div className="min-w-0 flex-1">
                     <p className="font-medium truncate text-sm md:text-base">{track.title}</p>
                     {track.subtitle && (
