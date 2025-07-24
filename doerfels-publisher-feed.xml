@@ -11,7 +11,7 @@
 		
 		<!-- Example podcast:remoteItem entries for The Doerfels albums -->
 		<!-- Bloodshot Lies Album -->
-		<podcast:remoteItem medium="music" feedGuid="2b62ef49-fcff-523c-b81a-0a7dde2b0609" feedUrl="https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml"/>
+		<podcast:remoteItem medium="music" feedGuid="5a95f9d8-35e3-51f5-a269-ba1df36b4bd8" feedUrl="https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml"/>
 		
 		<!-- Music from the Doerfelverse (Stay Awhile) -->
 		<podcast:remoteItem medium="music" feedGuid="2b62ef49-fcff-523c-b81a-0a7dde2b0609" feedUrl="https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml"/>
