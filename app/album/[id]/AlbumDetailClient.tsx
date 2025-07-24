@@ -350,7 +350,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               'https://www.doerfelverse.com/feeds/dfbv1.xml',
               'https://www.doerfelverse.com/feeds/dfbv2.xml',
               'https://www.doerfelverse.com/feeds/disco-swag.xml',
-              'https://www.doerfelverse.com/feeds/doerfels-pubfeed.xml',
+              'https://re-podtards-cdn.b-cdn.net/feeds/doerfels-pubfeed.xml',
               'https://www.doerfelverse.com/feeds/first-married-christmas.xml',
               'https://www.doerfelverse.com/feeds/generation-gap.xml',
               'https://www.doerfelverse.com/feeds/heartbreak.xml',
