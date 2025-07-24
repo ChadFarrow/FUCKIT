@@ -103,6 +103,23 @@
 		<!-- Your Chance -->
 		<podcast:remoteItem medium="music" feedGuid="your-chance-guid" feedUrl="https://www.doerfelverse.com/feeds/your-chance.xml"/>
 		
+		<!-- Opus (Doerfels side project) -->
+		<podcast:remoteItem medium="music" feedGuid="f511794d-437f-5cbd-8fcd-c541652a7931" feedUrl="https://www.doerfelverse.com/artists/opus/opus/opus.xml"/>
+		
+		<!-- Ed Doerfel (Shredward) Projects -->
+		<!-- Nostalgic -->
+		<podcast:remoteItem medium="music" feedGuid="1e7ed1fa-0456-5860-9b34-825d1335d8f8" feedUrl="https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml"/>
+		
+		<!-- CityBeach -->
+		<podcast:remoteItem medium="music" feedGuid="5bb8f186-2460-54dc-911d-54f642e8adf6" feedUrl="https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/CityBeach.xml"/>
+		
+		<!-- Kurtisdrums V1 -->
+		<podcast:remoteItem medium="music" feedGuid="69c634ad-afea-5826-ad9a-8e1f06d6470b" feedUrl="https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml"/>
+		
+		<!-- TJ Doerfel Projects -->
+		<!-- Ring That Bell -->
+		<podcast:remoteItem medium="music" feedGuid="a599fabe-6b73-58f3-88b8-a7b78a2976b5" feedUrl="https://www.thisisjdog.com/media/ring-that-bell.xml"/>
+		
 		<itunes:summary>The Doerfels are a family band from Buffalo, NY, creating original music across multiple genres including folk, rock, and acoustic. Their catalog includes albums like "Bloodshot Lies", "Stay Awhile", and many more.</itunes:summary>
 		<itunes:owner>
 			<itunes:name>The Doerfels</itunes:name>

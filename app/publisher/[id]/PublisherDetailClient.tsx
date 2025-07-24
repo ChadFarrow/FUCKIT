@@ -50,7 +50,17 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
 
         // Load publisher feed info for artist details and image (fast)
         console.log(`🏢 Loading publisher feed info...`);
-        const publisherFeedInfo = await RSSParser.parsePublisherFeedInfo(feedUrl);
+        
+        let publisherFeedInfo = null;
+        
+        // Special handling for IROH aggregated feed
+        if (feedUrl === 'iroh-aggregated') {
+          console.log(`🎵 Loading IROH artist info from main feed...`);
+          publisherFeedInfo = await RSSParser.parsePublisherFeedInfo('https://wavlake.com/feed/artist/8a9c2e54-785a-4128-9412-737610f5d00a');
+        } else {
+          publisherFeedInfo = await RSSParser.parsePublisherFeedInfo(feedUrl);
+        }
+        
         console.log(`🏢 Publisher feed info:`, publisherFeedInfo);
         
         // Set publisher info immediately so page shows content
@@ -62,11 +72,12 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
             coverArt: publisherFeedInfo.coverArt
           });
         } else {
-          // Fallback to basic info
+          // Fallback to basic info for IROH or other artists
+          const artistName = publisherId === '8a9c2e54' || publisherId === 'iroh' ? 'IROH' : publisherId;
           setPublisherInfo({
-            title: `Artist: ${publisherId}`,
+            title: artistName,
             description: 'Independent artist and music creator',
-            artist: publisherId
+            artist: artistName
           });
         }
         
@@ -77,16 +88,48 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
         setAlbumsLoading(true);
         
         try {
-          // Load publisher items
-          console.log(`🏢 Loading publisher items...`);
-          const items = await RSSParser.parsePublisherFeed(feedUrl);
-          console.log(`🏢 Publisher items:`, items);
-          setPublisherItems(items);
+          // Load publisher items (skip for IROH aggregated since it's not a real feed)
+          if (feedUrl !== 'iroh-aggregated') {
+            console.log(`🏢 Loading publisher items...`);
+            const items = await RSSParser.parsePublisherFeed(feedUrl);
+            console.log(`🏢 Publisher items:`, items);
+            setPublisherItems(items);
+          }
 
           // Load all albums from the publisher feed
           console.log(`🏢 Loading publisher albums...`);
-          const albumsData = await RSSParser.parsePublisherFeedAlbums(feedUrl);
-          console.log(`🏢 Publisher albums loaded:`, albumsData.length, 'albums');
+          
+          let albumsData: RSSAlbum[] = [];
+          
+          // Special handling for IROH aggregated feed
+          if (feedUrl === 'iroh-aggregated') {
+            console.log(`🎵 Loading IROH aggregated albums from multiple feeds...`);
+            const irohFeedUrls = [
+              'https://wavlake.com/feed/artist/8a9c2e54-785a-4128-9412-737610f5d00a',
+              'https://wavlake.com/feed/music/1c7917cc-357c-4eaf-ab54-1a7cda504976',
+              'https://wavlake.com/feed/music/e1f9dfcb-ee9b-4a6d-aee7-189043917fb5',
+              'https://wavlake.com/feed/music/d4f791c3-4d0c-4fbd-a543-c136ee78a9de',
+              'https://wavlake.com/feed/music/51606506-66f8-4394-b6c6-cc0c1b554375',
+              'https://wavlake.com/feed/music/6b7793b8-fd9d-432b-af1a-184cd41aaf9d',
+              'https://wavlake.com/feed/music/0bb8c9c7-1c55-4412-a517-572a98318921',
+              'https://wavlake.com/feed/music/16e46ed0-b392-4419-a937-a7815f6ca43b',
+              'https://wavlake.com/feed/music/2cd1b9ea-9ef3-4a54-aa25-55295689f442',
+              'https://wavlake.com/feed/music/33eeda7e-8591-4ff5-83f8-f36a879b0a09',
+              'https://wavlake.com/feed/music/32a79df8-ec3e-4a14-bfcb-7a074e1974b9',
+              'https://wavlake.com/feed/music/06376ab5-efca-459c-9801-49ceba5fdab1',
+              'https://wavlake.com/feed/music/997060e3-9dc1-4cd8-b3c1-3ae06d54bb03',
+              'https://wavlake.com/feed/music/b54b9a19-b6ed-46c1-806c-7e82f7550edc'
+            ];
+            
+            // Load albums from all IROH feeds
+            albumsData = await RSSParser.parseMultipleFeeds(irohFeedUrls);
+            console.log(`🎵 IROH aggregated albums loaded:`, albumsData.length, 'albums');
+          } else {
+            // Normal publisher feed loading
+            albumsData = await RSSParser.parsePublisherFeedAlbums(feedUrl);
+            console.log(`🏢 Publisher albums loaded:`, albumsData.length, 'albums');
+          }
+          
           setAlbums(albumsData);
         } catch (albumError) {
           console.error('❌ Error loading albums:', albumError);
