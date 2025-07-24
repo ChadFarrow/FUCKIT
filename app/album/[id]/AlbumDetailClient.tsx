@@ -99,6 +99,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
     if (!album || !album.tracks[index] || !album.tracks[index].url || !audioRef.current) return;
     
     try {
+      console.log('🎵 Attempting to play track:', album.tracks[index].title, 'URL:', album.tracks[index].url);
+      
       setCurrentTrackIndex(index);
       audioRef.current.src = album.tracks[index].url;
       await audioRef.current.play();
@@ -114,9 +116,37 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
       
       // Update Media Session for lock screen controls
       updateMediaSession(album.tracks[index]);
+      
+      console.log('✅ Track playback started successfully');
+      
     } catch (error) {
-      console.error('Audio playback failed:', error);
+      console.error('❌ Audio playback failed:', error);
       setIsPlaying(false);
+      
+      // Handle specific error types
+      if (error instanceof DOMException) {
+        if (error.name === 'NotAllowedError') {
+          console.log('🚫 Autoplay blocked - user interaction required');
+          setError('Tap the play button again to start playback');
+          setTimeout(() => setError(null), 5000);
+        } else if (error.name === 'NotSupportedError') {
+          console.log('🚫 Audio format not supported');
+          setError('Audio format not supported on this device');
+          setTimeout(() => setError(null), 5000);
+        } else if (error.message.includes('CORS') || error.message.includes('cross-origin')) {
+          console.log('🚫 CORS error - audio blocked by browser policy');
+          setError('Audio blocked by browser security policy - try a different album');
+          setTimeout(() => setError(null), 5000);
+        } else {
+          console.log('🚫 Other audio error:', error.message);
+          setError('Unable to play audio - please try again');
+          setTimeout(() => setError(null), 5000);
+        }
+      } else {
+        console.log('🚫 Unknown audio error:', error);
+        setError('Audio playback error - please try again');
+        setTimeout(() => setError(null), 5000);
+      }
     }
   };
 
@@ -881,13 +911,21 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                       </>
                     ) : (
                       <>
-                        {/* Track number fallback background */}
-                        <div className="absolute inset-0 bg-gray-800 flex items-center justify-center">
-                          <span className="text-gray-400 text-sm font-medium">
-                            {track.trackNumber || index + 1}
-                          </span>
-                        </div>
-                        {/* Play Button Overlay - On track number */}
+                        {/* Album artwork fallback for tracks without individual images */}
+                        <Image 
+                          src={getAlbumArtworkUrl(album.coverArt || '', 'thumbnail')} 
+                          alt={album.title}
+                          width={48}
+                          height={48}
+                          className="absolute inset-0 w-full h-full object-cover"
+                          onError={(e) => {
+                            // Fallback to track number if album image also fails
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            target.nextElementSibling?.classList.remove('hidden');
+                          }}
+                        />
+                        {/* Play Button Overlay - On album artwork */}
                         <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity duration-200">
                           <button 
                             className="bg-white text-black rounded-full p-1 transform hover:scale-110 transition-all duration-200 shadow-lg"
@@ -902,6 +940,12 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                               <Play className="h-3 w-3" />
                             )}
                           </button>
+                        </div>
+                        {/* Track number fallback background - hidden by default */}
+                        <div className="absolute inset-0 bg-gray-800 flex items-center justify-center hidden">
+                          <span className="text-gray-400 text-sm font-medium">
+                            {track.trackNumber || index + 1}
+                          </span>
                         </div>
                       </>
                     )}
