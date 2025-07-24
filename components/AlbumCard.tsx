@@ -11,7 +11,7 @@ interface AlbumCardProps {
   index: number;
   currentPlayingAlbum: string | null;
   isPlaying: boolean;
-  onPlay: (album: RSSAlbum, e: React.MouseEvent) => void;
+  onPlay: (album: RSSAlbum, e: React.MouseEvent | React.TouchEvent) => void;
 }
 
 export default function AlbumCard({ 
@@ -49,7 +49,9 @@ export default function AlbumCard({
         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
           <button
             onClick={(e) => onPlay(album, e)}
-            className="bg-white/80 hover:bg-white text-black rounded-full p-3 transform hover:scale-110 transition-all duration-200 shadow-lg"
+            onTouchEnd={(e) => onPlay(album, e)}
+            className="bg-white/80 hover:bg-white text-black rounded-full p-3 transform hover:scale-110 transition-all duration-200 shadow-lg touch-manipulation"
+            style={{ touchAction: 'manipulation' }}
           >
             {currentPlayingAlbum === album.title && isPlaying ? (
               <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">

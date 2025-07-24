@@ -228,6 +228,32 @@ export default function HomePage() {
     }
   }, []);
 
+  // Mobile audio initialization - handle autoplay restrictions
+  useEffect(() => {
+    if (typeof window !== 'undefined' && audioRef.current) {
+      // Add touch event listener to initialize audio context on mobile
+      const handleTouchStart = () => {
+        if (audioRef.current) {
+          // Try to play and immediately pause to initialize audio context
+          audioRef.current.play().then(() => {
+            audioRef.current?.pause();
+          }).catch(() => {
+            // Ignore autoplay errors - this is just for initialization
+          });
+          
+          // Remove the listener after first touch
+          document.removeEventListener('touchstart', handleTouchStart);
+        }
+      };
+      
+      document.addEventListener('touchstart', handleTouchStart);
+      
+      return () => {
+        document.removeEventListener('touchstart', handleTouchStart);
+      };
+    }
+  }, []);
+
   // Audio event listeners to properly track state
   useEffect(() => {
     const audio = audioRef.current;
@@ -451,7 +477,7 @@ export default function HomePage() {
     }
   };
 
-  const playAlbum = async (album: RSSAlbum, e: React.MouseEvent) => {
+  const playAlbum = async (album: RSSAlbum, e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
@@ -460,6 +486,8 @@ export default function HomePage() {
     
     if (!firstTrack || !firstTrack.url || !audioRef.current) {
       console.warn('Cannot play album: missing track or audio element');
+      setError('No playable tracks found in this album');
+      setTimeout(() => setError(null), 3000);
       return;
     }
 
@@ -475,9 +503,14 @@ export default function HomePage() {
     } else {
       // Play this album from the beginning
       try {
+        console.log('🎵 Attempting to play:', album.title, 'Track URL:', firstTrack.url);
+        
         // Set up audio element first
         audioRef.current.src = firstTrack.url;
         audioRef.current.load(); // Force load on iOS
+        
+        // Set volume to a reasonable level for mobile
+        audioRef.current.volume = 0.8;
         
         // iOS requires user gesture - ensure we're in a user-initiated event
         const playPromise = audioRef.current.play();
@@ -497,20 +530,27 @@ export default function HomePage() {
             currentTrackIndex: 0,
             trackUrl: firstTrack.url,
           }, audioRef.current || undefined);
+          
+          console.log('✅ Successfully started playback');
         }
       } catch (error) {
-        console.error('Error playing audio:', error);
+        console.error('❌ Error playing audio:', error);
         
         // Show user feedback for iOS autoplay restrictions
         if (error instanceof DOMException && error.name === 'NotAllowedError') {
           // iOS autoplay blocked - try to inform user
-          console.log('Autoplay blocked - user interaction required');
+          console.log('🚫 Autoplay blocked - user interaction required');
           setError('Tap the play button again to start playback');
-          setTimeout(() => setError(null), 3000);
+          setTimeout(() => setError(null), 5000);
+        } else if (error instanceof DOMException && error.name === 'NotSupportedError') {
+          // Audio format not supported
+          console.log('🚫 Audio format not supported');
+          setError('Audio format not supported on this device');
+          setTimeout(() => setError(null), 5000);
         } else {
-          console.error('Other audio error:', error);
+          console.error('❌ Other audio error:', error);
           setError('Unable to play audio - please try again');
-          setTimeout(() => setError(null), 3000);
+          setTimeout(() => setError(null), 5000);
         }
       }
     }
@@ -598,10 +638,16 @@ export default function HomePage() {
             updateGlobalAudioState({ isPlaying: false }, audioRef.current || undefined);
           }}
           onEnded={playNextTrack}
-          preload="none"
+          onError={(e) => {
+            console.error('Audio error:', e);
+            setError('Audio playback error - please try again');
+            setTimeout(() => setError(null), 3000);
+          }}
+          preload="metadata"
           crossOrigin="anonymous"
           playsInline
           webkit-playsinline="true"
+          controls={false}
           style={{ display: 'none' }}
         />
         

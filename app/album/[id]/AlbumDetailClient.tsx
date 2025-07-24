@@ -304,6 +304,10 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             'ring that bell': 'https://www.thisisjdog.com/media/ring-that-bell.xml',
             'tinderbox': 'https://wavlake.com/feed/music/d677db67-0310-4813-970e-e65927c689f1',
             'nate johnivan': 'https://wavlake.com/feed/music/e678589b-5a9f-4918-9622-34119d2eed2c', // Nate Johnivan album
+            'fountain artist takeover': 'https://wavlake.com/feed/music/6dc5c681-8beb-4193-93a3-d405c962d103',
+            'fountain-artist-takeover': 'https://wavlake.com/feed/music/6dc5c681-8beb-4193-93a3-d405c962d103',
+            'fountain artist takeover nate johnivan': 'https://wavlake.com/feed/music/6dc5c681-8beb-4193-93a3-d405c962d103',
+            'fountain-artist-takeover-nate-johnivan': 'https://wavlake.com/feed/music/6dc5c681-8beb-4193-93a3-d405c962d103',
             'empty passenger seat': 'https://www.wavlake.com/feed/95ea253a-4058-402c-8503-204f6d3f1494',
             'joe martin': 'https://www.wavlake.com/feed/95ea253a-4058-402c-8503-204f6d3f1494', // Empty Passenger Seat album
             'stay awhile': 'https://ableandthewolf.com/static/media/feed.xml',

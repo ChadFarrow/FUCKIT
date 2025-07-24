@@ -23,7 +23,7 @@
     "@types/react-dom": "^18",
     "@xmldom/xmldom": "^0.9.8",
     "autoprefixer": "^10.0.1",
-    "axios": "^1.6.2",
+    "axios": "^1.11.0",
     "canvas": "^3.1.2",
     "colorthief": "^2.6.0",
     "date-fns": "^2.30.0",
@@ -36,7 +36,8 @@
     "react-dom": "^18",
     "rss-parser": "^3.13.0",
     "tailwindcss": "^3.3.0",
-    "typescript": "^5"
+    "typescript": "^5",
+    "xml2js": "^0.6.2"
   },
   "devDependencies": {
     "@types/colorthief": "^2.6.0",
