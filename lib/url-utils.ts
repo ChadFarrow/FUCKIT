@@ -103,10 +103,10 @@ export const KNOWN_PUBLISHERS: { [slug: string]: { feedGuid: string; feedUrl: st
     feedUrl: 'https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738',
     name: 'Joe Martin'
   },
-  // IROH
+  // IROH - Using aggregated feed approach for multiple albums
   'iroh': {
     feedGuid: '8a9c2e54-785a-4128-9412-737610f5d00a',
-    feedUrl: 'https://wavlake.com/feed/artist/8a9c2e54-785a-4128-9412-737610f5d00a',
+    feedUrl: 'iroh-aggregated',
     name: 'IROH'
   },
   // Fallback for UUID-based URLs (backward compatibility)
@@ -127,7 +127,7 @@ export const KNOWN_PUBLISHERS: { [slug: string]: { feedGuid: string; feedUrl: st
   },
   '8a9c2e54': {
     feedGuid: '8a9c2e54-785a-4128-9412-737610f5d00a',
-    feedUrl: 'https://wavlake.com/feed/artist/8a9c2e54-785a-4128-9412-737610f5d00a',
+    feedUrl: 'iroh-aggregated',
     name: 'IROH'
   }
 };
