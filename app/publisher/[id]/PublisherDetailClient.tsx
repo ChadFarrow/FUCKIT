@@ -347,18 +347,22 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
         </div>
 
         {/* Content */}
-        {albums.length > 0 ? (
+        {albumsLoading ? (
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-4"></div>
+            <p className="text-gray-400">
+              {publisherId === 'the-doerfels' || publisherId === '5526a0ee' 
+                ? 'Loading Doerfels albums (36 feeds)...' 
+                : 'Loading albums...'
+              }
+            </p>
+          </div>
+        ) : albums.length > 0 ? (
           <div>
             {/* Filter Header */}
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl font-bold">
-                {albumsLoading 
-                  ? (publisherId === 'the-doerfels' || publisherId === '5526a0ee' 
-                      ? 'Loading 36 Doerfels Albums...' 
-                      : 'Loading Albums...'
-                    )
-                  : `${albums.length} Albums`
-                }
+                {`${albums.length} Albums`}
               </h2>
               {activeFilter !== 'all' && (
                 <button
