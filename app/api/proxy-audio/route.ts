@@ -1,11 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// In-memory cache for audio files
-const audioCache = new Map<string, { data: ArrayBuffer; timestamp: number; ttl: number }>();
-
-// Cache TTL: 10 minutes for audio files
-const AUDIO_CACHE_TTL = 10 * 60 * 1000;
-
 // Rate limiting for audio requests
 const audioRateLimit = new Map<string, { count: number; resetTime: number }>();
 const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
@@ -41,17 +35,6 @@ function isAudioRateLimited(url: string): boolean {
   }
 }
 
-/**
- * Clean up expired audio cache entries
- */
-function cleanupAudioCache() {
-  const now = Date.now();
-  Array.from(audioCache.entries()).forEach(([key, value]) => {
-    if (now - value.timestamp > value.ttl) {
-      audioCache.delete(key);
-    }
-  });
-}
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -73,28 +56,17 @@ export async function GET(request: NextRequest) {
       'thisisjdog.com',
       'wavlake.com',
       'ableandthewolf.com',
-      'static.staticsave.com'
+      'static.staticsave.com',
+      'op3.dev',
+      'd12wklypp119aj.cloudfront.net'
     ];
     
     if (!allowedDomains.includes(url.hostname)) {
       return NextResponse.json({ error: 'Domain not allowed' }, { status: 403 });
     }
 
-    // Check cache first
-    cleanupAudioCache();
-    const cached = audioCache.get(audioUrl);
-    if (cached && (Date.now() - cached.timestamp) < cached.ttl) {
-      console.log(`🎵 Serving cached audio: ${audioUrl}`);
-      return new NextResponse(cached.data, {
-        headers: {
-          'Content-Type': 'audio/mpeg',
-          'Cache-Control': 'public, max-age=600', // 10 minutes
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, HEAD',
-          'Access-Control-Allow-Headers': 'Range',
-        },
-      });
-    }
+    // Note: Removed in-memory caching to enable streaming
+    // Browser and CDN caching will handle performance optimization
 
     // Check rate limiting
     if (isAudioRateLimited(audioUrl)) {
@@ -120,25 +92,15 @@ export async function GET(request: NextRequest) {
       }, { status: response.status });
     }
 
-    // Get the audio data
-    const audioData = await response.arrayBuffer();
-    
-    // Cache the audio data
-    audioCache.set(audioUrl, {
-      data: audioData,
-      timestamp: Date.now(),
-      ttl: AUDIO_CACHE_TTL
-    });
-
-    // Determine content type
+    // Stream the response instead of buffering everything
     const contentType = response.headers.get('Content-Type') || 'audio/mpeg';
+    const contentLength = response.headers.get('Content-Length');
     
-    // Create response with proper headers
-    const proxyResponse = new NextResponse(audioData, {
+    // Create response with proper headers for streaming
+    const proxyResponse = new NextResponse(response.body, {
       status: response.status,
       headers: {
         'Content-Type': contentType,
-        'Content-Length': audioData.byteLength.toString(),
         'Cache-Control': 'public, max-age=600', // 10 minutes
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, HEAD',
@@ -148,12 +110,16 @@ export async function GET(request: NextRequest) {
     });
 
     // Copy relevant headers from original response
+    if (contentLength) {
+      proxyResponse.headers.set('Content-Length', contentLength);
+    }
+    
     const contentRange = response.headers.get('Content-Range');
     if (contentRange) {
       proxyResponse.headers.set('Content-Range', contentRange);
     }
 
-    console.log(`✅ Audio proxied successfully: ${audioUrl} (${audioData.byteLength} bytes)`);
+    console.log(`✅ Audio streamed successfully: ${audioUrl} (${contentLength || 'unknown'} bytes)`);
     return proxyResponse;
 
   } catch (error) {
