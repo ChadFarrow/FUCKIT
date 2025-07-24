@@ -677,43 +677,43 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
         </Link>
 
         {/* Album Header */}
-        <div className="flex flex-col gap-6 mb-8">
-          {/* Mobile: Album Art */}
-          <div className="relative group mx-auto">
+        <div className="flex flex-col md:flex-row gap-6 mb-8 items-start">
+          {/* Left Side: Play Button */}
+          <div className="flex justify-center md:justify-start w-full md:w-auto">
+            <button
+              onClick={isPlaying ? togglePlay : playAlbum}
+              className="bg-white/90 hover:bg-white text-black rounded-full p-6 transform hover:scale-110 transition-all duration-200 shadow-xl"
+            >
+              {isPlaying ? (
+                <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                </svg>
+              ) : (
+                <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+              )}
+            </button>
+          </div>
+
+          {/* Center: Album Art */}
+          <div className="mx-auto md:mx-0">
             <Image 
               src={getAlbumArtworkUrl(album.coverArt || '', 'large')} 
               alt={album.title}
               width={280}
               height={280}
-              className="rounded-lg object-cover shadow-2xl mx-auto"
+              className="rounded-lg object-cover shadow-2xl"
               onError={(e) => {
                 // Fallback to placeholder on error
                 const target = e.target as HTMLImageElement;
                 target.src = getPlaceholderImageUrl('large');
               }}
             />
-            
-            {/* Play Button Overlay */}
-            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
-              <button
-                onClick={isPlaying ? togglePlay : playAlbum}
-                className="bg-white/80 hover:bg-white text-black rounded-full p-4 transform hover:scale-110 transition-all duration-200 shadow-lg"
-              >
-                {isPlaying ? (
-                  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
-                  </svg>
-                ) : (
-                  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z"/>
-                  </svg>
-                )}
-              </button>
-            </div>
           </div>
           
           {/* Album Info */}
-          <div className="text-center space-y-4">
+          <div className="text-center md:text-left space-y-4 flex-1">
             <h1 className="text-3xl md:text-4xl font-bold leading-tight">{album.title}</h1>
             <p className="text-xl text-gray-300">{album.artist}</p>
             
@@ -721,19 +721,19 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               <p className="text-lg text-gray-300 italic">{album.subtitle}</p>
             )}
             
-            <div className="flex items-center justify-center gap-6 text-sm text-gray-400">
+            <div className="flex items-center justify-center md:justify-start gap-6 text-sm text-gray-400">
               <span>{new Date(album.releaseDate).getFullYear()}</span>
               <span>{album.tracks.length} tracks</span>
               {album.explicit && <span className="bg-red-600 text-white px-2 py-1 rounded text-xs">EXPLICIT</span>}
             </div>
             
             {(album.summary || album.description) && (
-              <p className="text-gray-300 text-center max-w-lg mx-auto leading-relaxed">{album.summary || album.description}</p>
+              <p className="text-gray-300 text-center md:text-left max-w-lg mx-auto md:mx-0 leading-relaxed">{album.summary || album.description}</p>
             )}
 
             {/* Publisher Information */}
             {album.publisher && (
-              <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
+              <div className="flex items-center justify-center md:justify-start gap-2 text-sm text-gray-400">
                 <span>More from this artist:</span>
                 <Link
                   href={`/publisher/${generatePublisherSlug({ feedGuid: album.publisher.feedGuid })}`}
@@ -748,8 +748,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             {/* Funding Information */}
             {album.funding && album.funding.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold mb-3 text-white text-center">Support This Artist</h3>
-                <div className="flex flex-wrap justify-center gap-3">
+                <h3 className="text-lg font-semibold mb-3 text-white text-center md:text-left">Support This Artist</h3>
+                <div className="flex flex-wrap justify-center md:justify-start gap-3">
                   {album.funding.map((funding, index) => (
                     <a
                       key={index}
@@ -802,6 +802,15 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                       </span>
                     </div>
                   </div>
+                  <button 
+                    className="text-gray-400 hover:text-white transition-colors p-1 flex-shrink-0"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      playTrack(index);
+                    }}
+                  >
+                    {currentTrackIndex === index && isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                  </button>
                   <div className="min-w-0 flex-1">
                     <p className="font-medium truncate text-sm md:text-base">{track.title}</p>
                     {track.subtitle && (
@@ -819,15 +828,6 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                   <span className="text-xs md:text-sm text-gray-400">
                     {formatDuration(track.duration)}
                   </span>
-                  <button 
-                    className="text-gray-400 hover:text-white transition-colors p-1 md:opacity-0 md:group-hover:opacity-100"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      playTrack(index);
-                    }}
-                  >
-                    {currentTrackIndex === index && isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-                  </button>
                 </div>
               </div>
             ))}
