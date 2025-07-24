@@ -99,19 +99,35 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
     if (!album || !album.tracks[index] || !album.tracks[index].url || !audioRef.current) return;
     
     try {
-      console.log('🎵 Attempting to play track:', album.tracks[index].title, 'URL:', album.tracks[index].url);
+      const originalUrl = album.tracks[index].url;
+      console.log('🎵 Attempting to play track:', album.tracks[index].title, 'URL:', originalUrl);
+      
+      // Check if this is an external URL that needs proxying
+      let audioUrl = originalUrl;
+      try {
+        const url = new URL(originalUrl);
+        const isExternal = url.hostname !== window.location.hostname;
+        
+        if (isExternal) {
+          // Proxy external audio through our API
+          audioUrl = `/api/proxy-audio?url=${encodeURIComponent(originalUrl)}`;
+          console.log('🔄 Proxying external audio through:', audioUrl);
+        }
+      } catch (urlError) {
+        console.warn('⚠️ Could not parse audio URL, using as-is:', originalUrl);
+      }
       
       setCurrentTrackIndex(index);
-      audioRef.current.src = album.tracks[index].url;
+      audioRef.current.src = audioUrl;
       await audioRef.current.play();
       setIsPlaying(true);
       
-      // Update global state
+      // Update global state (store original URL, not proxied)
       updateGlobalAudioState({
         isPlaying: true,
         currentAlbum: album.title,
         currentTrackIndex: index,
-        trackUrl: album.tracks[index].url,
+        trackUrl: originalUrl, // Store original URL, not proxied
       }, audioRef.current);
       
       // Update Media Session for lock screen controls
