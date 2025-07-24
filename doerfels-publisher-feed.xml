@@ -4,7 +4,7 @@
 		<title><![CDATA[The Doerfels]]></title>
 		<description><![CDATA[The Doerfels are a family band from Buffalo, NY, creating original music across multiple genres including folk, rock, and acoustic. Their catalog includes albums like "Bloodshot Lies", "Stay Awhile", and many more.]]></description>
 		<link>https://www.doerfelverse.com/</link>
-		<generator>Wavlake</generator>
+		<generator>cursor</generator>
 		<lastBuildDate>Wed, 23 Jul 2025 23:17:22 GMT</lastBuildDate>
 		<podcast:medium>publisher</podcast:medium>
 		<podcast:guid>5526a0ee-069d-4c76-8bd4-7fd2022034bc</podcast:guid>
@@ -65,43 +65,43 @@
 		<podcast:remoteItem medium="music" feedGuid="f275657c-4b58-563a-ad3b-91b65035b3d8" feedUrl="https://www.doerfelverse.com/feeds/merry-christmix.xml"/>
 		
 		<!-- Dead Time Live 2016 -->
-		<podcast:remoteItem medium="music" feedGuid="dead-time-live-2016-guid" feedUrl="https://www.doerfelverse.com/feeds/dead-time-live-2016.xml"/>
+		<podcast:remoteItem medium="music" feedGuid="d4608e6e-024c-5482-befc-7bee3753167d" feedUrl="https://www.doerfelverse.com/feeds/dead-time-live-2016.xml"/>
 		
 		<!-- Disco Swag -->
-		<podcast:remoteItem medium="music" feedGuid="disco-swag-guid" feedUrl="https://www.doerfelverse.com/feeds/disco-swag.xml"/>
+		<podcast:remoteItem medium="music" feedGuid="de196d3e-276d-5b5f-aa30-34d747e5f6a7" feedUrl="https://www.doerfelverse.com/feeds/disco-swag.xml"/>
 		
 		<!-- Phatty the Grasshopper -->
-		<podcast:remoteItem medium="music" feedGuid="phatty-grasshopper-guid" feedUrl="https://www.doerfelverse.com/feeds/phatty-the-grasshopper.xml"/>
+		<podcast:remoteItem medium="music" feedGuid="94c8a0bf-f76e-5f8c-ba1d-c0c15a642271" feedUrl="https://www.doerfelverse.com/feeds/phatty-the-grasshopper.xml"/>
 		
 		<!-- Possible -->
-		<podcast:remoteItem medium="music" feedGuid="possible-guid" feedUrl="https://www.doerfelverse.com/feeds/possible.xml"/>
+		<podcast:remoteItem medium="music" feedGuid="d13eab76-a4c4-5e4b-a0fb-25ed1386bc51" feedUrl="https://www.doerfelverse.com/feeds/possible.xml"/>
 		
 		<!-- Pour Over -->
-		<podcast:remoteItem medium="music" feedGuid="pour-over-guid" feedUrl="https://www.doerfelverse.com/feeds/pour-over.xml"/>
+		<podcast:remoteItem medium="music" feedGuid="b84c3345-55db-54e0-ac41-4b1cc6f3df67" feedUrl="https://www.doerfelverse.com/feeds/pour-over.xml"/>
 		
 		<!-- Psalm 54 -->
-		<podcast:remoteItem medium="music" feedGuid="psalm-54-guid" feedUrl="https://www.doerfelverse.com/feeds/psalm-54.xml"/>
+		<podcast:remoteItem medium="music" feedGuid="8c5dd9fd-4257-5e7b-9e94-643e6aa4ca1c" feedUrl="https://www.doerfelverse.com/feeds/psalm-54.xml"/>
 		
 		<!-- They Don't Know -->
-		<podcast:remoteItem medium="music" feedGuid="they-dont-know-guid" feedUrl="https://www.doerfelverse.com/feeds/they-dont-know.xml"/>
+		<podcast:remoteItem medium="music" feedGuid="f7d933c8-032a-52e5-9598-e34d833a3e8e" feedUrl="https://www.doerfelverse.com/feeds/they-dont-know.xml"/>
 		
 		<!-- Think EP -->
-		<podcast:remoteItem medium="music" feedGuid="think-ep-guid" feedUrl="https://www.doerfelverse.com/feeds/think-ep.xml"/>
+		<podcast:remoteItem medium="music" feedGuid="af99d1b4-e10e-503f-8321-8d748bdc76f8" feedUrl="https://www.doerfelverse.com/feeds/think-ep.xml"/>
 		
 		<!-- Underwater Single -->
-		<podcast:remoteItem medium="music" feedGuid="underwater-single-guid" feedUrl="https://www.doerfelverse.com/feeds/underwater-single.xml"/>
+		<podcast:remoteItem medium="music" feedGuid="c2095619-a9d0-5e7c-80e1-59e520ce55d3" feedUrl="https://www.doerfelverse.com/feeds/underwater-single.xml"/>
 		
 		<!-- Unsound Existence -->
-		<podcast:remoteItem medium="music" feedGuid="unsound-existence-guid" feedUrl="https://www.doerfelverse.com/feeds/unsound-existence.xml"/>
+		<podcast:remoteItem medium="music" feedGuid="00addc23-7769-5471-bb9a-c0acb6f27437" feedUrl="https://www.doerfelverse.com/feeds/unsound-existence.xml"/>
 		
 		<!-- You Are My World -->
-		<podcast:remoteItem medium="music" feedGuid="you-are-my-world-guid" feedUrl="https://www.doerfelverse.com/feeds/you-are-my-world.xml"/>
+		<podcast:remoteItem medium="music" feedGuid="3679b281-4f40-5463-aa5a-6ea91b8a4957" feedUrl="https://www.doerfelverse.com/feeds/you-are-my-world.xml"/>
 		
 		<!-- You Feel Like Home -->
-		<podcast:remoteItem medium="music" feedGuid="you-feel-like-home-guid" feedUrl="https://www.doerfelverse.com/feeds/you-feel-like-home.xml"/>
+		<podcast:remoteItem medium="music" feedGuid="141b86d8-76bc-581a-adf1-2f836a4dde91" feedUrl="https://www.doerfelverse.com/feeds/you-feel-like-home.xml"/>
 		
 		<!-- Your Chance -->
-		<podcast:remoteItem medium="music" feedGuid="your-chance-guid" feedUrl="https://www.doerfelverse.com/feeds/your-chance.xml"/>
+		<podcast:remoteItem medium="music" feedGuid="4ab3741a-4a10-5631-a026-a9d0eb62fe11" feedUrl="https://www.doerfelverse.com/feeds/your-chance.xml"/>
 		
 		<!-- Opus (Doerfels side project) -->
 		<podcast:remoteItem medium="music" feedGuid="f511794d-437f-5cbd-8fcd-c541652a7931" feedUrl="https://www.doerfelverse.com/artists/opus/opus/opus.xml"/>

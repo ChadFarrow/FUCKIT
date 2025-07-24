@@ -350,7 +350,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               'https://www.doerfelverse.com/feeds/dfbv1.xml',
               'https://www.doerfelverse.com/feeds/dfbv2.xml',
               'https://www.doerfelverse.com/feeds/disco-swag.xml',
-              'https://re-podtards-cdn.b-cdn.net/feeds/doerfels-pubfeed.xml',
+              'https://www.doerfelverse.com/feeds/doerfels-pubfeed.xml',
               'https://www.doerfelverse.com/feeds/first-married-christmas.xml',
               'https://www.doerfelverse.com/feeds/generation-gap.xml',
               'https://www.doerfelverse.com/feeds/heartbreak.xml',
@@ -913,15 +913,19 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             {/* Mobile Layout: Track Info + Controls Row */}
             <div className="flex items-center gap-3 w-full md:w-auto md:flex-1">
               <Image 
-                src={getAlbumArtworkUrl(album.coverArt || '', 'thumbnail')} 
-                alt={album.title}
+                src={album.tracks[currentTrackIndex]?.image || getAlbumArtworkUrl(album.coverArt || '', 'thumbnail')} 
+                alt={album.tracks[currentTrackIndex]?.title || album.title}
                 width={48}
                 height={48}
                 className="rounded object-cover hidden md:block"
                 onError={(e) => {
-                  // Fallback to placeholder on error
+                  // Fallback to album artwork then placeholder on error
                   const target = e.target as HTMLImageElement;
-                  target.src = getPlaceholderImageUrl('thumbnail');
+                  if (target.src !== getAlbumArtworkUrl(album.coverArt || '', 'thumbnail')) {
+                    target.src = getAlbumArtworkUrl(album.coverArt || '', 'thumbnail');
+                  } else {
+                    target.src = getPlaceholderImageUrl('thumbnail');
+                  }
                 }}
               />
               <div className="min-w-0 flex-1 md:flex-initial">

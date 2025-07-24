@@ -88,7 +88,7 @@ export const KNOWN_PUBLISHERS: { [slug: string]: { feedGuid: string; feedUrl: st
   // The Doerfels
   'the-doerfels': {
     feedGuid: '5526a0ee-069d-4c76-8bd4-7fd2022034bc',
-    feedUrl: 'https://re-podtards-cdn.b-cdn.net/feeds/doerfels-pubfeed.xml',
+    feedUrl: 'https://www.doerfelverse.com/feeds/doerfels-pubfeed.xml',
     name: 'The Doerfels'
   },
   // Nate Johnivan
@@ -112,7 +112,7 @@ export const KNOWN_PUBLISHERS: { [slug: string]: { feedGuid: string; feedUrl: st
   // Fallback for UUID-based URLs (backward compatibility)
   '5526a0ee': {
     feedGuid: '5526a0ee-069d-4c76-8bd4-7fd2022034bc',
-    feedUrl: 'https://re-podtards-cdn.b-cdn.net/feeds/doerfels-pubfeed.xml',
+    feedUrl: 'https://www.doerfelverse.com/feeds/doerfels-pubfeed.xml',
     name: 'The Doerfels'
   },
   '18bcbf10': {
