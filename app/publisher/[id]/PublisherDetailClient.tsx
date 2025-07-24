@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft, Play } from 'lucide-react';
@@ -24,6 +24,11 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
   const [publisherInfo, setPublisherInfo] = useState<{ title?: string; description?: string; artist?: string; coverArt?: string } | null>(null);
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [albumsLoading, setAlbumsLoading] = useState(false);
+  
+  // Rotating background state for publisher albums
+  const [currentBackgroundIndex, setCurrentBackgroundIndex] = useState(0);
+  const [backgroundAlbums, setBackgroundAlbums] = useState<RSSAlbum[]>([]);
+  const backgroundIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     console.log('🎯 PublisherDetailClient useEffect triggered');
@@ -108,6 +113,24 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
           console.log(`🏢 Publisher albums:`, allAlbums);
           setAlbums(allAlbums);
           
+          // Set up rotating background from albums with good cover art
+          const albumsWithArt = allAlbums.filter(album => 
+            album.coverArt && 
+            !album.coverArt.includes('placeholder') &&
+            album.coverArt !== getAlbumArtworkUrl('placeholder', 'large')
+          );
+          
+          // Take first 6 albums with art for rotation
+          const rotationAlbums = albumsWithArt.slice(0, 6);
+          setBackgroundAlbums(rotationAlbums);
+          
+          // Start rotation if we have albums with art and not on mobile
+          if (rotationAlbums.length > 1 && typeof window !== 'undefined' && window.innerWidth > 768) {
+            backgroundIntervalRef.current = setInterval(() => {
+              setCurrentBackgroundIndex(prev => (prev + 1) % rotationAlbums.length);
+            }, 8000); // Change every 8 seconds
+          }
+          
         } catch (albumError) {
           console.error(`❌ Error loading publisher albums:`, albumError);
           // Don't set error here - we still have publisher info
@@ -124,6 +147,13 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
     };
 
     loadPublisher();
+    
+    // Cleanup background interval on unmount
+    return () => {
+      if (backgroundIntervalRef.current) {
+        clearInterval(backgroundIntervalRef.current);
+      }
+    };
   }, [publisherId]);
 
   // Sort albums: Pin "Stay Awhile" first, then "Bloodshot Lies", then by artist/title
@@ -176,9 +206,9 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
   if (isLoading) {
     return (
       <div className="min-h-screen text-white relative overflow-hidden">
-        {/* Background Image */}
-        {publisherInfo?.coverArt && (
-          <div className="absolute inset-0 z-0">
+        {/* Fallback background - use artist image or gradient */}
+        {publisherInfo?.coverArt ? (
+          <div className="fixed inset-0 z-0">
             <Image 
               src={getAlbumArtworkUrl(publisherInfo.coverArt, 'large')} 
               alt={publisherInfo.title || 'Artist background'}
@@ -189,6 +219,9 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
             {/* Dark overlay for readability */}
             <div className="absolute inset-0 bg-black/70"></div>
           </div>
+        ) : (
+          /* Fallback gradient background */
+          <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 z-0" />
         )}
         
         {/* Content */}
@@ -210,9 +243,9 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
   if (error) {
     return (
       <div className="min-h-screen text-white relative overflow-hidden">
-        {/* Background Image */}
-        {publisherInfo?.coverArt && (
-          <div className="absolute inset-0 z-0">
+        {/* Fallback background - use artist image or gradient */}
+        {publisherInfo?.coverArt ? (
+          <div className="fixed inset-0 z-0">
             <Image 
               src={getAlbumArtworkUrl(publisherInfo.coverArt, 'large')} 
               alt={publisherInfo.title || 'Artist background'}
@@ -223,6 +256,9 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
             {/* Dark overlay for readability */}
             <div className="absolute inset-0 bg-black/70"></div>
           </div>
+        ) : (
+          /* Fallback gradient background */
+          <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 z-0" />
         )}
         
         {/* Content */}
@@ -241,22 +277,43 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
 
   return (
     <div className="min-h-screen text-white relative overflow-hidden">
-      {/* Background Image */}
-      {publisherInfo?.coverArt ? (
-        <div className="absolute inset-0 z-0">
-          <Image 
-            src={getAlbumArtworkUrl(publisherInfo.coverArt, 'large')} 
-            alt={publisherInfo.title || 'Artist background'}
-            fill
-            className="object-contain"
-            priority
-          />
-          {/* Dark overlay for readability */}
-          <div className="absolute inset-0 bg-black/70"></div>
+      {/* Rotating Background - Desktop Only */}
+      {backgroundAlbums.length > 0 && typeof window !== 'undefined' && window.innerWidth > 768 && (
+        <div className="fixed inset-0 z-0">
+          {backgroundAlbums.map((album, index) => (
+            <div
+              key={`${album.title}-${index}`}
+              className={`absolute inset-0 transition-opacity duration-3000 ease-in-out ${
+                index === currentBackgroundIndex ? 'opacity-100' : 'opacity-0'
+              }`}
+              style={{
+                background: `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('${album.coverArt}') center/cover fixed`,
+              }}
+            />
+          ))}
         </div>
-      ) : (
-        /* Fallback gradient background */
-        <div className="absolute inset-0 z-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"></div>
+      )}
+
+      {/* Fallback background - use artist image or gradient */}
+      {(!backgroundAlbums.length || (typeof window !== 'undefined' && window.innerWidth <= 768)) && (
+        <>
+          {publisherInfo?.coverArt ? (
+            <div className="fixed inset-0 z-0">
+              <Image 
+                src={getAlbumArtworkUrl(publisherInfo.coverArt, 'large')} 
+                alt={publisherInfo.title || 'Artist background'}
+                fill
+                className="object-contain"
+                priority
+              />
+              {/* Dark overlay for readability */}
+              <div className="absolute inset-0 bg-black/70"></div>
+            </div>
+          ) : (
+            /* Fallback gradient background */
+            <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 z-0" />
+          )}
+        </>
       )}
       
       {/* Content */}
