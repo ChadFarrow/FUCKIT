@@ -743,6 +743,20 @@ export default function HomePage() {
                   return acc;
                 }, new Map<string, { name: string; feedGuid: string; albumCount: number }>());
 
+              // Add The Doerfels manually since they might not have publisher tags in all feeds
+              const doerfelsAlbums = albums.filter(album => 
+                album.artist.toLowerCase().includes('doerfel') || 
+                album.title.toLowerCase().includes('doerfel')
+              );
+              
+              if (doerfelsAlbums.length > 0 && !artistsWithPublishers.has('5526a0ee-069d-4c76-8bd4-7fd2022034bc')) {
+                artistsWithPublishers.set('5526a0ee-069d-4c76-8bd4-7fd2022034bc', {
+                  name: 'The Doerfels',
+                  feedGuid: '5526a0ee-069d-4c76-8bd4-7fd2022034bc',
+                  albumCount: doerfelsAlbums.length
+                });
+              }
+
               const artists = Array.from(artistsWithPublishers.values()).sort((a, b) => 
                 a.name.toLowerCase().localeCompare(b.name.toLowerCase())
               );
@@ -765,7 +779,7 @@ export default function HomePage() {
                           {artist.name}
                         </span>
                         <span className="text-xs text-gray-500 group-hover:text-gray-400 ml-2">
-                          {artist.albumCount} albums
+                          {artist.albumCount} releases
                         </span>
                       </Link>
                     ))}
@@ -778,7 +792,7 @@ export default function HomePage() {
             <div className="text-sm text-gray-400 space-y-1">
               <p>Default feeds: {feedUrls.length}</p>
               <p>Custom feeds: {customFeeds.length}</p>
-              <p>Total albums: {albums.length}</p>
+              <p>Total releases: {albums.length}</p>
             </div>
             
             {/* Version Display */}
