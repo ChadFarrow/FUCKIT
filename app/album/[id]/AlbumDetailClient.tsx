@@ -354,8 +354,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             'fountain-artist-takeover': 'https://wavlake.com/feed/music/6dc5c681-8beb-4193-93a3-d405c962d103',
             'fountain artist takeover nate johnivan': 'https://wavlake.com/feed/music/6dc5c681-8beb-4193-93a3-d405c962d103',
             'fountain-artist-takeover-nate-johnivan': 'https://wavlake.com/feed/music/6dc5c681-8beb-4193-93a3-d405c962d103',
-            'empty passenger seat': 'https://www.wavlake.com/feed/95ea253a-4058-402c-8503-204f6d3f1494',
-            'joe martin': 'https://www.wavlake.com/feed/95ea253a-4058-402c-8503-204f6d3f1494', // Empty Passenger Seat album
+            'empty passenger seat': 'https://wavlake.com/feed/music/95ea253a-4058-402c-8503-204f6d3f1494',
+            'joe martin': 'https://wavlake.com/feed/music/95ea253a-4058-402c-8503-204f6d3f1494', // Empty Passenger Seat album
             'stay awhile': 'https://ableandthewolf.com/static/media/feed.xml',
             'now i feel it': 'https://music.behindthesch3m3s.com/wp-content/uploads/c_kostra/now i feel it.xml',
             'they ride': 'https://wavlake.com/feed/music/997060e3-9dc1-4cd8-b3c1-3ae06d54bb03',
