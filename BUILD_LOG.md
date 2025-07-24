@@ -558,6 +558,16 @@ NEXT_PUBLIC_API_URL=https://re.podtards.com/api
 
 ## 🐛 Recent Bug Fixes & Testing Status
 
+### Issues Resolved (July 23, 2025)
+- ✅ **Doerfels Publisher Feed Hosting** - Successfully hosted Doerfels publisher feed on Vercel API route
+- ✅ **Bunny CDN Storage Upload** - Uploaded Doerfels publisher feed to Bunny storage (8,116 bytes)
+- ✅ **Feed URL Configuration** - Updated all references to use Vercel API route as primary source
+- ✅ **GUID Verification** - Corrected all placeholder GUIDs with real UUIDs from individual RSS feeds
+- ✅ **Generator Tag Update** - Changed generator tag from "Wavlake" to "cursor"
+- ✅ **Podcast Index API Integration** - Added API credentials for future feed verification
+- ✅ **Fallback URL System** - Implemented fallback from Vercel API to original Doerfels website
+- ✅ **CDN Configuration Analysis** - Identified Bunny CDN pull zone configuration needs
+
 ### Issues Resolved (January 23, 2025)
 - ✅ **CDN Hostname Confusion** - Fixed all references from re-podtards.b-cdn.net to re-podtards-cdn.b-cdn.net
 - ✅ **RSS Feed Configuration** - Confirmed optimal Pull Zone setup for CDN performance
@@ -575,6 +585,9 @@ NEXT_PUBLIC_API_URL=https://re.podtards.com/api
 
 ### Testing Status
 - ✅ **Main Site:** https://re.podtards.com - RSS feeds loading correctly
+- ✅ **Doerfels Publisher:** https://re.podtards.com/publisher/the-doerfels - 36 albums displayed
+- ✅ **Doerfels Feed API:** https://re.podtards.com/api/feeds/doerfels-pubfeed - Working with XML headers
+- ✅ **Bunny Storage:** File uploaded to ny.storage.bunnycdn.com/re-podtards-storage/feeds/doerfels-pubfeed.xml
 - ✅ **Album Pages:** /album/stay-awhile - Shows correct "Stay Awhile" album
 - ✅ **API Endpoints:** /api/fetch-rss - Working with proper CORS handling
 - ✅ **PWA Features:** Install prompt, offline support, auto-updates
@@ -584,7 +597,7 @@ NEXT_PUBLIC_API_URL=https://re.podtards.com/api
 - ✅ **Album Artwork:** 126 images uploaded to Bunny.net Storage
 - ✅ **Hostname Consistency:** All files use correct CDN hostname
 
-### Current Stable Features (v1.0.0-stable)
+### Current Stable Features (v1.015)
 - **🎵 RSS Feed Parsing:** 100+ feeds with Podcasting 2.0 support
 - **🎨 Album Display:** Grid layout with cover art and metadata
 - **🔍 Search Functionality:** Cross-album search with real-time results
@@ -597,11 +610,31 @@ NEXT_PUBLIC_API_URL=https://re.podtards.com/api
 - **🎵 Persistent Audio:** Music continues playing across page navigation
 - **🎨 Reactive Album Backgrounds:** Album pages update background automatically
 - **🔧 Global Audio State:** localStorage-based audio state management
+- **📡 Publisher Feed Hosting:** Vercel API routes for custom publisher feeds
+- **🔄 Fallback URL System:** Automatic fallback from primary to secondary feed sources
 
 ---
 
-*Last Updated: January 23, 2025*  
-*Version: v1.0.0-stable*  
+## 📡 Publisher Feed Hosting
+
+### Doerfels Publisher Feed
+- **Primary URL:** https://re.podtards.com/api/feeds/doerfels-pubfeed
+- **Fallback URL:** https://www.doerfelverse.com/feeds/doerfels-pubfeed.xml
+- **Bunny Storage:** https://ny.storage.bunnycdn.com/re-podtards-storage/feeds/doerfels-pubfeed.xml
+- **Content:** 36 albums, EPs, and singles from The Doerfels family
+- **Generator:** cursor
+- **GUIDs:** All verified with real UUIDs from individual RSS feeds
+
+### Bunny CDN Configuration Status
+- **Storage Upload:** ✅ Successful (8,116 bytes)
+- **CDN Access:** ⚠️ Pull zone configured to pull from Vercel (not storage)
+- **Direct Storage Access:** ✅ Working (requires authentication)
+- **Configuration Needed:** Pull zone needs reconfiguration to serve storage files directly
+
+---
+
+*Last Updated: July 23, 2025*  
+*Version: v1.015 (build 15)*  
 *Build Status: ✅ Production Ready*  
 *Domain Status: ✅ Active*  
 *CDN Status: ✅ Operational (re-podtards-cdn.b-cdn.net)*  
@@ -610,4 +643,5 @@ NEXT_PUBLIC_API_URL=https://re.podtards.com/api
 *Testing Status: ✅ All Features Verified*  
 *Audio System: ✅ Persistent Playback*  
 *Background System: ✅ Dynamic & Responsive*  
-*CDN Hostname: ✅ Consistent (re-podtards-cdn.b-cdn.net)* 
+*CDN Hostname: ✅ Consistent (re-podtards-cdn.b-cdn.net)*  
+*Publisher Feeds: ✅ Doerfels feed hosted on Vercel API* 

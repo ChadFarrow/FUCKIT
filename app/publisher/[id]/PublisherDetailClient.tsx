@@ -98,6 +98,12 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
 
           // Load all albums from the publisher feed
           console.log(`🏢 Loading publisher albums...`);
+          
+          // For Doerfels publisher, show loading progress
+          if (publisherId === 'the-doerfels' || publisherId === '5526a0ee') {
+            console.log(`🎵 Loading Doerfels albums (36 feeds)...`);
+          }
+          
           const allAlbums = await RSSParser.parsePublisherFeedAlbums(feedUrl);
           console.log(`🏢 Publisher albums:`, allAlbums);
           setAlbums(allAlbums);
@@ -173,7 +179,12 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
         <div className="container mx-auto px-4 py-8">
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-            <p className="text-gray-400">Loading publisher...</p>
+            <p className="text-gray-400">
+              {publisherId === 'the-doerfels' || publisherId === '5526a0ee' 
+                ? 'Loading Doerfels publisher (36 albums)...' 
+                : 'Loading publisher...'
+              }
+            </p>
           </div>
         </div>
       </div>
@@ -233,7 +244,13 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
             {/* Filter Header */}
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl font-bold">
-                {albumsLoading ? 'Loading Albums...' : `${albums.length} Albums`}
+                {albumsLoading 
+                  ? (publisherId === 'the-doerfels' || publisherId === '5526a0ee' 
+                      ? 'Loading 36 Doerfels Albums...' 
+                      : 'Loading Albums...'
+                    )
+                  : `${albums.length} Albums`
+                }
               </h2>
               {activeFilter !== 'all' && (
                 <button

@@ -778,26 +778,37 @@ export class RSSParser {
     const musicFeedUrls = publisherItems.map(item => item.feedUrl);
     console.log(`🎵 Loading ${musicFeedUrls.length} music feeds from publisher...`);
     
-    // For publisher feeds, use smaller batch size to prevent timeouts
-    const batchSize = 3; // Reduced from 20 for publisher feeds
+    // Optimize batch size based on number of feeds
+    let batchSize = 5; // Default batch size
+    let delayMs = 500; // Default delay
+    
+    // For large publisher feeds (like Doerfels with 36 feeds), use larger batches
+    if (musicFeedUrls.length > 20) {
+      batchSize = 8; // Larger batches for efficiency
+      delayMs = 300; // Shorter delays
+    }
+    
     const allAlbums: RSSAlbum[] = [];
     
     for (let i = 0; i < musicFeedUrls.length; i += batchSize) {
       const batch = musicFeedUrls.slice(i, i + batchSize);
-      console.log(`📦 Processing publisher batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(musicFeedUrls.length / batchSize)} (${batch.length} feeds)`);
+      const batchNumber = Math.floor(i / batchSize) + 1;
+      const totalBatches = Math.ceil(musicFeedUrls.length / batchSize);
+      
+      console.log(`📦 Processing publisher batch ${batchNumber}/${totalBatches} (${batch.length} feeds)`);
       
       try {
         const batchAlbums = await this.parseMultipleFeeds(batch);
         allAlbums.push(...batchAlbums);
-        console.log(`✅ Batch ${Math.floor(i / batchSize) + 1} completed: ${batchAlbums.length} albums`);
+        console.log(`✅ Batch ${batchNumber}/${totalBatches} completed: ${batchAlbums.length} albums (${allAlbums.length}/${musicFeedUrls.length} total)`);
       } catch (error) {
-        console.error(`❌ Error in publisher batch ${Math.floor(i / batchSize) + 1}:`, error);
+        console.error(`❌ Error in publisher batch ${batchNumber}/${totalBatches}:`, error);
         // Continue with next batch instead of failing completely
       }
       
-      // Small delay between batches to prevent overwhelming the server
+      // Reduced delay between batches for better performance
       if (i + batchSize < musicFeedUrls.length) {
-        await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay
+        await new Promise(resolve => setTimeout(resolve, delayMs));
       }
     }
     
