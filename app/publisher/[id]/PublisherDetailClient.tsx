@@ -175,8 +175,24 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
-        <div className="container mx-auto px-4 py-8">
+      <div className="min-h-screen text-white relative overflow-hidden">
+        {/* Background Image */}
+        {publisherInfo?.coverArt && (
+          <div className="absolute inset-0 z-0">
+            <Image 
+              src={getAlbumArtworkUrl(publisherInfo.coverArt, 'large')} 
+              alt={publisherInfo.title || 'Artist background'}
+              fill
+              className="object-cover"
+              priority
+            />
+            {/* Dark overlay for readability */}
+            <div className="absolute inset-0 bg-black/70"></div>
+          </div>
+        )}
+        
+        {/* Content */}
+        <div className="relative z-10 container mx-auto px-4 py-8">
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
             <p className="text-gray-400">
@@ -193,8 +209,24 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
-        <div className="container mx-auto px-4 py-8">
+      <div className="min-h-screen text-white relative overflow-hidden">
+        {/* Background Image */}
+        {publisherInfo?.coverArt && (
+          <div className="absolute inset-0 z-0">
+            <Image 
+              src={getAlbumArtworkUrl(publisherInfo.coverArt, 'large')} 
+              alt={publisherInfo.title || 'Artist background'}
+              fill
+              className="object-cover"
+              priority
+            />
+            {/* Dark overlay for readability */}
+            <div className="absolute inset-0 bg-black/70"></div>
+          </div>
+        )}
+        
+        {/* Content */}
+        <div className="relative z-10 container mx-auto px-4 py-8">
           <div className="text-center py-12">
             <h2 className="text-2xl font-semibold mb-4">Error Loading Publisher</h2>
             <p className="text-gray-400 mb-4">{error}</p>
@@ -208,8 +240,27 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen text-white relative overflow-hidden">
+      {/* Background Image */}
+      {publisherInfo?.coverArt ? (
+        <div className="absolute inset-0 z-0">
+          <Image 
+            src={getAlbumArtworkUrl(publisherInfo.coverArt, 'large')} 
+            alt={publisherInfo.title || 'Artist background'}
+            fill
+            className="object-cover"
+            priority
+          />
+          {/* Dark overlay for readability */}
+          <div className="absolute inset-0 bg-black/70"></div>
+        </div>
+      ) : (
+        /* Fallback gradient background */
+        <div className="absolute inset-0 z-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"></div>
+      )}
+      
+      {/* Content */}
+      <div className="relative z-10 container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
           <Link href="/" className="inline-flex items-center text-gray-400 hover:text-white transition-colors mb-4">
@@ -271,7 +322,7 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
                     <Link 
                       key={index}
                       href={generateAlbumUrl(album.title)}
-                      className="bg-black/20 backdrop-blur-sm rounded-lg overflow-hidden group hover:bg-black/30 transition-all duration-300 border border-gray-700/50 hover:border-gray-600/50 block cursor-pointer"
+                      className="bg-black/40 backdrop-blur-md rounded-lg overflow-hidden group hover:bg-black/50 transition-all duration-300 border border-white/20 hover:border-white/30 block cursor-pointer shadow-lg"
                     >
                       {/* Album Cover */}
                       <div className="relative aspect-square">
@@ -336,7 +387,7 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
                     <Link 
                       key={`single-${index}`}
                       href={generateAlbumUrl(album.title)}
-                      className="bg-black/20 backdrop-blur-sm rounded-lg overflow-hidden group hover:bg-black/30 transition-all duration-300 border border-gray-700/50 hover:border-gray-600/50 block cursor-pointer"
+                      className="bg-black/40 backdrop-blur-md rounded-lg overflow-hidden group hover:bg-black/50 transition-all duration-300 border border-white/20 hover:border-white/30 block cursor-pointer shadow-lg"
                     >
                       {/* Album Cover */}
                       <div className="relative aspect-square">
