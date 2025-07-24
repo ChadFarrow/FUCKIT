@@ -11,7 +11,7 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'www.doerfelverse.com',
         port: '',
-        pathname: '/art/**',
+        pathname: '/**',
       },
       {
         protocol: 'https',
@@ -103,25 +103,7 @@ const nextConfig = {
       // Additional CDN and image hosting domains
       {
         protocol: 'https',
-        hostname: 'd12wklypp119aj.cloudfront.net',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 're-podtards-cdn.b-cdn.net',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
         hostname: 'static.wixstatic.com',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'music.behindthesch3m3s.com',
         port: '',
         pathname: '/**',
       },
