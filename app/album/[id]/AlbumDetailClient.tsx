@@ -316,7 +316,56 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             'more': 'https://wavlake.com/feed/music/b54b9a19-b6ed-46c1-806c-7e82f7550edc',
             // Temporarily disabled due to NetworkError issues
             // 'love in its purest form': 'https://feed.falsefinish.club/Vance%20Latta/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form/love%20in%20its%20purest%20form.xml',
-            'opus': 'https://www.doerfelverse.com/artists/opus/opus/opus.xml'
+            'opus': 'https://www.doerfelverse.com/artists/opus/opus/opus.xml',
+            
+            // Doerfels albums
+            'bloodshot-lies---the-album': 'https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml',
+            'dead-timelive-2016': 'https://www.doerfelverse.com/feeds/dead-time-live-2016.xml',
+            'dfb-volume-1': 'https://www.doerfelverse.com/feeds/dfbv1.xml',
+            'dfb-volume-2': 'https://www.doerfelverse.com/feeds/dfbv2.xml',
+            'the-doerfels': 'https://re.podtards.com/api/feeds/doerfels-pubfeed',
+            'let-go-whats-holding-you-back': 'https://www.doerfelverse.com/feeds/middle-season-let-go.xml',
+            'unsound-existence-self-hosted-version': 'https://www.doerfelverse.com/feeds/unsound-existence.xml',
+            'you-feel-like-homesingle': 'https://www.doerfelverse.com/feeds/you-feel-like-home.xml',
+            'kurtisdrums': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml',
+            
+            // External artists
+            'deathdreams': 'https://static.staticsave.com/mspfiles/deathdreams.xml',
+            'way-to-go': 'https://static.staticsave.com/mspfiles/waytogo.xml',
+            'pilot': 'https://music.behindthesch3m3s.com/wp-content/uploads/Mellow%20Cassette/Pilot/pilot.xml',
+            'radio-brigade': 'https://music.behindthesch3m3s.com/wp-content/uploads/Mellow%20Cassette/Radio_Brigade/radio_brigade.xml',
+            
+            // Nate Johnivan albums
+            'singles': 'https://wavlake.com/feed/music/e678589b-5a9f-4918-9622-34119d2eed2c',
+            'bowl-of-oranges-a-bright-eyes-cover': 'https://wavlake.com/feed/music/3a152941-c914-43da-aeca-5d7c58892a7f',
+            'goodbye-uncle-walt': 'https://wavlake.com/feed/music/a97e0586-ecda-4b79-9c38-be9a9effe05a',
+            'fight': 'https://wavlake.com/feed/music/0ed13237-aca9-446f-9a03-de1a2d9331a3',
+            'safe-some-place': 'https://wavlake.com/feed/music/ce8c4910-51bf-4d5e-a0b3-338e58e5ee79',
+            'you-should-waste-it': 'https://wavlake.com/feed/music/acb43f23-cfec-4cc1-a418-4087a5378129',
+            'the-kid-the-dad-the-mom--the-tiny-window': 'https://wavlake.com/feed/music/d1a871a7-7e4c-4a91-b799-87dcbb6bc41d',
+            'kids': 'https://wavlake.com/feed/music/3294d8b5-f9f6-4241-a298-f04df818390c',
+            'dont-worry-you-still-have-time-to-ruin-it---demo': 'https://wavlake.com/feed/music/d3145292-bf71-415f-a841-7f5c9a9466e1',
+            'rose': 'https://wavlake.com/feed/music/91367816-33e6-4b6e-8eb7-44b2832708fd',
+            'fake-love---demo': 'https://wavlake.com/feed/music/8c8f8133-7ef1-4b72-a641-4e1a6a44d626',
+            'roommates---demo': 'https://wavlake.com/feed/music/9720d58b-22a5-4047-81de-f1940fec41c7',
+            'orange-pill-pink-pill-white-pill---demo': 'https://wavlake.com/feed/music/21536269-5192-49e7-a819-fab00f4a159e',
+            'tyson-vs-paul': 'https://wavlake.com/feed/music/624b19ac-5d8b-4fd6-8589-0eef7bcb9c9e',
+            
+            // Joe Martin albums
+            'crocodile-tears': 'https://wavlake.com/feed/music/1c7917cc-357c-4eaf-ab54-1a7cda504976',
+            'letters-of-regret': 'https://wavlake.com/feed/music/e1f9dfcb-ee9b-4a6d-aee7-189043917fb5',
+            'hero': 'https://wavlake.com/feed/music/d4f791c3-4d0c-4fbd-a543-c136ee78a9de',
+            'bound-for-lonesome': 'https://wavlake.com/feed/music/51606506-66f8-4394-b6c6-cc0c1b554375',
+            'the-first-five-years': 'https://wavlake.com/feed/music/6b7793b8-fd9d-432b-af1a-184cd41aaf9d',
+            'daddy-gene': 'https://wavlake.com/feed/music/0bb8c9c7-1c55-4412-a517-572a98318921',
+            'love-strong': 'https://wavlake.com/feed/music/16e46ed0-b392-4419-a937-a7815f6ca43b',
+            'high-gravity': 'https://wavlake.com/feed/music/2cd1b9ea-9ef3-4a54-aa25-55295689f442',
+            'small-world': 'https://wavlake.com/feed/music/33eeda7e-8591-4ff5-83f8-f36a879b0a09',
+            'strangers-to-lovers---live-from-sloe-flower-studio': 'https://wavlake.com/feed/music/32a79df8-ec3e-4a14-bfcb-7a074e1974b9',
+            'cant-promise-you-the-world---live-from-sloe-flower-studio': 'https://wavlake.com/feed/music/06376ab5-efca-459c-9801-49ceba5fdab1',
+            
+            // Publisher feed
+            'iroh': 'https://wavlake.com/feed/artist/8a9c2e54-785a-4128-9412-737610f5d00a'
           };
           
           // Convert URL slug back to title format (e.g., "stay-awhile" -> "stay awhile")
@@ -554,6 +603,15 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               console.log('✅ Track order corrected for "They Ride"');
             }
             
+            console.log('📊 Album loaded:', processedAlbum.title);
+            console.log('🎵 Track count:', processedAlbum.tracks.length);
+            console.log('🖼️ Tracks with images:', processedAlbum.tracks.filter(t => t.image).length);
+            processedAlbum.tracks.forEach((track, index) => {
+              if (track.image) {
+                console.log(`  Track ${index + 1}: "${track.title}" - Image: ${track.image}`);
+              }
+            });
+            
             setAlbum(processedAlbum);
             // Load PodRoll albums if they exist
             if (foundAlbum.podroll && foundAlbum.podroll.length > 0) {
@@ -788,16 +846,20 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                     {track.image ? (
                       <>
                         <Image 
-                          src={track.image} 
+                          src={getTrackArtworkUrl(track.image)} 
                           alt={track.title}
                           width={48}
                           height={48}
                           className="absolute inset-0 w-full h-full object-cover"
                           onError={(e) => {
+                            console.error('Track image failed to load:', track.image, 'for track:', track.title);
                             // Fallback to track number on error
                             const target = e.target as HTMLImageElement;
                             target.style.display = 'none';
                             target.nextElementSibling?.classList.remove('hidden');
+                          }}
+                          onLoad={() => {
+                            console.log('Track image loaded successfully:', track.image, 'for track:', track.title);
                           }}
                         />
                         {/* Play Button Overlay - On top of image */}
@@ -917,7 +979,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             {/* Mobile Layout: Track Info + Controls Row */}
             <div className="flex items-center gap-3 w-full md:w-auto md:flex-1">
               <Image 
-                src={album.tracks[currentTrackIndex]?.image || getAlbumArtworkUrl(album.coverArt || '', 'thumbnail')} 
+                src={album.tracks[currentTrackIndex]?.image ? getTrackArtworkUrl(album.tracks[currentTrackIndex].image) : getAlbumArtworkUrl(album.coverArt || '', 'thumbnail')} 
                 alt={album.tracks[currentTrackIndex]?.title || album.title}
                 width={48}
                 height={48}
