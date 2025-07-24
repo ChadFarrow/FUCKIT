@@ -36,7 +36,7 @@ const feedUrlMappings = [
   ['https://www.doerfelverse.com/feeds/dfbv1.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/dfbv1.xml'],
   ['https://www.doerfelverse.com/feeds/dfbv2.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/dfbv2.xml'],
   ['https://www.doerfelverse.com/feeds/disco-swag.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/disco-swag.xml'],
-  ['https://www.doerfelverse.com/feeds/doerfels-pubfeed.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/doerfels-pubfeed.xml'],
+  ['https://re.podtards.com/api/feeds/doerfels-pubfeed', 'https://www.doerfelverse.com/feeds/doerfels-pubfeed.xml'],
   ['https://www.doerfelverse.com/feeds/first-married-christmas.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/first-married-christmas.xml'],
   ['https://www.doerfelverse.com/feeds/generation-gap.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/generation-gap.xml'],
   ['https://www.doerfelverse.com/feeds/heartbreak.xml', 'https://re-podtards-cdn.b-cdn.net/feeds/heartbreak.xml'],
