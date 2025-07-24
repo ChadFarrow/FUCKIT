@@ -267,16 +267,46 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
               )}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {albums
-                .filter(album => {
+              {(() => {
+                const filteredAlbums = albums.filter(album => {
                   if (activeFilter === 'all') return true;
                   if (activeFilter === 'albums') return album.tracks.length > 6;
                   if (activeFilter === 'eps') return album.tracks.length > 1 && album.tracks.length <= 6;
                   if (activeFilter === 'singles') return album.tracks.length === 1;
                   return true;
-                })
-                .sort((a, b) => new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime())
-                .map((album, index) => (
+                });
+
+                // Apply the same sorting logic as the main app
+                filteredAlbums.sort((a, b) => {
+                  // Check if either album is "Stay Awhile" (case-insensitive)
+                  const aIsStayAwhile = a.title.toLowerCase().includes('stay awhile');
+                  const bIsStayAwhile = b.title.toLowerCase().includes('stay awhile');
+                  
+                  if (aIsStayAwhile && !bIsStayAwhile) return -1; // a comes first
+                  if (!aIsStayAwhile && bIsStayAwhile) return 1; // b comes first
+                  
+                  // Check if either album is "Bloodshot Lies" (case-insensitive)
+                  const aIsBloodshot = a.title.toLowerCase().includes('bloodshot lie');
+                  const bIsBloodshot = b.title.toLowerCase().includes('bloodshot lie');
+                  
+                  if (aIsBloodshot && !bIsBloodshot) return -1; // a comes first
+                  if (!aIsBloodshot && bIsBloodshot) return 1; // b comes first
+                  
+                  // For all other albums, sort by artist then title
+                  const artistCompare = a.artist.toLowerCase().localeCompare(b.artist.toLowerCase());
+                  if (artistCompare !== 0) return artistCompare;
+                  
+                  // For EPs and singles, sort EPs (2-6 tracks) before singles (1 track)
+                  const aIsSingle = a.tracks.length === 1;
+                  const bIsSingle = b.tracks.length === 1;
+                  
+                  if (aIsSingle && !bIsSingle) return 1; // b (EP) comes first
+                  if (!aIsSingle && bIsSingle) return -1; // a (EP) comes first
+                  
+                  return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
+                });
+
+                return filteredAlbums.map((album, index) => (
                 <Link 
                   key={index}
                   href={generateAlbumUrl(album.title)}
@@ -331,7 +361,8 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
                     </div>
                   </div>
                 </Link>
-              ))}
+              ));
+            })()}
             </div>
           </div>
         ) : (

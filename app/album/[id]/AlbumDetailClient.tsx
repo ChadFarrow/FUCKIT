@@ -693,11 +693,11 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               }}
             />
             
-            {/* Play Button Overlay */}
-            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
+            {/* Play Button Overlay - Always Visible */}
+            <div className="absolute inset-0 flex items-center justify-center">
               <button
                 onClick={isPlaying ? togglePlay : playAlbum}
-                className="bg-white/80 hover:bg-white text-black rounded-full p-4 transform hover:scale-110 transition-all duration-200 shadow-lg"
+                className="bg-white/90 hover:bg-white text-black rounded-full p-4 transform hover:scale-110 transition-all duration-200 shadow-xl border-2 border-white/20"
               >
                 {isPlaying ? (
                   <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">

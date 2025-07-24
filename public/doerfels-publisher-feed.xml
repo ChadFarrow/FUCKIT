@@ -9,7 +9,7 @@
 		<podcast:medium>publisher</podcast:medium>
 		<podcast:guid>5526a0ee-069d-4c76-8bd4-7fd2022034bc</podcast:guid>
 		
-		<!-- Example podcast:remoteItem entries for The Doerfels albums -->
+		<!-- The Doerfels Music Albums -->
 		<!-- Bloodshot Lies Album -->
 		<podcast:remoteItem medium="music" feedGuid="5a95f9d8-35e3-51f5-a269-ba1df36b4bd8" feedUrl="https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml"/>
 		
@@ -19,11 +19,41 @@
 		<!-- Into the Doerfelverse -->
 		<podcast:remoteItem medium="music" feedGuid="41aace28-8679-5ef1-9958-75cf76c2b5f0" feedUrl="https://www.doerfelverse.com/feeds/intothedoerfelverse.xml"/>
 		
+		<!-- Wrath of Banjo -->
+		<podcast:remoteItem medium="music" feedGuid="4a483a4b-867c-50d5-a61a-e99fe03ea57e" feedUrl="https://www.doerfelverse.com/feeds/wrath-of-banjo.xml"/>
+		
+		<!-- Ben Doerfel -->
+		<podcast:remoteItem medium="music" feedGuid="08604071-83cc-5810-bec2-bea0f0cd0033" feedUrl="https://www.doerfelverse.com/feeds/ben-doerfel.xml"/>
+		
 		<!-- 18 Sundays -->
 		<podcast:remoteItem medium="music" feedGuid="910874e0-86cc-5d95-9589-a9948c32880a" feedUrl="https://www.doerfelverse.com/feeds/18sundays.xml"/>
 		
+		<!-- Alandace -->
+		<podcast:remoteItem medium="music" feedGuid="a40615ac-1b3c-5c76-8961-6bbc86e20439" feedUrl="https://www.doerfelverse.com/feeds/alandace.xml"/>
+		
 		<!-- Autumn -->
 		<podcast:remoteItem medium="music" feedGuid="47768d25-74d9-5ba4-82db-aeaa7f50e29c" feedUrl="https://www.doerfelverse.com/feeds/autumn.xml"/>
+		
+		<!-- Christ Exalted -->
+		<podcast:remoteItem medium="music" feedGuid="1aeccb22-0dce-57e8-80fb-01053f506763" feedUrl="https://www.doerfelverse.com/feeds/christ-exalted.xml"/>
+		
+		<!-- Come Back to Me -->
+		<podcast:remoteItem medium="music" feedGuid="3d929593-c368-5a59-aefd-50ec8d788874" feedUrl="https://www.doerfelverse.com/feeds/come-back-to-me.xml"/>
+		
+		<!-- Heartbreak -->
+		<podcast:remoteItem medium="music" feedGuid="e2d6766a-5c28-5cbd-b678-4d7595646e4e" feedUrl="https://www.doerfelverse.com/feeds/heartbreak.xml"/>
+		
+		<!-- DFBV1 -->
+		<podcast:remoteItem medium="music" feedGuid="1bb0f289-877b-5460-ab92-f8e25a2d4c89" feedUrl="https://www.doerfelverse.com/feeds/dfbv1.xml"/>
+		
+		<!-- DFBV2 -->
+		<podcast:remoteItem medium="music" feedGuid="6bf3785f-e053-57f4-9f70-261ee5e3747f" feedUrl="https://www.doerfelverse.com/feeds/dfbv2.xml"/>
+		
+		<!-- Generation Gap -->
+		<podcast:remoteItem medium="music" feedGuid="e0658b29-1cd3-55b8-ac51-0997764ce334" feedUrl="https://www.doerfelverse.com/feeds/generation-gap.xml"/>
+		
+		<!-- Middle Season Let Go -->
+		<podcast:remoteItem medium="music" feedGuid="3074902b-b2dc-5877-bfc3-30f5df0fbe6a" feedUrl="https://www.doerfelverse.com/feeds/middle-season-let-go.xml"/>
 		
 		<!-- Sensitive Guy -->
 		<podcast:remoteItem medium="music" feedGuid="6eef0b66-bb86-5d0c-b260-099bcc920b7c" feedUrl="https://www.doerfelverse.com/feeds/sensitive-guy.xml"/>
@@ -33,11 +63,6 @@
 		
 		<!-- Merry Christmix -->
 		<podcast:remoteItem medium="music" feedGuid="f275657c-4b58-563a-ad3b-91b65035b3d8" feedUrl="https://www.doerfelverse.com/feeds/merry-christmix.xml"/>
-		
-		<!-- Add more podcast:remoteItem entries here for additional albums -->
-		<!-- Example format:
-		<podcast:remoteItem medium="music" feedGuid="ALBUM-FEED-GUID" feedUrl="https://www.doerfelverse.com/feeds/ALBUM-NAME.xml"/>
-		-->
 		
 		<itunes:summary>The Doerfels are a family band from Buffalo, NY, creating original music across multiple genres including folk, rock, and acoustic. Their catalog includes albums like "Bloodshot Lies", "Stay Awhile", and many more.</itunes:summary>
 		<itunes:owner>

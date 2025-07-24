@@ -10,6 +10,7 @@ import { RSSParser, RSSAlbum } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { generateAlbumUrl, generatePublisherSlug } from '@/lib/url-utils';
 import { getGlobalAudioState, updateGlobalAudioState, clearGlobalAudioState } from '@/lib/audio-state';
+import { getVersionString } from '@/lib/version';
 
 // Environment-based RSS feed configuration
 // CDN zone: re-podtards-cdn (Pull Zone - needs reconfiguration)
@@ -774,10 +775,18 @@ export default function HomePage() {
             })()}
             
             {/* Feed Stats */}
-            <div className="text-sm text-gray-400">
+            <div className="text-sm text-gray-400 space-y-1">
               <p>Default feeds: {feedUrls.length}</p>
               <p>Custom feeds: {customFeeds.length}</p>
               <p>Total albums: {albums.length}</p>
+            </div>
+            
+            {/* Version Display */}
+            <div className="mt-6 pt-4 border-t border-gray-700">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-gray-500">Version</span>
+                <span className="text-xs text-gray-400 font-mono">{getVersionString()}</span>
+              </div>
             </div>
           </div>
         </div>
