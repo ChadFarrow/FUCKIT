@@ -183,7 +183,7 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
               src={getAlbumArtworkUrl(publisherInfo.coverArt, 'large')} 
               alt={publisherInfo.title || 'Artist background'}
               fill
-              className="object-cover"
+              className="object-contain"
               priority
             />
             {/* Dark overlay for readability */}
@@ -217,7 +217,7 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
               src={getAlbumArtworkUrl(publisherInfo.coverArt, 'large')} 
               alt={publisherInfo.title || 'Artist background'}
               fill
-              className="object-cover"
+              className="object-contain"
               priority
             />
             {/* Dark overlay for readability */}
@@ -248,7 +248,7 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
             src={getAlbumArtworkUrl(publisherInfo.coverArt, 'large')} 
             alt={publisherInfo.title || 'Artist background'}
             fill
-            className="object-cover"
+            className="object-contain"
             priority
           />
           {/* Dark overlay for readability */}
