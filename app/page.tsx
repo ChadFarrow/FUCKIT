@@ -14,6 +14,7 @@ import { getVersionString } from '@/lib/version';
 import ControlsBar, { FilterType, ViewType, SortType } from '@/components/ControlsBar';
 import { AppError, ErrorCodes, ErrorCode, getErrorMessage, createErrorLogger } from '@/lib/error-utils';
 import { toast } from '@/components/Toast';
+import { FeedManager } from '@/lib/feed-manager';
 
 // Environment-based RSS feed configuration
 // CDN zone: re-podtards-cdn-new (WORKING - new Pull Zone that points to Storage Zone)
@@ -411,8 +412,31 @@ export default function HomePage() {
   };
 
   const loadAlbumsData = async (additionalFeeds: string[] = []) => {
-    // Combine default feeds with custom feeds - declare outside try block for error logging
-    const allFeeds = [...feedUrls, ...additionalFeeds];
+    // Load managed feeds from the feed management system
+    let managedFeeds: string[] = [];
+    try {
+      if (typeof window === 'undefined') {
+        // Server-side: use FeedManager directly
+        const feedManager = FeedManager.getInstance();
+        managedFeeds = await feedManager.getActiveFeedUrls();
+      } else {
+        // Client-side: fetch from API
+        const response = await fetch('/api/admin/feeds');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            managedFeeds = data.feeds
+              .filter((feed: any) => feed.status === 'active')
+              .map((feed: any) => feed.cdnUrl || feed.originalUrl);
+          }
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to load managed feeds, falling back to hardcoded feeds:', error);
+    }
+    
+    // Combine hardcoded feeds, managed feeds, and custom feeds
+    const allFeeds = [...feedUrls, ...managedFeeds, ...additionalFeeds];
     
     try {
       console.log('🚀 loadAlbumsData called with additionalFeeds:', additionalFeeds);
