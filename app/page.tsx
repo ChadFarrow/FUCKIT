@@ -12,7 +12,7 @@ import { generateAlbumUrl, generatePublisherSlug } from '@/lib/url-utils';
 import { getGlobalAudioState, updateGlobalAudioState, clearGlobalAudioState } from '@/lib/audio-state';
 import { getVersionString } from '@/lib/version';
 import ControlsBar, { FilterType, ViewType, SortType } from '@/components/ControlsBar';
-import { AppError, ErrorCodes, getErrorMessage, createErrorLogger } from '@/lib/error-utils';
+import { AppError, ErrorCodes, ErrorCode, getErrorMessage, createErrorLogger } from '@/lib/error-utils';
 import { toast } from '@/components/Toast';
 
 // Environment-based RSS feed configuration
@@ -628,7 +628,7 @@ export default function HomePage() {
         }
       } catch (error) {
         let errorMessage = 'Unable to play audio - please try again';
-        let errorCode = ErrorCodes.AUDIO_PLAYBACK_ERROR;
+        let errorCode: ErrorCode = ErrorCodes.AUDIO_PLAYBACK_ERROR;
         
         if (error instanceof DOMException) {
           switch (error.name) {
