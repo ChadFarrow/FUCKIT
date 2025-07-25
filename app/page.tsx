@@ -404,6 +404,9 @@ export default function HomePage() {
   };
 
   const loadAlbumsData = async (additionalFeeds: string[] = []) => {
+    // Combine default feeds with custom feeds - declare outside try block for error logging
+    const allFeeds = [...feedUrls, ...additionalFeeds];
+    
     try {
       console.log('🚀 loadAlbumsData called with additionalFeeds:', additionalFeeds);
       console.log('🚀 Current feedUrls:', feedUrls);
@@ -415,9 +418,6 @@ export default function HomePage() {
       console.log('🚀 Starting normal RSS feed loading...');
       
       console.log('Starting to load album data...');
-      
-      // Combine default feeds with custom feeds
-      const allFeeds = [...feedUrls, ...additionalFeeds];
       
       // Add debugging to see what's happening
       console.log('🔍 About to call RSSParser.parseMultipleFeeds with:', allFeeds.length, 'feeds');
