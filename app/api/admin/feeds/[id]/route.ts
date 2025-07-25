@@ -3,11 +3,12 @@ import { FeedManager } from '@/lib/feed-manager';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params;
     const feedManager = FeedManager.getInstance();
-    const feed = await feedManager.getFeed(params.id);
+    const feed = await feedManager.getFeed(resolvedParams.id);
     
     if (!feed) {
       return NextResponse.json(
@@ -35,11 +36,12 @@ export async function GET(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params;
     const feedManager = FeedManager.getInstance();
-    const removed = await feedManager.removeFeed(params.id);
+    const removed = await feedManager.removeFeed(resolvedParams.id);
     
     if (!removed) {
       return NextResponse.json(

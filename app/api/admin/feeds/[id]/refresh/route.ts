@@ -3,11 +3,12 @@ import { FeedManager } from '@/lib/feed-manager';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params;
     const feedManager = FeedManager.getInstance();
-    const feed = await feedManager.refreshFeed(params.id);
+    const feed = await feedManager.refreshFeed(resolvedParams.id);
     
     if (!feed) {
       return NextResponse.json(

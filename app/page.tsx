@@ -14,7 +14,7 @@ import { getVersionString } from '@/lib/version';
 import ControlsBar, { FilterType, ViewType, SortType } from '@/components/ControlsBar';
 import { AppError, ErrorCodes, ErrorCode, getErrorMessage, createErrorLogger } from '@/lib/error-utils';
 import { toast } from '@/components/Toast';
-import { FeedManager } from '@/lib/feed-manager';
+// Note: FeedManager import removed to avoid fs/promises client-side error
 
 // Environment-based RSS feed configuration
 // CDN zone: re-podtards-cdn-new (WORKING - new Pull Zone that points to Storage Zone)
@@ -412,23 +412,16 @@ export default function HomePage() {
   };
 
   const loadAlbumsData = async (additionalFeeds: string[] = []) => {
-    // Load managed feeds from the feed management system
+    // Load managed feeds from the API (client-side only)
     let managedFeeds: string[] = [];
     try {
-      if (typeof window === 'undefined') {
-        // Server-side: use FeedManager directly
-        const feedManager = FeedManager.getInstance();
-        managedFeeds = await feedManager.getActiveFeedUrls();
-      } else {
-        // Client-side: fetch from API
-        const response = await fetch('/api/admin/feeds');
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success) {
-            managedFeeds = data.feeds
-              .filter((feed: any) => feed.status === 'active')
-              .map((feed: any) => feed.cdnUrl || feed.originalUrl);
-          }
+      const response = await fetch('/api/admin/feeds');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          managedFeeds = data.feeds
+            .filter((feed: any) => feed.status === 'active')
+            .map((feed: any) => feed.cdnUrl || feed.originalUrl);
         }
       }
     } catch (error) {
