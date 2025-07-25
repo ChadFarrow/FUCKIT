@@ -1,3 +1,5 @@
+import { AppError, ErrorCodes, withRetry, createErrorLogger } from './error-utils';
+
 export interface RSSTrack {
   title: string;
   duration: string;
@@ -60,103 +62,129 @@ export interface RSSAlbum {
 }
 
 export class RSSParser {
-  // Retry configuration
-  private static readonly MAX_RETRIES = 3;
-  private static readonly RETRY_DELAY_BASE = 1000; // 1 second base delay
-  
-  // Retry wrapper with exponential backoff
-  private static async withRetry<T>(
-    operation: () => Promise<T>,
-    maxRetries: number = this.MAX_RETRIES,
-    context: string = ''
-  ): Promise<T> {
-    let lastError: Error | null = null;
-    
-    for (let attempt = 0; attempt <= maxRetries; attempt++) {
-      try {
-        return await operation();
-      } catch (error) {
-        lastError = error as Error;
-        
-        // Don't retry on certain errors
-        if (error instanceof Error && (
-          error.message.includes('Invalid RSS feed') ||
-          error.message.includes('Empty response') ||
-          error.message.includes('not valid XML')
-        )) {
-          throw error;
-        }
-        
-        if (attempt < maxRetries) {
-          const delay = this.RETRY_DELAY_BASE * Math.pow(2, attempt);
-          console.log(`🔄 Retry ${attempt + 1}/${maxRetries} for ${context} after ${delay}ms`);
-          await new Promise(resolve => setTimeout(resolve, delay));
-        }
-      }
-    }
-    
-    throw lastError || new Error('Operation failed after retries');
-  }
+  private static readonly logger = createErrorLogger('RSSParser');
   
   static async parseAlbumFeed(feedUrl: string): Promise<RSSAlbum | null> {
-    try {
-      // For server-side fetching, always use direct URLs
+    return withRetry(async () => {
+      this.logger.info('Parsing RSS feed', { feedUrl });
+      
+      // For server-side fetching, always use direct URLs  
       // For client-side fetching, use the proxy
       const isServer = typeof window === 'undefined';
       
       let response;
-      if (isServer) {
-        // Server-side: fetch directly
-        response = await fetch(feedUrl);
-      } else {
-        // Client-side: use proxy
-        const isAlreadyProxied = feedUrl.startsWith('/api/fetch-rss');
-        const proxyUrl = isAlreadyProxied ? feedUrl : `/api/fetch-rss?url=${encodeURIComponent(feedUrl)}`;
-        response = await fetch(proxyUrl);
+      try {
+        if (isServer) {
+          // Server-side: fetch directly
+          response = await fetch(feedUrl);
+        } else {
+          // Client-side: use proxy
+          const isAlreadyProxied = feedUrl.startsWith('/api/fetch-rss');
+          const proxyUrl = isAlreadyProxied ? feedUrl : `/api/fetch-rss?url=${encodeURIComponent(feedUrl)}`;
+          response = await fetch(proxyUrl);
+        }
+      } catch (error) {
+        throw new AppError(
+          'Failed to fetch RSS feed',
+          ErrorCodes.RSS_FETCH_ERROR,
+          500,
+          true,
+          { feedUrl, error }
+        );
       }
       
       if (!response.ok) {
-        console.error(`❌ RSS feed fetch failed: ${feedUrl} - Status: ${response.status}`);
-        throw new Error(`Failed to fetch RSS feed: ${response.status}`);
+        if (response.status === 429) {
+          throw new AppError(
+            'Rate limited while fetching RSS feed',
+            ErrorCodes.RATE_LIMIT_ERROR,
+            429,
+            true,
+            { feedUrl, status: response.status }
+          );
+        }
+        throw new AppError(
+          `Failed to fetch RSS feed: ${response.status}`,
+          ErrorCodes.RSS_FETCH_ERROR,
+          response.status,
+          response.status >= 500,
+          { feedUrl, status: response.status }
+        );
       }
       
       const xmlText = await response.text();
       
-      // Debug: Check if we got valid XML
+      // Validate response content
       if (!xmlText || xmlText.trim().length === 0) {
-        console.error(`❌ Empty response from RSS feed: ${feedUrl}`);
-        throw new Error('Empty response from RSS feed');
+        throw new AppError(
+          'Empty response from RSS feed',
+          ErrorCodes.RSS_INVALID_FORMAT,
+          400,
+          false,
+          { feedUrl }
+        );
       }
       
-      // Debug: Check if response looks like XML
       if (!xmlText.includes('<') || !xmlText.includes('>')) {
-        console.error(`❌ Response does not look like XML for ${feedUrl}:`, xmlText.substring(0, 200));
-        throw new Error('Response is not valid XML');
+        this.logger.error('Invalid XML response', null, { 
+          feedUrl, 
+          responsePreview: xmlText.substring(0, 200) 
+        });
+        throw new AppError(
+          'Response is not valid XML',
+          ErrorCodes.RSS_INVALID_FORMAT,
+          400,
+          false,
+          { feedUrl }
+        );
       }
       
-      // Use different XML parsing based on environment
+      // Parse XML content
       let xmlDoc: any;
-      if (typeof window !== 'undefined') {
-        // Browser environment
-        const parser = new DOMParser();
-        xmlDoc = parser.parseFromString(xmlText, 'text/xml');
-      } else {
-        // Server environment - use xmldom
-        const { DOMParser } = await import('@xmldom/xmldom');
-        const parser = new DOMParser();
-        xmlDoc = parser.parseFromString(xmlText, 'text/xml');
-      }
-      
-      // Check for parsing errors
-      const parserError = xmlDoc.getElementsByTagName('parsererror')[0];
-      if (parserError) {
-        throw new Error('Invalid XML format');
+      try {
+        if (typeof window !== 'undefined') {
+          // Browser environment
+          const parser = new DOMParser();
+          xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+        } else {
+          // Server environment - use xmldom
+          const { DOMParser } = await import('@xmldom/xmldom');
+          const parser = new DOMParser();
+          xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+        }
+        
+        // Check for parsing errors
+        const parserError = xmlDoc.getElementsByTagName('parsererror')[0];
+        if (parserError) {
+          throw new AppError(
+            'Invalid XML format in RSS feed',
+            ErrorCodes.RSS_PARSE_ERROR,
+            400,
+            false,
+            { feedUrl, parserError: parserError.textContent }
+          );
+        }
+      } catch (error) {
+        if (error instanceof AppError) throw error;
+        throw new AppError(
+          'Failed to parse XML content',
+          ErrorCodes.RSS_PARSE_ERROR,
+          400,
+          false,
+          { feedUrl, error }
+        );
       }
       
       // Extract channel info
       const channels = xmlDoc.getElementsByTagName('channel');
       if (!channels || channels.length === 0) {
-        throw new Error('Invalid RSS feed: no channel found');
+        throw new AppError(
+          'Invalid RSS feed: no channel found',
+          ErrorCodes.RSS_INVALID_FORMAT,
+          400,
+          false,
+          { feedUrl }
+        );
       }
       const channel = channels[0];
       
@@ -556,15 +584,19 @@ export class RSSParser {
         publisher: publisher
       };
       
-    } catch (error) {
-      console.error('❌ Error parsing RSS feed:', error);
-      console.error('🔍 Error details:', {
-        message: error instanceof Error ? error.message : 'Unknown error',
-        stack: error instanceof Error ? error.stack : undefined,
-        feedUrl
-      });
+      this.logger.info('Successfully parsed RSS feed', { feedUrl, trackCount: tracks.length });
+      return album;
+      
+    }, {
+      maxRetries: 3,
+      delay: 1000,
+      onRetry: (attempt, error) => {
+        this.logger.warn(`Retrying RSS feed parse (attempt ${attempt})`, { feedUrl, error });
+      }
+    }).catch(error => {
+      this.logger.error('Failed to parse RSS feed after retries', error, { feedUrl });
       return null;
-    }
+    });
   }
   
   static async parseMultipleFeeds(feedUrls: string[]): Promise<RSSAlbum[]> {

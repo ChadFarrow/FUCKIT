@@ -12,10 +12,14 @@ import { generateAlbumUrl, generatePublisherSlug } from '@/lib/url-utils';
 import { getGlobalAudioState, updateGlobalAudioState, clearGlobalAudioState } from '@/lib/audio-state';
 import { getVersionString } from '@/lib/version';
 import ControlsBar, { FilterType, ViewType, SortType } from '@/components/ControlsBar';
+import { AppError, ErrorCodes, getErrorMessage, createErrorLogger } from '@/lib/error-utils';
+import { toast } from '@/components/Toast';
 
 // Environment-based RSS feed configuration
 // CDN zone: re-podtards-cdn-new (WORKING - new Pull Zone that points to Storage Zone)
 const isProduction = process.env.NODE_ENV === 'production';
+
+const logger = createErrorLogger('MainPage');
 
 // Separate album feeds from publisher feeds: [originalUrl, cdnUrl, type]
 const feedUrlMappings = [
@@ -287,8 +291,36 @@ export default function HomePage() {
       playNextTrack();
     };
 
-    const handleError = () => {
-      console.error('Audio playback error');
+    const handleError = (event: Event) => {
+      const audioError = (event.target as HTMLAudioElement)?.error;
+      let errorMessage = 'Audio playback failed';
+      
+      if (audioError) {
+        switch (audioError.code) {
+          case MediaError.MEDIA_ERR_ABORTED:
+            errorMessage = 'Audio playback was aborted';
+            break;
+          case MediaError.MEDIA_ERR_NETWORK:
+            errorMessage = 'Network error while loading audio';
+            break;
+          case MediaError.MEDIA_ERR_DECODE:
+            errorMessage = 'Audio file is corrupted or unsupported';
+            break;
+          case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
+            errorMessage = 'Audio format not supported';
+            break;
+        }
+      }
+      
+      logger.error('Audio playback error', audioError, {
+        currentAlbum: currentPlayingAlbum,
+        trackIndex: currentTrackIndex,
+        errorCode: audioError?.code,
+        errorMessage: audioError?.message
+      });
+      
+      toast.error(errorMessage);
+      
       setIsPlaying(false);
       setCurrentPlayingAlbum(null);
       updateGlobalAudioState({ 
@@ -362,8 +394,10 @@ export default function HomePage() {
       // Reload with the new feed
       await loadAlbumsData(newCustomFeeds);
     } catch (err) {
-      console.error('Error adding feed:', err);
-      setError('Failed to add RSS feed. Please check the URL and try again.');
+      const errorMessage = getErrorMessage(err);
+      logger.error('Error adding RSS feed', err, { feedUrl });
+      setError(`Failed to add RSS feed: ${errorMessage}`);
+      toast.error(`Failed to add feed: ${errorMessage}`);
     } finally {
       setIsAddingFeed(false);
     }
@@ -519,13 +553,17 @@ export default function HomePage() {
           }
         }
       } else {
-        console.log('❌ No album data received');
-        setError('Failed to load any album data from RSS feeds');
+        const errorMsg = 'Failed to load any album data from RSS feeds';
+        logger.error(errorMsg, null, { feedCount: allFeeds.length });
+        setError(errorMsg);
+        toast.error('No albums could be loaded. Please try again later.');
       }
       
     } catch (err) {
-      console.error('Error loading albums:', err);
-      setError(`Error loading album data: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      const errorMessage = getErrorMessage(err);
+      logger.error('Error loading albums', err, { feedCount: allFeeds?.length });
+      setError(`Error loading album data: ${errorMessage}`);
+      toast.error(`Failed to load albums: ${errorMessage}`);
     } finally {
       console.log('🏁 loadAlbumsData finally block - setting isLoading to false');
       setIsLoading(false);
@@ -589,24 +627,33 @@ export default function HomePage() {
           console.log('✅ Successfully started playback');
         }
       } catch (error) {
-        console.error('❌ Error playing audio:', error);
+        let errorMessage = 'Unable to play audio - please try again';
+        let errorCode = ErrorCodes.AUDIO_PLAYBACK_ERROR;
         
-        // Show user feedback for iOS autoplay restrictions
-        if (error instanceof DOMException && error.name === 'NotAllowedError') {
-          // iOS autoplay blocked - try to inform user
-          console.log('🚫 Autoplay blocked - user interaction required');
-          setError('Tap the play button again to start playback');
-          setTimeout(() => setError(null), 5000);
-        } else if (error instanceof DOMException && error.name === 'NotSupportedError') {
-          // Audio format not supported
-          console.log('🚫 Audio format not supported');
-          setError('Audio format not supported on this device');
-          setTimeout(() => setError(null), 5000);
-        } else {
-          console.error('❌ Other audio error:', error);
-          setError('Unable to play audio - please try again');
-          setTimeout(() => setError(null), 5000);
+        if (error instanceof DOMException) {
+          switch (error.name) {
+            case 'NotAllowedError':
+              errorMessage = 'Tap the play button again to start playback';
+              errorCode = ErrorCodes.PERMISSION_ERROR;
+              break;
+            case 'NotSupportedError':
+              errorMessage = 'Audio format not supported on this device';
+              errorCode = ErrorCodes.AUDIO_NOT_FOUND;
+              break;
+          }
         }
+        
+        logger.error('Audio playback error', error, {
+          album: album.title,
+          trackUrl: firstTrack?.url,
+          errorName: error instanceof DOMException ? error.name : 'Unknown'
+        });
+        
+        const appError = new AppError(errorMessage, errorCode, 400, false);
+        setError(appError.message);
+        toast.error(appError.message);
+        
+        setTimeout(() => setError(null), 5000);
       }
     }
   };
