@@ -11,11 +11,45 @@ export default function AdminPage() {
   const [newFeedUrl, setNewFeedUrl] = useState('');
   const [newFeedType, setNewFeedType] = useState<'album' | 'publisher'>('album');
   const [cdnStatus, setCdnStatus] = useState<any>(null);
+  
+  // Authentication state
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [passphrase, setPassphrase] = useState('');
+  const [authError, setAuthError] = useState('');
 
   useEffect(() => {
-    loadFeeds();
-    loadCDNStatus();
+    // Check if already authenticated from localStorage
+    const savedAuth = localStorage.getItem('admin-authenticated');
+    if (savedAuth === 'true') {
+      setIsAuthenticated(true);
+      loadFeeds();
+      loadCDNStatus();
+    } else {
+      setLoading(false);
+    }
   }, []);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (passphrase.trim().toLowerCase() === 'doerfel') {
+      setIsAuthenticated(true);
+      setAuthError('');
+      localStorage.setItem('admin-authenticated', 'true');
+      loadFeeds();
+      loadCDNStatus();
+    } else {
+      setAuthError('Incorrect passphrase. Please try again.');
+      setPassphrase('');
+    }
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    localStorage.removeItem('admin-authenticated');
+    setPassphrase('');
+    setAuthError('');
+  };
 
   const loadFeeds = async () => {
     try {
@@ -152,6 +186,52 @@ export default function AdminPage() {
     }
   };
 
+  // Authentication screen
+  if (!isAuthenticated && !loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white flex items-center justify-center">
+        <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-8 w-full max-w-md">
+          <div className="text-center mb-6">
+            <h1 className="text-3xl font-bold mb-2">Admin Access</h1>
+            <p className="text-gray-400">Enter passphrase to access RSS feed management</p>
+          </div>
+          
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <label htmlFor="passphrase" className="block text-sm font-medium text-gray-300 mb-2">
+                Passphrase
+              </label>
+              <input
+                type="password"
+                id="passphrase"
+                value={passphrase}
+                onChange={(e) => {
+                  setPassphrase(e.target.value);
+                  if (authError) setAuthError('');
+                }}
+                placeholder="Enter admin passphrase"
+                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                autoFocus
+                required
+              />
+              {authError && (
+                <p className="mt-2 text-sm text-red-400">{authError}</p>
+              )}
+            </div>
+            
+            <button
+              type="submit"
+              disabled={!passphrase.trim()}
+              className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+            >
+              Access Admin Panel
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
@@ -170,7 +250,16 @@ export default function AdminPage() {
       <div className="container mx-auto px-6 py-12">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-4">RSS Feed Management</h1>
+          <div className="flex items-center justify-between mb-4">
+            <h1 className="text-4xl font-bold">RSS Feed Management</h1>
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 bg-red-600/20 text-red-400 rounded-lg hover:bg-red-600/30 transition-colors text-sm font-medium"
+              title="Logout"
+            >
+              Logout
+            </button>
+          </div>
           <p className="text-gray-400 mb-4">
             Manage RSS feeds for the music catalog. Feeds are automatically processed and cached to CDN.
           </p>
