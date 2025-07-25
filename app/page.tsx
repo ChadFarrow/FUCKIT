@@ -643,73 +643,23 @@ export default function HomePage() {
 
   // Helper functions for filtering and sorting
   const getFilteredAlbums = () => {
-    // Helper functions for sorting
-    const sortAlbums = (albums: RSSAlbum[]) => {
+    // Universal sorting function that implements hierarchical order: Albums → EPs → Singles
+    const sortWithHierarchy = (albums: RSSAlbum[]) => {
       return albums.sort((a, b) => {
-        // Check if either album is "Stay Awhile" (case-insensitive)
+        // Special album prioritization (preserved from original)
         const aIsStayAwhile = a.title.toLowerCase().includes('stay awhile');
         const bIsStayAwhile = b.title.toLowerCase().includes('stay awhile');
         
-        if (aIsStayAwhile && !bIsStayAwhile) return -1; // a comes first
-        if (!aIsStayAwhile && bIsStayAwhile) return 1; // b comes first
+        if (aIsStayAwhile && !bIsStayAwhile) return -1;
+        if (!aIsStayAwhile && bIsStayAwhile) return 1;
         
-        // Check if either album is "Bloodshot Lies" (case-insensitive)
         const aIsBloodshot = a.title.toLowerCase().includes('bloodshot lie');
         const bIsBloodshot = b.title.toLowerCase().includes('bloodshot lie');
         
-        if (aIsBloodshot && !bIsBloodshot) return -1; // a comes first
-        if (!aIsBloodshot && bIsBloodshot) return 1; // b comes first
+        if (aIsBloodshot && !bIsBloodshot) return -1;
+        if (!aIsBloodshot && bIsBloodshot) return 1;
         
-        // For all other albums, sort by artist then title
-        const artistCompare = a.artist.toLowerCase().localeCompare(b.artist.toLowerCase());
-        if (artistCompare !== 0) return artistCompare;
-        return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
-      });
-    };
-
-    const sortEpsAndSingles = (albums: RSSAlbum[]) => {
-      return albums.sort((a, b) => {
-        // First sort by type: EPs (2-6 tracks) before Singles (1 track)
-        const aIsSingle = a.tracks.length === 1;
-        const bIsSingle = b.tracks.length === 1;
-        
-        if (aIsSingle && !bIsSingle) return 1; // b (EP) comes first
-        if (!aIsSingle && bIsSingle) return -1; // a (EP) comes first
-        
-        // Then sort by artist
-        const artistCompare = a.artist.toLowerCase().localeCompare(b.artist.toLowerCase());
-        if (artistCompare !== 0) return artistCompare;
-        
-        // Finally sort by title
-        return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
-      });
-    };
-    
-    // Separate albums from EPs/singles (6 tracks or less)
-    const albumsWithMultipleTracks = sortAlbums(albums.filter(album => album.tracks.length > 6));
-    const epsAndSingles = sortEpsAndSingles(albums.filter(album => album.tracks.length <= 6));
-    
-    let filtered = albums;
-    
-    switch (activeFilter) {
-      case 'albums':
-        filtered = albumsWithMultipleTracks;
-        break;
-      case 'eps':
-        filtered = epsAndSingles.filter(album => album.tracks.length > 1);
-        break;
-      case 'singles':
-        filtered = epsAndSingles.filter(album => album.tracks.length === 1);
-        break;
-      default: // 'all'
-        // For "All", maintain the hierarchical order: Albums, EPs, then Singles
-        filtered = [...albumsWithMultipleTracks, ...epsAndSingles];
-    }
-
-    // Sort albums based on sort type
-    return filtered.sort((a, b) => {
-      // For "All" filter, maintain hierarchy first, then apply sorting within each category
-      if (activeFilter === 'all') {
+        // Hierarchical sorting: Albums (7+ tracks) → EPs (2-6 tracks) → Singles (1 track)
         const aIsAlbum = a.tracks.length > 6;
         const bIsAlbum = b.tracks.length > 6;
         const aIsEP = a.tracks.length > 1 && a.tracks.length <= 6;
@@ -721,7 +671,7 @@ export default function HomePage() {
         if (aIsAlbum && !bIsAlbum) return -1;
         if (!aIsAlbum && bIsAlbum) return 1;
         
-        // Then EPs (if both are not albums)
+        // EPs come second (if both are not albums)
         if (!aIsAlbum && !bIsAlbum) {
           if (aIsEP && bIsSingle) return -1;
           if (aIsSingle && bIsEP) return 1;
@@ -736,18 +686,28 @@ export default function HomePage() {
           default: // name
             return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
         }
-      } else {
-        // For specific filters, just apply the sort type
-        switch (sortType) {
-          case 'year':
-            return new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime();
-          case 'tracks':
-            return b.tracks.length - a.tracks.length;
-          default: // name
-            return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
-        }
-      }
-    });
+      });
+    };
+    
+    // Apply filtering based on active filter
+    let filtered = albums;
+    
+    switch (activeFilter) {
+      case 'albums':
+        filtered = albums.filter(album => album.tracks.length > 6);
+        break;
+      case 'eps':
+        filtered = albums.filter(album => album.tracks.length > 1 && album.tracks.length <= 6);
+        break;
+      case 'singles':
+        filtered = albums.filter(album => album.tracks.length === 1);
+        break;
+      default: // 'all'
+        filtered = albums; // Show all albums
+    }
+
+    // Apply hierarchical sorting to filtered results
+    return sortWithHierarchy(filtered);
   };
 
   const filteredAlbums = getFilteredAlbums();
