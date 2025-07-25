@@ -329,8 +329,9 @@ export default function FeedValidatorPage() {
 
       // Validate selected tags
       const results: ValidationResult[] = [];
+      const tagNames = Array.from(selectedTags);
       
-      for (const tagName of selectedTags) {
+      for (const tagName of tagNames) {
         const category = TAG_CATEGORIES.find(cat => 
           cat.tags.some(tag => tag.name === tagName)
         )?.name || 'Other';
