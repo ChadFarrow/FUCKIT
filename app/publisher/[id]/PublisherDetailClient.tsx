@@ -3,18 +3,16 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, Play, Music, Disc, Calendar, Clock, ExternalLink, Grid3X3, List, Filter } from 'lucide-react';
+import { ArrowLeft, Play, Music, Disc, Calendar, Clock, ExternalLink } from 'lucide-react';
 import { RSSParser, RSSAlbum, RSSPublisherItem } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl } from '@/lib/cdn-utils';
 import { generateAlbumUrl, getPublisherInfo } from '@/lib/url-utils';
+import ControlsBar, { FilterType, ViewType, SortType } from '@/components/ControlsBar';
 
 interface PublisherDetailClientProps {
   publisherId: string;
 }
 
-type FilterType = 'all' | 'albums' | 'eps' | 'singles';
-type ViewType = 'grid' | 'list';
-type SortType = 'name' | 'year' | 'tracks';
 
 export default function PublisherDetailClient({ publisherId }: PublisherDetailClientProps) {
   console.log('🎯 PublisherDetailClient component loaded with publisherId:', publisherId);
@@ -276,19 +274,51 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
       case 'singles':
         filtered = epsAndSingles.filter(album => album.tracks.length === 1);
         break;
-      default:
-        filtered = albums;
+      default: // 'all'
+        // For "All", maintain the hierarchical order: Albums, EPs, then Singles
+        filtered = [...albumsWithMultipleTracks, ...epsAndSingles];
     }
 
     // Sort albums
     return filtered.sort((a, b) => {
-      switch (sortType) {
-        case 'year':
-          return new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime();
-        case 'tracks':
-          return b.tracks.length - a.tracks.length;
-        default: // name
-          return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
+      // For "All" filter, maintain hierarchy first, then apply sorting within each category
+      if (activeFilter === 'all') {
+        const aIsAlbum = a.tracks.length > 6;
+        const bIsAlbum = b.tracks.length > 6;
+        const aIsEP = a.tracks.length > 1 && a.tracks.length <= 6;
+        const bIsEP = b.tracks.length > 1 && b.tracks.length <= 6;
+        const aIsSingle = a.tracks.length === 1;
+        const bIsSingle = b.tracks.length === 1;
+        
+        // Albums come first
+        if (aIsAlbum && !bIsAlbum) return -1;
+        if (!aIsAlbum && bIsAlbum) return 1;
+        
+        // Then EPs (if both are not albums)
+        if (!aIsAlbum && !bIsAlbum) {
+          if (aIsEP && bIsSingle) return -1;
+          if (aIsSingle && bIsEP) return 1;
+        }
+        
+        // Within same category, apply the selected sort
+        switch (sortType) {
+          case 'year':
+            return new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime();
+          case 'tracks':
+            return b.tracks.length - a.tracks.length;
+          default: // name
+            return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
+        }
+      } else {
+        // For specific filters, just apply the sort type
+        switch (sortType) {
+          case 'year':
+            return new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime();
+          case 'tracks':
+            return b.tracks.length - a.tracks.length;
+          default: // name
+            return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
+        }
       }
     });
   };
@@ -405,66 +435,19 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
             ) : albums.length > 0 ? (
               <>
                 {/* Controls Bar */}
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8 p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
-                  {/* Filters */}
-                  <div className="flex items-center gap-2">
-                    <Filter className="w-4 h-4 text-gray-400" />
-                    <div className="flex gap-1">
-                      {(['all', 'albums', 'eps', 'singles'] as FilterType[]).map((filter) => (
-                        <button
-                          key={filter}
-                          onClick={() => setActiveFilter(filter)}
-                          className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                            activeFilter === filter
-                              ? 'bg-white/20 text-white'
-                              : 'text-gray-400 hover:text-white hover:bg-white/10'
-                          }`}
-                        >
-                          {filter === 'all' ? 'All' : filter.charAt(0).toUpperCase() + filter.slice(1)}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Sort and View Controls */}
-                  <div className="flex items-center gap-4">
-                    {/* Sort */}
-                    <select 
-                      value={sortType} 
-                      onChange={(e) => setSortType(e.target.value as SortType)}
-                      className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="name">Sort by Name</option>
-                      <option value="year">Sort by Year</option>
-                      <option value="tracks">Sort by Tracks</option>
-                    </select>
-
-                    {/* View Toggle */}
-                    <div className="flex items-center bg-white/10 rounded-lg p-1">
-                      <button
-                        onClick={() => setViewType('grid')}
-                        className={`p-1.5 rounded ${viewType === 'grid' ? 'bg-white/20 text-white' : 'text-gray-400 hover:text-white'}`}
-                      >
-                        <Grid3X3 className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => setViewType('list')}
-                        className={`p-1.5 rounded ${viewType === 'list' ? 'bg-white/20 text-white' : 'text-gray-400 hover:text-white'}`}
-                      >
-                        <List className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Results Header */}
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold">
-                    {filteredAlbums.length} {activeFilter === 'all' ? 'Releases' : 
-                     activeFilter === 'albums' ? 'Albums' :
-                     activeFilter === 'eps' ? 'EPs' : 'Singles'}
-                  </h2>
-                </div>
+                <ControlsBar
+                  activeFilter={activeFilter}
+                  onFilterChange={setActiveFilter}
+                  sortType={sortType}
+                  onSortChange={setSortType}
+                  viewType={viewType}
+                  onViewChange={setViewType}
+                  resultCount={filteredAlbums.length}
+                  resultLabel={activeFilter === 'all' ? 'Releases' : 
+                    activeFilter === 'albums' ? 'Albums' :
+                    activeFilter === 'eps' ? 'EPs' : 'Singles'}
+                  className="mb-8"
+                />
 
                 {/* Albums Display */}
                 {viewType === 'grid' ? (

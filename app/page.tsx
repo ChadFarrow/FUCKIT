@@ -11,6 +11,7 @@ import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { generateAlbumUrl, generatePublisherSlug } from '@/lib/url-utils';
 import { getGlobalAudioState, updateGlobalAudioState, clearGlobalAudioState } from '@/lib/audio-state';
 import { getVersionString } from '@/lib/version';
+import ControlsBar, { FilterType, ViewType, SortType } from '@/components/ControlsBar';
 
 // Environment-based RSS feed configuration
 // CDN zone: re-podtards-cdn-new (WORKING - new Pull Zone that points to Storage Zone)
@@ -142,6 +143,11 @@ export default function HomePage() {
   const [currentBackgroundIndex, setCurrentBackgroundIndex] = useState(0);
   const [backgroundAlbums, setBackgroundAlbums] = useState<RSSAlbum[]>([]);
   const backgroundIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Controls state
+  const [activeFilter, setActiveFilter] = useState<FilterType>('all');
+  const [viewType, setViewType] = useState<ViewType>('grid');
+  const [sortType, setSortType] = useState<SortType>('name');
 
   useEffect(() => {
     setIsClient(true);
@@ -723,7 +729,7 @@ export default function HomePage() {
             
             {/* Description */}
             <p className="text-gray-400 text-lg mb-4 mt-6">
-              This is a demo app I built as the "StableKraft" project to see what we could do with RSS feeds and music. All data here comes from RSS feeds on{' '}
+              This is a demo app I built for the "StableKraft" project to see what we could do with RSS feeds and music. All data here comes from RSS feeds on{' '}
               <a href="https://podcastindex.org/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
                 podcastindex.org
               </a>. This is also a demo of a site for The Doerfels that I added other music I like also and some stuff to help test. -ChadF
@@ -744,22 +750,6 @@ export default function HomePage() {
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 bg-red-400 rounded-full"></span>
                     <span className="text-red-400">{error}</span>
-                  </div>
-                ) : albums.length > 0 ? (
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 bg-green-400 rounded-full"></span>
-                    <span className="text-green-400">Loaded {albums.length} albums</span>
-                    <button
-                      onClick={() => {
-                        localStorage.removeItem('cachedAlbums');
-                        localStorage.removeItem('albumsCacheTimestamp');
-                        setIsLoading(true);
-                        loadAlbumsData();
-                      }}
-                      className="text-blue-400 hover:text-blue-300 text-xs underline"
-                    >
-                      Refresh
-                    </button>
                   </div>
                 ) : null}
               </div>
