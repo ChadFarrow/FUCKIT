@@ -1,3 +1,45 @@
+const withPWA = require('next-pwa')({
+  dest: 'public',
+  register: true,
+  skipWaiting: true,
+  disable: process.env.NODE_ENV === 'development',
+  runtimeCaching: [
+    {
+      urlPattern: /^https:\/\/.*\.(?:png|jpg|jpeg|svg|gif|webp)$/,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'images',
+        expiration: {
+          maxEntries: 1000,
+          maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+        },
+      },
+    },
+    {
+      urlPattern: /^https:\/\/.*\.(?:mp3|wav|ogg|m4a)$/,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'audio',
+        expiration: {
+          maxEntries: 500,
+          maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
+        },
+      },
+    },
+    {
+      urlPattern: /^https:\/\/.*\.xml$/,
+      handler: 'StaleWhileRevalidate',
+      options: {
+        cacheName: 'rss-feeds',
+        expiration: {
+          maxEntries: 100,
+          maxAgeSeconds: 60 * 60, // 1 hour
+        },
+      },
+    },
+  ],
+});
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Domain configuration for re.podtards.com deployment
@@ -107,6 +149,20 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
+      // Heycitizen domain
+      {
+        protocol: 'https',
+        hostname: 'files.heycitizen.xyz',
+        port: '',
+        pathname: '/**',
+      },
+      // Anni Powell Music domain
+      {
+        protocol: 'https',
+        hostname: 'annipowellmusic.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
     unoptimized: process.env.NODE_ENV === 'development', // Optimize in production
     formats: ['image/webp', 'image/avif'],
@@ -170,4 +226,4 @@ const nextConfig = {
   },
 }
 
-module.exports = nextConfig
+module.exports = withPWA(nextConfig)

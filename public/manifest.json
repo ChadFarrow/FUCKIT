@@ -10,6 +10,14 @@
   "scope": "/",
   "lang": "en",
   "categories": ["music", "entertainment", "lifestyle"],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "handle_links": "preferred",
   "icons": [
     {
       "src": "/icon-192x192.png",
