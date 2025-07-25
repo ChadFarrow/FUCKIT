@@ -161,6 +161,9 @@ export default function HomePage() {
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [viewType, setViewType] = useState<ViewType>('grid');
   const [sortType, setSortType] = useState<SortType>('name');
+  
+  // Shuffle state
+  const [shuffleSeed, setShuffleSeed] = useState(0);
 
   useEffect(() => {
     setIsClient(true);
@@ -691,10 +694,61 @@ export default function HomePage() {
     }
   };
 
+  // Shuffle function that randomizes the entire site
+  const handleShuffle = () => {
+    // Generate a new random seed
+    const newSeed = Math.floor(Math.random() * 1000000);
+    setShuffleSeed(newSeed);
+    
+    // Randomize filter
+    const filters: FilterType[] = ['all', 'albums', 'eps', 'singles'];
+    const randomFilter = filters[Math.floor(Math.random() * filters.length)];
+    setActiveFilter(randomFilter);
+    
+    // Randomize view type
+    const views: ViewType[] = ['grid', 'list'];
+    const randomView = views[Math.floor(Math.random() * views.length)];
+    setViewType(randomView);
+    
+    // Randomize sort type
+    const sorts: SortType[] = ['name', 'year', 'tracks'];
+    const randomSort = sorts[Math.floor(Math.random() * sorts.length)];
+    setSortType(randomSort);
+    
+    // Show a fun toast message
+    const messages = [
+      "🎲 Shuffling the deck!",
+      "🔄 Mixing it up!",
+      "🎯 Random mode activated!",
+      "🎪 Let's get chaotic!",
+      "🎨 Shaking things up!",
+      "🎭 New arrangement incoming!",
+      "🎪 Time for some randomness!",
+      "🎲 Shuffle shuffle!",
+      "🎯 Random adventure mode!",
+      "🎨 Creative chaos engaged!"
+    ];
+    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+    toast.success(randomMessage);
+  };
+
   // Helper functions for filtering and sorting
-  const getFilteredAlbums = () => {
+    const getFilteredAlbums = () => {
     // Universal sorting function that implements hierarchical order: Albums → EPs → Singles
     const sortWithHierarchy = (albums: RSSAlbum[]) => {
+      // If shuffle is active, randomize the order
+      if (shuffleSeed > 0) {
+        // Create a seeded random function for consistent shuffling
+        const seededRandom = (min: number, max: number) => {
+          const x = Math.sin(shuffleSeed) * 10000;
+          return min + (x - Math.floor(x)) * (max - min);
+        };
+        
+        // Shuffle the albums array
+        const shuffled = [...albums].sort(() => seededRandom(-1, 1));
+        return shuffled;
+      }
+      
       return albums.sort((a, b) => {
         // Special album prioritization (preserved from original)
         const aIsStayAwhile = a.title.toLowerCase().includes('stay awhile');
@@ -1047,6 +1101,8 @@ export default function HomePage() {
                 onSortChange={setSortType}
                 viewType={viewType}
                 onViewChange={setViewType}
+                onShuffle={handleShuffle}
+                showShuffle={true}
                 resultCount={filteredAlbums.length}
                 resultLabel={activeFilter === 'all' ? 'Releases' : 
                   activeFilter === 'albums' ? 'Albums' :

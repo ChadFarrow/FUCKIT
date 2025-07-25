@@ -1,6 +1,6 @@
 'use client';
 
-import { Filter, Grid3X3, List } from 'lucide-react';
+import { Filter, Grid3X3, List, Shuffle } from 'lucide-react';
 
 export type FilterType = 'all' | 'albums' | 'eps' | 'singles';
 export type ViewType = 'grid' | 'list';
@@ -21,6 +21,10 @@ interface ControlsBarProps {
   viewType: ViewType;
   onViewChange: (view: ViewType) => void;
   showViewToggle?: boolean;
+  
+  // Shuffle prop
+  onShuffle?: () => void;
+  showShuffle?: boolean;
   
   // Customization
   className?: string;
@@ -51,6 +55,8 @@ export default function ControlsBar({
   viewType,
   onViewChange,
   showViewToggle = true,
+  onShuffle,
+  showShuffle = false,
   className = '',
   resultCount,
   resultLabel = 'results',
@@ -88,7 +94,7 @@ export default function ControlsBar({
         </div>
       )}
 
-      {/* Bottom row - Sort and View Controls */}
+      {/* Bottom row - Sort, Shuffle, and View Controls */}
       <div className="flex items-center justify-between gap-3">
         {/* Sort */}
         <select 
@@ -102,6 +108,17 @@ export default function ControlsBar({
             </option>
           ))}
         </select>
+
+        {/* Shuffle Button */}
+        {showShuffle && onShuffle && (
+          <button
+            onClick={onShuffle}
+            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white p-2 sm:p-1.5 rounded-lg transition-all touch-manipulation shadow-lg hover:shadow-xl active:scale-95"
+            title="Random Shuffle"
+          >
+            <Shuffle className="w-4 h-4" />
+          </button>
+        )}
 
         {/* View Toggle */}
         {showViewToggle && (
