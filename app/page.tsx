@@ -1045,78 +1045,248 @@ export default function HomePage() {
               />
 
               {/* Albums Display */}
-              {viewType === 'grid' ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {filteredAlbums.map((album, index) => (
-                    <AlbumCard
-                      key={`${album.title}-${index}`}
-                      album={album}
-                      index={index}
-                      currentPlayingAlbum={currentPlayingAlbum}
-                      isPlaying={isPlaying}
-                      onPlay={playAlbum}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {filteredAlbums.map((album, index) => (
-                    <Link
-                      key={`${album.title}-${index}`}
-                      href={generateAlbumUrl(album.title)}
-                      className="group flex items-center gap-4 p-4 bg-white/5 backdrop-blur-sm rounded-xl hover:bg-white/10 transition-all duration-200 border border-white/10 hover:border-white/20"
-                    >
-                      <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
-                        <Image 
-                          src={getAlbumArtworkUrl(album.coverArt || '', 'thumbnail')} 
-                          alt={album.title}
-                          width={64}
-                          height={64}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.src = getPlaceholderImageUrl('thumbnail');
-                          }}
-                        />
-                      </div>
-                      
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-lg group-hover:text-blue-400 transition-colors truncate">
-                          {album.title}
-                        </h3>
-                        <p className="text-gray-400 text-sm truncate">{album.artist}</p>
-                      </div>
-                      
-                      <div className="flex items-center gap-4 text-sm text-gray-400">
-                        <span>{new Date(album.releaseDate).getFullYear()}</span>
-                        <span>{album.tracks.length} tracks</span>
-                        <span className="px-2 py-1 bg-white/10 rounded text-xs">
-                          {album.tracks.length <= 6 ? (album.tracks.length === 1 ? 'Single' : 'EP') : 'Album'}
-                        </span>
-                        {album.explicit && (
-                          <span className="bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">
-                            E
-                          </span>
-                        )}
-                      </div>
-                      
-                      <button
-                        onClick={(e) => playAlbum(album, e)}
-                        className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 transition-colors"
-                      >
-                        {currentPlayingAlbum === album.title && isPlaying ? (
-                          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
-                          </svg>
+              {activeFilter === 'all' ? (
+                // Original sectioned layout for "All" filter
+                <>
+                  {/* Albums Grid */}
+                  {(() => {
+                    const albumsWithMultipleTracks = filteredAlbums.filter(album => album.tracks.length > 6);
+                    return albumsWithMultipleTracks.length > 0 && (
+                      <div className="mb-12">
+                        <h2 className="text-2xl font-bold mb-6">Albums</h2>
+                        {viewType === 'grid' ? (
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            {albumsWithMultipleTracks.map((album, index) => (
+                              <AlbumCard
+                                key={`album-${index}`}
+                                album={album}
+                                index={index}
+                                currentPlayingAlbum={currentPlayingAlbum}
+                                isPlaying={isPlaying}
+                                onPlay={playAlbum}
+                              />
+                            ))}
+                          </div>
                         ) : (
-                          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M8 5v14l11-7z"/>
-                          </svg>
+                          <div className="space-y-2">
+                            {albumsWithMultipleTracks.map((album, index) => (
+                              <Link
+                                key={`album-${index}`}
+                                href={generateAlbumUrl(album.title)}
+                                className="group flex items-center gap-4 p-4 bg-white/5 backdrop-blur-sm rounded-xl hover:bg-white/10 transition-all duration-200 border border-white/10 hover:border-white/20"
+                              >
+                                <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                                  <Image 
+                                    src={getAlbumArtworkUrl(album.coverArt || '', 'thumbnail')} 
+                                    alt={album.title}
+                                    width={64}
+                                    height={64}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                      const target = e.target as HTMLImageElement;
+                                      target.src = getPlaceholderImageUrl('thumbnail');
+                                    }}
+                                  />
+                                </div>
+                                
+                                <div className="flex-1 min-w-0">
+                                  <h3 className="font-semibold text-lg group-hover:text-blue-400 transition-colors truncate">
+                                    {album.title}
+                                  </h3>
+                                  <p className="text-gray-400 text-sm truncate">{album.artist}</p>
+                                </div>
+                                
+                                <div className="flex items-center gap-4 text-sm text-gray-400">
+                                  <span>{new Date(album.releaseDate).getFullYear()}</span>
+                                  <span>{album.tracks.length} tracks</span>
+                                  <span className="px-2 py-1 bg-white/10 rounded text-xs">Album</span>
+                                  {album.explicit && (
+                                    <span className="bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">
+                                      E
+                                    </span>
+                                  )}
+                                </div>
+                                
+                                <button
+                                  onClick={(e) => playAlbum(album, e)}
+                                  className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 transition-colors"
+                                >
+                                  {currentPlayingAlbum === album.title && isPlaying ? (
+                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                      <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                                    </svg>
+                                  ) : (
+                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                      <path d="M8 5v14l11-7z"/>
+                                    </svg>
+                                  )}
+                                </button>
+                              </Link>
+                            ))}
+                          </div>
                         )}
-                      </button>
-                    </Link>
-                  ))}
-                </div>
+                      </div>
+                    );
+                  })()}
+                  
+                  {/* EPs and Singles Grid */}
+                  {(() => {
+                    const epsAndSingles = filteredAlbums.filter(album => album.tracks.length <= 6);
+                    return epsAndSingles.length > 0 && (
+                      <div>
+                        <h2 className="text-2xl font-bold mb-6">EPs and Singles</h2>
+                        {viewType === 'grid' ? (
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            {epsAndSingles.map((album, index) => (
+                              <AlbumCard
+                                key={`ep-single-${index}`}
+                                album={album}
+                                index={index}
+                                currentPlayingAlbum={currentPlayingAlbum}
+                                isPlaying={isPlaying}
+                                onPlay={playAlbum}
+                              />
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="space-y-2">
+                            {epsAndSingles.map((album, index) => (
+                              <Link
+                                key={`ep-single-${index}`}
+                                href={generateAlbumUrl(album.title)}
+                                className="group flex items-center gap-4 p-4 bg-white/5 backdrop-blur-sm rounded-xl hover:bg-white/10 transition-all duration-200 border border-white/10 hover:border-white/20"
+                              >
+                                <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                                  <Image 
+                                    src={getAlbumArtworkUrl(album.coverArt || '', 'thumbnail')} 
+                                    alt={album.title}
+                                    width={64}
+                                    height={64}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                      const target = e.target as HTMLImageElement;
+                                      target.src = getPlaceholderImageUrl('thumbnail');
+                                    }}
+                                  />
+                                </div>
+                                
+                                <div className="flex-1 min-w-0">
+                                  <h3 className="font-semibold text-lg group-hover:text-blue-400 transition-colors truncate">
+                                    {album.title}
+                                  </h3>
+                                  <p className="text-gray-400 text-sm truncate">{album.artist}</p>
+                                </div>
+                                
+                                <div className="flex items-center gap-4 text-sm text-gray-400">
+                                  <span>{new Date(album.releaseDate).getFullYear()}</span>
+                                  <span>{album.tracks.length} tracks</span>
+                                  <span className="px-2 py-1 bg-white/10 rounded text-xs">
+                                    {album.tracks.length === 1 ? 'Single' : 'EP'}
+                                  </span>
+                                  {album.explicit && (
+                                    <span className="bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">
+                                      E
+                                    </span>
+                                  )}
+                                </div>
+                                
+                                <button
+                                  onClick={(e) => playAlbum(album, e)}
+                                  className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 transition-colors"
+                                >
+                                  {currentPlayingAlbum === album.title && isPlaying ? (
+                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                      <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                                    </svg>
+                                  ) : (
+                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                      <path d="M8 5v14l11-7z"/>
+                                    </svg>
+                                  )}
+                                </button>
+                              </Link>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
+                </>
+              ) : (
+                // Unified layout for specific filters (Albums, EPs, Singles)
+                viewType === 'grid' ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {filteredAlbums.map((album, index) => (
+                      <AlbumCard
+                        key={`${album.title}-${index}`}
+                        album={album}
+                        index={index}
+                        currentPlayingAlbum={currentPlayingAlbum}
+                        isPlaying={isPlaying}
+                        onPlay={playAlbum}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {filteredAlbums.map((album, index) => (
+                      <Link
+                        key={`${album.title}-${index}`}
+                        href={generateAlbumUrl(album.title)}
+                        className="group flex items-center gap-4 p-4 bg-white/5 backdrop-blur-sm rounded-xl hover:bg-white/10 transition-all duration-200 border border-white/10 hover:border-white/20"
+                      >
+                        <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                          <Image 
+                            src={getAlbumArtworkUrl(album.coverArt || '', 'thumbnail')} 
+                            alt={album.title}
+                            width={64}
+                            height={64}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.src = getPlaceholderImageUrl('thumbnail');
+                            }}
+                          />
+                        </div>
+                        
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-lg group-hover:text-blue-400 transition-colors truncate">
+                            {album.title}
+                          </h3>
+                          <p className="text-gray-400 text-sm truncate">{album.artist}</p>
+                        </div>
+                        
+                        <div className="flex items-center gap-4 text-sm text-gray-400">
+                          <span>{new Date(album.releaseDate).getFullYear()}</span>
+                          <span>{album.tracks.length} tracks</span>
+                          <span className="px-2 py-1 bg-white/10 rounded text-xs">
+                            {album.tracks.length <= 6 ? (album.tracks.length === 1 ? 'Single' : 'EP') : 'Album'}
+                          </span>
+                          {album.explicit && (
+                            <span className="bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">
+                              E
+                            </span>
+                          )}
+                        </div>
+                        
+                        <button
+                          onClick={(e) => playAlbum(album, e)}
+                          className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 transition-colors"
+                        >
+                          {currentPlayingAlbum === album.title && isPlaying ? (
+                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                            </svg>
+                          ) : (
+                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M8 5v14l11-7z"/>
+                            </svg>
+                          )}
+                        </button>
+                      </Link>
+                    ))}
+                  </div>
+                )
               )}
             </div>
           ) : (
