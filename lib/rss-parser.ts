@@ -613,10 +613,15 @@ export class RSSParser {
       const promises = batch.map(async (url) => {
         try {
           // Use retry logic for each feed
-          return await this.withRetry(
+          return await withRetry(
             () => this.parseAlbumFeed(url),
-            2, // Use 2 retries for batch processing to avoid too much delay
-            `feed ${url}`
+            {
+              maxRetries: 2, // Use 2 retries for batch processing to avoid too much delay
+              delay: 1000,
+              onRetry: (attempt, error) => {
+                this.logger.warn(`Retrying feed parse (attempt ${attempt})`, { url, error });
+              }
+            }
           );
         } catch (error) {
           // Enhanced error handling for NetworkError
