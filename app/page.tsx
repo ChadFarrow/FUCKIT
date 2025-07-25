@@ -116,6 +116,10 @@ const feedUrlMappings = [
   
   // Additional Wavlake Publisher feeds - these need to be identified (currently missing one)
   ['https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4', 'https://re-podtards-cdn-new.b-cdn.net/feeds/wavlake-artist-aa909244-7555-4b52-ad88-7233860c6fb4.xml', 'publisher'],
+  
+  // Heycitizen - External artist feeds
+  ['https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/the heycitizen experience.xml', 'https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/the heycitizen experience.xml', 'album'],
+  ['https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/lofi.xml', 'https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/lofi.xml', 'album'],
 ];
 
 // Separate album feeds from publisher feeds
