@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, Play } from 'lucide-react';
+import { ArrowLeft, Play, Music, Disc, Calendar, Clock, ExternalLink, Grid3X3, List, Filter } from 'lucide-react';
 import { RSSParser, RSSAlbum, RSSPublisherItem } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl } from '@/lib/cdn-utils';
 import { generateAlbumUrl, getPublisherInfo } from '@/lib/url-utils';
@@ -13,6 +13,8 @@ interface PublisherDetailClientProps {
 }
 
 type FilterType = 'all' | 'albums' | 'eps' | 'singles';
+type ViewType = 'grid' | 'list';
+type SortType = 'name' | 'year' | 'tracks';
 
 export default function PublisherDetailClient({ publisherId }: PublisherDetailClientProps) {
   console.log('🎯 PublisherDetailClient component loaded with publisherId:', publisherId);
@@ -24,6 +26,8 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
   const [publisherInfo, setPublisherInfo] = useState<{ title?: string; description?: string; artist?: string; coverArt?: string } | null>(null);
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [albumsLoading, setAlbumsLoading] = useState(false);
+  const [viewType, setViewType] = useState<ViewType>('grid');
+  const [sortType, setSortType] = useState<SortType>('name');
   
 
   useEffect(() => {
@@ -241,9 +245,59 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
     );
   }
 
+  // Calculate statistics
+  const totalTracks = albums.reduce((sum, album) => sum + album.tracks.length, 0);
+  const totalDuration = albums.reduce((sum, album) => {
+    return sum + album.tracks.reduce((trackSum, track) => {
+      const [minutes, seconds] = track.duration.split(':').map(Number);
+      return trackSum + (minutes || 0) * 60 + (seconds || 0);
+    }, 0);
+  }, 0);
+  const avgYear = albums.length > 0 ? Math.floor(albums.reduce((sum, album) => sum + new Date(album.releaseDate).getFullYear(), 0) / albums.length) : 0;
+
+  // Format duration helper
+  const formatDuration = (seconds: number) => {
+    const hours = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+  };
+
+  // Filter and sort albums
+  const getFilteredAlbums = () => {
+    let filtered = albums;
+    
+    switch (activeFilter) {
+      case 'albums':
+        filtered = albumsWithMultipleTracks;
+        break;
+      case 'eps':
+        filtered = epsAndSingles.filter(album => album.tracks.length > 1);
+        break;
+      case 'singles':
+        filtered = epsAndSingles.filter(album => album.tracks.length === 1);
+        break;
+      default:
+        filtered = albums;
+    }
+
+    // Sort albums
+    return filtered.sort((a, b) => {
+      switch (sortType) {
+        case 'year':
+          return new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime();
+        case 'tracks':
+          return b.tracks.length - a.tracks.length;
+        default: // name
+          return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
+      }
+    });
+  };
+
+  const filteredAlbums = getFilteredAlbums();
+
   return (
     <div className="min-h-screen text-white relative overflow-hidden">
-      {/* Primary background - use publisher image */}
+      {/* Enhanced Background */}
       {publisherInfo?.coverArt ? (
         <div className="fixed inset-0 z-0">
           <Image 
@@ -253,205 +307,282 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
             className="object-cover"
             priority
           />
-          {/* Dark overlay for readability */}
-          <div className="absolute inset-0 bg-black/70"></div>
+          {/* Gradient overlay for better readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/70 to-black/90"></div>
         </div>
       ) : (
-        /* Fallback gradient background when no publisher image */
-        <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 z-0" />
+        <div className="fixed inset-0 bg-gradient-to-br from-purple-900 via-gray-900 to-black z-0" />
       )}
       
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <Link href="/" className="inline-flex items-center text-gray-400 hover:text-white transition-colors mb-4">
+      <div className="relative z-10">
+        {/* Navigation */}
+        <div className="container mx-auto px-4 pt-8">
+          <Link href="/" className="inline-flex items-center text-gray-400 hover:text-white transition-colors mb-8">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Home
           </Link>
-          
-          <div className="flex items-center space-x-4">
-            {publisherInfo?.coverArt && (
-              <div className="w-16 h-16 rounded-lg overflow-hidden">
-                <Image 
-                  src={getAlbumArtworkUrl(publisherInfo.coverArt, 'medium')} 
-                  alt={publisherInfo.title || 'Artist'}
-                  width={64}
-                  height={64}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            )}
-            <div>
-              <h1 className="text-3xl font-bold">{publisherInfo?.title || publisherId}</h1>
-              {publisherInfo?.description && (
-                <p className="text-gray-400 mt-2">{publisherInfo.description}</p>
+        </div>
+
+        {/* Hero Section */}
+        <div className="container mx-auto px-4 pb-8">
+          <div className="flex flex-col lg:flex-row items-start lg:items-end gap-8 mb-12">
+            {/* Artist Avatar */}
+            <div className="flex-shrink-0">
+              {publisherInfo?.coverArt ? (
+                <div className="w-48 h-48 rounded-2xl overflow-hidden shadow-2xl ring-4 ring-white/20">
+                  <Image 
+                    src={getAlbumArtworkUrl(publisherInfo.coverArt, 'large')} 
+                    alt={publisherInfo.title || 'Artist'}
+                    width={192}
+                    height={192}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="w-48 h-48 rounded-2xl bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center shadow-2xl ring-4 ring-white/20">
+                  <Music className="w-20 h-20 text-white/80" />
+                </div>
               )}
+            </div>
+
+            {/* Artist Information */}
+            <div className="flex-1 lg:mb-4">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-sm font-medium">
+                  <Music className="w-4 h-4 inline mr-1" />
+                  Artist
+                </span>
+              </div>
+              
+              <h1 className="text-4xl lg:text-6xl font-black mb-4 tracking-tight">
+                {publisherInfo?.title || publisherId}
+              </h1>
+              
+              {publisherInfo?.description && (
+                <p className="text-gray-300 text-lg mb-6 max-w-2xl leading-relaxed">
+                  {publisherInfo.description}
+                </p>
+              )}
+
+              {/* Statistics */}
+              <div className="flex flex-wrap gap-6 text-sm">
+                <div className="flex items-center gap-2">
+                  <Disc className="w-4 h-4 text-blue-400" />
+                  <span className="font-semibold">{albums.length}</span>
+                  <span className="text-gray-400">Releases</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Music className="w-4 h-4 text-green-400" />
+                  <span className="font-semibold">{totalTracks}</span>
+                  <span className="text-gray-400">Tracks</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-purple-400" />
+                  <span className="font-semibold">{formatDuration(totalDuration)}</span>
+                  <span className="text-gray-400">Total Duration</span>
+                </div>
+                {avgYear > 0 && (
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-orange-400" />
+                    <span className="font-semibold">{avgYear}</span>
+                    <span className="text-gray-400">Avg. Year</span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Content */}
-        {albumsLoading ? (
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-4"></div>
-            <p className="text-gray-400">
-              Loading albums...
-            </p>
-          </div>
-        ) : albums.length > 0 ? (
-          <div>
-            {/* Filter Header */}
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-2xl font-bold">
-                {`${albums.length} Albums`}
-              </h2>
-              {activeFilter !== 'all' && (
-                <button
-                  onClick={() => setActiveFilter('all')}
-                  className="text-sm text-gray-400 hover:text-white transition-colors"
-                >
-                  Show all
-                </button>
-              )}
-            </div>
+        {/* Content Section */}
+        <div className="bg-black/20 backdrop-blur-sm min-h-screen">
+          <div className="container mx-auto px-4 py-8">
+            {albumsLoading ? (
+              <div className="text-center py-20">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-6"></div>
+                <p className="text-xl text-gray-400">Loading albums...</p>
+              </div>
+            ) : albums.length > 0 ? (
+              <>
+                {/* Controls Bar */}
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8 p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
+                  {/* Filters */}
+                  <div className="flex items-center gap-2">
+                    <Filter className="w-4 h-4 text-gray-400" />
+                    <div className="flex gap-1">
+                      {(['all', 'albums', 'eps', 'singles'] as FilterType[]).map((filter) => (
+                        <button
+                          key={filter}
+                          onClick={() => setActiveFilter(filter)}
+                          className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                            activeFilter === filter
+                              ? 'bg-white/20 text-white'
+                              : 'text-gray-400 hover:text-white hover:bg-white/10'
+                          }`}
+                        >
+                          {filter === 'all' ? 'All' : filter.charAt(0).toUpperCase() + filter.slice(1)}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
 
-            {/* Albums Grid */}
-            {albumsWithMultipleTracks.length > 0 && (
-              <div className="mb-12">
-                <h2 className="text-2xl font-bold mb-6">Albums</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {albumsWithMultipleTracks.map((album, index) => (
-                    <Link 
-                      key={index}
-                      href={generateAlbumUrl(album.title)}
-                      className="bg-black/40 backdrop-blur-md rounded-lg overflow-hidden group hover:bg-black/50 transition-all duration-300 border border-white/20 hover:border-white/30 block cursor-pointer shadow-lg"
+                  {/* Sort and View Controls */}
+                  <div className="flex items-center gap-4">
+                    {/* Sort */}
+                    <select 
+                      value={sortType} 
+                      onChange={(e) => setSortType(e.target.value as SortType)}
+                      className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                      {/* Album Cover */}
-                      <div className="relative aspect-square">
-                        {album.coverArt ? (
-                          <Image 
-                            src={getAlbumArtworkUrl(album.coverArt, 'medium')} 
-                            alt={album.title}
-                            width={300}
-                            height={300}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-red-700 to-red-900 flex items-center justify-center">
-                            <span className="text-white text-lg font-bold text-center px-4">
-                              {album.title}
-                            </span>
+                      <option value="name">Sort by Name</option>
+                      <option value="year">Sort by Year</option>
+                      <option value="tracks">Sort by Tracks</option>
+                    </select>
+
+                    {/* View Toggle */}
+                    <div className="flex items-center bg-white/10 rounded-lg p-1">
+                      <button
+                        onClick={() => setViewType('grid')}
+                        className={`p-1.5 rounded ${viewType === 'grid' ? 'bg-white/20 text-white' : 'text-gray-400 hover:text-white'}`}
+                      >
+                        <Grid3X3 className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => setViewType('list')}
+                        className={`p-1.5 rounded ${viewType === 'list' ? 'bg-white/20 text-white' : 'text-gray-400 hover:text-white'}`}
+                      >
+                        <List className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Results Header */}
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold">
+                    {filteredAlbums.length} {activeFilter === 'all' ? 'Releases' : 
+                     activeFilter === 'albums' ? 'Albums' :
+                     activeFilter === 'eps' ? 'EPs' : 'Singles'}
+                  </h2>
+                </div>
+
+                {/* Albums Display */}
+                {viewType === 'grid' ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+                    {filteredAlbums.map((album, index) => (
+                      <Link 
+                        key={`${album.title}-${index}`}
+                        href={generateAlbumUrl(album.title)}
+                        className="group bg-white/5 backdrop-blur-sm rounded-xl overflow-hidden hover:bg-white/10 transition-all duration-300 border border-white/10 hover:border-white/20 shadow-lg hover:shadow-xl hover:scale-105"
+                      >
+                        <div className="relative aspect-square">
+                          {album.coverArt ? (
+                            <Image 
+                              src={getAlbumArtworkUrl(album.coverArt, 'medium')} 
+                              alt={album.title}
+                              width={300}
+                              height={300}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
+                              <Music className="w-12 h-12 text-white/80" />
+                            </div>
+                          )}
+                          
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
+                            <div className="bg-white/90 hover:bg-white text-black rounded-full p-3 transform scale-0 group-hover:scale-100 transition-all duration-200 shadow-xl">
+                              <Play className="w-6 h-6" />
+                            </div>
                           </div>
-                        )}
-                        
-                        {/* Play Button Overlay */}
-                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
-                          <div className="bg-white/80 hover:bg-white text-black rounded-full p-3 transform hover:scale-110 transition-all duration-200 shadow-lg">
-                            <Play className="w-6 h-6" />
+                          
+                          <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full">
+                            {album.tracks.length} tracks
                           </div>
                         </div>
                         
-                        {/* Track Count Badge */}
-                        <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-full">
-                          {album.tracks.length} tracks
+                        <div className="p-4">
+                          <h3 className="font-bold text-lg mb-1 group-hover:text-blue-400 transition-colors line-clamp-1">
+                            {album.title}
+                          </h3>
+                          <p className="text-gray-400 text-sm mb-3 line-clamp-1">{album.artist}</p>
+                          
+                          <div className="flex items-center justify-between text-xs text-gray-500">
+                            <span>{new Date(album.releaseDate).getFullYear()}</span>
+                            <div className="flex items-center gap-2">
+                              {album.explicit && (
+                                <span className="bg-red-500 text-white px-1.5 py-0.5 rounded text-xs font-bold">
+                                  E
+                                </span>
+                              )}
+                              <span className="bg-white/10 px-2 py-0.5 rounded">
+                                {album.tracks.length <= 6 ? (album.tracks.length === 1 ? 'Single' : 'EP') : 'Album'}
+                              </span>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      
-                      {/* Album Info */}
-                      <div className="p-4">
-                        <h3 className="font-bold text-lg mb-1 group-hover:text-blue-400 transition-colors truncate">
-                          {album.title}
-                        </h3>
-                        <p className="text-gray-400 text-sm mb-2 truncate">{album.artist}</p>
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {filteredAlbums.map((album, index) => (
+                      <Link 
+                        key={`${album.title}-${index}`}
+                        href={generateAlbumUrl(album.title)}
+                        className="group flex items-center gap-4 p-4 bg-white/5 backdrop-blur-sm rounded-xl hover:bg-white/10 transition-all duration-200 border border-white/10 hover:border-white/20"
+                      >
+                        <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                          {album.coverArt ? (
+                            <Image 
+                              src={getAlbumArtworkUrl(album.coverArt, 'thumbnail')} 
+                              alt={album.title}
+                              width={64}
+                              height={64}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
+                              <Music className="w-6 h-6 text-white/80" />
+                            </div>
+                          )}
+                        </div>
                         
-                        {/* Album Stats */}
-                        <div className="flex items-center justify-between text-xs text-gray-500">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-lg group-hover:text-blue-400 transition-colors truncate">
+                            {album.title}
+                          </h3>
+                          <p className="text-gray-400 text-sm truncate">{album.artist}</p>
+                        </div>
+                        
+                        <div className="flex items-center gap-4 text-sm text-gray-400">
                           <span>{new Date(album.releaseDate).getFullYear()}</span>
+                          <span>{album.tracks.length} tracks</span>
+                          <span className="px-2 py-1 bg-white/10 rounded text-xs">
+                            {album.tracks.length <= 6 ? (album.tracks.length === 1 ? 'Single' : 'EP') : 'Album'}
+                          </span>
                           {album.explicit && (
-                            <span className="bg-red-600 text-white px-1 py-0.5 rounded text-xs font-bold">
+                            <span className="bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">
                               E
                             </span>
                           )}
                         </div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
-            
-            {/* EPs and Singles Grid */}
-            {epsAndSingles.length > 0 && (
-              <div>
-                <h2 className="text-2xl font-bold mb-6">EPs and Singles</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {epsAndSingles.map((album, index) => (
-                    <Link 
-                      key={`single-${index}`}
-                      href={generateAlbumUrl(album.title)}
-                      className="bg-black/40 backdrop-blur-md rounded-lg overflow-hidden group hover:bg-black/50 transition-all duration-300 border border-white/20 hover:border-white/30 block cursor-pointer shadow-lg"
-                    >
-                      {/* Album Cover */}
-                      <div className="relative aspect-square">
-                        {album.coverArt ? (
-                          <Image 
-                            src={getAlbumArtworkUrl(album.coverArt, 'medium')} 
-                            alt={album.title}
-                            width={300}
-                            height={300}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-red-700 to-red-900 flex items-center justify-center">
-                            <span className="text-white text-lg font-bold text-center px-4">
-                              {album.title}
-                            </span>
-                          </div>
-                        )}
                         
-                        {/* Play Button Overlay */}
-                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
-                          <div className="bg-white/80 hover:bg-white text-black rounded-full p-3 transform hover:scale-110 transition-all duration-200 shadow-lg">
-                            <Play className="w-6 h-6" />
-                          </div>
-                        </div>
-                        
-                        {/* Track Count Badge */}
-                        <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-full">
-                          {album.tracks.length} tracks
-                        </div>
-                      </div>
-                      
-                      {/* Album Info */}
-                      <div className="p-4">
-                        <h3 className="font-bold text-lg mb-1 group-hover:text-blue-400 transition-colors truncate">
-                          {album.title}
-                        </h3>
-                        <p className="text-gray-400 text-sm mb-2 truncate">{album.artist}</p>
-                        
-                        {/* Album Stats */}
-                        <div className="flex items-center justify-between text-xs text-gray-500">
-                          <span>{new Date(album.releaseDate).getFullYear()}</span>
-                          {album.explicit && (
-                            <span className="bg-red-600 text-white px-1 py-0.5 rounded text-xs font-bold">
-                              E
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
+                        <Play className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="text-center py-20">
+                <Music className="w-16 h-16 text-gray-400 mx-auto mb-6" />
+                <h2 className="text-2xl font-semibold mb-4">No Albums Found</h2>
+                <p className="text-gray-400 text-lg">This artist doesn't have any releases available yet.</p>
               </div>
             )}
           </div>
-        ) : (
-          <div className="text-center py-12">
-            <h2 className="text-2xl font-semibold mb-4">No Albums Found</h2>
-            <p className="text-gray-400">This publisher doesn't have any albums available.</p>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );
