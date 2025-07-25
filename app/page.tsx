@@ -787,13 +787,22 @@ export default function HomePage() {
     
     albums.forEach(album => {
       album.tracks.forEach((track, trackIndex) => {
-        allTracks.push({
-          track,
-          album,
-          originalIndex: trackIndex
-        });
+        // Only include tracks with valid URLs
+        if (track.url && track.url.trim()) {
+          allTracks.push({
+            track,
+            album,
+            originalIndex: trackIndex
+          });
+        }
       });
     });
+    
+    // Check if we have any playable tracks
+    if (allTracks.length === 0) {
+      toast.error('No playable tracks found');
+      return;
+    }
     
     // Shuffle the tracks using Fisher-Yates algorithm
     const shuffled = [...allTracks];
@@ -811,9 +820,43 @@ export default function HomePage() {
     // Show success message
     toast.success(`🎵 Shuffled ${shuffled.length} tracks! Starting playback...`);
     
-    // Start playing the first shuffled track
-    if (shuffled.length > 0) {
-      playShuffledTrack(0);
+    // Start playing the first shuffled track immediately with the shuffled array
+    if (shuffled.length > 0 && audioRef.current) {
+      const { track, album } = shuffled[0];
+      
+      try {
+        console.log('🎵 Starting shuffle playback:', track.title, 'from album:', album.title);
+        
+        // Set up audio element
+        audioRef.current.src = track.url;
+        audioRef.current.load();
+        audioRef.current.volume = 0.8;
+        
+        // Play the track
+        audioRef.current.play().then(() => {
+          // Update state after successful play
+          setCurrentPlayingAlbum(album.title);
+          setCurrentTrackIndex(0);
+          setIsPlaying(true);
+          setShuffleTrackIndex(0);
+          
+          // Update global state
+          updateGlobalAudioState({
+            isPlaying: true,
+            currentAlbum: album.title,
+            currentTrackIndex: 0,
+            trackUrl: track.url,
+          }, audioRef.current || undefined);
+          
+          console.log('✅ Successfully started shuffle playback');
+        }).catch(error => {
+          console.error('Error starting shuffle playback:', error);
+          toast.error('Failed to start playback - tap the play button again');
+        });
+      } catch (error) {
+        console.error('Error setting up shuffle playback:', error);
+        toast.error('Failed to start playback');
+      }
     }
   };
 
