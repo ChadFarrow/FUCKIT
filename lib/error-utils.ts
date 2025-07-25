@@ -97,7 +97,7 @@ export function isRetryableError(error: unknown): boolean {
       ErrorCodes.RATE_LIMIT_ERROR,
       ErrorCodes.RSS_FETCH_ERROR,
       ErrorCodes.AUDIO_LOAD_ERROR,
-    ].includes(error.code);
+    ].includes(error.code as ErrorCode);
   }
   
   if (error instanceof Error) {

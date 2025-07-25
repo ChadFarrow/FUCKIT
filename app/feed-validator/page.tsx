@@ -151,7 +151,7 @@ export default function FeedValidatorPage() {
     try {
       const [namespace, localName] = tagName.includes(':') ? tagName.split(':') : [null, tagName];
       
-      let elements: NodeListOf<Element>;
+      let elements: NodeListOf<Element> | HTMLCollectionOf<Element>;
       if (namespace) {
         // Handle namespaced elements
         const namespaceURI = getNamespaceURI(namespace);
@@ -164,8 +164,9 @@ export default function FeedValidatorPage() {
       } else {
         elements = xmlDoc.getElementsByTagName(tagName);
       }
+      const elementList = Array.from(elements);
 
-      if (elements.length === 0) {
+      if (elementList.length === 0) {
         return {
           tag: tagName,
           category,
@@ -180,7 +181,7 @@ export default function FeedValidatorPage() {
         .flatMap(cat => cat.tags)
         .find(tag => tag.name === tagName)?.required;
 
-      if (isRequired && elements.length === 0) {
+      if (isRequired && elementList.length === 0) {
         return {
           tag: tagName,
           category,
@@ -191,7 +192,7 @@ export default function FeedValidatorPage() {
       }
 
       // Validate content
-      const firstElement = elements[0];
+      const firstElement = elementList[0];
       const content = firstElement.textContent?.trim();
       
       if (isRequired && (!content || content.length === 0)) {
@@ -201,13 +202,13 @@ export default function FeedValidatorPage() {
           status: 'fail',
           message: `Required tag '${tagName}' has no content`,
           value: content || '',
-          count: elements.length
+          count: elementList.length
         };
       }
 
       // Check for common validation issues
       let status: 'pass' | 'warning' = 'pass';
-      let message = `Tag '${tagName}' found with ${elements.length} occurrence(s)`;
+      let message = `Tag '${tagName}' found with ${elementList.length} occurrence(s)`;
 
       if (tagName === 'language' && content) {
         const langRegex = /^[a-z]{2}(-[A-Z]{2})?$/;
@@ -239,8 +240,8 @@ export default function FeedValidatorPage() {
         category,
         status,
         message,
-        value: content || undefined,
-        count: elements.length
+        value: content,
+        count: elementList.length
       };
 
     } catch (error) {
