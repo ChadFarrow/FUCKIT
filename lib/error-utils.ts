@@ -91,13 +91,14 @@ export function getErrorMessage(error: unknown): string {
 
 export function isRetryableError(error: unknown): boolean {
   if (error instanceof AppError) {
-    return [
+    const retryableCodes: ErrorCode[] = [
       ErrorCodes.NETWORK_ERROR,
       ErrorCodes.TIMEOUT_ERROR,
       ErrorCodes.RATE_LIMIT_ERROR,
       ErrorCodes.RSS_FETCH_ERROR,
       ErrorCodes.AUDIO_LOAD_ERROR,
-    ].includes(error.code as ErrorCode);
+    ];
+    return retryableCodes.includes(error.code);
   }
   
   if (error instanceof Error) {
