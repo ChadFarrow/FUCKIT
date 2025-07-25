@@ -1,5 +1,87 @@
 {
-  "feeds": [],
-  "lastUpdated": null,
+  "feeds": [
+    {
+      "id": "anni-powell-wild-and-free",
+      "originalUrl": "https://annipowellmusic.com/wp-content/MusicSideProject/MP3%20Masters%20and%20Copy%20of%20Cover/Wild%20and%20Free%20RSS%20Feed/RSS%20Feed%20Wild%20and%20Free/Wild%20and%20Free%20RSS%20Feed.xml",
+      "type": "album",
+      "title": "Anni Powell - Wild and Free EP",
+      "status": "active",
+      "addedAt": "2025-01-27T00:00:00.000Z",
+      "lastUpdated": "2025-01-27T00:00:00.000Z"
+    },
+    {
+      "id": "anni-powell-beauty",
+      "originalUrl": "https://annipowellmusic.com/wp-content/MusicSideProject/Beauty%20Master%20and%20Album%20Cover/BeautyRSS.xml",
+      "type": "album",
+      "title": "Anni Powell - Beauty",
+      "status": "active",
+      "addedAt": "2025-01-27T00:00:00.000Z",
+      "lastUpdated": "2025-01-27T00:00:00.000Z"
+    },
+    {
+      "id": "anni-powell-peach-clouds",
+      "originalUrl": "https://annipowellmusic.com/wp-content/MusicSideProject/Peach%20Clouds%20Master%20and%20Album%20Cover/peach%20clouds%20RSS%20FEED.xml",
+      "type": "album",
+      "title": "Anni Powell - Peach Clouds",
+      "status": "active",
+      "addedAt": "2025-01-27T00:00:00.000Z",
+      "lastUpdated": "2025-01-27T00:00:00.000Z"
+    },
+    {
+      "id": "anni-powell-beyond-the-hills",
+      "originalUrl": "https://annipowellmusic.com/wp-content/MusicSideProject/Beyond%20the%20Hills%20MP3%20Master%20and%20Album%20Cover/Beyond%20the%20Hills%20RSS%20FEED/beyond%20the%20hills%20RSS%20FEED.xml",
+      "type": "album",
+      "title": "Anni Powell - Beyond the Hills",
+      "status": "active",
+      "addedAt": "2025-01-27T00:00:00.000Z",
+      "lastUpdated": "2025-01-27T00:00:00.000Z"
+    },
+    {
+      "id": "anni-powell-lingo",
+      "originalUrl": "https://annipowellmusic.com/wp-content/MusicSideProject/Lingo%20Master%20and%20Album%20Cover/lingoRSS.xml",
+      "type": "album",
+      "title": "Anni Powell - Lingo",
+      "status": "active",
+      "addedAt": "2025-01-27T00:00:00.000Z",
+      "lastUpdated": "2025-01-27T00:00:00.000Z"
+    },
+    {
+      "id": "anni-powell-so-it-goes",
+      "originalUrl": "https://annipowellmusic.com/wp-content/MusicSideProject/So%20It%20Goes%20Master%20and%20Album%20Cover/so%20it%20goesRSS.xml",
+      "type": "album",
+      "title": "Anni Powell - So It Goes",
+      "status": "active",
+      "addedAt": "2025-01-27T00:00:00.000Z",
+      "lastUpdated": "2025-01-27T00:00:00.000Z"
+    },
+    {
+      "id": "middle-season-mejor-version",
+      "originalUrl": "https://www.doerfelverse.com/artists/middleseason/mejor-version.xml",
+      "type": "album",
+      "title": "Middle Season - Mejor Versión",
+      "status": "active",
+      "addedAt": "2025-01-27T00:00:00.000Z",
+      "lastUpdated": "2025-01-27T00:00:00.000Z"
+    },
+    {
+      "id": "middle-season-inside-out",
+      "originalUrl": "https://www.doerfelverse.com/artists/middleseason/inside-out.xml",
+      "type": "album",
+      "title": "Middle Season - Inside Out",
+      "status": "active",
+      "addedAt": "2025-01-27T00:00:00.000Z",
+      "lastUpdated": "2025-01-27T00:00:00.000Z"
+    },
+    {
+      "id": "middle-season-let-go",
+      "originalUrl": "https://www.doerfelverse.com/feeds/middle-season-let-go.xml",
+      "type": "album",
+      "title": "Middle Season - Let Go (What's holding you back)",
+      "status": "active",
+      "addedAt": "2025-01-27T00:00:00.000Z",
+      "lastUpdated": "2025-01-27T00:00:00.000Z"
+    }
+  ],
+  "lastUpdated": "2025-01-27T00:00:00.000Z",
   "version": 1
 }
