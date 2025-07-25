@@ -563,7 +563,7 @@ export class RSSParser {
         }
       }
       
-      return {
+      const album = {
         title,
         artist,
         description: cleanHtmlContent(description) || '',
