@@ -16,6 +16,8 @@ export interface ManagedFeed {
   albumCount?: number;
   addedAt: string;
   updatedAt: string;
+  source?: 'hardcoded' | 'managed';
+  isHardcoded?: boolean;
 }
 
 export interface FeedDatabase {

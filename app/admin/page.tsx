@@ -16,6 +16,7 @@ export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passphrase, setPassphrase] = useState('');
   const [authError, setAuthError] = useState('');
+  const [isMigrating, setIsMigrating] = useState(false);
 
   useEffect(() => {
     // Check if already authenticated from localStorage
@@ -53,7 +54,7 @@ export default function AdminPage() {
 
   const loadFeeds = async () => {
     try {
-      const response = await fetch('/api/admin/feeds');
+      const response = await fetch('/api/admin/all-feeds');
       const data = await response.json();
       
       if (data.success) {
@@ -107,7 +108,30 @@ export default function AdminPage() {
       const data = await response.json();
       
       if (data.success) {
-        toast.success('Feed added successfully');
+        // Also add to hardcoded list
+        try {
+          const hardcodedResponse = await fetch('/api/admin/add-to-hardcoded', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              originalUrl: newFeedUrl.trim(),
+              cdnUrl: data.feed.cdnUrl || newFeedUrl.trim(),
+              type: newFeedType
+            }),
+          });
+          
+          if (hardcodedResponse.ok) {
+            toast.success('Feed added to both managed system and hardcoded list');
+          } else {
+            toast.success('Feed added to managed system (hardcode update failed)');
+          }
+        } catch (error) {
+          console.warn('Failed to add to hardcoded list:', error);
+          toast.success('Feed added to managed system');
+        }
+        
         setNewFeedUrl('');
         setNewFeedType('album');
         await loadFeeds();
@@ -122,7 +146,12 @@ export default function AdminPage() {
     }
   };
 
-  const removeFeed = async (id: string) => {
+  const removeFeed = async (id: string, source: string) => {
+    if (source === 'hardcoded') {
+      toast.error('Cannot remove hardcoded feeds through admin interface');
+      return;
+    }
+
     if (!confirm('Are you sure you want to remove this feed?')) {
       return;
     }
@@ -333,21 +362,21 @@ export default function AdminPage() {
             <p className="text-3xl font-bold text-blue-400">{feeds.length}</p>
           </div>
           <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-4">
-            <h3 className="text-lg font-semibold mb-2">Active</h3>
+            <h3 className="text-lg font-semibold mb-2">Built-in</h3>
+            <p className="text-3xl font-bold text-blue-400">
+              {feeds.filter(f => f.source === 'hardcoded').length}
+            </p>
+          </div>
+          <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-4">
+            <h3 className="text-lg font-semibold mb-2">Added</h3>
             <p className="text-3xl font-bold text-green-400">
+              {feeds.filter(f => f.source === 'managed').length}
+            </p>
+          </div>
+          <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-4">
+            <h3 className="text-lg font-semibold mb-2">Active</h3>
+            <p className="text-3xl font-bold text-purple-400">
               {feeds.filter(f => f.status === 'active').length}
-            </p>
-          </div>
-          <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-4">
-            <h3 className="text-lg font-semibold mb-2">Processing</h3>
-            <p className="text-3xl font-bold text-yellow-400">
-              {feeds.filter(f => f.status === 'processing').length}
-            </p>
-          </div>
-          <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-4">
-            <h3 className="text-lg font-semibold mb-2">Errors</h3>
-            <p className="text-3xl font-bold text-red-400">
-              {feeds.filter(f => f.status === 'error').length}
             </p>
           </div>
         </div>
@@ -376,6 +405,13 @@ export default function AdminPage() {
                         </span>
                         <span className="text-xs bg-white/10 px-2 py-1 rounded">
                           {feed.type}
+                        </span>
+                        <span className={`text-xs px-2 py-1 rounded ${
+                          feed.source === 'hardcoded' 
+                            ? 'bg-blue-600/80 text-blue-100' 
+                            : 'bg-green-600/80 text-green-100'
+                        }`}>
+                          {feed.source === 'hardcoded' ? 'Built-in' : 'Added'}
                         </span>
                       </div>
                       
@@ -415,15 +451,25 @@ export default function AdminPage() {
                     <div className="flex items-center gap-2 ml-4">
                       <button
                         onClick={() => refreshFeed(feed.id)}
-                        className="px-3 py-1 bg-blue-600/20 text-blue-400 rounded hover:bg-blue-600/30 transition-colors text-sm"
-                        title="Refresh feed"
+                        disabled={feed.source === 'hardcoded'}
+                        className={`px-3 py-1 rounded transition-colors text-sm ${
+                          feed.source === 'hardcoded'
+                            ? 'bg-gray-600/20 text-gray-500 cursor-not-allowed'
+                            : 'bg-blue-600/20 text-blue-400 hover:bg-blue-600/30'
+                        }`}
+                        title={feed.source === 'hardcoded' ? 'Cannot refresh hardcoded feeds' : 'Refresh feed'}
                       >
                         🔄
                       </button>
                       <button
-                        onClick={() => removeFeed(feed.id)}
-                        className="px-3 py-1 bg-red-600/20 text-red-400 rounded hover:bg-red-600/30 transition-colors text-sm"
-                        title="Remove feed"
+                        onClick={() => removeFeed(feed.id, feed.source || 'managed')}
+                        disabled={feed.source === 'hardcoded'}
+                        className={`px-3 py-1 rounded transition-colors text-sm ${
+                          feed.source === 'hardcoded'
+                            ? 'bg-gray-600/20 text-gray-500 cursor-not-allowed'
+                            : 'bg-red-600/20 text-red-400 hover:bg-red-600/30'
+                        }`}
+                        title={feed.source === 'hardcoded' ? 'Cannot remove hardcoded feeds' : 'Remove feed'}
                       >
                         🗑️
                       </button>
