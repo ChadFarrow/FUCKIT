@@ -641,6 +641,116 @@ export default function HomePage() {
     }
   };
 
+  // Helper functions for filtering and sorting
+  const getFilteredAlbums = () => {
+    // Helper functions for sorting
+    const sortAlbums = (albums: RSSAlbum[]) => {
+      return albums.sort((a, b) => {
+        // Check if either album is "Stay Awhile" (case-insensitive)
+        const aIsStayAwhile = a.title.toLowerCase().includes('stay awhile');
+        const bIsStayAwhile = b.title.toLowerCase().includes('stay awhile');
+        
+        if (aIsStayAwhile && !bIsStayAwhile) return -1; // a comes first
+        if (!aIsStayAwhile && bIsStayAwhile) return 1; // b comes first
+        
+        // Check if either album is "Bloodshot Lies" (case-insensitive)
+        const aIsBloodshot = a.title.toLowerCase().includes('bloodshot lie');
+        const bIsBloodshot = b.title.toLowerCase().includes('bloodshot lie');
+        
+        if (aIsBloodshot && !bIsBloodshot) return -1; // a comes first
+        if (!aIsBloodshot && bIsBloodshot) return 1; // b comes first
+        
+        // For all other albums, sort by artist then title
+        const artistCompare = a.artist.toLowerCase().localeCompare(b.artist.toLowerCase());
+        if (artistCompare !== 0) return artistCompare;
+        return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
+      });
+    };
+
+    const sortEpsAndSingles = (albums: RSSAlbum[]) => {
+      return albums.sort((a, b) => {
+        // First sort by type: EPs (2-6 tracks) before Singles (1 track)
+        const aIsSingle = a.tracks.length === 1;
+        const bIsSingle = b.tracks.length === 1;
+        
+        if (aIsSingle && !bIsSingle) return 1; // b (EP) comes first
+        if (!aIsSingle && bIsSingle) return -1; // a (EP) comes first
+        
+        // Then sort by artist
+        const artistCompare = a.artist.toLowerCase().localeCompare(b.artist.toLowerCase());
+        if (artistCompare !== 0) return artistCompare;
+        
+        // Finally sort by title
+        return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
+      });
+    };
+    
+    // Separate albums from EPs/singles (6 tracks or less)
+    const albumsWithMultipleTracks = sortAlbums(albums.filter(album => album.tracks.length > 6));
+    const epsAndSingles = sortEpsAndSingles(albums.filter(album => album.tracks.length <= 6));
+    
+    let filtered = albums;
+    
+    switch (activeFilter) {
+      case 'albums':
+        filtered = albumsWithMultipleTracks;
+        break;
+      case 'eps':
+        filtered = epsAndSingles.filter(album => album.tracks.length > 1);
+        break;
+      case 'singles':
+        filtered = epsAndSingles.filter(album => album.tracks.length === 1);
+        break;
+      default: // 'all'
+        // For "All", maintain the hierarchical order: Albums, EPs, then Singles
+        filtered = [...albumsWithMultipleTracks, ...epsAndSingles];
+    }
+
+    // Sort albums based on sort type
+    return filtered.sort((a, b) => {
+      // For "All" filter, maintain hierarchy first, then apply sorting within each category
+      if (activeFilter === 'all') {
+        const aIsAlbum = a.tracks.length > 6;
+        const bIsAlbum = b.tracks.length > 6;
+        const aIsEP = a.tracks.length > 1 && a.tracks.length <= 6;
+        const bIsEP = b.tracks.length > 1 && b.tracks.length <= 6;
+        const aIsSingle = a.tracks.length === 1;
+        const bIsSingle = b.tracks.length === 1;
+        
+        // Albums come first
+        if (aIsAlbum && !bIsAlbum) return -1;
+        if (!aIsAlbum && bIsAlbum) return 1;
+        
+        // Then EPs (if both are not albums)
+        if (!aIsAlbum && !bIsAlbum) {
+          if (aIsEP && bIsSingle) return -1;
+          if (aIsSingle && bIsEP) return 1;
+        }
+        
+        // Within same category, apply the selected sort
+        switch (sortType) {
+          case 'year':
+            return new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime();
+          case 'tracks':
+            return b.tracks.length - a.tracks.length;
+          default: // name
+            return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
+        }
+      } else {
+        // For specific filters, just apply the sort type
+        switch (sortType) {
+          case 'year':
+            return new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime();
+          case 'tracks':
+            return b.tracks.length - a.tracks.length;
+          default: // name
+            return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
+        }
+      }
+    });
+  };
+
+  const filteredAlbums = getFilteredAlbums();
 
   return (
     <div className="min-h-screen text-white relative overflow-hidden">
@@ -919,221 +1029,225 @@ export default function HomePage() {
             </div>
           ) : albums.length > 0 ? (
             <div className="max-w-7xl mx-auto">
-              {(() => {
-                // Separate albums from EPs/singles (6 tracks or less)
-                const albumsWithMultipleTracks = albums.filter(album => album.tracks.length > 6);
-                const epsAndSingles = albums.filter(album => album.tracks.length <= 6);
-                
-                // Sort albums: Pin "Stay Awhile" first, then "Bloodshot Lies", then by artist/title
-                albumsWithMultipleTracks.sort((a, b) => {
-                  // Check if either album is "Stay Awhile" (case-insensitive)
-                  const aIsStayAwhile = a.title.toLowerCase().includes('stay awhile');
-                  const bIsStayAwhile = b.title.toLowerCase().includes('stay awhile');
-                  
-                  if (aIsStayAwhile && !bIsStayAwhile) return -1; // a comes first
-                  if (!aIsStayAwhile && bIsStayAwhile) return 1; // b comes first
-                  
-                  // Check if either album is "Bloodshot Lies" (case-insensitive)
-                  const aIsBloodshot = a.title.toLowerCase().includes('bloodshot lie');
-                  const bIsBloodshot = b.title.toLowerCase().includes('bloodshot lie');
-                  
-                  if (aIsBloodshot && !bIsBloodshot) return -1; // a comes first
-                  if (!aIsBloodshot && bIsBloodshot) return 1; // b comes first
-                  
-                  // For all other albums, sort by artist then title
-                  const artistCompare = a.artist.toLowerCase().localeCompare(b.artist.toLowerCase());
-                  if (artistCompare !== 0) return artistCompare;
-                  return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
-                });
-                
-                epsAndSingles.sort((a, b) => {
-                  // First sort by type: EPs (2-6 tracks) before Singles (1 track)
-                  const aIsSingle = a.tracks.length === 1;
-                  const bIsSingle = b.tracks.length === 1;
-                  
-                  if (aIsSingle && !bIsSingle) return 1; // b (EP) comes first
-                  if (!aIsSingle && bIsSingle) return -1; // a (EP) comes first
-                  
-                  // Then sort by artist
-                  const artistCompare = a.artist.toLowerCase().localeCompare(b.artist.toLowerCase());
-                  if (artistCompare !== 0) return artistCompare;
-                  
-                  // Finally sort by title
-                  return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
-                });
-                
-                return (
-                  <>
-                    {/* Albums Grid */}
-                    {albumsWithMultipleTracks.length > 0 && (
-                      <div className="mb-12">
-                        <h2 className="text-2xl font-bold mb-6">Albums</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                          {albumsWithMultipleTracks.map((album, index) => (
-                            <AlbumCard
-                              key={index}
-                              album={album}
-                              index={index}
-                              currentPlayingAlbum={currentPlayingAlbum}
-                              isPlaying={isPlaying}
-                              onPlay={playAlbum}
-                            />
-                          ))}
-                </div>
-              </div>
-            )}
-            
-            {/* EPs and Singles Grid */}
-            {epsAndSingles.length > 0 && (
-              <div>
-                <h2 className="text-2xl font-bold mb-6">EPs and Singles</h2>
+              {/* Controls Bar */}
+              <ControlsBar
+                activeFilter={activeFilter}
+                onFilterChange={setActiveFilter}
+                sortType={sortType}
+                onSortChange={setSortType}
+                viewType={viewType}
+                onViewChange={setViewType}
+                resultCount={filteredAlbums.length}
+                resultLabel={activeFilter === 'all' ? 'Releases' : 
+                  activeFilter === 'albums' ? 'Albums' :
+                  activeFilter === 'eps' ? 'EPs' : 'Singles'}
+                className="mb-8"
+              />
+
+              {/* Albums Display */}
+              {viewType === 'grid' ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {epsAndSingles.map((album, index) => (
+                  {filteredAlbums.map((album, index) => (
                     <AlbumCard
-                      key={`single-${index}`}
+                      key={`${album.title}-${index}`}
                       album={album}
-                      index={index + albumsWithMultipleTracks.length} // Continue index from albums section
+                      index={index}
                       currentPlayingAlbum={currentPlayingAlbum}
                       isPlaying={isPlaying}
                       onPlay={playAlbum}
                     />
                   ))}
                 </div>
-              </div>
-            )}
-          </>
-        );
-      })()}
-    </div>
-  ) : (
-    <div className="text-center py-12">
-      <h2 className="text-2xl font-semibold mb-4">No Albums Found</h2>
-      <p className="text-gray-400">Unable to load any album information from the RSS feeds.</p>
-    </div>
-  )}
-</div>
-
-{/* Now Playing Bar - Fixed at bottom */}
-{currentPlayingAlbum && (
-  <div className="fixed bottom-0 left-0 right-0 backdrop-blur-md bg-gradient-to-t from-black/60 via-black/40 to-transparent border-t border-white/10 p-4 z-50 shadow-2xl">
-    <div className="container mx-auto flex items-center gap-4 bg-white/5 rounded-xl p-4 backdrop-blur-sm border border-white/10">
-      {/* Current Album Info - Clickable */}
-      {(() => {
-        const currentAlbum = albums.find(album => album.title === currentPlayingAlbum);
-        const currentTrack = currentAlbum?.tracks[currentTrackIndex];
-        return currentAlbum ? (
-          <Link
-            href={generateAlbumUrl(currentAlbum.title)}
-            className="flex items-center gap-3 min-w-0 flex-1 hover:bg-white/10 rounded-lg p-2 -m-2 transition-colors cursor-pointer"
-          >
-            <Image 
-              src={getAlbumArtworkUrl(currentAlbum.coverArt || '', 'thumbnail')} 
-              alt={currentPlayingAlbum}
-              width={48}
-              height={48}
-              className="rounded object-cover"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = getPlaceholderImageUrl('thumbnail');
-              }}
-            />
-            <div className="min-w-0">
-              <p className="font-medium truncate">
-                {currentTrack?.title || 'Unknown Track'}
-              </p>
-              <p className="text-sm text-gray-400 truncate">
-                {currentAlbum.artist || 'Unknown Artist'} • {currentPlayingAlbum}
-              </p>
+              ) : (
+                <div className="space-y-2">
+                  {filteredAlbums.map((album, index) => (
+                    <Link
+                      key={`${album.title}-${index}`}
+                      href={generateAlbumUrl(album.title)}
+                      className="group flex items-center gap-4 p-4 bg-white/5 backdrop-blur-sm rounded-xl hover:bg-white/10 transition-all duration-200 border border-white/10 hover:border-white/20"
+                    >
+                      <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                        <Image 
+                          src={getAlbumArtworkUrl(album.coverArt || '', 'thumbnail')} 
+                          alt={album.title}
+                          width={64}
+                          height={64}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = getPlaceholderImageUrl('thumbnail');
+                          }}
+                        />
+                      </div>
+                      
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-lg group-hover:text-blue-400 transition-colors truncate">
+                          {album.title}
+                        </h3>
+                        <p className="text-gray-400 text-sm truncate">{album.artist}</p>
+                      </div>
+                      
+                      <div className="flex items-center gap-4 text-sm text-gray-400">
+                        <span>{new Date(album.releaseDate).getFullYear()}</span>
+                        <span>{album.tracks.length} tracks</span>
+                        <span className="px-2 py-1 bg-white/10 rounded text-xs">
+                          {album.tracks.length <= 6 ? (album.tracks.length === 1 ? 'Single' : 'EP') : 'Album'}
+                        </span>
+                        {album.explicit && (
+                          <span className="bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">
+                            E
+                          </span>
+                        )}
+                      </div>
+                      
+                      <button
+                        onClick={(e) => playAlbum(album, e)}
+                        className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 transition-colors"
+                      >
+                        {currentPlayingAlbum === album.title && isPlaying ? (
+                          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                          </svg>
+                        ) : (
+                          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                          </svg>
+                        )}
+                      </button>
+                    </Link>
+                  ))}
+                </div>
+              )}
             </div>
-          </Link>
-        ) : (
-          <div className="flex items-center gap-3 min-w-0 flex-1">
-            <div className="min-w-0">
-              <p className="font-medium truncate">Unknown Track</p>
-              <p className="text-sm text-gray-400 truncate">Unknown Artist</p>
+          ) : (
+            <div className="text-center py-12">
+              <h2 className="text-2xl font-semibold mb-4">No Albums Found</h2>
+              <p className="text-gray-400">Unable to load any album information from the RSS feeds.</p>
+            </div>
+          )}
+        </div>
+
+        {/* Now Playing Bar - Fixed at bottom */}
+        {currentPlayingAlbum && (
+          <div className="fixed bottom-0 left-0 right-0 backdrop-blur-md bg-gradient-to-t from-black/60 via-black/40 to-transparent border-t border-white/10 p-4 z-50 shadow-2xl">
+            <div className="container mx-auto flex items-center gap-4 bg-white/5 rounded-xl p-4 backdrop-blur-sm border border-white/10">
+              {/* Current Album Info - Clickable */}
+              {(() => {
+                const currentAlbum = albums.find(album => album.title === currentPlayingAlbum);
+                const currentTrack = currentAlbum?.tracks[currentTrackIndex];
+                return currentAlbum ? (
+                  <Link
+                    href={generateAlbumUrl(currentAlbum.title)}
+                    className="flex items-center gap-3 min-w-0 flex-1 hover:bg-white/10 rounded-lg p-2 -m-2 transition-colors cursor-pointer"
+                  >
+                    <Image 
+                      src={getAlbumArtworkUrl(currentAlbum.coverArt || '', 'thumbnail')} 
+                      alt={currentPlayingAlbum}
+                      width={48}
+                      height={48}
+                      className="rounded object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = getPlaceholderImageUrl('thumbnail');
+                      }}
+                    />
+                    <div className="min-w-0">
+                      <p className="font-medium truncate">
+                        {currentTrack?.title || 'Unknown Track'}
+                      </p>
+                      <p className="text-sm text-gray-400 truncate">
+                        {currentAlbum.artist || 'Unknown Artist'} • {currentPlayingAlbum}
+                      </p>
+                    </div>
+                  </Link>
+                ) : (
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <div className="min-w-0">
+                      <p className="font-medium truncate">Unknown Track</p>
+                      <p className="text-sm text-gray-400 truncate">Unknown Artist</p>
+                    </div>
+                  </div>
+                );
+              })()}
+              
+              {/* Playback Controls */}
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => {
+                    if (audioRef.current) {
+                      if (isPlaying) {
+                        audioRef.current.pause();
+                      } else {
+                        audioRef.current.play();
+                      }
+                    }
+                  }}
+                  className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 transition-colors"
+                >
+                  {isPlaying ? (
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                    </svg>
+                  ) : (
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                  )}
+                </button>
+                
+                <button
+                  onClick={() => {
+                    if (currentTrackIndex > 0) {
+                      const currentAlbum = albums.find(album => album.title === currentPlayingAlbum);
+                      if (currentAlbum && audioRef.current) {
+                        const prevTrack = currentAlbum.tracks[currentTrackIndex - 1];
+                        if (prevTrack && prevTrack.url) {
+                          audioRef.current.src = prevTrack.url;
+                          audioRef.current.play().then(() => {
+                            setCurrentTrackIndex(currentTrackIndex - 1);
+                          });
+                        }
+                      }
+                    }
+                  }}
+                  className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 transition-colors"
+                  disabled={currentTrackIndex === 0}
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
+                  </svg>
+                </button>
+                
+                <button
+                  onClick={playNextTrack}
+                  className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+                  </svg>
+                </button>
+              </div>
+              
+              {/* Close Button */}
+              <button
+                onClick={() => {
+                  if (audioRef.current) {
+                    audioRef.current.pause();
+                  }
+                  setIsPlaying(false);
+                  setCurrentPlayingAlbum(null);
+                  setCurrentTrackIndex(0);
+                  clearGlobalAudioState();
+                }}
+                className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 transition-colors"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+              </button>
             </div>
           </div>
-        );
-      })()}
-      
-      {/* Playback Controls */}
-      <div className="flex items-center gap-3">
-        <button
-          onClick={() => {
-            if (audioRef.current) {
-              if (isPlaying) {
-                audioRef.current.pause();
-              } else {
-                audioRef.current.play();
-              }
-            }
-          }}
-          className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 transition-colors"
-        >
-          {isPlaying ? (
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
-            </svg>
-          ) : (
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M8 5v14l11-7z"/>
-            </svg>
-          )}
-        </button>
-        
-        <button
-          onClick={() => {
-            if (currentTrackIndex > 0) {
-              const currentAlbum = albums.find(album => album.title === currentPlayingAlbum);
-              if (currentAlbum && audioRef.current) {
-                const prevTrack = currentAlbum.tracks[currentTrackIndex - 1];
-                if (prevTrack && prevTrack.url) {
-                  audioRef.current.src = prevTrack.url;
-                  audioRef.current.play().then(() => {
-                    setCurrentTrackIndex(currentTrackIndex - 1);
-                  });
-                }
-              }
-            }
-          }}
-          className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 transition-colors"
-          disabled={currentTrackIndex === 0}
-        >
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
-          </svg>
-        </button>
-        
-        <button
-          onClick={playNextTrack}
-          className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 transition-colors"
-        >
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
-          </svg>
-        </button>
-      </div>
-      
-      {/* Close Button */}
-      <button
-        onClick={() => {
-          if (audioRef.current) {
-            audioRef.current.pause();
-          }
-          setIsPlaying(false);
-          setCurrentPlayingAlbum(null);
-          setCurrentTrackIndex(0);
-          clearGlobalAudioState();
-        }}
-        className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 transition-colors"
-      >
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-        </svg>
-      </button>
-        </div>
-      </div>
-    )}
+        )}
       </div>
     </div>
   );
