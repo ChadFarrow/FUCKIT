@@ -804,10 +804,12 @@ export class RSSParser {
         console.log(`🏢 Found ${publisherItems.length} music items in IROH aggregated feed`);
         return publisherItems;
       }
-      
+      // PATCH: Ensure feedUrl is a string before using .startsWith
+      if (typeof feedUrl !== 'string') {
+        console.error('parsePublisherFeed: feedUrl is not a string:', feedUrl);
+        throw new TypeError('feedUrl must be a string (URL). Received: ' + typeof feedUrl);
+      }
       // For regular feeds, use the original logic
-      // For server-side fetching, always use direct URLs
-      // For client-side fetching, use the proxy
       const isServer = typeof window === 'undefined';
       
       let response;

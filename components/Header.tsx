@@ -1,4 +1,4 @@
-import { Music, Mic, Home } from 'lucide-react';
+import { Music, Mic, Home, TestTube } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Header() {
@@ -35,6 +35,13 @@ export default function Header() {
               className="text-gray-600 hover:text-primary-600 transition-colors"
             >
               About
+            </Link>
+            <Link 
+              href="/feed-tester" 
+              className="flex items-center space-x-1 text-gray-600 hover:text-primary-600 transition-colors"
+            >
+              <TestTube className="h-4 w-4" />
+              <span>Feed Tester</span>
             </Link>
           </nav>
         </div>

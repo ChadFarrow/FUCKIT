@@ -1,0 +1,82 @@
+# FUCKIT - Podcast/Music Streaming Application PRD
+
+## Project Overview
+FUCKIT is a podcast and music streaming application that aggregates RSS feeds from various publishers, provides album browsing and playback functionality, and integrates with CDN services for content delivery.
+
+## Current Features
+
+### Core Functionality
+- RSS feed aggregation and parsing
+- Album browsing and detail views
+- Publisher management and detail pages
+- Audio playback functionality
+- CDN integration for content delivery
+- Service worker for offline functionality
+- Search and filtering capabilities
+
+### Technical Features
+- Next.js frontend with TypeScript
+- API routes for RSS processing and content delivery
+- Bunny CDN integration for static assets
+- Audio state management
+- Responsive design with Tailwind CSS
+- PWA capabilities with manifest and service worker
+
+## Current Issues to Address
+
+### High Priority Fixes
+- Fix background art not loading properly
+- Resolve intermittent site loading issues
+- Fix missing albums sometimes appearing in feeds
+- Improve RSS feed parsing reliability
+- Enhance error handling and retry mechanisms
+- Optimize CDN configuration and delivery
+
+### User Experience Improvements
+- Improve loading states and error messages
+- Enhance search functionality
+- Optimize mobile experience
+- Add better offline support
+
+### Technical Improvements
+- Improve API rate limiting and caching
+- Enhance data validation and error handling
+- Optimize image loading and CDN delivery
+- Improve RSS feed processing reliability
+- Add comprehensive testing
+
+## Technical Architecture
+
+### Frontend
+- Next.js 14+ with App Router
+- TypeScript for type safety
+- Tailwind CSS for styling
+- React components for UI
+- Service worker for offline functionality
+
+### Backend/API
+- Next.js API routes
+- RSS feed parsing and processing
+- CDN integration (Bunny CDN)
+- Audio file proxy and streaming
+- Data validation and error handling
+
+### Infrastructure
+- Vercel deployment
+- Bunny CDN for static assets
+- RSS feed aggregation
+- Audio file hosting and streaming
+
+## Success Metrics
+- Improved site reliability and uptime
+- Faster content loading times
+- Better error handling and user feedback
+- Enhanced mobile experience
+- Reduced missing content issues
+
+## Technical Requirements
+- Maintain compatibility with existing RSS feeds
+- Ensure CDN integration remains functional
+- Preserve existing audio playback functionality
+- Maintain PWA capabilities
+- Keep deployment pipeline intact 

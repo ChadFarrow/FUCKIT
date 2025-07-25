@@ -155,11 +155,11 @@ node_modules/
 *.sw?
 # OS specific
 
-# Task files
-# tasks.json
-# tasks/ 
-
 # MCP Configuration Files (contain API keys)
 .cursor/mcp.json
 .windsurf/mcp.json
 *.mcp.json 
+
+# Task files
+# tasks.json
+# tasks/ 
