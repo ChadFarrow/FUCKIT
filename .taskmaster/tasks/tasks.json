@@ -45,7 +45,7 @@
         "id": "5",
         "title": "Design Better Layout for Publisher Pages",
         "description": "Improve the design and layout of publisher detail pages",
-        "status": "pending",
+        "status": "done",
         "priority": "medium",
         "dependencies": [],
         "details": "Redesign and improve the layout of publisher pages for better user experience, readability, and visual appeal.",
