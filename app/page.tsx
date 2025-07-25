@@ -169,6 +169,9 @@ export default function HomePage() {
   
   // Shuffle state
   const [shuffleSeed, setShuffleSeed] = useState(0);
+  const [shuffledTracks, setShuffledTracks] = useState<Array<{track: any, album: RSSAlbum, originalIndex: number}>>([]);
+  const [isShuffleMode, setIsShuffleMode] = useState(false);
+  const [shuffleTrackIndex, setShuffleTrackIndex] = useState(0);
 
   useEffect(() => {
     setIsClient(true);
@@ -682,8 +685,70 @@ export default function HomePage() {
     }
   };
 
+  const playShuffledTrack = async (index: number) => {
+    if (!shuffledTracks[index] || !audioRef.current) return;
+    
+    const { track, album } = shuffledTracks[index];
+    
+    try {
+      console.log('🎵 Playing shuffled track:', track.title, 'from album:', album.title);
+      
+      // Set up audio element
+      audioRef.current.src = track.url;
+      audioRef.current.load();
+      audioRef.current.volume = 0.8;
+      
+      // Play the track
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined) {
+        await playPromise;
+        
+        // Update state
+        setCurrentPlayingAlbum(album.title);
+        setCurrentTrackIndex(index);
+        setIsPlaying(true);
+        setShuffleTrackIndex(index);
+        
+        // Update global state
+        updateGlobalAudioState({
+          isPlaying: true,
+          currentAlbum: album.title,
+          currentTrackIndex: index,
+          trackUrl: track.url,
+        }, audioRef.current || undefined);
+        
+        console.log('✅ Successfully started shuffled track playback');
+      }
+    } catch (error) {
+      console.error('Error playing shuffled track:', error);
+      toast.error('Failed to play track');
+    }
+  };
+
   const playNextTrack = () => {
-    if (!currentPlayingAlbum || !audioRef.current) return;
+    if (!audioRef.current) return;
+    
+    // Handle shuffle mode
+    if (isShuffleMode && shuffledTracks.length > 0) {
+      const nextIndex = shuffleTrackIndex + 1;
+      if (nextIndex < shuffledTracks.length) {
+        playShuffledTrack(nextIndex);
+      } else {
+        // End of shuffled playlist, reset
+        setIsPlaying(false);
+        setCurrentPlayingAlbum(null);
+        setCurrentTrackIndex(0);
+        setIsShuffleMode(false);
+        setShuffledTracks([]);
+        setShuffleTrackIndex(0);
+        clearGlobalAudioState();
+        toast.success('🎵 Shuffle playlist completed!');
+      }
+      return;
+    }
+    
+    // Original album-based next track logic
+    if (!currentPlayingAlbum) return;
     
     // Find the current album
     const currentAlbum = albums.find(album => album.title === currentPlayingAlbum);
@@ -715,42 +780,41 @@ export default function HomePage() {
     }
   };
 
-  // Shuffle function that randomizes the entire site
+  // Shuffle function that flattens all tracks and shuffles them
   const handleShuffle = () => {
-    // Generate a new random seed
-    const newSeed = Math.floor(Math.random() * 1000000);
-    setShuffleSeed(newSeed);
+    // Flatten all tracks from all albums into a single array
+    const allTracks: Array<{track: any, album: RSSAlbum, originalIndex: number}> = [];
     
-    // Randomize filter
-    const filters: FilterType[] = ['all', 'albums', 'eps', 'singles'];
-    const randomFilter = filters[Math.floor(Math.random() * filters.length)];
-    setActiveFilter(randomFilter);
+    albums.forEach(album => {
+      album.tracks.forEach((track, trackIndex) => {
+        allTracks.push({
+          track,
+          album,
+          originalIndex: trackIndex
+        });
+      });
+    });
     
-    // Randomize view type
-    const views: ViewType[] = ['grid', 'list'];
-    const randomView = views[Math.floor(Math.random() * views.length)];
-    setViewType(randomView);
+    // Shuffle the tracks using Fisher-Yates algorithm
+    const shuffled = [...allTracks];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
     
-    // Randomize sort type
-    const sorts: SortType[] = ['name', 'year', 'tracks'];
-    const randomSort = sorts[Math.floor(Math.random() * sorts.length)];
-    setSortType(randomSort);
+    // Set shuffle mode and tracks
+    setShuffledTracks(shuffled);
+    setIsShuffleMode(true);
+    setShuffleTrackIndex(0);
+    setViewType('list'); // Force list view for track display
     
-    // Show a fun toast message
-    const messages = [
-      "🎲 Shuffling the deck!",
-      "🔄 Mixing it up!",
-      "🎯 Random mode activated!",
-      "🎪 Let's get chaotic!",
-      "🎨 Shaking things up!",
-      "🎭 New arrangement incoming!",
-      "🎪 Time for some randomness!",
-      "🎲 Shuffle shuffle!",
-      "🎯 Random adventure mode!",
-      "🎨 Creative chaos engaged!"
-    ];
-    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-    toast.success(randomMessage);
+    // Show success message
+    toast.success(`🎵 Shuffled ${shuffled.length} tracks! Starting playback...`);
+    
+    // Start playing the first shuffled track
+    if (shuffled.length > 0) {
+      playShuffledTrack(0);
+    }
   };
 
   // Helper functions for filtering and sorting
@@ -1131,8 +1195,103 @@ export default function HomePage() {
                 className="mb-8"
               />
 
+              {/* Shuffle Mode Track List */}
+              {isShuffleMode && shuffledTracks.length > 0 && (
+                <div className="mb-8">
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-2xl font-bold flex items-center gap-3">
+                      🎵 Shuffle Mode
+                      <span className="text-sm bg-purple-600/80 px-2 py-1 rounded-full">
+                        {shuffledTracks.length} tracks
+                      </span>
+                    </h2>
+                    <button
+                      onClick={() => {
+                        setIsShuffleMode(false);
+                        setShuffledTracks([]);
+                        setShuffleTrackIndex(0);
+                        setViewType('grid');
+                        toast.success('🎵 Exited shuffle mode');
+                      }}
+                      className="px-4 py-2 bg-red-600/20 text-red-400 rounded-lg hover:bg-red-600/30 transition-colors text-sm font-medium"
+                    >
+                      Exit Shuffle
+                    </button>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    {shuffledTracks.map((item, index) => {
+                      const { track, album } = item;
+                      const isCurrentlyPlaying = isShuffleMode && shuffleTrackIndex === index && isPlaying;
+                      
+                      return (
+                        <div
+                          key={`shuffle-${index}`}
+                          className={`group flex items-center gap-4 p-4 backdrop-blur-sm rounded-xl transition-all duration-200 border ${
+                            isCurrentlyPlaying 
+                              ? 'bg-blue-600/20 border-blue-500/50' 
+                              : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
+                          }`}
+                        >
+                          <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 relative">
+                            <Image 
+                              src={getAlbumArtworkUrl(album.coverArt || '', 'thumbnail')} 
+                              alt={album.title}
+                              width={48}
+                              height={48}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.src = getPlaceholderImageUrl('thumbnail');
+                              }}
+                            />
+                            {/* Play Button Overlay */}
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity duration-200">
+                              <button 
+                                className="bg-white text-black rounded-full p-1 transform hover:scale-110 transition-all duration-200 shadow-lg"
+                                onClick={() => playShuffledTrack(index)}
+                              >
+                                {isCurrentlyPlaying ? (
+                                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                                  </svg>
+                                ) : (
+                                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8 5v14l11-7z"/>
+                                  </svg>
+                                )}
+                              </button>
+                            </div>
+                          </div>
+                          
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-semibold text-lg truncate group-hover:text-blue-400 transition-colors">
+                              {track.title}
+                            </h3>
+                            <p className="text-gray-400 text-sm truncate">{album.artist}</p>
+                            <p className="text-gray-500 text-xs truncate">from {album.title}</p>
+                          </div>
+                          
+                          <div className="flex items-center gap-4 text-sm text-gray-400">
+                            <span className="px-2 py-1 bg-white/10 rounded text-xs">
+                              #{index + 1}
+                            </span>
+                            {isCurrentlyPlaying && (
+                              <div className="flex items-center gap-1 text-blue-400">
+                                <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                                <span className="text-xs">Now Playing</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               {/* Albums Display */}
-              {activeFilter === 'all' ? (
+              {!isShuffleMode && activeFilter === 'all' ? (
                 // Original sectioned layout for "All" filter
                 <>
                   {/* Albums Grid */}
