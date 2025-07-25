@@ -98,71 +98,92 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   const playTrack = async (index: number) => {
     if (!album || !album.tracks[index] || !album.tracks[index].url || !audioRef.current) return;
     
+    const originalUrl = album.tracks[index].url;
+    console.log('🎵 Attempting to play track:', album.tracks[index].title, 'URL:', originalUrl);
+    
+    // Try multiple approaches for better compatibility
+    const urlsToTry = [];
+    
     try {
-      const originalUrl = album.tracks[index].url;
-      console.log('🎵 Attempting to play track:', album.tracks[index].title, 'URL:', originalUrl);
+      const url = new URL(originalUrl);
+      const isExternal = url.hostname !== window.location.hostname;
       
-      // Check if this is an external URL that needs proxying
-      let audioUrl = originalUrl;
-      try {
-        const url = new URL(originalUrl);
-        const isExternal = url.hostname !== window.location.hostname;
-        
-        if (isExternal) {
-          // Proxy external audio through our API
-          audioUrl = `/api/proxy-audio?url=${encodeURIComponent(originalUrl)}`;
-          console.log('🔄 Proxying external audio through:', audioUrl);
-        }
-      } catch (urlError) {
-        console.warn('⚠️ Could not parse audio URL, using as-is:', originalUrl);
-      }
-      
-      setCurrentTrackIndex(index);
-      audioRef.current.src = audioUrl;
-      await audioRef.current.play();
-      setIsPlaying(true);
-      
-      // Update global state (store original URL, not proxied)
-      updateGlobalAudioState({
-        isPlaying: true,
-        currentAlbum: album.title,
-        currentTrackIndex: index,
-        trackUrl: originalUrl, // Store original URL, not proxied
-      }, audioRef.current);
-      
-      // Update Media Session for lock screen controls
-      updateMediaSession(album.tracks[index]);
-      
-      console.log('✅ Track playback started successfully');
-      
-    } catch (error) {
-      console.error('❌ Audio playback failed:', error);
-      setIsPlaying(false);
-      
-      // Handle specific error types
-      if (error instanceof DOMException) {
-        if (error.name === 'NotAllowedError') {
-          console.log('🚫 Autoplay blocked - user interaction required');
-          setError('Tap the play button again to start playback');
-          setTimeout(() => setError(null), 5000);
-        } else if (error.name === 'NotSupportedError') {
-          console.log('🚫 Audio format not supported');
-          setError('Audio format not supported on this device');
-          setTimeout(() => setError(null), 5000);
-        } else if (error.message.includes('CORS') || error.message.includes('cross-origin')) {
-          console.log('🚫 CORS error - audio blocked by browser policy');
-          setError('Audio blocked by browser security policy - try a different album');
-          setTimeout(() => setError(null), 5000);
-        } else {
-          console.log('🚫 Other audio error:', error.message);
-          setError('Unable to play audio - please try again');
-          setTimeout(() => setError(null), 5000);
-        }
+      if (isExternal) {
+        // Try proxy first for external URLs
+        urlsToTry.push(`/api/proxy-audio?url=${encodeURIComponent(originalUrl)}`);
+        // Fallback to direct URL
+        urlsToTry.push(originalUrl);
       } else {
-        console.log('🚫 Unknown audio error:', error);
-        setError('Audio playback error - please try again');
-        setTimeout(() => setError(null), 5000);
+        // For local URLs, try direct first
+        urlsToTry.push(originalUrl);
       }
+    } catch (urlError) {
+      console.warn('⚠️ Could not parse audio URL, using as-is:', originalUrl);
+      urlsToTry.push(originalUrl);
+    }
+    
+    setCurrentTrackIndex(index);
+    
+    // Try each URL until one works
+    for (let i = 0; i < urlsToTry.length; i++) {
+      const audioUrl = urlsToTry[i];
+      console.log(`🔄 Attempt ${i + 1}/${urlsToTry.length}: ${audioUrl.includes('proxy-audio') ? 'Proxied URL' : 'Direct URL'}`);
+      
+      try {
+        audioRef.current.src = audioUrl;
+        await audioRef.current.play();
+        setIsPlaying(true);
+        
+        // Update global state (store original URL, not proxied)
+        updateGlobalAudioState({
+          isPlaying: true,
+          currentAlbum: album.title,
+          currentTrackIndex: index,
+          trackUrl: originalUrl, // Store original URL, not proxied
+        }, audioRef.current);
+        
+        // Update Media Session for lock screen controls
+        updateMediaSession(album.tracks[index]);
+        
+        console.log(`✅ Track playback started successfully with ${audioUrl.includes('proxy-audio') ? 'proxied' : 'direct'} URL`);
+        return; // Success, exit the function
+        
+      } catch (error) {
+        console.error(`❌ Audio playback failed for attempt ${i + 1}:`, error);
+        
+        // If this is the last attempt, show error to user
+        if (i === urlsToTry.length - 1) {
+          setIsPlaying(false);
+          
+          // Handle specific error types
+          if (error instanceof DOMException) {
+            if (error.name === 'NotAllowedError') {
+              console.log('🚫 Autoplay blocked - user interaction required');
+              setError('Tap the play button again to start playback');
+              setTimeout(() => setError(null), 5000);
+            } else if (error.name === 'NotSupportedError') {
+              console.log('🚫 Audio format not supported');
+              setError('Audio format not supported on this device - try a different track');
+              setTimeout(() => setError(null), 5000);
+            } else if (error.message.includes('CORS') || error.message.includes('cross-origin')) {
+              console.log('🚫 CORS error - audio blocked by browser policy');
+              setError('Audio blocked by browser security policy - try a different album');
+              setTimeout(() => setError(null), 5000);
+            } else {
+              console.log('🚫 Other audio error:', error.message);
+              setError('Unable to play audio - please try a different track');
+              setTimeout(() => setError(null), 5000);
+            }
+          } else {
+            console.log('🚫 Unknown audio error:', error);
+            setError('Audio playback error - please try a different track');
+            setTimeout(() => setError(null), 5000);
+          }
+        }
+      }
+      
+      // Small delay before trying next URL
+      await new Promise(resolve => setTimeout(resolve, 500));
     }
   };
 
@@ -369,7 +390,6 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             'dead-timelive-2016': 'https://www.doerfelverse.com/feeds/dead-time-live-2016.xml',
             'dfb-volume-1': 'https://www.doerfelverse.com/feeds/dfbv1.xml',
             'dfb-volume-2': 'https://www.doerfelverse.com/feeds/dfbv2.xml',
-            'the-doerfels': 'https://re.podtards.com/api/feeds/doerfels-pubfeed',
             'let-go-whats-holding-you-back': 'https://www.doerfelverse.com/feeds/middle-season-let-go.xml',
             'unsound-existence-self-hosted-version': 'https://www.doerfelverse.com/feeds/unsound-existence.xml',
             'you-feel-like-homesingle': 'https://www.doerfelverse.com/feeds/you-feel-like-home.xml',
@@ -449,7 +469,6 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               'https://www.doerfelverse.com/feeds/dfbv1.xml',
               'https://www.doerfelverse.com/feeds/dfbv2.xml',
               'https://www.doerfelverse.com/feeds/disco-swag.xml',
-              'https://re.podtards.com/api/feeds/doerfels-pubfeed',
               'https://www.doerfelverse.com/feeds/first-married-christmas.xml',
               'https://www.doerfelverse.com/feeds/generation-gap.xml',
               'https://www.doerfelverse.com/feeds/heartbreak.xml',

@@ -25,10 +25,6 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [albumsLoading, setAlbumsLoading] = useState(false);
   
-  // Rotating background state for publisher albums
-  const [currentBackgroundIndex, setCurrentBackgroundIndex] = useState(0);
-  const [backgroundAlbums, setBackgroundAlbums] = useState<RSSAlbum[]>([]);
-  const backgroundIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     console.log('🎯 PublisherDetailClient useEffect triggered');
@@ -104,32 +100,11 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
           // Load all albums from the publisher feed
           console.log(`🏢 Loading publisher albums...`);
           
-          // For Doerfels publisher, show loading progress
-          if (publisherId === 'the-doerfels' || publisherId === '5526a0ee') {
-            console.log(`🎵 Loading Doerfels albums (36 feeds)...`);
-          }
           
           const allAlbums = await RSSParser.parsePublisherFeedAlbums(feedUrl);
           console.log(`🏢 Publisher albums:`, allAlbums);
           setAlbums(allAlbums);
           
-          // Set up rotating background from albums with good cover art
-          const albumsWithArt = allAlbums.filter(album => 
-            album.coverArt && 
-            !album.coverArt.includes('placeholder') &&
-            album.coverArt !== getAlbumArtworkUrl('placeholder', 'large')
-          );
-          
-          // Take first 6 albums with art for rotation
-          const rotationAlbums = albumsWithArt.slice(0, 6);
-          setBackgroundAlbums(rotationAlbums);
-          
-          // Start rotation if we have albums with art and not on mobile
-          if (rotationAlbums.length > 1 && typeof window !== 'undefined' && window.innerWidth > 768) {
-            backgroundIntervalRef.current = setInterval(() => {
-              setCurrentBackgroundIndex(prev => (prev + 1) % rotationAlbums.length);
-            }, 8000); // Change every 8 seconds
-          }
           
         } catch (albumError) {
           console.error(`❌ Error loading publisher albums:`, albumError);
@@ -148,12 +123,6 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
 
     loadPublisher();
     
-    // Cleanup background interval on unmount
-    return () => {
-      if (backgroundIntervalRef.current) {
-        clearInterval(backgroundIntervalRef.current);
-      }
-    };
   }, [publisherId]);
 
   // Sort albums: Pin "Stay Awhile" first, then "Bloodshot Lies", then by artist/title
@@ -213,7 +182,7 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
               src={getAlbumArtworkUrl(publisherInfo.coverArt, 'large')} 
               alt={publisherInfo.title || 'Artist background'}
               fill
-              className="object-contain"
+              className="object-cover"
               priority
             />
             {/* Dark overlay for readability */}
@@ -229,10 +198,7 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
             <p className="text-gray-400">
-              {publisherId === 'the-doerfels' || publisherId === '5526a0ee' 
-                ? 'Loading Doerfels publisher (36 albums)...' 
-                : 'Loading publisher...'
-              }
+              Loading publisher...
             </p>
           </div>
         </div>
@@ -250,7 +216,7 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
               src={getAlbumArtworkUrl(publisherInfo.coverArt, 'large')} 
               alt={publisherInfo.title || 'Artist background'}
               fill
-              className="object-contain"
+              className="object-cover"
               priority
             />
             {/* Dark overlay for readability */}
@@ -277,43 +243,22 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
 
   return (
     <div className="min-h-screen text-white relative overflow-hidden">
-      {/* Rotating Background - Desktop Only */}
-      {backgroundAlbums.length > 0 && typeof window !== 'undefined' && window.innerWidth > 768 && (
+      {/* Primary background - use publisher image */}
+      {publisherInfo?.coverArt ? (
         <div className="fixed inset-0 z-0">
-          {backgroundAlbums.map((album, index) => (
-            <div
-              key={`${album.title}-${index}`}
-              className={`absolute inset-0 transition-opacity duration-3000 ease-in-out ${
-                index === currentBackgroundIndex ? 'opacity-100' : 'opacity-0'
-              }`}
-              style={{
-                background: `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('${album.coverArt}') center/cover fixed`,
-              }}
-            />
-          ))}
+          <Image 
+            src={getAlbumArtworkUrl(publisherInfo.coverArt, 'large')} 
+            alt={publisherInfo.title || 'Publisher background'}
+            fill
+            className="object-cover"
+            priority
+          />
+          {/* Dark overlay for readability */}
+          <div className="absolute inset-0 bg-black/70"></div>
         </div>
-      )}
-
-      {/* Fallback background - use artist image or gradient */}
-      {(!backgroundAlbums.length || (typeof window !== 'undefined' && window.innerWidth <= 768)) && (
-        <>
-          {publisherInfo?.coverArt ? (
-            <div className="fixed inset-0 z-0">
-              <Image 
-                src={getAlbumArtworkUrl(publisherInfo.coverArt, 'large')} 
-                alt={publisherInfo.title || 'Artist background'}
-                fill
-                className="object-contain"
-                priority
-              />
-              {/* Dark overlay for readability */}
-              <div className="absolute inset-0 bg-black/70"></div>
-            </div>
-          ) : (
-            /* Fallback gradient background */
-            <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 z-0" />
-          )}
-        </>
+      ) : (
+        /* Fallback gradient background when no publisher image */
+        <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 z-0" />
       )}
       
       {/* Content */}
@@ -351,10 +296,7 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-4"></div>
             <p className="text-gray-400">
-              {publisherId === 'the-doerfels' || publisherId === '5526a0ee' 
-                ? 'Loading Doerfels albums (36 feeds)...' 
-                : 'Loading albums...'
-              }
+              Loading albums...
             </p>
           </div>
         ) : albums.length > 0 ? (

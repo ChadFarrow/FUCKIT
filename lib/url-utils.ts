@@ -85,12 +85,6 @@ export function generateCleanUrl(type: 'album' | 'publisher', identifier: string
  * Maps clean slugs to their corresponding feed URLs
  */
 export const KNOWN_PUBLISHERS: { [slug: string]: { feedGuid: string; feedUrl: string; name?: string } } = {
-  // The Doerfels
-  'the-doerfels': {
-    feedGuid: '5526a0ee-069d-4c76-8bd4-7fd2022034bc',
-    feedUrl: 'https://re.podtards.com/api/feeds/doerfels-pubfeed',
-    name: 'The Doerfels'
-  },
   // Nate Johnivan
   'nate-johnivan': {
     feedGuid: 'aa909244-7555-4b52-ad88-7233860c6fb4',
@@ -110,11 +104,6 @@ export const KNOWN_PUBLISHERS: { [slug: string]: { feedGuid: string; feedUrl: st
     name: 'IROH'
   },
   // Fallback for UUID-based URLs (backward compatibility)
-  '5526a0ee': {
-    feedGuid: '5526a0ee-069d-4c76-8bd4-7fd2022034bc',
-    feedUrl: 'https://re.podtards.com/api/feeds/doerfels-pubfeed',
-    name: 'The Doerfels'
-  },
   '18bcbf10': {
     feedGuid: '18bcbf10-6701-4ffb-b255-bc057390d738',
     feedUrl: 'https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738',
