@@ -1,17 +1,3 @@
-export class AppError extends Error {
-  constructor(
-    public message: string,
-    public code: string = 'UNKNOWN_ERROR',
-    public statusCode: number = 500,
-    public isOperational: boolean = true,
-    public details?: any
-  ) {
-    super(message);
-    this.name = 'AppError';
-    Error.captureStackTrace(this, this.constructor);
-  }
-}
-
 export const ErrorCodes = {
   // Network errors
   NETWORK_ERROR: 'NETWORK_ERROR',
@@ -39,6 +25,20 @@ export const ErrorCodes = {
 } as const;
 
 export type ErrorCode = typeof ErrorCodes[keyof typeof ErrorCodes];
+
+export class AppError extends Error {
+  constructor(
+    public message: string,
+    public code: ErrorCode = 'UNKNOWN_ERROR' as ErrorCode,
+    public statusCode: number = 500,
+    public isOperational: boolean = true,
+    public details?: any
+  ) {
+    super(message);
+    this.name = 'AppError';
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
 
 export const ErrorMessages: Record<ErrorCode, string> = {
   // Network errors
