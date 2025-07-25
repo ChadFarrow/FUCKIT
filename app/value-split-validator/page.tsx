@@ -276,7 +276,7 @@ export default function ValueSplitValidatorPage() {
     
     try {
       let splits: ValueTimeSplit[] = [];
-      let metadata = null;
+      let metadata: { title?: string; description?: string; artist?: string; } | undefined = undefined;
       
       if (inputMode === 'url') {
         if (!feedUrl.trim()) {
