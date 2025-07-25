@@ -1,0 +1,106 @@
+# DoerfelVerse - Music & Podcast Hub PRD
+
+## Project Overview
+DoerfelVerse is a modern Progressive Web App (PWA) built with Next.js for discovering and streaming music and podcasts from RSS feeds. The application provides a native app-like experience for experiencing the DoerfelVerse collection and curated indie artists.
+
+## Current Features
+
+### Core Functionality
+- Stream music from 100+ RSS feeds including The Doerfels, Wavlake artists, and indie musicians
+- Individual album pages with full-featured audio players
+- Track navigation, progress bars, and volume controls
+- Podcasting 2.0 support with funding links and publisher metadata
+- Persistent audio playback across page navigation
+- Global audio state management with localStorage
+
+### Visual Experience
+- Rotating album artwork backgrounds on desktop (mobile-optimized)
+- Reactive album page backgrounds that update automatically
+- Mobile-optimized solid backgrounds for better performance
+- Smooth transitions and immersive visual experience
+
+### PWA Features
+- Install as native app on iOS and Android devices
+- Offline functionality with intelligent caching
+- 30-second automatic updates with user-friendly notifications
+- Background sync for faster loading
+- Push notification ready for future features
+
+### Performance & CDN
+- Bunny.net CDN integration for global image optimization
+- RSS feed caching on CDN for lightning-fast loading
+- Environment-aware URLs (dev vs production)
+- Progressive image loading with WebP support
+- Mobile performance optimization with device-specific features
+
+## Technical Architecture
+
+### Frontend
+- Next.js 15 with App Router
+- TypeScript for type safety
+- Tailwind CSS for styling
+- Service Worker for PWA functionality
+
+### Backend
+- RSS Parser with cross-origin proxy
+- Bunny.net CDN for asset delivery
+- Vercel for hosting and deployment
+
+### Audio System
+- Global audio state management with localStorage persistence
+- Cross-page audio playback without interruption
+- Media Session API for iOS lock screen controls
+- Automatic track progression and playlist management
+
+## Future Enhancements
+
+### User Experience
+- User accounts and playlists
+- Social features (sharing, following artists)
+- Advanced search and filtering
+- Personalized recommendations
+- Dark/light theme toggle
+
+### Audio Features
+- Crossfade between tracks
+- Audio visualization
+- Equalizer settings
+- Sleep timer functionality
+- Audio quality selection
+
+### Content Management
+- Admin panel for feed management
+- Content moderation tools
+- Analytics dashboard
+- Automated content discovery
+- Artist/publisher profiles
+
+### Performance & Reliability
+- Advanced caching strategies
+- Error recovery mechanisms
+- Performance monitoring
+- A/B testing framework
+- Load balancing optimization
+
+### Mobile Enhancements
+- Native app development (React Native)
+- Offline playlist management
+- Background audio on mobile
+- Widget support
+- Deep linking improvements
+
+## Success Metrics
+- User engagement (time spent listening)
+- PWA installation rate
+- Audio playback completion rate
+- Page load performance
+- User retention rates
+- Cross-platform compatibility
+
+## Technical Requirements
+- Maintain PWA compliance
+- Ensure accessibility standards
+- Optimize for mobile performance
+- Implement proper error handling
+- Maintain type safety with TypeScript
+- Follow Next.js best practices 

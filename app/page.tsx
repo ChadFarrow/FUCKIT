@@ -723,7 +723,7 @@ export default function HomePage() {
             
             {/* Description */}
             <p className="text-gray-400 text-lg mb-4 mt-6">
-              This is a demo app I built as the "insert title" project to see what we could do with RSS feeds and music. All data here comes from RSS feeds on{' '}
+              This is a demo app I built as the "StableKraft" project to see what we could do with RSS feeds and music. All data here comes from RSS feeds on{' '}
               <a href="https://podcastindex.org/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
                 podcastindex.org
               </a>. This is also a demo of a site for The Doerfels that I added other music I like also and some stuff to help test. -ChadF
@@ -809,9 +809,18 @@ export default function HomePage() {
             
             {/* Artists with Publisher Feeds */}
             {(() => {
-              // Extract unique artists with publisher feeds
+              // Extract unique artists with publisher feeds, excluding Doerfels artists
               const artistsWithPublishers = albums
                 .filter(album => album.publisher && album.publisher.feedGuid)
+                .filter(album => {
+                  // Exclude Doerfels family artists
+                  const artistName = album.artist.toLowerCase();
+                  return !artistName.includes('doerfel') && 
+                         !artistName.includes('ben doerfel') && 
+                         !artistName.includes('sirtj') &&
+                         !artistName.includes('shredward') &&
+                         !artistName.includes('tj doerfel');
+                })
                 .reduce((acc, album) => {
                   const key = album.publisher!.feedGuid;
                   if (!acc.has(key)) {
@@ -825,20 +834,6 @@ export default function HomePage() {
                   }
                   return acc;
                 }, new Map<string, { name: string; feedGuid: string; albumCount: number }>());
-
-              // Add The Doerfels manually since they might not have publisher tags in all feeds
-              const doerfelsAlbums = albums.filter(album => 
-                album.artist.toLowerCase().includes('doerfel') || 
-                album.title.toLowerCase().includes('doerfel')
-              );
-              
-              if (doerfelsAlbums.length > 0 && !artistsWithPublishers.has('5526a0ee-069d-4c76-8bd4-7fd2022034bc')) {
-                artistsWithPublishers.set('5526a0ee-069d-4c76-8bd4-7fd2022034bc', {
-                  name: 'The Doerfels',
-                  feedGuid: '5526a0ee-069d-4c76-8bd4-7fd2022034bc',
-                  albumCount: doerfelsAlbums.length
-                });
-              }
 
               const artists = Array.from(artistsWithPublishers.values()).sort((a, b) => 
                 a.name.toLowerCase().localeCompare(b.name.toLowerCase())

@@ -42,7 +42,8 @@
   "devDependencies": {
     "@types/colorthief": "^2.6.0",
     "eslint": "^8",
-    "eslint-config-next": "14.0.4"
+    "eslint-config-next": "14.0.4",
+    "task-master-ai": "^0.21.0"
   },
   "buildTime": "2025-07-22T19:58:02.421Z"
 }

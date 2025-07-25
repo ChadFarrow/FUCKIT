@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "task-master-ai": {
+      "command": "npx",
+      "args": ["-y", "--package=task-master-ai", "task-master-ai"],
+      "env": {
+        "ANTHROPIC_API_KEY": "",
+        "PERPLEXITY_API_KEY": "",
+        "OPENAI_API_KEY": "",
+        "GOOGLE_API_KEY": "",
+        "MISTRAL_API_KEY": "",
+        "GROQ_API_KEY": "",
+        "OPENROUTER_API_KEY": "",
+        "XAI_API_KEY": "",
+        "AZURE_OPENAI_API_KEY": "",
+        "OLLAMA_API_KEY": "",
+        "BUNNY_CDN_API_KEY": "d33f9b6a-779d-4cce-8767-cd050a2819bf",
+        "BUNNY_STORAGE_API_KEY": "62d305ab-39a0-48c1-96a30779ca9b-e0f9-4752",
+        "PODCAST_INDEX_API_KEY": "PHT7NRJC6JWBWRFQGUXS",
+        "PODCAST_INDEX_API_SECRET": "#7g8zk3fB#dPSaj$LcYYa9#2jHXu$6gmYSKJkJDL"
+      }
+    }
+  }
+} 

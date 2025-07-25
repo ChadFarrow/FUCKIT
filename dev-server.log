@@ -1,882 +1,431 @@
 
-> podcast-music-site@0.1.0 dev
+> podcast-music-site@1.5e772e6 dev
 > next dev
 
- ⚠ Warning: Found multiple lockfiles. Selecting /Users/chad-mini/package-lock.json.
-   Consider removing the lockfiles at:
-   * /Users/chad-mini/Vibe/apps/FUCKIT/package-lock.json
-   * /Users/chad-mini/Vibe/package-lock.json
-
-   ▲ Next.js 15.4.2
+   ▲ Next.js 15.4.3
    - Local:        http://localhost:3000
    - Network:      http://192.168.0.238:3000
    - Environments: .env.local
 
  ✓ Starting...
- ✓ Ready in 1201ms
- ○ Compiling /album/[id] ...
- ✓ Compiled /album/[id] in 2.3s (666 modules)
- ✓ Compiled in 59ms (263 modules)
- HEAD /album/generation-gap 200 in 2729ms
- ⚠ Unsupported metadata themeColor is configured in metadata export in /album/[id]. Please move it to viewport export instead.
-Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
- ✓ Compiled / in 209ms (654 modules)
- ⚠ Unsupported metadata themeColor is configured in metadata export in /. Please move it to viewport export instead.
-Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
- GET / 200 in 310ms
- ✓ Compiled /api/fetch-rss in 132ms (674 modules)
+ ✓ Ready in 1271ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2.3s (704 modules)
+🔧 Environment check: { isProduction: false, NODE_ENV: 'development' }
+🔧 Feed URLs count: 74
+🔧 First few feed URLs: [
+  'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml',
+  'https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml',
+  'https://www.doerfelverse.com/feeds/intothedoerfelverse.xml'
+]
+ HEAD / 200 in 2516ms
+ ✓ Compiled in 268ms (259 modules)
+ GET / 200 in 20ms
+ ✓ Compiled in 126ms (259 modules)
+ GET / 200 in 32ms
+ ✓ Compiled /api/fetch-rss in 173ms (701 modules)
+🔄 Cache MISS for: https://www.doerfelverse.com/feeds/christ-exalted.xml
+🔄 Cache MISS for: https://www.doerfelverse.com/feeds/come-back-to-me.xml
+🔄 Cache MISS for: https://www.doerfelverse.com/feeds/dead-time-live-2016.xml
+🔄 Cache MISS for: https://www.doerfelverse.com/feeds/dfbv1.xml
+🔄 Cache MISS for: https://www.doerfelverse.com/feeds/dfbv2.xml
+🔄 Cache MISS for: https://www.doerfelverse.com/feeds/autumn.xml
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/dfbv1.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fdfbv1.xml 200 in 455ms
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/dfbv2.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fdfbv2.xml 200 in 457ms
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/dead-time-live-2016.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fdead-time-live-2016.xml 200 in 458ms
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/come-back-to-me.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fcome-back-to-me.xml 200 in 460ms
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/christ-exalted.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fchrist-exalted.xml 200 in 464ms
+🔄 Cache MISS for: https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml
 🔄 Cache MISS for: https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml
 🔄 Cache MISS for: https://www.doerfelverse.com/feeds/intothedoerfelverse.xml
 🔄 Cache MISS for: https://www.doerfelverse.com/feeds/wrath-of-banjo.xml
 🔄 Cache MISS for: https://www.doerfelverse.com/feeds/ben-doerfel.xml
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fmusic-from-the-doerfelverse.xml 200 in 49ms
 🔄 Cache MISS for: https://www.doerfelverse.com/feeds/18sundays.xml
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/wrath-of-banjo.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fwrath-of-banjo.xml 200 in 419ms
 💾 Cached RSS feed: https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fbloodshot-lies-album.xml 200 in 421ms
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/ben-doerfel.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fben-doerfel.xml 200 in 452ms
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/18sundays.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2F18sundays.xml 200 in 448ms
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fbloodshot-lies-album.xml 200 in 54ms
 🔄 Cache MISS for: https://www.doerfelverse.com/feeds/alandace.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/alandace.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Falandace.xml 200 in 270ms
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/intothedoerfelverse.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fintothedoerfelverse.xml 200 in 717ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/autumn.xml
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/christ-exalted.xml
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/come-back-to-me.xml
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/dead-time-live-2016.xml
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/possible.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/autumn.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fautumn.xml 200 in 252ms
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/come-back-to-me.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fcome-back-to-me.xml 200 in 42ms
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/christ-exalted.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fchrist-exalted.xml 200 in 257ms
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/dead-time-live-2016.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fdead-time-live-2016.xml 200 in 45ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/dfbv1.xml
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/pour-over.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/possible.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fpossible.xml 200 in 50ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/psalm-54.xml
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/dfbv2.xml
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/sensitive-guy.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/pour-over.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fpour-over.xml 200 in 46ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/they-dont-know.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/dfbv1.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fdfbv1.xml 200 in 56ms
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/psalm-54.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fpsalm-54.xml 200 in 52ms
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/dfbv2.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fdfbv2.xml 200 in 52ms
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/sensitive-guy.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fsensitive-guy.xml 200 in 49ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/think-ep.xml
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/underwater-single.xml
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/unsound-existence.xml
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/disco-swag.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/they-dont-know.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fthey-dont-know.xml 200 in 43ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/you-are-my-world.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/underwater-single.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Funderwater-single.xml 200 in 49ms
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/think-ep.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fthink-ep.xml 200 in 55ms
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/unsound-existence.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Funsound-existence.xml 200 in 52ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/doerfels-pubfeed.xml
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/you-feel-like-home.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/disco-swag.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fdisco-swag.xml 200 in 52ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/your-chance.xml
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/first-married-christmas.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/you-are-my-world.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fyou-are-my-world.xml 200 in 41ms
-🔄 Cache MISS for: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/you-feel-like-home.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fyou-feel-like-home.xml 200 in 47ms
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/doerfels-pubfeed.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fdoerfels-pubfeed.xml 200 in 51ms
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/first-married-christmas.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Ffirst-married-christmas.xml 200 in 44ms
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/wrath-of-banjo.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fwrath-of-banjo.xml 200 in 73ms
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/ben-doerfel.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fben-doerfel.xml 200 in 75ms
 🔄 Cache MISS for: https://www.doerfelverse.com/feeds/generation-gap.xml
 🔄 Cache MISS for: https://www.doerfelverse.com/feeds/merry-christmix.xml
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/middle-season-let-go.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/your-chance.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fyour-chance.xml 200 in 56ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/phatty-the-grasshopper.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/merry-christmix.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fmerry-christmix.xml 200 in 47ms
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/generation-gap.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fgeneration-gap.xml 200 in 49ms
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/middle-season-let-go.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fmiddle-season-let-go.xml 200 in 50ms
-🔄 Cache MISS for: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/CityBeach.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/phatty-the-grasshopper.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fphatty-the-grasshopper.xml 200 in 50ms
-🔄 Cache MISS for: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml
-🔄 Cache MISS for: https://www.thisisjdog.com/media/ring-that-bell.xml
-🔄 Cache MISS for: https://wavlake.com/feed/music/d677db67-0310-4813-970e-e65927c689f1
-💾 Cached RSS feed: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.sirtjthewrathful.com%2Fwp-content%2Fuploads%2F2023%2F08%2FNostalgic.xml 200 in 230ms
-💾 Cached RSS feed: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.sirtjthewrathful.com%2Fwp-content%2Fuploads%2F2023%2F08%2FKurtisdrums-V1.xml 200 in 155ms
-💾 Cached RSS feed: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/CityBeach.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.sirtjthewrathful.com%2Fwp-content%2Fuploads%2F2023%2F08%2FCityBeach.xml 200 in 160ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/heartbreak.xml
-🔄 Cache MISS for: https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4
-🔄 Cache MISS for: https://wavlake.com/feed/music/e678589b-5a9f-4918-9622-34119d2eed2c
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/heartbreak.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fheartbreak.xml 200 in 60ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/3a152941-c914-43da-aeca-5d7c58892a7f
-💾 Cached RSS feed: https://www.thisisjdog.com/media/ring-that-bell.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.thisisjdog.com%2Fmedia%2Fring-that-bell.xml 200 in 292ms
-💾 Cached RSS feed: https://wavlake.com/feed/music/d677db67-0310-4813-970e-e65927c689f1
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fd677db67-0310-4813-970e-e65927c689f1 200 in 286ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/a97e0586-ecda-4b79-9c38-be9a9effe05a
-🔄 Cache MISS for: https://wavlake.com/feed/music/0ed13237-aca9-446f-9a03-de1a2d9331a3
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fmusic-from-the-doerfelverse.xml 200 in 1356ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/ce8c4910-51bf-4d5e-a0b3-338e58e5ee79
-💾 Cached RSS feed: https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fartist%2Faa909244-7555-4b52-ad88-7233860c6fb4 200 in 282ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/acb43f23-cfec-4cc1-a418-4087a5378129
-💾 Cached RSS feed: https://wavlake.com/feed/music/e678589b-5a9f-4918-9622-34119d2eed2c
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fe678589b-5a9f-4918-9622-34119d2eed2c 200 in 302ms
-💾 Cached RSS feed: https://wavlake.com/feed/music/3a152941-c914-43da-aeca-5d7c58892a7f
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F3a152941-c914-43da-aeca-5d7c58892a7f 200 in 250ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/d1a871a7-7e4c-4a91-b799-87dcbb6bc41d
-🔄 Cache MISS for: https://wavlake.com/feed/music/3294d8b5-f9f6-4241-a298-f04df818390c
-💾 Cached RSS feed: https://wavlake.com/feed/music/a97e0586-ecda-4b79-9c38-be9a9effe05a
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fa97e0586-ecda-4b79-9c38-be9a9effe05a 200 in 196ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/d3145292-bf71-415f-a841-7f5c9a9466e1
-💾 Cached RSS feed: https://wavlake.com/feed/music/0ed13237-aca9-446f-9a03-de1a2d9331a3
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F0ed13237-aca9-446f-9a03-de1a2d9331a3 200 in 260ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/91367816-33e6-4b6e-8eb7-44b2832708fd
-💾 Cached RSS feed: https://wavlake.com/feed/music/d1a871a7-7e4c-4a91-b799-87dcbb6bc41d
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fd1a871a7-7e4c-4a91-b799-87dcbb6bc41d 200 in 155ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/8c8f8133-7ef1-4b72-a641-4e1a6a44d626
-💾 Cached RSS feed: https://wavlake.com/feed/music/3294d8b5-f9f6-4241-a298-f04df818390c
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F3294d8b5-f9f6-4241-a298-f04df818390c 200 in 169ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/9720d58b-22a5-4047-81de-f1940fec41c7
-💾 Cached RSS feed: https://wavlake.com/feed/music/acb43f23-cfec-4cc1-a418-4087a5378129
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Facb43f23-cfec-4cc1-a418-4087a5378129 200 in 218ms
-💾 Cached RSS feed: https://wavlake.com/feed/music/ce8c4910-51bf-4d5e-a0b3-338e58e5ee79
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fce8c4910-51bf-4d5e-a0b3-338e58e5ee79 200 in 280ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/you-are-my-world.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fyou-are-my-world.xml 200 in 6ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/you-feel-like-home.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fyou-feel-like-home.xml 200 in 9ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/21536269-5192-49e7-a819-fab00f4a159e
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/your-chance.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fyour-chance.xml 200 in 5ms
-📦 Cache HIT for: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.sirtjthewrathful.com%2Fwp-content%2Fuploads%2F2023%2F08%2FNostalgic.xml 200 in 3ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/624b19ac-5d8b-4fd6-8589-0eef7bcb9c9e
-💾 Cached RSS feed: https://wavlake.com/feed/music/d3145292-bf71-415f-a841-7f5c9a9466e1
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fd3145292-bf71-415f-a841-7f5c9a9466e1 200 in 217ms
-💾 Cached RSS feed: https://wavlake.com/feed/music/91367816-33e6-4b6e-8eb7-44b2832708fd
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F91367816-33e6-4b6e-8eb7-44b2832708fd 200 in 157ms
-📦 Cache HIT for: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/CityBeach.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.sirtjthewrathful.com%2Fwp-content%2Fuploads%2F2023%2F08%2FCityBeach.xml 200 in 4ms
-📦 Cache HIT for: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.sirtjthewrathful.com%2Fwp-content%2Fuploads%2F2023%2F08%2FKurtisdrums-V1.xml 200 in 8ms
-📦 Cache HIT for: https://www.thisisjdog.com/media/ring-that-bell.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.thisisjdog.com%2Fmedia%2Fring-that-bell.xml 200 in 6ms
-📦 Cache HIT for: https://wavlake.com/feed/music/d677db67-0310-4813-970e-e65927c689f1
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fd677db67-0310-4813-970e-e65927c689f1 200 in 6ms
-📦 Cache HIT for: https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fartist%2Faa909244-7555-4b52-ad88-7233860c6fb4 200 in 7ms
-📦 Cache HIT for: https://wavlake.com/feed/music/e678589b-5a9f-4918-9622-34119d2eed2c
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fe678589b-5a9f-4918-9622-34119d2eed2c 200 in 7ms
-🔄 Cache MISS for: https://www.wavlake.com/feed/95ea253a-4058-402c-8503-204f6d3f1494
-📦 Cache HIT for: https://wavlake.com/feed/music/3a152941-c914-43da-aeca-5d7c58892a7f
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F3a152941-c914-43da-aeca-5d7c58892a7f 200 in 6ms
-📦 Cache HIT for: https://wavlake.com/feed/music/a97e0586-ecda-4b79-9c38-be9a9effe05a
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fa97e0586-ecda-4b79-9c38-be9a9effe05a 200 in 2ms
-📦 Cache HIT for: https://wavlake.com/feed/music/0ed13237-aca9-446f-9a03-de1a2d9331a3
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F0ed13237-aca9-446f-9a03-de1a2d9331a3 200 in 2ms
-🔄 Cache MISS for: https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738
-💾 Cached RSS feed: https://wavlake.com/feed/music/8c8f8133-7ef1-4b72-a641-4e1a6a44d626
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F8c8f8133-7ef1-4b72-a641-4e1a6a44d626 200 in 191ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/1c7917cc-357c-4eaf-ab54-1a7cda504976
-💾 Cached RSS feed: https://wavlake.com/feed/music/9720d58b-22a5-4047-81de-f1940fec41c7
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F9720d58b-22a5-4047-81de-f1940fec41c7 200 in 189ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/e1f9dfcb-ee9b-4a6d-aee7-189043917fb5
-💾 Cached RSS feed: https://wavlake.com/feed/music/21536269-5192-49e7-a819-fab00f4a159e
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F21536269-5192-49e7-a819-fab00f4a159e 200 in 167ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/d4f791c3-4d0c-4fbd-a543-c136ee78a9de
-💾 Cached RSS feed: https://wavlake.com/feed/music/624b19ac-5d8b-4fd6-8589-0eef7bcb9c9e
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F624b19ac-5d8b-4fd6-8589-0eef7bcb9c9e 200 in 175ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/51606506-66f8-4394-b6c6-cc0c1b554375
-💾 Cached RSS feed: https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fartist%2F18bcbf10-6701-4ffb-b255-bc057390d738 200 in 188ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/6b7793b8-fd9d-432b-af1a-184cd41aaf9d
-💾 Cached RSS feed: https://wavlake.com/feed/music/e1f9dfcb-ee9b-4a6d-aee7-189043917fb5
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fe1f9dfcb-ee9b-4a6d-aee7-189043917fb5 200 in 177ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/0bb8c9c7-1c55-4412-a517-572a98318921
-💾 Cached RSS feed: https://wavlake.com/feed/music/d4f791c3-4d0c-4fbd-a543-c136ee78a9de
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fd4f791c3-4d0c-4fbd-a543-c136ee78a9de 200 in 184ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/16e46ed0-b392-4419-a937-a7815f6ca43b
-💾 Cached RSS feed: https://wavlake.com/feed/music/6b7793b8-fd9d-432b-af1a-184cd41aaf9d
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F6b7793b8-fd9d-432b-af1a-184cd41aaf9d 200 in 168ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/2cd1b9ea-9ef3-4a54-aa25-55295689f442
-💾 Cached RSS feed: https://wavlake.com/feed/music/51606506-66f8-4394-b6c6-cc0c1b554375
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F51606506-66f8-4394-b6c6-cc0c1b554375 200 in 258ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/33eeda7e-8591-4ff5-83f8-f36a879b0a09
-💾 Cached RSS feed: https://wavlake.com/feed/music/0bb8c9c7-1c55-4412-a517-572a98318921
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F0bb8c9c7-1c55-4412-a517-572a98318921 200 in 181ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/32a79df8-ec3e-4a14-bfcb-7a074e1974b9
-💾 Cached RSS feed: https://wavlake.com/feed/music/16e46ed0-b392-4419-a937-a7815f6ca43b
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F16e46ed0-b392-4419-a937-a7815f6ca43b 200 in 208ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/06376ab5-efca-459c-9801-49ceba5fdab1
-💾 Cached RSS feed: https://wavlake.com/feed/music/2cd1b9ea-9ef3-4a54-aa25-55295689f442
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F2cd1b9ea-9ef3-4a54-aa25-55295689f442 200 in 183ms
-🔄 Cache MISS for: https://www.wavlake.com/feed/95ea253a-4058-402c-8503-204f6d3f1494
-💾 Cached RSS feed: https://wavlake.com/feed/music/33eeda7e-8591-4ff5-83f8-f36a879b0a09
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F33eeda7e-8591-4ff5-83f8-f36a879b0a09 200 in 178ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/1c7917cc-357c-4eaf-ab54-1a7cda504976
-💾 Cached RSS feed: https://wavlake.com/feed/music/1c7917cc-357c-4eaf-ab54-1a7cda504976
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F1c7917cc-357c-4eaf-ab54-1a7cda504976 200 in 176ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/32a79df8-ec3e-4a14-bfcb-7a074e1974b9
-💾 Cached RSS feed: https://www.wavlake.com/feed/95ea253a-4058-402c-8503-204f6d3f1494
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.wavlake.com%2Ffeed%2F95ea253a-4058-402c-8503-204f6d3f1494 200 in 282ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/06376ab5-efca-459c-9801-49ceba5fdab1
-💾 Cached RSS feed: https://wavlake.com/feed/music/32a79df8-ec3e-4a14-bfcb-7a074e1974b9
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F32a79df8-ec3e-4a14-bfcb-7a074e1974b9 200 in 200ms
-💾 Cached RSS feed: https://wavlake.com/feed/music/06376ab5-efca-459c-9801-49ceba5fdab1
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F06376ab5-efca-459c-9801-49ceba5fdab1 200 in 202ms
-💾 Cached RSS feed: https://wavlake.com/feed/music/1c7917cc-357c-4eaf-ab54-1a7cda504976
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F1c7917cc-357c-4eaf-ab54-1a7cda504976 200 in 1195ms
-💾 Cached RSS feed: https://www.wavlake.com/feed/95ea253a-4058-402c-8503-204f6d3f1494
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.wavlake.com%2Ffeed%2F95ea253a-4058-402c-8503-204f6d3f1494 200 in 1377ms
-💾 Cached RSS feed: https://wavlake.com/feed/music/32a79df8-ec3e-4a14-bfcb-7a074e1974b9
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F32a79df8-ec3e-4a14-bfcb-7a074e1974b9 200 in 1209ms
-💾 Cached RSS feed: https://wavlake.com/feed/music/06376ab5-efca-459c-9801-49ceba5fdab1
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F06376ab5-efca-459c-9801-49ceba5fdab1 200 in 1192ms
- ⚠ Unsupported metadata themeColor is configured in metadata export in /. Please move it to viewport export instead.
-Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
- GET / 200 in 122ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/you-are-my-world.xml
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/you-feel-like-home.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fyou-are-my-world.xml 200 in 5ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fyou-feel-like-home.xml 200 in 4ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/your-chance.xml
-📦 Cache HIT for: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml
-📦 Cache HIT for: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/CityBeach.xml
-📦 Cache HIT for: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml
-📦 Cache HIT for: https://www.thisisjdog.com/media/ring-that-bell.xml
-📦 Cache HIT for: https://wavlake.com/feed/music/d677db67-0310-4813-970e-e65927c689f1
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fyour-chance.xml 200 in 13ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.sirtjthewrathful.com%2Fwp-content%2Fuploads%2F2023%2F08%2FNostalgic.xml 200 in 13ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.sirtjthewrathful.com%2Fwp-content%2Fuploads%2F2023%2F08%2FCityBeach.xml 200 in 12ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.sirtjthewrathful.com%2Fwp-content%2Fuploads%2F2023%2F08%2FKurtisdrums-V1.xml 200 in 12ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.thisisjdog.com%2Fmedia%2Fring-that-bell.xml 200 in 12ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fd677db67-0310-4813-970e-e65927c689f1 200 in 12ms
-📦 Cache HIT for: https://wavlake.com/feed/music/e678589b-5a9f-4918-9622-34119d2eed2c
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fe678589b-5a9f-4918-9622-34119d2eed2c 200 in 5ms
-📦 Cache HIT for: https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4
-📦 Cache HIT for: https://wavlake.com/feed/music/3a152941-c914-43da-aeca-5d7c58892a7f
-📦 Cache HIT for: https://wavlake.com/feed/music/a97e0586-ecda-4b79-9c38-be9a9effe05a
-📦 Cache HIT for: https://wavlake.com/feed/music/0ed13237-aca9-446f-9a03-de1a2d9331a3
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fartist%2Faa909244-7555-4b52-ad88-7233860c6fb4 200 in 17ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F3a152941-c914-43da-aeca-5d7c58892a7f 200 in 16ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fa97e0586-ecda-4b79-9c38-be9a9effe05a 200 in 16ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F0ed13237-aca9-446f-9a03-de1a2d9331a3 200 in 16ms
- ⚠ Unsupported metadata themeColor is configured in metadata export in /album/[id]. Please move it to viewport export instead.
-Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
- GET /album/bloodshot-lies-the-album 200 in 35ms
-📦 Cache HIT for: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.sirtjthewrathful.com%2Fwp-content%2Fuploads%2F2023%2F08%2FKurtisdrums-V1.xml 200 in 4ms
-📦 Cache HIT for: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.sirtjthewrathful.com%2Fwp-content%2Fuploads%2F2023%2F08%2FNostalgic.xml 200 in 6ms
-📦 Cache HIT for: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.sirtjthewrathful.com%2Fwp-content%2Fuploads%2F2023%2F08%2FKurtisdrums-V1.xml 200 in 4ms
-📦 Cache HIT for: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.sirtjthewrathful.com%2Fwp-content%2Fuploads%2F2023%2F08%2FNostalgic.xml 200 in 7ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/you-are-my-world.xml
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/you-feel-like-home.xml
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/your-chance.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fyou-are-my-world.xml 200 in 14ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fyou-feel-like-home.xml 200 in 14ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fyour-chance.xml 200 in 12ms
-📦 Cache HIT for: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml
-📦 Cache HIT for: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/CityBeach.xml
-📦 Cache HIT for: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.sirtjthewrathful.com%2Fwp-content%2Fuploads%2F2023%2F08%2FNostalgic.xml 200 in 19ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.sirtjthewrathful.com%2Fwp-content%2Fuploads%2F2023%2F08%2FCityBeach.xml 200 in 17ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.sirtjthewrathful.com%2Fwp-content%2Fuploads%2F2023%2F08%2FKurtisdrums-V1.xml 200 in 17ms
-📦 Cache HIT for: https://www.thisisjdog.com/media/ring-that-bell.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.thisisjdog.com%2Fmedia%2Fring-that-bell.xml 200 in 11ms
-📦 Cache HIT for: https://wavlake.com/feed/music/d677db67-0310-4813-970e-e65927c689f1
-📦 Cache HIT for: https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fd677db67-0310-4813-970e-e65927c689f1 200 in 15ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fartist%2Faa909244-7555-4b52-ad88-7233860c6fb4 200 in 15ms
-📦 Cache HIT for: https://wavlake.com/feed/music/e678589b-5a9f-4918-9622-34119d2eed2c
-📦 Cache HIT for: https://wavlake.com/feed/music/3a152941-c914-43da-aeca-5d7c58892a7f
-📦 Cache HIT for: https://wavlake.com/feed/music/a97e0586-ecda-4b79-9c38-be9a9effe05a
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fe678589b-5a9f-4918-9622-34119d2eed2c 200 in 11ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F3a152941-c914-43da-aeca-5d7c58892a7f 200 in 11ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fa97e0586-ecda-4b79-9c38-be9a9effe05a 200 in 11ms
-📦 Cache HIT for: https://wavlake.com/feed/music/0ed13237-aca9-446f-9a03-de1a2d9331a3
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F0ed13237-aca9-446f-9a03-de1a2d9331a3 200 in 10ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/you-are-my-world.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fyou-are-my-world.xml 200 in 4ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/you-feel-like-home.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fyou-feel-like-home.xml 200 in 8ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/your-chance.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fyour-chance.xml 200 in 8ms
-📦 Cache HIT for: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml
-📦 Cache HIT for: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/CityBeach.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.sirtjthewrathful.com%2Fwp-content%2Fuploads%2F2023%2F08%2FNostalgic.xml 200 in 5ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.sirtjthewrathful.com%2Fwp-content%2Fuploads%2F2023%2F08%2FCityBeach.xml 200 in 5ms
-📦 Cache HIT for: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml
-📦 Cache HIT for: https://www.thisisjdog.com/media/ring-that-bell.xml
-📦 Cache HIT for: https://wavlake.com/feed/music/d677db67-0310-4813-970e-e65927c689f1
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.sirtjthewrathful.com%2Fwp-content%2Fuploads%2F2023%2F08%2FKurtisdrums-V1.xml 200 in 5ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.thisisjdog.com%2Fmedia%2Fring-that-bell.xml 200 in 5ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fd677db67-0310-4813-970e-e65927c689f1 200 in 5ms
-📦 Cache HIT for: https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fartist%2Faa909244-7555-4b52-ad88-7233860c6fb4 200 in 6ms
-📦 Cache HIT for: https://wavlake.com/feed/music/a97e0586-ecda-4b79-9c38-be9a9effe05a
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fa97e0586-ecda-4b79-9c38-be9a9effe05a 200 in 4ms
-📦 Cache HIT for: https://wavlake.com/feed/music/e678589b-5a9f-4918-9622-34119d2eed2c
-📦 Cache HIT for: https://wavlake.com/feed/music/3a152941-c914-43da-aeca-5d7c58892a7f
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fe678589b-5a9f-4918-9622-34119d2eed2c 200 in 5ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F3a152941-c914-43da-aeca-5d7c58892a7f 200 in 4ms
-📦 Cache HIT for: https://wavlake.com/feed/music/0ed13237-aca9-446f-9a03-de1a2d9331a3
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F0ed13237-aca9-446f-9a03-de1a2d9331a3 200 in 2ms
- ⚠ Unsupported metadata themeColor is configured in metadata export in /album/[id]. Please move it to viewport export instead.
-Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
- GET /album/18-sundays 200 in 20ms
- HEAD /album/18-sundays 200 in 27ms
- ⚠ Unsupported metadata themeColor is configured in metadata export in /album/[id]. Please move it to viewport export instead.
-Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/18sundays.xml
 💾 Cached RSS feed: https://www.doerfelverse.com/feeds/18sundays.xml
- GET /api/fetch-rss?url=https://www.doerfelverse.com/feeds/18sundays.xml 200 in 132ms
- ⚠ Unsupported metadata themeColor is configured in metadata export in /album/[id]. Please move it to viewport export instead.
-Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
- GET /album/18-sundays 200 in 50ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/18sundays.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2F18sundays.xml 200 in 4ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/sensitive-guy.xml
-🔄 Cache MISS for: https://www.sirtjthewrathful.com/tracks/emo-stormtrooper.xml
-🔄 Cache MISS for: https://wavlake.com/feed/19803acd-4989-4482-86f7-030ad1533dd8
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/sensitive-guy.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fsensitive-guy.xml 200 in 124ms
-💾 Cached RSS feed: https://www.sirtjthewrathful.com/tracks/emo-stormtrooper.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.sirtjthewrathful.com%2Ftracks%2Femo-stormtrooper.xml 200 in 125ms
-💾 Cached RSS feed: https://wavlake.com/feed/19803acd-4989-4482-86f7-030ad1533dd8
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2F19803acd-4989-4482-86f7-030ad1533dd8 200 in 406ms
- ⚠ Unsupported metadata themeColor is configured in metadata export in /album/[id]. Please move it to viewport export instead.
-Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
- GET /album/18-sundays 200 in 33ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/18sundays.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2F18sundays.xml 200 in 3ms
- ⚠ Unsupported metadata themeColor is configured in metadata export in /. Please move it to viewport export instead.
-Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
- GET / 200 in 17ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/intothedoerfelverse.xml
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/18sundays.xml
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/wrath-of-banjo.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2F18sundays.xml 200 in 16ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/ben-doerfel.xml
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/alandace.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fmusic-from-the-doerfelverse.xml 200 in 142ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/autumn.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fbloodshot-lies-album.xml 200 in 150ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/christ-exalted.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/ben-doerfel.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fben-doerfel.xml 200 in 153ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/come-back-to-me.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/autumn.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fautumn.xml 200 in 45ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/dead-time-live-2016.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/christ-exalted.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fchrist-exalted.xml 200 in 45ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/dfbv1.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/come-back-to-me.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fcome-back-to-me.xml 200 in 45ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/dfbv2.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/wrath-of-banjo.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fwrath-of-banjo.xml 200 in 205ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/disco-swag.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/dead-time-live-2016.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fdead-time-live-2016.xml 200 in 41ms
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/intothedoerfelverse.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fintothedoerfelverse.xml 200 in 230ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/merry-christmix.xml
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/doerfels-pubfeed.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/dfbv1.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fdfbv1.xml 200 in 41ms
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2F18sundays.xml 200 in 43ms
 🔄 Cache MISS for: https://www.doerfelverse.com/feeds/middle-season-let-go.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/dfbv2.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fdfbv2.xml 200 in 38ms
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/intothedoerfelverse.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fintothedoerfelverse.xml 200 in 98ms
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/alandace.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Falandace.xml 200 in 44ms
 🔄 Cache MISS for: https://www.doerfelverse.com/feeds/phatty-the-grasshopper.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/disco-swag.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fdisco-swag.xml 200 in 37ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/possible.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/doerfels-pubfeed.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fdoerfels-pubfeed.xml 200 in 42ms
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/merry-christmix.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fmerry-christmix.xml 200 in 43ms
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/middle-season-let-go.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fmiddle-season-let-go.xml 200 in 39ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/pour-over.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/phatty-the-grasshopper.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fphatty-the-grasshopper.xml 200 in 39ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/first-married-christmas.xml
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/psalm-54.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/possible.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fpossible.xml 200 in 41ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/generation-gap.xml
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/they-dont-know.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/pour-over.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fpour-over.xml 200 in 42ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/think-ep.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/psalm-54.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fpsalm-54.xml 200 in 41ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/underwater-single.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/they-dont-know.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fthey-dont-know.xml 200 in 41ms
+🔄 Cache MISS for: https://www.doerfelverse.com/feeds/autumn.xml
 💾 Cached RSS feed: https://www.doerfelverse.com/feeds/generation-gap.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fgeneration-gap.xml 200 in 46ms
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fgeneration-gap.xml 200 in 42ms
+🔄 Cache MISS for: https://www.doerfelverse.com/feeds/disco-swag.xml
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/merry-christmix.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fmerry-christmix.xml 200 in 45ms
+🔄 Cache MISS for: https://www.doerfelverse.com/feeds/first-married-christmas.xml
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/middle-season-let-go.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fmiddle-season-let-go.xml 200 in 42ms
 🔄 Cache MISS for: https://www.doerfelverse.com/feeds/heartbreak.xml
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/unsound-existence.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/think-ep.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fthink-ep.xml 200 in 40ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/you-are-my-world.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/underwater-single.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Funderwater-single.xml 200 in 43ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/you-feel-like-home.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/unsound-existence.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Funsound-existence.xml 200 in 38ms
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/heartbreak.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fheartbreak.xml 200 in 39ms
-🔄 Cache MISS for: https://www.doerfelverse.com/feeds/your-chance.xml
-🔄 Cache MISS for: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml
+⏳ Rate limited, waiting 2289ms before retry 1
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/phatty-the-grasshopper.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fphatty-the-grasshopper.xml 200 in 41ms
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/autumn.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fautumn.xml 200 in 41ms
+🔄 Cache MISS for: https://www.doerfelverse.com/feeds/disco-swag.xml
+⏳ Rate limited, waiting 2418ms before retry 1
+🔄 Cache MISS for: https://www.doerfelverse.com/feeds/first-married-christmas.xml
+⏳ Rate limited, waiting 2891ms before retry 1
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/disco-swag.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fdisco-swag.xml 200 in 42ms
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fdisco-swag.xml 200 in 18ms
 💾 Cached RSS feed: https://www.doerfelverse.com/feeds/first-married-christmas.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Ffirst-married-christmas.xml 200 in 118ms
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Ffirst-married-christmas.xml 200 in 42ms
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Ffirst-married-christmas.xml 200 in 24ms
+🔄 Cache MISS for: https://www.doerfelverse.com/feeds/heartbreak.xml
+⏳ Rate limited, waiting 2323ms before retry 1
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/autumn.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fautumn.xml 200 in 1404ms
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/heartbreak.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fheartbreak.xml 200 in 2334ms
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fheartbreak.xml 200 in 2310ms
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/heartbreak.xml
+🔄 Cache MISS for: https://www.doerfelverse.com/feeds/possible.xml
+⏳ Rate limited, waiting 1890ms before retry 1
+🔄 Cache MISS for: https://www.doerfelverse.com/feeds/they-dont-know.xml
+⏳ Rate limited, waiting 1905ms before retry 1
+🔄 Cache MISS for: https://www.doerfelverse.com/feeds/underwater-single.xml
+⏳ Rate limited, waiting 2571ms before retry 1
+🔄 Cache MISS for: https://www.doerfelverse.com/feeds/your-chance.xml
+⏳ Rate limited, waiting 2973ms before retry 1
 🔄 Cache MISS for: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/CityBeach.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/you-are-my-world.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fyou-are-my-world.xml 200 in 40ms
-🔄 Cache MISS for: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/you-feel-like-home.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fyou-feel-like-home.xml 200 in 52ms
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/your-chance.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fyour-chance.xml 200 in 51ms
-🔄 Cache MISS for: https://www.thisisjdog.com/media/ring-that-bell.xml
-🔄 Cache MISS for: https://wavlake.com/feed/music/d677db67-0310-4813-970e-e65927c689f1
-💾 Cached RSS feed: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.sirtjthewrathful.com%2Fwp-content%2Fuploads%2F2023%2F08%2FNostalgic.xml 200 in 131ms
-🔄 Cache MISS for: https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4
+🔄 Cache MISS for: https://www.doerfelverse.com/feeds/unsound-existence.xml
+⏳ Rate limited, waiting 2923ms before retry 1
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/disco-swag.xml
 💾 Cached RSS feed: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/CityBeach.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.sirtjthewrathful.com%2Fwp-content%2Fuploads%2F2023%2F08%2FCityBeach.xml 200 in 137ms
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.sirtjthewrathful.com%2Fwp-content%2Fuploads%2F2023%2F08%2FCityBeach.xml 200 in 388ms
+🔄 Cache MISS for: https://www.doerfelverse.com/feeds/you-are-my-world.xml
+⏳ Rate limited, waiting 2930ms before retry 1
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/first-married-christmas.xml
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/possible.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fpossible.xml 200 in 2004ms
+ ✓ Compiled in 158ms (260 modules)
+🔄 Cache MISS for: https://www.doerfelverse.com/feeds/you-feel-like-home.xml
+⏳ Rate limited, waiting 1802ms before retry 1
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/they-dont-know.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fthey-dont-know.xml 200 in 2234ms
+🔄 Cache MISS for: https://www.doerfelverse.com/artists/opus/opus/opus.xml
+⏳ Rate limited, waiting 1237ms before retry 1
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/underwater-single.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Funderwater-single.xml 200 in 2659ms
+🔄 Cache MISS for: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml
+💾 Cached RSS feed: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.sirtjthewrathful.com%2Fwp-content%2Fuploads%2F2023%2F08%2FNostalgic.xml 200 in 155ms
+🔄 Cache MISS for: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/your-chance.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fyour-chance.xml 200 in 3073ms
+🔄 Cache MISS for: https://www.thisisjdog.com/media/ring-that-bell.xml
 💾 Cached RSS feed: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.sirtjthewrathful.com%2Fwp-content%2Fuploads%2F2023%2F08%2FKurtisdrums-V1.xml 200 in 132ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/e678589b-5a9f-4918-9622-34119d2eed2c
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/wrath-of-banjo.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fwrath-of-banjo.xml 200 in 5ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/18sundays.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2F18sundays.xml 200 in 3ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/middle-season-let-go.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fmiddle-season-let-go.xml 200 in 2ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/phatty-the-grasshopper.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fphatty-the-grasshopper.xml 200 in 2ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/possible.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fpossible.xml 200 in 4ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/psalm-54.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fpsalm-54.xml 200 in 2ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/they-dont-know.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fthey-dont-know.xml 200 in 2ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/think-ep.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fthink-ep.xml 200 in 2ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/underwater-single.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Funderwater-single.xml 200 in 2ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/unsound-existence.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Funsound-existence.xml 200 in 2ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/3a152941-c914-43da-aeca-5d7c58892a7f
-💾 Cached RSS feed: https://wavlake.com/feed/music/d677db67-0310-4813-970e-e65927c689f1
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fd677db67-0310-4813-970e-e65927c689f1 200 in 192ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/a97e0586-ecda-4b79-9c38-be9a9effe05a
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.sirtjthewrathful.com%2Fwp-content%2Fuploads%2F2023%2F08%2FKurtisdrums-V1.xml 200 in 281ms
+🔄 Cache MISS for: https://ableandthewolf.com/static/media/feed.xml
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/unsound-existence.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Funsound-existence.xml 200 in 3198ms
+🔄 Cache MISS for: https://static.staticsave.com/mspfiles/deathdreams.xml
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/you-are-my-world.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fyou-are-my-world.xml 200 in 2972ms
+🔄 Cache MISS for: https://static.staticsave.com/mspfiles/waytogo.xml
+💾 Cached RSS feed: https://static.staticsave.com/mspfiles/deathdreams.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fstatic.staticsave.com%2Fmspfiles%2Fdeathdreams.xml 200 in 210ms
+🔄 Cache MISS for: https://music.behindthesch3m3s.com/wp-content/uploads/c_kostra/now%20i%20feel%20it.xml
+💾 Cached RSS feed: https://ableandthewolf.com/static/media/feed.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fableandthewolf.com%2Fstatic%2Fmedia%2Ffeed.xml 200 in 414ms
+🔄 Cache MISS for: https://www.doerfelverse.com/feeds/pour-over.xml
+⏳ Rate limited, waiting 1330ms before retry 1
+💾 Cached RSS feed: https://www.doerfelverse.com/artists/opus/opus/opus.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Fartists%2Fopus%2Fopus%2Fopus.xml 200 in 1288ms
+🔄 Cache MISS for: https://www.doerfelverse.com/feeds/psalm-54.xml
+⏳ Rate limited, waiting 1692ms before retry 1
+💾 Cached RSS feed: https://music.behindthesch3m3s.com/wp-content/uploads/c_kostra/now%20i%20feel%20it.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fmusic.behindthesch3m3s.com%2Fwp-content%2Fuploads%2Fc_kostra%2Fnow%2520i%2520feel%2520it.xml 200 in 140ms
+🔄 Cache MISS for: https://www.doerfelverse.com/feeds/sensitive-guy.xml
+⏳ Rate limited, waiting 2309ms before retry 1
+💾 Cached RSS feed: https://static.staticsave.com/mspfiles/waytogo.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fstatic.staticsave.com%2Fmspfiles%2Fwaytogo.xml 200 in 216ms
+🔄 Cache MISS for: https://www.doerfelverse.com/feeds/think-ep.xml
+⏳ Rate limited, waiting 1057ms before retry 1
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/you-feel-like-home.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fyou-feel-like-home.xml 200 in 1851ms
+📦 Cache HIT for: https://www.doerfelverse.com/feeds/you-feel-like-home.xml
+🔄 Cache MISS for: https://www.doerfelverse.com/feeds/pour-over.xml
+⏳ Rate limited, waiting 1831ms before retry 1
 💾 Cached RSS feed: https://www.thisisjdog.com/media/ring-that-bell.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.thisisjdog.com%2Fmedia%2Fring-that-bell.xml 200 in 216ms
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.thisisjdog.com%2Fmedia%2Fring-that-bell.xml 200 in 1359ms
+📦 Cache HIT for: https://www.thisisjdog.com/media/ring-that-bell.xml
+🔄 Cache MISS for: https://www.doerfelverse.com/feeds/psalm-54.xml
+⏳ Rate limited, waiting 1975ms before retry 1
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/think-ep.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fthink-ep.xml 200 in 1108ms
+📦 Cache HIT for: https://www.doerfelverse.com/feeds/think-ep.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fthink-ep.xml 200 in 6ms
+🔄 Cache MISS for: https://www.doerfelverse.com/feeds/sensitive-guy.xml
+⏳ Rate limited, waiting 2898ms before retry 1
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/pour-over.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fpour-over.xml 200 in 1372ms
+ GET / 200 in 45ms
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/psalm-54.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fpsalm-54.xml 200 in 1734ms
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/pour-over.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fpour-over.xml 200 in 1872ms
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/sensitive-guy.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fsensitive-guy.xml 200 in 2350ms
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/psalm-54.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fpsalm-54.xml 200 in 2027ms
+🔄 Cache MISS for: https://music.behindthesch3m3s.com/wp-content/uploads/Mellow%20Cassette/Pilot/pilot.xml
+🔄 Cache MISS for: https://music.behindthesch3m3s.com/wp-content/uploads/Mellow%20Cassette/Radio_Brigade/radio_brigade.xml
+🔄 Cache MISS for: https://wavlake.com/feed/music/d677db67-0310-4813-970e-e65927c689f1
+🔄 Cache MISS for: https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4
+🔄 Cache MISS for: https://wavlake.com/feed/music/e678589b-5a9f-4918-9622-34119d2eed2c
+💾 Cached RSS feed: https://music.behindthesch3m3s.com/wp-content/uploads/Mellow%20Cassette/Pilot/pilot.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fmusic.behindthesch3m3s.com%2Fwp-content%2Fuploads%2FMellow%2520Cassette%2FPilot%2Fpilot.xml 200 in 129ms
+🔄 Cache MISS for: https://wavlake.com/feed/music/d3145292-bf71-415f-a841-7f5c9a9466e1
+💾 Cached RSS feed: https://music.behindthesch3m3s.com/wp-content/uploads/Mellow%20Cassette/Radio_Brigade/radio_brigade.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fmusic.behindthesch3m3s.com%2Fwp-content%2Fuploads%2FMellow%2520Cassette%2FRadio_Brigade%2Fradio_brigade.xml 200 in 141ms
+🔄 Cache MISS for: https://wavlake.com/feed/music/3a152941-c914-43da-aeca-5d7c58892a7f
+💾 Cached RSS feed: https://wavlake.com/feed/music/e678589b-5a9f-4918-9622-34119d2eed2c
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fe678589b-5a9f-4918-9622-34119d2eed2c 200 in 243ms
+🔄 Cache MISS for: https://wavlake.com/feed/music/a97e0586-ecda-4b79-9c38-be9a9effe05a
+💾 Cached RSS feed: https://wavlake.com/feed/music/d677db67-0310-4813-970e-e65927c689f1
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fd677db67-0310-4813-970e-e65927c689f1 200 in 254ms
 🔄 Cache MISS for: https://wavlake.com/feed/music/0ed13237-aca9-446f-9a03-de1a2d9331a3
 💾 Cached RSS feed: https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fartist%2Faa909244-7555-4b52-ad88-7233860c6fb4 200 in 199ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/ce8c4910-51bf-4d5e-a0b3-338e58e5ee79
-💾 Cached RSS feed: https://wavlake.com/feed/music/e678589b-5a9f-4918-9622-34119d2eed2c
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fe678589b-5a9f-4918-9622-34119d2eed2c 200 in 261ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/acb43f23-cfec-4cc1-a418-4087a5378129
-💾 Cached RSS feed: https://wavlake.com/feed/music/a97e0586-ecda-4b79-9c38-be9a9effe05a
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fa97e0586-ecda-4b79-9c38-be9a9effe05a 200 in 190ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/d1a871a7-7e4c-4a91-b799-87dcbb6bc41d
-💾 Cached RSS feed: https://wavlake.com/feed/music/3a152941-c914-43da-aeca-5d7c58892a7f
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F3a152941-c914-43da-aeca-5d7c58892a7f 200 in 261ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/3294d8b5-f9f6-4241-a298-f04df818390c
-💾 Cached RSS feed: https://wavlake.com/feed/music/ce8c4910-51bf-4d5e-a0b3-338e58e5ee79
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fce8c4910-51bf-4d5e-a0b3-338e58e5ee79 200 in 174ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/d3145292-bf71-415f-a841-7f5c9a9466e1
-💾 Cached RSS feed: https://wavlake.com/feed/music/0ed13237-aca9-446f-9a03-de1a2d9331a3
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F0ed13237-aca9-446f-9a03-de1a2d9331a3 200 in 292ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/91367816-33e6-4b6e-8eb7-44b2832708fd
-💾 Cached RSS feed: https://wavlake.com/feed/music/d1a871a7-7e4c-4a91-b799-87dcbb6bc41d
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fd1a871a7-7e4c-4a91-b799-87dcbb6bc41d 200 in 190ms
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fartist%2Faa909244-7555-4b52-ad88-7233860c6fb4 200 in 290ms
 🔄 Cache MISS for: https://wavlake.com/feed/music/8c8f8133-7ef1-4b72-a641-4e1a6a44d626
-💾 Cached RSS feed: https://wavlake.com/feed/music/3294d8b5-f9f6-4241-a298-f04df818390c
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F3294d8b5-f9f6-4241-a298-f04df818390c 200 in 185ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/9720d58b-22a5-4047-81de-f1940fec41c7
-💾 Cached RSS feed: https://wavlake.com/feed/music/acb43f23-cfec-4cc1-a418-4087a5378129
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Facb43f23-cfec-4cc1-a418-4087a5378129 200 in 237ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/21536269-5192-49e7-a819-fab00f4a159e
 💾 Cached RSS feed: https://wavlake.com/feed/music/d3145292-bf71-415f-a841-7f5c9a9466e1
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fd3145292-bf71-415f-a841-7f5c9a9466e1 200 in 208ms
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fd3145292-bf71-415f-a841-7f5c9a9466e1 200 in 250ms
+🔄 Cache MISS for: https://wavlake.com/feed/music/9720d58b-22a5-4047-81de-f1940fec41c7
+💾 Cached RSS feed: https://wavlake.com/feed/music/3a152941-c914-43da-aeca-5d7c58892a7f
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F3a152941-c914-43da-aeca-5d7c58892a7f 200 in 253ms
+🔄 Cache MISS for: https://wavlake.com/feed/music/21536269-5192-49e7-a819-fab00f4a159e
+💾 Cached RSS feed: https://wavlake.com/feed/music/0ed13237-aca9-446f-9a03-de1a2d9331a3
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F0ed13237-aca9-446f-9a03-de1a2d9331a3 200 in 160ms
 🔄 Cache MISS for: https://wavlake.com/feed/music/624b19ac-5d8b-4fd6-8589-0eef7bcb9c9e
-💾 Cached RSS feed: https://wavlake.com/feed/music/91367816-33e6-4b6e-8eb7-44b2832708fd
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F91367816-33e6-4b6e-8eb7-44b2832708fd 200 in 178ms
-🔄 Cache MISS for: https://www.wavlake.com/feed/95ea253a-4058-402c-8503-204f6d3f1494
+💾 Cached RSS feed: https://wavlake.com/feed/music/a97e0586-ecda-4b79-9c38-be9a9effe05a
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fa97e0586-ecda-4b79-9c38-be9a9effe05a 200 in 178ms
+🔄 Cache MISS for: https://wavlake.com/feed/music/ce8c4910-51bf-4d5e-a0b3-338e58e5ee79
 💾 Cached RSS feed: https://wavlake.com/feed/music/8c8f8133-7ef1-4b72-a641-4e1a6a44d626
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F8c8f8133-7ef1-4b72-a641-4e1a6a44d626 200 in 152ms
-🔄 Cache MISS for: https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738
-💾 Cached RSS feed: https://www.doerfelverse.com/feeds/alandace.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Falandace.xml 200 in 1150ms
-💾 Cached RSS feed: https://wavlake.com/feed/music/21536269-5192-49e7-a819-fab00f4a159e
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F21536269-5192-49e7-a819-fab00f4a159e 200 in 143ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/1c7917cc-357c-4eaf-ab54-1a7cda504976
-🔄 Cache MISS for: https://wavlake.com/feed/music/e1f9dfcb-ee9b-4a6d-aee7-189043917fb5
-💾 Cached RSS feed: https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fartist%2F18bcbf10-6701-4ffb-b255-bc057390d738 200 in 172ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/d4f791c3-4d0c-4fbd-a543-c136ee78a9de
-💾 Cached RSS feed: https://wavlake.com/feed/music/1c7917cc-357c-4eaf-ab54-1a7cda504976
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F1c7917cc-357c-4eaf-ab54-1a7cda504976 200 in 196ms
-💾 Cached RSS feed: https://wavlake.com/feed/music/624b19ac-5d8b-4fd6-8589-0eef7bcb9c9e
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F624b19ac-5d8b-4fd6-8589-0eef7bcb9c9e 200 in 289ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/51606506-66f8-4394-b6c6-cc0c1b554375
-💾 Cached RSS feed: https://wavlake.com/feed/music/e1f9dfcb-ee9b-4a6d-aee7-189043917fb5
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fe1f9dfcb-ee9b-4a6d-aee7-189043917fb5 200 in 207ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/6b7793b8-fd9d-432b-af1a-184cd41aaf9d
-🔄 Cache MISS for: https://wavlake.com/feed/music/0bb8c9c7-1c55-4412-a517-572a98318921
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F8c8f8133-7ef1-4b72-a641-4e1a6a44d626 200 in 160ms
+🔄 Cache MISS for: https://wavlake.com/feed/music/997060e3-9dc1-4cd8-b3c1-3ae06d54bb03
 💾 Cached RSS feed: https://wavlake.com/feed/music/9720d58b-22a5-4047-81de-f1940fec41c7
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F9720d58b-22a5-4047-81de-f1940fec41c7 200 in 428ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/16e46ed0-b392-4419-a937-a7815f6ca43b
-💾 Cached RSS feed: https://wavlake.com/feed/music/d4f791c3-4d0c-4fbd-a543-c136ee78a9de
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fd4f791c3-4d0c-4fbd-a543-c136ee78a9de 200 in 181ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/2cd1b9ea-9ef3-4a54-aa25-55295689f442
-💾 Cached RSS feed: https://www.wavlake.com/feed/95ea253a-4058-402c-8503-204f6d3f1494
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.wavlake.com%2Ffeed%2F95ea253a-4058-402c-8503-204f6d3f1494 200 in 516ms
-💾 Cached RSS feed: https://wavlake.com/feed/music/16e46ed0-b392-4419-a937-a7815f6ca43b
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F16e46ed0-b392-4419-a937-a7815f6ca43b 200 in 187ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/33eeda7e-8591-4ff5-83f8-f36a879b0a09
-🔄 Cache MISS for: https://wavlake.com/feed/music/32a79df8-ec3e-4a14-bfcb-7a074e1974b9
-💾 Cached RSS feed: https://wavlake.com/feed/music/51606506-66f8-4394-b6c6-cc0c1b554375
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F51606506-66f8-4394-b6c6-cc0c1b554375 200 in 279ms
-🔄 Cache MISS for: https://wavlake.com/feed/music/06376ab5-efca-459c-9801-49ceba5fdab1
-💾 Cached RSS feed: https://wavlake.com/feed/music/0bb8c9c7-1c55-4412-a517-572a98318921
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F0bb8c9c7-1c55-4412-a517-572a98318921 200 in 279ms
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F9720d58b-22a5-4047-81de-f1940fec41c7 200 in 190ms
+🔄 Cache MISS for: https://wavlake.com/feed/music/b54b9a19-b6ed-46c1-806c-7e82f7550edc
+💾 Cached RSS feed: https://wavlake.com/feed/music/ce8c4910-51bf-4d5e-a0b3-338e58e5ee79
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fce8c4910-51bf-4d5e-a0b3-338e58e5ee79 200 in 156ms
+🔄 Cache MISS for: https://wavlake.com/feed/music/acb43f23-cfec-4cc1-a418-4087a5378129
+💾 Cached RSS feed: https://wavlake.com/feed/music/624b19ac-5d8b-4fd6-8589-0eef7bcb9c9e
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F624b19ac-5d8b-4fd6-8589-0eef7bcb9c9e 200 in 192ms
+💾 Cached RSS feed: https://wavlake.com/feed/music/997060e3-9dc1-4cd8-b3c1-3ae06d54bb03
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F997060e3-9dc1-4cd8-b3c1-3ae06d54bb03 200 in 155ms
+🔄 Cache MISS for: https://wavlake.com/feed/music/d1a871a7-7e4c-4a91-b799-87dcbb6bc41d
+🔄 Cache MISS for: https://wavlake.com/feed/music/3294d8b5-f9f6-4241-a298-f04df818390c
+💾 Cached RSS feed: https://wavlake.com/feed/music/21536269-5192-49e7-a819-fab00f4a159e
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F21536269-5192-49e7-a819-fab00f4a159e 200 in 265ms
+🔄 Cache MISS for: https://wavlake.com/feed/music/91367816-33e6-4b6e-8eb7-44b2832708fd
+💾 Cached RSS feed: https://www.doerfelverse.com/feeds/sensitive-guy.xml
+ GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fsensitive-guy.xml 200 in 2935ms
+💾 Cached RSS feed: https://wavlake.com/feed/music/acb43f23-cfec-4cc1-a418-4087a5378129
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Facb43f23-cfec-4cc1-a418-4087a5378129 200 in 155ms
+💾 Cached RSS feed: https://wavlake.com/feed/music/b54b9a19-b6ed-46c1-806c-7e82f7550edc
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fb54b9a19-b6ed-46c1-806c-7e82f7550edc 200 in 183ms
+💾 Cached RSS feed: https://wavlake.com/feed/music/3294d8b5-f9f6-4241-a298-f04df818390c
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F3294d8b5-f9f6-4241-a298-f04df818390c 200 in 171ms
+💾 Cached RSS feed: https://wavlake.com/feed/music/d1a871a7-7e4c-4a91-b799-87dcbb6bc41d
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fd1a871a7-7e4c-4a91-b799-87dcbb6bc41d 200 in 222ms
+💾 Cached RSS feed: https://wavlake.com/feed/music/91367816-33e6-4b6e-8eb7-44b2832708fd
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F91367816-33e6-4b6e-8eb7-44b2832708fd 200 in 239ms
+🔄 Cache MISS for: https://wavlake.com/feed/music/95ea253a-4058-402c-8503-204f6d3f1494
+🔄 Cache MISS for: https://wavlake.com/feed/music/d4f791c3-4d0c-4fbd-a543-c136ee78a9de
+🔄 Cache MISS for: https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738
+⏳ Rate limited, waiting 1911ms before retry 1
+🔄 Cache MISS for: https://wavlake.com/feed/music/51606506-66f8-4394-b6c6-cc0c1b554375
+⏳ Rate limited, waiting 2997ms before retry 1
+🔄 Cache MISS for: https://wavlake.com/feed/artist/8a9c2e54-785a-4128-9412-737610f5d00a
+⏳ Rate limited, waiting 1873ms before retry 1
 🔄 Cache MISS for: https://wavlake.com/feed/music/6b7793b8-fd9d-432b-af1a-184cd41aaf9d
-💾 Cached RSS feed: https://wavlake.com/feed/music/2cd1b9ea-9ef3-4a54-aa25-55295689f442
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F2cd1b9ea-9ef3-4a54-aa25-55295689f442 200 in 194ms
-📦 Cache HIT for: https://wavlake.com/feed/music/2cd1b9ea-9ef3-4a54-aa25-55295689f442
+⏳ Rate limited, waiting 1348ms before retry 1
+💾 Cached RSS feed: https://wavlake.com/feed/music/d4f791c3-4d0c-4fbd-a543-c136ee78a9de
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fd4f791c3-4d0c-4fbd-a543-c136ee78a9de 200 in 178ms
+🔄 Cache MISS for: https://wavlake.com/feed/music/1c7917cc-357c-4eaf-ab54-1a7cda504976
+⏳ Rate limited, waiting 2458ms before retry 1
+💾 Cached RSS feed: https://wavlake.com/feed/music/95ea253a-4058-402c-8503-204f6d3f1494
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F95ea253a-4058-402c-8503-204f6d3f1494 200 in 195ms
+🔄 Cache MISS for: https://wavlake.com/feed/music/2cd1b9ea-9ef3-4a54-aa25-55295689f442
+⏳ Rate limited, waiting 2917ms before retry 1
+💾 Cached RSS feed: https://wavlake.com/feed/artist/8a9c2e54-785a-4128-9412-737610f5d00a
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fartist%2F8a9c2e54-785a-4128-9412-737610f5d00a 200 in 2035ms
 🔄 Cache MISS for: https://wavlake.com/feed/music/33eeda7e-8591-4ff5-83f8-f36a879b0a09
-💾 Cached RSS feed: https://wavlake.com/feed/music/33eeda7e-8591-4ff5-83f8-f36a879b0a09
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F33eeda7e-8591-4ff5-83f8-f36a879b0a09 200 in 182ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F33eeda7e-8591-4ff5-83f8-f36a879b0a09 200 in 106ms
+⏳ Rate limited, waiting 2135ms before retry 1
+💾 Cached RSS feed: https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fartist%2F18bcbf10-6701-4ffb-b255-bc057390d738 200 in 2101ms
 🔄 Cache MISS for: https://wavlake.com/feed/music/32a79df8-ec3e-4a14-bfcb-7a074e1974b9
-💾 Cached RSS feed: https://wavlake.com/feed/music/32a79df8-ec3e-4a14-bfcb-7a074e1974b9
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F32a79df8-ec3e-4a14-bfcb-7a074e1974b9 200 in 193ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F32a79df8-ec3e-4a14-bfcb-7a074e1974b9 200 in 15ms
+⏳ Rate limited, waiting 2229ms before retry 1
+💾 Cached RSS feed: https://wavlake.com/feed/music/6b7793b8-fd9d-432b-af1a-184cd41aaf9d
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F6b7793b8-fd9d-432b-af1a-184cd41aaf9d 200 in 2549ms
+🔄 Cache MISS for: https://wavlake.com/feed/music/e1f9dfcb-ee9b-4a6d-aee7-189043917fb5
+⏳ Rate limited, waiting 2275ms before retry 1
+💾 Cached RSS feed: https://wavlake.com/feed/music/51606506-66f8-4394-b6c6-cc0c1b554375
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F51606506-66f8-4394-b6c6-cc0c1b554375 200 in 3219ms
 🔄 Cache MISS for: https://wavlake.com/feed/music/06376ab5-efca-459c-9801-49ceba5fdab1
-💾 Cached RSS feed: https://wavlake.com/feed/music/06376ab5-efca-459c-9801-49ceba5fdab1
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F06376ab5-efca-459c-9801-49ceba5fdab1 200 in 191ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F06376ab5-efca-459c-9801-49ceba5fdab1 200 in 33ms
-💾 Cached RSS feed: https://wavlake.com/feed/music/06376ab5-efca-459c-9801-49ceba5fdab1
-💾 Cached RSS feed: https://wavlake.com/feed/music/6b7793b8-fd9d-432b-af1a-184cd41aaf9d
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F6b7793b8-fd9d-432b-af1a-184cd41aaf9d 200 in 1212ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F6b7793b8-fd9d-432b-af1a-184cd41aaf9d 200 in 924ms
-💾 Cached RSS feed: https://wavlake.com/feed/music/6b7793b8-fd9d-432b-af1a-184cd41aaf9d
+⏳ Rate limited, waiting 2851ms before retry 1
+💾 Cached RSS feed: https://wavlake.com/feed/music/2cd1b9ea-9ef3-4a54-aa25-55295689f442
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F2cd1b9ea-9ef3-4a54-aa25-55295689f442 200 in 3094ms
+🔄 Cache MISS for: https://wavlake.com/feed/music/1c7917cc-357c-4eaf-ab54-1a7cda504976
+⏳ Rate limited, waiting 1132ms before retry 1
 💾 Cached RSS feed: https://wavlake.com/feed/music/33eeda7e-8591-4ff5-83f8-f36a879b0a09
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F33eeda7e-8591-4ff5-83f8-f36a879b0a09 200 in 2305ms
+🔄 Cache MISS for: https://wavlake.com/feed/music/e1f9dfcb-ee9b-4a6d-aee7-189043917fb5
+⏳ Rate limited, waiting 2910ms before retry 1
 💾 Cached RSS feed: https://wavlake.com/feed/music/32a79df8-ec3e-4a14-bfcb-7a074e1974b9
- ⚠ Unsupported metadata themeColor is configured in metadata export in /album/[id]. Please move it to viewport export instead.
-Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
- GET /album/tinderbox 200 in 18ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/wrath-of-banjo.xml
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/18sundays.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fwrath-of-banjo.xml 200 in 6ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2F18sundays.xml 200 in 6ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/middle-season-let-go.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fmiddle-season-let-go.xml 200 in 9ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/phatty-the-grasshopper.xml
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/possible.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fphatty-the-grasshopper.xml 200 in 13ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fpossible.xml 200 in 12ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/psalm-54.xml
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/they-dont-know.xml
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/think-ep.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fpsalm-54.xml 200 in 14ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fthey-dont-know.xml 200 in 13ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fthink-ep.xml 200 in 10ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/underwater-single.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Funderwater-single.xml 200 in 12ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/unsound-existence.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Funsound-existence.xml 200 in 10ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/wrath-of-banjo.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fwrath-of-banjo.xml 200 in 8ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/18sundays.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2F18sundays.xml 200 in 6ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/middle-season-let-go.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fmiddle-season-let-go.xml 200 in 4ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/phatty-the-grasshopper.xml
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/possible.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fphatty-the-grasshopper.xml 200 in 6ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fpossible.xml 200 in 6ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/they-dont-know.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fthey-dont-know.xml 200 in 3ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/think-ep.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fthink-ep.xml 200 in 3ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/psalm-54.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fpsalm-54.xml 200 in 2ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/underwater-single.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Funderwater-single.xml 200 in 4ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/unsound-existence.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Funsound-existence.xml 200 in 5ms
- ⚠ Unsupported metadata themeColor is configured in metadata export in /album/[id]. Please move it to viewport export instead.
-Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
- GET /album/bound-for-lonesome 200 in 15ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/wrath-of-banjo.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fwrath-of-banjo.xml 200 in 5ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/18sundays.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2F18sundays.xml 200 in 6ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/middle-season-let-go.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fmiddle-season-let-go.xml 200 in 4ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/phatty-the-grasshopper.xml
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/possible.xml
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/psalm-54.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fphatty-the-grasshopper.xml 200 in 7ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fpossible.xml 200 in 7ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fpsalm-54.xml 200 in 6ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/they-dont-know.xml
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/think-ep.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fthey-dont-know.xml 200 in 10ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fthink-ep.xml 200 in 10ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/underwater-single.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Funderwater-single.xml 200 in 11ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/unsound-existence.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Funsound-existence.xml 200 in 9ms
-🔄 Cache MISS for: https://www.sirtjthewrathful.com/wp-content/uploads/2023/07/Beware-of-Banjo.xml
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/wrath-of-banjo.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fwrath-of-banjo.xml 200 in 5ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/18sundays.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2F18sundays.xml 200 in 7ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/middle-season-let-go.xml
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/phatty-the-grasshopper.xml
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/possible.xml
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/psalm-54.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fmiddle-season-let-go.xml 200 in 6ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fphatty-the-grasshopper.xml 200 in 6ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fpossible.xml 200 in 6ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fpsalm-54.xml 200 in 6ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/they-dont-know.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fthey-dont-know.xml 200 in 7ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/think-ep.xml
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/underwater-single.xml
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/unsound-existence.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fthink-ep.xml 200 in 8ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Funderwater-single.xml 200 in 8ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Funsound-existence.xml 200 in 8ms
-🔄 Cache MISS for: https://www.sirtjthewrathful.com/wp-content/uploads/2023/07/Beware-of-Banjo.xml
-💾 Cached RSS feed: https://www.sirtjthewrathful.com/wp-content/uploads/2023/07/Beware-of-Banjo.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.sirtjthewrathful.com%2Fwp-content%2Fuploads%2F2023%2F07%2FBeware-of-Banjo.xml 200 in 138ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.sirtjthewrathful.com%2Fwp-content%2Fuploads%2F2023%2F07%2FBeware-of-Banjo.xml 200 in 105ms
-💾 Cached RSS feed: https://www.sirtjthewrathful.com/wp-content/uploads/2023/07/Beware-of-Banjo.xml
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/wrath-of-banjo.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fwrath-of-banjo.xml 200 in 5ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/18sundays.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2F18sundays.xml 200 in 6ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/middle-season-let-go.xml
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/phatty-the-grasshopper.xml
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/possible.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fmiddle-season-let-go.xml 200 in 9ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fphatty-the-grasshopper.xml 200 in 9ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fpossible.xml 200 in 8ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/psalm-54.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fpsalm-54.xml 200 in 12ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/they-dont-know.xml
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/think-ep.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fthey-dont-know.xml 200 in 14ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fthink-ep.xml 200 in 13ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/underwater-single.xml
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/unsound-existence.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Funderwater-single.xml 200 in 9ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Funsound-existence.xml 200 in 9ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/wrath-of-banjo.xml
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/18sundays.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fwrath-of-banjo.xml 200 in 5ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2F18sundays.xml 200 in 4ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/middle-season-let-go.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fmiddle-season-let-go.xml 200 in 4ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/phatty-the-grasshopper.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fphatty-the-grasshopper.xml 200 in 7ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/possible.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fpossible.xml 200 in 10ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/psalm-54.xml
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/they-dont-know.xml
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/think-ep.xml
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/underwater-single.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fpsalm-54.xml 200 in 13ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fthey-dont-know.xml 200 in 12ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Fthink-ep.xml 200 in 12ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Funderwater-single.xml 200 in 12ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/unsound-existence.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Funsound-existence.xml 200 in 10ms
- ⚠ Unsupported metadata themeColor is configured in metadata export in /album/[id]. Please move it to viewport export instead.
-Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
- GET /album/your-chance 200 in 28ms
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.sirtjthewrathful.com%2Fwp-content%2Fuploads%2F2023%2F08%2FCityBeach.xml 200 in 4ms
-📦 Cache HIT for: https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/CityBeach.xml
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/unsound-existence.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Funsound-existence.xml 200 in 4ms
-📦 Cache HIT for: https://www.doerfelverse.com/feeds/unsound-existence.xml
- GET /api/fetch-rss?url=https%3A%2F%2Fwww.doerfelverse.com%2Ffeeds%2Funsound-existence.xml 200 in 7ms
- ✓ Compiled in 218ms (655 modules)
- ⚠ Unsupported metadata themeColor is configured in metadata export in /album/[id]. Please move it to viewport export instead.
-Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
- GET /album/your-chance 200 in 79ms
-   Reload env: .env.local
- ✓ Compiled in 67ms (655 modules)
- ⚠ Unsupported metadata themeColor is configured in metadata export in /album/[id]. Please move it to viewport export instead.
-Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
- GET /album/your-chance 200 in 37ms
- ✓ Compiled in 34ms (254 modules)
- ✓ Compiled in 621ms (655 modules)
- ✓ Compiled in 211ms (655 modules)
- ✓ Compiled in 88ms (655 modules)
- ✓ Compiled in 108ms (655 modules)
- ✓ Compiled in 82ms (655 modules)
- ✓ Compiled in 104ms (655 modules)
- ✓ Compiled in 110ms (655 modules)
- ⨯ Error: ENOENT: no such file or directory, open '/Users/chad-mini/Vibe/apps/FUCKIT/.next/routes-manifest.json'
-    at async K (.next/server/app/page.js:1:3749) {
-  errno: -2,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: '/Users/chad-mini/Vibe/apps/FUCKIT/.next/routes-manifest.json',
-  page: '/'
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F32a79df8-ec3e-4a14-bfcb-7a074e1974b9 200 in 2399ms
+🔄 Cache MISS for: https://wavlake.com/feed/music/0bb8c9c7-1c55-4412-a517-572a98318921
+⏳ Rate limited, waiting 2586ms before retry 1
+💾 Cached RSS feed: https://wavlake.com/feed/music/1c7917cc-357c-4eaf-ab54-1a7cda504976
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F1c7917cc-357c-4eaf-ab54-1a7cda504976 200 in 4622ms
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F1c7917cc-357c-4eaf-ab54-1a7cda504976 200 in 1517ms
+🔄 Cache MISS for: https://wavlake.com/feed/music/16e46ed0-b392-4419-a937-a7815f6ca43b
+⏳ Rate limited, waiting 2133ms before retry 1
+🔄 Cache MISS for: https://wavlake.com/feed/music/0bb8c9c7-1c55-4412-a517-572a98318921
+⏳ Rate limited, waiting 1475ms before retry 1
+💾 Cached RSS feed: https://wavlake.com/feed/music/1c7917cc-357c-4eaf-ab54-1a7cda504976
+💾 Cached RSS feed: https://wavlake.com/feed/music/0bb8c9c7-1c55-4412-a517-572a98318921
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F0bb8c9c7-1c55-4412-a517-572a98318921 200 in 1636ms
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F0bb8c9c7-1c55-4412-a517-572a98318921 200 in 1938ms
+🔄 Cache MISS for: https://wavlake.com/feed/music/06376ab5-efca-459c-9801-49ceba5fdab1
+⏳ Rate limited, waiting 2985ms before retry 1
+🔄 Cache MISS for: https://wavlake.com/feed/music/16e46ed0-b392-4419-a937-a7815f6ca43b
+⏳ Rate limited, waiting 1743ms before retry 1
+💾 Cached RSS feed: https://wavlake.com/feed/music/16e46ed0-b392-4419-a937-a7815f6ca43b
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F16e46ed0-b392-4419-a937-a7815f6ca43b 200 in 2277ms
+💾 Cached RSS feed: https://wavlake.com/feed/music/0bb8c9c7-1c55-4412-a517-572a98318921
+💾 Cached RSS feed: https://wavlake.com/feed/music/e1f9dfcb-ee9b-4a6d-aee7-189043917fb5
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fe1f9dfcb-ee9b-4a6d-aee7-189043917fb5 200 in 5426ms
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2Fe1f9dfcb-ee9b-4a6d-aee7-189043917fb5 200 in 3636ms
+💾 Cached RSS feed: https://wavlake.com/feed/music/06376ab5-efca-459c-9801-49ceba5fdab1
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F06376ab5-efca-459c-9801-49ceba5fdab1 200 in 5020ms
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F06376ab5-efca-459c-9801-49ceba5fdab1 200 in 1800ms
+💾 Cached RSS feed: https://wavlake.com/feed/music/e1f9dfcb-ee9b-4a6d-aee7-189043917fb5
+ ✓ Compiled in 248ms (715 modules)
+ GET / 200 in 39ms
+💾 Cached RSS feed: https://wavlake.com/feed/music/06376ab5-efca-459c-9801-49ceba5fdab1
+💾 Cached RSS feed: https://wavlake.com/feed/music/16e46ed0-b392-4419-a937-a7815f6ca43b
+ GET /api/fetch-rss?url=https%3A%2F%2Fwavlake.com%2Ffeed%2Fmusic%2F16e46ed0-b392-4419-a937-a7815f6ca43b 200 in 4938ms
+ ✓ Compiled in 111ms (260 modules)
+ GET / 200 in 19ms
+ ✓ Compiled /api/proxy-audio in 108ms (701 modules)
+🎵 Proxying audio: https://op3.dev/e,pg=32fc15ba-4bf2-5790-bb57-4279c9514a6e/https://d12wklypp119aj.cloudfront.net/track/ae732eab-b915-43e0-a92a-b686fc9651b9.mp3
+✅ Audio proxied successfully: https://op3.dev/e,pg=32fc15ba-4bf2-5790-bb57-4279c9514a6e/https://d12wklypp119aj.cloudfront.net/track/ae732eab-b915-43e0-a92a-b686fc9651b9.mp3 (3297970 bytes)
+ HEAD /api/proxy-audio?url=https%3A//op3.dev/e%2Cpg%3D32fc15ba-4bf2-5790-bb57-4279c9514a6e/https%3A//d12wklypp119aj.cloudfront.net/track/ae732eab-b915-43e0-a92a-b686fc9651b9.mp3 206 in 934ms
+🎵 Proxying audio: https://d12wklypp119aj.cloudfront.net/track/ae732eab-b915-43e0-a92a-b686fc9651b9.mp3
+✅ Audio proxied successfully: https://d12wklypp119aj.cloudfront.net/track/ae732eab-b915-43e0-a92a-b686fc9651b9.mp3 (3297970 bytes)
+ HEAD /api/proxy-audio?url=https%3A//d12wklypp119aj.cloudfront.net/track/ae732eab-b915-43e0-a92a-b686fc9651b9.mp3 206 in 868ms
+ ✓ Compiled in 136ms (715 modules)
+ GET / 200 in 40ms
+ ✓ Compiled in 112ms (715 modules)
+ GET / 200 in 26ms
+ ✓ Compiled in 147ms (715 modules)
+ GET / 200 in 31ms
+ ✓ Compiled in 297ms (715 modules)
+ GET / 200 in 23ms
+🎵 Proxying audio: https://op3.dev/e,pg=32fc15ba-4bf2-5790-bb57-4279c9514a6e/https://d12wklypp119aj.cloudfront.net/track/ae732eab-b915-43e0-a92a-b686fc9651b9.mp3
+✅ Audio streamed successfully: https://op3.dev/e,pg=32fc15ba-4bf2-5790-bb57-4279c9514a6e/https://d12wklypp119aj.cloudfront.net/track/ae732eab-b915-43e0-a92a-b686fc9651b9.mp3 (3297970 bytes)
+ HEAD /api/proxy-audio?url=https%3A//op3.dev/e%2Cpg%3D32fc15ba-4bf2-5790-bb57-4279c9514a6e/https%3A//d12wklypp119aj.cloudfront.net/track/ae732eab-b915-43e0-a92a-b686fc9651b9.mp3 206 in 292ms
+ ✓ Compiled in 78ms (260 modules)
+ GET / 200 in 8ms
+ ✓ Compiled /album/[id] in 246ms (727 modules)
+🎨 Background style applied: {
+  backgroundImage: null,
+  isClient: false,
+  windowWidth: 'undefined',
+  style: {
+    background: 'linear-gradient(to bottom right, rgb(17, 24, 39), rgb(31, 41, 55), rgb(17, 24, 39))'
+  },
+  willUseImage: false
 }
- ○ Compiling /_error ...
- ✓ Compiled /_error in 1190ms (981 modules)
- ⨯ [Error: ENOENT: no such file or directory, open '/Users/chad-mini/Vibe/apps/FUCKIT/.next/prerender-manifest.json'] {
-  errno: -2,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: '/Users/chad-mini/Vibe/apps/FUCKIT/.next/prerender-manifest.json'
-}
- ⨯ [Error: ENOENT: no such file or directory, open '/Users/chad-mini/Vibe/apps/FUCKIT/.next/prerender-manifest.json'] {
-  errno: -2,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: '/Users/chad-mini/Vibe/apps/FUCKIT/.next/prerender-manifest.json',
-  page: '/'
-}
- ⨯ [Error: ENOENT: no such file or directory, open '/Users/chad-mini/Vibe/apps/FUCKIT/.next/prerender-manifest.json'] {
-  errno: -2,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: '/Users/chad-mini/Vibe/apps/FUCKIT/.next/prerender-manifest.json'
-}
- GET / 500 in 2882ms
- ⨯ [Error: ENOENT: no such file or directory, open '/Users/chad-mini/Vibe/apps/FUCKIT/.next/prerender-manifest.json'] {
-  errno: -2,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: '/Users/chad-mini/Vibe/apps/FUCKIT/.next/prerender-manifest.json',
-  page: '/'
-}
- GET / 500 in 1752ms
- ⨯ [Error: ENOENT: no such file or directory, open '/Users/chad-mini/Vibe/apps/FUCKIT/.next/prerender-manifest.json'] {
-  errno: -2,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: '/Users/chad-mini/Vibe/apps/FUCKIT/.next/prerender-manifest.json'
-}
- GET / 500 in 541ms
- ⨯ [Error: ENOENT: no such file or directory, open '/Users/chad-mini/Vibe/apps/FUCKIT/.next/prerender-manifest.json'] {
-  errno: -2,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: '/Users/chad-mini/Vibe/apps/FUCKIT/.next/prerender-manifest.json',
-  page: '/'
-}
- ⨯ [Error: ENOENT: no such file or directory, open '/Users/chad-mini/Vibe/apps/FUCKIT/.next/prerender-manifest.json'] {
-  errno: -2,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: '/Users/chad-mini/Vibe/apps/FUCKIT/.next/prerender-manifest.json',
-  page: '/'
-}
- ⨯ [Error: ENOENT: no such file or directory, open '/Users/chad-mini/Vibe/apps/FUCKIT/.next/prerender-manifest.json'] {
-  errno: -2,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: '/Users/chad-mini/Vibe/apps/FUCKIT/.next/prerender-manifest.json'
-}
- GET / 500 in 369ms
- ⨯ [Error: ENOENT: no such file or directory, open '/Users/chad-mini/Vibe/apps/FUCKIT/.next/prerender-manifest.json'] {
-  errno: -2,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: '/Users/chad-mini/Vibe/apps/FUCKIT/.next/prerender-manifest.json'
-}
- GET / 500 in 373ms
- ⚠ Unsupported metadata themeColor is configured in metadata export in /. Please move it to viewport export instead.
-Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
- ⨯ [TypeError: __webpack_modules__[moduleId] is not a function] {
-  digest: '4211180041'
-}
-[TypeError: __webpack_modules__[moduleId] is not a function]
- ⚠ Unsupported metadata themeColor is configured in metadata export in /. Please move it to viewport export instead.
-Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
- ⨯ [TypeError: __webpack_modules__[moduleId] is not a function]
- ⨯ [TypeError: __webpack_modules__[moduleId] is not a function] {
-  page: '/'
-}
- GET / 500 in 676ms
- ⚠ Unsupported metadata themeColor is configured in metadata export in /. Please move it to viewport export instead.
-Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
- ⨯ [TypeError: __webpack_modules__[moduleId] is not a function] {
-  digest: '4211180041'
-}
-[TypeError: __webpack_modules__[moduleId] is not a function]
- ⚠ Unsupported metadata themeColor is configured in metadata export in /. Please move it to viewport export instead.
-Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
- ⨯ [TypeError: __webpack_modules__[moduleId] is not a function]
- ⨯ [TypeError: __webpack_modules__[moduleId] is not a function] {
-  page: '/'
-}
- GET / 500 in 550ms
- ⚠ Unsupported metadata themeColor is configured in metadata export in /. Please move it to viewport export instead.
-Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
- ⨯ [TypeError: __webpack_modules__[moduleId] is not a function] {
-  digest: '4211180041'
-}
-[TypeError: __webpack_modules__[moduleId] is not a function]
- ⚠ Unsupported metadata themeColor is configured in metadata export in /. Please move it to viewport export instead.
-Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
- ⨯ [TypeError: __webpack_modules__[moduleId] is not a function]
- ⨯ [TypeError: __webpack_modules__[moduleId] is not a function] {
-  page: '/'
-}
- GET / 500 in 586ms
- ✓ Compiled /_not-found in 366ms (986 modules)
- ⚠ Unsupported metadata themeColor is configured in metadata export in /_not-found. Please move it to viewport export instead.
-Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
- HEAD / 404 in 486ms
+ GET /album/fountain-artist-takeover-nate-johnivan 200 in 682ms
+ ✓ Compiled in 169ms (693 modules)
+ ✓ Compiled in 233ms (693 modules)
+ ✓ Compiled in 110ms (271 modules)
+ GET / 200 in 90ms
+ ✓ Compiled in 114ms (271 modules)
+ GET / 200 in 9ms
+ ✓ Compiled in 72ms (271 modules)
+ GET / 200 in 9ms
+ ✓ Compiled in 84ms (271 modules)
+ GET / 200 in 9ms
+ ✓ Compiled in 68ms (271 modules)
+ GET / 200 in 6ms
+ ✓ Compiled in 109ms (271 modules)
+ GET / 200 in 11ms
+ ✓ Compiled in 90ms (693 modules)
+ GET / 200 in 125ms
+ GET / 200 in 7ms
+🔧 Environment check: { isProduction: false, NODE_ENV: 'development' }
+🔧 Feed URLs count: 74
+🔧 First few feed URLs: [
+  'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml',
+  'https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml',
+  'https://www.doerfelverse.com/feeds/intothedoerfelverse.xml'
+]
+ GET / 200 in 76ms
+ ✓ Compiled /_not-found in 106ms (698 modules)
+ HEAD /api/feeds/doerfels-pubfeed 404 in 161ms
+ ✓ Compiled /publisher/[id] in 171ms (712 modules)
+🎯 PublisherDetailClient component loaded with publisherId: the-doerfels
+ HEAD /publisher/the-doerfels 200 in 560ms
+🎯 PublisherDetailClient component loaded with publisherId: nate-johnivan
+ GET /publisher/nate-johnivan 200 in 23ms
+🎯 PublisherDetailClient component loaded with publisherId: joe-martin
+ GET /publisher/joe-martin 200 in 22ms
+🎯 PublisherDetailClient component loaded with publisherId: iroh
+ GET /publisher/iroh 200 in 16ms
+ ✓ Compiled in 176ms (696 modules)
+ ✓ Compiled in 250ms (274 modules)
+ ✓ Compiled in 124ms (274 modules)
+ GET / 200 in 121ms
+ GET / 200 in 9ms
+ ✓ Compiled in 74ms (274 modules)
+ GET / 200 in 6ms
+ ✓ Compiled in 92ms (274 modules)
+ GET / 200 in 10ms
+ ✓ Compiled in 77ms (274 modules)
+ GET / 200 in 10ms
+ ✓ Compiled in 68ms (274 modules)
+ GET / 200 in 8ms
+ ✓ Compiled /publisher/[id] in 79ms (447 modules)
+🎯 PublisherDetailClient component loaded with publisherId: joe-martin
+ GET /publisher/joe-martin 200 in 174ms
+ ✓ Compiled in 130ms (721 modules)
+ GET / 200 in 21ms
+🎯 PublisherDetailClient component loaded with publisherId: nate-johnivan
+ GET /publisher/nate-johnivan 200 in 49ms
+ ✓ Compiled in 132ms (696 modules)
+🔧 Environment check: { isProduction: false, NODE_ENV: 'development' }
+🔧 Feed URLs count: 74
+🔧 First few feed URLs: [
+  'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml',
+  'https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml',
+  'https://www.doerfelverse.com/feeds/intothedoerfelverse.xml'
+]
+ GET / 200 in 62ms
+ GET / 200 in 15ms
+ ✓ Compiled in 455ms (710 modules)
+ ✓ Compiled in 389ms (710 modules)
+ ✓ Compiled in 212ms (710 modules)
 [?25h

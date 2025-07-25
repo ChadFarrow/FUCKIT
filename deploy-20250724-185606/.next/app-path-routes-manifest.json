@@ -1,0 +1,16 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/api/debug-albums/route": "/api/debug-albums",
+  "/api/feeds/doerfels-pubfeed/route": "/api/feeds/doerfels-pubfeed",
+  "/api/fetch-rss/route": "/api/fetch-rss",
+  "/api/debug-artwork/route": "/api/debug-artwork",
+  "/api/proxy-audio/route": "/api/proxy-audio",
+  "/api/test-parser/route": "/api/test-parser",
+  "/api/test-single-feed/route": "/api/test-single-feed",
+  "/about/page": "/about",
+  "/page": "/",
+  "/publisher/[id]/page": "/publisher/[id]",
+  "/offline/page": "/offline",
+  "/test-jdog/page": "/test-jdog",
+  "/album/[id]/page": "/album/[id]"
+}

@@ -1,0 +1,162 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": "1",
+        "title": "Fix Background Art Not Loading",
+        "description": "Resolve issues with album artwork backgrounds not displaying properly",
+        "status": "done",
+        "priority": "high",
+        "dependencies": [],
+        "details": "Investigate and fix the background art loading issues. This may involve CDN configuration, image optimization, or fallback mechanisms for when images fail to load.",
+        "testStrategy": "Test background art loading across different devices, network conditions, and browsers. Verify CDN delivery and fallback mechanisms."
+      },
+      {
+        "id": "2",
+        "title": "Fix Site Not Loading in General Sometimes",
+        "description": "Resolve intermittent site loading issues and improve overall reliability",
+        "status": "done",
+        "priority": "high",
+        "dependencies": [],
+        "details": "Investigate and fix intermittent site loading issues. This may involve API rate limiting, server configuration, or client-side error handling improvements.",
+        "testStrategy": "Monitor site availability, test under various load conditions, and implement proper error handling and retry mechanisms."
+      },
+      {
+        "id": "3",
+        "title": "Fix Missing Albums Sometimes",
+        "description": "Resolve issues where albums occasionally don't appear in the feed",
+        "status": "in_progress",
+        "priority": "high",
+        "dependencies": [],
+        "details": "Investigate and fix issues where albums are sometimes missing from feeds. This may involve RSS parsing improvements, caching issues, or data validation.",
+        "testStrategy": "Test RSS feed parsing reliability, verify album data consistency, and implement better error handling for missing data."
+      },
+      {
+        "id": "4",
+        "title": "Fix Cursor Forgetting API Keys and Credentials",
+        "description": "Resolve issues with Cursor losing API keys and credentials configuration",
+        "status": "done",
+        "priority": "medium",
+        "dependencies": [],
+        "details": "Investigate and fix issues where Cursor forgets API keys and credentials. This may involve MCP configuration, environment variable persistence, or configuration file management.",
+        "testStrategy": "Test MCP configuration persistence, verify environment variable loading, and ensure configuration files are properly maintained."
+      },
+      {
+        "id": "5",
+        "title": "Design Better Layout for Publisher Pages",
+        "description": "Improve the design and layout of publisher detail pages",
+        "status": "pending",
+        "priority": "medium",
+        "dependencies": [],
+        "details": "Redesign and improve the layout of publisher pages for better user experience, readability, and visual appeal.",
+        "testStrategy": "Test publisher page layouts across different screen sizes, verify content readability, and gather user feedback on the new design."
+      },
+      {
+        "id": "6",
+        "title": "Better Mobile UI",
+        "description": "Improve the mobile user interface and user experience",
+        "status": "pending",
+        "priority": "medium",
+        "dependencies": [],
+        "details": "Enhance the mobile user interface with better touch interactions, responsive design improvements, and mobile-specific optimizations.",
+        "testStrategy": "Test mobile UI across different devices and screen sizes, verify touch interactions, and ensure responsive design works properly."
+      },
+      {
+        "id": "7",
+        "title": "Create APK for Android",
+        "description": "Convert the DoerfelVerse PWA into a native Android APK for distribution",
+        "status": "pending",
+        "priority": "medium",
+        "dependencies": [],
+        "details": "Convert the Progressive Web App into a native Android APK for distribution on Google Play Store and direct installation. This involves using tools like Bubblewrap, TWA (Trusted Web Activity), or Capacitor to package the PWA as a native Android application.",
+        "testStrategy": "Test APK installation on various Android devices, verify PWA functionality within the native app, test offline capabilities, and ensure proper app store compliance."
+      },
+      {
+        "id": "8",
+        "title": "Add Support for Podcasting 2.0 Image Tag",
+        "description": "Investigate and implement support for the Podcasting 2.0 image tag specification",
+        "status": "pending",
+        "priority": "medium",
+        "dependencies": [],
+        "details": "Research and implement support for the Podcasting 2.0 image tag specification. This involves updating the RSS parser to handle the new image tag format, implementing proper image fallback mechanisms, and ensuring compatibility with existing podcast feeds. The Podcasting 2.0 image tag provides better image handling and metadata for podcast episodes.",
+        "testStrategy": "Test with feeds that use Podcasting 2.0 image tags, verify proper image parsing and display, test fallback mechanisms for feeds without the new tags, and ensure backward compatibility with existing RSS feeds."
+      },
+      {
+        "id": "9",
+        "title": "Add Passphrase-Protected Feed Addition",
+        "description": "Implement a secure way to add new RSS feeds to the site using a passphrase",
+        "status": "pending",
+        "priority": "medium",
+        "dependencies": [],
+        "details": "Create a secure system for adding new RSS feeds to the DoerfelVerse site that requires a passphrase. This involves creating an admin interface or API endpoint that validates a passphrase before allowing feed addition, implementing proper security measures to prevent unauthorized feed additions, and ensuring the system is user-friendly while maintaining security.",
+        "testStrategy": "Test passphrase validation, verify unauthorized access is blocked, test feed addition workflow, ensure proper error handling, and verify the system works across different user scenarios."
+      },
+      {
+        "id": "10",
+        "title": "Create Blank Customizable Site Template",
+        "description": "Create a blank, customizable version of the site that others can run with their own choice of feeds",
+        "status": "pending",
+        "priority": "medium",
+        "dependencies": [],
+        "details": "Create a blank, customizable template version of the DoerfelVerse site that others can deploy and configure with their own RSS feeds. This involves removing DoerfelVerse-specific content, creating a configuration system for custom feeds, implementing a setup wizard or configuration interface, and providing comprehensive documentation for deployment and customization.",
+        "testStrategy": "Test the blank template deployment, verify feed configuration works properly, test customization options, ensure documentation is clear and complete, and verify the template works across different deployment environments."
+      },
+      {
+        "id": "11",
+        "title": "Add Lightning Network Bets Integration for Album Discovery",
+        "description": "Add support for adding albums to site via Lightning Network bets links",
+        "status": "pending",
+        "priority": "low",
+        "dependencies": [],
+        "details": "Implement Lightning Network integration to allow users to add albums to the site through LN bets links. This involves integrating with Lightning Network APIs, creating a system to parse and validate LN bets links, implementing album metadata extraction from bets, creating a user interface for LN bet-based album addition, and ensuring proper security and validation of Lightning Network transactions.",
+        "testStrategy": "Test LN bets link parsing, verify album metadata extraction, test Lightning Network transaction validation, ensure proper error handling for invalid bets, test the user interface for LN-based album addition, and verify integration works with various Lightning Network implementations."
+      },
+      {
+        "id": "12",
+        "title": "Create Podroll Analysis Page",
+        "description": "Make a page to check podrolls in RSS feeds",
+        "status": "pending",
+        "priority": "medium",
+        "dependencies": [],
+        "details": "Create a dedicated page for analyzing podrolls (podcast recommendations) in RSS feeds. This involves building a podroll parser that can extract and display podcast recommendations from RSS feeds, creating a user interface for inputting RSS feed URLs, implementing podroll validation and analysis features, displaying podroll data in a structured format, and providing tools for podroll management and export.",
+        "testStrategy": "Test podroll parsing with various RSS feeds, verify podroll data extraction accuracy, test the user interface for RSS feed input, ensure proper error handling for invalid feeds, test podroll validation features, and verify the analysis tools work correctly with different podroll formats."
+      },
+      {
+        "id": "13",
+        "title": "Create Publisher Feed Testing Page",
+        "description": "Make a page to test publisher feeds in RSS feeds",
+        "status": "pending",
+        "priority": "medium",
+        "dependencies": [],
+        "details": "Create a dedicated page for testing and validating publisher feeds in RSS feeds. This involves building a publisher feed parser that can extract and display publisher information from RSS feeds, creating a user interface for inputting RSS feed URLs, implementing publisher feed validation and testing features, displaying publisher data in a structured format, and providing tools for publisher feed management and debugging.",
+        "testStrategy": "Test publisher feed parsing with various RSS feeds, verify publisher data extraction accuracy, test the user interface for RSS feed input, ensure proper error handling for invalid feeds, test publisher feed validation features, and verify the testing tools work correctly with different publisher feed formats."
+      },
+      {
+        "id": "14",
+        "title": "Add Support for V4V Music Shows",
+        "description": "Implement Lightning Network integration for Value for Value payments to artists and podcasters",
+        "status": "pending",
+        "priority": "medium",
+        "dependencies": [],
+        "details": "Implement Lightning Network integration for V4V (Value for Value) music shows, allowing listeners to send sats directly to artists and podcasters while listening to their content. This involves integrating with Lightning Network payment processors, creating payment buttons and amount selection interfaces, implementing payment validation and confirmation, supporting popular Lightning wallets, and ensuring secure payment processing. The system should allow creators to set their own payment amounts and provide listeners with an easy way to support content they enjoy.",
+        "testStrategy": "Test Lightning payment integration with various payment processors, verify payment button functionality, test payment amount selection, ensure proper payment validation and confirmation, test integration with popular Lightning wallets, verify security measures, and test the complete V4V workflow from listener to creator."
+      },
+      {
+        "id": "15",
+        "title": "Parse RSS Feeds for Music Show Playlists",
+        "description": "Parse RSS feeds to create playlists for each episode of music shows",
+        "status": "pending",
+        "priority": "medium",
+        "dependencies": [],
+        "details": "Parse RSS feeds for music shows to automatically generate playlists for each episode. This involves analyzing RSS feed content to extract music track information, episode metadata, and timestamps, then creating structured playlists that can be played sequentially. The system should handle various RSS feed formats, extract artist and track information from episode descriptions, parse timestamps for track boundaries, and create exportable playlist formats (M3U, JSON, etc.). This will allow listeners to easily access and play the music featured in each episode.",
+        "testStrategy": "Test RSS parsing with various music show feeds, verify track information extraction accuracy, test playlist generation for different episode formats, ensure proper timestamp parsing, test playlist export functionality, verify playlist playback compatibility, and test the system with feeds that have different music metadata formats."
+      }
+    ],
+    "metadata": {
+      "lastUpdated": "2025-07-24T23:41:00.000Z",
+      "totalTasks": 15,
+      "pendingTasks": 12,
+      "completedTasks": 3
+    }
+  }
+}
