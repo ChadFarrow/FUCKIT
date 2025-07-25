@@ -88,19 +88,19 @@ const parseValueTimeSplitsFromXML = (xmlText: string): ValueTimeSplit[] => {
 };
 
 // Helper function to extract metadata from XML
-const extractMetadataFromXML = (xmlText: string): { title?: string; description?: string; artist?: string } | null => {
+const extractMetadataFromXML = (xmlText: string): { title?: string; description?: string; artist?: string } | undefined => {
   try {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
     
     const parserError = xmlDoc.getElementsByTagName('parsererror')[0];
     if (parserError) {
-      return null;
+      return undefined;
     }
     
     const channels = xmlDoc.getElementsByTagName('channel');
     if (!channels || channels.length === 0) {
-      return null;
+      return undefined;
     }
     const channel = channels[0];
     
@@ -119,7 +119,7 @@ const extractMetadataFromXML = (xmlText: string): { title?: string; description?
     return { title, description, artist };
   } catch (error) {
     console.error('❌ Error extracting metadata from XML:', error);
-    return null;
+    return undefined;
   }
 };
 
