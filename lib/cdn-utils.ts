@@ -58,6 +58,12 @@ export function shouldUseCDN(url: string): boolean {
       return false;
     }
 
+    // TEMPORARY: Disable CDN processing until CORS is fixed
+    // TODO: Remove this when CDN CORS headers are properly configured
+    if (defaultCDNConfig.hostname === 're-podtards.b-cdn.net') {
+      return false;
+    }
+
     // Don't re-process URLs that are already on our CDN
     if (domain === 're-podtards.b-cdn.net') {
       return false;
@@ -183,6 +189,13 @@ export function getAlbumArtworkUrl(originalUrl: string, size: 'thumbnail' | 'med
     medium: { width: 300, height: 300, quality: 85 },
     large: { width: 600, height: 600, quality: 90 },
   };
+
+  // TEMPORARY: Use original URLs until CDN CORS is fixed
+  // TODO: Remove this when CDN CORS headers are properly configured
+  if (originalUrl.includes('re-podtards.b-cdn.net')) {
+    // For now, just return the original URL to avoid CORS blocking
+    return originalUrl;
+  }
 
   return getSmartCDNUrl(originalUrl, {
     ...sizeMap[size],
