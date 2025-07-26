@@ -83,6 +83,14 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   const togglePlay = async () => {
     if (!audioRef.current) return;
     
+    // Check if GlobalAudioPlayer is handling this album - if so, don't control local audio
+    const globalState = getGlobalAudioState();
+    const shouldHide = globalState?.isPlaying && globalState?.currentAlbum === album?.title;
+    if (shouldHide) {
+      console.log('⚠️ Skipping local audio control - GlobalAudioPlayer is handling this album');
+      return;
+    }
+    
     try {
       if (isPlaying) {
         audioRef.current.pause();
@@ -100,6 +108,14 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
 
   const playTrack = async (index: number) => {
     if (!album || !album.tracks[index] || !album.tracks[index].url || !audioRef.current) return;
+    
+    // Check if GlobalAudioPlayer is handling this album - if so, don't start local audio
+    const globalState = getGlobalAudioState();
+    const shouldHide = globalState?.isPlaying && globalState?.currentAlbum === album?.title;
+    if (shouldHide) {
+      console.log('⚠️ Skipping local audio playback - GlobalAudioPlayer is handling this album');
+      return;
+    }
     
     const originalUrl = album.tracks[index].url;
     console.log('🎵 Attempting to play track:', album.tracks[index].title, 'URL:', originalUrl);
@@ -186,18 +202,42 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   };
 
   const playAlbum = async () => {
+    // Check if GlobalAudioPlayer is handling this album - if so, don't start local playback
+    const globalState = getGlobalAudioState();
+    const shouldHide = globalState?.isPlaying && globalState?.currentAlbum === album?.title;
+    if (shouldHide) {
+      console.log('⚠️ Skipping album playback - GlobalAudioPlayer is handling this album');
+      return;
+    }
+    
     if (album && album.tracks.length > 0) {
       await playTrack(0);
     }
   };
 
   const nextTrack = async () => {
+    // Check if GlobalAudioPlayer is handling this album - if so, don't control local audio
+    const globalState = getGlobalAudioState();
+    const shouldHide = globalState?.isPlaying && globalState?.currentAlbum === album?.title;
+    if (shouldHide) {
+      console.log('⚠️ Skipping track navigation - GlobalAudioPlayer is handling this album');
+      return;
+    }
+    
     if (album && currentTrackIndex < album.tracks.length - 1) {
       await playTrack(currentTrackIndex + 1);
     }
   };
 
   const prevTrack = async () => {
+    // Check if GlobalAudioPlayer is handling this album - if so, don't control local audio
+    const globalState = getGlobalAudioState();
+    const shouldHide = globalState?.isPlaying && globalState?.currentAlbum === album?.title;
+    if (shouldHide) {
+      console.log('⚠️ Skipping track navigation - GlobalAudioPlayer is handling this album');
+      return;
+    }
+    
     if (album && currentTrackIndex > 0) {
       await playTrack(currentTrackIndex - 1);
     }
@@ -275,6 +315,22 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
     const shouldHide = globalState?.isPlaying && globalState?.currentAlbum === album?.title;
     setShouldHideLocalPlayer(shouldHide);
     console.log('🎮 Should hide local player:', shouldHide);
+    
+    // IMPORTANT: Do NOT restore audio if GlobalAudioPlayer is already handling this album
+    // This prevents duplicate audio elements playing the same track
+    if (shouldHide) {
+      console.log('⚠️ Skipping album page audio restoration - GlobalAudioPlayer is handling this album');
+      
+      // Still sync the visual state (track index, times) but don't create audio element
+      if (album && globalState.currentAlbum === album.title) {
+        setCurrentTrackIndex(globalState.currentTrackIndex);
+        setCurrentTime(globalState.currentTime);
+        setDuration(globalState.duration);
+        setVolume(globalState.volume);
+        setIsPlaying(globalState.isPlaying);
+      }
+      return;
+    }
     
     if (globalState.isPlaying && globalState.currentAlbum && globalState.trackUrl) {
       // Restore audio state if it matches this album (compare by album.title)
