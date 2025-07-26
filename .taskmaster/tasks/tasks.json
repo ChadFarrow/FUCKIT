@@ -128,7 +128,7 @@
         "description": "Relocate the top banner content to an about section and add PayPal donation links for Doerfels and PodcastIndex",
         "details": "Move the current banner content from the top of the page to a dedicated about section. Add PayPal donation links for both Doerfels and PodcastIndex to support the creators and services used by the application. This will improve the site layout and provide users with ways to support the content creators.",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "medium",
         "subtasks": []
@@ -161,7 +161,7 @@
       "description": "Main task list for FUCKIT podcast/music streaming application",
       "created": "2025-01-27T00:00:00.000Z",
       "lastModified": "2025-01-27T00:00:00.000Z",
-      "updated": "2025-07-26T13:55:03.077Z"
+      "updated": "2025-07-26T14:09:21.585Z"
     }
   }
 }

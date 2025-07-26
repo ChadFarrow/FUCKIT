@@ -1071,13 +1071,28 @@ export default function HomePage() {
               <h1 className="text-4xl font-bold">Into the ValueVerse</h1>
             </div>
             
-            {/* Description */}
-            <p className="text-gray-400 text-lg mb-4 mt-6">
-              This is a demo app I built for the "StableKraft" project to see what we could do with RSS feeds and music. All data here comes from RSS feeds on{' '}
-              <a href="https://podcastindex.org/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
-                podcastindex.org
-              </a>. This is also a demo of a site for The Doerfels that I added other music I like also and some stuff to help test. -ChadF
-            </p>
+            {/* About Link */}
+            <div className="flex items-center gap-4 mt-6 mb-4">
+              <Link 
+                href="/about" 
+                className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                About this site
+              </Link>
+              <span className="text-gray-600">•</span>
+              <Link 
+                href="/about" 
+                className="inline-flex items-center gap-2 text-green-400 hover:text-green-300 transition-colors"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1.93.66 1.64 2.08 1.64 1.96 0 2.37-.79 2.37-1.54 0-1.06-.92-1.38-2.07-1.75l-1.46-.45c-1.54-.47-2.78-1.34-2.78-3.06 0-1.91 1.51-3.04 3.13-3.39V4.23h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39h-1.96c-.05-1.02-.59-1.66-1.77-1.66-1.45 0-2.23.69-2.23 1.49 0 .87.66 1.24 1.84 1.6l1.57.48c1.83.56 3.01 1.41 3.01 3.14.01 2.19-1.66 3.13-3.27 3.47z"/>
+                </svg>
+                Support the creators
+              </Link>
+            </div>
             
             {/* Loading/Error Status */}
             {isClient && (
@@ -1107,6 +1122,20 @@ export default function HomePage() {
         }`}>
           <div className="p-6 pt-20">
             <h2 className="text-xl font-bold mb-6">Menu</h2>
+            
+            {/* Navigation Links */}
+            <div className="mb-8 space-y-2">
+              <Link 
+                href="/about" 
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800/50 transition-colors"
+                onClick={() => setIsSidebarOpen(false)}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>About & Support</span>
+              </Link>
+            </div>
             
             {/* Add RSS Feed Component */}
             <div className="mb-8">
