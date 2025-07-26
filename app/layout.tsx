@@ -4,7 +4,7 @@ import './globals.css'
 import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import { ToastContainer } from '@/components/Toast'
-import GlobalAudioPlayer from '@/components/GlobalAudioPlayer'
+
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -67,7 +67,7 @@ export default function RootLayout({
           <div className="min-h-screen bg-gray-50">
             {children}
           </div>
-          <GlobalAudioPlayer />
+
           <ToastContainer />
         </ErrorBoundary>
         <ServiceWorkerRegistration />
