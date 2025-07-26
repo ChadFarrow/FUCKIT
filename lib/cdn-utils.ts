@@ -11,8 +11,8 @@ export interface CDNConfig {
 
 // Default CDN configuration
 const defaultCDNConfig: CDNConfig = {
-  hostname: process.env.BUNNY_CDN_HOSTNAME || 'your-zone.b-cdn.net',
-  zone: process.env.BUNNY_CDN_ZONE || 'your-zone',
+  hostname: process.env.BUNNY_CDN_HOSTNAME || 're-podtards.b-cdn.net',
+  zone: process.env.BUNNY_CDN_ZONE || 're-podtards',
   apiKey: process.env.BUNNY_CDN_API_KEY,
 };
 
@@ -24,8 +24,7 @@ const CDN_THRESHOLDS = {
   EXTERNAL_DOMAINS_ONLY: true,
   // Domains that are already fast (don't need CDN)
   FAST_DOMAINS: [
-    're-podtards-cdn-new.b-cdn.net', // Already on our CDN
-    're-podtards-cdn.b-cdn.net', // Legacy CDN
+    're-podtards.b-cdn.net', // Our primary CDN
     'localhost',
     '127.0.0.1',
     'vercel.app',
@@ -56,6 +55,11 @@ export function shouldUseCDN(url: string): boolean {
 
     // Don't use CDN if not configured
     if (defaultCDNConfig.hostname === 'your-zone.b-cdn.net') {
+      return false;
+    }
+
+    // Don't re-process URLs that are already on our CDN
+    if (domain === 're-podtards.b-cdn.net') {
       return false;
     }
 
@@ -110,6 +114,11 @@ export function getSmartCDNUrl(
 
   // If no CDN hostname is configured, return original URL
   if (defaultCDNConfig.hostname === 'your-zone.b-cdn.net') {
+    return originalUrl;
+  }
+
+  // If URL is already on our CDN, return as-is unless forceCDN is true
+  if (!options.forceCDN && originalUrl.includes('re-podtards.b-cdn.net')) {
     return originalUrl;
   }
 

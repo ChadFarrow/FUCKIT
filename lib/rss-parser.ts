@@ -239,21 +239,19 @@ export class RSSParser {
       // Extract tracks from items first (needed for cover art fallback)
       const items = xmlDoc.getElementsByTagName('item');
       
-      // Extract cover art with enhanced fallback logic
+      // Extract cover art with prioritized methods (most reliable first)
       let coverArt: string | null = null;
       
-      // Method 1: Try channel-level itunes:image
+      // Method 1: Channel-level itunes:image (most reliable)
       let imageElement: Element | null = channel.getElementsByTagName('itunes:image')[0] || null;
       if (!imageElement) {
-        // Fallback to querySelector with escaped namespace
         imageElement = channel.querySelector('itunes\\:image');
       }
-      
       if (imageElement) {
         coverArt = imageElement.getAttribute('href') || null;
       }
       
-      // Method 2: Try channel-level image url
+      // Method 2: Channel-level image url (RSS standard)
       if (!coverArt) {
         const imageUrl = channel.querySelector('image url');
         if (imageUrl) {
@@ -261,65 +259,26 @@ export class RSSParser {
         }
       }
       
-      // Method 3: Try channel-level image attributes
-      if (!coverArt) {
-        const altImageElement = channel.querySelector('image');
-        if (altImageElement) {
-          const altUrl = altImageElement.getAttribute('url') || altImageElement.getAttribute('href');
-          if (altUrl) {
-            coverArt = altUrl;
-          }
-        }
-      }
-      
-      // Method 4: Try to get artwork from first item if channel-level fails
-      if (!coverArt) {
+      // Method 3: First item itunes:image (common fallback)
+      if (!coverArt && items.length > 0) {
         const firstItem = items[0];
-        if (firstItem) {
-          // Try item-level itunes:image
-          const itemImageElement = firstItem.getElementsByTagName('itunes:image')[0];
-          if (itemImageElement) {
-            coverArt = itemImageElement.getAttribute('href') || null;
-          }
-          
-          // Try item-level media:content
-          if (!coverArt) {
-            const mediaContent = firstItem.getElementsByTagName('media:content')[0];
-            if (mediaContent && mediaContent.getAttribute('type')?.startsWith('image/')) {
-              coverArt = mediaContent.getAttribute('url') || null;
-            }
-          }
-          
-          // Try item-level enclosure
-          if (!coverArt) {
-            const enclosure = firstItem.getElementsByTagName('enclosure')[0];
-            if (enclosure && enclosure.getAttribute('type')?.startsWith('image/')) {
-              coverArt = enclosure.getAttribute('url') || null;
-            }
-          }
+        const itemImageElement = firstItem.getElementsByTagName('itunes:image')[0];
+        if (itemImageElement) {
+          coverArt = itemImageElement.getAttribute('href') || null;
         }
       }
       
-      // Method 5: Try to extract from description if it contains an image
-      if (!coverArt) {
-        const description = channel.getElementsByTagName('description')[0]?.textContent || '';
-        const imgMatch = description.match(/<img[^>]+src=["']([^"']+)["'][^>]*>/i);
-        if (imgMatch) {
-          coverArt = imgMatch[1];
-        }
-      }
-      
-      // Clean up the cover art URL (but preserve query parameters that might be needed)
+      // Validate and clean cover art URL
       if (coverArt) {
         try {
           const url = new URL(coverArt);
-          // Only clean up obviously problematic URLs, keep query parameters
+          // Security check for potentially unsafe URLs
           if (url.href.includes('javascript:') || url.href.includes('data:')) {
             console.warn('Potentially unsafe cover art URL detected:', coverArt);
             coverArt = null;
           }
         } catch (error) {
-          // If URL parsing fails, keep the original unless it's obviously broken
+          // If URL parsing fails, only keep valid HTTP(S) URLs
           if (coverArt && !coverArt.startsWith('http')) {
             verboseLog('Invalid cover art URL format:', coverArt);
             coverArt = null;
