@@ -74,12 +74,14 @@ export default function AlbumCard({ album, isPlaying, onPlay, className = '' }: 
     <div 
       ref={cardRef}
       className={`group relative bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 overflow-hidden transition-all duration-300 hover:bg-white/10 hover:border-white/20 hover:scale-[1.02] active:scale-[0.98] ${className}`}
-      onTouchStart={onTouchStart}
-      onTouchMove={onTouchMove}
-      onTouchEnd={onTouchEnd}
     >
       {/* Album Artwork */}
-      <div className="relative aspect-square overflow-hidden">
+      <div 
+        className="relative aspect-square overflow-hidden"
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
         <CDNImage
           src={artworkUrl}
           alt={`${album.title} by ${album.artist}`}
@@ -132,7 +134,11 @@ export default function AlbumCard({ album, isPlaying, onPlay, className = '' }: 
 
       {/* Album Info */}
       <div className="p-3">
-        <Link href={albumUrl} className="block group">
+        <Link 
+          href={albumUrl} 
+          className="block group"
+          onClick={() => console.log('🔗 Navigating to album:', albumUrl)}
+        >
           <h3 className="font-semibold text-white text-sm leading-tight line-clamp-2 group-hover:text-blue-300 transition-colors duration-200">
             {album.title}
           </h3>
