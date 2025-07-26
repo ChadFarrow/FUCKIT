@@ -638,16 +638,24 @@ export default function HomePage() {
             const batchAlbums = await Promise.race([batchPromise, batchTimeout]) as RSSAlbum[];
             
             if (batchAlbums && batchAlbums.length > 0) {
-              // Deduplicate albums before adding to prevent duplicates
-              const existingKeys = new Set(albumsData.map(album => `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`));
-              const newAlbums = batchAlbums.filter(album => {
-                const key = `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`;
-                return !existingKeys.has(key);
+              // Use React state-based deduplication to prevent sync issues
+              setAlbums(prev => {
+                const existingKeys = new Set(prev.map(album => `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`));
+                const newAlbums = batchAlbums.filter(album => {
+                  const key = `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`;
+                  return !existingKeys.has(key);
+                });
+                
+                // Debug: Log albums without cover art
+                const albumsWithoutArt = newAlbums.filter(album => !album.coverArt);
+                if (albumsWithoutArt.length > 0 && isDev) {
+                  console.log(`⚠️ ${albumsWithoutArt.length} albums missing cover art:`, albumsWithoutArt.map(a => a.title));
+                }
+                
+                return [...prev, ...newAlbums];
               });
               
-              albumsData = [...albumsData, ...newAlbums];
-              // Use incremental update instead of replacing entire array
-              setAlbums(prev => [...prev, ...newAlbums]);
+              albumsData = [...albumsData, ...batchAlbums]; // Keep local copy in sync
               
               // Update progress (only show for core feeds to avoid confusing users)
               if (loadTier === 'core') {

@@ -309,15 +309,21 @@ export class RSSParser {
         }
       }
       
-      // Clean up the cover art URL
+      // Clean up the cover art URL (but preserve query parameters that might be needed)
       if (coverArt) {
-        // Remove any query parameters that might cause issues
         try {
           const url = new URL(coverArt);
-          coverArt = `${url.protocol}//${url.host}${url.pathname}`;
+          // Only clean up obviously problematic URLs, keep query parameters
+          if (url.href.includes('javascript:') || url.href.includes('data:')) {
+            console.warn('Potentially unsafe cover art URL detected:', coverArt);
+            coverArt = null;
+          }
         } catch (error) {
-          // If URL parsing fails, keep the original
-          console.warn('Invalid cover art URL:', coverArt);
+          // If URL parsing fails, keep the original unless it's obviously broken
+          if (!coverArt.startsWith('http')) {
+            verboseLog('Invalid cover art URL format:', coverArt);
+            coverArt = null;
+          }
         }
       }
       
