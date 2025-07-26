@@ -59,9 +59,7 @@ export function shouldUseCDN(url: string): boolean {
       return false;
     }
 
-    // TEMPORARY: Testing new CDN hostname - disable until images are confirmed to exist
-    // TODO: Remove this when images are confirmed on re-podtards-cdn-new.b-cdn.net
-    return false;
+    // CDN is now enabled - images are confirmed to exist on re-podtards-cdn-new.b-cdn.net
 
     // Don't re-process URLs that are already on our CDN
     if (domain === 're-podtards-cdn-new.b-cdn.net' || domain === 're-podtards.b-cdn.net') {

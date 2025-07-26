@@ -781,7 +781,7 @@ export default function HomePage() {
   };
 
   const playAlbum = async (album: RSSAlbum, e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
+    // Only prevent default/propagation for the play button, not the entire card
     e.stopPropagation();
     
     // Find the first playable track
