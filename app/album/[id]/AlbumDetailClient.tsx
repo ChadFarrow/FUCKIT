@@ -32,6 +32,9 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   // Background state
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
+  
+  // Global audio player state
+  const [shouldHideLocalPlayer, setShouldHideLocalPlayer] = useState(false);
 
   // Update Media Session API for iOS lock screen controls
   const updateMediaSession = (track: any) => {
@@ -242,6 +245,19 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
     setIsClient(true);
   }, []);
 
+  // Listen for changes to global audio state
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const globalState = getGlobalAudioState();
+      const shouldHide = globalState?.isPlaying && globalState?.currentAlbum === album?.title;
+      setShouldHideLocalPlayer(shouldHide);
+      console.log('🔄 Global state changed, should hide local player:', shouldHide);
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [album?.title]);
+
   // Initialize audio state from localStorage
   useEffect(() => {
     const globalState = getGlobalAudioState();
@@ -253,6 +269,11 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
       albumTitle: album?.title,
       willRestore: globalState?.isPlaying && globalState?.currentAlbum && globalState?.trackUrl && album && globalState.currentAlbum === album.title
     });
+    
+    // Check if we should hide local player (global player is active for this album)
+    const shouldHide = globalState?.isPlaying && globalState?.currentAlbum === album?.title;
+    setShouldHideLocalPlayer(shouldHide);
+    console.log('🎮 Should hide local player:', shouldHide);
     
     if (globalState.isPlaying && globalState.currentAlbum && globalState.trackUrl) {
       // Restore audio state if it matches this album (compare by album.title)
@@ -1076,8 +1097,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
         )}
       </div>
 
-      {/* Fixed Audio Player Bar - Only show if no global audio state matches this album */}
-      {album.tracks.length > 0 && !(getGlobalAudioState().isPlaying && getGlobalAudioState().currentAlbum === album.title) && (
+      {/* Fixed Audio Player Bar - Only show if global player isn't active for this album */}
+      {album.tracks.length > 0 && !shouldHideLocalPlayer && (
         <div className="fixed bottom-0 left-0 right-0 backdrop-blur-md bg-gradient-to-t from-black/60 via-black/40 to-transparent border-t border-white/10 p-4 pb-safe shadow-2xl">
           <div className="container mx-auto flex flex-col md:flex-row items-center gap-4 bg-white/5 rounded-xl p-4 backdrop-blur-sm border border-white/10">
             {/* Mobile Layout: Track Info + Controls Row */}
