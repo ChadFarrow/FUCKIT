@@ -99,6 +99,61 @@
         "details": "Add unit tests, integration tests, and end-to-end tests to ensure application reliability and prevent regressions.",
         "testStrategy": "Implement test coverage reporting and ensure all critical functionality is properly tested.",
         "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "APK RSS Feed Download Feature",
+        "description": "Create an Android TWA feature that allows users to enter RSS feed URLs and download complete album information for offline access",
+        "details": "Implement a comprehensive RSS feed download system in the Android TWA app:\n\n1. **User Interface Components:**\n   - RSS feed URL input field with validation\n   - Download progress indicators\n   - Album preview before download\n   - Download history and management\n\n2. **RSS Processing:**\n   - Parse RSS feeds using existing parser\n   - Extract album metadata (title, artist, description)\n   - Download and cache cover artwork\n   - Store track information and audio URLs\n\n3. **Storage & Offline Access:**\n   - Local storage for downloaded albums\n   - IndexedDB or SQLite for metadata\n   - File system access for audio files\n   - Offline album browsing and playback\n\n4. **Integration Points:**\n   - Use existing RSS parser from lib/rss-parser.ts\n   - Leverage CDN utilities for image handling\n   - Integrate with audio state management\n   - Connect to existing album display components\n\n5. **Error Handling:**\n   - Invalid RSS feed URLs\n   - Network connectivity issues\n   - Storage space limitations\n   - Corrupted or incomplete downloads\n\n6. **Performance Considerations:**\n   - Background download processing\n   - Progress tracking and cancellation\n   - Efficient storage management\n   - Battery optimization for mobile devices",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 11,
+        "title": "Improve Website Flow and UI",
+        "description": "Enhance the overall user experience by improving website navigation, layout, and visual design",
+        "details": "Focus on improving user flow, navigation patterns, visual hierarchy, and overall UI/UX design to create a more intuitive and engaging experience for users browsing and discovering music content.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 12,
+        "title": "Move Banner to About Section and Add PayPal Links",
+        "description": "Relocate the top banner content to an about section and add PayPal donation links for Doerfels and PodcastIndex",
+        "details": "Move the current banner content from the top of the page to a dedicated about section. Add PayPal donation links for both Doerfels and PodcastIndex to support the creators and services used by the application. This will improve the site layout and provide users with ways to support the content creators.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 13,
+        "title": "Remove Green Downloading Updates Button",
+        "description": "Remove the green downloading updates button from the user interface",
+        "details": "Remove the green downloading updates button that appears in the UI. This will clean up the interface and remove potentially confusing or unnecessary UI elements related to update downloads.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "low",
+        "subtasks": []
+      },
+      {
+        "id": 14,
+        "title": "Fix Slow Album Loading Performance",
+        "description": "Resolve performance issues causing albums to load slowly on the site",
+        "details": "Investigate and fix the slow loading performance for albums. This may involve optimizing image loading, improving CDN delivery, reducing bundle sizes, implementing better caching strategies, or optimizing the data fetching and rendering pipeline to improve overall site performance when loading album content.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
       }
     ],
     "metadata": {
@@ -106,7 +161,7 @@
       "description": "Main task list for FUCKIT podcast/music streaming application",
       "created": "2025-01-27T00:00:00.000Z",
       "lastModified": "2025-01-27T00:00:00.000Z",
-      "updated": "2025-07-26T02:40:17.433Z"
+      "updated": "2025-07-26T13:55:03.077Z"
     }
   }
 }

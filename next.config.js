@@ -44,6 +44,11 @@ const withPWA = require('next-pwa')({
 const nextConfig = {
   // Domain configuration for re.podtards.com deployment
   basePath: '',
+  
+  // Revert static export - doesn't work with API routes
+  // output: 'export',
+  // trailingSlash: true,
+  // distDir: 'out',
 
   
   // Image optimization configuration

@@ -43,15 +43,6 @@
                 android:resource="@color/colorPrimary" />
         </activity>
 
-        <provider
-            android:name="com.google.androidbrowserhelper.trusted.WebViewAssetLoader"
-            android:authorities="${applicationId}.assetloader"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="assetStatements"
-                android:resource="@string/asset_statements" />
-        </provider>
 
     </application>
 

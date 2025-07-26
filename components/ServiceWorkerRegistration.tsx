@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 
 export default function ServiceWorkerRegistration() {
-  const [updateAvailable, setUpdateAvailable] = useState(false);
   const [updateReady, setUpdateReady] = useState(false);
   const [newVersion, setNewVersion] = useState('');
 
@@ -62,7 +61,6 @@ export default function ServiceWorkerRegistration() {
       // Check for waiting service worker on load
       navigator.serviceWorker.ready.then((registration) => {
         if (registration.waiting) {
-          setUpdateAvailable(true);
           console.log('🔄 Update available on page load');
         }
 
@@ -70,7 +68,6 @@ export default function ServiceWorkerRegistration() {
         registration.addEventListener('updatefound', () => {
           const newWorker = registration.installing;
           if (newWorker) {
-            setUpdateAvailable(true);
             console.log('🔄 New service worker found');
             
             newWorker.addEventListener('statechange', () => {
@@ -79,7 +76,6 @@ export default function ServiceWorkerRegistration() {
                   // New content is available
                   console.log('🆕 New content available - update ready');
                   setUpdateReady(true);
-                  setUpdateAvailable(false);
                 } else {
                   // First time installation
                   console.log('🎉 App installed for offline use');
@@ -107,7 +103,6 @@ export default function ServiceWorkerRegistration() {
 
   const dismissUpdate = () => {
     setUpdateReady(false);
-    setUpdateAvailable(false);
   };
 
   // Show update notification
@@ -153,21 +148,7 @@ export default function ServiceWorkerRegistration() {
     );
   }
 
-  // Show update available notification
-  if (updateAvailable) {
-    return (
-      <div className="fixed top-4 right-4 z-50 max-w-sm bg-green-600 text-white rounded-lg shadow-lg p-4 transform transition-all duration-300 ease-in-out">
-        <div className="flex items-center">
-          <div className="flex-shrink-0">
-            <div className="w-2 h-2 bg-green-200 rounded-full animate-pulse"></div>
-          </div>
-          <div className="ml-3 flex-1">
-            <p className="text-sm">Downloading update...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Update available notification removed - task 13
 
   return null; // This component doesn't render anything when no updates
 }
