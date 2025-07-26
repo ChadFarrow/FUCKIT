@@ -266,14 +266,25 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
         // Restore audio element state
         if (audioRef.current) {
           audioRef.current.src = globalState.trackUrl;
-          audioRef.current.currentTime = globalState.currentTime;
           audioRef.current.volume = globalState.volume;
           setIsPlaying(globalState.isPlaying);
           
-          // Resume playback if it was playing
-          if (globalState.isPlaying) {
-            audioRef.current.play().catch(console.error);
-          }
+          // Wait for metadata to load before setting time and resuming
+          const handleLoadedMetadata = () => {
+            if (audioRef.current) {
+              audioRef.current.currentTime = globalState.currentTime;
+              console.log('🔄 Set audio time to:', globalState.currentTime);
+              
+              // Resume playback if it was playing
+              if (globalState.isPlaying) {
+                audioRef.current.play().catch(console.error);
+              }
+            }
+            audioRef.current?.removeEventListener('loadedmetadata', handleLoadedMetadata);
+          };
+          
+          audioRef.current.addEventListener('loadedmetadata', handleLoadedMetadata);
+          audioRef.current.load(); // Force load to trigger metadata event
         }
       }
     }
@@ -1065,8 +1076,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
         )}
       </div>
 
-      {/* Fixed Audio Player Bar */}
-      {album.tracks.length > 0 && (
+      {/* Fixed Audio Player Bar - Only show if no global audio state matches this album */}
+      {album.tracks.length > 0 && !(getGlobalAudioState().isPlaying && getGlobalAudioState().currentAlbum === album.title) && (
         <div className="fixed bottom-0 left-0 right-0 backdrop-blur-md bg-gradient-to-t from-black/60 via-black/40 to-transparent border-t border-white/10 p-4 pb-safe shadow-2xl">
           <div className="container mx-auto flex flex-col md:flex-row items-center gap-4 bg-white/5 rounded-xl p-4 backdrop-blur-sm border border-white/10">
             {/* Mobile Layout: Track Info + Controls Row */}
