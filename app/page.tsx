@@ -102,8 +102,7 @@ const extendedFeedUrlMappings = [
   ['https://wavlake.com/feed/music/997060e3-9dc1-4cd8-b3c1-3ae06d54bb03', 'https://re-podtards-cdn-new.b-cdn.net/feeds/wavlake-997060e3-9dc1-4cd8-b3c1-3ae06d54bb03.xml', 'album'],
   ['https://wavlake.com/feed/music/b54b9a19-b6ed-46c1-806c-7e82f7550edc', 'https://re-podtards-cdn-new.b-cdn.net/feeds/wavlake-b54b9a19-b6ed-46c1-806c-7e82f7550edc.xml', 'album'],
   
-  // Joe Martin (Wavlake) - Album and Publisher feeds
-  ['https://wavlake.com/feed/music/95ea253a-4058-402c-8503-204f6d3f1494', 'https://re-podtards-cdn-new.b-cdn.net/feeds/wavlake-95ea253a-4058-402c-8503-204f6d3f1494.xml', 'album'],
+  // Joe Martin (Wavlake) - Publisher feed only (album feed is broken/404)
   ['https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738', 'https://re-podtards-cdn-new.b-cdn.net/feeds/wavlake-artist-18bcbf10-6701-4ffb-b255-bc057390d738.xml', 'publisher'],
   
   // IROH (Wavlake) - Album and Publisher feeds

@@ -309,10 +309,8 @@ export class RSSParser {
         }
       }
       
-      // Debug: Log cover art extraction results
-      if (coverArt) {
-        console.log(`🎨 Found cover art for "${title}": ${coverArt}`);
-      } else {
+      // Only warn about missing cover art in development
+      if (!coverArt && process.env.NODE_ENV === 'development') {
         console.warn(`⚠️ No cover art found for "${title}"`);
       }
       
@@ -346,7 +344,10 @@ export class RSSParser {
       // Extract tracks from items
       const tracks: RSSTrack[] = [];
       
-      console.log(`🎵 Found ${items.length} items in RSS feed`);
+      // Less verbose: only log for large feeds or unusual cases
+      if (items.length > 10 || items.length === 0) {
+        console.log(`🎵 Found ${items.length} items in RSS feed`);
+      }
       
       for (let i = 0; i < items.length; i++) {
         const item = items[i];
@@ -465,7 +466,10 @@ export class RSSParser {
           keywords: trackKeywords.length > 0 ? trackKeywords : undefined
         });
         
-        console.log(`✅ Added track: "${trackTitle}" (${duration}) - URL: ${url ? 'Found' : 'Missing'}`);
+        // Reduced verbosity - only log missing URLs as warnings
+        if (!url) {
+          console.warn(`⚠️ Track missing URL: "${trackTitle}" (${duration})`);
+        }
       }
       
       // Extract release date
@@ -600,7 +604,10 @@ export class RSSParser {
   }
   
   static async parseMultipleFeeds(feedUrls: string[]): Promise<RSSAlbum[]> {
-    console.log(`🔄 Parsing ${feedUrls.length} RSS feeds...`);
+    // Only log for large batches to reduce noise
+    if (feedUrls.length > 5) {
+      console.log(`🔄 Parsing ${feedUrls.length} RSS feeds...`);
+    }
     
     // Process feeds in larger batches for better performance
     const batchSize = 20; // Increased from 10
@@ -608,7 +615,10 @@ export class RSSParser {
     
     for (let i = 0; i < feedUrls.length; i += batchSize) {
       const batch = feedUrls.slice(i, i + batchSize);
-      console.log(`📦 Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(feedUrls.length / batchSize)} (${batch.length} feeds)`);
+      // Only log batches for large operations
+      if (feedUrls.length > 10) {
+        console.log(`📦 Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(feedUrls.length / batchSize)} (${batch.length} feeds)`);
+      }
       
       const promises = batch.map(async (url) => {
         try {
@@ -646,18 +656,19 @@ export class RSSParser {
       
       const failed = batchResults.filter(result => result.status === 'rejected' || result.value === null);
       
-      if (failed.length > 0) {
+      // Only log failures for large batches to reduce noise
+      if (failed.length > 0 && feedUrls.length > 10) {
         console.warn(`⚠️ Failed to parse ${failed.length} feeds in batch ${Math.floor(i / batchSize) + 1}`);
         // Only log first few failures to avoid console spam
-        failed.slice(0, 3).forEach((result, index) => {
+        failed.slice(0, 2).forEach((result, index) => {
           if (result.status === 'rejected') {
             console.error(`❌ Failed to parse feed ${batch[index]}: ${result.reason}`);
           } else if (result.status === 'fulfilled' && result.value === null) {
             console.error(`❌ Feed ${batch[index]} returned null`);
           }
         });
-        if (failed.length > 3) {
-          console.warn(`... and ${failed.length - 3} more failures`);
+        if (failed.length > 2) {
+          console.warn(`... and ${failed.length - 2} more failures`);
         }
       }
       
@@ -669,7 +680,10 @@ export class RSSParser {
       }
     }
     
-    console.log(`✅ Successfully parsed ${results.length} albums from ${feedUrls.length} feeds`);
+    // Only log summary for large operations
+    if (feedUrls.length > 5) {
+      console.log(`✅ Successfully parsed ${results.length} albums from ${feedUrls.length} feeds`);
+    }
     return results;
   }
 
