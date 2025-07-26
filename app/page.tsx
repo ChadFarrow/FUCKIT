@@ -22,14 +22,21 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 const logger = createErrorLogger('MainPage');
 
-// Separate album feeds from publisher feeds: [originalUrl, cdnUrl, type]
-const feedUrlMappings = [
-  // Core Doerfels feeds - verified working (Albums)
+// Performance optimization: Separate feeds into priority tiers for lazy loading
+// PRIORITY 1: Core feeds loaded immediately (fast page load)
+const coreFeedUrlMappings = [
+  // Core Doerfels feeds - verified working (Albums) - Load first for immediate content
   ['https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml', 'https://re-podtards-cdn-new.b-cdn.net/feeds/music-from-the-doerfelverse.xml', 'album'],
   ['https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml', 'https://re-podtards-cdn-new.b-cdn.net/feeds/bloodshot-lies-album.xml', 'album'],
   ['https://www.doerfelverse.com/feeds/intothedoerfelverse.xml', 'https://re-podtards-cdn-new.b-cdn.net/feeds/intothedoerfelverse.xml', 'album'],
   ['https://www.doerfelverse.com/feeds/wrath-of-banjo.xml', 'https://re-podtards-cdn-new.b-cdn.net/feeds/wrath-of-banjo.xml', 'album'],
   ['https://www.doerfelverse.com/feeds/ben-doerfel.xml', 'https://re-podtards-cdn-new.b-cdn.net/feeds/ben-doerfel.xml', 'album'],
+  // Popular external artists
+  ['https://ableandthewolf.com/static/media/feed.xml', 'https://re-podtards-cdn-new.b-cdn.net/feeds/ableandthewolf-feed.xml', 'album'],
+];
+
+// PRIORITY 2: Extended Doerfels collection (loaded after core)
+const extendedFeedUrlMappings = [
   
   // Additional Doerfels albums and projects - all verified working (Albums)
   ['https://www.doerfelverse.com/feeds/18sundays.xml', 'https://re-podtards-cdn-new.b-cdn.net/feeds/18sundays.xml', 'album'],
@@ -123,6 +130,15 @@ const feedUrlMappings = [
   ['https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/lofi.xml', 'https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/lofi.xml', 'album'],
 ];
 
+// PRIORITY 3: All remaining feeds (loaded last)
+const lowPriorityFeedUrlMappings = [
+  // Additional Wavlake Publisher feeds
+  ['https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4', 'https://re-podtards-cdn-new.b-cdn.net/feeds/wavlake-artist-aa909244-7555-4b52-ad88-7233860c6fb4.xml', 'publisher'],
+];
+
+// Combine all feed tiers for backwards compatibility
+const feedUrlMappings = [...coreFeedUrlMappings, ...extendedFeedUrlMappings, ...lowPriorityFeedUrlMappings];
+
 // Separate album feeds from publisher feeds
 const albumFeeds = feedUrlMappings.filter(([, , type]) => type === 'album').map(([originalUrl, cdnUrl]) => 
   isProduction ? cdnUrl : originalUrl
@@ -132,13 +148,31 @@ const publisherFeeds = feedUrlMappings.filter(([, , type]) => type === 'publishe
   isProduction ? cdnUrl : originalUrl
 );
 
-// For backwards compatibility, keep feedUrls as album feeds only
-const feedUrls = albumFeeds;
+// Performance optimization: Create tiered feed arrays for lazy loading
+const coreFeeds = coreFeedUrlMappings.filter(([, , type]) => type === 'album').map(([originalUrl, cdnUrl]) => 
+  isProduction ? cdnUrl : originalUrl
+);
 
-// Debug logging
+const extendedFeeds = extendedFeedUrlMappings.filter(([, , type]) => type === 'album').map(([originalUrl, cdnUrl]) => 
+  isProduction ? cdnUrl : originalUrl
+);
+
+const lowPriorityFeeds = lowPriorityFeedUrlMappings.filter(([, , type]) => type === 'album').map(([originalUrl, cdnUrl]) => 
+  isProduction ? cdnUrl : originalUrl
+);
+
+// Start with core feeds only for fast initial load
+const feedUrls = coreFeeds;
+
+// Debug logging - Performance optimization info
+console.log('🚀 PERFORMANCE OPTIMIZATION ENABLED');
 console.log('🔧 Environment check:', { isProduction, NODE_ENV: process.env.NODE_ENV });
-console.log('🔧 Feed URLs count:', feedUrls.length);
-console.log('🔧 First few feed URLs:', feedUrls.slice(0, 3));
+console.log('🚀 Core feeds (load first):', coreFeeds.length, 'feeds');
+console.log('🚀 Extended feeds (load second):', extendedFeeds.length, 'feeds'); 
+console.log('🚀 Low priority feeds:', lowPriorityFeeds.length, 'feeds');
+console.log('🚀 Total feeds available:', feedUrlMappings.length, 'feeds');
+console.log('🚀 Initial load will use ONLY core feeds for fast page load');
+console.log('🔧 First few core feed URLs:', coreFeeds.slice(0, 3));
 
 export default function HomePage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -263,10 +297,36 @@ export default function HomePage() {
       }
     }
     
-    // Add a small delay to let the UI render first
+    // Performance optimization: Load core feeds immediately for fast page load
     setTimeout(() => {
-      console.log('🔄 Calling loadAlbumsData after timeout');
-      loadAlbumsData();
+      console.log('🔄 Loading core feeds first for fast initial page load');
+      loadAlbumsData([], 'core').then(() => {
+        // Load extended feeds in background after core feeds are loaded
+        setTimeout(() => {
+          console.log('🔄 Loading extended feeds in background');
+          loadAlbumsData([], 'extended').then((extendedAlbums) => {
+            if (extendedAlbums && extendedAlbums.length > 0) {
+              // Append extended albums to existing albums
+              setAlbums(prevAlbums => {
+                const combined = [...prevAlbums, ...extendedAlbums];
+                console.log(`📦 Added ${extendedAlbums.length} extended albums, total: ${combined.length}`);
+                
+                // Update cache with combined data
+                try {
+                  localStorage.setItem('cachedAlbums', JSON.stringify(combined));
+                  localStorage.setItem('albumsCacheTimestamp', Date.now().toString());
+                } catch (error) {
+                  console.warn('⚠️ Failed to cache extended albums:', error);
+                }
+                
+                return combined;
+              });
+            }
+          }).catch(error => {
+            console.warn('⚠️ Failed to load extended feeds:', error);
+          });
+        }, 2000); // 2 second delay to let core content load first
+      });
     }, 100);
   }, [isClient]); // Add isClient as dependency
 
@@ -470,7 +530,7 @@ export default function HomePage() {
     }
   };
 
-  const loadAlbumsData = async (additionalFeeds: string[] = []) => {
+  const loadAlbumsData = async (additionalFeeds: string[] = [], loadTier: 'core' | 'extended' | 'all' = 'all') => {
     // Load managed feeds from the API (client-side only)
     let managedFeeds: string[] = [];
     try {
@@ -487,8 +547,22 @@ export default function HomePage() {
       console.warn('Failed to load managed feeds, falling back to hardcoded feeds:', error);
     }
     
-    // Combine hardcoded feeds, managed feeds, and custom feeds
-    const allFeeds = [...feedUrls, ...managedFeeds, ...additionalFeeds];
+    // Performance optimization: Load feeds in tiers for faster initial page load
+    let feedsToLoad: string[] = [];
+    
+    if (loadTier === 'core') {
+      feedsToLoad = [...coreFeeds, ...additionalFeeds];
+      console.log('🚀 Loading CORE feeds only for fast initial load:', feedsToLoad.length, 'feeds');
+    } else if (loadTier === 'extended') {
+      feedsToLoad = [...extendedFeeds];
+      console.log('🚀 Loading EXTENDED feeds (background load):', feedsToLoad.length, 'feeds');
+    } else {
+      // 'all' - legacy behavior for backwards compatibility
+      feedsToLoad = [...feedUrls, ...managedFeeds, ...additionalFeeds];
+      console.log('🚀 Loading ALL feeds (legacy mode):', feedsToLoad.length, 'feeds');
+    }
+    
+    const allFeeds = feedsToLoad;
     
     try {
       console.log('🚀 loadAlbumsData called with additionalFeeds:', additionalFeeds);
@@ -498,7 +572,13 @@ export default function HomePage() {
       setError(null);
       
       // Remove test code and restore normal RSS feed loading
-      console.log('🚀 Starting normal RSS feed loading...');
+      if (loadTier === 'core') {
+        console.log('🚀 Starting CORE feed loading for fast page display...');
+      } else if (loadTier === 'extended') {
+        console.log('🚀 Starting EXTENDED feed loading in background...');
+      } else {
+        console.log('🚀 Starting ALL feed loading (legacy mode)...');
+      }
       
       console.log('Starting to load album data...');
       
@@ -511,9 +591,9 @@ export default function HomePage() {
       // Update progress as feeds load
       setLoadingProgress(0);
       
-      // Progressive loading configuration
-      const BATCH_SIZE = 20;
-      const BATCH_DELAY = 100; // Small delay between batches to prevent overwhelming
+      // Performance optimization: Smaller batches for faster perceived loading
+      const BATCH_SIZE = loadTier === 'core' ? 6 : 12; // Smaller batches for core, larger for background
+      const BATCH_DELAY = loadTier === 'core' ? 50 : 200; // Faster core loading, slower background
       
       let albumsData: RSSAlbum[] = [];
       
@@ -541,9 +621,11 @@ export default function HomePage() {
               albumsData = [...albumsData, ...batchAlbums];
               setAlbums(albumsData);
               
-              // Update progress
-              const progress = Math.min(((i + BATCH_SIZE) / allFeeds.length) * 100, 100);
-              setLoadingProgress(progress);
+              // Update progress (only show for core feeds to avoid confusing users)
+              if (loadTier === 'core') {
+                const progress = Math.min(((i + BATCH_SIZE) / allFeeds.length) * 100, 100);
+                setLoadingProgress(progress);
+              }
               
               console.log(`✅ Batch ${batchNumber} loaded: ${batchAlbums.length} albums (total: ${albumsData.length})`);
             }
@@ -625,21 +707,25 @@ export default function HomePage() {
         setAlbums(albumsData);
         console.log('Successfully set', albumsData.length, 'albums');
         
-        // Cache albums in localStorage for faster subsequent loads
-        if (typeof window !== 'undefined') {
+        // Cache albums in localStorage for faster subsequent loads (only for core tier)
+        if (typeof window !== 'undefined' && loadTier === 'core') {
           try {
             localStorage.setItem('cachedAlbums', JSON.stringify(albumsData));
             localStorage.setItem('albumsCacheTimestamp', Date.now().toString());
-            console.log('💾 Cached albums in localStorage');
+            console.log('💾 Cached core albums in localStorage');
           } catch (error) {
             console.warn('⚠️ Failed to cache albums:', error);
           }
         }
+        
+        // Return albums for use in promise chains
+        return albumsData;
       } else {
         const errorMsg = 'Failed to load any album data from RSS feeds';
         logger.error(errorMsg, null, { feedCount: allFeeds.length });
         setError(errorMsg);
         toast.error('No albums could be loaded. Please try again later.');
+        return [];
       }
       
     } catch (err) {
@@ -647,6 +733,7 @@ export default function HomePage() {
       logger.error('Error loading albums', err, { feedCount: allFeeds?.length });
       setError(`Error loading album data: ${errorMessage}`);
       toast.error(`Failed to load albums: ${errorMessage}`);
+      return [];
     } finally {
       console.log('🏁 loadAlbumsData finally block - setting isLoading to false');
       setIsLoading(false);

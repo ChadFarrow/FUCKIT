@@ -13,9 +13,9 @@ export interface AppVersion {
 // Current version - starts at 1.000
 export const currentVersion: AppVersion = {
   major: 1,
-  minor: 0,
-  patch: 96,
-  build: 96
+  minor: 1,
+  patch: 1,
+  build: 101
 };
 
 /**

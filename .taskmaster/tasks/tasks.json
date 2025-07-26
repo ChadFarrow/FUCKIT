@@ -150,7 +150,7 @@
         "description": "Resolve performance issues causing albums to load slowly on the site",
         "details": "Investigate and fix the slow loading performance for albums. This may involve optimizing image loading, improving CDN delivery, reducing bundle sizes, implementing better caching strategies, or optimizing the data fetching and rendering pipeline to improve overall site performance when loading album content.",
         "testStrategy": "",
-        "status": "pending",
+        "status": "in-progress",
         "dependencies": [],
         "priority": "high",
         "subtasks": []
@@ -260,7 +260,7 @@
       "description": "Main task list for FUCKIT podcast/music streaming application",
       "created": "2025-01-27T00:00:00.000Z",
       "lastModified": "2025-01-27T00:00:00.000Z",
-      "updated": "2025-07-26T17:06:09.874Z"
+      "updated": "2025-07-26T17:12:56.318Z"
     }
   }
 }
