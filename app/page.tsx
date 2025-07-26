@@ -354,10 +354,17 @@ export default function HomePage() {
           devLog('🔄 Loading extended feeds in background');
           loadAlbumsData([], 'extended').then((extendedAlbums) => {
             if (extendedAlbums && extendedAlbums.length > 0) {
-              // Append extended albums to existing albums
+              // Append extended albums to existing albums with deduplication
               setAlbums(prevAlbums => {
-                const combined = [...prevAlbums, ...extendedAlbums];
-                devLog(`📦 Added ${extendedAlbums.length} extended albums, total: ${combined.length}`);
+                // Filter out duplicates by title+artist
+                const existingKeys = new Set(prevAlbums.map(album => `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`));
+                const newAlbums = extendedAlbums.filter(album => {
+                  const key = `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`;
+                  return !existingKeys.has(key);
+                });
+                
+                const combined = [...prevAlbums, ...newAlbums];
+                devLog(`📦 Added ${newAlbums.length} extended albums, total: ${combined.length}`);
                 
                 // Update cache with combined data
                 try {
@@ -631,7 +638,14 @@ export default function HomePage() {
             const batchAlbums = await Promise.race([batchPromise, batchTimeout]) as RSSAlbum[];
             
             if (batchAlbums && batchAlbums.length > 0) {
-              albumsData = [...albumsData, ...batchAlbums];
+              // Deduplicate albums before adding to prevent duplicates
+              const existingKeys = new Set(albumsData.map(album => `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`));
+              const newAlbums = batchAlbums.filter(album => {
+                const key = `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`;
+                return !existingKeys.has(key);
+              });
+              
+              albumsData = [...albumsData, ...newAlbums];
               setAlbums(albumsData);
               
               // Update progress (only show for core feeds to avoid confusing users)
