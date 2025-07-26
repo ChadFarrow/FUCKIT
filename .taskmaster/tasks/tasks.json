@@ -198,6 +198,61 @@
         "dependencies": [],
         "priority": "medium",
         "subtasks": []
+      },
+      {
+        "id": 19,
+        "title": "Fix Persistent Audio Player Issues",
+        "description": "GlobalAudioPlayer component has multiple issues preventing proper persistent playback across pages",
+        "details": "Current issues identified:\n- GlobalAudioPlayer useEffect hooks not running properly \n- Multiple component mounting (re-mounting repeatedly)\n- Audio metadata not loading (duration: null, currentTime stuck at 0)\n- Component renders but audio element doesn't play\n- May need hydration fixes and better client-side initialization\n- Need to ensure only single audio player shows across entire site",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 20,
+        "title": "Fix RSS Feed Parsing Duplication and Performance Issues",
+        "description": "Resolve duplicate RSS feed parsing and optimize batch processing performance",
+        "details": "The console logs show RSS feeds being parsed multiple times unnecessarily. This includes: 1) Same feeds parsed repeatedly (e.g., \"Safe Some Place\", \"Goodbye Uncle Walt\" appearing multiple times), 2) Redundant batch processing operations, 3) Performance impact from duplicate parsing. Need to implement proper deduplication, caching, and optimize the batch processing logic to prevent redundant operations and improve loading performance.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 21,
+        "title": "Clean Up GlobalAudioPlayer References and State Management",
+        "description": "Remove remaining GlobalAudioPlayer references and clean up audio state management",
+        "details": "Console logs show GlobalAudioPlayer still checking state even after component removal. Need to: 1) Find and remove all remaining GlobalAudioPlayer references in the codebase, 2) Clean up audio state management functions that reference the removed component, 3) Ensure no orphaned state checks or functions remain, 4) Verify audio functionality works properly without the GlobalAudioPlayer component.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 22,
+        "title": "Optimize Production Console Logging and Debug Output",
+        "description": "Reduce excessive console logging in production environment",
+        "details": "Production environment shows excessive debug logging including: 1) RSS parsing details, 2) Track addition confirmations, 3) Cover art discovery logs, 4) Batch processing updates, 5) GlobalAudioPlayer state checks. Need to implement proper logging levels, reduce debug output in production, and only show essential logs while maintaining debugging capability for development.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "low",
+        "subtasks": []
+      },
+      {
+        "id": 23,
+        "title": "Fix Global Playbar - Implement Consistent Bottom Player Bar",
+        "description": "Create a persistent global player bar at the bottom that continues playing across all pages",
+        "details": "Currently there are 2 different player bars that come and go depending on navigation. Need to implement a single, persistent global player bar at the bottom of the site that: 1) Stays visible on all pages, 2) Continues playing music when navigating between pages, 3) Shows current track info and controls consistently, 4) Replaces the current inconsistent player implementations, 5) Integrates with the existing audio state management, 6) Provides seamless playback experience across the entire site. This will eliminate the confusion of having multiple player bars appearing and disappearing.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
       }
     ],
     "metadata": {
@@ -205,7 +260,7 @@
       "description": "Main task list for FUCKIT podcast/music streaming application",
       "created": "2025-01-27T00:00:00.000Z",
       "lastModified": "2025-01-27T00:00:00.000Z",
-      "updated": "2025-07-26T16:16:00.743Z"
+      "updated": "2025-07-26T17:06:09.874Z"
     }
   }
 }

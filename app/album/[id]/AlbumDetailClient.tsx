@@ -154,6 +154,12 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
         setIsPlaying(true);
         
         // Set global track info for persistent player
+        console.log('🔥 AUDIO PLAYED SUCCESSFULLY - Setting global track info:', {
+          albumTitle: album.title,
+          trackIndex: index,
+          trackTitle: album.tracks[index].title,
+          trackUrl: originalUrl
+        });
         setGlobalTrackInfo(album, index, originalUrl);
         
         // Update Media Session for lock screen controls

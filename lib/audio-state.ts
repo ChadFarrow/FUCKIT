@@ -69,6 +69,8 @@ export const updateGlobalAudioState = (
   updates: Partial<GlobalAudioState>,
   audioElement?: HTMLAudioElement
 ) => {
+  console.log('🔥 updateGlobalAudioState called with:', updates, 'audioElement:', !!audioElement);
+  
   if (audioElement) {
     // Update with current audio element state
     const state: Partial<GlobalAudioState> = {
@@ -77,8 +79,10 @@ export const updateGlobalAudioState = (
       duration: audioElement.duration,
       volume: audioElement.volume,
     };
+    console.log('🔥 updateGlobalAudioState with audioElement, final state:', state);
     setGlobalAudioState(state);
   } else {
+    console.log('🔥 updateGlobalAudioState without audioElement, updates:', updates);
     setGlobalAudioState(updates);
   }
 };
@@ -142,7 +146,7 @@ export const setGlobalTrackInfo = (
 
   // Use album title as unique identifier since album.id doesn't exist
   const albumIdentifier = album.title;
-  console.log('🎵 Setting global track info:', {
+  console.log('🔥 setGlobalTrackInfo CALLED:', {
     albumTitle: album.title,
     albumIdentifier,
     trackIndex,
@@ -166,6 +170,12 @@ export const setGlobalTrackInfo = (
     localStorage.setItem(trackInfoKey, JSON.stringify(trackInfo));
     
     // Update global audio state
+    console.log('🔥 Updating global audio state with:', {
+      currentAlbum: albumIdentifier,
+      currentTrackIndex: trackIndex,
+      trackUrl: trackUrl,
+      isPlaying: true
+    });
     updateGlobalAudioState({
       currentAlbum: albumIdentifier,
       currentTrackIndex: trackIndex,
