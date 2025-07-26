@@ -21,6 +21,18 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 const logger = createErrorLogger('MainPage');
 
+// Development logging utility
+const isDev = process.env.NODE_ENV === 'development';
+const isVerbose = process.env.NEXT_PUBLIC_LOG_LEVEL === 'verbose';
+
+const devLog = (...args: any[]) => {
+  if (isDev) console.log(...args);
+};
+
+const verboseLog = (...args: any[]) => {
+  if (isVerbose) console.log(...args);
+};
+
 // Performance optimization: Separate feeds into priority tiers for lazy loading
 // PRIORITY 1: Core feeds loaded immediately (fast page load)
 const coreFeedUrlMappings = [
@@ -160,14 +172,14 @@ const lowPriorityFeeds = lowPriorityFeedUrlMappings.filter(([, , type]) => type 
 const feedUrls = coreFeeds;
 
 // Debug logging - Performance optimization info
-console.log('🚀 PERFORMANCE OPTIMIZATION ENABLED');
-console.log('🔧 Environment check:', { isProduction, NODE_ENV: process.env.NODE_ENV });
-console.log('🚀 Core feeds (load first):', coreFeeds.length, 'feeds');
-console.log('🚀 Extended feeds (load second):', extendedFeeds.length, 'feeds'); 
-console.log('🚀 Low priority feeds:', lowPriorityFeeds.length, 'feeds');
-console.log('🚀 Total feeds available:', feedUrlMappings.length, 'feeds');
-console.log('🚀 Initial load will use ONLY core feeds for fast page load');
-console.log('🔧 First few core feed URLs:', coreFeeds.slice(0, 3));
+devLog('🚀 PERFORMANCE OPTIMIZATION ENABLED');
+devLog('🔧 Environment check:', { isProduction, NODE_ENV: process.env.NODE_ENV });
+devLog('🚀 Core feeds (load first):', coreFeeds.length, 'feeds');
+devLog('🚀 Extended feeds (load second):', extendedFeeds.length, 'feeds'); 
+devLog('🚀 Low priority feeds:', lowPriorityFeeds.length, 'feeds');
+devLog('🚀 Total feeds available:', feedUrlMappings.length, 'feeds');
+devLog('🚀 Initial load will use ONLY core feeds for fast page load');
+verboseLog('🔧 First few core feed URLs:', coreFeeds.slice(0, 3));
 
 export default function HomePage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -262,12 +274,12 @@ export default function HomePage() {
   };
   
   useEffect(() => {
-    console.log('🔄 useEffect triggered - starting to load albums');
-    console.log('🔄 hasLoadedRef.current:', hasLoadedRef.current);
-    console.log('🔄 isClient:', isClient);
+    verboseLog('🔄 useEffect triggered - starting to load albums');
+    verboseLog('🔄 hasLoadedRef.current:', hasLoadedRef.current);
+    verboseLog('🔄 isClient:', isClient);
     
     // Always try to load, regardless of hasLoadedRef
-    console.log('🔄 Attempting to load albums...');
+    verboseLog('🔄 Attempting to load albums...');
     
     // Try to load from cache first
     if (typeof window !== 'undefined') {
@@ -281,14 +293,14 @@ export default function HomePage() {
         if (cacheValid) {
           try {
             const parsedAlbums = JSON.parse(cachedAlbums);
-            console.log('📦 Loading albums from cache:', parsedAlbums.length, 'albums');
+            devLog('📦 Loading albums from cache:', parsedAlbums.length, 'albums');
             setAlbums(parsedAlbums);
             setIsLoading(false);
             
             // IMPORTANT: Still load extended feeds in background even when using cache
             // This ensures the full catalog is available
             setTimeout(() => {
-              console.log('🔄 Loading extended feeds in background (cached start)');
+              devLog('🔄 Loading extended feeds in background (cached start)');
               loadAlbumsData([], 'extended').then((extendedAlbums) => {
                 if (extendedAlbums && extendedAlbums.length > 0) {
                   setAlbums(prevAlbums => {
@@ -301,7 +313,7 @@ export default function HomePage() {
                     
                     if (newAlbums.length > 0) {
                       const combined = [...prevAlbums, ...newAlbums];
-                      console.log(`📦 Added ${newAlbums.length} new extended albums to cache, total: ${combined.length}`);
+                      devLog(`📦 Added ${newAlbums.length} new extended albums to cache, total: ${combined.length}`);
                       
                       // Update cache with full catalog
                       try {
@@ -331,17 +343,17 @@ export default function HomePage() {
     
     // Performance optimization: Load core feeds immediately for fast page load
     setTimeout(() => {
-      console.log('🔄 Loading core feeds first for fast initial page load');
+      devLog('🔄 Loading core feeds first for fast initial page load');
       loadAlbumsData([], 'core').then(() => {
         // Load extended feeds in background after core feeds are loaded
         setTimeout(() => {
-          console.log('🔄 Loading extended feeds in background');
+          devLog('🔄 Loading extended feeds in background');
           loadAlbumsData([], 'extended').then((extendedAlbums) => {
             if (extendedAlbums && extendedAlbums.length > 0) {
               // Append extended albums to existing albums
               setAlbums(prevAlbums => {
                 const combined = [...prevAlbums, ...extendedAlbums];
-                console.log(`📦 Added ${extendedAlbums.length} extended albums, total: ${combined.length}`);
+                devLog(`📦 Added ${extendedAlbums.length} extended albums, total: ${combined.length}`);
                 
                 // Update cache with combined data
                 try {
@@ -536,14 +548,14 @@ export default function HomePage() {
     
     if (loadTier === 'core') {
       feedsToLoad = [...coreFeeds, ...additionalFeeds];
-      console.log('🚀 Loading CORE feeds only for fast initial load:', feedsToLoad.length, 'feeds');
+      devLog('🚀 Loading CORE feeds only for fast initial load:', feedsToLoad.length, 'feeds');
     } else if (loadTier === 'extended') {
       feedsToLoad = [...extendedFeeds];
-      console.log('🚀 Loading EXTENDED feeds (background load):', feedsToLoad.length, 'feeds');
+      devLog('🚀 Loading EXTENDED feeds (background load):', feedsToLoad.length, 'feeds');
     } else {
       // 'all' - legacy behavior for backwards compatibility
       feedsToLoad = [...feedUrls, ...managedFeeds, ...additionalFeeds];
-      console.log('🚀 Loading ALL feeds (legacy mode):', feedsToLoad.length, 'feeds');
+      devLog('🚀 Loading ALL feeds (legacy mode):', feedsToLoad.length, 'feeds');
     }
     
     // DEDUPLICATION: Remove duplicate URLs to prevent redundant parsing
@@ -554,36 +566,36 @@ export default function HomePage() {
     if (originalCount !== deduplicatedCount) {
       const duplicatesRemoved = originalCount - deduplicatedCount;
       console.warn(`⚠️ DEDUPLICATION: Removed ${duplicatesRemoved} duplicate feed URLs`);
-      console.log(`📊 Feed count: ${originalCount} → ${deduplicatedCount} (${duplicatesRemoved} duplicates removed)`);
+      verboseLog(`📊 Feed count: ${originalCount} → ${deduplicatedCount} (${duplicatesRemoved} duplicates removed)`);
     } else {
-      console.log(`✅ No duplicate feeds found in ${loadTier} tier`);
+      verboseLog(`✅ No duplicate feeds found in ${loadTier} tier`);
     }
     
     const allFeeds = feedsToLoad;
     
     try {
-      console.log('🚀 loadAlbumsData called with additionalFeeds:', additionalFeeds);
-      console.log('🚀 Current feedUrls:', feedUrls);
-      console.log('🚀 isProduction value:', isProduction);
+      verboseLog('🚀 loadAlbumsData called with additionalFeeds:', additionalFeeds);
+      verboseLog('🚀 Current feedUrls:', feedUrls);
+      verboseLog('🚀 isProduction value:', isProduction);
       setIsLoading(true);
       setError(null);
       
       // Remove test code and restore normal RSS feed loading
       if (loadTier === 'core') {
-        console.log('🚀 Starting CORE feed loading for fast page display...');
+        devLog('🚀 Starting CORE feed loading for fast page display...');
       } else if (loadTier === 'extended') {
-        console.log('🚀 Starting EXTENDED feed loading in background...');
+        devLog('🚀 Starting EXTENDED feed loading in background...');
       } else {
-        console.log('🚀 Starting ALL feed loading (legacy mode)...');
+        devLog('🚀 Starting ALL feed loading (legacy mode)...');
       }
       
-      console.log('Starting to load album data...');
+      verboseLog('Starting to load album data...');
       
       // Add debugging to see what's happening
-      console.log('🔍 About to call RSSParser.parseMultipleFeeds with:', allFeeds.length, 'feeds');
-      console.log('🔍 First few feed URLs:', allFeeds.slice(0, 3));
-      console.log('Feed URLs:', allFeeds);
-      console.log('Loading', allFeeds.length, 'feeds...');
+      verboseLog('🔍 About to call RSSParser.parseMultipleFeeds with:', allFeeds.length, 'feeds');
+      verboseLog('🔍 First few feed URLs:', allFeeds.slice(0, 3));
+      verboseLog('Feed URLs:', allFeeds);
+      verboseLog('Loading', allFeeds.length, 'feeds...');
       
       // Update progress as feeds load
       setLoadingProgress(0);
@@ -596,14 +608,14 @@ export default function HomePage() {
       
       try {
         // Process feeds in batches for progressive loading
-        console.log(`📊 Loading ${allFeeds.length} feeds in batches of ${BATCH_SIZE}`);
+        devLog(`📊 Loading ${allFeeds.length} feeds in batches of ${BATCH_SIZE}`);
         
         for (let i = 0; i < allFeeds.length; i += BATCH_SIZE) {
           const batch = allFeeds.slice(i, i + BATCH_SIZE);
           const batchNumber = Math.floor(i / BATCH_SIZE) + 1;
           const totalBatches = Math.ceil(allFeeds.length / BATCH_SIZE);
           
-          console.log(`🔄 Loading batch ${batchNumber}/${totalBatches} (${batch.length} feeds)`);
+          verboseLog(`🔄 Loading batch ${batchNumber}/${totalBatches} (${batch.length} feeds)`);
           
           try {
             // Parse batch with individual timeout
@@ -624,7 +636,7 @@ export default function HomePage() {
                 setLoadingProgress(progress);
               }
               
-              console.log(`✅ Batch ${batchNumber} loaded: ${batchAlbums.length} albums (total: ${albumsData.length})`);
+              verboseLog(`✅ Batch ${batchNumber} loaded: ${batchAlbums.length} albums (total: ${albumsData.length})`);
             }
             
             // Small delay between batches to prevent rate limiting
@@ -637,10 +649,10 @@ export default function HomePage() {
           }
         }
         
-        console.log(`📦 Total albums loaded: ${albumsData.length}`);
+        devLog(`📦 Total albums loaded: ${albumsData.length}`);
 
         // Load configured publisher feeds in background (non-blocking)
-        console.log(`🏢 Loading ${publisherFeeds.length} configured publisher feeds in background`);
+        devLog(`🏢 Loading ${publisherFeeds.length} configured publisher feeds in background`);
 
         // Load publisher feeds asynchronously without blocking the UI
         if (publisherFeeds.length > 0) {
@@ -650,13 +662,13 @@ export default function HomePage() {
             
             for (let i = 0; i < publisherFeeds.length; i++) {
               const publisherFeedUrl = publisherFeeds[i];
-              console.log(`🏢 Loading publisher feed ${i + 1}/${publisherFeeds.length}: ${publisherFeedUrl}`);
+              devLog(`🏢 Loading publisher feed ${i + 1}/${publisherFeeds.length}: ${publisherFeedUrl}`);
               
               try {
                 // Use the proper publisher feed parsing method
                 const publisherBatchAlbums = await RSSParser.parsePublisherFeedAlbums(publisherFeedUrl);
                 publisherAlbums.push(...publisherBatchAlbums);
-                console.log(`✅ Publisher ${i + 1}/${publisherFeeds.length} loaded: ${publisherBatchAlbums.length} albums`);
+                devLog(`✅ Publisher ${i + 1}/${publisherFeeds.length} loaded: ${publisherBatchAlbums.length} albums`);
               } catch (error) {
                 console.warn(`⚠️ Publisher feed ${publisherFeedUrl} failed:`, error);
               }
@@ -667,7 +679,7 @@ export default function HomePage() {
               }
             }
             
-            console.log(`🎶 Loaded ${publisherAlbums.length} albums from ${publisherFeeds.length} publisher feeds`);
+            devLog(`🎶 Loaded ${publisherAlbums.length} albums from ${publisherFeeds.length} publisher feeds`);
             
             // Combine with existing albums
             const existingKeys = new Set(
@@ -681,7 +693,7 @@ export default function HomePage() {
             
             if (newAlbums.length > 0) {
               setAlbums(prev => [...prev, ...newAlbums]);
-              console.log(`✅ Added ${newAlbums.length} new albums from ${publisherFeeds.length} publisher feeds`);
+              devLog(`✅ Added ${newAlbums.length} new albums from ${publisherFeeds.length} publisher feeds`);
             }
           };
           
@@ -690,26 +702,26 @@ export default function HomePage() {
             console.warn('⚠️ Failed to load publisher feeds:', error);
           });
         }
-        console.log(`📦 Total albums after initial load: ${albumsData.length}`);
+        devLog(`📦 Total albums after initial load: ${albumsData.length}`);
       } catch (parseError) {
         console.error('❌ Album parsing failed:', parseError);
         console.error('❌ Failed feeds:', allFeeds);
         throw parseError;
       }
       
-      console.log('Albums data received:', albumsData);
+      verboseLog('Albums data received:', albumsData);
       
       if (albumsData && albumsData.length > 0) {
-        console.log('✅ Setting albums:', albumsData.length, 'albums');
+        verboseLog('✅ Setting albums:', albumsData.length, 'albums');
         setAlbums(albumsData);
-        console.log('Successfully set', albumsData.length, 'albums');
+        verboseLog('Successfully set', albumsData.length, 'albums');
         
         // Cache albums in localStorage for faster subsequent loads (only for core tier)
         if (typeof window !== 'undefined' && loadTier === 'core') {
           try {
             localStorage.setItem('cachedAlbums', JSON.stringify(albumsData));
             localStorage.setItem('albumsCacheTimestamp', Date.now().toString());
-            console.log('💾 Cached core albums in localStorage');
+            verboseLog('💾 Cached core albums in localStorage');
           } catch (error) {
             console.warn('⚠️ Failed to cache albums:', error);
           }
@@ -732,7 +744,7 @@ export default function HomePage() {
       toast.error(`Failed to load albums: ${errorMessage}`);
       return [];
     } finally {
-      console.log('🏁 loadAlbumsData finally block - setting isLoading to false');
+      verboseLog('🏁 loadAlbumsData finally block - setting isLoading to false');
       setIsLoading(false);
     }
   };

@@ -61,12 +61,24 @@ export interface RSSAlbum {
   publisher?: RSSPublisher;
 }
 
+// Development logging utility
+const isDev = process.env.NODE_ENV === 'development';
+const isVerbose = process.env.NEXT_PUBLIC_LOG_LEVEL === 'verbose';
+
+const devLog = (...args: any[]) => {
+  if (isDev) console.log(...args);
+};
+
+const verboseLog = (...args: any[]) => {
+  if (isVerbose) console.log(...args);
+};
+
 export class RSSParser {
   private static readonly logger = createErrorLogger('RSSParser');
   
   static async parseAlbumFeed(feedUrl: string): Promise<RSSAlbum | null> {
     return withRetry(async () => {
-      this.logger.info('Parsing RSS feed', { feedUrl });
+      verboseLog('[RSSParser] Parsing RSS feed', { feedUrl });
       
       // For server-side fetching, always use direct URLs  
       // For client-side fetching, use the proxy
@@ -346,7 +358,7 @@ export class RSSParser {
       
       // Less verbose: only log for large feeds or unusual cases
       if (items.length > 10 || items.length === 0) {
-        console.log(`🎵 Found ${items.length} items in RSS feed`);
+        devLog(`🎵 Found ${items.length} items in RSS feed`);
       }
       
       for (let i = 0; i < items.length; i++) {
@@ -366,7 +378,7 @@ export class RSSParser {
         // If duration is empty or just whitespace, use default
         if (!duration || duration.trim() === '') {
           duration = '0:00';
-          console.log(`⚠️ No duration found for track "${trackTitle}", using default`);
+          verboseLog(`⚠️ No duration found for track "${trackTitle}", using default`);
         } else {
           // Convert seconds to MM:SS format if needed
           const durationStr = duration.trim();
@@ -398,7 +410,7 @@ export class RSSParser {
                 const originalDuration = duration;
                 duration = `${totalMinutes}:${secs.toString().padStart(2, '0')}`;
                 if (hours > 0) {
-                  console.log(`🔄 Converted HH:MM:SS "${originalDuration}" to MM:SS "${duration}" for "${trackTitle}"`);
+                  verboseLog(`🔄 Converted HH:MM:SS "${originalDuration}" to MM:SS "${duration}" for "${trackTitle}"`);
                 }
               }
             }
@@ -466,9 +478,9 @@ export class RSSParser {
           keywords: trackKeywords.length > 0 ? trackKeywords : undefined
         });
         
-        // Reduced verbosity - only log missing URLs as warnings
+        // Reduced verbosity - only log missing URLs as warnings in dev
         if (!url) {
-          console.warn(`⚠️ Track missing URL: "${trackTitle}" (${duration})`);
+          verboseLog(`⚠️ Track missing URL: "${trackTitle}" (${duration})`);
         }
       }
       
@@ -588,7 +600,7 @@ export class RSSParser {
         publisher: publisher
       };
       
-      this.logger.info('Successfully parsed RSS feed', { feedUrl, trackCount: tracks.length });
+      verboseLog('[RSSParser] Successfully parsed RSS feed', { feedUrl, trackCount: tracks.length });
       return album;
       
     }, {
@@ -606,7 +618,7 @@ export class RSSParser {
   static async parseMultipleFeeds(feedUrls: string[]): Promise<RSSAlbum[]> {
     // Only log for large batches to reduce noise
     if (feedUrls.length > 5) {
-      console.log(`🔄 Parsing ${feedUrls.length} RSS feeds...`);
+      devLog(`🔄 Parsing ${feedUrls.length} RSS feeds...`);
     }
     
     // Process feeds in larger batches for better performance
@@ -617,7 +629,7 @@ export class RSSParser {
       const batch = feedUrls.slice(i, i + batchSize);
       // Only log batches for large operations
       if (feedUrls.length > 10) {
-        console.log(`📦 Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(feedUrls.length / batchSize)} (${batch.length} feeds)`);
+        devLog(`📦 Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(feedUrls.length / batchSize)} (${batch.length} feeds)`);
       }
       
       const promises = batch.map(async (url) => {
@@ -682,7 +694,7 @@ export class RSSParser {
     
     // Only log summary for large operations
     if (feedUrls.length > 5) {
-      console.log(`✅ Successfully parsed ${results.length} albums from ${feedUrls.length} feeds`);
+      devLog(`✅ Successfully parsed ${results.length} albums from ${feedUrls.length} feeds`);
     }
     return results;
   }
@@ -852,7 +864,7 @@ export class RSSParser {
           }
         });
         
-        console.log(`🏢 Found ${publisherItems.length} music items in IROH aggregated feed`);
+        devLog(`🏢 Found ${publisherItems.length} music items in IROH aggregated feed`);
         return publisherItems;
       }
       // PATCH: Ensure feedUrl is a string before using .startsWith
@@ -928,7 +940,7 @@ export class RSSParser {
         }
       });
       
-      console.log(`🏢 Found ${publisherItems.length} music items in publisher feed: ${feedUrl}`);
+      devLog(`🏢 Found ${publisherItems.length} music items in publisher feed: ${feedUrl}`);
       return publisherItems;
       
     } catch (error) {
@@ -938,17 +950,17 @@ export class RSSParser {
   }
 
   static async parsePublisherFeedAlbums(feedUrl: string): Promise<RSSAlbum[]> {
-    console.log(`🏢 Parsing publisher feed for albums: ${feedUrl}`);
+    devLog(`🏢 Parsing publisher feed for albums: ${feedUrl}`);
     
     const publisherItems = await this.parsePublisherFeed(feedUrl);
     
     if (publisherItems.length === 0) {
-      console.log(`📭 No music items found in publisher feed: ${feedUrl}`);
+      devLog(`📭 No music items found in publisher feed: ${feedUrl}`);
       return [];
     }
     
     const musicFeedUrls = publisherItems.map(item => item.feedUrl);
-    console.log(`🎵 Loading ${musicFeedUrls.length} music feeds from publisher...`);
+    devLog(`🎵 Loading ${musicFeedUrls.length} music feeds from publisher...`);
     
     // Optimize batch size based on number of feeds
     let batchSize = 5; // Default batch size
@@ -967,12 +979,12 @@ export class RSSParser {
       const batchNumber = Math.floor(i / batchSize) + 1;
       const totalBatches = Math.ceil(musicFeedUrls.length / batchSize);
       
-      console.log(`📦 Processing publisher batch ${batchNumber}/${totalBatches} (${batch.length} feeds)`);
+      devLog(`📦 Processing publisher batch ${batchNumber}/${totalBatches} (${batch.length} feeds)`);
       
       try {
         const batchAlbums = await this.parseMultipleFeeds(batch);
         allAlbums.push(...batchAlbums);
-        console.log(`✅ Batch ${batchNumber}/${totalBatches} completed: ${batchAlbums.length} albums (${allAlbums.length}/${musicFeedUrls.length} total)`);
+        devLog(`✅ Batch ${batchNumber}/${totalBatches} completed: ${batchAlbums.length} albums (${allAlbums.length}/${musicFeedUrls.length} total)`);
       } catch (error) {
         console.error(`❌ Error in publisher batch ${batchNumber}/${totalBatches}:`, error);
         // Continue with next batch instead of failing completely
@@ -984,7 +996,7 @@ export class RSSParser {
       }
     }
     
-    console.log(`🎶 Loaded ${allAlbums.length} albums from publisher feed`);
+    devLog(`🎶 Loaded ${allAlbums.length} albums from publisher feed`);
     return allAlbums;
   }
 }
