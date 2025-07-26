@@ -11,8 +11,8 @@ export interface CDNConfig {
 
 // Default CDN configuration
 const defaultCDNConfig: CDNConfig = {
-  hostname: process.env.BUNNY_CDN_HOSTNAME || 're-podtards.b-cdn.net',
-  zone: process.env.BUNNY_CDN_ZONE || 're-podtards',
+  hostname: process.env.BUNNY_CDN_HOSTNAME || 're-podtards-cdn-new.b-cdn.net',
+  zone: process.env.BUNNY_CDN_ZONE || 're-podtards-cdn-new',
   apiKey: process.env.BUNNY_CDN_API_KEY,
 };
 
@@ -24,7 +24,8 @@ const CDN_THRESHOLDS = {
   EXTERNAL_DOMAINS_ONLY: true,
   // Domains that are already fast (don't need CDN)
   FAST_DOMAINS: [
-    're-podtards.b-cdn.net', // Our primary CDN
+    're-podtards-cdn-new.b-cdn.net', // Our primary CDN with CORS
+    're-podtards.b-cdn.net', // Legacy CDN (no access)
     'localhost',
     '127.0.0.1',
     'vercel.app',
@@ -58,11 +59,12 @@ export function shouldUseCDN(url: string): boolean {
       return false;
     }
 
-    // CDN CORS headers are now properly configured
-    // Re-enabled CDN processing after confirming CORS setup
+    // TEMPORARY: Testing new CDN hostname - disable until images are confirmed to exist
+    // TODO: Remove this when images are confirmed on re-podtards-cdn-new.b-cdn.net
+    return false;
 
     // Don't re-process URLs that are already on our CDN
-    if (domain === 're-podtards.b-cdn.net') {
+    if (domain === 're-podtards-cdn-new.b-cdn.net' || domain === 're-podtards.b-cdn.net') {
       return false;
     }
 
@@ -121,7 +123,7 @@ export function getSmartCDNUrl(
   }
 
   // If URL is already on our CDN, return as-is unless forceCDN is true
-  if (!options.forceCDN && originalUrl.includes('re-podtards.b-cdn.net')) {
+  if (!options.forceCDN && (originalUrl.includes('re-podtards-cdn-new.b-cdn.net') || originalUrl.includes('re-podtards.b-cdn.net'))) {
     return originalUrl;
   }
 
