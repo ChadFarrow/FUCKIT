@@ -266,6 +266,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
       isPlaying: globalState?.isPlaying,
       currentAlbum: globalState?.currentAlbum,
       trackUrl: globalState?.trackUrl,
+      currentTime: globalState?.currentTime,
       albumTitle: album?.title,
       willRestore: globalState?.isPlaying && globalState?.currentAlbum && globalState?.trackUrl && album && globalState.currentAlbum === album.title
     });
@@ -293,8 +294,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
           // Wait for metadata to load before setting time and resuming
           const handleLoadedMetadata = () => {
             if (audioRef.current) {
-              audioRef.current.currentTime = globalState.currentTime;
-              console.log('🔄 Set audio time to:', globalState.currentTime);
+              console.log('🔄 Setting audio time from saved state:', globalState.currentTime);
+              audioRef.current.currentTime = globalState.currentTime || 0;
               
               // Resume playback if it was playing
               if (globalState.isPlaying) {
