@@ -1,128 +1,158 @@
 'use client';
 
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Play, Pause, Music } from 'lucide-react';
 import { RSSAlbum } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { generateAlbumUrl } from '@/lib/url-utils';
+import CDNImage from './CDNImage';
 
 interface AlbumCardProps {
   album: RSSAlbum;
-  index: number;
-  currentPlayingAlbum: string | null;
   isPlaying: boolean;
   onPlay: (album: RSSAlbum, e: React.MouseEvent | React.TouchEvent) => void;
+  className?: string;
 }
 
-export default function AlbumCard({ 
-  album, 
-  index, 
-  currentPlayingAlbum, 
-  isPlaying, 
-  onPlay 
-}: AlbumCardProps) {
-  const isEpOrSingle = album.tracks.length <= 6;
-  
+export default function AlbumCard({ album, isPlaying, onPlay, className = '' }: AlbumCardProps) {
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  // Minimum swipe distance (in px)
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) {
+      // Left swipe - play next track (future enhancement)
+      console.log('Left swipe detected - next track');
+    } else if (isRightSwipe) {
+      // Right swipe - play previous track (future enhancement)
+      console.log('Right swipe detected - previous track');
+    } else {
+      // Tap - play/pause
+      onPlay(album, e);
+    }
+  };
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+    setImageError(false);
+  };
+
+  const handleImageError = () => {
+    setImageError(true);
+    setImageLoaded(false);
+  };
+
+  const artworkUrl = album.coverArt 
+    ? getAlbumArtworkUrl(album.coverArt, 'medium')
+    : getPlaceholderImageUrl('medium');
+
+  const albumUrl = generateAlbumUrl(album.title);
+
   return (
-    <Link 
-      href={generateAlbumUrl(album.title)}
-      className="bg-black/20 backdrop-blur-sm rounded-lg overflow-hidden group hover:bg-black/30 transition-all duration-300 border border-gray-700/50 hover:border-gray-600/50 block cursor-pointer"
+    <div 
+      ref={cardRef}
+      className={`group relative bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 overflow-hidden transition-all duration-300 hover:bg-white/10 hover:border-white/20 hover:scale-[1.02] active:scale-[0.98] ${className}`}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
     >
-      {/* Album Cover */}
-      <div className="relative aspect-square">
-        <Image 
-          src={getAlbumArtworkUrl(album.coverArt || '', 'medium')} 
-          alt={album.title}
+      {/* Album Artwork */}
+      <div className="relative aspect-square overflow-hidden">
+        <CDNImage
+          src={artworkUrl}
+          alt={`${album.title} by ${album.artist}`}
           width={300}
           height={300}
-          className="w-full h-full object-cover"
-          loading={index < 8 ? undefined : "lazy"}
-          priority={index < 8} // Only prioritize first 8 images
-          onError={(e) => {
-            // Fallback to placeholder on error
-            const target = e.target as HTMLImageElement;
-            target.src = getPlaceholderImageUrl('medium');
-          }}
+          className={`w-full h-full object-cover transition-opacity duration-300 ${
+            imageLoaded ? 'opacity-100' : 'opacity-0'
+          }`}
+          onLoad={handleImageLoad}
+          onError={handleImageError}
+          priority={false}
         />
         
-        {/* Play Button Overlay - Always Visible */}
-        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
+        {/* Loading placeholder */}
+        {!imageLoaded && !imageError && (
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
+            <Music className="w-8 h-8 text-gray-400 animate-pulse" />
+          </div>
+        )}
+        
+        {/* Error placeholder */}
+        {imageError && (
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
+            <Music className="w-8 h-8 text-gray-400" />
+          </div>
+        )}
+
+        {/* Play/Pause Overlay */}
+        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
           <button
             onClick={(e) => onPlay(album, e)}
-            onTouchEnd={(e) => onPlay(album, e)}
-            className="bg-white/80 hover:bg-white text-black rounded-full p-3 transform hover:scale-110 transition-all duration-200 shadow-lg touch-manipulation"
-            style={{ touchAction: 'manipulation' }}
+            className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors duration-200 touch-manipulation"
+            aria-label={isPlaying ? 'Pause' : 'Play'}
           >
-            {currentPlayingAlbum === album.title && isPlaying ? (
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
-              </svg>
+            {isPlaying ? (
+              <Pause className="w-6 h-6 text-white" />
             ) : (
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M8 5v14l11-7z"/>
-              </svg>
+              <Play className="w-6 h-6 text-white ml-1" />
             )}
           </button>
         </div>
-        
-        {/* Track Count Badge */}
-        <div className={`absolute top-2 right-2 text-white text-xs px-2 py-1 rounded-full ${
-          isEpOrSingle ? 'bg-purple-600/80' : 'bg-black/70'
-        }`}>
-          {isEpOrSingle ? (
-            album.tracks.length === 1 ? 'Single' : `EP - ${album.tracks.length} tracks`
-          ) : (
-            `${album.tracks.length} tracks`
-          )}
-        </div>
-      </div>
-      
-      {/* Album Info */}
-      <div className="p-4">
-        <h3 className="font-bold text-lg mb-1 group-hover:text-blue-400 transition-colors truncate">
-          {album.title}
-        </h3>
-        <p className="text-gray-400 text-sm mb-2 truncate">{album.artist}</p>
-        
-        {/* Album Subtitle */}
-        {album.subtitle && (
-          <p className="text-gray-300 text-xs mb-2 italic truncate">{album.subtitle}</p>
-        )}
-        
-        {/* Album Stats */}
-        <div className="flex items-center justify-between text-xs text-gray-500">
-          <span>{new Date(album.releaseDate).getFullYear()}</span>
-          {album.explicit && (
-            <span className="bg-red-600 text-white px-1 py-0.5 rounded text-xs font-bold">
-              E
-            </span>
-          )}
-        </div>
-        
-        {/* Funding Links */}
-        {album.funding && album.funding.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-1">
-            {album.funding.slice(0, 2).map((funding, fundingIndex) => (
-              <button
-                key={fundingIndex}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  window.open(funding.url, '_blank', 'noopener,noreferrer');
-                }}
-                className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 hover:from-blue-500/30 hover:to-purple-500/30 text-white px-2 py-1 rounded text-xs transition-all cursor-pointer"
-              >
-                💝 {funding.message || 'Support'}
-              </button>
-            ))}
-            {album.funding.length > 2 && (
-              <span className="text-xs text-gray-500 px-2 py-1">
-                +{album.funding.length - 2} more
-              </span>
-            )}
+
+        {/* Track count badge */}
+        {album.tracks.length > 0 && (
+          <div className="absolute top-2 right-2 bg-black/50 backdrop-blur-sm rounded-full px-2 py-1 text-xs text-white">
+            {album.tracks.length} track{album.tracks.length !== 1 ? 's' : ''}
           </div>
         )}
       </div>
-    </Link>
+
+      {/* Album Info */}
+      <div className="p-3">
+        <Link href={albumUrl} className="block group">
+          <h3 className="font-semibold text-white text-sm leading-tight line-clamp-2 group-hover:text-blue-300 transition-colors duration-200">
+            {album.title}
+          </h3>
+          <p className="text-gray-400 text-xs mt-1 line-clamp-1">
+            {album.artist}
+          </p>
+        </Link>
+        
+        {/* Release date */}
+        {album.releaseDate && (
+          <p className="text-gray-500 text-xs mt-1">
+            {new Date(album.releaseDate).getFullYear()}
+          </p>
+        )}
+      </div>
+
+      {/* Mobile touch feedback */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-white/5 opacity-0 group-active:opacity-100 transition-opacity duration-150" />
+      </div>
+    </div>
   );
 }

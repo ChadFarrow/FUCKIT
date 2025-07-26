@@ -1382,8 +1382,6 @@ export default function HomePage() {
                               <AlbumCard
                                 key={`album-${index}`}
                                 album={album}
-                                index={index}
-                                currentPlayingAlbum={currentPlayingAlbum}
                                 isPlaying={isPlaying}
                                 onPlay={playAlbum}
                               />
@@ -1463,8 +1461,6 @@ export default function HomePage() {
                               <AlbumCard
                                 key={`ep-single-${index}`}
                                 album={album}
-                                index={index}
-                                currentPlayingAlbum={currentPlayingAlbum}
                                 isPlaying={isPlaying}
                                 onPlay={playAlbum}
                               />
@@ -1542,8 +1538,6 @@ export default function HomePage() {
                       <AlbumCard
                         key={`${album.title}-${index}`}
                         album={album}
-                        index={index}
-                        currentPlayingAlbum={currentPlayingAlbum}
                         isPlaying={isPlaying}
                         onPlay={playAlbum}
                       />

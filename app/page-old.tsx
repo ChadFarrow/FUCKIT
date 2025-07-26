@@ -973,8 +973,6 @@ export default function HomePage() {
                             <AlbumCard
                               key={index}
                               album={album}
-                              index={index}
-                              currentPlayingAlbum={currentPlayingAlbum}
                               isPlaying={isPlaying}
                               onPlay={playAlbum}
                             />
@@ -992,8 +990,6 @@ export default function HomePage() {
                     <AlbumCard
                       key={`single-${index}`}
                       album={album}
-                      index={index + albumsWithMultipleTracks.length} // Continue index from albums section
-                      currentPlayingAlbum={currentPlayingAlbum}
                       isPlaying={isPlaying}
                       onPlay={playAlbum}
                     />

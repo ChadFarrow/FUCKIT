@@ -81,4 +81,50 @@ export const updateGlobalAudioState = (
   } else {
     setGlobalAudioState(updates);
   }
+};
+
+// Mobile audio session management
+export const setupMobileAudioSession = (audioElement?: HTMLAudioElement) => {
+  if (typeof window !== 'undefined' && 'mediaSession' in navigator) {
+    navigator.mediaSession.setActionHandler('play', () => {
+      if (audioElement) audioElement.play();
+    });
+    
+    navigator.mediaSession.setActionHandler('pause', () => {
+      if (audioElement) audioElement.pause();
+    });
+    
+    navigator.mediaSession.setActionHandler('previoustrack', () => {
+      // Implement previous track
+    });
+    
+    navigator.mediaSession.setActionHandler('nexttrack', () => {
+      // Implement next track
+    });
+    
+    navigator.mediaSession.setActionHandler('seekto', (details) => {
+      if (audioElement && details.seekTime) {
+        audioElement.currentTime = details.seekTime;
+      }
+    });
+  }
+};
+
+// Update metadata for lock screen controls
+export const updateMediaSessionMetadata = (album: any, trackIndex: number) => {
+  if (typeof window !== 'undefined' && 'mediaSession' in navigator) {
+    const track = album.tracks[trackIndex];
+    if (track) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: track.title,
+        artist: album.artist || album.title,
+        album: album.title,
+        artwork: album.coverArt ? [
+          { src: album.coverArt, sizes: '512x512', type: 'image/jpeg' },
+          { src: album.coverArt, sizes: '256x256', type: 'image/jpeg' },
+          { src: album.coverArt, sizes: '128x128', type: 'image/jpeg' },
+        ] : []
+      });
+    }
+  }
 }; 
