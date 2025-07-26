@@ -140,24 +140,27 @@ export const setGlobalTrackInfo = (
   const track = album.tracks[trackIndex];
   if (!track) return;
 
+  // Use album title as unique identifier since album.id doesn't exist
+  const albumIdentifier = album.title;
+
   // Store track info in localStorage for global player access
   const trackInfo = {
     title: track.title,
     artist: album.artist || album.title,
     album: album.title,
-    albumId: album.id,
+    albumId: albumIdentifier,
     coverArt: album.coverArt,
     url: trackUrl,
     duration: track.duration
   };
 
   try {
-    const trackInfoKey = `fuckit_track_info_${album.id}_${trackIndex}`;
+    const trackInfoKey = `fuckit_track_info_${albumIdentifier}_${trackIndex}`;
     localStorage.setItem(trackInfoKey, JSON.stringify(trackInfo));
     
     // Update global audio state
     updateGlobalAudioState({
-      currentAlbum: album.id,
+      currentAlbum: albumIdentifier,
       currentTrackIndex: trackIndex,
       trackUrl: trackUrl,
       isPlaying: true

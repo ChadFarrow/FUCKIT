@@ -246,7 +246,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   useEffect(() => {
     const globalState = getGlobalAudioState();
     if (globalState.isPlaying && globalState.currentAlbum && globalState.trackUrl) {
-      // Restore audio state if it matches this album
+      // Restore audio state if it matches this album (compare by album.title)
       if (album && globalState.currentAlbum === album.title) {
         setCurrentTrackIndex(globalState.currentTrackIndex);
         setCurrentTime(globalState.currentTime);
@@ -259,6 +259,11 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
           audioRef.current.currentTime = globalState.currentTime;
           audioRef.current.volume = globalState.volume;
           setIsPlaying(globalState.isPlaying);
+          
+          // Resume playback if it was playing
+          if (globalState.isPlaying) {
+            audioRef.current.play().catch(console.error);
+          }
         }
       }
     }
