@@ -34,14 +34,26 @@ export default function GlobalAudioPlayer() {
   const [isVisible, setIsVisible] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [isClient, setIsClient] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // Debug: Log component mount
-  console.log('🚀 GlobalAudioPlayer component mounted');
+  // Debug: Log component mount with timestamp
+  console.log('🚀 GlobalAudioPlayer component mounted at:', new Date().toISOString());
+  
+  // Ensure we're client-side before running audio logic
+  useEffect(() => {
+    setIsClient(true);
+    console.log('🔧 GlobalAudioPlayer client-side initialized');
+  }, []);
 
   // Load audio state from localStorage
   useEffect(() => {
-    console.log('🔧 GlobalAudioPlayer useEffect starting');
+    if (!isClient) {
+      console.log('⏳ GlobalAudioPlayer waiting for client-side hydration');
+      return;
+    }
+    
+    console.log('🔧 GlobalAudioPlayer useEffect starting (client-side)');
     
     const checkAudioState = () => {
       const state = getGlobalAudioState();
