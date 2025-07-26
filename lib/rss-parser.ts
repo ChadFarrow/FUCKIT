@@ -675,9 +675,22 @@ export class RSSParser {
         // Server-side: fetch directly
         response = await fetch(feedUrl);
       } else {
-        // Client-side: use proxy
+        // Client-side: use proxy or direct API routes
+        const isApiRoute = feedUrl.startsWith('/api/');
         const isAlreadyProxied = feedUrl.startsWith('/api/fetch-rss');
-        const proxyUrl = isAlreadyProxied ? feedUrl : `/api/fetch-rss?url=${encodeURIComponent(feedUrl)}`;
+        
+        let proxyUrl: string;
+        if (isApiRoute && !isAlreadyProxied) {
+          // Direct API route (e.g., /api/podcastindex)
+          proxyUrl = feedUrl;
+        } else if (isAlreadyProxied) {
+          // Already proxied through fetch-rss
+          proxyUrl = feedUrl;
+        } else {
+          // External URL, proxy through fetch-rss
+          proxyUrl = `/api/fetch-rss?url=${encodeURIComponent(feedUrl)}`;
+        }
+        
         response = await fetch(proxyUrl);
       }
       
@@ -845,9 +858,22 @@ export class RSSParser {
         // Server-side: fetch directly
         response = await fetch(feedUrl);
       } else {
-        // Client-side: use proxy
+        // Client-side: use proxy or direct API routes
+        const isApiRoute = feedUrl.startsWith('/api/');
         const isAlreadyProxied = feedUrl.startsWith('/api/fetch-rss');
-        const proxyUrl = isAlreadyProxied ? feedUrl : `/api/fetch-rss?url=${encodeURIComponent(feedUrl)}`;
+        
+        let proxyUrl: string;
+        if (isApiRoute && !isAlreadyProxied) {
+          // Direct API route (e.g., /api/podcastindex)
+          proxyUrl = feedUrl;
+        } else if (isAlreadyProxied) {
+          // Already proxied through fetch-rss
+          proxyUrl = feedUrl;
+        } else {
+          // External URL, proxy through fetch-rss
+          proxyUrl = `/api/fetch-rss?url=${encodeURIComponent(feedUrl)}`;
+        }
+        
         response = await fetch(proxyUrl);
       }
       
