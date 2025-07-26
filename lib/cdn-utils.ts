@@ -11,8 +11,8 @@ export interface CDNConfig {
 
 // Default CDN configuration
 const defaultCDNConfig: CDNConfig = {
-  hostname: process.env.BUNNY_CDN_HOSTNAME || 're-podtards.b-cdn.net',
-  zone: process.env.BUNNY_CDN_ZONE || 're-podtards',
+  hostname: process.env.BUNNY_CDN_HOSTNAME || 're-podtards-cdn-new.b-cdn.net',
+  zone: process.env.BUNNY_CDN_ZONE || 're-podtards-cdn-new',
   apiKey: process.env.BUNNY_CDN_API_KEY,
 };
 
@@ -45,30 +45,30 @@ const CDN_THRESHOLDS = {
 // URL mapping from upload report - maps original URLs to CDN URLs
 const CDN_URL_MAPPING: { [key: string]: string } = {
   // Bloodshot Lies - The Album
-  'https://www.doerfelverse.com/art/bloodshot-lies-the-album.png': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-artwork.png',
+  'https://www.doerfelverse.com/art/bloodshot-lies-the-album.png': 'https://re-podtards-cdn-new.b-cdn.net/albums/bloodshot-lies---the-album-artwork.png',
   
   // Music From The Doerfel-Verse
-  'https://www.doerfelverse.com/art/carol-of-the-bells.png': 'https://re-podtards.b-cdn.net/albums/music-from-the-doerfel-verse-artwork.png',
+  'https://www.doerfelverse.com/art/carol-of-the-bells.png': 'https://re-podtards-cdn-new.b-cdn.net/albums/music-from-the-doerfel-verse-artwork.png',
   
   // Into The Doerfel-Verse
-  'https://www.doerfelverse.com/art/itdvchadf.png': 'https://re-podtards.b-cdn.net/albums/into-the-doerfel-verse-artwork.png',
+  'https://www.doerfelverse.com/art/itdvchadf.png': 'https://re-podtards-cdn-new.b-cdn.net/albums/into-the-doerfel-verse-artwork.png',
   
   // Common track images that are reused
-  'https://www.doerfelverse.com/art/bloodshot-lies-art.jpg': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.jpg',
-  'https://www.doerfelverse.com/art/movie.png': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
-  'https://www.doerfelverse.com/art/heartbreak.png': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
-  'https://www.doerfelverse.com/art/still-a-man.png': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
-  'https://www.doerfelverse.com/art/so-far-away.png': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
-  'https://www.doerfelverse.com/art/thought-it-was-real.png': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
-  'https://www.doerfelverse.com/art/breakaway.png': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
-  'https://www.doerfelverse.com/art/some1likeyou.png': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
-  'https://www.doerfelverse.com/art/maybe-its-you-art.jpg': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.jpg',
-  'https://www.doerfelverse.com/art/3-years.png': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
-  'https://www.doerfelverse.com/art/love-is-a-war.png': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
-  'https://www.doerfelverse.com/art/another-man-ben.png': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
-  'https://www.doerfelverse.com/art/my-brother.png': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
-  'https://www.doerfelverse.com/art/bloodshot-lies-acoustic.png': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
-  'https://www.doerfelverse.com/art/bloodshot-lies-funk.png': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
+  'https://www.doerfelverse.com/art/bloodshot-lies-art.jpg': 'https://re-podtards-cdn-new.b-cdn.net/albums/bloodshot-lies---the-album-track.jpg',
+  'https://www.doerfelverse.com/art/movie.png': 'https://re-podtards-cdn-new.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
+  'https://www.doerfelverse.com/art/heartbreak.png': 'https://re-podtards-cdn-new.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
+  'https://www.doerfelverse.com/art/still-a-man.png': 'https://re-podtards-cdn-new.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
+  'https://www.doerfelverse.com/art/so-far-away.png': 'https://re-podtards-cdn-new.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
+  'https://www.doerfelverse.com/art/thought-it-was-real.png': 'https://re-podtards-cdn-new.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
+  'https://www.doerfelverse.com/art/breakaway.png': 'https://re-podtards-cdn-new.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
+  'https://www.doerfelverse.com/art/some1likeyou.png': 'https://re-podtards-cdn-new.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
+  'https://www.doerfelverse.com/art/maybe-its-you-art.jpg': 'https://re-podtards-cdn-new.b-cdn.net/albums/bloodshot-lies---the-album-track.jpg',
+  'https://www.doerfelverse.com/art/3-years.png': 'https://re-podtards-cdn-new.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
+  'https://www.doerfelverse.com/art/love-is-a-war.png': 'https://re-podtards-cdn-new.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
+  'https://www.doerfelverse.com/art/another-man-ben.png': 'https://re-podtards-cdn-new.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
+  'https://www.doerfelverse.com/art/my-brother.png': 'https://re-podtards-cdn-new.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
+  'https://www.doerfelverse.com/art/bloodshot-lies-acoustic.png': 'https://re-podtards-cdn-new.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
+  'https://www.doerfelverse.com/art/bloodshot-lies-funk.png': 'https://re-podtards-cdn-new.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
 };
 
 /**
