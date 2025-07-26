@@ -320,7 +320,7 @@ export class RSSParser {
           }
         } catch (error) {
           // If URL parsing fails, keep the original unless it's obviously broken
-          if (!coverArt.startsWith('http')) {
+          if (coverArt && !coverArt.startsWith('http')) {
             verboseLog('Invalid cover art URL format:', coverArt);
             coverArt = null;
           }
