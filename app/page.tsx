@@ -731,7 +731,8 @@ export default function HomePage() {
       
       if (albumsData && albumsData.length > 0) {
         verboseLog('✅ Setting albums:', albumsData.length, 'albums');
-        setAlbums(albumsData);
+        // Only set albums if we don't already have albums displayed (prevents page refresh)
+        setAlbums(prev => prev.length === 0 ? albumsData : prev);
         verboseLog('Successfully set', albumsData.length, 'albums');
         
         // Cache albums in localStorage for faster subsequent loads (only for core tier)
