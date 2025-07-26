@@ -202,7 +202,7 @@ export default function GlobalAudioPlayer() {
             >
               <div className="w-12 h-12 relative rounded overflow-hidden">
                 <Image
-                  src={getAlbumArtworkUrl(trackInfo.coverArt)}
+                  src={getAlbumArtworkUrl(trackInfo.coverArt || '')}
                   alt={trackInfo.album}
                   fill
                   className="object-cover"
