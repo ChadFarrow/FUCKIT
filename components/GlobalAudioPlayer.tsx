@@ -48,12 +48,7 @@ export default function GlobalAudioPlayer() {
 
   // Load audio state from localStorage
   useEffect(() => {
-    if (!isClient) {
-      console.log('⏳ GlobalAudioPlayer waiting for client-side hydration');
-      return;
-    }
-    
-    console.log('🔧 GlobalAudioPlayer useEffect starting (client-side)');
+    console.log('🔧 GlobalAudioPlayer useEffect starting, isClient:', isClient);
     
     const checkAudioState = () => {
       const state = getGlobalAudioState();
@@ -96,7 +91,7 @@ export default function GlobalAudioPlayer() {
       clearInterval(interval);
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, []);
+  }, [isClient]);
 
   // Update audio element when state changes
   useEffect(() => {
