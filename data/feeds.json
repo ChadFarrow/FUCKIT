@@ -829,6 +829,16 @@
       "status": "active",
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z"
+    },
+    {
+      "id": "doerfels-publisher",
+      "originalUrl": "https://re.podtards.com/api/feeds/doerfels-pubfeed",
+      "type": "publisher",
+      "title": "Doerfels Publisher Feed",
+      "priority": "core",
+      "status": "active",
+      "addedAt": "2025-01-27T00:00:00.000Z",
+      "lastUpdated": "2025-01-27T00:00:00.000Z"
     }
   ],
   "lastUpdated": "2025-01-27T00:00:00.000Z",
