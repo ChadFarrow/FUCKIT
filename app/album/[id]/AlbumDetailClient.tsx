@@ -377,20 +377,20 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
     });
     
     if (album?.coverArt) {
-      console.log('🖼️ Loading background image:', album.coverArt);
+      console.log('🖼️ Loading background image:', album?.coverArt);
       
       // Preload the image to ensure it's available for background
       const img = new window.Image();
       img.onload = () => {
-        console.log('✅ Background image loaded successfully:', album.coverArt);
-        setBackgroundImage(album.coverArt);
+        console.log('✅ Background image loaded successfully:', album?.coverArt);
+        setBackgroundImage(album?.coverArt);
       };
       img.onerror = (error) => {
-        console.error('❌ Background image failed to load:', album.coverArt, error);
+        console.error('❌ Background image failed to load:', album?.coverArt, error);
         // Fallback to gradient if image fails to load
         setBackgroundImage(null);
       };
-      img.src = album.coverArt;
+      img.src = album?.coverArt;
     } else {
       console.log('🚫 No cover art available, using gradient background');
       setBackgroundImage(null);
@@ -911,7 +911,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
           {/* Album Art with Play Button Overlay */}
           <div className="relative group mx-auto">
             <Image 
-              src={getAlbumArtworkUrl(album.coverArt || '', 'large')} 
+              src={getAlbumArtworkUrl(album?.coverArt || '', 'large')} 
               alt={album.title}
               width={280}
               height={280}
@@ -1051,7 +1051,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                       <>
                         {/* Album artwork fallback for tracks without individual images */}
                         <Image 
-                          src={getAlbumArtworkUrl(album.coverArt || '', 'thumbnail')} 
+                          src={getAlbumArtworkUrl(album?.coverArt || '', 'thumbnail')} 
                           alt={album.title}
                           width={48}
                           height={48}
@@ -1093,7 +1093,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                     {track.subtitle && (
                       <p className="text-xs md:text-sm text-gray-400 italic truncate">{track.subtitle}</p>
                     )}
-                    <p className="text-xs md:text-sm text-gray-400 truncate">{album.artist}</p>
+                    <p className="text-xs md:text-sm text-gray-400 truncate">{album?.artist}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
@@ -1155,22 +1155,22 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
       </div>
 
       {/* Local Audio Player Removed - GlobalAudioPlayer handles all playback */}
-      {false && (
+      {/* Player removed - using GlobalAudioPlayer only */ false && (
         <div className="fixed bottom-0 left-0 right-0 backdrop-blur-md bg-gradient-to-t from-black/60 via-black/40 to-transparent border-t border-white/10 p-4 pb-safe shadow-2xl">
           <div className="container mx-auto flex flex-col md:flex-row items-center gap-4 bg-white/5 rounded-xl p-4 backdrop-blur-sm border border-white/10">
             {/* Mobile Layout: Track Info + Controls Row */}
             <div className="flex items-center gap-3 w-full md:w-auto md:flex-1">
               <Image 
-                src={album.tracks[currentTrackIndex]?.image ? getTrackArtworkUrl(album.tracks[currentTrackIndex].image) : getAlbumArtworkUrl(album.coverArt || '', 'thumbnail')} 
-                alt={album.tracks[currentTrackIndex]?.title || album.title}
+                src={getPlaceholderImageUrl('thumbnail')} 
+                alt={album?.tracks?.[currentTrackIndex]?.title || album?.title || 'Track'}
                 width={48}
                 height={48}
                 className="rounded object-cover hidden md:block"
                 onError={(e) => {
                   // Fallback to album artwork then placeholder on error
                   const target = e.target as HTMLImageElement;
-                  if (target.src !== getAlbumArtworkUrl(album.coverArt || '', 'thumbnail')) {
-                    target.src = getAlbumArtworkUrl(album.coverArt || '', 'thumbnail');
+                  if (target.src !== getAlbumArtworkUrl(album?.coverArt || '', 'thumbnail')) {
+                    target.src = getAlbumArtworkUrl(album?.coverArt || '', 'thumbnail');
                   } else {
                     target.src = getPlaceholderImageUrl('thumbnail');
                   }
@@ -1178,9 +1178,9 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               />
               <div className="min-w-0 flex-1 md:flex-initial">
                 <p className="font-medium truncate text-sm md:text-base">
-                  {album.tracks[currentTrackIndex]?.title || 'No track selected'}
+                  {album?.tracks?.[currentTrackIndex]?.title || 'No track selected'}
                 </p>
-                <p className="text-xs md:text-sm text-gray-400 truncate">{album.artist}</p>
+                <p className="text-xs md:text-sm text-gray-400 truncate">{album?.artist}</p>
               </div>
               
               {/* Mobile Playback Controls */}
@@ -1203,7 +1203,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                 <button 
                   onClick={nextTrack}
                   className="text-gray-400 hover:text-white transition-colors p-2"
-                  disabled={currentTrackIndex === album.tracks.length - 1}
+                  disabled={currentTrackIndex === (album?.tracks?.length ?? 1) - 1}
                 >
                   <SkipForward className="h-5 w-5" />
                 </button>
@@ -1230,7 +1230,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               <button 
                 onClick={nextTrack}
                 className="text-gray-400 hover:text-white transition-colors"
-                disabled={currentTrackIndex === album.tracks.length - 1}
+                disabled={currentTrackIndex === (album?.tracks?.length ?? 1) - 1}
               >
                 <SkipForward className="h-5 w-5" />
               </button>
