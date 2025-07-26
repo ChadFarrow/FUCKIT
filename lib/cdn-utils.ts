@@ -79,6 +79,17 @@ const CDN_URL_MAPPING: { [key: string]: string } = {
 export function shouldUseCDN(url: string): boolean {
   if (!url) return false;
 
+  // Temporarily disable CDN until pull zone is configured to pull from origin domains
+  // Images exist at original sources but CDN pull zone needs configuration
+  // 
+  // To fix: Configure re-podtards-cdn-new pull zone to pull from:
+  // - https://www.doerfelverse.com
+  // - https://sirtjthewrathful.com  
+  // - https://thisisjdog.com
+  // - https://wavlake.com
+  return false;
+
+  /* Re-enable this code after configuring pull zone:
   try {
     const urlObj = new URL(url);
     const domain = urlObj.hostname.toLowerCase();
@@ -87,8 +98,6 @@ export function shouldUseCDN(url: string): boolean {
     if (defaultCDNConfig.hostname === 'your-zone.b-cdn.net') {
       return false;
     }
-
-    // CDN is now enabled - images are confirmed to exist on re-podtards-cdn-new.b-cdn.net
 
     // Don't re-process URLs that are already on our CDN
     if (domain === 're-podtards-cdn-new.b-cdn.net' || domain === 're-podtards.b-cdn.net') {
@@ -118,6 +127,7 @@ export function shouldUseCDN(url: string): boolean {
     // If URL parsing fails, don't use CDN
     return false;
   }
+  */
 }
 
 /**

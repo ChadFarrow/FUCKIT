@@ -14,8 +14,8 @@ export interface AppVersion {
 export const currentVersion: AppVersion = {
   major: 1,
   minor: 1,
-  patch: 24,
-  build: 124
+  patch: 25,
+  build: 125
 };
 
 /**
