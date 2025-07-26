@@ -1,0 +1,11 @@
+# Task ID: 12
+# Title: Move Banner to About Section and Add PayPal Links
+# Status: done
+# Dependencies: None
+# Priority: medium
+# Description: Relocate the top banner content to an about section and add PayPal donation links for Doerfels and PodcastIndex
+# Details:
+Move the current banner content from the top of the page to a dedicated about section. Add PayPal donation links for both Doerfels and PodcastIndex to support the creators and services used by the application. This will improve the site layout and provide users with ways to support the content creators.
+
+# Test Strategy:
+

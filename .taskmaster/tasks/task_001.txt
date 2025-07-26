@@ -1,6 +1,6 @@
 # Task ID: 1
 # Title: Fix Background Art Not Loading
-# Status: pending
+# Status: done
 # Dependencies: None
 # Priority: high
 # Description: Resolve issues with album artwork backgrounds not displaying properly

@@ -46,17 +46,6 @@
         "subtasks": []
       },
       {
-        "id": 5,
-        "title": "Optimize CDN Configuration",
-        "description": "Improve CDN setup and configuration for better content delivery",
-        "status": "done",
-        "priority": "medium",
-        "dependencies": [],
-        "details": "Review and optimize Bunny CDN configuration for better performance, caching, and content delivery. Ensure proper fallback mechanisms.",
-        "testStrategy": "Test CDN performance, caching behavior, and fallback mechanisms across different regions and network conditions.",
-        "subtasks": []
-      },
-      {
         "id": 6,
         "title": "Enhance Error Handling",
         "description": "Improve error handling and user feedback throughout the application",
@@ -253,17 +242,6 @@
         "dependencies": [],
         "priority": "high",
         "subtasks": []
-      },
-      {
-        "id": 24,
-        "title": "Fix Incorrect Album Art Display Issues",
-        "description": "Resolve album art showing incorrect images due to CDN processing and RSS parsing issues",
-        "details": "The album art is displaying incorrect images due to several issues: 1) CDN processing may be serving wrong images, 2) RSS parsing might be extracting incorrect cover art URLs, 3) Image caching issues between different album feeds, 4) Potential URL mapping problems in the CDN configuration. Need to: 1) Audit RSS feed parsing to ensure correct cover art extraction, 2) Verify CDN image serving is working correctly, 3) Check for image URL conflicts or caching issues, 4) Implement better fallback mechanisms for missing or incorrect album art, 5) Add debugging to track which images are being loaded for each album, 6) Ensure proper image URL validation and sanitization.",
-        "testStrategy": "",
-        "status": "pending",
-        "dependencies": [],
-        "priority": "high",
-        "subtasks": []
       }
     ],
     "metadata": {
@@ -271,7 +249,7 @@
       "description": "Main task list for FUCKIT podcast/music streaming application",
       "created": "2025-01-27T00:00:00.000Z",
       "lastModified": "2025-01-27T00:00:00.000Z",
-      "updated": "2025-07-26T19:15:44.938Z"
+      "updated": "2025-07-26T20:15:17.150Z"
     }
   }
 }

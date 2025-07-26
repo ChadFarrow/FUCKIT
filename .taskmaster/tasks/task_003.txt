@@ -1,6 +1,6 @@
 # Task ID: 3
 # Title: Fix Missing Albums Sometimes
-# Status: pending
+# Status: done
 # Dependencies: None
 # Priority: high
 # Description: Resolve issues where albums occasionally don't appear in the feed
