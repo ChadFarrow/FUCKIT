@@ -11,7 +11,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Bunny.net CDN configuration
-const BUNNY_CDN_API_KEY = process.env.BUNNY_CDN_API_KEY || 'd33f9b6a-779d-4cce-8767-cd050a2819bf';
+const BUNNY_CDN_API_KEY = process.env.BUNNY_CDN_API_KEY;
 const BUNNY_CDN_HOSTNAME = process.env.BUNNY_CDN_HOSTNAME || 're-podtards-cdn.b-cdn.net';
 const BUNNY_CDN_ZONE = process.env.BUNNY_CDN_ZONE || 're-podtards-cdn';
 

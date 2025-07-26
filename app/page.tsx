@@ -1045,34 +1045,35 @@ export default function HomePage() {
           }}
         >
           <div className="container mx-auto px-6 py-4">
-            <div className="flex items-center gap-4 mb-8">
-              {/* Menu Button - Left */}
-              <button
-                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="p-2 rounded-lg bg-gray-800/50 hover:bg-gray-700/50 transition-colors"
-                aria-label="Toggle menu"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </button>
-              
-              {/* Logo and Title - Centered */}
-              <div className="w-10 h-10 relative border border-gray-700 rounded-lg overflow-hidden">
-                <Image 
-                  src="/logo.webp" 
-                  alt="VALUE Logo" 
-                  width={40} 
-                  height={40}
-                  className="object-cover"
-                  priority
-                />
+            <div className="flex items-center justify-between mb-8">
+              {/* Left side - Menu Button, Logo and Title */}
+              <div className="flex items-center gap-4">
+                {/* Menu Button */}
+                <button
+                  onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                  className="p-2 rounded-lg bg-gray-800/50 hover:bg-gray-700/50 transition-colors"
+                  aria-label="Toggle menu"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                </button>
+                
+                {/* Logo and Title */}
+                <div className="w-10 h-10 relative border border-gray-700 rounded-lg overflow-hidden">
+                  <Image 
+                    src="/logo.webp" 
+                    alt="VALUE Logo" 
+                    width={40} 
+                    height={40}
+                    className="object-cover"
+                    priority
+                  />
+                </div>
+                <h1 className="text-4xl font-bold">Into the ValueVerse</h1>
               </div>
-              <h1 className="text-4xl font-bold">Into the ValueVerse</h1>
-            </div>
-            
-            {/* About Link */}
-            <div className="mt-6 mb-4">
+              
+              {/* Right side - About Link */}
               <Link 
                 href="/about" 
                 className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
@@ -1080,7 +1081,7 @@ export default function HomePage() {
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                About this site
+                <span className="hidden sm:inline">About this site</span>
               </Link>
             </div>
             

@@ -3,7 +3,7 @@
 const https = require('https');
 
 const PULL_ZONE_ID = '4240975'; // New Pull Zone ID
-const API_KEY = 'd33f9b6a-779d-4cce-8767-cd050a2819bf';
+const API_KEY = process.env.BUNNY_CDN_API_KEY;
 
 // Try to configure authentication for the Storage Zone
 const updateData = JSON.stringify({

@@ -3,7 +3,7 @@
 const https = require('https');
 
 const STORAGE_ZONE_ID = '1120580'; // From the earlier response
-const API_KEY = '62d305ab-39a0-48c1-96a30779ca9b-e0f9-4752'; // Storage API key
+const API_KEY = process.env.BUNNY_STORAGE_API_KEY; // Storage API key
 
 // Try to make the Storage Zone public
 const updateData = JSON.stringify({

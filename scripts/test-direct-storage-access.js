@@ -2,7 +2,7 @@
 
 const https = require('https');
 
-const STORAGE_API_KEY = '62d305ab-39a0-48c1-96a30779ca9b-e0f9-4752';
+const STORAGE_API_KEY = process.env.BUNNY_STORAGE_API_KEY;
 
 function testDirectAccess() {
   const options = {

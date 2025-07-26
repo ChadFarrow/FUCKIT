@@ -110,13 +110,7 @@ export default function AboutPage() {
                   Add your own RSS feeds to discover new content.
                 </p>
               </div>
-              <div>
-                <h3 className="text-lg font-semibold mb-3">Offline Support</h3>
-                <p className="text-gray-400">
-                  Progressive Web App with offline capabilities.
-                  Download and play music even without an internet connection.
-                </p>
-              </div>
+
               <div>
                 <h3 className="text-lg font-semibold mb-3">Open Ecosystem</h3>
                 <p className="text-gray-400">
@@ -157,11 +151,7 @@ export default function AboutPage() {
                       Podcast Index Website
                     </a>
                   </li>
-                  <li>
-                    <a href="https://api.podcastindex.org/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
-                      API Documentation
-                    </a>
-                  </li>
+
                   <li>
                     <a href="https://www.paypal.com/donate?token=5IhXgt0XwBEHolJXARM9gmAoTXWkftjA3uCLayf_msLtycZ5pYnk2ZSe7FoG6rOFtvv2qjUuvOz1ZeV1" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
                       Support Podcast Index

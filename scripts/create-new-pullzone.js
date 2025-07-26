@@ -2,7 +2,7 @@
 
 const https = require('https');
 
-const API_KEY = 'd33f9b6a-779d-4cce-8767-cd050a2819bf';
+const API_KEY = process.env.BUNNY_CDN_API_KEY;
 
 const createData = JSON.stringify({
   Name: 're-podtards-cdn-new',

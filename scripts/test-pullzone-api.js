@@ -3,7 +3,7 @@
 const https = require('https');
 
 const PULL_ZONE_ID = '4228588';
-const API_KEY = 'd33f9b6a-779d-4cce-8767-cd050a2819bf';
+const API_KEY = process.env.BUNNY_CDN_API_KEY;
 
 const updateData = JSON.stringify({
   OriginUrl: 're-podtards-storage',

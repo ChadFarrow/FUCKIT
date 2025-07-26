@@ -5,15 +5,29 @@
  * Helps diagnose "Domain suspended or not configured" errors
  */
 
+require('dotenv').config({ path: '.env.local' });
 const https = require('https');
 
 // Configuration from your .env.local
-const BUNNY_CDN_API_KEY = process.env.BUNNY_CDN_API_KEY || 'd33f9b6a-779d-4cce-8767-cd050a2819bf';
+const BUNNY_CDN_API_KEY = process.env.BUNNY_CDN_API_KEY;
 const BUNNY_CDN_HOSTNAME = process.env.BUNNY_CDN_HOSTNAME || 're-podtards-cdn.b-cdn.net';
 const BUNNY_CDN_ZONE = process.env.BUNNY_CDN_ZONE || 're-podtards-cdn';
-const BUNNY_STORAGE_API_KEY = process.env.BUNNY_STORAGE_API_KEY || '62d305ab-39a0-48c1-96a30779ca9b-e0f9-4752';
+const BUNNY_STORAGE_API_KEY = process.env.BUNNY_STORAGE_API_KEY;
 const BUNNY_STORAGE_HOSTNAME = process.env.BUNNY_STORAGE_HOSTNAME || 'ny.storage.bunnycdn.com';
 const BUNNY_STORAGE_ZONE = process.env.BUNNY_STORAGE_ZONE || 're-podtards-storage';
+
+// Validate required environment variables
+if (!BUNNY_CDN_API_KEY) {
+  console.error('❌ Error: BUNNY_CDN_API_KEY environment variable not set');
+  console.log('💡 Set it with: export BUNNY_CDN_API_KEY="your-api-key"');
+  process.exit(1);
+}
+
+if (!BUNNY_STORAGE_API_KEY) {
+  console.error('❌ Error: BUNNY_STORAGE_API_KEY environment variable not set');
+  console.log('💡 Set it with: export BUNNY_STORAGE_API_KEY="your-api-key"');
+  process.exit(1);
+}
 
 function makeRequest(url, options = {}) {
   return new Promise((resolve, reject) => {
