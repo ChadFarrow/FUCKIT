@@ -646,7 +646,8 @@ export default function HomePage() {
               });
               
               albumsData = [...albumsData, ...newAlbums];
-              setAlbums(albumsData);
+              // Use incremental update instead of replacing entire array
+              setAlbums(prev => [...prev, ...newAlbums]);
               
               // Update progress (only show for core feeds to avoid confusing users)
               if (loadTier === 'core') {
