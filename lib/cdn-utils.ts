@@ -11,8 +11,8 @@ export interface CDNConfig {
 
 // Default CDN configuration
 const defaultCDNConfig: CDNConfig = {
-  hostname: process.env.BUNNY_CDN_HOSTNAME || 're-podtards-cdn-new.b-cdn.net',
-  zone: process.env.BUNNY_CDN_ZONE || 're-podtards-cdn-new',
+  hostname: process.env.BUNNY_CDN_HOSTNAME || 're-podtards.b-cdn.net',
+  zone: process.env.BUNNY_CDN_ZONE || 're-podtards',
   apiKey: process.env.BUNNY_CDN_API_KEY,
 };
 
@@ -24,8 +24,8 @@ const CDN_THRESHOLDS = {
   EXTERNAL_DOMAINS_ONLY: true,
   // Domains that are already fast (don't need CDN)
   FAST_DOMAINS: [
-    're-podtards-cdn-new.b-cdn.net', // Our primary CDN with CORS
-    're-podtards.b-cdn.net', // Legacy CDN (no access)
+    're-podtards.b-cdn.net', // Our primary CDN where images are stored
+    're-podtards-cdn-new.b-cdn.net', // New CDN (not used yet)
     'localhost',
     '127.0.0.1',
     'vercel.app',
@@ -40,6 +40,35 @@ const CDN_THRESHOLDS = {
     'wavlake.com',
     // 'ableandthewolf.com', // Temporarily disabled - CDN not configured for this domain
   ]
+};
+
+// URL mapping from upload report - maps original URLs to CDN URLs
+const CDN_URL_MAPPING: { [key: string]: string } = {
+  // Bloodshot Lies - The Album
+  'https://www.doerfelverse.com/art/bloodshot-lies-the-album.png': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-artwork.png',
+  
+  // Music From The Doerfel-Verse
+  'https://www.doerfelverse.com/art/carol-of-the-bells.png': 'https://re-podtards.b-cdn.net/albums/music-from-the-doerfel-verse-artwork.png',
+  
+  // Into The Doerfel-Verse
+  'https://www.doerfelverse.com/art/itdvchadf.png': 'https://re-podtards.b-cdn.net/albums/into-the-doerfel-verse-artwork.png',
+  
+  // Common track images that are reused
+  'https://www.doerfelverse.com/art/bloodshot-lies-art.jpg': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.jpg',
+  'https://www.doerfelverse.com/art/movie.png': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
+  'https://www.doerfelverse.com/art/heartbreak.png': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
+  'https://www.doerfelverse.com/art/still-a-man.png': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
+  'https://www.doerfelverse.com/art/so-far-away.png': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
+  'https://www.doerfelverse.com/art/thought-it-was-real.png': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
+  'https://www.doerfelverse.com/art/breakaway.png': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
+  'https://www.doerfelverse.com/art/some1likeyou.png': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
+  'https://www.doerfelverse.com/art/maybe-its-you-art.jpg': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.jpg',
+  'https://www.doerfelverse.com/art/3-years.png': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
+  'https://www.doerfelverse.com/art/love-is-a-war.png': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
+  'https://www.doerfelverse.com/art/another-man-ben.png': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
+  'https://www.doerfelverse.com/art/my-brother.png': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
+  'https://www.doerfelverse.com/art/bloodshot-lies-acoustic.png': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
+  'https://www.doerfelverse.com/art/bloodshot-lies-funk.png': 'https://re-podtards.b-cdn.net/albums/bloodshot-lies---the-album-track.png',
 };
 
 /**
@@ -170,7 +199,7 @@ export function getCDNUrl(
 }
 
 /**
- * Smart album artwork URL - only uses CDN when beneficial
+ * Smart album artwork URL - uses CDN mapping when available
  * @param originalUrl - The original artwork URL
  * @param size - The desired size (e.g., 'thumbnail', 'medium', 'large')
  * @returns The optimized artwork URL
@@ -181,14 +210,29 @@ export function getAlbumArtworkUrl(originalUrl: string, size: 'thumbnail' | 'med
     return getPlaceholderImageUrl(size);
   }
 
+  // First, check if we have a direct CDN mapping for this URL
+  const mappedUrl = getMappedCDNUrl(originalUrl);
+  if (mappedUrl !== originalUrl) {
+    // Use the mapped CDN URL with size optimization
+    const sizeMap = {
+      thumbnail: { width: 150, height: 150, quality: 80 },
+      medium: { width: 300, height: 300, quality: 85 },
+      large: { width: 600, height: 600, quality: 90 },
+    };
+
+    return getSmartCDNUrl(mappedUrl, {
+      ...sizeMap[size],
+      format: 'webp',
+      fit: 'cover',
+    });
+  }
+
+  // Fallback to original CDN logic for unmapped URLs
   const sizeMap = {
     thumbnail: { width: 150, height: 150, quality: 80 },
     medium: { width: 300, height: 300, quality: 85 },
     large: { width: 600, height: 600, quality: 90 },
   };
-
-  // CDN CORS headers are now properly configured
-  // Re-enabled CDN processing with image optimization
 
   return getSmartCDNUrl(originalUrl, {
     ...sizeMap[size],
@@ -228,6 +272,23 @@ export function getTrackArtworkUrl(originalUrl: string): string {
     format: 'webp',
     fit: 'cover',
   });
+}
+
+/**
+ * Get CDN URL for a specific original URL if it exists in our mapping
+ * @param originalUrl - The original image URL
+ * @returns The CDN URL if mapped, otherwise the original URL
+ */
+export function getMappedCDNUrl(originalUrl: string): string {
+  if (!originalUrl) return originalUrl;
+  
+  // Check if we have a direct mapping for this URL
+  if (CDN_URL_MAPPING[originalUrl]) {
+    return CDN_URL_MAPPING[originalUrl];
+  }
+  
+  // If no direct mapping, return original URL
+  return originalUrl;
 }
 
 /**
