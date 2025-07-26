@@ -349,9 +349,12 @@ export default function HomePage() {
     setTimeout(() => {
       devLog('🔄 Loading core feeds first for fast initial page load');
       loadAlbumsData([], 'core').then(() => {
+        // TEMPORARY: Disable extended feeds to debug refresh issue
         // Load extended feeds in background after core feeds are loaded
         setTimeout(() => {
           devLog('🔄 Loading extended feeds in background');
+          console.log('⚠️ EXTENDED FEEDS TEMPORARILY DISABLED FOR DEBUGGING');
+          return; // TEMP: Skip extended loading
           loadAlbumsData([], 'extended').then((extendedAlbums) => {
             if (extendedAlbums && extendedAlbums.length > 0) {
               // Append extended albums to existing albums with deduplication
