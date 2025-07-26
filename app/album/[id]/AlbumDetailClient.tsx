@@ -245,9 +245,19 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   // Initialize audio state from localStorage
   useEffect(() => {
     const globalState = getGlobalAudioState();
+    console.log('🔍 Audio state restoration check:', {
+      hasGlobalState: !!globalState,
+      isPlaying: globalState?.isPlaying,
+      currentAlbum: globalState?.currentAlbum,
+      trackUrl: globalState?.trackUrl,
+      albumTitle: album?.title,
+      willRestore: globalState?.isPlaying && globalState?.currentAlbum && globalState?.trackUrl && album && globalState.currentAlbum === album.title
+    });
+    
     if (globalState.isPlaying && globalState.currentAlbum && globalState.trackUrl) {
       // Restore audio state if it matches this album (compare by album.title)
       if (album && globalState.currentAlbum === album.title) {
+        console.log('✅ Restoring audio state for album:', album.title);
         setCurrentTrackIndex(globalState.currentTrackIndex);
         setCurrentTime(globalState.currentTime);
         setDuration(globalState.duration);

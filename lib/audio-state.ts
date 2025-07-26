@@ -142,6 +142,13 @@ export const setGlobalTrackInfo = (
 
   // Use album title as unique identifier since album.id doesn't exist
   const albumIdentifier = album.title;
+  console.log('🎵 Setting global track info:', {
+    albumTitle: album.title,
+    albumIdentifier,
+    trackIndex,
+    trackTitle: track.title,
+    trackUrl
+  });
 
   // Store track info in localStorage for global player access
   const trackInfo = {
