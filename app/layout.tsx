@@ -4,7 +4,6 @@ import './globals.css'
 import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import { ToastContainer } from '@/components/Toast'
-import GlobalAudioPlayer from '@/components/GlobalAudioPlayer'
 
 
 
@@ -70,7 +69,6 @@ export default function RootLayout({
             {children}
           </div>
 
-          <GlobalAudioPlayer />
           <ToastContainer />
         </ErrorBoundary>
         <ServiceWorkerRegistration />

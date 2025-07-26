@@ -9,7 +9,6 @@ import AlbumCard from '@/components/AlbumCard';
 import { RSSParser, RSSAlbum } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { generateAlbumUrl, generatePublisherSlug } from '@/lib/url-utils';
-import { getGlobalAudioState, updateGlobalAudioState, clearGlobalAudioState, setGlobalTrackInfo } from '@/lib/audio-state';
 import { getVersionString } from '@/lib/version';
 import ControlsBar, { FilterType, ViewType, SortType } from '@/components/ControlsBar';
 import { AppError, ErrorCodes, ErrorCode, getErrorMessage, createErrorLogger } from '@/lib/error-utils';
@@ -364,47 +363,6 @@ export default function HomePage() {
     }, 100);
   }, [isClient]); // Add isClient as dependency
 
-  // Initialize audio state from localStorage
-  useEffect(() => {
-    const globalState = getGlobalAudioState();
-    if (globalState.isPlaying && globalState.currentAlbum && globalState.trackUrl) {
-      // Only restore state if we have a valid audio element and it can actually play
-      if (audioRef.current) {
-        // Use proxy helper even for global state restoration
-        const urlsToTry = getAudioUrlsToTry(globalState.trackUrl);
-        audioRef.current.src = urlsToTry[0]; // Use first URL (proxy if external)
-        audioRef.current.currentTime = globalState.currentTime;
-        audioRef.current.volume = globalState.volume;
-        
-        // Check if the audio is actually ready to play
-        const checkAudioReady = () => {
-          if (audioRef.current && audioRef.current.readyState >= 2) {
-            // Audio is ready, restore state
-            setCurrentPlayingAlbum(globalState.currentAlbum);
-            setCurrentTrackIndex(globalState.currentTrackIndex);
-            
-            // Only set as playing if the audio is actually playing
-            if (audioRef.current && !audioRef.current.paused) {
-              setIsPlaying(true);
-            } else {
-              // Audio is not actually playing, clear the playing state
-              setIsPlaying(false);
-              updateGlobalAudioState({ isPlaying: false });
-            }
-          } else {
-            // Audio not ready yet, try again in a moment
-            setTimeout(checkAudioReady, 100);
-          }
-        };
-        
-        checkAudioReady();
-      } else {
-        // No audio element available, clear the playing state
-        setIsPlaying(false);
-        updateGlobalAudioState({ isPlaying: false });
-      }
-    }
-  }, []);
 
   // Mobile audio initialization - handle autoplay restrictions
   useEffect(() => {
@@ -439,12 +397,10 @@ export default function HomePage() {
 
     const handlePlay = () => {
       setIsPlaying(true);
-      updateGlobalAudioState({ isPlaying: true }, audioRef.current || undefined);
     };
 
     const handlePause = () => {
       setIsPlaying(false);
-      updateGlobalAudioState({ isPlaying: false }, audioRef.current || undefined);
     };
 
     const handleEnded = () => {
@@ -484,11 +440,6 @@ export default function HomePage() {
       
       setIsPlaying(false);
       setCurrentPlayingAlbum(null);
-      updateGlobalAudioState({ 
-        isPlaying: false, 
-        currentAlbum: null, 
-        trackUrl: null 
-      });
     };
 
     // Add event listeners
@@ -511,7 +462,7 @@ export default function HomePage() {
     return () => {
       // If we're unmounting and audio is not actually playing, clear the state
       if (audioRef.current && audioRef.current.paused) {
-        clearGlobalAudioState();
+
       }
     };
   }, []);
@@ -806,7 +757,7 @@ export default function HomePage() {
       try {
         audioRef.current.pause();
         setIsPlaying(false);
-        updateGlobalAudioState({ isPlaying: false }, audioRef.current || undefined);
+
       } catch (error) {
         console.error('Error pausing audio:', error);
       }
@@ -824,7 +775,7 @@ export default function HomePage() {
           setIsPlaying(true);
           
           // Set global track info for persistent player
-          setGlobalTrackInfo(album, 0, firstTrack.url);
+
           
           console.log('✅ Successfully started playback');
         } else {
@@ -880,13 +831,6 @@ export default function HomePage() {
         setIsPlaying(true);
         setShuffleTrackIndex(index);
         
-        // Update global state (store original URL, not proxied)
-        updateGlobalAudioState({
-          isPlaying: true,
-          currentAlbum: album.title,
-          currentTrackIndex: index,
-          trackUrl: originalUrl, // Store original URL, not proxied
-        }, audioRef.current || undefined);
       } else {
         throw new Error('All URL attempts failed for shuffled track');
       }
@@ -913,7 +857,7 @@ export default function HomePage() {
         setIsShuffleMode(false);
         setShuffledTracks([]);
         setShuffleTrackIndex(0);
-        clearGlobalAudioState();
+
         toast.success('🎵 Shuffle playlist completed!');
       }
       return;
@@ -934,11 +878,6 @@ export default function HomePage() {
           if (success) {
             setCurrentTrackIndex(currentTrackIndex + 1);
             
-            // Update global state
-            updateGlobalAudioState({
-              currentTrackIndex: currentTrackIndex + 1,
-              trackUrl: nextTrack.url,
-            }, audioRef.current || undefined);
           } else {
             console.error('Error playing next track: all URLs failed');
           }
@@ -951,7 +890,7 @@ export default function HomePage() {
       setIsPlaying(false);
       setCurrentPlayingAlbum(null);
       setCurrentTrackIndex(0);
-      clearGlobalAudioState();
+
     }
   };
 
@@ -1011,13 +950,6 @@ export default function HomePage() {
           setIsPlaying(true);
           setShuffleTrackIndex(0);
           
-          // Update global state
-          updateGlobalAudioState({
-            isPlaying: true,
-            currentAlbum: album.title,
-            currentTrackIndex: 0,
-            trackUrl: track.url,
-          }, audioRef.current || undefined);
           
           console.log('✅ Successfully started shuffle playback');
         } else {
@@ -1146,11 +1078,11 @@ export default function HomePage() {
           ref={audioRef}
           onPlay={() => {
             setIsPlaying(true);
-            updateGlobalAudioState({ isPlaying: true }, audioRef.current || undefined);
+
           }}
           onPause={() => {
             setIsPlaying(false);
-            updateGlobalAudioState({ isPlaying: false }, audioRef.current || undefined);
+
           }}
           onEnded={playNextTrack}
           onError={(e) => {
@@ -1873,7 +1805,7 @@ export default function HomePage() {
                   setIsPlaying(false);
                   setCurrentPlayingAlbum(null);
                   setCurrentTrackIndex(0);
-                  clearGlobalAudioState();
+
                 }}
                 className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 transition-colors"
               >
