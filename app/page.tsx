@@ -176,6 +176,61 @@ export default function HomePage() {
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  // Helper function to get URLs to try for audio playback
+  const getAudioUrlsToTry = (originalUrl: string): string[] => {
+    const urlsToTry = [];
+    
+    try {
+      const url = new URL(originalUrl);
+      const isExternal = url.hostname !== window.location.hostname;
+      
+      if (isExternal) {
+        // Try proxy first for external URLs
+        urlsToTry.push(`/api/proxy-audio?url=${encodeURIComponent(originalUrl)}`);
+        // Fallback to direct URL
+        urlsToTry.push(originalUrl);
+      } else {
+        // For local URLs, try direct first
+        urlsToTry.push(originalUrl);
+      }
+    } catch (urlError) {
+      console.warn('⚠️ Could not parse audio URL, using as-is:', originalUrl);
+      urlsToTry.push(originalUrl);
+    }
+    
+    return urlsToTry;
+  };
+
+  // Helper function to attempt audio playback with fallback URLs
+  const attemptAudioPlayback = async (originalUrl: string, context = 'playback'): Promise<boolean> => {
+    if (!audioRef.current) return false;
+    
+    const urlsToTry = getAudioUrlsToTry(originalUrl);
+    
+    for (let i = 0; i < urlsToTry.length; i++) {
+      const audioUrl = urlsToTry[i];
+      console.log(`🔄 ${context} attempt ${i + 1}/${urlsToTry.length}: ${audioUrl.includes('proxy-audio') ? 'Proxied URL' : 'Direct URL'}`);
+      
+      try {
+        audioRef.current.src = audioUrl;
+        audioRef.current.load();
+        audioRef.current.volume = 0.8;
+        
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+          await playPromise;
+          console.log(`✅ ${context} started successfully with ${audioUrl.includes('proxy-audio') ? 'proxied' : 'direct'} URL`);
+          return true;
+        }
+      } catch (attemptError) {
+        console.warn(`⚠️ ${context} attempt ${i + 1} failed:`, attemptError);
+        // Continue to next URL
+      }
+    }
+    
+    return false; // All attempts failed
+  };
   
   useEffect(() => {
     console.log('🔄 useEffect triggered - starting to load albums');
@@ -689,36 +744,31 @@ export default function HomePage() {
     if (!shuffledTracks[index] || !audioRef.current) return;
     
     const { track, album } = shuffledTracks[index];
+    const originalUrl = track.url;
     
     try {
-      console.log('🎵 Playing shuffled track:', track.title, 'from album:', album.title);
+      console.log('🎵 Playing shuffled track:', track.title, 'from album:', album.title, 'URL:', originalUrl);
       
-      // Set up audio element
-      audioRef.current.src = track.url;
-      audioRef.current.load();
-      audioRef.current.volume = 0.8;
+      const success = await attemptAudioPlayback(originalUrl, 'Shuffle');
       
-      // Play the track
-      const playPromise = audioRef.current.play();
-      if (playPromise !== undefined) {
-        await playPromise;
-        
+      if (success) {
         // Update state
         setCurrentPlayingAlbum(album.title);
         setCurrentTrackIndex(index);
         setIsPlaying(true);
         setShuffleTrackIndex(index);
         
-        // Update global state
+        // Update global state (store original URL, not proxied)
         updateGlobalAudioState({
           isPlaying: true,
           currentAlbum: album.title,
           currentTrackIndex: index,
-          trackUrl: track.url,
+          trackUrl: originalUrl, // Store original URL, not proxied
         }, audioRef.current || undefined);
-        
-        console.log('✅ Successfully started shuffled track playback');
+      } else {
+        throw new Error('All URL attempts failed for shuffled track');
       }
+      
     } catch (error) {
       console.error('Error playing shuffled track:', error);
       toast.error('Failed to play track');
