@@ -1,82 +1,47 @@
 import { NextResponse } from 'next/server';
-import { FeedManager } from '@/lib/feed-manager';
-import fs from 'fs/promises';
-import path from 'path';
 
-// Function to extract hardcoded feeds from the main page file
-async function getHardcodedFeeds() {
-  try {
-    const mainPagePath = path.join(process.cwd(), 'app', 'page.tsx');
-    const content = await fs.readFile(mainPagePath, 'utf-8');
-    
-    // Extract the feedUrlMappings array from the file
-    const feedMappingsMatch = content.match(/const feedUrlMappings = \[([\s\S]*?)\];/);
-    if (!feedMappingsMatch) {
-      return [];
-    }
-    
-    const mappingsString = feedMappingsMatch[1];
-    
-    // Parse the feed mappings (this is a simple regex approach)
-    const feedLines = mappingsString.match(/\['([^']+)',\s*'([^']+)',\s*'([^']+)'\]/g) || [];
-    
-    return feedLines.map((line, index) => {
-      const match = line.match(/\['([^']+)',\s*'([^']+)',\s*'([^']+)'\]/);
-      if (match) {
-        return {
-          id: `hardcoded-${index}`,
-          originalUrl: match[1],
-          cdnUrl: match[2],
-          type: match[3] as 'album' | 'publisher',
-          title: `Hardcoded Feed ${index + 1}`,
-          status: 'active' as const,
-          isHardcoded: true,
-          addedAt: '2025-01-01T00:00:00.000Z',
-          updatedAt: '2025-01-01T00:00:00.000Z'
-        };
-      }
-      return null;
-    }).filter(Boolean);
-  } catch (error) {
-    console.error('Error reading hardcoded feeds:', error);
-    return [];
-  }
-}
-
+// Simplified admin API - returns basic feed info without FeedManager
 export async function GET() {
   try {
-    const feedManager = FeedManager.getInstance();
-    
-    // Get managed feeds
-    const managedFeeds = await feedManager.getAllFeeds();
-    
-    // Get hardcoded feeds
-    const hardcodedFeeds = await getHardcodedFeeds();
-    
-    // Combine both types
-    const allFeeds = [
-      ...hardcodedFeeds.map(feed => ({ ...feed, source: 'hardcoded' })),
-      ...managedFeeds.map(feed => ({ ...feed, source: 'managed' }))
+    // Return hardcoded feeds for admin display
+    const hardcodedFeeds = [
+      { originalUrl: 'https://value4value.live/feeds/doerfels.xml', type: 'album' },
+      { originalUrl: 'https://podcastindex.org/api/1.0/episodes/byfeedurl?url=https%3A%2F%2Fchrisdobrien.podhome.fm%2Frss&pretty', type: 'album' },
+      { originalUrl: 'https://rss.buzzsprout.com/2022460.rss', type: 'album' },
+      { originalUrl: 'https://value4value.live/feeds/ajjohnson.xml', type: 'album' },
+      { originalUrl: 'https://value4value.live/feeds/chasity.xml', type: 'album' },
+      { originalUrl: 'https://value4value.live/feeds/bobdylan.xml', type: 'album' },
+      { originalUrl: 'https://value4value.live/feeds/caseyjones.xml', type: 'album' },
+      { originalUrl: 'https://value4value.live/feeds/dannyboy.xml', type: 'album' },
+      { originalUrl: 'https://value4value.live/feeds/sirtj.xml', type: 'album' },
+      { originalUrl: 'https://value4value.live/feeds/shredward.xml', type: 'album' },
+      { originalUrl: 'https://feeds.buzzsprout.com/2181713.rss', type: 'album' },
+      { originalUrl: 'https://rss.buzzsprout.com/1996760.rss', type: 'album' },
     ];
+
+    const feedsForAdmin = hardcodedFeeds.map((feed, index) => ({
+      id: `hardcoded-${index}`,
+      originalUrl: feed.originalUrl,
+      cdnUrl: feed.originalUrl,
+      type: feed.type as 'album' | 'publisher',
+      status: 'active' as const,
+      source: 'hardcoded' as const,
+      title: '',
+      artist: '',
+      addedAt: new Date().toISOString(),
+      lastFetched: new Date().toISOString(),
+      lastError: null,
+      albumCount: 0
+    }));
     
     return NextResponse.json({
       success: true,
-      feeds: allFeeds,
-      count: allFeeds.length,
-      breakdown: {
-        hardcoded: hardcodedFeeds.length,
-        managed: managedFeeds.length,
-        total: allFeeds.length
-      }
+      feeds: feedsForAdmin
     });
   } catch (error) {
     console.error('Error fetching all feeds:', error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to fetch feeds',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      },
+      { success: false, error: 'Failed to fetch feeds' },
       { status: 500 }
     );
   }

@@ -1,26 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { FeedManager } from '@/lib/feed-manager';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const resolvedParams = await params;
-    const feedManager = FeedManager.getInstance();
-    const feed = await feedManager.getFeed(resolvedParams.id);
-    
-    if (!feed) {
-      return NextResponse.json(
-        { success: false, error: 'Feed not found' },
-        { status: 404 }
-      );
-    }
-    
-    return NextResponse.json({
-      success: true,
-      feed
-    });
+    return NextResponse.json(
+      { success: false, error: 'Feed management temporarily disabled' },
+      { status: 503 }
+    );
   } catch (error) {
     console.error('Error fetching feed:', error);
     return NextResponse.json(
@@ -39,21 +27,10 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const resolvedParams = await params;
-    const feedManager = FeedManager.getInstance();
-    const removed = await feedManager.removeFeed(resolvedParams.id);
-    
-    if (!removed) {
-      return NextResponse.json(
-        { success: false, error: 'Feed not found' },
-        { status: 404 }
-      );
-    }
-    
-    return NextResponse.json({
-      success: true,
-      message: 'Feed removed successfully'
-    });
+    return NextResponse.json(
+      { success: false, error: 'Feed management temporarily disabled' },
+      { status: 503 }
+    );
   } catch (error) {
     console.error('Error removing feed:', error);
     return NextResponse.json(

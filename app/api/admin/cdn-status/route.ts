@@ -1,14 +1,15 @@
 import { NextResponse } from 'next/server';
-import { FeedManager } from '@/lib/feed-manager';
 
 export async function GET() {
   try {
-    const feedManager = FeedManager.getInstance();
-    const cdnStatus = feedManager.getCDNStatus();
-    
+    // CDN is disabled, return appropriate status
     return NextResponse.json({
       success: true,
-      cdnStatus
+      cdnStatus: {
+        configured: false,
+        storageZone: null,
+        message: 'CDN has been disabled'
+      }
     });
   } catch (error) {
     console.error('Error fetching CDN status:', error);

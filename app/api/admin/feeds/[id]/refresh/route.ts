@@ -1,27 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { FeedManager } from '@/lib/feed-manager';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const resolvedParams = await params;
-    const feedManager = FeedManager.getInstance();
-    const feed = await feedManager.refreshFeed(resolvedParams.id);
-    
-    if (!feed) {
-      return NextResponse.json(
-        { success: false, error: 'Feed not found' },
-        { status: 404 }
-      );
-    }
-    
-    return NextResponse.json({
-      success: true,
-      feed,
-      message: 'Feed refreshed successfully'
-    });
+    return NextResponse.json(
+      { success: false, error: 'Feed management temporarily disabled' },
+      { status: 503 }
+    );
   } catch (error) {
     console.error('Error refreshing feed:', error);
     return NextResponse.json(

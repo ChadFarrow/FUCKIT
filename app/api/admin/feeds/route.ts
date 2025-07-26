@@ -1,17 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { FeedManager } from '@/lib/feed-manager';
-import fs from 'fs/promises';
-import path from 'path';
 
 export async function GET() {
   try {
-    const feedManager = FeedManager.getInstance();
-    const feeds = await feedManager.getAllFeeds();
-    
+    // Return empty feeds for now
     return NextResponse.json({
       success: true,
-      feeds,
-      count: feeds.length
+      feeds: [],
+      count: 0
     });
   } catch (error) {
     console.error('Error fetching feeds:', error);
@@ -31,6 +26,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { url, type = 'album' } = body;
 
+    // Validate inputs
     if (!url) {
       return NextResponse.json(
         { success: false, error: 'URL is required' },
@@ -38,7 +34,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate URL
     try {
       new URL(url);
     } catch {
@@ -55,24 +50,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const feedManager = FeedManager.getInstance();
-    const feed = await feedManager.addFeed(url, type);
-    
-    return NextResponse.json({
-      success: true,
-      feed,
-      message: 'Feed added successfully and is being processed'
-    });
+    // Disabled for now - would need proper FeedManager implementation
+    return NextResponse.json(
+      { success: false, error: 'Feed management temporarily disabled' },
+      { status: 503 }
+    );
   } catch (error) {
     console.error('Error adding feed:', error);
-    
-    if (error instanceof Error && error.message === 'Feed already exists') {
-      return NextResponse.json(
-        { success: false, error: 'Feed already exists' },
-        { status: 409 }
-      );
-    }
-    
     return NextResponse.json(
       { 
         success: false, 

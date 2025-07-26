@@ -13,8 +13,6 @@ import { getVersionString } from '@/lib/version';
 import ControlsBar, { FilterType, ViewType, SortType } from '@/components/ControlsBar';
 import { AppError, ErrorCodes, ErrorCode, getErrorMessage, createErrorLogger } from '@/lib/error-utils';
 import { toast } from '@/components/Toast';
-import { FeedManager } from '@/lib/feed-manager';
-
 // RSS feed configuration - CDN removed, using original URLs directly
 
 const logger = createErrorLogger('MainPage');
@@ -31,20 +29,43 @@ const verboseLog = (...args: any[]) => {
   if (isVerbose) console.log(...args);
 };
 
-// Feed configuration using FeedManager for centralized management
-// All feeds are now loaded from data/feeds.json for better maintainability
+// RSS feed URLs - hardcoded for client-side compatibility
+// All CDN URLs removed, using original URLs directly
 
-// Get feeds by priority for performance optimization
-const coreFeeds = FeedManager.getCoreFeeds();
-const extendedFeeds = FeedManager.getExtendedFeeds();
-const lowPriorityFeeds = FeedManager.getLowPriorityFeeds();
+// Core feeds (load first for fast page display)
+const coreFeeds = [
+  'https://value4value.live/feeds/doerfels.xml',
+  'https://podcastindex.org/api/1.0/episodes/byfeedurl?url=https%3A%2F%2Fchrisdobrien.podhome.fm%2Frss&pretty',
+  'https://rss.buzzsprout.com/2022460.rss'
+];
 
-// Get feeds by type for backwards compatibility
-const albumFeeds = FeedManager.getAlbumFeeds();
-const publisherFeeds = FeedManager.getPublisherFeeds();
+// Extended feeds (load in background after core)
+const extendedFeeds = [
+  'https://value4value.live/feeds/ajjohnson.xml',
+  'https://rss.buzzsprout.com/2022460.rss',
+  'https://value4value.live/feeds/chasity.xml',
+  'https://value4value.live/feeds/bobdylan.xml',
+  'https://value4value.live/feeds/caseyjones.xml',
+  'https://value4value.live/feeds/dannyboy.xml',
+  'https://value4value.live/feeds/sirtj.xml',
+  'https://value4value.live/feeds/shredward.xml'
+];
 
-// Combine all feeds for backwards compatibility
-const allFeeds = FeedManager.getActiveFeeds().map(feed => feed.originalUrl);
+// Low priority feeds (load last in background)
+const lowPriorityFeeds = [
+  'https://feeds.buzzsprout.com/2181713.rss',
+  'https://rss.buzzsprout.com/1996760.rss',
+  'https://rss.buzzsprout.com/2022460.rss'
+];
+
+// Album feeds (for backwards compatibility)
+const albumFeeds = [...coreFeeds, ...extendedFeeds, ...lowPriorityFeeds];
+
+// Publisher feeds (empty for now, can be added later)
+const publisherFeeds: string[] = [];
+
+// All feeds combined
+const allFeeds = [...coreFeeds, ...extendedFeeds, ...lowPriorityFeeds];
 
 // Start with core feeds only for fast initial load
 const feedUrls = coreFeeds;

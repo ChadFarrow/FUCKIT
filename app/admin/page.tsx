@@ -2,7 +2,22 @@
 
 import { useState, useEffect } from 'react';
 import { toast } from '@/components/Toast';
-import { ManagedFeed } from '@/lib/feed-manager';
+
+// ManagedFeed type definition (previously from feed-manager)
+interface ManagedFeed {
+  id: string;
+  originalUrl: string;
+  cdnUrl?: string;
+  type: 'album' | 'publisher';
+  status: 'active' | 'processing' | 'error' | 'pending';
+  source?: 'hardcoded' | 'managed';
+  title?: string;
+  artist?: string;
+  addedAt: string;
+  lastFetched?: string;
+  lastError?: string;
+  albumCount?: number;
+}
 
 export default function AdminPage() {
   const [feeds, setFeeds] = useState<ManagedFeed[]>([]);
