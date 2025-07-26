@@ -330,12 +330,9 @@ export default function HomePage() {
     setTimeout(() => {
       devLog('🔄 Loading core feeds first for fast initial page load');
       loadAlbumsData([], 'core').then(() => {
-        // TEMPORARY: Disable extended feeds to debug refresh issue
         // Load extended feeds in background after core feeds are loaded
         setTimeout(() => {
           devLog('🔄 Loading extended feeds in background');
-          console.log('⚠️ EXTENDED FEEDS TEMPORARILY DISABLED FOR DEBUGGING');
-          return; // TEMP: Skip extended loading
           loadAlbumsData([], 'extended').then((extendedAlbums) => {
             if (extendedAlbums && extendedAlbums.length > 0) {
               // Append extended albums to existing albums with deduplication
@@ -361,6 +358,39 @@ export default function HomePage() {
                 return combined;
               });
             }
+            
+            // Load low priority feeds after extended feeds
+            setTimeout(() => {
+              devLog('🔄 Loading low priority feeds in background');
+              loadAlbumsData([], 'lowPriority').then((lowPriorityAlbums) => {
+                if (lowPriorityAlbums && lowPriorityAlbums.length > 0) {
+                  // Append low priority albums with deduplication
+                  setAlbums(prevAlbums => {
+                    const existingKeys = new Set(prevAlbums.map(album => `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`));
+                    const newAlbums = lowPriorityAlbums.filter(album => {
+                      const key = `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`;
+                      return !existingKeys.has(key);
+                    });
+                    
+                    const combined = [...prevAlbums, ...newAlbums];
+                    devLog(`📦 Added ${newAlbums.length} low priority albums, total: ${combined.length}`);
+                    
+                    // Update cache with all data
+                    try {
+                      localStorage.setItem('cachedAlbums', JSON.stringify(combined));
+                      localStorage.setItem('albumsCacheTimestamp', Date.now().toString());
+                    } catch (error) {
+                      console.warn('⚠️ Failed to cache low priority albums:', error);
+                    }
+                    
+                    return combined;
+                  });
+                }
+              }).catch(error => {
+                console.warn('⚠️ Failed to load low priority feeds:', error);
+              });
+            }, 4000); // 4 second delay to load after extended feeds
+            
           }).catch(error => {
             console.warn('⚠️ Failed to load extended feeds:', error);
           });
@@ -521,7 +551,7 @@ export default function HomePage() {
     }
   };
 
-  const loadAlbumsData = async (additionalFeeds: string[] = [], loadTier: 'core' | 'extended' | 'all' = 'all') => {
+  const loadAlbumsData = async (additionalFeeds: string[] = [], loadTier: 'core' | 'extended' | 'lowPriority' | 'all' = 'all') => {
     // Load managed feeds from the API (client-side only)
     let managedFeeds: string[] = [];
     try {
@@ -547,6 +577,9 @@ export default function HomePage() {
     } else if (loadTier === 'extended') {
       feedsToLoad = [...extendedFeeds];
       devLog('🚀 Loading EXTENDED feeds (background load):', feedsToLoad.length, 'feeds');
+    } else if (loadTier === 'lowPriority') {
+      feedsToLoad = [...lowPriorityFeeds];
+      devLog('🚀 Loading LOW PRIORITY feeds (background load):', feedsToLoad.length, 'feeds');
     } else {
       // 'all' - legacy behavior for backwards compatibility
       feedsToLoad = [...feedUrls, ...managedFeeds, ...additionalFeeds];
@@ -580,6 +613,8 @@ export default function HomePage() {
         devLog('🚀 Starting CORE feed loading for fast page display...');
       } else if (loadTier === 'extended') {
         devLog('🚀 Starting EXTENDED feed loading in background...');
+      } else if (loadTier === 'lowPriority') {
+        devLog('🚀 Starting LOW PRIORITY feed loading in background...');
       } else {
         devLog('🚀 Starting ALL feed loading (legacy mode)...');
       }
@@ -596,8 +631,8 @@ export default function HomePage() {
       setLoadingProgress(0);
       
       // Performance optimization: Smaller batches for faster perceived loading
-      const BATCH_SIZE = loadTier === 'core' ? 6 : 12; // Smaller batches for core, larger for background
-      const BATCH_DELAY = loadTier === 'core' ? 50 : 200; // Faster core loading, slower background
+      const BATCH_SIZE = loadTier === 'core' ? 6 : (loadTier === 'lowPriority' ? 8 : 12); // Smaller batches for core, medium for low priority, larger for extended
+      const BATCH_DELAY = loadTier === 'core' ? 50 : (loadTier === 'lowPriority' ? 300 : 200); // Faster core loading, slower low priority, medium extended
       
       let albumsData: RSSAlbum[] = [];
       
