@@ -13,7 +13,7 @@ import { getVersionString } from '@/lib/version';
 import ControlsBar, { FilterType, ViewType, SortType } from '@/components/ControlsBar';
 import { AppError, ErrorCodes, ErrorCode, getErrorMessage, createErrorLogger } from '@/lib/error-utils';
 import { toast } from '@/components/Toast';
-// Note: FeedManager import removed to avoid fs/promises client-side error
+import { FeedManager } from '@/lib/feed-manager';
 
 // RSS feed configuration - CDN removed, using original URLs directly
 
@@ -31,127 +31,20 @@ const verboseLog = (...args: any[]) => {
   if (isVerbose) console.log(...args);
 };
 
-// Performance optimization: Separate feeds into priority tiers for lazy loading
-// PRIORITY 1: Core feeds loaded immediately (fast page load)
-const coreFeedUrlMappings = [
-  // Core Doerfels feeds - verified working (Albums) - Load first for immediate content
-  ['https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml', 'album'],
-  ['https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml', 'album'],
-  ['https://www.doerfelverse.com/feeds/intothedoerfelverse.xml', 'album'],
-  ['https://www.doerfelverse.com/feeds/wrath-of-banjo.xml', 'album'],
-  ['https://www.doerfelverse.com/feeds/ben-doerfel.xml', 'album'],
-  // Popular external artists
-  ['https://ableandthewolf.com/static/media/feed.xml', 'album'],
-];
+// Feed configuration using FeedManager for centralized management
+// All feeds are now loaded from data/feeds.json for better maintainability
 
-// PRIORITY 2: Extended Doerfels collection (loaded after core)
-const extendedFeedUrlMappings = [
-  
-  // Additional Doerfels albums and projects - all verified working (Albums)
-  ['https://www.doerfelverse.com/feeds/18sundays.xml', 'album'],
-  ['https://www.doerfelverse.com/feeds/alandace.xml', 'album'],
-  ['https://www.doerfelverse.com/feeds/autumn.xml', 'album'],
-  ['https://www.doerfelverse.com/feeds/christ-exalted.xml', 'album'],
-  ['https://www.doerfelverse.com/feeds/come-back-to-me.xml', 'album'],
-  ['https://www.doerfelverse.com/feeds/dead-time-live-2016.xml', 'album'],
-  ['https://www.doerfelverse.com/feeds/dfbv1.xml', 'album'],
-  ['https://www.doerfelverse.com/feeds/dfbv2.xml', 'album'],
-  ['https://www.doerfelverse.com/feeds/disco-swag.xml', 'album'],
-  ['https://www.doerfelverse.com/feeds/first-married-christmas.xml', 'album'],
-  ['https://www.doerfelverse.com/feeds/generation-gap.xml', 'album'],
-  ['https://www.doerfelverse.com/feeds/heartbreak.xml', 'album'],
-  ['https://www.doerfelverse.com/feeds/merry-christmix.xml', 'album'],
-  ['https://www.doerfelverse.com/feeds/middle-season-let-go.xml', 'album'],
-  ['https://www.doerfelverse.com/feeds/phatty-the-grasshopper.xml', 'album'],
-  ['https://www.doerfelverse.com/feeds/possible.xml', 'album'],
-  ['https://www.doerfelverse.com/feeds/pour-over.xml', 'album'],
-  ['https://www.doerfelverse.com/feeds/psalm-54.xml', 'album'],
-  ['https://www.doerfelverse.com/feeds/sensitive-guy.xml', 'album'],
-  ['https://www.doerfelverse.com/feeds/they-dont-know.xml', 'album'],
-  ['https://www.doerfelverse.com/feeds/think-ep.xml', 'album'],
-  ['https://www.doerfelverse.com/feeds/underwater-single.xml', 'album'],
-  ['https://www.doerfelverse.com/feeds/unsound-existence.xml', 'album'],
-  ['https://www.doerfelverse.com/feeds/you-are-my-world.xml', 'album'],
-  ['https://www.doerfelverse.com/feeds/you-feel-like-home.xml', 'album'],
-  ['https://www.doerfelverse.com/feeds/your-chance.xml', 'album'],
-  ['https://www.doerfelverse.com/artists/opus/opus/opus.xml', 'album'],
-  
-  // Ed Doerfel (Shredward) projects - verified working (Albums)
-  ['https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml', 'album'],
-  ['https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/CityBeach.xml', 'album'],
-  ['https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml', 'album'],
-  
-  // TJ Doerfel projects - verified working (Albums)
-  ['https://www.thisisjdog.com/media/ring-that-bell.xml', 'album'],
-  
-  // External artists - verified working (Albums)
-  ['https://static.staticsave.com/mspfiles/deathdreams.xml', 'album'],
-  ['https://static.staticsave.com/mspfiles/waytogo.xml', 'album'],
-  // Temporarily disabled due to NetworkError issues
-  // ['https://feed.falsefinish.club/Vance%20Latta/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form/love%20in%20its%20purest%20form.xml', 'album'],
-  ['https://music.behindthesch3m3s.com/wp-content/uploads/c_kostra/now%20i%20feel%20it.xml', 'album'],
-  ['https://music.behindthesch3m3s.com/wp-content/uploads/Mellow%20Cassette/Pilot/pilot.xml', 'album'],
-  ['https://music.behindthesch3m3s.com/wp-content/uploads/Mellow%20Cassette/Radio_Brigade/radio_brigade.xml', 'album'],
-  
-  // Wavlake music feeds - verified working (Albums)
-  ['https://wavlake.com/feed/music/d677db67-0310-4813-970e-e65927c689f1', 'album'],
-  ['https://wavlake.com/feed/music/e678589b-5a9f-4918-9622-34119d2eed2c', 'album'],
-  ['https://wavlake.com/feed/music/3a152941-c914-43da-aeca-5d7c58892a7f', 'album'],
-  ['https://wavlake.com/feed/music/a97e0586-ecda-4b79-9c38-be9a9effe05a', 'album'],
-  ['https://wavlake.com/feed/music/0ed13237-aca9-446f-9a03-de1a2d9331a3', 'album'],
-  ['https://wavlake.com/feed/music/ce8c4910-51bf-4d5e-a0b3-338e58e5ee79', 'album'],
-  ['https://wavlake.com/feed/music/acb43f23-cfec-4cc1-a418-4087a5378129', 'album'],
-  ['https://wavlake.com/feed/music/d1a871a7-7e4c-4a91-b799-87dcbb6bc41d', 'album'],
-  ['https://wavlake.com/feed/music/3294d8b5-f9f6-4241-a298-f04df818390c', 'album'],
-  ['https://wavlake.com/feed/music/d3145292-bf71-415f-a841-7f5c9a9466e1', 'album'],
-  ['https://wavlake.com/feed/music/91367816-33e6-4b6e-8eb7-44b2832708fd', 'album'],
-  ['https://wavlake.com/feed/music/8c8f8133-7ef1-4b72-a641-4e1a6a44d626', 'album'],
-  ['https://wavlake.com/feed/music/9720d58b-22a5-4047-81de-f1940fec41c7', 'album'],
-  ['https://wavlake.com/feed/music/21536269-5192-49e7-a819-fab00f4a159e', 'album'],
-  ['https://wavlake.com/feed/music/624b19ac-5d8b-4fd6-8589-0eef7bcb9c9e', 'album'],
-  ['https://wavlake.com/feed/music/997060e3-9dc1-4cd8-b3c1-3ae06d54bb03', 'album'],
-  ['https://wavlake.com/feed/music/b54b9a19-b6ed-46c1-806c-7e82f7550edc', 'album'],
-  
-  // Joe Martin (Wavlake) - Publisher feed only (album feed is broken/404)
-  ['https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738', 'publisher'],
-  
-  // IROH (Wavlake) - Album and Publisher feeds
-  ['https://wavlake.com/feed/artist/8a9c2e54-785a-4128-9412-737610f5d00a', 'publisher'],
-  ['https://wavlake.com/feed/music/1c7917cc-357c-4eaf-ab54-1a7cda504976', 'album'],
-  ['https://wavlake.com/feed/music/e1f9dfcb-ee9b-4a6d-aee7-189043917fb5', 'album'],
-  ['https://wavlake.com/feed/music/d4f791c3-4d0c-4fbd-a543-c136ee78a9de', 'album'],
-  ['https://wavlake.com/feed/music/51606506-66f8-4394-b6c6-cc0c1b554375', 'album'],
-  ['https://wavlake.com/feed/music/6b7793b8-fd9d-432b-af1a-184cd41aaf9d', 'album'],
-  ['https://wavlake.com/feed/music/0bb8c9c7-1c55-4412-a517-572a98318921', 'album'],
-  ['https://wavlake.com/feed/music/16e46ed0-b392-4419-a937-a7815f6ca43b', 'album'],
-  ['https://wavlake.com/feed/music/2cd1b9ea-9ef3-4a54-aa25-55295689f442', 'album'],
-  ['https://wavlake.com/feed/music/33eeda7e-8591-4ff5-83f8-f36a879b0a09', 'album'],
-  ['https://wavlake.com/feed/music/32a79df8-ec3e-4a14-bfcb-7a074e1974b9', 'album'],
-  ['https://wavlake.com/feed/music/06376ab5-efca-459c-9801-49ceba5fdab1', 'album'],
-  
-];
+// Get feeds by priority for performance optimization
+const coreFeeds = FeedManager.getCoreFeeds();
+const extendedFeeds = FeedManager.getExtendedFeeds();
+const lowPriorityFeeds = FeedManager.getLowPriorityFeeds();
 
-// PRIORITY 3: All remaining feeds (loaded last)
-const lowPriorityFeedUrlMappings = [
-  // Additional Wavlake Publisher feeds
-  ['https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4', 'publisher'],
-  
-  // Heycitizen - External artist feeds (low priority)
-  ['https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/the heycitizen experience.xml', 'album'],
-  ['https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/lofi.xml', 'album'],
-];
+// Get feeds by type for backwards compatibility
+const albumFeeds = FeedManager.getAlbumFeeds();
+const publisherFeeds = FeedManager.getPublisherFeeds();
 
-// Combine all feed tiers for backwards compatibility
-const feedUrlMappings = [...coreFeedUrlMappings, ...extendedFeedUrlMappings, ...lowPriorityFeedUrlMappings];
-
-// Separate album feeds from publisher feeds - CDN removed, using original URLs directly
-const albumFeeds = feedUrlMappings.filter(([, type]) => type === 'album').map(([url]) => url);
-const publisherFeeds = feedUrlMappings.filter(([, type]) => type === 'publisher').map(([url]) => url);
-
-// Performance optimization: Create tiered feed arrays for lazy loading
-const coreFeeds = coreFeedUrlMappings.filter(([, type]) => type === 'album').map(([url]) => url);
-const extendedFeeds = extendedFeedUrlMappings.filter(([, type]) => type === 'album').map(([url]) => url);
-const lowPriorityFeeds = lowPriorityFeedUrlMappings.filter(([, type]) => type === 'album').map(([url]) => url);
+// Combine all feeds for backwards compatibility
+const allFeeds = FeedManager.getActiveFeeds().map(feed => feed.originalUrl);
 
 // Start with core feeds only for fast initial load
 const feedUrls = coreFeeds;
@@ -162,7 +55,7 @@ devLog('🔧 Environment check:', { NODE_ENV: process.env.NODE_ENV });
 devLog('🚀 Core feeds (load first):', coreFeeds.length, 'feeds');
 devLog('🚀 Extended feeds (load second):', extendedFeeds.length, 'feeds'); 
 devLog('🚀 Low priority feeds:', lowPriorityFeeds.length, 'feeds');
-devLog('🚀 Total feeds available:', feedUrlMappings.length, 'feeds');
+devLog('🚀 Total feeds available:', allFeeds.length, 'feeds');
 devLog('🚀 Initial load will use ONLY core feeds for fast page load');
 verboseLog('🔧 First few core feed URLs:', coreFeeds.slice(0, 3));
 

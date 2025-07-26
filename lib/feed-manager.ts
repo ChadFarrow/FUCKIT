@@ -1,237 +1,164 @@
-import fs from 'fs/promises';
+import fs from 'fs';
 import path from 'path';
-import { RSSParser } from './rss-parser';
 
-export interface ManagedFeed {
+export interface Feed {
   id: string;
   originalUrl: string;
-  cdnUrl?: string;
   type: 'album' | 'publisher';
-  title?: string;
-  artist?: string;
-  status: 'pending' | 'processing' | 'active' | 'error';
-  lastFetched?: string;
-  lastError?: string;
-  albumCount?: number;
+  title: string;
+  priority: 'core' | 'extended' | 'low';
+  status: 'active' | 'inactive';
   addedAt: string;
-  updatedAt: string;
-  source?: 'hardcoded' | 'managed';
-  isHardcoded?: boolean;
+  lastUpdated: string;
 }
 
-export interface FeedDatabase {
-  feeds: ManagedFeed[];
-  lastUpdated: string | null;
+export interface FeedsData {
+  feeds: Feed[];
+  lastUpdated: string;
   version: number;
 }
 
-const FEEDS_FILE = path.join(process.cwd(), 'data', 'feeds.json');
-
 export class FeedManager {
-  private static instance: FeedManager;
-  private feeds: Map<string, ManagedFeed> = new Map();
-  private lastLoaded: number = 0;
-  private readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+  private static feedsData: FeedsData | null = null;
+  private static readonly feedsPath = path.join(process.cwd(), 'data', 'feeds.json');
 
-  constructor() {
-    // CDN functionality removed
-  }
-
-  static getInstance(): FeedManager {
-    if (!FeedManager.instance) {
-      FeedManager.instance = new FeedManager();
-    }
-    return FeedManager.instance;
-  }
-
-  private async ensureDataDir(): Promise<void> {
-    const dataDir = path.dirname(FEEDS_FILE);
-    try {
-      await fs.access(dataDir);
-    } catch {
-      await fs.mkdir(dataDir, { recursive: true });
-    }
-  }
-
-  private async loadFeeds(): Promise<void> {
-    const now = Date.now();
-    if (now - this.lastLoaded < this.CACHE_DURATION && this.feeds.size > 0) {
-      return; // Use cached data
+  /**
+   * Load feeds from data/feeds.json
+   */
+  static loadFeeds(): FeedsData {
+    if (this.feedsData) {
+      return this.feedsData;
     }
 
     try {
-      await this.ensureDataDir();
-      const data = await fs.readFile(FEEDS_FILE, 'utf-8');
-      const db: FeedDatabase = JSON.parse(data);
-      
-      this.feeds.clear();
-      for (const feed of db.feeds) {
-        this.feeds.set(feed.id, feed);
-      }
-      
-      this.lastLoaded = now;
+      const feedsContent = fs.readFileSync(this.feedsPath, 'utf-8');
+      this.feedsData = JSON.parse(feedsContent) as FeedsData;
+      return this.feedsData;
     } catch (error) {
-      if ((error as any)?.code === 'ENOENT') {
-        // File doesn't exist, start with empty feeds
-        this.feeds.clear();
-        await this.saveFeeds();
-      } else {
-        console.error('Error loading feeds:', error);
-        throw error;
-      }
+      console.error('Failed to load feeds from data/feeds.json:', error);
+      // Return empty feeds as fallback
+      const fallbackData = {
+        feeds: [],
+        lastUpdated: new Date().toISOString(),
+        version: 1
+      };
+      this.feedsData = fallbackData;
+      return fallbackData;
     }
   }
 
-  private async saveFeeds(): Promise<void> {
-    await this.ensureDataDir();
-    
-    const db: FeedDatabase = {
-      feeds: Array.from(this.feeds.values()),
-      lastUpdated: new Date().toISOString(),
-      version: 1
-    };
-
-    await fs.writeFile(FEEDS_FILE, JSON.stringify(db, null, 2));
-    this.lastLoaded = Date.now();
+  /**
+   * Get all active feeds
+   */
+  static getActiveFeeds(): Feed[] {
+    const feedsData = this.loadFeeds();
+    return feedsData.feeds.filter(feed => feed.status === 'active');
   }
 
-  async getAllFeeds(): Promise<ManagedFeed[]> {
-    await this.loadFeeds();
-    return Array.from(this.feeds.values());
+  /**
+   * Get feeds by priority
+   */
+  static getFeedsByPriority(priority: 'core' | 'extended' | 'low'): Feed[] {
+    return this.getActiveFeeds().filter(feed => feed.priority === priority);
   }
 
-  async getFeed(id: string): Promise<ManagedFeed | null> {
-    await this.loadFeeds();
-    return this.feeds.get(id) || null;
+  /**
+   * Get feeds by type
+   */
+  static getFeedsByType(type: 'album' | 'publisher'): Feed[] {
+    return this.getActiveFeeds().filter(feed => feed.type === type);
   }
 
-  async addFeed(url: string, type: 'album' | 'publisher' = 'album'): Promise<ManagedFeed> {
-    await this.loadFeeds();
+  /**
+   * Get feed URLs in the format expected by the app (for backwards compatibility)
+   */
+  static getFeedUrlMappings(): [string, string][] {
+    const activeFeeds = this.getActiveFeeds();
+    return activeFeeds.map(feed => [feed.originalUrl, feed.type]);
+  }
 
-    const id = this.generateFeedId(url);
-    
-    // Check if feed already exists
-    if (this.feeds.has(id)) {
-      throw new Error('Feed already exists');
-    }
+  /**
+   * Get album feed URLs only
+   */
+  static getAlbumFeeds(): string[] {
+    return this.getFeedsByType('album').map(feed => feed.originalUrl);
+  }
 
-    const feed: ManagedFeed = {
-      id,
-      originalUrl: url,
-      type,
-      status: 'pending',
+  /**
+   * Get publisher feed URLs only
+   */
+  static getPublisherFeeds(): string[] {
+    return this.getFeedsByType('publisher').map(feed => feed.originalUrl);
+  }
+
+  /**
+   * Get core feeds (for immediate loading)
+   */
+  static getCoreFeeds(): string[] {
+    return this.getFeedsByPriority('core').map(feed => feed.originalUrl);
+  }
+
+  /**
+   * Get extended feeds (for secondary loading)
+   */
+  static getExtendedFeeds(): string[] {
+    return this.getFeedsByPriority('extended').map(feed => feed.originalUrl);
+  }
+
+  /**
+   * Get low priority feeds (for final loading)
+   */
+  static getLowPriorityFeeds(): string[] {
+    return this.getFeedsByPriority('low').map(feed => feed.originalUrl);
+  }
+
+  /**
+   * Add a new feed to the feeds.json file
+   */
+  static addFeed(feed: Omit<Feed, 'addedAt' | 'lastUpdated'>): void {
+    const feedsData = this.loadFeeds();
+    const newFeed: Feed = {
+      ...feed,
       addedAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      lastUpdated: new Date().toISOString()
     };
-
-    this.feeds.set(id, feed);
-    await this.saveFeeds();
-
-    // Process feed asynchronously
-    this.processFeed(id).catch(error => {
-      console.error(`Error processing feed ${id}:`, error);
-    });
-
-    return feed;
+    
+    feedsData.feeds.push(newFeed);
+    feedsData.lastUpdated = new Date().toISOString();
+    
+    fs.writeFileSync(this.feedsPath, JSON.stringify(feedsData, null, 2));
+    this.feedsData = feedsData; // Update cache
   }
 
-  async removeFeed(id: string): Promise<boolean> {
-    await this.loadFeeds();
+  /**
+   * Update an existing feed
+   */
+  static updateFeed(id: string, updates: Partial<Feed>): void {
+    const feedsData = this.loadFeeds();
+    const feedIndex = feedsData.feeds.findIndex(feed => feed.id === id);
     
-    const feed = this.feeds.get(id);
-    const existed = this.feeds.delete(id);
-    
-    if (existed) {
-      await this.saveFeeds();
-    }
-    
-    return existed;
-  }
-
-  async refreshFeed(id: string): Promise<ManagedFeed | null> {
-    await this.loadFeeds();
-    
-    const feed = this.feeds.get(id);
-    if (!feed) {
-      return null;
-    }
-
-    await this.processFeed(id);
-    return this.feeds.get(id) || null;
-  }
-
-  private async processFeed(id: string): Promise<void> {
-    const feed = this.feeds.get(id);
-    if (!feed) return;
-
-    try {
-      // Update status to processing
-      feed.status = 'processing';
-      feed.updatedAt = new Date().toISOString();
-      await this.saveFeeds();
-
-      // Validate and parse the feed
-      const testParse = await RSSParser.parseMultipleFeeds([feed.originalUrl]);
+    if (feedIndex !== -1) {
+      feedsData.feeds[feedIndex] = {
+        ...feedsData.feeds[feedIndex],
+        ...updates,
+        lastUpdated: new Date().toISOString()
+      };
+      feedsData.lastUpdated = new Date().toISOString();
       
-      if (testParse && testParse.length > 0) {
-        // Extract metadata from first album
-        const firstAlbum = testParse[0];
-        feed.title = firstAlbum.title;
-        feed.artist = firstAlbum.artist;
-        feed.albumCount = testParse.length;
-
-        // CDN upload removed - using original URLs directly
-
-        feed.status = 'active';
-        feed.lastFetched = new Date().toISOString();
-        feed.lastError = undefined;
-      } else {
-        throw new Error('No albums found in feed');
-      }
-    } catch (error) {
-      feed.status = 'error';
-      feed.lastError = error instanceof Error ? error.message : 'Unknown error';
+      fs.writeFileSync(this.feedsPath, JSON.stringify(feedsData, null, 2));
+      this.feedsData = feedsData; // Update cache
     }
-
-    feed.updatedAt = new Date().toISOString();
-    await this.saveFeeds();
   }
 
-  private generateFeedId(url: string): string {
-    // Generate a URL-safe ID from the feed URL
-    const urlObj = new URL(url);
-    const pathname = urlObj.pathname.replace(/[^a-zA-Z0-9-_]/g, '-');
-    const timestamp = Date.now().toString(36);
-    return `${urlObj.hostname.replace(/[^a-zA-Z0-9]/g, '-')}-${pathname}-${timestamp}`.toLowerCase();
-  }
-
-  // Get all active feeds in the format expected by the main app
-  async getActiveFeedUrls(): Promise<string[]> {
-    await this.loadFeeds();
-    return Array.from(this.feeds.values())
-      .filter(feed => feed.status === 'active')
-      .map(feed => feed.cdnUrl || feed.originalUrl);
-  }
-
-  // Get feed mappings in the format expected by the main app
-  async getFeedMappings(): Promise<[string, string, string][]> {
-    await this.loadFeeds();
-    return Array.from(this.feeds.values())
-      .filter(feed => feed.status === 'active')
-      .map(feed => [
-        feed.originalUrl,
-        feed.cdnUrl || feed.originalUrl,
-        feed.type
-      ] as [string, string, string]);
-  }
-
-  // Get CDN configuration status for admin interface (CDN disabled)
-  getCDNStatus() {
-    return {
-      configured: false,
-      storageZone: null,
-      cdnUrl: null,
-      hasAccessKey: false
-    };
+  /**
+   * Remove a feed
+   */
+  static removeFeed(id: string): void {
+    const feedsData = this.loadFeeds();
+    feedsData.feeds = feedsData.feeds.filter(feed => feed.id !== id);
+    feedsData.lastUpdated = new Date().toISOString();
+    
+    fs.writeFileSync(this.feedsPath, JSON.stringify(feedsData, null, 2));
+    this.feedsData = feedsData; // Update cache
   }
 }
