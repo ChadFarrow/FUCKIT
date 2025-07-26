@@ -127,4 +127,42 @@ export const updateMediaSessionMetadata = (album: any, trackIndex: number) => {
       });
     }
   }
+};
+
+// Set track info for global player
+export const setGlobalTrackInfo = (
+  album: any,
+  trackIndex: number,
+  trackUrl: string
+) => {
+  if (typeof window === 'undefined') return;
+
+  const track = album.tracks[trackIndex];
+  if (!track) return;
+
+  // Store track info in localStorage for global player access
+  const trackInfo = {
+    title: track.title,
+    artist: album.artist || album.title,
+    album: album.title,
+    albumId: album.id,
+    coverArt: album.coverArt,
+    url: trackUrl,
+    duration: track.duration
+  };
+
+  try {
+    const trackInfoKey = `fuckit_track_info_${album.id}_${trackIndex}`;
+    localStorage.setItem(trackInfoKey, JSON.stringify(trackInfo));
+    
+    // Update global audio state
+    updateGlobalAudioState({
+      currentAlbum: album.id,
+      currentTrackIndex: trackIndex,
+      trackUrl: trackUrl,
+      isPlaying: true
+    });
+  } catch (error) {
+    console.error('Error setting track info:', error);
+  }
 }; 

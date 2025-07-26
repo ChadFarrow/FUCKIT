@@ -9,7 +9,7 @@ import AlbumCard from '@/components/AlbumCard';
 import { RSSParser, RSSAlbum } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { generateAlbumUrl, generatePublisherSlug } from '@/lib/url-utils';
-import { getGlobalAudioState, updateGlobalAudioState, clearGlobalAudioState } from '@/lib/audio-state';
+import { getGlobalAudioState, updateGlobalAudioState, clearGlobalAudioState, setGlobalTrackInfo } from '@/lib/audio-state';
 import { getVersionString } from '@/lib/version';
 import ControlsBar, { FilterType, ViewType, SortType } from '@/components/ControlsBar';
 import { AppError, ErrorCodes, ErrorCode, getErrorMessage, createErrorLogger } from '@/lib/error-utils';
@@ -689,13 +689,8 @@ export default function HomePage() {
           setCurrentTrackIndex(0);
           setIsPlaying(true);
           
-          // Update global state
-          updateGlobalAudioState({
-            isPlaying: true,
-            currentAlbum: album.title,
-            currentTrackIndex: 0,
-            trackUrl: firstTrack.url,
-          }, audioRef.current || undefined);
+          // Set global track info for persistent player
+          setGlobalTrackInfo(album, 0, firstTrack.url);
           
           console.log('✅ Successfully started playback');
         } else {

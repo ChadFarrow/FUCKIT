@@ -8,7 +8,7 @@ import { RSSAlbum } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl, getTrackArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { generateAlbumUrl, generatePublisherSlug } from '@/lib/url-utils';
 import { RSSParser } from '@/lib/rss-parser';
-import { getGlobalAudioState, updateGlobalAudioState, clearGlobalAudioState } from '@/lib/audio-state';
+import { getGlobalAudioState, updateGlobalAudioState, clearGlobalAudioState, setGlobalTrackInfo } from '@/lib/audio-state';
 
 interface AlbumDetailClientProps {
   albumTitle: string;
@@ -134,13 +134,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
         await audioRef.current.play();
         setIsPlaying(true);
         
-        // Update global state (store original URL, not proxied)
-        updateGlobalAudioState({
-          isPlaying: true,
-          currentAlbum: album.title,
-          currentTrackIndex: index,
-          trackUrl: originalUrl, // Store original URL, not proxied
-        }, audioRef.current);
+        // Set global track info for persistent player
+        setGlobalTrackInfo(album, index, originalUrl);
         
         // Update Media Session for lock screen controls
         updateMediaSession(album.tracks[index]);
