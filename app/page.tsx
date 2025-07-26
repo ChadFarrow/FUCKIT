@@ -34,15 +34,19 @@ const verboseLog = (...args: any[]) => {
 
 // Core feeds (load first for fast page display)
 const coreFeeds = [
-  'https://www.doerfelverse.com/feeds/doerfels-pubfeed.xml',
-  'https://podcastindex.org/api/1.0/episodes/byfeedurl?url=https%3A%2F%2Fchrisdobrien.podhome.fm%2Frss&pretty',
+  // Direct RSS feeds from reliable sources
+  'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml',
+  'https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml',
   'https://rss.buzzsprout.com/2022460.rss'
 ];
 
 // Extended feeds (load in background after core)
 const extendedFeeds = [
-  // Additional music feeds from known sources
-  'https://rss.buzzsprout.com/2022460.rss'
+  // More music feeds from known working sources
+  'https://www.doerfelverse.com/feeds/ben-doerfel.xml',
+  'https://www.doerfelverse.com/feeds/intothedoerfelverse.xml',
+  'https://www.doerfelverse.com/feeds/18sundays.xml',
+  'https://ableandthewolf.com/static/media/feed.xml'
 ];
 
 // Low priority feeds (load last in background)
