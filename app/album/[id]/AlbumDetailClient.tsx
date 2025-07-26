@@ -1098,7 +1098,16 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
       </div>
 
       {/* Fixed Audio Player Bar - Only show if global player isn't active for this album */}
-      {album.tracks.length > 0 && !shouldHideLocalPlayer && (
+      {(() => {
+        const shouldShow = album.tracks.length > 0 && !shouldHideLocalPlayer;
+        console.log('🎵 Local player render decision:', {
+          hasTracks: album.tracks.length > 0,
+          shouldHideLocalPlayer,
+          shouldShow,
+          albumTitle: album?.title
+        });
+        return shouldShow;
+      })() && (
         <div className="fixed bottom-0 left-0 right-0 backdrop-blur-md bg-gradient-to-t from-black/60 via-black/40 to-transparent border-t border-white/10 p-4 pb-safe shadow-2xl">
           <div className="container mx-auto flex flex-col md:flex-row items-center gap-4 bg-white/5 rounded-xl p-4 backdrop-blur-sm border border-white/10">
             {/* Mobile Layout: Track Info + Controls Row */}

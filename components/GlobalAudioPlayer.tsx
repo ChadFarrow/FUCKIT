@@ -166,6 +166,13 @@ export default function GlobalAudioPlayer() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  console.log('🌐 GlobalAudioPlayer render check:', {
+    isVisible,
+    hasAudioState: !!audioState,
+    hasTrackInfo: !!trackInfo,
+    willRender: isVisible && audioState && trackInfo
+  });
+
   if (!isVisible || !audioState || !trackInfo) {
     return null;
   }
