@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import { getCDNUrl, shouldUseCDN } from '@/lib/cdn-utils';
 import { useState } from 'react';
 
 interface CDNImageProps {
@@ -26,30 +25,15 @@ export default function CDNImage({
   className,
   priority = false,
   quality = 85,
-  format = 'webp',
-  fit = 'cover',
   onError,
   onLoad,
   ...props
 }: CDNImageProps) {
-  const [imageSrc, setImageSrc] = useState(src);
-  const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Use CDN URL if configured and appropriate
-  const finalSrc = shouldUseCDN(imageSrc) 
-    ? getCDNUrl(imageSrc, { width, height, quality, format, fit })
-    : imageSrc;
-
   const handleError = () => {
-    if (!hasError && shouldUseCDN(imageSrc)) {
-      // Fallback to original URL if CDN fails
-      setImageSrc(src);
-      setHasError(true);
-    } else {
-      setIsLoading(false);
-      onError?.();
-    }
+    setIsLoading(false);
+    onError?.();
   };
 
   const handleLoad = () => {
@@ -63,7 +47,7 @@ export default function CDNImage({
         <div className="absolute inset-0 bg-gray-200 animate-pulse rounded" />
       )}
       <Image
-        src={finalSrc}
+        src={src}
         alt={alt}
         width={width}
         height={height}
@@ -71,7 +55,7 @@ export default function CDNImage({
         priority={priority}
         onError={handleError}
         onLoad={handleLoad}
-        unoptimized={!shouldUseCDN(imageSrc)} // Only optimize through CDN
+        unoptimized={true}
         {...props}
       />
     </div>

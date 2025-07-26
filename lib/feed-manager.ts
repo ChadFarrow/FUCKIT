@@ -1,7 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { RSSParser } from './rss-parser';
-import { BunnyCDN } from './bunny-cdn';
 
 export interface ManagedFeed {
   id: string;
@@ -33,10 +32,9 @@ export class FeedManager {
   private feeds: Map<string, ManagedFeed> = new Map();
   private lastLoaded: number = 0;
   private readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-  private bunnyCDN: BunnyCDN;
 
   constructor() {
-    this.bunnyCDN = new BunnyCDN();
+    // CDN functionality removed
   }
 
   static getInstance(): FeedManager {
@@ -144,19 +142,6 @@ export class FeedManager {
     const existed = this.feeds.delete(id);
     
     if (existed) {
-      // Clean up CDN if the feed had a CDN URL
-      if (feed?.cdnUrl && this.bunnyCDN.isConfigured()) {
-        try {
-          const filename = feed.cdnUrl.split('/feeds/')[1];
-          if (filename) {
-            await this.bunnyCDN.deleteFeed(filename);
-            console.log(`🗑️ Cleaned up CDN file for removed feed: ${filename}`);
-          }
-        } catch (error) {
-          console.warn(`⚠️ Failed to clean up CDN for removed feed ${id}:`, error);
-        }
-      }
-      
       await this.saveFeeds();
     }
     
@@ -195,19 +180,7 @@ export class FeedManager {
         feed.artist = firstAlbum.artist;
         feed.albumCount = testParse.length;
 
-        // Upload to Bunny.net CDN if configured
-        if (this.bunnyCDN.isConfigured()) {
-          try {
-            console.log(`🚀 Uploading feed ${id} to CDN...`);
-            feed.cdnUrl = await this.bunnyCDN.cacheFeedToCDN(feed.originalUrl, id);
-            console.log(`✅ Feed ${id} cached to CDN: ${feed.cdnUrl}`);
-          } catch (cdnError) {
-            console.warn(`⚠️ Failed to upload feed ${id} to CDN:`, cdnError);
-            // Continue without CDN - feed will use original URL
-          }
-        } else {
-          console.log(`ℹ️ Bunny.net CDN not configured, skipping upload for feed ${id}`);
-        }
+        // CDN upload removed - using original URLs directly
 
         feed.status = 'active';
         feed.lastFetched = new Date().toISOString();
@@ -252,8 +225,13 @@ export class FeedManager {
       ] as [string, string, string]);
   }
 
-  // Get CDN configuration status for admin interface
+  // Get CDN configuration status for admin interface (CDN disabled)
   getCDNStatus() {
-    return this.bunnyCDN.getStatus();
+    return {
+      configured: false,
+      storageZone: null,
+      cdnUrl: null,
+      hasAccessKey: false
+    };
   }
 }
