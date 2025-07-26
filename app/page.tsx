@@ -598,7 +598,7 @@ export default function HomePage() {
     
     // DEDUPLICATION: Remove duplicate URLs to prevent redundant parsing
     const originalCount = feedsToLoad.length;
-    feedsToLoad = [...new Set(feedsToLoad)]; // Remove duplicates using Set
+    feedsToLoad = Array.from(new Set(feedsToLoad)); // Remove duplicates using Set
     const deduplicatedCount = feedsToLoad.length;
     
     if (originalCount !== deduplicatedCount) {
