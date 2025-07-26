@@ -76,7 +76,6 @@ const extendedFeedUrlMappings = [
   ['https://www.thisisjdog.com/media/ring-that-bell.xml', 'https://re-podtards-cdn-new.b-cdn.net/feeds/ring-that-bell.xml', 'album'],
   
   // External artists - verified working (Albums)
-  ['https://ableandthewolf.com/static/media/feed.xml', 'https://re-podtards-cdn-new.b-cdn.net/feeds/ableandthewolf-feed.xml', 'album'],
   ['https://static.staticsave.com/mspfiles/deathdreams.xml', 'https://re-podtards-cdn-new.b-cdn.net/feeds/deathdreams.xml', 'album'],
   ['https://static.staticsave.com/mspfiles/waytogo.xml', 'https://re-podtards-cdn-new.b-cdn.net/feeds/waytogo.xml', 'album'],
   // Temporarily disabled due to NetworkError issues
@@ -122,18 +121,16 @@ const extendedFeedUrlMappings = [
   ['https://wavlake.com/feed/music/32a79df8-ec3e-4a14-bfcb-7a074e1974b9', 'https://re-podtards-cdn-new.b-cdn.net/feeds/wavlake-32a79df8-ec3e-4a14-bfcb-7a074e1974b9.xml', 'album'],
   ['https://wavlake.com/feed/music/06376ab5-efca-459c-9801-49ceba5fdab1', 'https://re-podtards-cdn-new.b-cdn.net/feeds/wavlake-06376ab5-efca-459c-9801-49ceba5fdab1.xml', 'album'],
   
-  // Additional Wavlake Publisher feeds - these need to be identified (currently missing one)
-  ['https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4', 'https://re-podtards-cdn-new.b-cdn.net/feeds/wavlake-artist-aa909244-7555-4b52-ad88-7233860c6fb4.xml', 'publisher'],
-  
-  // Heycitizen - External artist feeds
-  ['https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/the heycitizen experience.xml', 'https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/the heycitizen experience.xml', 'album'],
-  ['https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/lofi.xml', 'https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/lofi.xml', 'album'],
 ];
 
 // PRIORITY 3: All remaining feeds (loaded last)
 const lowPriorityFeedUrlMappings = [
   // Additional Wavlake Publisher feeds
   ['https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4', 'https://re-podtards-cdn-new.b-cdn.net/feeds/wavlake-artist-aa909244-7555-4b52-ad88-7233860c6fb4.xml', 'publisher'],
+  
+  // Heycitizen - External artist feeds (low priority)
+  ['https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/the heycitizen experience.xml', 'https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/the heycitizen experience.xml', 'album'],
+  ['https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/lofi.xml', 'https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/lofi.xml', 'album'],
 ];
 
 // Combine all feed tiers for backwards compatibility
@@ -289,6 +286,43 @@ export default function HomePage() {
             console.log('📦 Loading albums from cache:', parsedAlbums.length, 'albums');
             setAlbums(parsedAlbums);
             setIsLoading(false);
+            
+            // IMPORTANT: Still load extended feeds in background even when using cache
+            // This ensures the full catalog is available
+            setTimeout(() => {
+              console.log('🔄 Loading extended feeds in background (cached start)');
+              loadAlbumsData([], 'extended').then((extendedAlbums) => {
+                if (extendedAlbums && extendedAlbums.length > 0) {
+                  setAlbums(prevAlbums => {
+                    // Filter out duplicates by title+artist
+                    const existingKeys = new Set(prevAlbums.map(album => `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`));
+                    const newAlbums = extendedAlbums.filter(album => {
+                      const key = `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`;
+                      return !existingKeys.has(key);
+                    });
+                    
+                    if (newAlbums.length > 0) {
+                      const combined = [...prevAlbums, ...newAlbums];
+                      console.log(`📦 Added ${newAlbums.length} new extended albums to cache, total: ${combined.length}`);
+                      
+                      // Update cache with full catalog
+                      try {
+                        localStorage.setItem('cachedAlbums', JSON.stringify(combined));
+                        localStorage.setItem('albumsCacheTimestamp', Date.now().toString());
+                      } catch (error) {
+                        console.warn('⚠️ Failed to update cache with extended albums:', error);
+                      }
+                      
+                      return combined;
+                    }
+                    return prevAlbums;
+                  });
+                }
+              }).catch(error => {
+                console.warn('⚠️ Failed to load extended feeds from cache:', error);
+              });
+            }, 1000); // 1 second delay when loading from cache
+            
             return;
           } catch (error) {
             console.warn('⚠️ Failed to parse cached albums:', error);
@@ -560,6 +594,19 @@ export default function HomePage() {
       // 'all' - legacy behavior for backwards compatibility
       feedsToLoad = [...feedUrls, ...managedFeeds, ...additionalFeeds];
       console.log('🚀 Loading ALL feeds (legacy mode):', feedsToLoad.length, 'feeds');
+    }
+    
+    // DEDUPLICATION: Remove duplicate URLs to prevent redundant parsing
+    const originalCount = feedsToLoad.length;
+    feedsToLoad = [...new Set(feedsToLoad)]; // Remove duplicates using Set
+    const deduplicatedCount = feedsToLoad.length;
+    
+    if (originalCount !== deduplicatedCount) {
+      const duplicatesRemoved = originalCount - deduplicatedCount;
+      console.warn(`⚠️ DEDUPLICATION: Removed ${duplicatesRemoved} duplicate feed URLs`);
+      console.log(`📊 Feed count: ${originalCount} → ${deduplicatedCount} (${duplicatesRemoved} duplicates removed)`);
+    } else {
+      console.log(`✅ No duplicate feeds found in ${loadTier} tier`);
     }
     
     const allFeeds = feedsToLoad;

@@ -150,7 +150,7 @@
         "description": "Resolve performance issues causing albums to load slowly on the site",
         "details": "Investigate and fix the slow loading performance for albums. This may involve optimizing image loading, improving CDN delivery, reducing bundle sizes, implementing better caching strategies, or optimizing the data fetching and rendering pipeline to improve overall site performance when loading album content.",
         "testStrategy": "",
-        "status": "in-progress",
+        "status": "done",
         "dependencies": [],
         "priority": "high",
         "subtasks": []
@@ -216,7 +216,7 @@
         "description": "Resolve duplicate RSS feed parsing and optimize batch processing performance",
         "details": "The console logs show RSS feeds being parsed multiple times unnecessarily. This includes: 1) Same feeds parsed repeatedly (e.g., \"Safe Some Place\", \"Goodbye Uncle Walt\" appearing multiple times), 2) Redundant batch processing operations, 3) Performance impact from duplicate parsing. Need to implement proper deduplication, caching, and optimize the batch processing logic to prevent redundant operations and improve loading performance.",
         "testStrategy": "",
-        "status": "pending",
+        "status": "in-progress",
         "dependencies": [],
         "priority": "high",
         "subtasks": []
@@ -260,7 +260,7 @@
       "description": "Main task list for FUCKIT podcast/music streaming application",
       "created": "2025-01-27T00:00:00.000Z",
       "lastModified": "2025-01-27T00:00:00.000Z",
-      "updated": "2025-07-26T17:12:56.318Z"
+      "updated": "2025-07-26T17:23:16.395Z"
     }
   }
 }
