@@ -34,6 +34,7 @@ export default function CDNImage({
 }: CDNImageProps) {
   const [imageSrc, setImageSrc] = useState(src);
   const [hasError, setHasError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Use CDN URL if configured and appropriate
   const finalSrc = shouldUseCDN(imageSrc) 
@@ -46,22 +47,33 @@ export default function CDNImage({
       setImageSrc(src);
       setHasError(true);
     } else {
+      setIsLoading(false);
       onError?.();
     }
   };
 
+  const handleLoad = () => {
+    setIsLoading(false);
+    onLoad?.();
+  };
+
   return (
-    <Image
-      src={finalSrc}
-      alt={alt}
-      width={width}
-      height={height}
-      className={className}
-      priority={priority}
-      onError={handleError}
-      onLoad={onLoad}
-      unoptimized={!shouldUseCDN(imageSrc)} // Only optimize through CDN
-      {...props}
-    />
+    <div className={`relative ${className || ''}`}>
+      {isLoading && (
+        <div className="absolute inset-0 bg-gray-200 animate-pulse rounded" />
+      )}
+      <Image
+        src={finalSrc}
+        alt={alt}
+        width={width}
+        height={height}
+        className={`${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+        priority={priority}
+        onError={handleError}
+        onLoad={handleLoad}
+        unoptimized={!shouldUseCDN(imageSrc)} // Only optimize through CDN
+        {...props}
+      />
+    </div>
   );
 } 

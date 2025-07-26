@@ -1237,25 +1237,16 @@ export default function HomePage() {
         <div className="container mx-auto px-6 py-8">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-12 gap-4">
-              <LoadingSpinner />
-              {loadingProgress > 0 && (
-                <div className="w-full max-w-md">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-gray-400">Loading feeds...</span>
-                    <span className="text-sm text-gray-400">{Math.round(loadingProgress)}%</span>
-                  </div>
-                  <div className="w-full bg-gray-700 rounded-full h-2">
-                    <div 
-                      className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${loadingProgress}%` }}
-                    />
-                  </div>
-                  {albums.length > 0 && (
-                    <p className="text-center text-sm text-gray-400 mt-2">
-                      {albums.length} albums loaded so far...
-                    </p>
-                  )}
-                </div>
+              <LoadingSpinner 
+                size="large"
+                text="Loading music feeds"
+                showProgress={loadingProgress > 0}
+                progress={loadingProgress}
+              />
+              {albums.length > 0 && (
+                <p className="text-center text-sm text-gray-400 mt-2">
+                  {albums.length} albums loaded so far...
+                </p>
               )}
             </div>
           ) : error ? (

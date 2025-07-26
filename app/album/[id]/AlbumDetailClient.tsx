@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft, Play, Pause, SkipBack, SkipForward, Volume2 } from 'lucide-react';
@@ -298,21 +298,25 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
     }
   }, [album?.coverArt]);
 
-  // Debug background application - temporarily force image background for testing
-  const backgroundStyle = backgroundImage && isClient ? {
-    background: `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url('${backgroundImage}') center/cover fixed`,
-    backgroundAttachment: 'fixed'
-  } : {
-    background: 'linear-gradient(to bottom right, rgb(17, 24, 39), rgb(31, 41, 55), rgb(17, 24, 39))'
-  };
+  // Optimized background style calculation - memoized to prevent repeated logs
+  const backgroundStyle = useMemo(() => {
+    const style = backgroundImage && isClient ? {
+      background: `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url('${backgroundImage}') center/cover fixed`,
+      backgroundAttachment: 'fixed'
+    } : {
+      background: 'linear-gradient(to bottom right, rgb(17, 24, 39), rgb(31, 41, 55), rgb(17, 24, 39))'
+    };
 
-  console.log('🎨 Background style applied:', {
-    backgroundImage,
-    isClient,
-    windowWidth: typeof window !== 'undefined' ? window.innerWidth : 'undefined',
-    style: backgroundStyle,
-    willUseImage: !!(backgroundImage && isClient)
-  });
+    // Only log when background actually changes (not on every render)
+    console.log('🎨 Background style applied:', {
+      backgroundImage,
+      isClient,
+      windowWidth: typeof window !== 'undefined' ? window.innerWidth : 'undefined',
+      willUseImage: !!(backgroundImage && isClient)
+    });
+
+    return style;
+  }, [backgroundImage, isClient]);
 
   // Load album data if not provided initially
   useEffect(() => {
