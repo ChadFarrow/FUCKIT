@@ -276,8 +276,9 @@ export default function HomePage() {
     if (globalState.isPlaying && globalState.currentAlbum && globalState.trackUrl) {
       // Only restore state if we have a valid audio element and it can actually play
       if (audioRef.current) {
-        // Set up the audio element
-        audioRef.current.src = globalState.trackUrl;
+        // Use proxy helper even for global state restoration
+        const urlsToTry = getAudioUrlsToTry(globalState.trackUrl);
+        audioRef.current.src = urlsToTry[0]; // Use first URL (proxy if external)
         audioRef.current.currentTime = globalState.currentTime;
         audioRef.current.volume = globalState.volume;
         
@@ -680,19 +681,9 @@ export default function HomePage() {
       try {
         console.log('🎵 Attempting to play:', album.title, 'Track URL:', firstTrack.url);
         
-        // Set up audio element first
-        audioRef.current.src = firstTrack.url;
-        audioRef.current.load(); // Force load on iOS
-        
-        // Set volume to a reasonable level for mobile
-        audioRef.current.volume = 0.8;
-        
-        // iOS requires user gesture - ensure we're in a user-initiated event
-        const playPromise = audioRef.current.play();
-        
-        if (playPromise !== undefined) {
-          await playPromise;
-          
+        // Use proxy helper for external URLs
+        const success = await attemptAudioPlayback(firstTrack.url, 'Album playback');
+        if (success) {
           // Success - update state
           setCurrentPlayingAlbum(album.title);
           setCurrentTrackIndex(0);
@@ -707,6 +698,8 @@ export default function HomePage() {
           }, audioRef.current || undefined);
           
           console.log('✅ Successfully started playback');
+        } else {
+          throw new Error('Failed to start album playback');
         }
       } catch (error) {
         let errorMessage = 'Unable to play audio - please try again';
@@ -808,15 +801,18 @@ export default function HomePage() {
     if (currentTrackIndex < currentAlbum.tracks.length - 1) {
       const nextTrack = currentAlbum.tracks[currentTrackIndex + 1];
       if (nextTrack && nextTrack.url) {
-        audioRef.current.src = nextTrack.url;
-        audioRef.current.play().then(() => {
-          setCurrentTrackIndex(currentTrackIndex + 1);
-          
-          // Update global state
-          updateGlobalAudioState({
-            currentTrackIndex: currentTrackIndex + 1,
-            trackUrl: nextTrack.url,
-          }, audioRef.current || undefined);
+        attemptAudioPlayback(nextTrack.url, 'Next track').then((success) => {
+          if (success) {
+            setCurrentTrackIndex(currentTrackIndex + 1);
+            
+            // Update global state
+            updateGlobalAudioState({
+              currentTrackIndex: currentTrackIndex + 1,
+              trackUrl: nextTrack.url,
+            }, audioRef.current || undefined);
+          } else {
+            console.error('Error playing next track: all URLs failed');
+          }
         }).catch(err => {
           console.error('Error playing next track:', err);
         });
@@ -831,7 +827,7 @@ export default function HomePage() {
   };
 
   // Shuffle function that flattens all tracks and shuffles them
-  const handleShuffle = () => {
+  const handleShuffle = async () => {
     // Flatten all tracks from all albums into a single array
     const allTracks: Array<{track: any, album: RSSAlbum, originalIndex: number}> = [];
     
@@ -877,13 +873,9 @@ export default function HomePage() {
       try {
         console.log('🎵 Starting shuffle playback:', track.title, 'from album:', album.title);
         
-        // Set up audio element
-        audioRef.current.src = track.url;
-        audioRef.current.load();
-        audioRef.current.volume = 0.8;
-        
-        // Play the track
-        audioRef.current.play().then(() => {
+        // Use proxy helper for external URLs
+        const success = await attemptAudioPlayback(track.url, 'Shuffle startup');
+        if (success) {
           // Update state after successful play
           setCurrentPlayingAlbum(album.title);
           setCurrentTrackIndex(0);
@@ -899,10 +891,10 @@ export default function HomePage() {
           }, audioRef.current || undefined);
           
           console.log('✅ Successfully started shuffle playback');
-        }).catch(error => {
-          console.error('Error starting shuffle playback:', error);
-          toast.error('Failed to start playback - tap the play button again');
-        });
+        } else {
+          console.error('Error starting shuffle playback: all URLs failed');
+          toast.error('Failed to start playback - try a different track');
+        }
       } catch (error) {
         console.error('Error setting up shuffle playback:', error);
         toast.error('Failed to start playback');
@@ -1702,9 +1694,10 @@ export default function HomePage() {
                       if (currentAlbum && audioRef.current) {
                         const prevTrack = currentAlbum.tracks[currentTrackIndex - 1];
                         if (prevTrack && prevTrack.url) {
-                          audioRef.current.src = prevTrack.url;
-                          audioRef.current.play().then(() => {
-                            setCurrentTrackIndex(currentTrackIndex - 1);
+                          attemptAudioPlayback(prevTrack.url, 'Previous track').then((success) => {
+                            if (success) {
+                              setCurrentTrackIndex(currentTrackIndex - 1);
+                            }
                           });
                         }
                       }
