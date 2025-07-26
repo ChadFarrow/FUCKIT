@@ -151,9 +151,13 @@ const albumFeeds = feedUrlMappings.filter(([, , type]) => type === 'album').map(
   isProduction ? cdnUrl : originalUrl
 );
 
-const publisherFeeds = feedUrlMappings.filter(([, , type]) => type === 'publisher').map(([originalUrl, cdnUrl]) => 
-  isProduction ? cdnUrl : originalUrl
-);
+const publisherFeeds = feedUrlMappings.filter(([, , type]) => type === 'publisher').map(([originalUrl, cdnUrl]) => {
+  // Temporary fix: Use direct URL for Wavlake IROH feed until CDN is fixed
+  if (originalUrl.includes('8a9c2e54-785a-4128-9412-737610f5d00a')) {
+    return originalUrl; // Use direct Wavlake URL
+  }
+  return isProduction ? cdnUrl : originalUrl;
+});
 
 // Performance optimization: Create tiered feed arrays for lazy loading
 const coreFeeds = coreFeedUrlMappings.filter(([, , type]) => type === 'album').map(([originalUrl, cdnUrl]) => 
