@@ -36,8 +36,13 @@ export default function GlobalAudioPlayer() {
   const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
 
+  // Debug: Log component mount
+  console.log('🚀 GlobalAudioPlayer component mounted');
+
   // Load audio state from localStorage
   useEffect(() => {
+    console.log('🔧 GlobalAudioPlayer useEffect starting');
+    
     const checkAudioState = () => {
       const state = getGlobalAudioState();
       console.log('🔄 GlobalAudioPlayer checking state:', state);
