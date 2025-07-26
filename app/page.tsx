@@ -34,21 +34,15 @@ const verboseLog = (...args: any[]) => {
 
 // Core feeds (load first for fast page display)
 const coreFeeds = [
-  'https://value4value.live/feeds/doerfels.xml',
+  'https://www.doerfelverse.com/feeds/doerfels-pubfeed.xml',
   'https://podcastindex.org/api/1.0/episodes/byfeedurl?url=https%3A%2F%2Fchrisdobrien.podhome.fm%2Frss&pretty',
   'https://rss.buzzsprout.com/2022460.rss'
 ];
 
 // Extended feeds (load in background after core)
 const extendedFeeds = [
-  'https://value4value.live/feeds/ajjohnson.xml',
-  'https://rss.buzzsprout.com/2022460.rss',
-  'https://value4value.live/feeds/chasity.xml',
-  'https://value4value.live/feeds/bobdylan.xml',
-  'https://value4value.live/feeds/caseyjones.xml',
-  'https://value4value.live/feeds/dannyboy.xml',
-  'https://value4value.live/feeds/sirtj.xml',
-  'https://value4value.live/feeds/shredward.xml'
+  // Additional music feeds from known sources
+  'https://rss.buzzsprout.com/2022460.rss'
 ];
 
 // Low priority feeds (load last in background)
