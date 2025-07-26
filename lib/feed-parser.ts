@@ -331,17 +331,18 @@ export class FeedParser {
     podRollFeeds: number;
     fundingFeeds: number;
   } {
-    const parsedFeeds = this.getParsedFeeds();
+    const parsedData = this.getParsedFeeds();
+    const parsedFeeds: ParsedFeedData[] = Array.isArray(parsedData) ? parsedData : (parsedData as any).feeds || [];
     
     return {
       totalFeeds: parsedFeeds.length,
-      successfulParses: parsedFeeds.filter(f => f.parseStatus === 'success').length,
-      failedParses: parsedFeeds.filter(f => f.parseStatus === 'error').length,
-      albumsFound: parsedFeeds.filter(f => f.type === 'album' && f.parseStatus === 'success').length,
-      publishersFound: parsedFeeds.filter(f => f.type === 'publisher' && f.parseStatus === 'success').length,
-      totalTracks: parsedFeeds.reduce((sum, f) => sum + (f.trackCount || 0), 0),
-      podRollFeeds: parsedFeeds.filter(f => f.hasPodRoll).length,
-      fundingFeeds: parsedFeeds.filter(f => f.hasFunding).length
+      successfulParses: parsedFeeds.filter((f: ParsedFeedData) => f.parseStatus === 'success').length,
+      failedParses: parsedFeeds.filter((f: ParsedFeedData) => f.parseStatus === 'error').length,
+      albumsFound: parsedFeeds.filter((f: ParsedFeedData) => f.type === 'album' && f.parseStatus === 'success').length,
+      publishersFound: parsedFeeds.filter((f: ParsedFeedData) => f.type === 'publisher' && f.parseStatus === 'success').length,
+      totalTracks: parsedFeeds.reduce((sum: number, f: ParsedFeedData) => sum + (f.trackCount || 0), 0),
+      podRollFeeds: parsedFeeds.filter((f: ParsedFeedData) => f.hasPodRoll).length,
+      fundingFeeds: parsedFeeds.filter((f: ParsedFeedData) => f.hasFunding).length
     };
   }
   
