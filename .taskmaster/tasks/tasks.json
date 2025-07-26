@@ -242,6 +242,17 @@
         "dependencies": [],
         "priority": "high",
         "subtasks": []
+      },
+      {
+        "id": 24,
+        "title": "Fix Duplicate Albums and Artwork Mismatches",
+        "description": "Resolve issues with duplicate albums appearing in the feed and incorrect artwork being displayed for albums.",
+        "details": "- Investigate RSS feed parsing to identify why duplicate albums are being created\n- Fix album deduplication logic to prevent the same album from appearing multiple times\n- Resolve artwork mismatches where albums are showing incorrect cover art\n- Improve album identification and matching across different RSS feeds\n- Add proper album title normalization and comparison\n- Implement better error handling for malformed RSS data\n- Add debugging to track album parsing and deduplication process",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
       }
     ],
     "metadata": {
@@ -249,7 +260,7 @@
       "description": "Main task list for FUCKIT podcast/music streaming application",
       "created": "2025-01-27T00:00:00.000Z",
       "lastModified": "2025-01-27T00:00:00.000Z",
-      "updated": "2025-07-26T20:15:17.150Z"
+      "updated": "2025-07-26T20:21:21.413Z"
     }
   }
 }
