@@ -809,6 +809,26 @@
       "status": "active",
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z"
+    },
+    {
+      "id": "fountain-artist-takeover",
+      "originalUrl": "https://wavlake.com/feed/music/6dc5c681-8beb-4193-93a3-d405c962d103",
+      "type": "album",
+      "title": "Fountain Artist Takeover",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-01-27T00:00:00.000Z",
+      "lastUpdated": "2025-01-27T00:00:00.000Z"
+    },
+    {
+      "id": "empty-passenger-seat",
+      "originalUrl": "https://wavlake.com/feed/music/95ea253a-4058-402c-8503-204f6d3f1494",
+      "type": "album",
+      "title": "Empty Passenger Seat",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-01-27T00:00:00.000Z",
+      "lastUpdated": "2025-01-27T00:00:00.000Z"
     }
   ],
   "lastUpdated": "2025-01-27T00:00:00.000Z",
