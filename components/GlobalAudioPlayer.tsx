@@ -38,28 +38,17 @@ export default function GlobalAudioPlayer() {
 
   // Load audio state from localStorage
   useEffect(() => {
-    const state = getGlobalAudioState();
-    if (state.isPlaying && state.currentAlbum && state.trackUrl) {
-      setAudioState(state);
-      setIsVisible(true);
-      setCurrentTime(state.currentTime || 0);
-      setDuration(state.duration || 0);
-      
-      // Load track info from localStorage
-      const trackInfoKey = `fuckit_track_info_${state.currentAlbum}_${state.currentTrackIndex}`;
-      const storedTrackInfo = localStorage.getItem(trackInfoKey);
-      if (storedTrackInfo) {
-        setTrackInfo(JSON.parse(storedTrackInfo));
-      }
-    }
-
-    // Listen for storage changes
-    const handleStorageChange = () => {
+    const checkAudioState = () => {
       const state = getGlobalAudioState();
+      console.log('🔄 GlobalAudioPlayer checking state:', state);
+      
       if (state.isPlaying && state.currentAlbum && state.trackUrl) {
         setAudioState(state);
         setIsVisible(true);
+        setCurrentTime(state.currentTime || 0);
+        setDuration(state.duration || 0);
         
+        // Load track info from localStorage
         const trackInfoKey = `fuckit_track_info_${state.currentAlbum}_${state.currentTrackIndex}`;
         const storedTrackInfo = localStorage.getItem(trackInfoKey);
         if (storedTrackInfo) {
@@ -72,8 +61,24 @@ export default function GlobalAudioPlayer() {
       }
     };
 
+    // Check immediately
+    checkAudioState();
+
+    // Check every second to detect state changes
+    const interval = setInterval(checkAudioState, 1000);
+
+    // Listen for storage changes (from other tabs)
+    const handleStorageChange = () => {
+      console.log('🔄 Storage change detected');
+      checkAudioState();
+    };
+
     window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+    
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   // Update audio element when state changes
