@@ -187,6 +187,17 @@
         "dependencies": [],
         "priority": "high",
         "subtasks": []
+      },
+      {
+        "id": 18,
+        "title": "Add \"Add to Playlist\" Feature Using Podcast Index Medium Tag",
+        "description": "Implement playlist functionality using the Podcast Index medium tag specification for better content organization",
+        "details": "Implement a playlist feature that leverages the Podcast Index medium tag specification (https://github.com/Podcastindex-org/podcast-namespace/blob/main/docs/tags/medium.md). This will allow users to add albums/tracks to playlists and organize their music listening experience. Features should include: 1) Add to playlist button on album and track pages, 2) Create new playlists, 3) Manage existing playlists, 4) Playlist playback functionality, 5) Integration with the existing audio state management system, 6) Local storage for playlist persistence, 7) UI for playlist management and viewing.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
       }
     ],
     "metadata": {
@@ -194,7 +205,7 @@
       "description": "Main task list for FUCKIT podcast/music streaming application",
       "created": "2025-01-27T00:00:00.000Z",
       "lastModified": "2025-01-27T00:00:00.000Z",
-      "updated": "2025-07-26T14:27:44.904Z"
+      "updated": "2025-07-26T15:15:40.640Z"
     }
   }
 }
