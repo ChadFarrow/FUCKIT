@@ -18,6 +18,9 @@ README.md
 scripts/*
 !scripts/auto-version-update.js
 
+# Exclude cache files (now served from Bunny.net CDN)
+data/cache/
+
 # Exclude any temporary files
 *.tmp
 *.temp 
