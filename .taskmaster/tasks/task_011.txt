@@ -1,6 +1,6 @@
 # Task ID: 11
 # Title: Improve Website Flow and UI
-# Status: pending
+# Status: done
 # Dependencies: None
 # Priority: medium
 # Description: Enhance the overall user experience by improving website navigation, layout, and visual design

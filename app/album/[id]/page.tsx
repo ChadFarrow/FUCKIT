@@ -44,8 +44,18 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 // Server-side data fetching - use pre-parsed data API
 async function getAlbumData(albumTitle: string): Promise<RSSAlbum | null> {
   try {
-    // Fetch pre-parsed album data
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/albums`);
+    // Fetch pre-parsed album data - use relative URL for production compatibility
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 
+                   (process.env.NODE_ENV === 'production' ? 'https://re.podtards.com' : 'http://localhost:3000');
+    const response = await fetch(`${baseUrl}/api/albums`, {
+      // Add cache control to prevent stale data
+      cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
+    });
     
     if (!response.ok) {
       console.warn('Failed to fetch albums for metadata:', response.status);

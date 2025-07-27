@@ -1,0 +1,18 @@
+# Task ID: 28
+# Title: Add Additional RSS Feeds to Data Configuration
+# Status: done
+# Dependencies: None
+# Priority: medium
+# Description: Added multiple RSS feeds to the feeds.json configuration including breakheart music content and other requested feeds
+# Details:
+Added RSS feeds to data/feeds.json:
+- midnight-breakheart: https://rocknrollbreakheart.com/msp/MidnightBreakheart/midnight breakheart.xml
+- satoshi-streamer: https://rocknrollbreakheart.com/msp/SatoshiStreamer/satoshi streamer.xml  
+- panisee-attack: https://feeds.rssblue.com/panisee-attack
+- 2-crystal-balls: https://rocknrollbreakheart.com/msp/2CrystalBalls/2 crystal balls.xml
+- rock-n-roll-breakheart: https://rocknrollbreakheart.com/msp/RNRBH/rock'n'roll%20breakheart.xml
+
+All feeds configured as album type with extended priority and active status.
+
+# Test Strategy:
+

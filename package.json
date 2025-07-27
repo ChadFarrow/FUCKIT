@@ -1,6 +1,6 @@
 {
   "name": "podcast-music-site",
-  "version": "1.5e772e6",
+  "version": "1.f534333",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -51,5 +51,5 @@
     "eslint-config-next": "^14.0.4",
     "task-master-ai": "^0.22.0"
   },
-  "buildTime": "2025-07-22T19:58:02.421Z"
+  "buildTime": "2025-07-27T21:07:59.353Z"
 }

@@ -1,6 +1,6 @@
 # Task ID: 8
 # Title: Optimize Mobile Experience
-# Status: pending
+# Status: done
 # Dependencies: None
 # Priority: medium
 # Description: Improve the application experience on mobile devices
