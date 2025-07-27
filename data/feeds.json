@@ -869,6 +869,46 @@
       "status": "active",
       "addedAt": "2025-07-27T02:34:47.000Z",
       "lastUpdated": "2025-07-27T02:34:47.000Z"
+    },
+    {
+      "id": "satoshi-streamer",
+      "originalUrl": "https://rocknrollbreakheart.com/msp/SatoshiStreamer/satoshi streamer.xml",
+      "type": "album",
+      "title": "Satoshi Streamer",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-27T02:34:47.000Z",
+      "lastUpdated": "2025-07-27T02:34:47.000Z"
+    },
+    {
+      "id": "panisee-attack",
+      "originalUrl": "https://feeds.rssblue.com/panisee-attack",
+      "type": "album",
+      "title": "Panisee Attack",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-27T02:34:47.000Z",
+      "lastUpdated": "2025-07-27T02:34:47.000Z"
+    },
+    {
+      "id": "2-crystal-balls",
+      "originalUrl": "https://rocknrollbreakheart.com/msp/2CrystalBalls/2 crystal balls.xml",
+      "type": "album",
+      "title": "2 Crystal Balls",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-27T02:34:47.000Z",
+      "lastUpdated": "2025-07-27T02:34:47.000Z"
+    },
+    {
+      "id": "rock-n-roll-breakheart",
+      "originalUrl": "https://rocknrollbreakheart.com/msp/RNRBH/rock'n'roll%20breakheart.xml",
+      "type": "album",
+      "title": "Rock'n'Roll Breakheart",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-27T02:34:47.000Z",
+      "lastUpdated": "2025-07-27T02:34:47.000Z"
     }
   ],
   "lastUpdated": "2025-07-27T01:27:30.801Z",

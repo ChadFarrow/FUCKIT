@@ -138,7 +138,13 @@ export default function HomePage() {
     verboseLog('🔄 hasLoadedRef.current:', hasLoadedRef.current);
     verboseLog('🔄 isClient:', isClient);
     
-    // Always try to load, regardless of hasLoadedRef
+    // Prevent multiple loads
+    if (hasLoadedRef.current) {
+      verboseLog('🔄 Already loaded, skipping...');
+      return;
+    }
+    
+    hasLoadedRef.current = true;
     verboseLog('🔄 Attempting to load albums...');
     
     // Try to load from cache first
@@ -272,7 +278,7 @@ export default function HomePage() {
         }, 2000); // 2 second delay to let core content load first
       });
     }, 100);
-  }, [isClient]); // Add isClient as dependency
+  }, []); // Run only once on mount
 
 
   // Mobile audio initialization - handle autoplay restrictions
@@ -281,12 +287,9 @@ export default function HomePage() {
       // Add touch event listener to initialize audio context on mobile
       const handleTouchStart = () => {
         if (audioRef.current) {
-          // Try to play and immediately pause to initialize audio context
-          audioRef.current.play().then(() => {
-            audioRef.current?.pause();
-          }).catch(() => {
-            // Ignore autoplay errors - this is just for initialization
-          });
+          // Just load the audio context without playing
+          // This prevents unwanted autoplay while still initializing the context
+          audioRef.current.load();
           
           // Remove the listener after first touch
           document.removeEventListener('touchstart', handleTouchStart);
@@ -1013,8 +1016,8 @@ export default function HomePage() {
       case 'singles':
         filtered = albums.filter(album => album.tracks.length === 1);
         break;
-      case 'family-friendly':
-        filtered = albums.filter(album => !album.explicit); // Exclude explicit content
+      case 'explicit':
+        filtered = albums.filter(album => album.explicit); // Show only explicit content
         break;
       default: // 'all'
         filtered = albums; // Show all albums
@@ -1069,10 +1072,11 @@ export default function HomePage() {
             setError('Audio playback error - please try again');
             setTimeout(() => setError(null), 3000);
           }}
-          preload="metadata"
+          preload="none"
           crossOrigin="anonymous"
           playsInline
           webkit-playsinline="true"
+          autoPlay={false}
           controls={false}
           style={{ display: 'none' }}
         />
@@ -1085,46 +1089,98 @@ export default function HomePage() {
           }}
         >
           <div className="container mx-auto px-6 py-4">
-            <div className="relative flex items-center justify-center mb-8">
-              {/* Left side - Menu Button and Logo */}
-              <div className="absolute left-0 flex items-center gap-4">
-                {/* Menu Button */}
-                <button
-                  onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                  className="p-2 rounded-lg bg-gray-800/50 hover:bg-gray-700/50 transition-colors"
-                  aria-label="Toggle menu"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                  </svg>
-                </button>
-                
-                {/* Logo */}
-                <div className="w-10 h-10 relative border border-gray-700 rounded-lg overflow-hidden">
-                  <Image 
-                    src="/logo.webp" 
-                    alt="VALUE Logo" 
-                    width={40} 
-                    height={40}
-                    className="object-cover"
-                    priority
-                  />
+            {/* Mobile Header - Stacked Layout */}
+            <div className="block sm:hidden mb-6">
+              {/* Top row - Menu, Logo, About */}
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-4">
+                  {/* Menu Button */}
+                  <button
+                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                    className="p-2 rounded-lg bg-gray-800/50 hover:bg-gray-700/50 transition-colors"
+                    aria-label="Toggle menu"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                  </button>
+                  
+                  {/* Logo */}
+                  <div className="w-10 h-10 relative border border-gray-700 rounded-lg overflow-hidden">
+                    <Image 
+                      src="/logo.webp" 
+                      alt="VALUE Logo" 
+                      width={40} 
+                      height={40}
+                      className="object-cover"
+                      priority
+                    />
+                  </div>
                 </div>
-              </div>
-              
-              {/* Center - Title */}
-              <div className="flex items-center gap-3">
-                <h1 className="text-4xl font-bold">Into the ValueVerse</h1>
-                <span className="text-sm bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full border border-yellow-500/30">
-                  Beta - might not work
-                </span>
-              </div>
-              
-              {/* Right side - About Link */}
-              <div className="absolute right-0">
+                
+                {/* About Link */}
                 <Link 
                   href="/about" 
                   className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
+                >
+                  <span className="text-sm">About</span>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </Link>
+              </div>
+              
+              {/* Bottom row - Title and Beta badge */}
+              <div className="text-center">
+                <h1 className="text-2xl font-bold mb-2">Into the ValueVerse</h1>
+                <span className="text-xs bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full border border-yellow-500/30">
+                  Beta - might not work
+                </span>
+              </div>
+            </div>
+
+            {/* Desktop Header - Original Layout */}
+            <div className="hidden sm:block mb-8">
+              <div className="relative flex items-center justify-center">
+                {/* Left side - Menu Button and Logo */}
+                <div className="absolute left-0 flex items-center gap-4">
+                  {/* Menu Button */}
+                  <button
+                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                    className="p-2 rounded-lg bg-gray-800/50 hover:bg-gray-700/50 transition-colors"
+                    aria-label="Toggle menu"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                  </button>
+                  
+                  {/* Logo */}
+                  <div className="w-10 h-10 relative border border-gray-700 rounded-lg overflow-hidden">
+                    <Image 
+                      src="/logo.webp" 
+                      alt="VALUE Logo" 
+                      width={40} 
+                      height={40}
+                      className="object-cover"
+                      priority
+                    />
+                  </div>
+                </div>
+                
+                {/* Center - Title */}
+                <div className="flex items-center gap-3">
+                  <h1 className="text-4xl font-bold">Into the ValueVerse</h1>
+                  <span className="text-sm bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full border border-yellow-500/30">
+                    Beta - might not work
+                  </span>
+                </div>
+                
+                {/* Right side - About Link */}
+                <div className="absolute right-0">
+                  <Link 
+                    href="/about" 
+                    className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -1209,58 +1265,6 @@ export default function HomePage() {
                 </div>
               </div>
             )}
-            
-            {/* Explicit Content Section */}
-            {(() => {
-              const explicitAlbums = albums.filter(album => album.explicit);
-              
-              return explicitAlbums.length > 0 ? (
-                <div className="mb-8">
-                  <h3 className="text-lg font-semibold mb-3 text-white flex items-center gap-2">
-                    <svg className="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                    </svg>
-                    <span>Explicit Content</span>
-                    <span className="text-xs bg-red-600/80 px-2 py-1 rounded font-bold">E</span>
-                  </h3>
-                  <div className="space-y-2 max-h-48 overflow-y-auto">
-                    {explicitAlbums.map((album, index) => (
-                      <Link
-                        key={`explicit-${index}`}
-                        href={generateAlbumUrl(album.title)}
-                        className="flex items-center gap-3 bg-red-900/20 hover:bg-red-900/30 rounded p-2 transition-colors group border border-red-500/30"
-                        onClick={() => setIsSidebarOpen(false)}
-                      >
-                        <div className="w-10 h-10 rounded overflow-hidden flex-shrink-0">
-                          <Image 
-                            src={getAlbumArtworkUrl(album.coverArt || '', 'thumbnail')} 
-                            alt={album.title}
-                            width={40}
-                            height={40}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.src = getPlaceholderImageUrl('thumbnail');
-                            }}
-                          />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm text-gray-300 group-hover:text-white truncate font-medium">
-                            {album.title}
-                          </p>
-                          <p className="text-xs text-gray-500 group-hover:text-gray-400 truncate">
-                            {album.artist}
-                          </p>
-                        </div>
-                        <span className="text-xs bg-red-500 text-white px-1.5 py-0.5 rounded font-bold">
-                          E
-                        </span>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              ) : null;
-            })()}
 
             {/* Artists with Publisher Feeds */}
             {(() => {
@@ -1732,6 +1736,7 @@ export default function HomePage() {
               <p className="text-gray-400">Unable to load any album information from the RSS feeds.</p>
             </div>
           )}
+        </div>
         </div>
 
         {/* Now Playing Bar - Fixed at bottom */}
