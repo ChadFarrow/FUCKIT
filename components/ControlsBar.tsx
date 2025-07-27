@@ -40,7 +40,7 @@ const defaultSortOptions: { value: SortType; label: string }[] = [
 
 const defaultFilters: { value: FilterType; label: string }[] = [
   { value: 'all', label: 'All' },
-  { value: 'explicit', label: 'Explicit' },
+  { value: 'explicit', label: 'Family-Friendly' },
   { value: 'albums', label: 'Albums' },
   { value: 'eps', label: 'EPs' },
   { value: 'singles', label: 'Singles' },
