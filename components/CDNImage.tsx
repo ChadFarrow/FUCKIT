@@ -39,8 +39,8 @@ export default function CDNImage({
 
   // Extract original URL from CDN URL for fallback
   const getOriginalUrl = (cdnUrl: string) => {
-    // Check for CDN hostname
-    if (cdnUrl.includes('re-podtards-cdn.b-cdn.net/cache/artwork/')) {
+    // Check for CDN hostname (storage zone CDN)
+    if (cdnUrl.includes('re-podtards-cache.b-cdn.net/cache/artwork/')) {
       // Extract the filename from the CDN URL
       const filename = cdnUrl.split('/').pop();
       if (filename) {

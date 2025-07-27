@@ -134,6 +134,18 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'FUCKIT.b-cdn.net',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 're-podtards-cache.b-cdn.net',
+        port: '',
+        pathname: '/**',
+      },
       // Fallback for local development
       {
         protocol: 'https',
