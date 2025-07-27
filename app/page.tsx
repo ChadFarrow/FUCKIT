@@ -1017,7 +1017,7 @@ export default function HomePage() {
         filtered = albums.filter(album => album.tracks.length === 1);
         break;
       case 'explicit':
-        filtered = albums.filter(album => !album.explicit); // Hide explicit content when "Explicit" filter is active
+        filtered = albums.filter(album => album.explicit); // Show only explicit content when "Explicit" filter is active
         break;
       default: // 'all'
         filtered = albums; // Show all albums
