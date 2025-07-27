@@ -127,6 +127,13 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
+      // Bunny.net CDN domain
+      {
+        protocol: 'https',
+        hostname: 're-podtards-cdn.b-cdn.net',
+        port: '',
+        pathname: '/**',
+      },
       // Fallback for local development
       {
         protocol: 'https',

@@ -39,7 +39,8 @@ export default function CDNImage({
 
   // Extract original URL from CDN URL for fallback
   const getOriginalUrl = (cdnUrl: string) => {
-    if (cdnUrl.includes('FUCKIT.b-cdn.net/cache/artwork/')) {
+    // Check for both old and new CDN hostnames
+    if (cdnUrl.includes('FUCKIT.b-cdn.net/cache/artwork/') || cdnUrl.includes('re-podtards-cdn.b-cdn.net/cache/artwork/')) {
       // Extract the filename from the CDN URL
       const filename = cdnUrl.split('/').pop();
       if (filename) {
@@ -220,6 +221,7 @@ export default function CDNImage({
           onError={handleError}
           onLoad={handleLoad}
           unoptimized={true}
+          crossOrigin="anonymous"
           {...props}
         />
       )}

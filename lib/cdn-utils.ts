@@ -9,6 +9,11 @@
  * @returns Always false - CDN disabled
  */
 export function shouldUseCDN(url: string): boolean {
+  // Check if we're in production and the URL is from an external source
+  if (typeof window !== 'undefined' && process.env.NODE_ENV === 'production') {
+    // Only use CDN for external images, not for local assets
+    return Boolean(url && !url.startsWith('/') && !url.startsWith('data:'));
+  }
   return false;
 }
 
