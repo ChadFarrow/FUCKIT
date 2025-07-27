@@ -25,7 +25,9 @@ export async function GET() {
 
     return NextResponse.json(organizedFeeds, {
       headers: {
-        'Cache-Control': 'public, max-age=300', // Cache for 5 minutes
+        'Cache-Control': 'no-cache, no-store, must-revalidate', // Disable caching
+        'Pragma': 'no-cache',
+        'Expires': '0'
       },
     });
   } catch (error) {

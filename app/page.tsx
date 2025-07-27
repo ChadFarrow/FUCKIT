@@ -147,49 +147,11 @@ export default function HomePage() {
     hasLoadedRef.current = true;
     verboseLog('🔄 Attempting to load albums...');
     
-    // Try to load from cache first
+    // Clear cache to force fresh data load with updated CDN URLs
     if (typeof window !== 'undefined') {
-      const cachedAlbums = localStorage.getItem('cachedAlbums');
-      const cacheTimestamp = localStorage.getItem('albumsCacheTimestamp');
-      
-      if (cachedAlbums && cacheTimestamp) {
-        const cacheAge = Date.now() - parseInt(cacheTimestamp);
-        const cacheValid = cacheAge < 5 * 60 * 1000; // 5 minutes
-        
-        if (cacheValid) {
-          try {
-            const parsedAlbums = JSON.parse(cachedAlbums);
-            devLog('📦 Loading albums from cache:', parsedAlbums.length, 'albums');
-            setAlbums(parsedAlbums);
-            setIsLoading(false);
-            
-            // Load fresh data in background to update cache
-            setTimeout(() => {
-              devLog('🔄 Refreshing cache in background');
-              loadAlbumsData([], 'all').then((freshAlbums) => {
-                if (freshAlbums && freshAlbums.length > 0) {
-                  // Only update if we got more albums (avoid duplicates)
-                  if (freshAlbums.length > parsedAlbums.length) {
-                    setAlbums(freshAlbums);
-                    try {
-                      localStorage.setItem('cachedAlbums', JSON.stringify(freshAlbums));
-                      localStorage.setItem('albumsCacheTimestamp', Date.now().toString());
-                    } catch (error) {
-                      console.warn('⚠️ Failed to update cache:', error);
-                    }
-                  }
-                }
-              }).catch(error => {
-                console.warn('⚠️ Failed to refresh cache:', error);
-              });
-            }, 2000); // 2 second delay for background refresh
-            
-            return;
-          } catch (error) {
-            console.warn('⚠️ Failed to parse cached albums:', error);
-          }
-        }
-      }
+      localStorage.removeItem('cachedAlbums');
+      localStorage.removeItem('albumsCacheTimestamp');
+      devLog('🧹 Cache cleared to force fresh data load');
     }
     
     // Load all feeds at once for smooth experience
