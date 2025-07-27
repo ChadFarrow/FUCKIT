@@ -103,6 +103,19 @@ export default function CDNImage({
     }
     
     if (retryCount <= 1) {
+      // Try image proxy as fallback (similar to audio proxy)
+      const originalSrc = src; // Use the original src prop
+      if (!originalSrc.includes('/api/proxy-image') && !originalSrc.startsWith('data:')) {
+        console.log('Trying image proxy fallback:', originalSrc);
+        setCurrentSrc(`/api/proxy-image?url=${encodeURIComponent(originalSrc)}`);
+        setHasError(false);
+        setIsLoading(true);
+        setRetryCount(2);
+        return;
+      }
+    }
+    
+    if (retryCount <= 2) {
       // Try data URL fallback
       console.log('All URLs failed, using placeholder...');
       
@@ -114,7 +127,7 @@ export default function CDNImage({
       setCurrentSrc(dataUrl);
       setHasError(false);
       setIsLoading(true);
-      setRetryCount(2);
+      setRetryCount(3);
     } else {
       // Final fallback - show error state but don't hide image
       console.log('All fallbacks failed, showing error state');
@@ -143,7 +156,9 @@ export default function CDNImage({
     let fixedSrc = src;
     if (src.includes('re-podtards-cache.b-cdn.net')) {
       fixedSrc = src.replace('re-podtards-cache.b-cdn.net', 'FUCKIT.b-cdn.net');
-      console.log('Fixed CDN hostname:', src, '→', fixedSrc);
+      // Add cache busting to force reload past browser 403 cache
+      fixedSrc += `?v=${Date.now()}`;
+      console.log('Fixed CDN hostname with cache busting:', src, '→', fixedSrc);
     }
     
     setCurrentSrc(fixedSrc);
