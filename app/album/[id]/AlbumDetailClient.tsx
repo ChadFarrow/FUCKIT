@@ -307,7 +307,17 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
       setBackgroundImage(null);
       setBackgroundLoaded(true); // Mark background as loaded even if no image
     }
-  }, [album?.coverArt]);
+    
+    // Ensure background is marked as loaded after a short delay to prevent blocking
+    const timeoutId = setTimeout(() => {
+      if (!backgroundLoaded) {
+        console.log('⏰ Background loading timeout - marking as loaded');
+        setBackgroundLoaded(true);
+      }
+    }, 2000); // 2 second timeout
+    
+    return () => clearTimeout(timeoutId);
+  }, [album?.coverArt, backgroundLoaded]);
 
   // Optimized background style calculation - memoized to prevent repeated logs
   const backgroundStyle = useMemo(() => {
@@ -764,33 +774,33 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
         <div className="flex flex-col gap-6 mb-8">
           {/* Album Art with Play Button Overlay */}
           <div className="relative group mx-auto">
-            {!backgroundLoaded ? (
-              // Show loading placeholder while background loads
-              <div className="w-[280px] h-[280px] bg-gray-800 animate-pulse rounded-lg flex items-center justify-center">
+            <Image 
+              src={getAlbumArtworkUrl(album?.coverArt || '', 'large')} 
+              alt={album.title}
+              width={280}
+              height={280}
+              className={`rounded-lg object-cover shadow-2xl mx-auto transition-opacity duration-500 ${
+                albumArtLoaded ? 'opacity-100' : 'opacity-0'
+              }`}
+              priority={true} // Always prioritize album art loading
+              onLoad={() => setAlbumArtLoaded(true)}
+              onError={(e) => {
+                // Fallback to placeholder on error
+                const target = e.target as HTMLImageElement;
+                target.src = getPlaceholderImageUrl('large');
+                setAlbumArtLoaded(true);
+              }}
+            />
+            
+            {/* Loading placeholder - show when album art is not loaded */}
+            {!albumArtLoaded && (
+              <div className="absolute inset-0 w-[280px] h-[280px] bg-gray-800 animate-pulse rounded-lg flex items-center justify-center">
                 <div className="text-gray-400 text-sm">Loading...</div>
               </div>
-            ) : (
-              <Image 
-                src={getAlbumArtworkUrl(album?.coverArt || '', 'large')} 
-                alt={album.title}
-                width={280}
-                height={280}
-                className={`rounded-lg object-cover shadow-2xl mx-auto transition-opacity duration-500 ${
-                  albumArtLoaded ? 'opacity-100' : 'opacity-0'
-                }`}
-                priority={backgroundLoaded} // Prioritize loading after background is ready
-                onLoad={() => setAlbumArtLoaded(true)}
-                onError={(e) => {
-                  // Fallback to placeholder on error
-                  const target = e.target as HTMLImageElement;
-                  target.src = getPlaceholderImageUrl('large');
-                  setAlbumArtLoaded(true);
-                }}
-              />
             )}
             
-            {/* Play Button Overlay - Only show when background is loaded */}
-            {backgroundLoaded && (
+            {/* Play Button Overlay - Always visible when album art is loaded */}
+            {albumArtLoaded && (
               <div className="absolute inset-0 flex items-center justify-center">
                 <button
                   onClick={isPlaying ? togglePlay : playAlbum}
