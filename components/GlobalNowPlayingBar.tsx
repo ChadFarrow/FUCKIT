@@ -88,7 +88,7 @@ const GlobalNowPlayingBar: React.FC = () => {
             onClick={handleProgressClick}
           >
             <div 
-              className="h-full bg-blue-500 rounded-full transition-all duration-100"
+              className="h-full bg-white rounded-full transition-all duration-100"
               style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
             />
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity">
