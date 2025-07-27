@@ -4,6 +4,9 @@
  * Script to download RSS feeds and upload them to Bunny.net storage
  */
 
+// Load environment variables from .env.local
+require('dotenv').config({ path: '.env.local' });
+
 const https = require('https');
 const http = require('http');
 const fs = require('fs');
@@ -12,8 +15,8 @@ const path = require('path');
 // Bunny.net storage configuration from .env.local
 const BUNNY_STORAGE_API_KEY = process.env.BUNNY_STORAGE_API_KEY;
 const BUNNY_STORAGE_HOSTNAME = 'ny.storage.bunnycdn.com';
-const BUNNY_STORAGE_ZONE = 're-podtards-storage';
-const BUNNY_CDN_URL = 'https://re-podtards-cdn.b-cdn.net';
+const BUNNY_STORAGE_ZONE = 're-podtards-cache';
+const BUNNY_CDN_URL = 'https://re-podtards-cache.b-cdn.net';
 
 // RSS feeds to upload (newly added ones)
 const rssFeeds = [

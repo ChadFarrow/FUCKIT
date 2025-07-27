@@ -10,7 +10,7 @@ const https = require('https');
 
 // Configuration from your .env.local
 const BUNNY_CDN_API_KEY = process.env.BUNNY_CDN_API_KEY;
-const BUNNY_CDN_HOSTNAME = process.env.BUNNY_CDN_HOSTNAME || 're-podtards-cdn.b-cdn.net';
+const BUNNY_CDN_HOSTNAME = process.env.BUNNY_CDN_HOSTNAME || 'FUCKIT.b-cdn.net';
 const BUNNY_CDN_ZONE = process.env.BUNNY_CDN_ZONE || 're-podtards-cdn';
 const BUNNY_STORAGE_API_KEY = process.env.BUNNY_STORAGE_API_KEY;
 const BUNNY_STORAGE_HOSTNAME = process.env.BUNNY_STORAGE_HOSTNAME || 'ny.storage.bunnycdn.com';
