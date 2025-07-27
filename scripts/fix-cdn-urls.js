@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 
 /**
- * Fix CDN URLs in parsed feeds data
+ * Fix CDN URLs in parsed-feeds.json
  * 
- * This script updates all CDN URLs from re-podtards-cdn.b-cdn.net to FUCKIT.b-cdn.net
- * to match the actual CDN configuration.
+ * Replace FUCKIT.b-cdn.net with re-podtards-cdn.b-cdn.net
  */
 
 import fs from 'fs/promises';
@@ -14,58 +13,37 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-async function fixCdnUrls() {
-  console.log('🔧 Fixing CDN URLs in parsed feeds data...\n');
+async function fixCDNUrls() {
+  console.log('🔧 Fixing CDN URLs in parsed-feeds.json...\n');
   
   try {
-    // Read the parsed feeds data
+    // Read parsed feeds
     const feedsPath = path.join(__dirname, '..', 'data', 'parsed-feeds.json');
-    const feedsContent = await fs.readFile(feedsPath, 'utf8');
-    const feedsData = JSON.parse(feedsContent);
+    let feedsContent = await fs.readFile(feedsPath, 'utf8');
     
-    console.log(`📊 Found ${feedsData.feeds.length} feeds to process\n`);
+    // Count occurrences
+    const wrongUrlCount = (feedsContent.match(/FUCKIT\.b-cdn\.net/g) || []).length;
+    console.log(`=� Found ${wrongUrlCount} instances of FUCKIT.b-cdn.net`);
     
-    let totalUrlsFixed = 0;
+    // Replace all instances
+    feedsContent = feedsContent.replace(/FUCKIT\.b-cdn\.net/g, 're-podtards-cdn.b-cdn.net');
     
-    // Process each feed
-    feedsData.feeds.forEach(feed => {
-      if (feed.parsedData?.album?.coverArt) {
-        const oldUrl = feed.parsedData.album.coverArt;
-        if (oldUrl.includes('re-podtards-cdn.b-cdn.net')) {
-          const newUrl = oldUrl.replace('re-podtards-cdn.b-cdn.net', 'FUCKIT.b-cdn.net');
-          feed.parsedData.album.coverArt = newUrl;
-          totalUrlsFixed++;
-          console.log(`✅ Fixed album cover: ${path.basename(oldUrl)}`);
-        }
-      }
-      
-      // Process tracks
-      if (feed.parsedData?.album?.tracks) {
-        feed.parsedData.album.tracks.forEach(track => {
-          if (track.image && track.image.includes('re-podtards-cdn.b-cdn.net')) {
-            const oldUrl = track.image;
-            const newUrl = oldUrl.replace('re-podtards-cdn.b-cdn.net', 'FUCKIT.b-cdn.net');
-            track.image = newUrl;
-            totalUrlsFixed++;
-            console.log(`✅ Fixed track image: ${path.basename(oldUrl)}`);
-          }
-        });
-      }
-    });
+    // Save updated file
+    await fs.writeFile(feedsPath, feedsContent);
     
-    // Save the updated data
-    await fs.writeFile(feedsPath, JSON.stringify(feedsData, null, 2));
+    // Verify
+    const updatedContent = await fs.readFile(feedsPath, 'utf8');
+    const remainingWrong = (updatedContent.match(/FUCKIT\.b-cdn\.net/g) || []).length;
+    const correctUrls = (updatedContent.match(/re-podtards-cdn\.b-cdn\.net/g) || []).length;
     
-    console.log(`\n📊 Summary:`);
-    console.log(`   Total URLs fixed: ${totalUrlsFixed}`);
-    console.log(`   Updated file: ${feedsPath}`);
-    console.log('\n✅ CDN URLs fixed successfully!');
+    console.log(`\n Success!`);
+    console.log(`=� Replaced ${wrongUrlCount} URLs`);
+    console.log(`=� Now using correct CDN: re-podtards-cdn.b-cdn.net (${correctUrls} URLs)`);
+    console.log(`=� Remaining wrong URLs: ${remainingWrong}`);
     
   } catch (error) {
-    console.error('❌ Error fixing CDN URLs:', error.message);
-    process.exit(1);
+    console.error('L Error fixing CDN URLs:', error.message);
   }
 }
 
-// Run the script
-fixCdnUrls().catch(console.error); 
+fixCDNUrls();
