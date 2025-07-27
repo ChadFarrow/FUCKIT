@@ -21,7 +21,6 @@ export default function AlbumCard({ album, isPlaying, onPlay, className = '' }: 
   const [imageError, setImageError] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
 
   // Minimum swipe distance (in px)
   const minSwipeDistance = 50;
@@ -71,9 +70,13 @@ export default function AlbumCard({ album, isPlaying, onPlay, className = '' }: 
   const albumUrl = generateAlbumUrl(album.title);
 
   return (
-    <div 
-      ref={cardRef}
-      className={`group relative bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 overflow-hidden transition-all duration-300 hover:bg-white/10 hover:border-white/20 hover:scale-[1.02] active:scale-[0.98] ${className}`}
+    <Link 
+      href={albumUrl}
+      className={`group relative bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 overflow-hidden transition-all duration-300 hover:bg-white/10 hover:border-white/20 hover:scale-[1.02] active:scale-[0.98] block ${className}`}
+      onClick={(e) => {
+        console.log('🔗 Navigating to album:', albumUrl);
+      }}
+      aria-label={`View album details for ${album.title} by ${album.artist}`}
     >
       {/* Album Artwork */}
       <div 
@@ -92,6 +95,13 @@ export default function AlbumCard({ album, isPlaying, onPlay, className = '' }: 
         onTouchEnd={(e) => {
           if (!(e.target as HTMLElement).closest('button')) {
             onTouchEnd(e);
+          }
+        }}
+        onClick={(e) => {
+          // Prevent navigation when clicking on the artwork area (play button handles its own clicks)
+          if (!(e.target as HTMLElement).closest('button')) {
+            // Let the Link handle the navigation
+            console.log('🎵 Album artwork clicked - navigating to album page');
           }
         }}
       >
@@ -126,6 +136,7 @@ export default function AlbumCard({ album, isPlaying, onPlay, className = '' }: 
         <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center pointer-events-none">
           <button
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               onPlay(album, e);
             }}
@@ -150,22 +161,12 @@ export default function AlbumCard({ album, isPlaying, onPlay, className = '' }: 
 
       {/* Album Info */}
       <div className="p-3">
-        <Link 
-          href={albumUrl} 
-          className="block group cursor-pointer"
-          onClick={(e) => {
-            console.log('🔗 Navigating to album:', albumUrl);
-            // Prevent the click from bubbling up to parent elements
-            e.stopPropagation();
-          }}
-        >
-          <h3 className="font-semibold text-white text-sm leading-tight line-clamp-2 group-hover:text-blue-300 transition-colors duration-200">
-            {album.title}
-          </h3>
-          <p className="text-gray-400 text-xs mt-1 line-clamp-1">
-            {album.artist}
-          </p>
-        </Link>
+        <h3 className="font-semibold text-white text-sm leading-tight line-clamp-2 group-hover:text-blue-300 transition-colors duration-200">
+          {album.title}
+        </h3>
+        <p className="text-gray-400 text-xs mt-1 line-clamp-1">
+          {album.artist}
+        </p>
         
         {/* Release date */}
         {album.releaseDate && (
@@ -179,6 +180,6 @@ export default function AlbumCard({ album, isPlaying, onPlay, className = '' }: 
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute inset-0 bg-white/5 opacity-0 group-active:opacity-100 transition-opacity duration-150" />
       </div>
-    </div>
+    </Link>
   );
 }

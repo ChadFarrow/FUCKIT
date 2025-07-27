@@ -17,7 +17,8 @@
     "deploy": "npm run update-version && ./scripts/deploy.sh",
     "auto-deploy": "npm run update-version && ./scripts/auto-deploy.sh",
     "auto-add-publishers": "node scripts/auto-add-publisher-feeds.js",
-    "parse-and-add-publishers": "node scripts/parse-and-add-publishers.js"
+    "parse-and-add-publishers": "node scripts/parse-and-add-publishers.js",
+    "post-parse-cleanup": "node scripts/post-parse-cleanup.js"
   },
   "dependencies": {
     "@types/node": "^20",
