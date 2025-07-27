@@ -226,6 +226,13 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
+      // Placeholder image service
+      {
+        protocol: 'https',
+        hostname: 'via.placeholder.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
     unoptimized: process.env.NODE_ENV === 'development', // Optimize in production
     formats: ['image/webp', 'image/avif'],
