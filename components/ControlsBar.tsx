@@ -2,7 +2,7 @@
 
 import { Filter, Grid3X3, List, Shuffle } from 'lucide-react';
 
-export type FilterType = 'all' | 'albums' | 'eps' | 'singles';
+export type FilterType = 'all' | 'albums' | 'eps' | 'singles' | 'family-friendly';
 export type ViewType = 'grid' | 'list';
 export type SortType = 'name' | 'year' | 'tracks';
 
@@ -40,6 +40,7 @@ const defaultSortOptions: { value: SortType; label: string }[] = [
 
 const defaultFilters: { value: FilterType; label: string }[] = [
   { value: 'all', label: 'All' },
+  { value: 'family-friendly', label: 'Family-Friendly' },
   { value: 'albums', label: 'Albums' },
   { value: 'eps', label: 'EPs' },
   { value: 'singles', label: 'Singles' },

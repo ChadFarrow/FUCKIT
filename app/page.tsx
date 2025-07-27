@@ -1013,6 +1013,9 @@ export default function HomePage() {
       case 'singles':
         filtered = albums.filter(album => album.tracks.length === 1);
         break;
+      case 'family-friendly':
+        filtered = albums.filter(album => !album.explicit); // Exclude explicit content
+        break;
       default: // 'all'
         filtered = albums; // Show all albums
     }
@@ -1207,6 +1210,58 @@ export default function HomePage() {
               </div>
             )}
             
+            {/* Explicit Content Section */}
+            {(() => {
+              const explicitAlbums = albums.filter(album => album.explicit);
+              
+              return explicitAlbums.length > 0 ? (
+                <div className="mb-8">
+                  <h3 className="text-lg font-semibold mb-3 text-white flex items-center gap-2">
+                    <svg className="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                    </svg>
+                    <span>Explicit Content</span>
+                    <span className="text-xs bg-red-600/80 px-2 py-1 rounded font-bold">E</span>
+                  </h3>
+                  <div className="space-y-2 max-h-48 overflow-y-auto">
+                    {explicitAlbums.map((album, index) => (
+                      <Link
+                        key={`explicit-${index}`}
+                        href={generateAlbumUrl(album.title)}
+                        className="flex items-center gap-3 bg-red-900/20 hover:bg-red-900/30 rounded p-2 transition-colors group border border-red-500/30"
+                        onClick={() => setIsSidebarOpen(false)}
+                      >
+                        <div className="w-10 h-10 rounded overflow-hidden flex-shrink-0">
+                          <Image 
+                            src={getAlbumArtworkUrl(album.coverArt || '', 'thumbnail')} 
+                            alt={album.title}
+                            width={40}
+                            height={40}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.src = getPlaceholderImageUrl('thumbnail');
+                            }}
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-gray-300 group-hover:text-white truncate font-medium">
+                            {album.title}
+                          </p>
+                          <p className="text-xs text-gray-500 group-hover:text-gray-400 truncate">
+                            {album.artist}
+                          </p>
+                        </div>
+                        <span className="text-xs bg-red-500 text-white px-1.5 py-0.5 rounded font-bold">
+                          E
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ) : null;
+            })()}
+
             {/* Artists with Publisher Feeds */}
             {(() => {
               // Extract unique artists with publisher feeds, excluding Doerfels artists
