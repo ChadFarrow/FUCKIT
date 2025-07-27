@@ -8,12 +8,12 @@ const https = require('https');
 require('dotenv').config({ path: '.env.local' });
 
 const STORAGE_API_KEY = process.env.BUNNY_STORAGE_API_KEY;
-const STORAGE_HOSTNAME = process.env.BUNNY_STORAGE_HOSTNAME;
+const STORAGE_HOSTNAME = process.env.BUNNY_STORAGE_HOSTNAME || 'ny.storage.bunnycdn.com';
 const STORAGE_ZONE = process.env.BUNNY_STORAGE_ZONE;
 
-if (!STORAGE_API_KEY || !STORAGE_HOSTNAME || !STORAGE_ZONE) {
+if (!STORAGE_API_KEY || !STORAGE_ZONE) {
   console.error('❌ Storage configuration missing from .env.local');
-  console.error('Required: BUNNY_STORAGE_API_KEY, BUNNY_STORAGE_HOSTNAME, BUNNY_STORAGE_ZONE');
+  console.error('Required: BUNNY_STORAGE_API_KEY, BUNNY_STORAGE_ZONE');
   process.exit(1);
 }
 

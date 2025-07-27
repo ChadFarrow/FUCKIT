@@ -71,7 +71,7 @@
         "id": 8,
         "title": "Optimize Mobile Experience",
         "description": "Improve the application experience on mobile devices",
-        "status": "pending",
+        "status": "done",
         "priority": "medium",
         "dependencies": [],
         "details": "Review and optimize the mobile user experience, including touch interactions, responsive design, and performance.",
@@ -106,7 +106,7 @@
         "description": "Enhance the overall user experience by improving website navigation, layout, and visual design",
         "details": "Focus on improving user flow, navigation patterns, visual hierarchy, and overall UI/UX design to create a more intuitive and engaging experience for users browsing and discovering music content.",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "medium",
         "subtasks": []
@@ -260,7 +260,7 @@
         "description": "Upload all cached audio and artwork files to Bunny.net Storage and update metadata with CDN URLs",
         "details": "The project has a comprehensive cache system with 9,656 items in cache-metadata.json, organized audio and artwork directories, and a working upload script (scripts/upload-cache-to-bunny.js). Need to upload all cached files to Bunny.net Storage and update the metadata with CDN URLs for improved performance and reliability.",
         "testStrategy": "",
-        "status": "pending",
+        "status": "in-progress",
         "dependencies": [
           10
         ],
@@ -299,6 +299,28 @@
         "dependencies": [],
         "priority": "medium",
         "subtasks": []
+      },
+      {
+        "id": 29,
+        "title": "Fix Mobile Album Artwork Loading Issues",
+        "description": "Enhanced CDNImage component with better mobile detection, CORS handling, timeout protection, and reliable fallback strategies for iOS devices",
+        "details": "",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 30,
+        "title": "Fix Missing Elijah Lied Album Parsing",
+        "description": "Fixed missing 'All in a Day' album by manually adding parsed feed data to resolve /album/all-in-a-day page loading issue",
+        "details": "",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
       }
     ],
     "metadata": {
@@ -306,7 +328,7 @@
       "description": "Main task list for FUCKIT podcast/music streaming application",
       "created": "2025-01-27T00:00:00.000Z",
       "lastModified": "2025-01-27T00:00:00.000Z",
-      "updated": "2025-07-27T02:01:19.017Z"
+      "updated": "2025-07-27T12:22:39.563Z"
     }
   }
 }

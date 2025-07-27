@@ -15,6 +15,7 @@ interface CDNImageProps {
   fit?: 'cover' | 'contain' | 'fill' | 'inside' | 'outside';
   onError?: () => void;
   onLoad?: () => void;
+  fallbackSrc?: string; // Original URL to fall back to
 }
 
 export default function CDNImage({
@@ -27,6 +28,7 @@ export default function CDNImage({
   quality = 85,
   onError,
   onLoad,
+  fallbackSrc,
   ...props
 }: CDNImageProps) {
   const [isLoading, setIsLoading] = useState(true);
@@ -35,26 +37,68 @@ export default function CDNImage({
   const [retryCount, setRetryCount] = useState(0);
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
+  // Extract original URL from CDN URL for fallback
+  const getOriginalUrl = (cdnUrl: string) => {
+    if (cdnUrl.includes('FUCKIT.b-cdn.net/cache/artwork/')) {
+      // Extract the filename from the CDN URL
+      const filename = cdnUrl.split('/').pop();
+      if (filename) {
+        // The filename format is: artwork-{name}-{base64-encoded-original-url}.{ext}
+        // Extract the base64 part and decode it to get the original URL
+        const match = filename.match(/artwork-.*?-([A-Za-z0-9+/=]+)\.(jpg|jpeg|png|gif)$/);
+        if (match) {
+          try {
+            const base64Part = match[1];
+            const originalUrl = atob(base64Part);
+            console.log('Decoded original URL from CDN filename:', originalUrl);
+            return originalUrl;
+          } catch (error) {
+            console.warn('Failed to decode base64 URL from filename:', filename, error);
+          }
+        }
+      }
+    }
+    return fallbackSrc || cdnUrl;
+  };
+
   const handleError = () => {
     console.warn(`Image failed to load (attempt ${retryCount + 1}):`, currentSrc);
     setIsLoading(false);
     setHasError(true);
     
-    // Skip external placeholder and go directly to data URL on mobile for reliability
-    if (currentSrc === src && retryCount === 0) {
-      console.log('Image failed, trying data URL fallback...');
-      const dataUrl = `data:image/svg+xml;base64,${btoa(`
+    if (retryCount === 0) {
+      // First failure: try original URL
+      const originalUrl = getOriginalUrl(currentSrc);
+      if (originalUrl && originalUrl !== currentSrc) {
+        console.log('CDN failed, trying original URL:', originalUrl);
+        setCurrentSrc(originalUrl);
+        setHasError(false);
+        setIsLoading(true);
+        setRetryCount(1);
+        return;
+      }
+    }
+    
+    if (retryCount === 1) {
+      // Second failure: try data URL fallback
+      console.log('Original URL failed, trying data URL fallback...');
+      
+      const svgContent = `
         <svg width="${width || 300}" height="${height || 300}" xmlns="http://www.w3.org/2000/svg">
           <rect width="100%" height="100%" fill="#1f2937"/>
           <text x="50%" y="50%" text-anchor="middle" dy="0.3em" fill="#9ca3af" font-family="Arial" font-size="32">🎵</text>
         </svg>
-      `)}`;
+      `;
+      
+      const encodedSvg = encodeURIComponent(svgContent);
+      const dataUrl = `data:image/svg+xml;charset=utf-8,${encodedSvg}`;
+      
       setCurrentSrc(dataUrl);
       setHasError(false);
       setIsLoading(true);
-      setRetryCount(1);
+      setRetryCount(2);
     } else {
-      console.log('Data URL fallback failed, showing error state');
+      console.log('All fallbacks failed, showing error state');
       onError?.();
     }
   };
@@ -90,17 +134,21 @@ export default function CDNImage({
     const timeout = setTimeout(() => {
       console.log('Image timeout - falling back to placeholder');
       // Create fallback directly instead of calling handleError to avoid dependency
-      const dataUrl = `data:image/svg+xml;base64,${btoa(`
+      const svgContent = `
         <svg width="${width || 300}" height="${height || 300}" xmlns="http://www.w3.org/2000/svg">
           <rect width="100%" height="100%" fill="#1f2937"/>
           <text x="50%" y="50%" text-anchor="middle" dy="0.3em" fill="#9ca3af" font-family="Arial" font-size="32">🎵</text>
         </svg>
-      `)}`;
+      `;
+      
+      const encodedSvg = encodeURIComponent(svgContent);
+      const dataUrl = `data:image/svg+xml;charset=utf-8,${encodedSvg}`;
+      
       setCurrentSrc(dataUrl);
       setHasError(false);
       setIsLoading(true);
       setRetryCount(1);
-    }, 8000); // 8 second timeout for mobile
+    }, 3000); // 3 second timeout for faster fallback
     
     setTimeoutId(timeout);
     

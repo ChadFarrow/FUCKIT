@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { RSSParser, RSSAlbum } from '@/lib/rss-parser';
+import { RSSAlbum } from '@/lib/rss-parser';
 import AlbumDetailClient from './AlbumDetailClient';
 import { generateAlbumSlug } from '@/lib/url-utils';
 
@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const albumTitle = id.replace(/-/g, ' ');
   
   try {
-    // Try to fetch album data for metadata
+    // Try to fetch album data for metadata from pre-parsed API
     const album = await getAlbumData(albumTitle);
     
     if (album) {
@@ -41,11 +41,47 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   };
 }
 
-// Server-side data fetching - simplified for dynamic generation
+// Server-side data fetching - use pre-parsed data API
 async function getAlbumData(albumTitle: string): Promise<RSSAlbum | null> {
-  // For now, return null to let client-side handle data fetching
-  // This prevents build-time RSS fetching issues
-  return null;
+  try {
+    // Fetch pre-parsed album data
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/albums`);
+    
+    if (!response.ok) {
+      console.warn('Failed to fetch albums for metadata:', response.status);
+      return null;
+    }
+    
+    const data = await response.json();
+    const albums = data.albums || [];
+    
+    // Find the matching album
+    const foundAlbum = albums.find((album: any) => {
+      const albumTitleLower = album.title.toLowerCase();
+      const searchTitleLower = albumTitle.toLowerCase();
+      
+      // Exact match
+      if (album.title === albumTitle) return true;
+      
+      // Case-insensitive match
+      if (albumTitleLower === searchTitleLower) return true;
+      
+      // Contains match
+      if (albumTitleLower.includes(searchTitleLower) || searchTitleLower.includes(albumTitleLower)) return true;
+      
+      // Normalized match
+      const normalizedAlbum = albumTitleLower.replace(/[^a-z0-9]/g, '');
+      const normalizedSearch = searchTitleLower.replace(/[^a-z0-9]/g, '');
+      if (normalizedAlbum === normalizedSearch) return true;
+      
+      return false;
+    });
+    
+    return foundAlbum || null;
+  } catch (error) {
+    console.error('Error fetching album data for metadata:', error);
+    return null;
+  }
 }
 
 export default async function AlbumDetailPage({ params }: { params: Promise<{ id: string }> }) {

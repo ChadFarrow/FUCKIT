@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft, Play, Music, Disc, Calendar, Clock, ExternalLink } from 'lucide-react';
-import { RSSParser, RSSAlbum, RSSPublisherItem } from '@/lib/rss-parser';
-import { getAlbumArtworkUrl } from '@/lib/cdn-utils';
+import { RSSAlbum, RSSPublisherItem } from '@/lib/rss-parser';
+import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { generateAlbumUrl, getPublisherInfo } from '@/lib/url-utils';
 import ControlsBar, { FilterType, ViewType, SortType } from '@/components/ControlsBar';
 
@@ -51,17 +51,42 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
         console.log(`🏢 Publisher info found:`, publisherInfo);
         console.log(`🏢 Loading publisher feed: ${feedUrl}`);
 
-        // Load publisher feed info for artist details and image (fast)
-        console.log(`🏢 Loading publisher feed info...`);
+        // Load publisher info from pre-parsed data
+        console.log(`🏢 Loading publisher info from pre-parsed data...`);
         
+        // Load pre-parsed album data to get publisher info
+        const response = await fetch('/api/albums');
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch albums: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        const allAlbums = data.albums || [];
+        
+        // Find albums from this publisher
+        const publisherAlbums = allAlbums.filter((album: any) => {
+          if (!album.publisher) return false;
+          
+          // Check if this album belongs to the publisher
+          if (album.publisher.feedUrl === feedUrl) return true;
+          if (album.publisher.feedGuid && album.publisher.feedGuid.includes(publisherId)) return true;
+          
+          return false;
+        });
+        
+        console.log(`🏢 Found ${publisherAlbums.length} albums for publisher`);
+        
+        // Extract publisher info from the first album
         let publisherFeedInfo = null;
-        
-        // Special handling for IROH aggregated feed
-        if (feedUrl === 'iroh-aggregated') {
-          console.log(`🎵 Loading IROH artist info from main feed...`);
-          publisherFeedInfo = await RSSParser.parsePublisherFeedInfo('https://wavlake.com/feed/artist/8a9c2e54-785a-4128-9412-737610f5d00a');
-        } else {
-          publisherFeedInfo = await RSSParser.parsePublisherFeedInfo(feedUrl);
+        if (publisherAlbums.length > 0) {
+          const firstAlbum = publisherAlbums[0];
+          publisherFeedInfo = {
+            title: firstAlbum.publisher?.title || firstAlbum.artist,
+            artist: firstAlbum.artist,
+            description: firstAlbum.publisher?.description || 'Independent artist and music creator',
+            coverArt: firstAlbum.publisher?.coverArt || firstAlbum.coverArt
+          };
         }
         
         console.log(`🏢 Publisher feed info:`, publisherFeedInfo);
@@ -91,22 +116,17 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
         setAlbumsLoading(true);
         
         try {
-          // Load publisher items (skip for IROH aggregated since it's not a real feed)
-          if (feedUrl !== 'iroh-aggregated') {
-            console.log(`🏢 Loading publisher items...`);
-            const items = await RSSParser.parsePublisherFeed(feedUrl);
-            console.log(`🏢 Publisher items:`, items);
-            setPublisherItems(items);
-          }
-
-          // Load all albums from the publisher feed
-          console.log(`🏢 Loading publisher albums...`);
+          // Set the albums from pre-parsed data
+          console.log(`🏢 Setting ${publisherAlbums.length} publisher albums from pre-parsed data`);
+          setAlbums(publisherAlbums);
           
-          
-          const allAlbums = await RSSParser.parsePublisherFeedAlbums(feedUrl);
-          console.log(`🏢 Publisher albums:`, allAlbums);
-          setAlbums(allAlbums);
-          
+          // For publisher items, we can use the albums data
+          setPublisherItems(publisherAlbums.map((album: any) => ({
+            title: album.title,
+            description: album.description || album.summary,
+            url: album.feedUrl,
+            image: album.coverArt
+          })));
           
         } catch (albumError) {
           console.error(`❌ Error loading publisher albums:`, albumError);
