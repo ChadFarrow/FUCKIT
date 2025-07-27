@@ -35,6 +35,9 @@ export async function GET() {
             explicit: track.explicit,
             keywords: track.keywords
           })),
+          podroll: album.podroll,
+          publisher: album.publisher,
+          funding: album.funding,
           feedId: feed.id,
           feedUrl: feed.originalUrl,
           lastUpdated: feed.lastParsed
