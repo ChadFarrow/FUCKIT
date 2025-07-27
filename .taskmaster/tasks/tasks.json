@@ -79,28 +79,6 @@
         "subtasks": []
       },
       {
-        "id": 9,
-        "title": "Add Comprehensive Testing",
-        "description": "Implement comprehensive testing suite for the application",
-        "status": "pending",
-        "priority": "low",
-        "dependencies": [],
-        "details": "Add unit tests, integration tests, and end-to-end tests to ensure application reliability and prevent regressions.",
-        "testStrategy": "Implement test coverage reporting and ensure all critical functionality is properly tested.",
-        "subtasks": []
-      },
-      {
-        "id": 10,
-        "title": "APK RSS Feed Download Feature",
-        "description": "Create an Android TWA feature that allows users to enter RSS feed URLs and download complete album information for offline access",
-        "details": "Implement a comprehensive RSS feed download system in the Android TWA app:\n\n1. **User Interface Components:**\n   - RSS feed URL input field with validation\n   - Download progress indicators\n   - Album preview before download\n   - Download history and management\n\n2. **RSS Processing:**\n   - Parse RSS feeds using existing parser\n   - Extract album metadata (title, artist, description)\n   - Download and cache cover artwork\n   - Store track information and audio URLs\n\n3. **Storage & Offline Access:**\n   - Local storage for downloaded albums\n   - IndexedDB or SQLite for metadata\n   - File system access for audio files\n   - Offline album browsing and playback\n\n4. **Integration Points:**\n   - Use existing RSS parser from lib/rss-parser.ts\n   - Leverage CDN utilities for image handling\n   - Integrate with audio state management\n   - Connect to existing album display components\n\n5. **Error Handling:**\n   - Invalid RSS feed URLs\n   - Network connectivity issues\n   - Storage space limitations\n   - Corrupted or incomplete downloads\n\n6. **Performance Considerations:**\n   - Background download processing\n   - Progress tracking and cancellation\n   - Efficient storage management\n   - Battery optimization for mobile devices",
-        "testStrategy": "",
-        "status": "pending",
-        "dependencies": [],
-        "priority": "high",
-        "subtasks": []
-      },
-      {
         "id": 11,
         "title": "Improve Website Flow and UI",
         "description": "Enhance the overall user experience by improving website navigation, layout, and visual design",
@@ -178,28 +156,6 @@
         "subtasks": []
       },
       {
-        "id": 18,
-        "title": "Add \"Add to Playlist\" Feature Using Podcast Index Medium Tag",
-        "description": "Implement playlist functionality using the Podcast Index medium tag specification for better content organization",
-        "details": "Implement a playlist feature that leverages the Podcast Index medium tag specification (https://github.com/Podcastindex-org/podcast-namespace/blob/main/docs/tags/medium.md). This will allow users to add albums/tracks to playlists and organize their music listening experience. Features should include: 1) Add to playlist button on album and track pages, 2) Create new playlists, 3) Manage existing playlists, 4) Playlist playback functionality, 5) Integration with the existing audio state management system, 6) Local storage for playlist persistence, 7) UI for playlist management and viewing.",
-        "testStrategy": "",
-        "status": "pending",
-        "dependencies": [],
-        "priority": "medium",
-        "subtasks": []
-      },
-      {
-        "id": 19,
-        "title": "Fix Persistent Audio Player Issues",
-        "description": "GlobalAudioPlayer component has multiple issues preventing proper persistent playback across pages",
-        "details": "Current issues identified:\n- GlobalAudioPlayer useEffect hooks not running properly \n- Multiple component mounting (re-mounting repeatedly)\n- Audio metadata not loading (duration: null, currentTime stuck at 0)\n- Component renders but audio element doesn't play\n- May need hydration fixes and better client-side initialization\n- Need to ensure only single audio player shows across entire site",
-        "testStrategy": "",
-        "status": "pending",
-        "dependencies": [],
-        "priority": "high",
-        "subtasks": []
-      },
-      {
         "id": 20,
         "title": "Fix RSS Feed Parsing Duplication and Performance Issues",
         "description": "Resolve duplicate RSS feed parsing and optimize batch processing performance",
@@ -208,17 +164,6 @@
         "status": "done",
         "dependencies": [],
         "priority": "high",
-        "subtasks": []
-      },
-      {
-        "id": 21,
-        "title": "Clean Up GlobalAudioPlayer References and State Management",
-        "description": "Remove remaining GlobalAudioPlayer references and clean up audio state management",
-        "details": "Console logs show GlobalAudioPlayer still checking state even after component removal. Need to: 1) Find and remove all remaining GlobalAudioPlayer references in the codebase, 2) Clean up audio state management functions that reference the removed component, 3) Ensure no orphaned state checks or functions remain, 4) Verify audio functionality works properly without the GlobalAudioPlayer component.",
-        "testStrategy": "",
-        "status": "pending",
-        "dependencies": [],
-        "priority": "medium",
         "subtasks": []
       },
       {
@@ -261,9 +206,7 @@
         "details": "The project has a comprehensive cache system with 9,656 items in cache-metadata.json, organized audio and artwork directories, and a working upload script (scripts/upload-cache-to-bunny.js). Need to upload all cached files to Bunny.net Storage and update the metadata with CDN URLs for improved performance and reliability.",
         "testStrategy": "",
         "status": "done",
-        "dependencies": [
-          10
-        ],
+        "dependencies": [],
         "priority": "high",
         "subtasks": []
       },

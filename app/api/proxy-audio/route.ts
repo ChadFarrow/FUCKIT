@@ -54,6 +54,7 @@ export async function GET(request: NextRequest) {
       'doerfelverse.com',
       'music.behindthesch3m3s.com',
       'thisisjdog.com',
+      'www.thisisjdog.com',
       'wavlake.com',
       'ableandthewolf.com',
       'static.staticsave.com',

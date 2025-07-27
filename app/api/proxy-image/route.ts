@@ -44,32 +44,35 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Image URL parameter required' }, { status: 400 });
     }
 
-    // Fix CDN hostname mapping before trying to fetch
-    if (imageUrl.includes('re-podtards-cache.b-cdn.net')) {
-      imageUrl = imageUrl.replace('re-podtards-cache.b-cdn.net', 'FUCKIT.b-cdn.net');
-      console.log(`🔧 Fixed CDN hostname: ${searchParams.get('url')} → ${imageUrl}`);
-    }
     // Validate URL
     const url = new URL(imageUrl);
     
-    // Allow same domains as audio plus CDN domains
+    // Allow same domains as audio plus all artwork domains
     const allowedDomains = [
       'www.doerfelverse.com',
-      'doerfelverse.com',
+      'doerfelverse.com', 
       'music.behindthesch3m3s.com',
       'thisisjdog.com',
+      'www.thisisjdog.com',
       'wavlake.com',
       'ableandthewolf.com',
       'static.staticsave.com',
+      'static.wixstatic.com',
       'op3.dev',
       'd12wklypp119aj.cloudfront.net',
-      'FUCKIT.b-cdn.net',
-      're-podtards-cache.b-cdn.net',
-      'bunnycdn.com',
-      'b-cdn.net'
+      'f4.bcbits.com',
+      'files.heycitizen.xyz',
+      'media.rssblue.com',
+      'rocknrollbreakheart.com',
+      'annipowellmusic.com',
+      'noagendaassets.com'
     ];
+
+    // Allow any Bunny.net CDN domain
+    const isBunnyCdn = url.hostname.endsWith('.b-cdn.net');
+    const isAllowedDomain = allowedDomains.some(domain => url.hostname.includes(domain));
     
-    if (!allowedDomains.some(domain => url.hostname.includes(domain))) {
+    if (!isAllowedDomain && !isBunnyCdn) {
       return NextResponse.json({ error: 'Domain not allowed' }, { status: 403 });
     }
 

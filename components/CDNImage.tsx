@@ -15,7 +15,7 @@ interface CDNImageProps {
   fit?: 'cover' | 'contain' | 'fill' | 'inside' | 'outside';
   onError?: () => void;
   onLoad?: () => void;
-  fallbackSrc?: string; // Original URL to fall back to
+  fallbackSrc?: string;
 }
 
 export default function CDNImage({
@@ -37,42 +37,12 @@ export default function CDNImage({
   const [retryCount, setRetryCount] = useState(0);
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
-  // Extract original URL from CDN URL for fallback
-  const getOriginalUrl = (cdnUrl: string) => {
-    // Check for CDN hostname (storage zone CDN)
-    if (cdnUrl.includes('FUCKIT.b-cdn.net/cache/artwork/') || cdnUrl.includes('re-podtards-cache.b-cdn.net/cache/artwork/')) {
-      // Extract the filename from the CDN URL
-      const filename = cdnUrl.split('/').pop();
-      if (filename) {
-        // Check if this is an encoded filename (contains base64 part)
-        const encodedMatch = filename.match(/artwork-.*?-([A-Za-z0-9+/=]{20,})\.(jpg|jpeg|png|gif)$/);
-        if (encodedMatch) {
-          // This is an encoded filename - decode it
-          try {
-            const base64Part = encodedMatch[1];
-            const originalUrl = atob(base64Part);
-            console.log('Decoded original URL from CDN filename:', originalUrl);
-            
-            // If the decoded URL points to /albums/, fix it to use /cache/artwork/
-            if (originalUrl.includes('/albums/')) {
-              const correctedUrl = originalUrl.replace('/albums/', '/cache/artwork/artwork-');
-              console.log('Corrected /albums/ URL to /cache/artwork/:', correctedUrl);
-              return correctedUrl;
-            }
-            
-            return originalUrl;
-          } catch (error) {
-            console.warn('Failed to decode base64 URL from filename:', filename, error);
-          }
-        } else {
-          // This is a simple filename (e.g., artwork-album-name.png)
-          // For simple filenames, there's no fallback - the CDN should have this file
-          console.log('Simple filename detected, no fallback available:', filename);
-          return null; // No fallback for simple filenames
-        }
-      }
+  const getOriginalUrl = (imageUrl: string) => {
+    // If it's a CDN URL, try to use the proxy as fallback
+    if (imageUrl.includes('.b-cdn.net')) {
+      return `/api/proxy-image?url=${encodeURIComponent(imageUrl)}`;
     }
-    return fallbackSrc || cdnUrl;
+    return fallbackSrc || imageUrl;
   };
 
   const handleError = () => {
@@ -102,7 +72,7 @@ export default function CDNImage({
       }
     }
     
-    if (retryCount <= 1) {
+    if (retryCount <= 2) {
       // Try image proxy as fallback (similar to audio proxy)
       const originalSrc = src; // Use the original src prop
       if (!originalSrc.includes('/api/proxy-image') && !originalSrc.startsWith('data:')) {
@@ -110,12 +80,12 @@ export default function CDNImage({
         setCurrentSrc(`/api/proxy-image?url=${encodeURIComponent(originalSrc)}`);
         setHasError(false);
         setIsLoading(true);
-        setRetryCount(2);
+        setRetryCount(3);
         return;
       }
     }
     
-    if (retryCount <= 2) {
+    if (retryCount <= 3) {
       // Try data URL fallback
       console.log('All URLs failed, using placeholder...');
       
@@ -127,7 +97,7 @@ export default function CDNImage({
       setCurrentSrc(dataUrl);
       setHasError(false);
       setIsLoading(true);
-      setRetryCount(3);
+      setRetryCount(4);
     } else {
       // Final fallback - show error state but don't hide image
       console.log('All fallbacks failed, showing error state');
@@ -152,16 +122,7 @@ export default function CDNImage({
 
   // Reset state when src changes and set up timeout for slow connections
   useEffect(() => {
-    // Fix old CDN hostname to new CDN hostname
-    let fixedSrc = src;
-    if (src.includes('re-podtards-cache.b-cdn.net')) {
-      fixedSrc = src.replace('re-podtards-cache.b-cdn.net', 'FUCKIT.b-cdn.net');
-      // Add cache busting to force reload past browser 403 cache
-      fixedSrc += `?v=${Date.now()}`;
-      console.log('Fixed CDN hostname with cache busting:', src, '→', fixedSrc);
-    }
-    
-    setCurrentSrc(fixedSrc);
+    setCurrentSrc(src);
     setIsLoading(true);
     setHasError(false);
     setRetryCount(0);
@@ -172,29 +133,28 @@ export default function CDNImage({
       setTimeoutId(null);
     }
     
-    // Set timeout for slow loading images (especially on mobile)
-    const timeout = setTimeout(() => {
-      console.log('Image timeout - falling back to placeholder');
-      // Create fallback directly instead of calling handleError to avoid dependency
-      const svgContent = `<svg width="${width || 300}" height="${height || 300}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#1f2937"/><circle cx="50%" cy="50%" r="20" fill="#9ca3af"/></svg>`;
-      
-      const encodedSvg = encodeURIComponent(svgContent);
-      const dataUrl = `data:image/svg+xml;charset=utf-8,${encodedSvg}`;
-      
-      setCurrentSrc(dataUrl);
-      setHasError(false);
-      setIsLoading(true);
-      setRetryCount(1);
-    }, 1500); // 1.5 second timeout for faster fallback on OpaqueResponseBlocking
-    
-    setTimeoutId(timeout);
+    // Disable timeout for now to let images load naturally
+    // const timeout = setTimeout(() => {
+    //   console.log('Image timeout - falling back to placeholder');
+    //   const svgContent = `<svg width="${width || 300}" height="${height || 300}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#1f2937"/><circle cx="50%" cy="50%" r="20" fill="#9ca3af"/></svg>`;
+    //   
+    //   const encodedSvg = encodeURIComponent(svgContent);
+    //   const dataUrl = `data:image/svg+xml;charset=utf-8,${encodedSvg}`;
+    //   
+    //   setCurrentSrc(dataUrl);
+    //   setHasError(false);
+    //   setIsLoading(true);
+    //   setRetryCount(1);
+    // }, 8000);
+    // 
+    // setTimeoutId(timeout);
     
     return () => {
-      if (timeout) clearTimeout(timeout);
+      // if (timeout) clearTimeout(timeout);
     };
   }, [src, width, height]); // Only depend on src and size props
 
-  // Check if we're on mobile to decide which image component to use
+  // Check if we're on mobile
   const [isMobile, setIsMobile] = useState(false);
   
   useEffect(() => {
@@ -208,13 +168,6 @@ export default function CDNImage({
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
-  
-  // Extra mobile debugging
-  useEffect(() => {
-    if (isMobile && retryCount === 0) {
-      console.log(`CDNImage mobile: src=${src}, currentSrc=${currentSrc}, isLoading=${isLoading}, hasError=${hasError}`);
-    }
-  }, [isMobile, src, currentSrc, isLoading, hasError, retryCount]);
 
   return (
     <div className={`relative ${className || ''}`}>
@@ -230,13 +183,13 @@ export default function CDNImage({
       )}
       
       {isMobile ? (
-        // Use regular img tag for mobile to avoid Next.js Image issues
+        // Use regular img tag for mobile
         <img
           src={currentSrc}
           alt={alt}
           width={width}
           height={height}
-          className={`${isLoading && retryCount === 0 ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+          className={`${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
           onError={handleError}
           onLoad={handleLoad}
           loading={priority ? 'eager' : 'lazy'}
@@ -251,7 +204,7 @@ export default function CDNImage({
           alt={alt}
           width={width}
           height={height}
-          className={`${isLoading && retryCount === 0 ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+          className={`${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
           priority={priority}
           onError={handleError}
           onLoad={handleLoad}

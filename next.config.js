@@ -127,22 +127,10 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
-      // Bunny.net CDN domains
+      // Bunny.net CDN domains (configured via environment)
       {
         protocol: 'https',
-        hostname: 're-podtards-cdn.b-cdn.net',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'FUCKIT.b-cdn.net',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 're-podtards-cache.b-cdn.net',
+        hostname: '*.b-cdn.net',
         port: '',
         pathname: '/**',
       },
@@ -190,6 +178,13 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'annipowellmusic.com',
+        port: '',
+        pathname: '/**',
+      },
+      // Additional music domains
+      {
+        protocol: 'https',
+        hostname: 'rocknrollbreakheart.com',
         port: '',
         pathname: '/**',
       },
