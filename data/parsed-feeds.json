@@ -3641,7 +3641,7 @@
           "title": "Disco Swag",
           "artist": "The Doerfels",
           "description": "check out our podcast Into The Doerfel-Verse https://www.doerfelverse.com",
-          "coverArt": "https://www.doerfelverse.com/art/disco-swag.png",
+          "coverArt": "https://re.podtards.com/api/optimized-images/disco-swag.png",
           "tracks": [
             {
               "title": "Disco Swag - single",
@@ -3649,7 +3649,7 @@
               "url": "https://www.doerfelverse.com/tracks/disco-swag.mp3",
               "trackNumber": 1,
               "subtitle": "Disco Swag - single",
-              "image": "https://www.doerfelverse.com/art/disco-swag.png",
+              "image": "https://re.podtards.com/api/optimized-images/disco-swag.png",
               "explicit": false,
               "keywords": [
                 "disco",
@@ -3724,14 +3724,14 @@
           "title": "First Married Christmas",
           "artist": "CityBeach",
           "description": "CityBeach is music produced by Edward Doerfel, often featuring his wife Alandace and other friends and family.",
-          "coverArt": "https://www.doerfelverse.com/art/first-christmas-art.jpg",
+          "coverArt": "https://re.podtards.com/api/optimized-images/first-christmas-art.jpg",
           "tracks": [
             {
               "title": "First Married Christmas",
               "duration": "4:21",
               "url": "https://www.doerfelverse.com/tracks/first-married-christmas.mp3",
               "trackNumber": 1,
-              "image": "https://www.doerfelverse.com/art/first-christmas-art.jpg",
+              "image": "https://re.podtards.com/api/optimized-images/first-christmas-art.jpg",
               "explicit": false
             }
           ],
@@ -4064,14 +4064,14 @@
           "title": "Let Go (What's holding you back)",
           "artist": "Middle Season",
           "description": "Middle Season is an Indie Rock band based in Nashville TN by music producer and guitarist Joey Ramon, he is originally from South America (Venezuela), currently fighting laziness, drinking a lot of coffee to stay up late and finish up his songs.",
-          "coverArt": "https://www.doerfelverse.com/art/let-go-art.png",
+          "coverArt": "https://re.podtards.com/api/optimized-images/let-go-art.png",
           "tracks": [
             {
               "title": "Let Go (What's holding you back)",
               "duration": "4:09",
               "url": "https://www.doerfelverse.com/tracks/let-go.mp3",
               "trackNumber": 1,
-              "image": "https://www.doerfelverse.com/art/let-go-art.png",
+              "image": "https://re.podtards.com/api/optimized-images/let-go-art.png",
               "explicit": false
             }
           ],

@@ -59,7 +59,8 @@ export async function GET(request: NextRequest) {
       'ableandthewolf.com',
       'static.staticsave.com',
       'op3.dev',
-      'd12wklypp119aj.cloudfront.net'
+      'd12wklypp119aj.cloudfront.net',
+      'files.heycitizen.xyz'
     ];
     
     if (!allowedDomains.includes(url.hostname)) {

@@ -869,9 +869,9 @@ export default function HomePage() {
               {/* Bottom row - Title and Beta badge */}
               <div className="text-center">
                 <h1 className="text-2xl font-bold mb-2">Into the ValueVerse</h1>
-                <span className="text-xs bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full border border-yellow-500/30">
-                  Beta - might not work
-                </span>
+                                                  <div className="text-xs bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full border border-yellow-500/30">
+                  Beta - if the page isn&apos;t loading try a hard refresh and wait a little for it to load
+                </div>
               </div>
             </div>
 
@@ -905,11 +905,11 @@ export default function HomePage() {
                 </div>
                 
                 {/* Center - Title */}
-                <div className="flex items-center gap-3">
-                  <h1 className="text-4xl font-bold">Into the ValueVerse</h1>
-                  <span className="text-sm bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full border border-yellow-500/30">
-                    Beta - might not work
-                  </span>
+                <div className="text-center">
+                  <h1 className="text-4xl font-bold mb-2">Into the ValueVerse</h1>
+                  <div className="text-sm bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full border border-yellow-500/30 inline-block">
+                    Beta - if the page isn&apos;t loading try a hard refresh and wait a little for it to load
+                  </div>
                 </div>
                 
                 {/* Right side - About Link */}
