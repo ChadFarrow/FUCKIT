@@ -266,6 +266,39 @@
         ],
         "priority": "high",
         "subtasks": []
+      },
+      {
+        "id": 26,
+        "title": "Fix Mobile UI Issues - iOS Header Overlap and Auto-Play",
+        "description": "Fixed iOS mobile header overlap where title and beta badge were colliding, and prevented mobile browser auto-play issue",
+        "details": "- Created separate mobile/desktop header layouts to prevent overlap\n- Fixed mobile auto-play by changing audio initialization from play().then(pause()) to just load()\n- Improved mobile responsive design for better iOS compatibility",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 27,
+        "title": "Fix JSX Compilation Error - Missing Closing Div",
+        "description": "Resolved JSX compilation error that was preventing builds from succeeding due to missing closing div tag in Main Content section",
+        "details": "- Identified missing closing div tag in Main Content section of app/page.tsx\n- Fixed JSX structure to properly close container elements\n- Verified build success after fix\n- Build now completes successfully without compilation errors",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 28,
+        "title": "Add Additional RSS Feeds to Data Configuration",
+        "description": "Added multiple RSS feeds to the feeds.json configuration including breakheart music content and other requested feeds",
+        "details": "Added RSS feeds to data/feeds.json:\n- midnight-breakheart: https://rocknrollbreakheart.com/msp/MidnightBreakheart/midnight breakheart.xml\n- satoshi-streamer: https://rocknrollbreakheart.com/msp/SatoshiStreamer/satoshi streamer.xml  \n- panisee-attack: https://feeds.rssblue.com/panisee-attack\n- 2-crystal-balls: https://rocknrollbreakheart.com/msp/2CrystalBalls/2 crystal balls.xml\n- rock-n-roll-breakheart: https://rocknrollbreakheart.com/msp/RNRBH/rock'n'roll%20breakheart.xml\n\nAll feeds configured as album type with extended priority and active status.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
       }
     ],
     "metadata": {
@@ -273,7 +306,7 @@
       "description": "Main task list for FUCKIT podcast/music streaming application",
       "created": "2025-01-27T00:00:00.000Z",
       "lastModified": "2025-01-27T00:00:00.000Z",
-      "updated": "2025-07-27T01:03:20.135Z"
+      "updated": "2025-07-27T02:01:13.832Z"
     }
   }
 }
