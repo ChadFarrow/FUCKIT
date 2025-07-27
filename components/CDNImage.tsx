@@ -40,7 +40,7 @@ export default function CDNImage({
   // Extract original URL from CDN URL for fallback
   const getOriginalUrl = (cdnUrl: string) => {
     // Check for CDN hostname (storage zone CDN)
-    if (cdnUrl.includes('re-podtards-cache.b-cdn.net/cache/artwork/')) {
+    if (cdnUrl.includes('FUCKIT.b-cdn.net/cache/artwork/') || cdnUrl.includes('re-podtards-cache.b-cdn.net/cache/artwork/')) {
       // Extract the filename from the CDN URL
       const filename = cdnUrl.split('/').pop();
       if (filename) {
@@ -79,26 +79,32 @@ export default function CDNImage({
     console.warn(`Image failed to load (attempt ${retryCount + 1}):`, currentSrc);
     setIsLoading(false);
     
+    if (retryCount === 0 && fallbackSrc && fallbackSrc !== currentSrc) {
+      // First failure: try fallbackSrc (original URL) if provided
+      console.log('CDN failed, trying fallback URL:', fallbackSrc);
+      setCurrentSrc(fallbackSrc);
+      setHasError(false);
+      setIsLoading(true);
+      setRetryCount(1);
+      return;
+    }
+    
     if (retryCount === 0) {
-      // First failure: try original URL
+      // No fallbackSrc provided, try to extract from CDN URL
       const originalUrl = getOriginalUrl(currentSrc);
       if (originalUrl && originalUrl !== currentSrc) {
-        console.log('CDN failed, trying original URL:', originalUrl);
+        console.log('CDN failed, trying extracted original URL:', originalUrl);
         setCurrentSrc(originalUrl);
         setHasError(false);
         setIsLoading(true);
         setRetryCount(1);
         return;
-      } else {
-        // No fallback available (simple filename) - go to data URL
-        console.log('No fallback URL available for simple filename, using placeholder');
-        setRetryCount(1); // Skip to data URL
       }
     }
     
     if (retryCount <= 1) {
       // Try data URL fallback
-      console.log('Original URL failed, trying data URL fallback...');
+      console.log('All URLs failed, using placeholder...');
       
       const svgContent = `<svg width="${width || 300}" height="${height || 300}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#1f2937"/><circle cx="50%" cy="45%" r="25" fill="#9ca3af"/><text x="50%" y="65%" text-anchor="middle" fill="#9ca3af" font-size="12" font-family="system-ui">♪</text></svg>`;
       
@@ -133,7 +139,14 @@ export default function CDNImage({
 
   // Reset state when src changes and set up timeout for slow connections
   useEffect(() => {
-    setCurrentSrc(src);
+    // Fix old CDN hostname to new CDN hostname
+    let fixedSrc = src;
+    if (src.includes('re-podtards-cache.b-cdn.net')) {
+      fixedSrc = src.replace('re-podtards-cache.b-cdn.net', 'FUCKIT.b-cdn.net');
+      console.log('Fixed CDN hostname:', src, '→', fixedSrc);
+    }
+    
+    setCurrentSrc(fixedSrc);
     setIsLoading(true);
     setHasError(false);
     setRetryCount(0);
