@@ -92,6 +92,49 @@ export async function GET(request: NextRequest) {
 
     if (!response.ok) {
       console.error(`❌ Image fetch failed: ${response.status} ${response.statusText}`);
+      
+      // If CDN file is missing (404), try to decode base64-encoded original URL as fallback
+      if (response.status === 404 && imageUrl.includes('cache/artwork/artwork-')) {
+        const filename = imageUrl.split('/').pop();
+        if (filename) {
+          const encodedMatch = filename.match(/artwork-.*?-([A-Za-z0-9+/=]{20,})\.(jpg|jpeg|png|gif)$/);
+          if (encodedMatch) {
+            try {
+              const base64Part = encodedMatch[1];
+              const originalUrl = atob(base64Part);
+              console.log(`🔄 CDN file missing, trying decoded original URL: ${originalUrl}`);
+              
+              // Fetch from original URL
+              const originalResponse = await fetch(originalUrl, {
+                headers: {
+                  'User-Agent': 'DoerfelVerse/1.0 (Image Proxy)',
+                  'Referer': 'https://re.podtards.com',
+                },
+                signal: AbortSignal.timeout(15000),
+              });
+              
+              if (originalResponse.ok) {
+                const contentType = originalResponse.headers.get('Content-Type') || 'image/jpeg';
+                if (contentType.startsWith('image/')) {
+                  console.log(`✅ Original URL worked: ${originalUrl}`);
+                  return new NextResponse(originalResponse.body, {
+                    status: originalResponse.status,
+                    headers: {
+                      'Content-Type': contentType,
+                      'Cache-Control': 'public, max-age=3600',
+                      'Access-Control-Allow-Origin': '*',
+                      'Access-Control-Allow-Methods': 'GET, HEAD',
+                    },
+                  });
+                }
+              }
+            } catch (decodeError) {
+              console.warn('Failed to decode or fetch original URL:', decodeError);
+            }
+          }
+        }
+      }
+      
       return NextResponse.json({ 
         error: 'Failed to fetch image file',
         status: response.status 
