@@ -1006,21 +1006,27 @@ export default function HomePage() {
     // Apply filtering based on active filter
     let filtered = albums;
     
+    // First, filter out explicit content by default unless explicit filter is active
+    const baseAlbums = activeFilter === 'explicit' 
+      ? albums // Include explicit content when explicit filter is active
+      : albums.filter(album => !album.explicit); // Hide explicit content by default
+    
     switch (activeFilter) {
       case 'albums':
-        filtered = albums.filter(album => album.tracks.length > 6);
+        filtered = baseAlbums.filter(album => album.tracks.length > 6);
         break;
       case 'eps':
-        filtered = albums.filter(album => album.tracks.length > 1 && album.tracks.length <= 6);
+        filtered = baseAlbums.filter(album => album.tracks.length > 1 && album.tracks.length <= 6);
         break;
       case 'singles':
-        filtered = albums.filter(album => album.tracks.length === 1);
+        filtered = baseAlbums.filter(album => album.tracks.length === 1);
         break;
       case 'explicit':
-        filtered = albums.filter(album => album.explicit); // Show only explicit content when "Explicit" filter is active
+        // When explicit filter is active, show all explicit content regardless of track count
+        filtered = albums.filter(album => album.explicit);
         break;
       default: // 'all'
-        filtered = albums; // Show all albums
+        filtered = baseAlbums; // Show all non-explicit albums
     }
 
     // Apply hierarchical sorting to filtered results

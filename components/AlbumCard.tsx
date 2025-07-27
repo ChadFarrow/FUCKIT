@@ -66,6 +66,12 @@ export default function AlbumCard({ album, isPlaying, onPlay, className = '' }: 
   const artworkUrl = album.coverArt 
     ? getAlbumArtworkUrl(album.coverArt, 'medium')
     : getPlaceholderImageUrl('medium');
+  
+  // Debug logging for mobile
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+  if (isMobile) {
+    console.log(`Mobile album card for "${album.title}": coverArt=${album.coverArt}, artworkUrl=${artworkUrl}`);
+  }
 
   const albumUrl = generateAlbumUrl(album.title);
 
