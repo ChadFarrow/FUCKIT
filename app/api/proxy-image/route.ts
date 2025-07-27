@@ -116,11 +116,16 @@ export async function GET(request: NextRequest) {
               if (originalResponse.ok) {
                 const contentType = originalResponse.headers.get('Content-Type') || 'image/jpeg';
                 if (contentType.startsWith('image/')) {
-                  console.log(`✅ Original URL worked: ${originalUrl}`);
-                  return new NextResponse(originalResponse.body, {
-                    status: originalResponse.status,
+                  // Read the image data as buffer to ensure complete transfer
+                  const imageBuffer = await originalResponse.arrayBuffer();
+                  const contentLength = imageBuffer.byteLength;
+                  
+                  console.log(`✅ Original URL worked: ${originalUrl} (${contentLength} bytes)`);
+                  return new NextResponse(imageBuffer, {
+                    status: 200,
                     headers: {
                       'Content-Type': contentType,
+                      'Content-Length': contentLength.toString(),
                       'Cache-Control': 'public, max-age=3600',
                       'Access-Control-Allow-Origin': '*',
                       'Access-Control-Allow-Methods': 'GET, HEAD',
@@ -147,27 +152,24 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Not an image file' }, { status: 400 });
     }
     
-    const contentLength = response.headers.get('Content-Length');
+    // Read the image data as buffer to ensure complete transfer
+    const imageBuffer = await response.arrayBuffer();
+    const contentLength = imageBuffer.byteLength;
     
-    // Create response with proper headers for caching
-    const proxyResponse = new NextResponse(response.body, {
-      status: response.status,
+    console.log(`✅ Image proxied successfully: ${imageUrl} (${contentLength} bytes)`);
+    
+    // Create response with proper headers and complete image data
+    return new NextResponse(imageBuffer, {
+      status: 200,
       headers: {
         'Content-Type': contentType,
+        'Content-Length': contentLength.toString(),
         'Cache-Control': 'public, max-age=3600', // 1 hour cache
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, HEAD',
         'Access-Control-Allow-Headers': 'Range',
       },
     });
-
-    // Copy relevant headers from original response
-    if (contentLength) {
-      proxyResponse.headers.set('Content-Length', contentLength);
-    }
-
-    console.log(`✅ Image proxied successfully: ${imageUrl} (${contentLength || 'unknown'} bytes)`);
-    return proxyResponse;
 
   } catch (error) {
     console.error('❌ Image proxy error:', error);
