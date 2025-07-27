@@ -59,7 +59,7 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
 
   return (
     <div className="container mx-auto flex items-center gap-4">
-      {/* Album Info - Clickable */}
+      {/* Album Info - Left Side */}
       <Link
         href={generateAlbumUrl(track.title)}
         className="flex items-center gap-3 min-w-0 flex-1 hover:bg-gray-700 rounded-lg p-2 -m-2 transition-colors cursor-pointer"
@@ -86,8 +86,8 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
         </div>
       </Link>
       
-      {/* Playback Controls - Centered */}
-      <div className="flex items-center gap-3">
+      {/* Playback Controls - Perfectly Centered */}
+      <div className="flex items-center justify-center gap-3 flex-1">
         <button
           onClick={onPrevious}
           className="bg-gray-600 hover:bg-gray-500 text-white rounded-full p-2 transition-colors"
