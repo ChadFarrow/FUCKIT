@@ -9669,8 +9669,51 @@
       "keywords": [
         "music"
       ]
+    },
+    {
+      "id": "elijah-lied-all-in-a-day",
+      "originalUrl": "https://www.doerfelverse.com/artists/elijahlied/all-in-a-day/all-in-a-day.xml",
+      "type": "album",
+      "title": "All in a Day - Elijah Lied",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-27T02:35:00.000Z",
+      "lastUpdated": "2025-07-27T02:35:00.000Z",
+      "parseStatus": "success",
+      "lastParsed": "2025-07-27T02:35:00.000Z",
+      "parsedData": {
+        "album": {
+          "title": "all in a day",
+          "artist": "Elijah Lied",
+          "description": "i made an EP in one day",
+          "coverArt": "https://www.doerfelverse.com/artists/elijahlied/all-in-a-day/all-in-a-day.png",
+          "tracks": [
+            {
+              "title": "all in a day(intro)",
+              "duration": "0:33",
+              "url": "https://www.doerfelverse.com/artists/elijahlied/all-in-a-day/01-all-in-a-day-intro.mp3",
+              "trackNumber": 1,
+              "subtitle": "all in a day(intro)",
+              "summary": "all in a day(intro) by Elijah Lied",
+              "image": "https://www.doerfelverse.com/artists/elijahlied/all-in-a-day/all-in-a-day.png",
+              "explicit": false,
+              "keywords": ["elijah", "lied", "all", "in", "a", "day", "ep"]
+            }
+          ],
+          "releaseDate": "2025-02-15T22:06:05.000Z",
+          "link": "https://linktr.ee/milknetwork",
+          "subtitle": "i made an EP in one day",
+          "summary": "i made an EP in one day",
+          "explicit": false,
+          "categories": ["Music"],
+          "keywords": ["elijah", "lied", "all", "in", "a", "day", "ep"]
+        }
+      },
+      "trackCount": 1,
+      "categories": ["Music"],
+      "keywords": ["elijah", "lied", "all", "in", "a", "day", "ep"]
     }
   ],
-  "lastUpdated": "2025-07-27T02:08:51.561Z",
+  "lastUpdated": "2025-07-27T02:35:00.000Z",
   "version": 1
 }
