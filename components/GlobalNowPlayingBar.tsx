@@ -62,8 +62,8 @@ const GlobalNowPlayingBar: React.FC = () => {
       left: 0, 
       right: 0, 
       padding: '16px',
-      backgroundColor: 'rgba(0, 0, 0, 0.8)',
-      backdropFilter: 'blur(10px)',
+      backgroundColor: '#1f2937',
+      borderTop: '1px solid #f97316',
       zIndex: 50
     }}>
       <NowPlaying
