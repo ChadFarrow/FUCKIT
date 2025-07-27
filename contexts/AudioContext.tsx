@@ -83,11 +83,19 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       }
     };
 
+    // Check if we're on mobile
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
     // Listen for user interactions to enable audio
-    const events = ['click', 'touchstart', 'keydown'];
+    const events = ['click', 'touchstart', 'touchend', 'keydown'];
     events.forEach(event => {
       document.addEventListener(event, enableAudio, { once: true });
     });
+
+    // For mobile, also try to enable audio on page load if possible
+    if (isMobile) {
+      console.log('📱 Mobile device detected - enabling mobile-specific audio handling');
+    }
 
     return () => {
       events.forEach(event => {
