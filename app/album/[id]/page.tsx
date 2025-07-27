@@ -26,40 +26,36 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   // Convert hyphens to spaces for slug format (e.g., "stay-awhile" -> "stay awhile")
   albumTitle = albumTitle.replace(/-/g, ' ');
   
-  try {
-    // Try to fetch album data for metadata from pre-parsed API
-    const album = await getAlbumData(albumTitle);
-    
-    if (album) {
-      return {
-        title: `${album.title} - ${album.artist} | DoerfelVerse`,
-        description: album.description || `Listen to ${album.title} by ${album.artist}`,
-        openGraph: {
-          title: album.title,
-          description: album.description || `Listen to ${album.title} by ${album.artist}`,
-          images: album.coverArt ? [album.coverArt] : [],
-        },
-      };
-    }
-  } catch (error) {
-    console.error('Error generating metadata:', error);
-  }
-
-  // Fallback metadata
+  // Use fallback metadata to prevent server-side rendering issues
   return {
     title: `${albumTitle} | DoerfelVerse`,
     description: `Listen to ${albumTitle} on DoerfelVerse`,
+    openGraph: {
+      title: albumTitle,
+      description: `Listen to ${albumTitle} on DoerfelVerse`,
+    },
   };
 }
 
 // Server-side data fetching - use pre-parsed data API
 async function getAlbumData(albumTitle: string): Promise<RSSAlbum | null> {
   try {
+    // Only attempt server-side fetching in development or if explicitly enabled
+    if (process.env.NODE_ENV === 'production' && !process.env.ENABLE_SERVER_SIDE_FETCH) {
+      console.log('Skipping server-side album fetch in production');
+      return null;
+    }
+    
     // Fetch pre-parsed album data - use relative URL for production compatibility
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 
                    (process.env.NODE_ENV === 'production' ? 'https://re.podtards.com' : 'http://localhost:3000');
+    
+    // Add timeout to prevent hanging requests
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+    
     const response = await fetch(`${baseUrl}/api/albums`, {
-      // Add cache control to prevent stale data
+      signal: controller.signal,
       cache: 'no-store',
       headers: {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -67,6 +63,8 @@ async function getAlbumData(albumTitle: string): Promise<RSSAlbum | null> {
         'Expires': '0'
       }
     });
+    
+    clearTimeout(timeoutId);
     
     if (!response.ok) {
       console.warn('Failed to fetch albums for metadata:', response.status);
@@ -123,7 +121,9 @@ export default async function AlbumDetailPage({ params }: { params: Promise<{ id
   
   console.log(`🔍 Album page: id="${id}" -> albumTitle="${albumTitle}"`);
   
-  const album = await getAlbumData(albumTitle);
+  // Skip server-side data fetching to prevent RSC payload issues
+  // Let the client component handle data loading
+  const album = null;
   
   return <AlbumDetailClient albumTitle={albumTitle} initialAlbum={album} />;
 }
