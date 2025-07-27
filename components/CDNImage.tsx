@@ -40,7 +40,7 @@ export default function CDNImage({
   // Extract original URL from CDN URL for fallback
   const getOriginalUrl = (cdnUrl: string) => {
     // Check for both old and new CDN hostnames
-    if (cdnUrl.includes('FUCKIT.b-cdn.net/artwork/') || cdnUrl.includes('fuckit.b-cdn.net/artwork/') || cdnUrl.includes('re-podtards-cdn.b-cdn.net/cache/artwork/')) {
+    if (cdnUrl.includes('FUCKIT.b-cdn.net/cache/artwork/') || cdnUrl.includes('re-podtards-cdn.b-cdn.net/cache/artwork/')) {
       // Extract the filename from the CDN URL
       const filename = cdnUrl.split('/').pop();
       if (filename) {
@@ -53,10 +53,10 @@ export default function CDNImage({
             const originalUrl = atob(base64Part);
             console.log('Decoded original URL from CDN filename:', originalUrl);
             
-            // If the decoded URL points to /albums/, fix it to use /artwork/
+            // If the decoded URL points to /albums/, fix it to use /cache/artwork/
             if (originalUrl.includes('/albums/')) {
-              const correctedUrl = originalUrl.replace('/albums/', '/artwork/artwork-');
-              console.log('Corrected /albums/ URL to /artwork/:', correctedUrl);
+              const correctedUrl = originalUrl.replace('/albums/', '/cache/artwork/artwork-');
+              console.log('Corrected /albums/ URL to /cache/artwork/:', correctedUrl);
               return correctedUrl;
             }
             

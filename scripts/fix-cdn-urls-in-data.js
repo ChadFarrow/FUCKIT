@@ -8,8 +8,8 @@
 const fs = require('fs');
 const path = require('path');
 
-// CDN hostname mapping
-const OLD_HOSTNAME = 'FUCKIT.b-cdn.net';
+// CDN hostname mapping - handle both uppercase and lowercase
+const OLD_HOSTNAMES = ['FUCKIT.b-cdn.net', 'fuckit.b-cdn.net'];
 const NEW_HOSTNAME = 're-podtards-cdn.b-cdn.net';
 
 console.log('🔧 Fixing CDN URLs in Data Files\n');
@@ -24,32 +24,42 @@ function fixCdnUrlsInFile(filePath) {
 
   try {
     // Read the file
-    const content = fs.readFileSync(filePath, 'utf8');
+    let content = fs.readFileSync(filePath, 'utf8');
     
-    // Count occurrences
-    const oldCount = (content.match(new RegExp(OLD_HOSTNAME.replace(/\./g, '\\.'), 'g')) || []).length;
+    // Count total old occurrences
+    let totalOldCount = 0;
+    for (const oldHostname of OLD_HOSTNAMES) {
+      const count = (content.match(new RegExp(oldHostname.replace(/\./g, '\\.'), 'g')) || []).length;
+      totalOldCount += count;
+      if (count > 0) {
+        console.log(`🔍 Found ${count} instances of ${oldHostname}`);
+      }
+    }
     
-    if (oldCount === 0) {
+    if (totalOldCount === 0) {
       console.log(`✅ No old CDN URLs found in ${path.basename(filePath)}`);
       return true;
     }
     
-    // Replace all occurrences
-    const newContent = content.replace(new RegExp(OLD_HOSTNAME.replace(/\./g, '\\.'), 'g'), NEW_HOSTNAME);
+    // Replace all occurrences of each old hostname
+    for (const oldHostname of OLD_HOSTNAMES) {
+      const regex = new RegExp(oldHostname.replace(/\./g, '\\.'), 'g');
+      content = content.replace(regex, NEW_HOSTNAME);
+    }
     
     // Count new occurrences
-    const newCount = (newContent.match(new RegExp(NEW_HOSTNAME.replace(/\./g, '\\.'), 'g')) || []).length;
+    const newCount = (content.match(new RegExp(NEW_HOSTNAME.replace(/\./g, '\\.'), 'g')) || []).length;
     
     // Create backup
     const backupPath = `${filePath}.backup-${Date.now()}`;
-    fs.writeFileSync(backupPath, content);
+    fs.writeFileSync(backupPath, fs.readFileSync(filePath, 'utf8'));
     console.log(`💾 Backup created: ${path.basename(backupPath)}`);
     
     // Write the fixed content
-    fs.writeFileSync(filePath, newContent);
+    fs.writeFileSync(filePath, content);
     
-    console.log(`✅ Fixed ${oldCount} CDN URLs in ${path.basename(filePath)}`);
-    console.log(`📊 Old hostname count: ${oldCount} → New hostname count: ${newCount}`);
+    console.log(`✅ Fixed ${totalOldCount} CDN URLs in ${path.basename(filePath)}`);
+    console.log(`📊 Old hostname count: ${totalOldCount} → New hostname count: ${newCount}`);
     
     return true;
   } catch (error) {
