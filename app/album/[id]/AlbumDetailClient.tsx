@@ -30,6 +30,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   // Background state
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
+  const [backgroundLoaded, setBackgroundLoaded] = useState(false);
+  const [albumArtLoaded, setAlbumArtLoaded] = useState(false);
   
 
   // Update Media Session API for iOS lock screen controls
@@ -275,6 +277,10 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
       hasCoverArt: !!album?.coverArt 
     });
     
+    // Reset loading states when album changes
+    setBackgroundLoaded(false);
+    setAlbumArtLoaded(false);
+    
     if (album?.coverArt) {
       console.log('🖼️ Loading background image:', album?.coverArt);
       
@@ -283,16 +289,23 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
       img.onload = () => {
         console.log('✅ Background image loaded successfully:', album?.coverArt);
         setBackgroundImage(album?.coverArt);
+        setBackgroundLoaded(true); // Mark background as loaded
       };
       img.onerror = (error) => {
         console.error('❌ Background image failed to load:', album?.coverArt, error);
         // Fallback to gradient if image fails to load
         setBackgroundImage(null);
+        setBackgroundLoaded(true); // Mark background as loaded even if image fails
       };
+      
+      // Set priority loading for background image
+      img.crossOrigin = 'anonymous';
+      img.decoding = 'async';
       img.src = album?.coverArt;
     } else {
       console.log('🚫 No cover art available, using gradient background');
       setBackgroundImage(null);
+      setBackgroundLoaded(true); // Mark background as loaded even if no image
     }
   }, [album?.coverArt]);
 
@@ -751,36 +764,50 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
         <div className="flex flex-col gap-6 mb-8">
           {/* Album Art with Play Button Overlay */}
           <div className="relative group mx-auto">
-            <Image 
-              src={getAlbumArtworkUrl(album?.coverArt || '', 'large')} 
-              alt={album.title}
-              width={280}
-              height={280}
-              className="rounded-lg object-cover shadow-2xl mx-auto"
-              onError={(e) => {
-                // Fallback to placeholder on error
-                const target = e.target as HTMLImageElement;
-                target.src = getPlaceholderImageUrl('large');
-              }}
-            />
+            {!backgroundLoaded ? (
+              // Show loading placeholder while background loads
+              <div className="w-[280px] h-[280px] bg-gray-800 animate-pulse rounded-lg flex items-center justify-center">
+                <div className="text-gray-400 text-sm">Loading...</div>
+              </div>
+            ) : (
+              <Image 
+                src={getAlbumArtworkUrl(album?.coverArt || '', 'large')} 
+                alt={album.title}
+                width={280}
+                height={280}
+                className={`rounded-lg object-cover shadow-2xl mx-auto transition-opacity duration-500 ${
+                  albumArtLoaded ? 'opacity-100' : 'opacity-0'
+                }`}
+                priority={backgroundLoaded} // Prioritize loading after background is ready
+                onLoad={() => setAlbumArtLoaded(true)}
+                onError={(e) => {
+                  // Fallback to placeholder on error
+                  const target = e.target as HTMLImageElement;
+                  target.src = getPlaceholderImageUrl('large');
+                  setAlbumArtLoaded(true);
+                }}
+              />
+            )}
             
-            {/* Play Button Overlay - Always Visible */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <button
-                onClick={isPlaying ? togglePlay : playAlbum}
-                className="bg-white/90 hover:bg-white text-black rounded-full p-4 transform hover:scale-110 transition-all duration-200 shadow-xl border-2 border-white/20"
-              >
-                {isPlaying ? (
-                  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
-                  </svg>
-                ) : (
-                  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z"/>
-                  </svg>
-                )}
-              </button>
-            </div>
+            {/* Play Button Overlay - Only show when background is loaded */}
+            {backgroundLoaded && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <button
+                  onClick={isPlaying ? togglePlay : playAlbum}
+                  className="bg-white/90 hover:bg-white text-black rounded-full p-4 transform hover:scale-110 transition-all duration-200 shadow-xl border-2 border-white/20"
+                >
+                  {isPlaying ? (
+                    <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                    </svg>
+                  ) : (
+                    <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                  )}
+                </button>
+              </div>
+            )}
           </div>
           
           {/* Album Info */}
