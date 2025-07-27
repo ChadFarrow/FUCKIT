@@ -12,7 +12,7 @@
 const fs = require('fs');
 const path = require('path');
 
-async function main() {
+async function autoAddPublisherFeeds() {
   console.log('🔍 Scanning for publisher feeds in parsed data...\n');
   
   try {
@@ -22,12 +22,12 @@ async function main() {
     
     if (!fs.existsSync(parsedFeedsPath)) {
       console.error('❌ Parsed feeds file not found');
-      return;
+      return 0;
     }
     
     if (!fs.existsSync(feedsConfigPath)) {
       console.error('❌ Feeds configuration file not found');
-      return;
+      return 0;
     }
     
     const parsedFeedsData = JSON.parse(fs.readFileSync(parsedFeedsPath, 'utf-8'));
@@ -73,7 +73,7 @@ async function main() {
     
     if (missingPublisherFeeds.length === 0) {
       console.log('✅ All publisher feeds are already configured!');
-      return;
+      return 0;
     }
     
     console.log(`\n🆕 Found ${missingPublisherFeeds.length} new publisher feeds to add:`);
@@ -115,9 +115,18 @@ async function main() {
     console.log(`   Already configured: ${existingPublisherUrls.size}`);
     console.log(`   Newly added: ${newFeeds.length}`);
     
+    return newFeeds.length;
+    
   } catch (error) {
     console.error('❌ Error processing publisher feeds:', error);
-    process.exit(1);
+    return 0;
+  }
+}
+
+async function main() {
+  const added = await autoAddPublisherFeeds();
+  if (added === 0) {
+    process.exit(0);
   }
 }
 
@@ -130,5 +139,10 @@ function generateFeedId(title) {
     .trim('-') + '-publisher';
 }
 
-// Run the script
-main().catch(console.error); 
+// Export the function for use in other scripts
+module.exports = { autoAddPublisherFeeds };
+
+// Run the script if called directly
+if (require.main === module) {
+  main().catch(console.error);
+} 
