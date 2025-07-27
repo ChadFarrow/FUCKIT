@@ -115,7 +115,7 @@ async function retryFailedUploads() {
         
         // Upload to Bunny.net
         const cdnPath = `cache/${fileType}/${filename}`;
-        const uploadUrl = `https://storage.bunnycdn.com/${storageZone}/${cdnPath}`;
+        const uploadUrl = `https://${region.toLowerCase()}.storage.bunnycdn.com/${storageZone}/${cdnPath}`;
         
         const fileBuffer = await fs.readFile(localPath);
         
