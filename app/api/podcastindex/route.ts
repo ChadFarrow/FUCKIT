@@ -18,7 +18,13 @@ export async function GET(request: NextRequest) {
     if (!PODCAST_INDEX_API_KEY || !PODCAST_INDEX_API_SECRET) {
       console.error('PodcastIndex API credentials not configured');
       // Fallback to direct RSS feed fetch
-      return NextResponse.redirect(`/api/fetch-rss?url=${encodeURIComponent(feedUrl)}`);
+      const response = await fetch(`${request.nextUrl.origin}/api/fetch-rss?url=${encodeURIComponent(feedUrl)}`);
+      return new NextResponse(await response.text(), {
+        headers: {
+          'Content-Type': 'application/xml',
+          'Cache-Control': 'public, max-age=3600',
+        },
+      });
     }
 
     // Generate auth headers for PodcastIndex
@@ -43,13 +49,19 @@ export async function GET(request: NextRequest) {
     if (!response.ok) {
       console.error(`PodcastIndex API error: ${response.status} ${response.statusText}`);
       // Fallback to direct RSS feed fetch
-      return NextResponse.redirect(`/api/fetch-rss?url=${encodeURIComponent(feedUrl)}`);
+      const fallbackResponse = await fetch(`${request.nextUrl.origin}/api/fetch-rss?url=${encodeURIComponent(feedUrl)}`);
+      return new NextResponse(await fallbackResponse.text(), {
+        headers: {
+          'Content-Type': 'application/xml',
+          'Cache-Control': 'public, max-age=3600',
+        },
+      });
     }
 
     const data = await response.json();
 
-    // Transform PodcastIndex response to RSS-like format for compatibility
-    if (data.items && data.items.length > 0) {
+    // Check if we have valid feed data from PodcastIndex
+    if (data.items && data.items.length > 0 && data.feed && data.feed.title) {
       // Convert to RSS XML format that our parser expects
       const rssXml = convertPodcastIndexToRSS(data);
       return new NextResponse(rssXml, {
@@ -58,9 +70,17 @@ export async function GET(request: NextRequest) {
           'Cache-Control': 'public, max-age=3600',
         },
       });
+    } else {
+      // PodcastIndex doesn't have this feed or has incomplete data - fallback to direct RSS
+      console.log(`PodcastIndex missing feed data for ${feedUrl}, falling back to direct RSS`);
+      const fallbackResponse = await fetch(`${request.nextUrl.origin}/api/fetch-rss?url=${encodeURIComponent(feedUrl)}`);
+      return new NextResponse(await fallbackResponse.text(), {
+        headers: {
+          'Content-Type': 'application/xml',
+          'Cache-Control': 'public, max-age=3600',
+        },
+      });
     }
-
-    return NextResponse.json(data);
   } catch (error) {
     console.error('PodcastIndex route error:', error);
     return NextResponse.json(
