@@ -227,14 +227,12 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
     
     // Ensure background is marked as loaded after a short delay to prevent blocking
     const timeoutId = setTimeout(() => {
-      if (!backgroundLoaded) {
-        console.log('⏰ Background loading timeout - marking as loaded');
-        setBackgroundLoaded(true);
-      }
+      console.log('⏰ Background loading timeout - marking as loaded');
+      setBackgroundLoaded(true);
     }, 2000); // 2 second timeout
     
     return () => clearTimeout(timeoutId);
-  }, [album?.coverArt, backgroundLoaded]);
+  }, [album?.coverArt]); // Removed backgroundLoaded from dependencies to prevent infinite loop
 
   // Optimized background style calculation - memoized to prevent repeated logs
   const backgroundStyle = useMemo(() => {
@@ -244,14 +242,6 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
     } : {
       background: 'linear-gradient(to bottom right, rgb(17, 24, 39), rgb(31, 41, 55), rgb(17, 24, 39))'
     };
-
-    // Only log when background actually changes (not on every render)
-    console.log('🎨 Background style applied:', {
-      backgroundImage,
-      isClient,
-      windowWidth: typeof window !== 'undefined' ? window.innerWidth : 'undefined',
-      willUseImage: !!(backgroundImage && isClient)
-    });
 
     return style;
   }, [backgroundImage, isClient]);
