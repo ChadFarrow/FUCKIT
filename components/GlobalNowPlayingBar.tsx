@@ -54,12 +54,12 @@ const GlobalNowPlayingBar: React.FC = () => {
       <div className="container mx-auto flex items-center gap-4 bg-white/5 rounded-xl p-4 backdrop-blur-sm border border-white/10">
         {/* Current Album Info - Clickable */}
         <Link
-          href={generateAlbumUrl(currentPlayingAlbum)}
+          href={generateAlbumUrl(currentPlayingAlbum.title)}
           className="flex items-center gap-3 min-w-0 flex-1 hover:bg-white/10 rounded-lg p-2 -m-2 transition-colors cursor-pointer"
         >
           <Image 
-            src={getAlbumArtworkUrl('', 'thumbnail')} 
-            alt={currentPlayingAlbum}
+            src={getAlbumArtworkUrl(currentPlayingAlbum.coverArt || '', 'thumbnail')} 
+            alt={currentPlayingAlbum.title}
             width={48}
             height={48}
             className="rounded object-cover"
@@ -70,10 +70,10 @@ const GlobalNowPlayingBar: React.FC = () => {
           />
           <div className="min-w-0">
             <p className="font-medium truncate">
-              Track {currentTrackIndex + 1}
+              {currentPlayingAlbum.tracks?.[currentTrackIndex]?.title || `Track ${currentTrackIndex + 1}`}
             </p>
             <p className="text-sm text-gray-400 truncate">
-              {currentPlayingAlbum}
+              {currentPlayingAlbum.title}
             </p>
           </div>
         </Link>

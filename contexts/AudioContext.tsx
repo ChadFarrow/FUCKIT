@@ -5,7 +5,7 @@ import { RSSAlbum } from '@/lib/rss-parser';
 
 interface AudioContextType {
   // Audio state
-  currentPlayingAlbum: string | null;
+  currentPlayingAlbum: RSSAlbum | null;
   isPlaying: boolean;
   currentTrackIndex: number;
   currentTime: number;
@@ -40,7 +40,7 @@ interface AudioProviderProps {
 }
 
 export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
-  const [currentPlayingAlbum, setCurrentPlayingAlbum] = useState<string | null>(null);
+  const [currentPlayingAlbum, setCurrentPlayingAlbum] = useState<RSSAlbum | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
@@ -56,8 +56,9 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       if (savedState) {
         try {
           const state = JSON.parse(savedState);
-          setCurrentPlayingAlbum(state.currentPlayingAlbum);
-          setCurrentTrackIndex(state.currentTrackIndex);
+          // Note: We can't restore the full album object from localStorage
+          // So we'll just restore the track index and timing info
+          setCurrentTrackIndex(state.currentTrackIndex || 0);
           setCurrentTime(state.currentTime || 0);
           setDuration(state.duration || 0);
           // Note: isPlaying is not restored to prevent autoplay issues
@@ -72,7 +73,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   useEffect(() => {
     if (typeof window !== 'undefined' && currentPlayingAlbum) {
       const state = {
-        currentPlayingAlbum,
+        currentPlayingAlbumTitle: currentPlayingAlbum.title,
         currentTrackIndex,
         currentTime,
         duration,
@@ -252,7 +253,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
 
     const success = await attemptAudioPlayback(track.url, 'Album playback');
     if (success) {
-      setCurrentPlayingAlbum(album.title);
+      setCurrentPlayingAlbum(album);
       setCurrentTrackIndex(trackIndex);
     }
     return success;
@@ -289,14 +290,11 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
 
   // Play next track
   const playNextTrack = () => {
-    if (!currentPlayingAlbum) return;
-    
-    const currentAlbum = albums.find(album => album.title === currentPlayingAlbum);
-    if (!currentAlbum || !currentAlbum.tracks) return;
+    if (!currentPlayingAlbum || !currentPlayingAlbum.tracks) return;
 
     const nextIndex = currentTrackIndex + 1;
-    if (nextIndex < currentAlbum.tracks.length) {
-      playAlbum(currentAlbum, nextIndex);
+    if (nextIndex < currentPlayingAlbum.tracks.length) {
+      playAlbum(currentPlayingAlbum, nextIndex);
     } else {
       // End of album - could loop or stop
       stop();
@@ -305,14 +303,11 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
 
   // Play previous track
   const playPreviousTrack = () => {
-    if (!currentPlayingAlbum) return;
-    
-    const currentAlbum = albums.find(album => album.title === currentPlayingAlbum);
-    if (!currentAlbum || !currentAlbum.tracks) return;
+    if (!currentPlayingAlbum || !currentPlayingAlbum.tracks) return;
 
     const prevIndex = currentTrackIndex - 1;
     if (prevIndex >= 0) {
-      playAlbum(currentAlbum, prevIndex);
+      playAlbum(currentPlayingAlbum, prevIndex);
     }
   };
 
