@@ -84,6 +84,11 @@ export default function CDNImage({
   // Check if we're on mobile to decide which image component to use
   const isMobile = typeof window !== 'undefined' && 
     (window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+  
+  // Extra mobile debugging
+  if (isMobile && retryCount === 0) {
+    console.log(`CDNImage mobile: src=${src}, currentSrc=${currentSrc}, isLoading=${isLoading}, hasError=${hasError}`);
+  }
 
   return (
     <div className={`relative ${className || ''}`}>
