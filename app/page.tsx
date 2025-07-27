@@ -32,51 +32,13 @@ const verboseLog = (...args: any[]) => {
 // RSS feed URLs - hardcoded for client-side compatibility
 // All CDN URLs removed, using original URLs directly
 
-// Core feeds (load first for fast page display)
-const coreFeeds = [
-  // Using our PodcastIndex API proxy for better reliability and features
-  '/api/podcastindex?feedUrl=https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml',
-  '/api/podcastindex?feedUrl=https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml',
-  '/api/podcastindex?feedUrl=https://rss.buzzsprout.com/2022460.rss'
-];
-
-// Extended feeds (load in background after core)
-const extendedFeeds = [
-  // More music feeds via PodcastIndex API
-  '/api/podcastindex?feedUrl=https://www.doerfelverse.com/feeds/ben-doerfel.xml',
-  '/api/podcastindex?feedUrl=https://www.doerfelverse.com/feeds/intothedoerfelverse.xml',
-  '/api/podcastindex?feedUrl=https://www.doerfelverse.com/feeds/18sundays.xml',
-  '/api/podcastindex?feedUrl=https://ableandthewolf.com/static/media/feed.xml'
-];
-
-// Low priority feeds (load last in background)
-const lowPriorityFeeds = [
-  'https://feeds.buzzsprout.com/2181713.rss',
-  'https://rss.buzzsprout.com/1996760.rss',
-  'https://rss.buzzsprout.com/2022460.rss'
-];
-
-// Album feeds (for backwards compatibility)
-const albumFeeds = [...coreFeeds, ...extendedFeeds, ...lowPriorityFeeds];
-
-// Publisher feeds (empty for now, can be added later)
-const publisherFeeds: string[] = [];
-
-// All feeds combined
-const allFeeds = [...coreFeeds, ...extendedFeeds, ...lowPriorityFeeds];
-
-// Start with core feeds only for fast initial load
-const feedUrls = coreFeeds;
+// Feed URLs are now loaded dynamically from /api/feeds endpoint
+// This ensures feeds are always up-to-date with data/feeds.json
 
 // Debug logging - Performance optimization info
-devLog('🚀 PERFORMANCE OPTIMIZATION ENABLED');
+devLog('🚀 PERFORMANCE OPTIMIZATION ENABLED - Dynamic feed loading');
 devLog('🔧 Environment check:', { NODE_ENV: process.env.NODE_ENV });
-devLog('🚀 Core feeds (load first):', coreFeeds.length, 'feeds');
-devLog('🚀 Extended feeds (load second):', extendedFeeds.length, 'feeds'); 
-devLog('🚀 Low priority feeds:', lowPriorityFeeds.length, 'feeds');
-devLog('🚀 Total feeds available:', allFeeds.length, 'feeds');
-devLog('🚀 Initial load will use ONLY core feeds for fast page load');
-verboseLog('🔧 First few core feed URLs:', coreFeeds.slice(0, 3));
+devLog('🚀 Feeds will be loaded dynamically from /api/feeds endpoint');
 
 export default function HomePage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -85,6 +47,7 @@ export default function HomePage() {
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [customFeeds, setCustomFeeds] = useState<string[]>([]);
   const [isAddingFeed, setIsAddingFeed] = useState(false);
+  const [totalFeedsCount, setTotalFeedsCount] = useState(0);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
   
@@ -464,38 +427,49 @@ export default function HomePage() {
   };
 
   const loadAlbumsData = async (additionalFeeds: string[] = [], loadTier: 'core' | 'extended' | 'lowPriority' | 'all' = 'all') => {
-    // Load managed feeds from the API (client-side only)
-    let managedFeeds: string[] = [];
+    // Load feeds configuration from data/feeds.json
+    let feedsConfig: any = { core: [], extended: [], low: [] };
     try {
-      const response = await fetch('/api/admin/feeds');
+      const response = await fetch('/api/feeds');
       if (response.ok) {
-        const data = await response.json();
-        if (data.success) {
-          managedFeeds = data.feeds
-            .filter((feed: any) => feed.status === 'active')
-            .map((feed: any) => feed.cdnUrl || feed.originalUrl);
-        }
+        feedsConfig = await response.json();
+        devLog('✅ Loaded feeds configuration:', feedsConfig);
+        
+        // Update total feeds count for display
+        const totalCount = (feedsConfig.core?.length || 0) + 
+                          (feedsConfig.extended?.length || 0) + 
+                          (feedsConfig.low?.length || 0);
+        setTotalFeedsCount(totalCount);
       }
     } catch (error) {
-      console.warn('Failed to load managed feeds, falling back to hardcoded feeds:', error);
+      console.warn('Failed to load feeds configuration:', error);
     }
+    
+    // Convert feed objects to URLs for PodcastIndex API
+    const convertFeedsToUrls = (feeds: any[]) => 
+      feeds.map((feed: any) => `/api/podcastindex?feedUrl=${encodeURIComponent(feed.originalUrl)}`);
     
     // Performance optimization: Load feeds in tiers for faster initial page load
     let feedsToLoad: string[] = [];
     
     if (loadTier === 'core') {
-      feedsToLoad = [...coreFeeds, ...additionalFeeds];
+      feedsToLoad = [...convertFeedsToUrls(feedsConfig.core || []), ...additionalFeeds];
       devLog('🚀 Loading CORE feeds only for fast initial load:', feedsToLoad.length, 'feeds');
     } else if (loadTier === 'extended') {
-      feedsToLoad = [...extendedFeeds];
+      feedsToLoad = convertFeedsToUrls(feedsConfig.extended || []);
       devLog('🚀 Loading EXTENDED feeds (background load):', feedsToLoad.length, 'feeds');
     } else if (loadTier === 'lowPriority') {
-      feedsToLoad = [...lowPriorityFeeds];
+      feedsToLoad = convertFeedsToUrls(feedsConfig.low || []);
       devLog('🚀 Loading LOW PRIORITY feeds (background load):', feedsToLoad.length, 'feeds');
     } else {
-      // 'all' - legacy behavior for backwards compatibility
-      feedsToLoad = [...feedUrls, ...managedFeeds, ...additionalFeeds];
-      devLog('🚀 Loading ALL feeds (legacy mode):', feedsToLoad.length, 'feeds');
+      // 'all' - load all feeds from configuration
+      const allConfigFeeds = [
+        ...(feedsConfig.core || []),
+        ...(feedsConfig.extended || []),
+        ...(feedsConfig.low || [])
+      ];
+      feedsToLoad = [...convertFeedsToUrls(allConfigFeeds), ...additionalFeeds];
+      devLog('🚀 Loading ALL feeds from configuration:', feedsToLoad.length, 'feeds');
     }
     
     // DEDUPLICATION: Remove duplicate URLs to prevent redundant parsing
@@ -515,7 +489,7 @@ export default function HomePage() {
     
     try {
       verboseLog('🚀 loadAlbumsData called with additionalFeeds:', additionalFeeds);
-      verboseLog('🚀 Current feedUrls:', feedUrls);
+      verboseLog('🚀 Current feedsToLoad:', feedsToLoad);
       verboseLog('🚀 Using original RSS feed URLs directly');
       setIsLoading(true);
       setError(null);
@@ -1128,7 +1102,7 @@ export default function HomePage() {
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
                     <span className="text-yellow-400">
-                      Loading {albums.length > 0 ? `${albums.length} albums` : `${feedUrls.length + customFeeds.length} RSS feeds`}...
+                      Loading {albums.length > 0 ? `${albums.length} albums` : `RSS feeds`}...
                       {loadingProgress > 0 && ` (${Math.round(loadingProgress)}%)`}
                     </span>
                   </div>
@@ -1258,7 +1232,7 @@ export default function HomePage() {
             
             {/* Feed Stats */}
             <div className="text-sm text-gray-400 space-y-1">
-              <p>Default feeds: {feedUrls.length}</p>
+              <p>Default feeds: {totalFeedsCount}</p>
               <p>Custom feeds: {customFeeds.length}</p>
               <p>Total releases: {albums.length}</p>
             </div>
