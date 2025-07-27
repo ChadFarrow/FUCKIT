@@ -83,14 +83,23 @@ export default function CDNImage({
     // Clear existing timeout
     if (timeoutId) {
       clearTimeout(timeoutId);
+      setTimeoutId(null);
     }
     
     // Set timeout for slow loading images (especially on mobile)
     const timeout = setTimeout(() => {
-      if (isLoading && retryCount === 0) {
-        console.log('Image timeout - falling back to placeholder');
-        handleError();
-      }
+      console.log('Image timeout - falling back to placeholder');
+      // Create fallback directly instead of calling handleError to avoid dependency
+      const dataUrl = `data:image/svg+xml;base64,${btoa(`
+        <svg width="${width || 300}" height="${height || 300}" xmlns="http://www.w3.org/2000/svg">
+          <rect width="100%" height="100%" fill="#1f2937"/>
+          <text x="50%" y="50%" text-anchor="middle" dy="0.3em" fill="#9ca3af" font-family="Arial" font-size="32">🎵</text>
+        </svg>
+      `)}`;
+      setCurrentSrc(dataUrl);
+      setHasError(false);
+      setIsLoading(true);
+      setRetryCount(1);
     }, 8000); // 8 second timeout for mobile
     
     setTimeoutId(timeout);
@@ -98,7 +107,7 @@ export default function CDNImage({
     return () => {
       if (timeout) clearTimeout(timeout);
     };
-  }, [src]); // Remove isLoading and retryCount from deps to avoid infinite loops
+  }, [src, width, height]); // Only depend on src and size props
 
   // Check if we're on mobile to decide which image component to use
   const [isMobile, setIsMobile] = useState(false);
