@@ -44,12 +44,12 @@ export default function CDNImage({
       // Extract the filename from the CDN URL
       const filename = cdnUrl.split('/').pop();
       if (filename) {
-        // The filename format is: artwork-{name}-{base64-encoded-original-url}.{ext}
-        // Extract the base64 part and decode it to get the original URL
-        const match = filename.match(/artwork-.*?-([A-Za-z0-9+/=]+)\.(jpg|jpeg|png|gif)$/);
-        if (match) {
+        // Check if this is an encoded filename (contains base64 part)
+        const encodedMatch = filename.match(/artwork-.*?-([A-Za-z0-9+/=]{20,})\.(jpg|jpeg|png|gif)$/);
+        if (encodedMatch) {
+          // This is an encoded filename - decode it
           try {
-            const base64Part = match[1];
+            const base64Part = encodedMatch[1];
             const originalUrl = atob(base64Part);
             console.log('Decoded original URL from CDN filename:', originalUrl);
             
@@ -64,6 +64,11 @@ export default function CDNImage({
           } catch (error) {
             console.warn('Failed to decode base64 URL from filename:', filename, error);
           }
+        } else {
+          // This is a simple filename (e.g., artwork-album-name.png)
+          // For simple filenames, there's no fallback - the CDN should have this file
+          console.log('Simple filename detected, no fallback available:', filename);
+          return null; // No fallback for simple filenames
         }
       }
     }
@@ -85,6 +90,10 @@ export default function CDNImage({
         setIsLoading(true);
         setRetryCount(1);
         return;
+      } else {
+        // No fallback available (simple filename) - go straight to placeholder
+        console.log('No fallback URL available for simple filename, using placeholder');
+        setRetryCount(1); // Skip to placeholder
       }
     }
     
