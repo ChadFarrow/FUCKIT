@@ -839,8 +839,28 @@
       "status": "active",
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z"
+    },
+    {
+      "id": "example-com-test-feed-xml",
+      "originalUrl": "https://example.com/test-feed.xml",
+      "type": "album",
+      "title": "Feed from example.com",
+      "priority": "low",
+      "status": "active",
+      "addedAt": "2025-07-27T01:26:28.499Z",
+      "lastUpdated": "2025-07-27T01:26:28.499Z"
+    },
+    {
+      "id": "wavlake-com-feed-music-ef800a88-9a1c-4f8e-a7c5-f83d7d9b1c87",
+      "originalUrl": "https://wavlake.com/feed/music/ef800a88-9a1c-4f8e-a7c5-f83d7d9b1c87",
+      "type": "album",
+      "title": "Feed from wavlake.com",
+      "priority": "low",
+      "status": "active",
+      "addedAt": "2025-07-27T01:27:30.801Z",
+      "lastUpdated": "2025-07-27T01:27:30.801Z"
     }
   ],
-  "lastUpdated": "2025-01-27T00:00:00.000Z",
+  "lastUpdated": "2025-07-27T01:27:30.801Z",
   "version": 2
 }
