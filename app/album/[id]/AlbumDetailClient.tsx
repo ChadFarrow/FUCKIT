@@ -46,6 +46,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   const [isClient, setIsClient] = useState(false);
   const [backgroundLoaded, setBackgroundLoaded] = useState(false);
   const [albumArtLoaded, setAlbumArtLoaded] = useState(false);
+  const [lastProcessedCoverArt, setLastProcessedCoverArt] = useState<string | null>(null);
   
 
   // Update Media Session API for iOS lock screen controls
@@ -188,11 +189,19 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
 
   // Update background when album data changes
   useEffect(() => {
+    // Prevent infinite loops by checking if we've already processed this cover art
+    if (album?.coverArt === lastProcessedCoverArt) {
+      return;
+    }
+    
     console.log('🎨 Background update triggered:', { 
       albumTitle: album?.title, 
       coverArt: album?.coverArt,
       hasCoverArt: !!album?.coverArt 
     });
+    
+    // Mark this cover art as processed
+    setLastProcessedCoverArt(album?.coverArt || null);
     
     // Reset loading states when album changes
     setBackgroundLoaded(false);
@@ -216,7 +225,6 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
       };
       
       // Set priority loading for background image
-      img.crossOrigin = 'anonymous';
       img.decoding = 'async';
       img.src = album?.coverArt;
     } else {
@@ -232,7 +240,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
     }, 2000); // 2 second timeout
     
     return () => clearTimeout(timeoutId);
-  }, [album?.coverArt]); // Removed backgroundLoaded from dependencies to prevent infinite loop
+  }, [album?.coverArt, lastProcessedCoverArt]); // Added lastProcessedCoverArt to dependencies
 
   // Optimized background style calculation - memoized to prevent repeated logs
   const backgroundStyle = useMemo(() => {
