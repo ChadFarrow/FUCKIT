@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import { generateAlbumSlug } from '@/lib/url-utils';
 
 export async function GET() {
   try {
@@ -18,6 +19,7 @@ export async function GET() {
       .map((feed: any) => {
         const album = feed.parsedData.album;
         return {
+          id: generateAlbumSlug(album.title),
           title: album.title,
           artist: album.artist,
           description: album.description,
