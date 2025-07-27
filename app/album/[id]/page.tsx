@@ -12,8 +12,19 @@ import { generateAlbumSlug } from '@/lib/url-utils';
 // Generate metadata for each album
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
-  // Convert slug back to title format for display
-  const albumTitle = id.replace(/-/g, ' ');
+  
+  // Handle both URL-encoded and slug formats
+  let albumTitle: string;
+  try {
+    // First try to decode URL-encoded characters (e.g., %20 -> space)
+    albumTitle = decodeURIComponent(id);
+  } catch (error) {
+    // If decoding fails, use the original id
+    albumTitle = id;
+  }
+  
+  // Convert hyphens to spaces for slug format (e.g., "stay-awhile" -> "stay awhile")
+  albumTitle = albumTitle.replace(/-/g, ' ');
   
   try {
     // Try to fetch album data for metadata from pre-parsed API
@@ -96,8 +107,22 @@ async function getAlbumData(albumTitle: string): Promise<RSSAlbum | null> {
 
 export default async function AlbumDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  // Convert slug back to title format for display
-  const albumTitle = id.replace(/-/g, ' ');
+  
+  // Handle both URL-encoded and slug formats
+  let albumTitle: string;
+  try {
+    // First try to decode URL-encoded characters (e.g., %20 -> space)
+    albumTitle = decodeURIComponent(id);
+  } catch (error) {
+    // If decoding fails, use the original id
+    albumTitle = id;
+  }
+  
+  // Convert hyphens to spaces for slug format (e.g., "stay-awhile" -> "stay awhile")
+  albumTitle = albumTitle.replace(/-/g, ' ');
+  
+  console.log(`🔍 Album page: id="${id}" -> albumTitle="${albumTitle}"`);
+  
   const album = await getAlbumData(albumTitle);
   
   return <AlbumDetailClient albumTitle={albumTitle} initialAlbum={album} />;
