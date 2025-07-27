@@ -81,7 +81,53 @@ export async function GET(request: NextRequest) {
 
     console.log(`🖼️ Proxying image: ${imageUrl}`);
 
-    // Fetch the image file
+    // For encoded filenames, try to decode and fetch from original URL first
+    if (imageUrl.includes('cache/artwork/artwork-')) {
+      const filename = imageUrl.split('/').pop();
+      if (filename) {
+        const encodedMatch = filename.match(/artwork-.*?-([A-Za-z0-9+/=]{20,})\.(jpg|jpeg|png|gif)$/);
+        if (encodedMatch) {
+          try {
+            const base64Part = encodedMatch[1];
+            const originalUrl = atob(base64Part);
+            console.log(`🔄 Trying decoded original URL first: ${originalUrl}`);
+            
+            // Try original URL first
+            const originalResponse = await fetch(originalUrl, {
+              headers: {
+                'User-Agent': 'DoerfelVerse/1.0 (Image Proxy)',
+                'Referer': 'https://re.podtards.com',
+              },
+              signal: AbortSignal.timeout(15000),
+            });
+            
+            if (originalResponse.ok) {
+              const contentType = originalResponse.headers.get('Content-Type') || 'image/jpeg';
+              if (contentType.startsWith('image/')) {
+                const imageBuffer = await originalResponse.arrayBuffer();
+                const contentLength = imageBuffer.byteLength;
+                
+                console.log(`✅ Original URL worked: ${originalUrl} (${contentLength} bytes)`);
+                return new NextResponse(imageBuffer, {
+                  status: 200,
+                  headers: {
+                    'Content-Type': contentType,
+                    'Content-Length': contentLength.toString(),
+                    'Cache-Control': 'public, max-age=3600',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET, HEAD',
+                  },
+                });
+              }
+            }
+          } catch (decodeError) {
+            console.warn('Failed to decode or fetch original URL:', decodeError);
+          }
+        }
+      }
+    }
+
+    // Fetch the image file from CDN as fallback
     const response = await fetch(imageUrl, {
       headers: {
         'User-Agent': 'DoerfelVerse/1.0 (Image Proxy)',
@@ -91,55 +137,7 @@ export async function GET(request: NextRequest) {
     });
 
     if (!response.ok) {
-      console.error(`❌ Image fetch failed: ${response.status} ${response.statusText}`);
-      
-      // If CDN file is missing (404), try to decode base64-encoded original URL as fallback
-      if (response.status === 404 && imageUrl.includes('cache/artwork/artwork-')) {
-        const filename = imageUrl.split('/').pop();
-        if (filename) {
-          const encodedMatch = filename.match(/artwork-.*?-([A-Za-z0-9+/=]{20,})\.(jpg|jpeg|png|gif)$/);
-          if (encodedMatch) {
-            try {
-              const base64Part = encodedMatch[1];
-              const originalUrl = atob(base64Part);
-              console.log(`🔄 CDN file missing, trying decoded original URL: ${originalUrl}`);
-              
-              // Fetch from original URL
-              const originalResponse = await fetch(originalUrl, {
-                headers: {
-                  'User-Agent': 'DoerfelVerse/1.0 (Image Proxy)',
-                  'Referer': 'https://re.podtards.com',
-                },
-                signal: AbortSignal.timeout(15000),
-              });
-              
-              if (originalResponse.ok) {
-                const contentType = originalResponse.headers.get('Content-Type') || 'image/jpeg';
-                if (contentType.startsWith('image/')) {
-                  // Read the image data as buffer to ensure complete transfer
-                  const imageBuffer = await originalResponse.arrayBuffer();
-                  const contentLength = imageBuffer.byteLength;
-                  
-                  console.log(`✅ Original URL worked: ${originalUrl} (${contentLength} bytes)`);
-                  return new NextResponse(imageBuffer, {
-                    status: 200,
-                    headers: {
-                      'Content-Type': contentType,
-                      'Content-Length': contentLength.toString(),
-                      'Cache-Control': 'public, max-age=3600',
-                      'Access-Control-Allow-Origin': '*',
-                      'Access-Control-Allow-Methods': 'GET, HEAD',
-                    },
-                  });
-                }
-              }
-            } catch (decodeError) {
-              console.warn('Failed to decode or fetch original URL:', decodeError);
-            }
-          }
-        }
-      }
-      
+      console.error(`❌ CDN fetch failed: ${response.status} ${response.statusText}`);
       return NextResponse.json({ 
         error: 'Failed to fetch image file',
         status: response.status 
