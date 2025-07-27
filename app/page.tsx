@@ -1101,7 +1101,12 @@ export default function HomePage() {
                     priority
                   />
                 </div>
-                <h1 className="text-4xl font-bold">Into the ValueVerse</h1>
+                <div className="flex items-center gap-3">
+                  <h1 className="text-4xl font-bold">Into the ValueVerse</h1>
+                  <span className="text-sm bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full border border-yellow-500/30">
+                    Beta - might not work
+                  </span>
+                </div>
               </div>
               
               {/* Right side - About Link */}
