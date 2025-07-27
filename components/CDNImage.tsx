@@ -101,12 +101,7 @@ export default function CDNImage({
       // Second failure: try data URL fallback
       console.log('Original URL failed, trying data URL fallback...');
       
-      const svgContent = `
-        <svg width="${width || 300}" height="${height || 300}" xmlns="http://www.w3.org/2000/svg">
-          <rect width="100%" height="100%" fill="#1f2937"/>
-          <text x="50%" y="50%" text-anchor="middle" dy="0.3em" fill="#9ca3af" font-family="Arial" font-size="32">🎵</text>
-        </svg>
-      `;
+      const svgContent = `<svg width="${width || 300}" height="${height || 300}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#1f2937"/><circle cx="50%" cy="50%" r="20" fill="#9ca3af"/></svg>`;
       
       const encodedSvg = encodeURIComponent(svgContent);
       const dataUrl = `data:image/svg+xml;charset=utf-8,${encodedSvg}`;
@@ -152,12 +147,7 @@ export default function CDNImage({
     const timeout = setTimeout(() => {
       console.log('Image timeout - falling back to placeholder');
       // Create fallback directly instead of calling handleError to avoid dependency
-      const svgContent = `
-        <svg width="${width || 300}" height="${height || 300}" xmlns="http://www.w3.org/2000/svg">
-          <rect width="100%" height="100%" fill="#1f2937"/>
-          <text x="50%" y="50%" text-anchor="middle" dy="0.3em" fill="#9ca3af" font-family="Arial" font-size="32">🎵</text>
-        </svg>
-      `;
+      const svgContent = `<svg width="${width || 300}" height="${height || 300}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#1f2937"/><circle cx="50%" cy="50%" r="20" fill="#9ca3af"/></svg>`;
       
       const encodedSvg = encodeURIComponent(svgContent);
       const dataUrl = `data:image/svg+xml;charset=utf-8,${encodedSvg}`;
@@ -201,12 +191,12 @@ export default function CDNImage({
     <div className={`relative ${className || ''}`}>
       {isLoading && (
         <div className="absolute inset-0 bg-gray-800/50 animate-pulse rounded flex items-center justify-center">
-          <div className="text-white/50 text-2xl">🎵</div>
+          <div className="w-6 h-6 bg-white/20 rounded-full"></div>
         </div>
       )}
       {hasError && (
         <div className="absolute inset-0 bg-gray-800/50 rounded flex items-center justify-center">
-          <div className="text-white/50 text-2xl">🎵</div>
+          <div className="w-6 h-6 bg-white/20 rounded-full"></div>
         </div>
       )}
       

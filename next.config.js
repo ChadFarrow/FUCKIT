@@ -127,10 +127,16 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
-      // Bunny.net CDN domain
+      // Bunny.net CDN domains
       {
         protocol: 'https',
         hostname: 're-podtards-cdn.b-cdn.net',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'FUCKIT.b-cdn.net',
         port: '',
         pathname: '/**',
       },
@@ -190,7 +196,7 @@ const nextConfig = {
     // Improved loading state configuration
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
-    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    contentSecurityPolicy: "default-src 'self' data:; script-src 'none'; img-src 'self' data: https:; sandbox;",
     // Reduce retry attempts to prevent excessive HTTP 400 errors
     loader: 'default',
     loaderFile: undefined,
