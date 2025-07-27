@@ -78,7 +78,6 @@ export default function CDNImage({
   const handleError = () => {
     console.warn(`Image failed to load (attempt ${retryCount + 1}):`, currentSrc);
     setIsLoading(false);
-    setHasError(true);
     
     if (retryCount === 0) {
       // First failure: try original URL
@@ -91,17 +90,17 @@ export default function CDNImage({
         setRetryCount(1);
         return;
       } else {
-        // No fallback available (simple filename) - go straight to placeholder
+        // No fallback available (simple filename) - go to data URL
         console.log('No fallback URL available for simple filename, using placeholder');
-        setRetryCount(1); // Skip to placeholder
+        setRetryCount(1); // Skip to data URL
       }
     }
     
-    if (retryCount === 1) {
-      // Second failure: try data URL fallback
+    if (retryCount <= 1) {
+      // Try data URL fallback
       console.log('Original URL failed, trying data URL fallback...');
       
-      const svgContent = `<svg width="${width || 300}" height="${height || 300}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#1f2937"/><circle cx="50%" cy="50%" r="20" fill="#9ca3af"/></svg>`;
+      const svgContent = `<svg width="${width || 300}" height="${height || 300}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#1f2937"/><circle cx="50%" cy="45%" r="25" fill="#9ca3af"/><text x="50%" y="65%" text-anchor="middle" fill="#9ca3af" font-size="12" font-family="system-ui">♪</text></svg>`;
       
       const encodedSvg = encodeURIComponent(svgContent);
       const dataUrl = `data:image/svg+xml;charset=utf-8,${encodedSvg}`;
@@ -111,7 +110,9 @@ export default function CDNImage({
       setIsLoading(true);
       setRetryCount(2);
     } else {
+      // Final fallback - show error state but don't hide image
       console.log('All fallbacks failed, showing error state');
+      setHasError(true);
       onError?.();
     }
   };
@@ -156,7 +157,7 @@ export default function CDNImage({
       setHasError(false);
       setIsLoading(true);
       setRetryCount(1);
-    }, 3000); // 3 second timeout for faster fallback
+    }, 1500); // 1.5 second timeout for faster fallback on OpaqueResponseBlocking
     
     setTimeoutId(timeout);
     
@@ -207,7 +208,7 @@ export default function CDNImage({
           alt={alt}
           width={width}
           height={height}
-          className={`${isLoading || hasError ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+          className={`${isLoading && retryCount === 0 ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
           onError={handleError}
           onLoad={handleLoad}
           loading={priority ? 'eager' : 'lazy'}
@@ -222,7 +223,7 @@ export default function CDNImage({
           alt={alt}
           width={width}
           height={height}
-          className={`${isLoading || hasError ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+          className={`${isLoading && retryCount === 0 ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
           priority={priority}
           onError={handleError}
           onLoad={handleLoad}
