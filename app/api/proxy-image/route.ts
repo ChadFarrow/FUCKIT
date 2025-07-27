@@ -85,10 +85,10 @@ export async function GET(request: NextRequest) {
     if (imageUrl.includes('cache/artwork/artwork-')) {
       const filename = imageUrl.split('/').pop();
       if (filename) {
-        const encodedMatch = filename.match(/artwork-.*?-([A-Za-z0-9+/=]{20,})\.(jpg|jpeg|png|gif)$/);
+        const encodedMatch = filename.match(/artwork-(.+?)-([A-Za-z0-9+/=]{20,})\.(jpg|jpeg|png|gif)$/);
         if (encodedMatch) {
           try {
-            const base64Part = encodedMatch[1];
+            const base64Part = encodedMatch[2];
             const originalUrl = atob(base64Part);
             console.log(`🔄 Trying decoded original URL first: ${originalUrl}`);
             
