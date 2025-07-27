@@ -134,12 +134,6 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
-      {
-        protocol: 'https',
-        hostname: 'FUCKIT.b-cdn.net',
-        port: '',
-        pathname: '/**',
-      },
       // Fallback for local development
       {
         protocol: 'https',

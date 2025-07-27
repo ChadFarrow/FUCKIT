@@ -33,39 +33,14 @@ export default function CDNImage({
 }: CDNImageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-  // Add cache-busting for known problematic files
-  const addCacheBuster = (url: string) => {
-    // List of files that need cache busting due to wrong content-type
-    const problematicFiles = [
-      'artwork-ben-doerfel-artwork.png',
-      'artwork-kurtisdrums-artwork.png',
-      'artwork-bloodshot-lies---the-album-artwork.png',
-      'artwork-music-from-the-doerfel-verse-artwork.png',
-      'artwork-into-the-doerfel-verse-artwork.png',
-      'artwork-christ-exalted-artwork.png',
-      'artwork-dfb-volume-2-artwork.png',
-      'artwork-generation-gap-artwork.png',
-      'artwork-18-sundays-artwork.gif',
-      'artwork-your-chance-artwork.png'
-    ];
-    
-    const filename = url.split('/').pop();
-    if (filename && problematicFiles.includes(filename)) {
-      // Add timestamp to force CDN to fetch fresh content
-      const separator = url.includes('?') ? '&' : '?';
-      return `${url}${separator}cb=${Date.now()}`;
-    }
-    return url;
-  };
-  
-  const [currentSrc, setCurrentSrc] = useState(addCacheBuster(src));
+  const [currentSrc, setCurrentSrc] = useState(src);
   const [retryCount, setRetryCount] = useState(0);
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
   // Extract original URL from CDN URL for fallback
   const getOriginalUrl = (cdnUrl: string) => {
-    // Check for both old and new CDN hostnames
-    if (cdnUrl.includes('FUCKIT.b-cdn.net/cache/artwork/') || cdnUrl.includes('re-podtards-cdn.b-cdn.net/cache/artwork/')) {
+    // Check for CDN hostname
+    if (cdnUrl.includes('re-podtards-cdn.b-cdn.net/cache/artwork/')) {
       // Extract the filename from the CDN URL
       const filename = cdnUrl.split('/').pop();
       if (filename) {
@@ -157,7 +132,7 @@ export default function CDNImage({
 
   // Reset state when src changes and set up timeout for slow connections
   useEffect(() => {
-    setCurrentSrc(addCacheBuster(src));
+    setCurrentSrc(src);
     setIsLoading(true);
     setHasError(false);
     setRetryCount(0);
