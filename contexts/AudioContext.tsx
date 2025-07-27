@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useRef, useState, useEffect, ReactNode } from 'react';
 import { RSSAlbum } from '@/lib/rss-parser';
+import { toast } from '@/components/Toast';
 
 interface AudioContextType {
   // Audio state
@@ -68,6 +69,31 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
         }
       }
     }
+  }, []);
+
+  // Add user interaction handler to enable audio playback
+  useEffect(() => {
+    const enableAudio = () => {
+      if (audioRef.current) {
+        // Try to play a silent audio to unlock audio context
+        audioRef.current.volume = 0;
+        audioRef.current.play().catch(() => {
+          // Ignore errors - this is just to unlock the audio context
+        });
+      }
+    };
+
+    // Listen for user interactions to enable audio
+    const events = ['click', 'touchstart', 'keydown'];
+    events.forEach(event => {
+      document.addEventListener(event, enableAudio, { once: true });
+    });
+
+    return () => {
+      events.forEach(event => {
+        document.removeEventListener(event, enableAudio);
+      });
+    };
   }, []);
 
   // Save state to localStorage when it changes
@@ -155,6 +181,10 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
         // Wait a bit for the audio to load before attempting to play
         await new Promise(resolve => setTimeout(resolve, 100));
         
+        // Ensure audio is not muted for playback
+        audioRef.current.muted = false;
+        audioRef.current.volume = 0.8;
+        
         const playPromise = audioRef.current.play();
         if (playPromise !== undefined) {
           await playPromise;
@@ -167,7 +197,9 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
         // Handle specific error types
         if (attemptError instanceof DOMException) {
           if (attemptError.name === 'NotAllowedError') {
-            console.log('🚫 Autoplay blocked - user interaction required');
+            console.log('🚫 Autoplay blocked - user interaction required. Please click or tap to enable audio.');
+            // Show user-friendly toast message
+            toast.info('Click anywhere on the page to enable audio playback', 8000);
             break; // Don't try other URLs for autoplay issues
           } else if (attemptError.name === 'NotSupportedError') {
             console.log('🚫 Audio format not supported');
@@ -400,12 +432,13 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       {/* Hidden audio element */}
       <audio
         ref={audioRef}
-        preload="none"
+        preload="metadata"
         crossOrigin="anonymous"
         playsInline
         webkit-playsinline="true"
         autoPlay={false}
         controls={false}
+        muted={false}
         style={{ display: 'none' }}
       />
     </AudioContext.Provider>
