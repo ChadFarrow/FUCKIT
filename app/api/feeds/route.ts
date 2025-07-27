@@ -19,6 +19,7 @@ export async function GET() {
       core: activeFeeds.filter((feed: any) => feed.priority === 'core'),
       extended: activeFeeds.filter((feed: any) => feed.priority === 'extended'),
       low: activeFeeds.filter((feed: any) => feed.priority === 'low'),
+      publisher: activeFeeds.filter((feed: any) => feed.type === 'publisher'),
       all: activeFeeds
     };
 

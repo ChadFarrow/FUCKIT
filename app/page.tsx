@@ -438,7 +438,8 @@ export default function HomePage() {
         // Update total feeds count for display
         const totalCount = (feedsConfig.core?.length || 0) + 
                           (feedsConfig.extended?.length || 0) + 
-                          (feedsConfig.low?.length || 0);
+                          (feedsConfig.low?.length || 0) +
+                          (feedsConfig.publisher?.length || 0);
         setTotalFeedsCount(totalCount);
       }
     } catch (error) {
@@ -448,6 +449,9 @@ export default function HomePage() {
     // Convert feed objects to URLs for PodcastIndex API
     const convertFeedsToUrls = (feeds: any[]) => 
       feeds.map((feed: any) => `/api/podcastindex?feedUrl=${encodeURIComponent(feed.originalUrl)}`);
+    
+    // Get publisher feeds for background loading
+    const publisherFeeds = convertFeedsToUrls(feedsConfig.publisher || []);
     
     // Performance optimization: Load feeds in tiers for faster initial page load
     let feedsToLoad: string[] = [];
