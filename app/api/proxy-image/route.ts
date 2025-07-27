@@ -36,12 +36,13 @@ function isImageRateLimited(url: string): boolean {
 }
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  let imageUrl = searchParams.get('url');
+  try {
+    const { searchParams } = new URL(request.url);
+    let imageUrl = searchParams.get('url');
 
-  if (!imageUrl) {
-    return NextResponse.json({ error: 'Image URL parameter required' }, { status: 400 });
-  }
+    if (!imageUrl) {
+      return NextResponse.json({ error: 'Image URL parameter required' }, { status: 400 });
+    }
 
   // Fix CDN hostname mapping before trying to fetch
   if (imageUrl.includes('re-podtards-cache.b-cdn.net')) {
@@ -89,7 +90,19 @@ export async function GET(request: NextRequest) {
         if (encodedMatch) {
           try {
             const base64Part = encodedMatch[2];
+            
+            // Validate base64 before decoding
+            if (!base64Part || base64Part.length < 20) {
+              throw new Error('Invalid base64 part');
+            }
+            
             const originalUrl = atob(base64Part);
+            
+            // Validate decoded URL
+            if (!originalUrl || !originalUrl.startsWith('http')) {
+              throw new Error('Invalid decoded URL');
+            }
+            
             console.log(`🔄 Trying decoded original URL first: ${originalUrl}`);
             
             // Try original URL first
