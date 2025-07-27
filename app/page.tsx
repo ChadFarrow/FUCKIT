@@ -521,7 +521,7 @@ export default function HomePage() {
               <div className="text-center">
                 <h1 className="text-2xl font-bold mb-2">Into the ValueVerse</h1>
                                                   <div className="text-xs bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full border border-yellow-500/30">
-                  Beta - if the page isn&apos;t loading try a hard refresh and wait a little for it to load
+                  Beta
                 </div>
               </div>
             </div>
@@ -559,7 +559,7 @@ export default function HomePage() {
                 <div className="text-center">
                   <h1 className="text-4xl font-bold mb-2">Into the ValueVerse</h1>
                   <div className="text-sm bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full border border-yellow-500/30 inline-block">
-                    Beta - if the page isn&apos;t loading try a hard refresh and wait a little for it to load
+                    Beta
                   </div>
                 </div>
                 
@@ -739,7 +739,7 @@ export default function HomePage() {
         )}
         
         {/* Main Content */}
-        <div className="container mx-auto px-6 py-8">
+        <div className="container mx-auto px-3 sm:px-6 py-6 sm:py-8">
           {isLoading && albums.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 gap-4">
               <LoadingSpinner 
@@ -791,7 +791,7 @@ export default function HomePage() {
                       <div className="mb-12">
                         <h2 className="text-2xl font-bold mb-6">Albums</h2>
                         {viewType === 'grid' ? (
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                             {albumsWithMultipleTracks.map((album, index) => (
                               <AlbumCard
                                 key={`album-${index}`}
@@ -854,7 +854,7 @@ export default function HomePage() {
                       <div>
                         <h2 className="text-2xl font-bold mb-6">EPs and Singles</h2>
                         {viewType === 'grid' ? (
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                             {epsAndSingles.map((album, index) => (
                               <AlbumCard
                                 key={`ep-single-${index}`}
@@ -915,7 +915,7 @@ export default function HomePage() {
               ) : (
                 // Unified layout for specific filters (Albums, EPs, Singles)
                 viewType === 'grid' ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                     {filteredAlbums.map((album, index) => (
                       <AlbumCard
                         key={`${album.title}-${index}`}
