@@ -273,7 +273,7 @@
         "testStrategy": "",
         "status": "pending",
         "dependencies": [],
-        "priority": "high",
+        "priority": "medium",
         "subtasks": [
           {
             "id": 1,
@@ -337,7 +337,7 @@
       "description": "Main task list for FUCKIT podcast/music streaming application",
       "created": "2025-01-27T00:00:00.000Z",
       "lastModified": "2025-01-27T00:00:00.000Z",
-      "updated": "2025-07-27T21:10:55.657Z"
+      "updated": "2025-07-27T23:12:36.377Z"
     }
   }
 }
