@@ -44,13 +44,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Image URL parameter required' }, { status: 400 });
     }
 
-  // Fix CDN hostname mapping before trying to fetch
-  if (imageUrl.includes('re-podtards-cache.b-cdn.net')) {
-    imageUrl = imageUrl.replace('re-podtards-cache.b-cdn.net', 'FUCKIT.b-cdn.net');
-    console.log(`🔧 Fixed CDN hostname: ${searchParams.get('url')} → ${imageUrl}`);
-  }
-
-  try {
+    // Fix CDN hostname mapping before trying to fetch
+    if (imageUrl.includes('re-podtards-cache.b-cdn.net')) {
+      imageUrl = imageUrl.replace('re-podtards-cache.b-cdn.net', 'FUCKIT.b-cdn.net');
+      console.log(`🔧 Fixed CDN hostname: ${searchParams.get('url')} → ${imageUrl}`);
+    }
     // Validate URL
     const url = new URL(imageUrl);
     
