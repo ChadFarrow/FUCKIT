@@ -647,8 +647,16 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
         <div className="container mx-auto px-6 py-8">
           <div className="text-center">
-            <h1 className="text-2xl font-bold mb-4">{error || 'Album Not Found'}</h1>
-            <Link href="/" className="text-blue-400 hover:text-blue-300">
+            <h1 className="text-2xl font-bold mb-4">
+              {error === 'Album not found' ? 'Album Not Available' : (error || 'Album Not Found')}
+            </h1>
+            <p className="text-gray-400 mb-6 max-w-md mx-auto">
+              {error === 'Album not found' 
+                ? 'This album may not be available in our current collection or may have been temporarily removed.'
+                : 'We couldn\'t load this album. Please check the URL or try again later.'
+              }
+            </p>
+            <Link href="/" className="text-blue-400 hover:text-blue-300 transition-colors">
               ← Back to Albums
             </Link>
           </div>
@@ -694,9 +702,10 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               alt={album.title}
               width={280}
               height={280}
-              className={`rounded-lg object-cover shadow-2xl mx-auto transition-opacity duration-500 ${
+              className={`rounded-lg object-cover shadow-2xl mx-auto transition-opacity duration-500 w-70 h-70 ${
                 albumArtLoaded ? 'opacity-100' : 'opacity-0'
               }`}
+              style={{ objectFit: 'cover' }}
               priority={true} // Always prioritize album art loading
               onLoad={() => setAlbumArtLoaded(true)}
               onError={(e) => {
@@ -812,6 +821,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                           width={48}
                           height={48}
                           className="absolute inset-0 w-full h-full object-cover"
+                          style={{ objectFit: 'cover' }}
                           onError={(e) => {
                             console.error('Track image failed to load:', track.image, 'for track:', track.title);
                             // Fallback to track number on error
@@ -849,6 +859,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                           width={48}
                           height={48}
                           className="absolute inset-0 w-full h-full object-cover"
+                          style={{ objectFit: 'cover' }}
                           onError={(e) => {
                             // Fallback to track number if album image also fails
                             const target = e.target as HTMLImageElement;

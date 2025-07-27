@@ -62,7 +62,8 @@ const GlobalNowPlayingBar: React.FC = () => {
             alt={currentPlayingAlbum.title}
             width={48}
             height={48}
-            className="rounded object-cover"
+            className="rounded object-cover w-12 h-12 flex-shrink-0"
+            style={{ objectFit: 'cover' }}
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.src = getPlaceholderImageUrl('thumbnail');
