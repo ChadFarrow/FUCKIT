@@ -211,7 +211,6 @@ export default function CDNImage({
           onError={handleError}
           onLoad={handleLoad}
           loading={priority ? 'eager' : 'lazy'}
-          crossOrigin="anonymous"
           referrerPolicy="no-referrer"
           style={{ objectFit: 'cover' }}
           {...props}
@@ -228,7 +227,6 @@ export default function CDNImage({
           onError={handleError}
           onLoad={handleLoad}
           unoptimized={true}
-          crossOrigin="anonymous"
           {...props}
         />
       )}
