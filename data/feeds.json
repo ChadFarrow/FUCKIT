@@ -909,8 +909,18 @@
       "status": "active",
       "addedAt": "2025-07-27T02:34:47.000Z",
       "lastUpdated": "2025-07-27T02:34:47.000Z"
+    },
+    {
+      "id": "my-friend-jimi-publisher",
+      "originalUrl": "https://wavlake.com/feed/artist/0ea699be-e985-4aa1-8c00-43542e4b9e0d",
+      "type": "publisher",
+      "title": "My Friend Jimi",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-27T02:35:00.000Z",
+      "lastUpdated": "2025-07-27T02:35:00.000Z"
     }
   ],
-  "lastUpdated": "2025-07-27T01:27:30.801Z",
+  "lastUpdated": "2025-07-27T02:35:00.000Z",
   "version": 2
 }

@@ -15,7 +15,8 @@
     "setup-cdn": "node scripts/setup-cdn.js",
     "update-version": "node scripts/auto-version-update.js",
     "deploy": "npm run update-version && ./scripts/deploy.sh",
-    "auto-deploy": "npm run update-version && ./scripts/auto-deploy.sh"
+    "auto-deploy": "npm run update-version && ./scripts/auto-deploy.sh",
+    "auto-add-publishers": "node scripts/auto-add-publisher-feeds.js"
   },
   "dependencies": {
     "@types/node": "^20",

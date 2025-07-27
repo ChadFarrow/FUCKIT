@@ -459,7 +459,7 @@ ${report.results.map(result =>
             Selective RSS Feed Validator
           </h1>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Choose specific RSS tags and elements to validate in your feed. Get detailed reports on what's working and what needs attention.
+            Choose specific RSS tags and elements to validate in your feed. Get detailed reports on what&apos;s working and what needs attention.
           </p>
         </div>
 

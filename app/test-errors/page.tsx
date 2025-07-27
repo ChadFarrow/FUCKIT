@@ -210,7 +210,7 @@ export default function ErrorTestPage() {
           <h2 className="text-xl font-semibold mb-4">Test Results</h2>
           
           {testResults.length === 0 ? (
-            <p className="text-gray-400">No tests run yet. Click "Run All Tests" to begin.</p>
+            <p className="text-gray-400">No tests run yet. Click &quot;Run All Tests&quot; to begin.</p>
           ) : (
             <div className="space-y-3 max-h-96 overflow-y-auto">
               {testResults.map((result, index) => (

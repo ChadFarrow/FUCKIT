@@ -561,7 +561,7 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
               <div className="text-center py-20">
                 <Music className="w-16 h-16 text-gray-400 mx-auto mb-6" />
                 <h2 className="text-2xl font-semibold mb-4">No Albums Found</h2>
-                <p className="text-gray-400 text-lg">This artist doesn't have any releases available yet.</p>
+                <p className="text-gray-400 text-lg">This artist doesn&apos;t have any releases available yet.</p>
               </div>
             )}
           </div>

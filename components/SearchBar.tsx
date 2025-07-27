@@ -47,7 +47,7 @@ export default function SearchBar({ onSearch, onClear }: SearchBarProps) {
         )}
       </div>
       <div className="mt-2 text-sm text-gray-500">
-        Try searching for: "music", "jazz", "rock", "electronic", "podcast"
+        Try searching for: &quot;music&quot;, &quot;jazz&quot;, &quot;rock&quot;, &quot;electronic&quot;, &quot;podcast&quot;
       </div>
     </form>
   );

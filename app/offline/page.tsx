@@ -16,12 +16,12 @@ export default function OfflinePage() {
         </div>
 
         {/* Title */}
-        <h1 className="text-3xl font-bold mb-4">You're Offline</h1>
+        <h1 className="text-3xl font-bold mb-4">You&apos;re Offline</h1>
         
         {/* Description */}
         <p className="text-gray-400 mb-8 leading-relaxed">
-          Don't worry! You can still enjoy your cached music and browse previously loaded content. 
-          Some features may be limited until you're back online.
+          Don&apos;t worry! You can still enjoy your cached music and browse previously loaded content. 
+          Some features may be limited until you&apos;re back online.
         </p>
 
         {/* Features Available Offline */}
