@@ -410,12 +410,35 @@ export default function HomePage() {
   const handleAddFeed = async (feedUrl: string) => {
     setIsAddingFeed(true);
     try {
-      // Add to custom feeds
+      // First, save the feed permanently via API
+      const response = await fetch('/api/admin/feeds', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          url: feedUrl,
+          type: 'album'
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to save feed');
+      }
+
+      // Show success message
+      toast.success('RSS feed added successfully!');
+      
+      // Add to custom feeds for immediate loading
       const newCustomFeeds = [...customFeeds, feedUrl];
       setCustomFeeds(newCustomFeeds);
       
       // Reload with the new feed
       await loadAlbumsData(newCustomFeeds);
+      
+      console.log('✅ RSS feed added and loaded:', feedUrl);
     } catch (err) {
       const errorMessage = getErrorMessage(err);
       logger.error('Error adding RSS feed', err, { feedUrl });
