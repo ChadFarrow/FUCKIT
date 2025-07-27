@@ -78,9 +78,22 @@ export default function AlbumCard({ album, isPlaying, onPlay, className = '' }: 
       {/* Album Artwork */}
       <div 
         className="relative aspect-square overflow-hidden"
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
+        onTouchStart={(e) => {
+          // Only handle touch events on the artwork area, not on the play button
+          if (!(e.target as HTMLElement).closest('button')) {
+            onTouchStart(e);
+          }
+        }}
+        onTouchMove={(e) => {
+          if (!(e.target as HTMLElement).closest('button')) {
+            onTouchMove(e);
+          }
+        }}
+        onTouchEnd={(e) => {
+          if (!(e.target as HTMLElement).closest('button')) {
+            onTouchEnd(e);
+          }
+        }}
       >
         <CDNImage
           src={artworkUrl}
@@ -110,10 +123,13 @@ export default function AlbumCard({ album, isPlaying, onPlay, className = '' }: 
         )}
 
         {/* Play/Pause Overlay */}
-        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center pointer-events-none">
           <button
-            onClick={(e) => onPlay(album, e)}
-            className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors duration-200 touch-manipulation"
+            onClick={(e) => {
+              e.stopPropagation();
+              onPlay(album, e);
+            }}
+            className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors duration-200 touch-manipulation pointer-events-auto"
             aria-label={isPlaying ? 'Pause' : 'Play'}
           >
             {isPlaying ? (
@@ -136,8 +152,12 @@ export default function AlbumCard({ album, isPlaying, onPlay, className = '' }: 
       <div className="p-3">
         <Link 
           href={albumUrl} 
-          className="block group"
-          onClick={() => console.log('🔗 Navigating to album:', albumUrl)}
+          className="block group cursor-pointer"
+          onClick={(e) => {
+            console.log('🔗 Navigating to album:', albumUrl);
+            // Prevent the click from bubbling up to parent elements
+            e.stopPropagation();
+          }}
         >
           <h3 className="font-semibold text-white text-sm leading-tight line-clamp-2 group-hover:text-blue-300 transition-colors duration-200">
             {album.title}
