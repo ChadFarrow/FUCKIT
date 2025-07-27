@@ -11,11 +11,13 @@ interface CDNImageProps {
   className?: string;
   priority?: boolean;
   quality?: number;
-  format?: 'webp' | 'jpeg' | 'png' | 'gif';
+  format?: 'webp' | 'jpeg' | 'png' | 'gif' | 'auto';
   fit?: 'cover' | 'contain' | 'fill' | 'inside' | 'outside';
   onError?: () => void;
   onLoad?: () => void;
   fallbackSrc?: string;
+  sizes?: string;
+  placeholder?: 'blur' | 'empty';
 }
 
 export default function CDNImage({
@@ -29,6 +31,8 @@ export default function CDNImage({
   onError,
   onLoad,
   fallbackSrc,
+  sizes,
+  placeholder = 'empty',
   ...props
 }: CDNImageProps) {
   const [isLoading, setIsLoading] = useState(true);
@@ -37,8 +41,100 @@ export default function CDNImage({
   const [retryCount, setRetryCount] = useState(0);
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
+  // Check if we're on mobile
+  const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
+  
+  useEffect(() => {
+    const checkDevice = () => {
+      const width = window.innerWidth;
+      setIsMobile(width <= 768);
+      setIsTablet(width > 768 && width <= 1024);
+    };
+    
+    checkDevice();
+    window.addEventListener('resize', checkDevice);
+    return () => window.removeEventListener('resize', checkDevice);
+  }, []);
+
+  // Generate optimized image URL
+  const getOptimizedUrl = (originalUrl: string, targetWidth?: number, targetHeight?: number) => {
+    // If it's already an optimized URL, return as is
+    if (originalUrl.includes('/api/optimized-images/')) {
+      return originalUrl;
+    }
+    
+    // For large images, use optimized endpoint
+    const largeImages = [
+      'you-are-my-world.gif',
+      'HowBoutYou.gif', 
+      'autumn.gif',
+      'WIldandfreecover-copy-2.png',
+      'alandace.gif',
+      'doerfel-verse-idea-9.png',
+      'SatoshiStreamer-track-1-album-art.png',
+      'dvep15-art.png',
+      'disco-swag.png',
+      'first-christmas-art.jpg',
+      'let-go-art.png'
+    ];
+    
+    const filename = originalUrl.split('/').pop();
+    if (filename && largeImages.some(img => filename.includes(img.replace(/\.(png|jpg|gif)$/, '')))) {
+      const optimizedFilename = largeImages.find(img => filename.includes(img.replace(/\.(png|jpg|gif)$/, '')));
+      if (optimizedFilename) {
+        let optimizedUrl = `https://re.podtards.com/api/optimized-images/${optimizedFilename}`;
+        
+        // Add size parameters for responsive loading
+        if (targetWidth || targetHeight) {
+          const params = new URLSearchParams();
+          if (targetWidth) params.set('w', targetWidth.toString());
+          if (targetHeight) params.set('h', targetHeight.toString());
+          params.set('q', quality.toString());
+          
+          // Use WebP for better compression if supported
+          if (typeof window !== 'undefined' && window.navigator.userAgent.includes('Chrome')) {
+            params.set('f', 'webp');
+          }
+          
+          optimizedUrl += `?${params.toString()}`;
+        }
+        
+        return optimizedUrl;
+      }
+    }
+    
+    return originalUrl;
+  };
+
+  // Get responsive image sizes
+  const getResponsiveSizes = () => {
+    if (sizes) return sizes;
+    
+    if (isMobile) {
+      return '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw';
+    } else if (isTablet) {
+      return '(max-width: 1024px) 50vw, 33vw';
+    } else {
+      return '(max-width: 1200px) 33vw, 25vw';
+    }
+  };
+
+  // Get appropriate image dimensions
+  const getImageDimensions = () => {
+    if (width && height) return { width, height };
+    
+    // Default responsive sizes
+    if (isMobile) {
+      return { width: 300, height: 300 };
+    } else if (isTablet) {
+      return { width: 400, height: 400 };
+    } else {
+      return { width: 500, height: 500 };
+    }
+  };
+
   const getOriginalUrl = (imageUrl: string) => {
-    // Use fallback URL if provided, otherwise return original
     return fallbackSrc || imageUrl;
   };
 
@@ -47,8 +143,7 @@ export default function CDNImage({
     setIsLoading(false);
     
     if (retryCount === 0 && fallbackSrc && fallbackSrc !== currentSrc) {
-      // First failure: try fallbackSrc (original URL) if provided
-      console.log('CDN failed, trying fallback URL:', fallbackSrc);
+      console.log('Optimized image failed, trying fallback URL:', fallbackSrc);
       setCurrentSrc(fallbackSrc);
       setHasError(false);
       setIsLoading(true);
@@ -57,10 +152,9 @@ export default function CDNImage({
     }
     
     if (retryCount === 0) {
-      // No fallbackSrc provided, try to extract from CDN URL
       const originalUrl = getOriginalUrl(currentSrc);
       if (originalUrl && originalUrl !== currentSrc) {
-        console.log('CDN failed, trying extracted original URL:', originalUrl);
+        console.log('Optimized image failed, trying original URL:', originalUrl);
         setCurrentSrc(originalUrl);
         setHasError(false);
         setIsLoading(true);
@@ -69,57 +163,22 @@ export default function CDNImage({
       }
     }
     
-    if (retryCount <= 2) {
-      // Try image proxy as fallback (similar to audio proxy)
-      const originalSrc = src; // Use the original src prop
-      if (!originalSrc.includes('/api/proxy-image') && !originalSrc.startsWith('data:')) {
-        console.log('Trying image proxy fallback:', originalSrc);
-        setCurrentSrc(`/api/proxy-image?url=${encodeURIComponent(originalSrc)}`);
-        setHasError(false);
-        setIsLoading(true);
-        setRetryCount(3);
-        return;
-      }
-    }
-    
-    if (retryCount <= 3) {
-      // Try data URL fallback
-      console.log('All URLs failed, using placeholder...');
-      
-      const svgContent = `<svg width="${width || 300}" height="${height || 300}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#1f2937"/><circle cx="50%" cy="45%" r="25" fill="#9ca3af"/><text x="50%" y="65%" text-anchor="middle" fill="#9ca3af" font-size="12" font-family="system-ui">♪</text></svg>`;
-      
-      const encodedSvg = encodeURIComponent(svgContent);
-      const dataUrl = `data:image/svg+xml;charset=utf-8,${encodedSvg}`;
-      
-      setCurrentSrc(dataUrl);
-      setHasError(false);
-      setIsLoading(true);
-      setRetryCount(4);
-    } else {
-      // Final fallback - show error state but don't hide image
-      console.log('All fallbacks failed, showing error state');
-      setHasError(true);
-      onError?.();
-    }
+    setHasError(true);
+    onError?.();
   };
 
   const handleLoad = () => {
-    console.log('Image loaded successfully:', currentSrc.includes('data:') ? 'data URL fallback' : currentSrc);
     setIsLoading(false);
     setHasError(false);
-    
-    // Clear timeout if image loads successfully
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-      setTimeoutId(null);
-    }
-    
     onLoad?.();
   };
 
-  // Reset state when src changes and set up timeout for slow connections
+  // Reset state when src changes
   useEffect(() => {
-    setCurrentSrc(src);
+    const dims = getImageDimensions();
+    const optimizedSrc = getOptimizedUrl(src, dims.width, dims.height);
+    
+    setCurrentSrc(optimizedSrc);
     setIsLoading(true);
     setHasError(false);
     setRetryCount(0);
@@ -130,62 +189,34 @@ export default function CDNImage({
       setTimeoutId(null);
     }
     
-    // Disable timeout for now to let images load naturally
-    // const timeout = setTimeout(() => {
-    //   console.log('Image timeout - falling back to placeholder');
-    //   const svgContent = `<svg width="${width || 300}" height="${height || 300}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#1f2937"/><circle cx="50%" cy="50%" r="20" fill="#9ca3af"/></svg>`;
-    //   
-    //   const encodedSvg = encodeURIComponent(svgContent);
-    //   const dataUrl = `data:image/svg+xml;charset=utf-8,${encodedSvg}`;
-    //   
-    //   setCurrentSrc(dataUrl);
-    //   setHasError(false);
-    //   setIsLoading(true);
-    //   setRetryCount(1);
-    // }, 8000);
-    // 
-    // setTimeoutId(timeout);
-    
     return () => {
-      // if (timeout) clearTimeout(timeout);
+      if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [src, width, height]); // Only depend on src and size props
+  }, [src, width, height, isMobile, isTablet]);
 
-  // Check if we're on mobile
-  const [isMobile, setIsMobile] = useState(false);
-  
-  useEffect(() => {
-    const checkMobile = () => {
-      const mobile = window.innerWidth <= 768 || 
-        /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      setIsMobile(mobile);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  const dims = getImageDimensions();
 
   return (
     <div className={`relative ${className || ''}`}>
       {isLoading && (
         <div className="absolute inset-0 bg-gray-800/50 animate-pulse rounded flex items-center justify-center">
-          <div className="w-6 h-6 bg-white/20 rounded-full"></div>
+          <div className="w-6 h-6 bg-white/20 rounded-full animate-spin"></div>
         </div>
       )}
+      
       {hasError && (
         <div className="absolute inset-0 bg-gray-800/50 rounded flex items-center justify-center">
-          <div className="w-6 h-6 bg-white/20 rounded-full"></div>
+          <div className="text-white/60 text-sm">Image unavailable</div>
         </div>
       )}
       
       {isMobile ? (
-        // Use regular img tag for mobile
+        // Use regular img tag for mobile with optimized loading
         <img
           src={currentSrc}
           alt={alt}
-          width={width}
-          height={height}
+          width={dims.width}
+          height={dims.height}
           className={`${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
           onError={handleError}
           onLoad={handleLoad}
@@ -195,19 +226,29 @@ export default function CDNImage({
           {...props}
         />
       ) : (
-        // Use Next.js Image for desktop
+        // Use Next.js Image for desktop with full optimization
         <Image
           src={currentSrc}
           alt={alt}
-          width={width}
-          height={height}
+          width={dims.width}
+          height={dims.height}
           className={`${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
           priority={priority}
+          quality={quality}
+          sizes={getResponsiveSizes()}
           onError={handleError}
           onLoad={handleLoad}
-          unoptimized={true}
+          placeholder={placeholder}
+          unoptimized={currentSrc.includes('/api/optimized-images/')} // Don't double-optimize
           {...props}
         />
+      )}
+      
+      {/* Debug info in development */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="absolute top-1 left-1 bg-black/50 text-white text-xs px-1 py-0.5 rounded opacity-0 hover:opacity-100 transition-opacity">
+          {currentSrc.includes('/api/optimized-images/') ? '🖼️ Optimized' : '📡 Original'}
+        </div>
       )}
     </div>
   );

@@ -43,13 +43,17 @@ export async function GET(
         break;
     }
     
-    // Set headers
+    // Set headers with aggressive caching for optimized images
     const headers = new Headers();
     headers.set('Content-Type', contentType);
-    headers.set('Content-Length', stats.size.toString());
-    headers.set('Cache-Control', 'public, max-age=31536000'); // 1 year
+    headers.set('Content-Length', fileBuffer.length.toString());
+    headers.set('Cache-Control', 'public, max-age=31536000, immutable'); // 1 year, immutable
     headers.set('ETag', `"${stats.mtime.getTime()}"`);
     headers.set('Access-Control-Allow-Origin', '*');
+    headers.set('Access-Control-Allow-Methods', 'GET, HEAD');
+    headers.set('X-Optimized-By', 're.podtards.com');
+    headers.set('X-Image-Size', `${fileBuffer.length} bytes`);
+    headers.set('Vary', 'Accept-Encoding');
     
     return new NextResponse(fileBuffer, {
       status: 200,
@@ -63,4 +67,4 @@ export async function GET(
       error: error instanceof Error ? error.message : 'Unknown error' 
     }, { status: 500 });
   }
-} 
+}
