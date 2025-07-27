@@ -68,11 +68,10 @@ export async function GET(request: NextRequest) {
       'noagendaassets.com'
     ];
 
-    // Allow any Bunny.net CDN domain
-    const isBunnyCdn = url.hostname.endsWith('.b-cdn.net');
+    // Check if domain is allowed
     const isAllowedDomain = allowedDomains.some(domain => url.hostname.includes(domain));
     
-    if (!isAllowedDomain && !isBunnyCdn) {
+    if (!isAllowedDomain) {
       return NextResponse.json({ error: 'Domain not allowed' }, { status: 403 });
     }
 

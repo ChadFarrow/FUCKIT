@@ -1,72 +1,16 @@
 /**
  * Image Utilities
- * Direct image serving without CDN dependencies
+ * Simple image serving utilities without CDN dependencies
  */
 
 /**
- * Check if a URL should use CDN - disabled, using direct image serving
- * @param url - The URL to analyze
- * @returns Always false - CDN disabled
- */
-export function shouldUseCDN(url: string): boolean {
-  // Check if we're in production and the URL is from an external source
-  if (typeof window !== 'undefined' && process.env.NODE_ENV === 'production') {
-    // Only use CDN for external images, not for local assets
-    return Boolean(url && !url.startsWith('/') && !url.startsWith('data:'));
-  }
-  return false;
-}
-
-/**
- * Get image URL - returns original URL directly
- * @param originalUrl - The original image URL
- * @param options - Image options (unused)
- * @returns The original URL
- */
-export function getSmartCDNUrl(
-  originalUrl: string,
-  options: {
-    width?: number;
-    height?: number;
-    quality?: number;
-    format?: 'webp' | 'jpeg' | 'png' | 'gif';
-    fit?: 'cover' | 'contain' | 'fill' | 'inside' | 'outside';
-    forceCDN?: boolean;
-  } = {}
-): string {
-  return originalUrl || '';
-}
-
-/**
- * Legacy function for backward compatibility
- * @deprecated Use getSmartCDNUrl instead
- */
-export function getCDNUrl(
-  originalUrl: string,
-  options: {
-    width?: number;
-    height?: number;
-    quality?: number;
-    format?: 'webp' | 'jpeg' | 'png' | 'gif';
-    fit?: 'cover' | 'contain' | 'fill' | 'inside' | 'outside';
-  } = {}
-): string {
-  return originalUrl || '';
-}
-
-/**
- * Get album artwork URL - returns original URL or placeholder
+ * Get album artwork URL with fallback to placeholder
  * @param originalUrl - The original artwork URL
- * @param size - The desired size (unused)
+ * @param size - The desired size for placeholder
  * @returns The original artwork URL or placeholder
  */
 export function getAlbumArtworkUrl(originalUrl: string, size: 'thumbnail' | 'medium' | 'large' = 'medium'): string {
-  // If no URL provided, return a placeholder
-  if (!originalUrl) {
-    return getPlaceholderImageUrl(size);
-  }
-  
-  return originalUrl;
+  return originalUrl || getPlaceholderImageUrl(size);
 }
 
 /**
@@ -90,17 +34,8 @@ export function getPlaceholderImageUrl(size: 'thumbnail' | 'medium' | 'large' = 
 /**
  * Get track artwork URL - returns original URL
  * @param originalUrl - The original artwork URL
- * @returns The original artwork URL
+ * @returns The original artwork URL or empty string
  */
 export function getTrackArtworkUrl(originalUrl: string): string {
-  return originalUrl || '';
-}
-
-/**
- * Get image URL - returns original URL (no mapping)
- * @param originalUrl - The original image URL
- * @returns The original URL
- */
-export function getMappedCDNUrl(originalUrl: string): string {
   return originalUrl || '';
 } 

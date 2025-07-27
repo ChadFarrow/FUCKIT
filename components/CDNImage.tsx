@@ -38,10 +38,7 @@ export default function CDNImage({
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
   const getOriginalUrl = (imageUrl: string) => {
-    // If it's a CDN URL, try to use the proxy as fallback
-    if (imageUrl.includes('.b-cdn.net')) {
-      return `/api/proxy-image?url=${encodeURIComponent(imageUrl)}`;
-    }
+    // Use fallback URL if provided, otherwise return original
     return fallbackSrc || imageUrl;
   };
 

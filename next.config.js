@@ -127,13 +127,6 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
-      // Bunny.net CDN domains (configured via environment)
-      {
-        protocol: 'https',
-        hostname: '*.b-cdn.net',
-        port: '',
-        pathname: '/**',
-      },
       // Fallback for local development
       {
         protocol: 'https',
