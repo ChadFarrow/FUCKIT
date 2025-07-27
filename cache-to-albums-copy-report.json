@@ -1,0 +1,1404 @@
+{
+  "timestamp": "2025-07-27T16:26:01.713Z",
+  "totalFiles": 30,
+  "copied": 0,
+  "errors": 247,
+  "details": [
+    {
+      "album": "Music From The Doerfel-Verse",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Long As You're Loving Me",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "What Love Is",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Now I Know",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Make It",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Disco Swag",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Underwater",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Possible",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Diamonds",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Days Gone By",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Love Is A War",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Breakaway (demo)",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Autumn - CityBeach",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Big Pine Song",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Still A Man",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Pour Over - CityBeach",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Happy New Year(demo)",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Love Like Yours",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Worth Fighting For",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "The Movie I'll Never See",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Morning Love",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Bloodshot Lies(Acoustic)",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "You Feel Like Home(CityBeach)",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Sing For You",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Maybe It's You",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Call Me Medley - Kurtisdrums",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Way In My Life",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Angel Beast",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "If I Promise(Demo)",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Pulls Me Up - Ben Doerfel",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Come Back To Me",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "HEARTBREAK",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "They Don't Know",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Thought It Was Real",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Tired of Dreaming",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "NOSTALGIC - CityBeach",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "3 Years",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Figured You Out",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "So Far Away",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Don't Forget Me",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Music From The Doerfel-Verse",
+      "track": "Bloodshot Lies",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Bloodshot Lies - The Album",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Bloodshot Lies - The Album",
+      "track": "Movie (album version)",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Bloodshot Lies - The Album",
+      "track": "Heartbreak (album version)",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Bloodshot Lies - The Album",
+      "track": "Still A Man (album version)",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Bloodshot Lies - The Album",
+      "track": "So Far Away (album version)",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Bloodshot Lies - The Album",
+      "track": "Thought It Was Real (album version)",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Bloodshot Lies - The Album",
+      "track": "Breakaway (album version)",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Bloodshot Lies - The Album",
+      "track": "some1likeyou",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Bloodshot Lies - The Album",
+      "track": "Maybe It's You (album version)",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Bloodshot Lies - The Album",
+      "track": "3 Years (album version)",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Bloodshot Lies - The Album",
+      "track": "Love Is A War (album version)",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Bloodshot Lies - The Album",
+      "track": "Another Man",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Bloodshot Lies - The Album",
+      "track": "My Brother",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Bloodshot Lies - The Album",
+      "track": "Bloodshot Lies (Live Acoustic)",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Bloodshot Lies - The Album",
+      "track": "Bloodshot Lies FUNK",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 53 - Work Tape Demos",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 52 - Mini-sode",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 51 - The Greensands",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 50 - Valueverse Jams",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 49 - Hunting Doerfels",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 48  -  Boo-bury",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 47 - My Friend Jimi",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 46 - Banjovi",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 45 - V4V music talk plus new song!",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 44 - HeyCitizen",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 43 - Jimmy V",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 42 - Steven B",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 41- Mike Neumann",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 40 - Somewhat special guest?...Kurtisdrums!",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 39 - ChadF",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 38 - Musical Chairs with Salty Crayon",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 37 - Jukebox Vol. 4",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 36 - Doerfel Jukebox Vol. 3",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 35 - Doerfel-Jukebox Vol. 2",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 34 - D.A.I. with Tommy Jr",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 33 with Adam Curry",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 32.5",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 32 - Doerfel-Node",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 31 - Doerfel-Jukebox Vol. 1",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 30 - Oh My Baby",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 29 - Jam with Tommy G",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 28 - Shhh Top Secret",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 27 - Into The Normy-Verse",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 26 - Garage to Studio",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 25 - Alandace Part 2",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 24 - Alandace",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 23 - Ryan AND Seth Fonda",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 22 - Halftime",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 21 - Queen Mother",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 20 - Goals",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 19 - Wondoerfel New Year",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 18 - DoerJam 3 Feat. Doug Yeomans",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 17 - BabyVerse",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 16 - DragonCello/DoerJam2",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 15 - Bluegrass in Montreal 2007",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 14 - Chill and Chit-Chat",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 13 - Chugging Chel with Zac Polk",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 12 - DoerJam!",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 11 - Doerfel Agents Meeting",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 10 - Feat. Middle Season & Live Jam",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 9 - Daddy D",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 8 - Our Favorite Sister",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 7 - With Jdog & callieNOTwallie",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 6 - Live Jam 1",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 5 - Berries and Cream",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 4 - Superjells",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 3 - Keep it Low Key ft. Ryan Fonda",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 2 - DragonBoyz",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Into The Doerfel-Verse",
+      "track": "Episode 1 - So Friggin' Fine",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Wrath Of Banjo",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Wrath Of Banjo",
+      "track": "THE BANJO",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Ben Doerfel",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Ben Doerfel",
+      "track": "Emma Rose",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Ben Doerfel",
+      "track": "Hey Yo!",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Ben Doerfel",
+      "track": "Here With Me",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Ben Doerfel",
+      "track": "Tell Him",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Ben Doerfel",
+      "track": "What A Friend",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Ben Doerfel",
+      "track": "Pulls Me Up",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Stay Awhile",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Stay Awhile",
+      "track": "Willow Brown (ft. Scream Mail)",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Stay Awhile",
+      "track": "Like Wine",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Stay Awhile",
+      "track": "Stay Awhile",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Stay Awhile",
+      "track": "Maps of Home",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Stay Awhile",
+      "track": "One Christmas",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Stay Awhile",
+      "track": "Stay Awhile (reprise)",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "18 Sundays",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "18 Sundays",
+      "track": "Ode To Ashley",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Alandace",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "Autumn",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "Christ Exalted",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Come Back To Me",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Dead Time(live 2016)",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "DFB Volume 1",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "DFB Volume 2",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Disco Swag",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "First Married Christmas",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Generation Gap",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Heartbreak",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "Merry Christmix",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Let Go (What's holding you back)",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Phatty The Grasshopper",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Possible",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "Pour Over",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Psalm 54",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Sensitive Guy",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "They Don't Know",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Think EP",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Underwater - Single",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Unsound Existence (self-hosted version)",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "You Are My World",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "You Feel Like Home(Single)",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Your Chance",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Your Chance",
+      "track": "Love Like Yours",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Your Chance",
+      "track": "They Don't Know",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Your Chance",
+      "track": "Worth Fighting For",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Opus",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "Nostalgic",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "CityBeach",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "Kurtisdrums",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "Kurtisdrums",
+      "track": "Jeff Across The Street",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "Kurtisdrums",
+      "track": "Lovin You Forever",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "Kurtisdrums",
+      "track": "Another Man",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "Kurtisdrums",
+      "track": "Tired of Dreaming",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "Kurtisdrums",
+      "track": "Charlie",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "Ring That Bell",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "deathdreams",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "Ugly Side",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "now i feel it",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Pilot",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "Radio Brigade",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Tinderbox",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "Singles",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "Bowl of Oranges a Bright Eyes Cover",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Goodbye Uncle Walt",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Fight!",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "Safe Some Place",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "You Should Waste It",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "The Kid, The Dad, The Mom & the Tiny Window",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Kids",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "Don't Worry, You Still Have Time To Ruin It - Demo",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Rose",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "Fake Love - Demo",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Roommates - Demo",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Orange Pill, Pink Pill, White Pill - Demo",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Tyson vs Paul",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "THEY RIDE",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "More",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "Crocodile Tears",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Letters Of Regret",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Hero",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "Bound For Lonesome",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "The First Five Years",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Daddy Gene",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Love Strong",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "High Gravity",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Small World",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Strangers To Lovers - Live from Sloe Flower Studio",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Can't Promise You The World - Live from Sloe Flower Studio",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "The Heycitizen Experience",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "The Heycitizen Experience",
+      "track": "MoeFactz",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "The Heycitizen Experience",
+      "track": "Milves in Teslas",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "The Heycitizen Experience",
+      "track": "The Platform",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "The Heycitizen Experience",
+      "track": "It's Christmastime Again!",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "The Heycitizen Experience",
+      "track": "Kiss Me Always",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "The Heycitizen Experience",
+      "track": "Incogneetus",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "The Heycitizen Experience",
+      "track": "Free Software Song Remix",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "The Heycitizen Experience",
+      "track": "Chocolates",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "The Heycitizen Experience",
+      "track": "Boostagrams",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "The Heycitizen Experience",
+      "track": "How Bout You?",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "The Heycitizen Experience",
+      "track": "To be in Nashville",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "The Heycitizen Experience",
+      "track": "Not To Worry",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "The Heycitizen Experience",
+      "track": "Porkchops Fried",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "The Heycitizen Experience",
+      "track": "So Intersectional",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "The Heycitizen Experience",
+      "track": "Check Your Pockets",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "The Heycitizen Experience",
+      "track": "Pay The Bills",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "The Heycitizen Experience",
+      "track": "Luv Song 4 U",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "The Heycitizen Experience",
+      "track": "ZZXX",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "HeyCitizen's Lo-Fi Hip-Hop Beats to Study and Relax to",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "HeyCitizen's Lo-Fi Hip-Hop Beats to Study and Relax to",
+      "track": "Montréal",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Wild and Free",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Beauty",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "Peach Clouds",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Beyond the Hills",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Lingo",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "So It Goes",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Fountain Artist Takeover - Nate Johnivan",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Empty Passenger Seat",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Chasing Waterfalls",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Bestlegs",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "Bestlegs",
+      "track": "Midnight Breakheart",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "Bestlegs",
+      "track": "Crying on a Curb",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "Bestlegs",
+      "track": "Mind and Body",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "Bestlegs",
+      "track": "I Have the Brains",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "Bestlegs",
+      "track": "Never Enough",
+      "error": "Download failed: 404 - Not Found",
+      "status": "error"
+    },
+    {
+      "album": "Satoshi Streamer",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "PANISEE Attack",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Rock'n'Roll Breakheart",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Rock'n'Roll Breakheart",
+      "track": "I'm Back",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Rock'n'Roll Breakheart",
+      "track": "Rock'n'Roll Demon",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Rock'n'Roll Breakheart",
+      "track": "Look What You Put Me Through",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Rock'n'Roll Breakheart",
+      "track": "Games",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Rock'n'Roll Breakheart",
+      "track": "You've Got a Lot of Nerve",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Rock'n'Roll Breakheart",
+      "track": "Fell Down",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "Rock'n'Roll Breakheart",
+      "track": "Sticky Situation",
+      "error": "Invalid URL",
+      "status": "error"
+    },
+    {
+      "album": "all in a day",
+      "error": "Invalid URL",
+      "status": "error"
+    }
+  ]
+}

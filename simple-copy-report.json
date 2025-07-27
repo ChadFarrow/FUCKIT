@@ -1,0 +1,18 @@
+{
+  "timestamp": "2025-07-27T16:27:16.853Z",
+  "totalFiles": 2,
+  "copied": 2,
+  "errors": 0,
+  "details": [
+    {
+      "cachePath": "cache/artwork/artwork-music-from-the-doerfelverse-aHR0cHM6Ly93d3cuZG9lcmZlbHZlcnNlLmNvbS9hcnQvY2Fyb2wtb2YtdGhlLWJlbGxzLnBuZw.jpg",
+      "albumPath": "albums/carol-of-the-bells.png",
+      "status": "success"
+    },
+    {
+      "cachePath": "cache/artwork/artwork-music-from-the-doerfelverse-aHR0cHM6Ly93d3cuZG9lcmZlbHZlcnNlLmNvbS9hcnQvY2Fyb2wtb2YtdGhlLWJlbGxzLnBuZw.jpg",
+      "albumPath": "albums/music-from-the-doerfel-verse-artwork.png",
+      "status": "success"
+    }
+  ]
+}
