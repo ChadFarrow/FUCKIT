@@ -1059,9 +1059,9 @@ export default function HomePage() {
           }}
         >
           <div className="container mx-auto px-6 py-4">
-            <div className="flex items-center justify-between mb-8">
-              {/* Left side - Menu Button, Logo and Title */}
-              <div className="flex items-center gap-4">
+            <div className="relative flex items-center justify-center mb-8">
+              {/* Left side - Menu Button and Logo */}
+              <div className="absolute left-0 flex items-center gap-4">
                 {/* Menu Button */}
                 <button
                   onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -1073,7 +1073,7 @@ export default function HomePage() {
                   </svg>
                 </button>
                 
-                {/* Logo and Title */}
+                {/* Logo */}
                 <div className="w-10 h-10 relative border border-gray-700 rounded-lg overflow-hidden">
                   <Image 
                     src="/logo.webp" 
@@ -1084,24 +1084,28 @@ export default function HomePage() {
                     priority
                   />
                 </div>
-                <div className="flex items-center gap-3">
-                  <h1 className="text-4xl font-bold">Into the ValueVerse</h1>
-                  <span className="text-sm bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full border border-yellow-500/30">
-                    Beta - might not work
-                  </span>
-                </div>
+              </div>
+              
+              {/* Center - Title */}
+              <div className="flex items-center gap-3">
+                <h1 className="text-4xl font-bold">Into the ValueVerse</h1>
+                <span className="text-sm bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full border border-yellow-500/30">
+                  Beta - might not work
+                </span>
               </div>
               
               {/* Right side - About Link */}
-              <Link 
-                href="/about" 
-                className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span className="hidden sm:inline">About this site</span>
-              </Link>
+              <div className="absolute right-0">
+                <Link 
+                  href="/about" 
+                  className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span className="hidden sm:inline">About this site</span>
+                </Link>
+              </div>
             </div>
             
             {/* Loading/Error Status */}
