@@ -1017,7 +1017,7 @@ export default function HomePage() {
         filtered = albums.filter(album => album.tracks.length === 1);
         break;
       case 'explicit':
-        filtered = albums.filter(album => album.explicit); // Show only explicit content
+        filtered = albums.filter(album => !album.explicit); // Hide explicit content when "Explicit" filter is active
         break;
       default: // 'all'
         filtered = albums; // Show all albums
@@ -1209,6 +1209,7 @@ export default function HomePage() {
                 ) : null}
               </div>
             )}
+          </div>
           </div>
         </header>
         
@@ -1736,7 +1737,6 @@ export default function HomePage() {
               <p className="text-gray-400">Unable to load any album information from the RSS feeds.</p>
             </div>
           )}
-        </div>
         </div>
 
         {/* Now Playing Bar - Fixed at bottom */}
