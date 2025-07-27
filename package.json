@@ -12,7 +12,6 @@
     "dev-setup": "node scripts/dev-setup.js",
     "test-feeds": "node scripts/test-rss-feeds.js",
     "test-removed": "node scripts/test-removed-feeds.js",
-    "setup-cdn": "node scripts/setup-cdn.js",
     "update-version": "node scripts/auto-version-update.js",
     "deploy": "npm run update-version && ./scripts/deploy.sh",
     "auto-deploy": "npm run update-version && ./scripts/auto-deploy.sh",
