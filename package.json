@@ -17,7 +17,10 @@
     "auto-deploy": "npm run update-version && ./scripts/auto-deploy.sh",
     "auto-add-publishers": "node scripts/auto-add-publisher-feeds.js",
     "parse-and-add-publishers": "node scripts/parse-and-add-publishers.js",
-    "post-parse-cleanup": "node scripts/post-parse-cleanup.js"
+    "post-parse-cleanup": "node scripts/post-parse-cleanup.js",
+    "fix-images": "node scripts/fix-corrupted-images.js",
+    "clear-sw-cache": "node scripts/clear-sw-cache.js",
+    "fix-all": "node scripts/fix-all-issues.js"
   },
   "dependencies": {
     "@types/node": "^20",

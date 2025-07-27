@@ -12,7 +12,10 @@ export default function ServiceWorkerRegistration() {
 
       // Register service worker
       navigator.serviceWorker
-        .register('/sw.js')
+        .register('/sw.js', {
+          scope: '/',
+          updateViaCache: 'none' // Don't cache the service worker itself
+        })
         .then((reg) => {
           registration = reg;
           console.log('✅ Service Worker registered successfully:', reg);
@@ -55,6 +58,31 @@ export default function ServiceWorkerRegistration() {
               window.location.reload();
             }
           }, 3000);
+        }
+      });
+
+      // Handle RSC fetch failures
+      const handleRSCFetchFailure = () => {
+        console.warn('🔄 RSC fetch failed, attempting to clear service worker cache...');
+        
+        // Clear service worker cache for RSC files
+        if ('caches' in window) {
+          caches.keys().then(cacheNames => {
+            cacheNames.forEach(cacheName => {
+              if (cacheName.includes('next-js-files') || cacheName.includes('start-url')) {
+                caches.delete(cacheName).then(() => {
+                  console.log(`🗑️ Cleared cache: ${cacheName}`);
+                });
+              }
+            });
+          });
+        }
+      };
+
+      // Listen for RSC fetch errors
+      window.addEventListener('error', (event) => {
+        if (event.message && event.message.includes('Failed to fetch RSC payload')) {
+          handleRSCFetchFailure();
         }
       });
 

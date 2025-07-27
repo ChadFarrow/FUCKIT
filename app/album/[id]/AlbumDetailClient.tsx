@@ -94,8 +94,18 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   };
 
   const playTrack = async (index: number) => {
-    if (!album || !album.tracks[index] || !album.tracks[index].url || !audioRef.current) return;
+    if (!album || !album.tracks[index] || !album.tracks[index].url) {
+      console.error('❌ Missing album, track, or URL');
+      return;
+    }
     
+    const audio = audioRef.current;
+    if (!audio) {
+      console.error('❌ Audio element reference is null');
+      setError('Audio player not available - please refresh the page');
+      setTimeout(() => setError(null), 5000);
+      return;
+    }
     
     const originalUrl = album.tracks[index].url;
     console.log('🎵 Attempting to play track:', album.tracks[index].title, 'URL:', originalUrl);
@@ -129,7 +139,16 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
       console.log(`🔄 Attempt ${i + 1}/${urlsToTry.length}: ${audioUrl.includes('proxy-audio') ? 'Proxied URL' : 'Direct URL'}`);
       
       try {
+        // Check if audio element is still valid
+        if (!audioRef.current) {
+          console.error('❌ Audio element became null during playback attempt');
+          setError('Audio player error - please refresh the page');
+          setTimeout(() => setError(null), 5000);
+          return;
+        }
+        
         audioRef.current.src = audioUrl;
+        audioRef.current.load();
         await audioRef.current.play();
         setIsPlaying(true);
         
@@ -173,6 +192,10 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               setError('Unable to play audio - please try a different track');
               setTimeout(() => setError(null), 5000);
             }
+          } else if (error instanceof TypeError && error.message.includes('src')) {
+            console.log('🚫 Audio element reference error:', error.message);
+            setError('Audio player error - please refresh the page');
+            setTimeout(() => setError(null), 5000);
           } else {
             console.log('🚫 Unknown audio error:', error);
             setError('Audio playback error - please try a different track');
@@ -972,8 +995,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
         )}
       </div>
 
-      {/* Local Audio Player Removed - GlobalAudioPlayer handles all playback */}
-      {/* Player removed - using GlobalAudioPlayer only */ false && (
+      {/* Audio Player */}
+      {album && album.tracks && album.tracks.length > 0 && (
         <div className="fixed bottom-0 left-0 right-0 backdrop-blur-md bg-gradient-to-t from-black/60 via-black/40 to-transparent border-t border-white/10 p-4 pb-safe shadow-2xl">
           <div className="container mx-auto flex flex-col md:flex-row items-center gap-4 bg-white/5 rounded-xl p-4 backdrop-blur-sm border border-white/10">
             {/* Mobile Layout: Track Info + Controls Row */}

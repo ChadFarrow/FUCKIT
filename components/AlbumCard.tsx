@@ -11,12 +11,12 @@ import CDNImage from './CDNImage';
 
 interface AlbumCardProps {
   album: RSSAlbum;
-  isPlaying: boolean;
+  isPlaying?: boolean;
   onPlay: (album: RSSAlbum, e: React.MouseEvent | React.TouchEvent) => void;
   className?: string;
 }
 
-export default function AlbumCard({ album, isPlaying, onPlay, className = '' }: AlbumCardProps) {
+export default function AlbumCard({ album, isPlaying = false, onPlay, className = '' }: AlbumCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);

@@ -3,6 +3,16 @@ const withPWA = require('next-pwa')({
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === 'development',
+  // Exclude RSC payloads and critical Next.js files from service worker caching
+  exclude: [
+    /_next\/static\/.*\/_buildManifest\.js$/,
+    /_next\/static\/.*\/_ssgManifest\.js$/,
+    /_next\/static\/.*\/_app-build-manifest\.json$/,
+    /_next\/webpack-hmr/,
+    /_next\/static\/.*\/.*\.js$/,
+    /_next\/static\/.*\/.*\.mjs$/,
+    /_next\/static\/.*\/.*\.css$/,
+  ],
   runtimeCaching: [
     {
       urlPattern: /^https:\/\/.*\.(?:png|jpg|jpeg|svg|gif|webp)$/,
@@ -15,17 +25,7 @@ const withPWA = require('next-pwa')({
         },
       },
     },
-    {
-      urlPattern: /^https:\/\/.*\.(?:mp3|wav|ogg|m4a)$/,
-      handler: 'CacheFirst',
-      options: {
-        cacheName: 'audio',
-        expiration: {
-          maxEntries: 500,
-          maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
-        },
-      },
-    },
+    // Removed CacheFirst audio caching - now using NetworkFirst above
     {
       urlPattern: /^https:\/\/.*\.xml$/,
       handler: 'StaleWhileRevalidate',
@@ -35,6 +35,45 @@ const withPWA = require('next-pwa')({
           maxEntries: 100,
           maxAgeSeconds: 60 * 60, // 1 hour
         },
+      },
+    },
+    // Network first for RSC payloads and critical Next.js files
+    {
+      urlPattern: /_next\/static\/.*\/.*\.js$/,
+      handler: 'NetworkFirst',
+      options: {
+        cacheName: 'next-js-files',
+        expiration: {
+          maxEntries: 50,
+          maxAgeSeconds: 60 * 60, // 1 hour
+        },
+        networkTimeoutSeconds: 3,
+      },
+    },
+    // Network first for audio files to prevent caching issues
+    {
+      urlPattern: /^https:\/\/.*\.(?:mp3|wav|ogg|m4a)$/,
+      handler: 'NetworkFirst',
+      options: {
+        cacheName: 'audio-files',
+        expiration: {
+          maxEntries: 100,
+          maxAgeSeconds: 60 * 60 * 24, // 24 hours
+        },
+        networkTimeoutSeconds: 10,
+      },
+    },
+    // Network first for proxy audio to prevent CORS issues
+    {
+      urlPattern: /\/api\/proxy-audio/,
+      handler: 'NetworkFirst',
+      options: {
+        cacheName: 'proxy-audio',
+        expiration: {
+          maxEntries: 50,
+          maxAgeSeconds: 60 * 30, // 30 minutes
+        },
+        networkTimeoutSeconds: 15,
       },
     },
   ],

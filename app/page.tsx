@@ -13,6 +13,7 @@ import { getVersionString } from '@/lib/version';
 import ControlsBar, { FilterType, ViewType, SortType } from '@/components/ControlsBar';
 import { AppError, ErrorCodes, ErrorCode, getErrorMessage, createErrorLogger } from '@/lib/error-utils';
 import { toast } from '@/components/Toast';
+import { useAudio } from '@/contexts/AudioContext';
 // RSS feed configuration - CDN removed, using original URLs directly
 
 const logger = createErrorLogger('MainPage');
@@ -51,11 +52,8 @@ export default function HomePage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
   
-  // Audio player state for main page
-  const [currentPlayingAlbum, setCurrentPlayingAlbum] = useState<string | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
-  const audioRef = useRef<HTMLAudioElement>(null);
+  // Global audio context
+  const { playAlbum: globalPlayAlbum } = useAudio();
   const hasLoadedRef = useRef(false);
   
   // Rotating background state
@@ -68,70 +66,13 @@ export default function HomePage() {
   const [viewType, setViewType] = useState<ViewType>('grid');
   const [sortType, setSortType] = useState<SortType>('name');
   
-  // Shuffle state
-  const [shuffleSeed, setShuffleSeed] = useState(0);
-  const [shuffledTracks, setShuffledTracks] = useState<Array<{track: any, album: RSSAlbum, originalIndex: number}>>([]);
-  const [isShuffleMode, setIsShuffleMode] = useState(false);
-  const [shuffleTrackIndex, setShuffleTrackIndex] = useState(0);
+  // Shuffle functionality is now handled by the global AudioContext
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // Helper function to get URLs to try for audio playback
-  const getAudioUrlsToTry = (originalUrl: string): string[] => {
-    const urlsToTry = [];
-    
-    try {
-      const url = new URL(originalUrl);
-      const isExternal = url.hostname !== window.location.hostname;
-      
-      if (isExternal) {
-        // Try proxy first for external URLs
-        urlsToTry.push(`/api/proxy-audio?url=${encodeURIComponent(originalUrl)}`);
-        // Fallback to direct URL
-        urlsToTry.push(originalUrl);
-      } else {
-        // For local URLs, try direct first
-        urlsToTry.push(originalUrl);
-      }
-    } catch (urlError) {
-      console.warn('⚠️ Could not parse audio URL, using as-is:', originalUrl);
-      urlsToTry.push(originalUrl);
-    }
-    
-    return urlsToTry;
-  };
-
-  // Helper function to attempt audio playback with fallback URLs
-  const attemptAudioPlayback = async (originalUrl: string, context = 'playback'): Promise<boolean> => {
-    if (!audioRef.current) return false;
-    
-    const urlsToTry = getAudioUrlsToTry(originalUrl);
-    
-    for (let i = 0; i < urlsToTry.length; i++) {
-      const audioUrl = urlsToTry[i];
-      console.log(`🔄 ${context} attempt ${i + 1}/${urlsToTry.length}: ${audioUrl.includes('proxy-audio') ? 'Proxied URL' : 'Direct URL'}`);
-      
-      try {
-        audioRef.current.src = audioUrl;
-        audioRef.current.load();
-        audioRef.current.volume = 0.8;
-        
-        const playPromise = audioRef.current.play();
-        if (playPromise !== undefined) {
-          await playPromise;
-          console.log(`✅ ${context} started successfully with ${audioUrl.includes('proxy-audio') ? 'proxied' : 'direct'} URL`);
-          return true;
-        }
-      } catch (attemptError) {
-        console.warn(`⚠️ ${context} attempt ${i + 1} failed:`, attemptError);
-        // Continue to next URL
-      }
-    }
-    
-    return false; // All attempts failed
-  };
+  // Audio playback is now handled by the global AudioContext
   
   useEffect(() => {
     verboseLog('🔄 useEffect triggered - starting to load albums');
@@ -160,105 +101,9 @@ export default function HomePage() {
   }, []); // Run only once on mount
 
 
-  // Mobile audio initialization - handle autoplay restrictions
-  useEffect(() => {
-    if (typeof window !== 'undefined' && audioRef.current) {
-      // Add touch event listener to initialize audio context on mobile
-      const handleTouchStart = () => {
-        if (audioRef.current) {
-          // Just load the audio context without playing
-          // This prevents unwanted autoplay while still initializing the context
-          audioRef.current.load();
-          
-          // Remove the listener after first touch
-          document.removeEventListener('touchstart', handleTouchStart);
-        }
-      };
-      
-      document.addEventListener('touchstart', handleTouchStart);
-      
-      return () => {
-        document.removeEventListener('touchstart', handleTouchStart);
-      };
-    }
-  }, []);
+  // Mobile audio initialization is now handled by the global AudioContext
 
-  // Audio event listeners to properly track state
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    const handlePlay = () => {
-      setIsPlaying(true);
-    };
-
-    const handlePause = () => {
-      setIsPlaying(false);
-    };
-
-    const handleEnded = () => {
-      // Try to play next track, or reset if no more tracks
-      playNextTrack();
-    };
-
-    const handleError = (event: Event) => {
-      const audioError = (event.target as HTMLAudioElement)?.error;
-      let errorMessage = 'Audio playback failed';
-      
-      if (audioError) {
-        switch (audioError.code) {
-          case MediaError.MEDIA_ERR_ABORTED:
-            errorMessage = 'Audio playback was aborted';
-            break;
-          case MediaError.MEDIA_ERR_NETWORK:
-            errorMessage = 'Network error while loading audio';
-            break;
-          case MediaError.MEDIA_ERR_DECODE:
-            errorMessage = 'Audio file is corrupted or unsupported';
-            break;
-          case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
-            errorMessage = 'Audio format not supported';
-            break;
-        }
-      }
-      
-      logger.error('Audio playback error', audioError, {
-        currentAlbum: currentPlayingAlbum,
-        trackIndex: currentTrackIndex,
-        errorCode: audioError?.code,
-        errorMessage: audioError?.message
-      });
-      
-      toast.error(errorMessage);
-      
-      setIsPlaying(false);
-      setCurrentPlayingAlbum(null);
-    };
-
-    // Add event listeners
-    audio.addEventListener('play', handlePlay);
-    audio.addEventListener('pause', handlePause);
-    audio.addEventListener('ended', handleEnded);
-    audio.addEventListener('error', handleError);
-
-    // Cleanup
-    return () => {
-      audio.removeEventListener('play', handlePlay);
-      audio.removeEventListener('pause', handlePause);
-      audio.removeEventListener('ended', handleEnded);
-      audio.removeEventListener('error', handleError);
-    };
-  }, [currentPlayingAlbum, currentTrackIndex]); // Re-add listeners when album/track changes
-
-  // Cleanup effect - clear audio state on unmount if not playing
-  useEffect(() => {
-    return () => {
-      // If we're unmounting and audio is not actually playing, clear the state
-      if (audioRef.current && audioRef.current.paused) {
-
-      }
-    };
-  }, []);
+  // Audio event listeners are now handled by the global AudioContext
 
   // Rotating background effect - optimized for all devices
   useEffect(() => {
@@ -454,240 +299,62 @@ export default function HomePage() {
     // Find the first playable track
     const firstTrack = album.tracks.find(track => track.url);
     
-    if (!firstTrack || !firstTrack.url || !audioRef.current) {
-      console.warn('Cannot play album: missing track or audio element');
+    if (!firstTrack || !firstTrack.url) {
+      console.warn('Cannot play album: missing track');
       setError('No playable tracks found in this album');
       setTimeout(() => setError(null), 3000);
       return;
     }
 
-    if (currentPlayingAlbum === album.title && isPlaying) {
-      // Pause current album
-      try {
-        audioRef.current.pause();
-        setIsPlaying(false);
-
-      } catch (error) {
-        console.error('Error pausing audio:', error);
-      }
-    } else {
-      // Play this album from the beginning
-      try {
-        console.log('🎵 Attempting to play:', album.title, 'Track URL:', firstTrack.url);
-        
-        // Use proxy helper for external URLs
-        const success = await attemptAudioPlayback(firstTrack.url, 'Album playback');
-        if (success) {
-          // Success - update state
-          setCurrentPlayingAlbum(album.title);
-          setCurrentTrackIndex(0);
-          setIsPlaying(true);
-          
-          // Set global track info for persistent player
-
-          
-          console.log('✅ Successfully started playback');
-        } else {
-          throw new Error('Failed to start album playback');
-        }
-      } catch (error) {
-        let errorMessage = 'Unable to play audio - please try again';
-        let errorCode: ErrorCode = ErrorCodes.AUDIO_PLAYBACK_ERROR;
-        
-        if (error instanceof DOMException) {
-          switch (error.name) {
-            case 'NotAllowedError':
-              errorMessage = 'Tap the play button again to start playback';
-              errorCode = ErrorCodes.PERMISSION_ERROR;
-              break;
-            case 'NotSupportedError':
-              errorMessage = 'Audio format not supported on this device';
-              errorCode = ErrorCodes.AUDIO_NOT_FOUND;
-              break;
-          }
-        }
-        
-        logger.error('Audio playback error', error, {
-          album: album.title,
-          trackUrl: firstTrack?.url,
-          errorName: error instanceof DOMException ? error.name : 'Unknown'
-        });
-        
-        const appError = new AppError(errorMessage, errorCode, 400, false);
-        setError(appError.message);
-        toast.error(appError.message);
-        
-        setTimeout(() => setError(null), 5000);
-      }
-    }
-  };
-
-  const playShuffledTrack = async (index: number) => {
-    if (!shuffledTracks[index] || !audioRef.current) return;
-    
-    const { track, album } = shuffledTracks[index];
-    const originalUrl = track.url;
-    
     try {
-      console.log('🎵 Playing shuffled track:', track.title, 'from album:', album.title, 'URL:', originalUrl);
+      console.log('🎵 Attempting to play:', album.title, 'Track URL:', firstTrack.url);
       
-      const success = await attemptAudioPlayback(originalUrl, 'Shuffle');
-      
+      // Use global audio context to play album
+      const success = await globalPlayAlbum(album, 0);
       if (success) {
-        // Update state
-        setCurrentPlayingAlbum(album.title);
-        setCurrentTrackIndex(index);
-        setIsPlaying(true);
-        setShuffleTrackIndex(index);
-        
+        console.log('✅ Successfully started playback');
       } else {
-        throw new Error('All URL attempts failed for shuffled track');
+        throw new Error('Failed to start album playback');
       }
-      
     } catch (error) {
-      console.error('Error playing shuffled track:', error);
-      toast.error('Failed to play track');
-    }
-  };
-
-  const playNextTrack = () => {
-    if (!audioRef.current) return;
-    
-    // Handle shuffle mode
-    if (isShuffleMode && shuffledTracks.length > 0) {
-      const nextIndex = shuffleTrackIndex + 1;
-      if (nextIndex < shuffledTracks.length) {
-        playShuffledTrack(nextIndex);
-      } else {
-        // End of shuffled playlist, reset
-        setIsPlaying(false);
-        setCurrentPlayingAlbum(null);
-        setCurrentTrackIndex(0);
-        setIsShuffleMode(false);
-        setShuffledTracks([]);
-        setShuffleTrackIndex(0);
-
-        toast.success('🎵 Shuffle playlist completed!');
-      }
-      return;
-    }
-    
-    // Original album-based next track logic
-    if (!currentPlayingAlbum) return;
-    
-    // Find the current album
-    const currentAlbum = albums.find(album => album.title === currentPlayingAlbum);
-    if (!currentAlbum) return;
-    
-    // Check if there's a next track
-    if (currentTrackIndex < currentAlbum.tracks.length - 1) {
-      const nextTrack = currentAlbum.tracks[currentTrackIndex + 1];
-      if (nextTrack && nextTrack.url) {
-        attemptAudioPlayback(nextTrack.url, 'Next track').then((success) => {
-          if (success) {
-            setCurrentTrackIndex(currentTrackIndex + 1);
-            
-          } else {
-            console.error('Error playing next track: all URLs failed');
-          }
-        }).catch(err => {
-          console.error('Error playing next track:', err);
-        });
-      }
-    } else {
-      // Album ended, reset
-      setIsPlaying(false);
-      setCurrentPlayingAlbum(null);
-      setCurrentTrackIndex(0);
-
-    }
-  };
-
-  // Shuffle function that flattens all tracks and shuffles them
-  const handleShuffle = async () => {
-    // Flatten all tracks from all albums into a single array
-    const allTracks: Array<{track: any, album: RSSAlbum, originalIndex: number}> = [];
-    
-    albums.forEach(album => {
-      album.tracks.forEach((track, trackIndex) => {
-        // Only include tracks with valid URLs
-        if (track.url && track.url.trim()) {
-          allTracks.push({
-            track,
-            album,
-            originalIndex: trackIndex
-          });
-        }
-      });
-    });
-    
-    // Check if we have any playable tracks
-    if (allTracks.length === 0) {
-      toast.error('No playable tracks found');
-      return;
-    }
-    
-    // Shuffle the tracks using Fisher-Yates algorithm
-    const shuffled = [...allTracks];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    
-    // Set shuffle mode and tracks
-    setShuffledTracks(shuffled);
-    setIsShuffleMode(true);
-    setShuffleTrackIndex(0);
-    setViewType('list'); // Force list view for track display
-    
-    // Show success message
-    toast.success(`🎵 Shuffled ${shuffled.length} tracks! Starting playback...`);
-    
-    // Start playing the first shuffled track immediately with the shuffled array
-    if (shuffled.length > 0 && audioRef.current) {
-      const { track, album } = shuffled[0];
+      let errorMessage = 'Unable to play audio - please try again';
+      let errorCode: ErrorCode = ErrorCodes.AUDIO_PLAYBACK_ERROR;
       
-      try {
-        console.log('🎵 Starting shuffle playback:', track.title, 'from album:', album.title);
-        
-        // Use proxy helper for external URLs
-        const success = await attemptAudioPlayback(track.url, 'Shuffle startup');
-        if (success) {
-          // Update state after successful play
-          setCurrentPlayingAlbum(album.title);
-          setCurrentTrackIndex(0);
-          setIsPlaying(true);
-          setShuffleTrackIndex(0);
-          
-          
-          console.log('✅ Successfully started shuffle playback');
-        } else {
-          console.error('Error starting shuffle playback: all URLs failed');
-          toast.error('Failed to start playback - try a different track');
+      if (error instanceof DOMException) {
+        switch (error.name) {
+          case 'NotAllowedError':
+            errorMessage = 'Tap the play button again to start playback';
+            errorCode = ErrorCodes.PERMISSION_ERROR;
+            break;
+          case 'NotSupportedError':
+            errorMessage = 'Audio format not supported on this device';
+            errorCode = ErrorCodes.AUDIO_NOT_FOUND;
+            break;
         }
-      } catch (error) {
-        console.error('Error setting up shuffle playback:', error);
-        toast.error('Failed to start playback');
       }
+      
+      logger.error('Audio playback error', error, {
+        album: album.title,
+        trackUrl: firstTrack?.url,
+        errorName: error instanceof DOMException ? error.name : 'Unknown'
+      });
+      
+      const appError = new AppError(errorMessage, errorCode, 400, false);
+      setError(appError.message);
+      toast.error(appError.message);
+      
+      setTimeout(() => setError(null), 5000);
     }
   };
+
+  // Audio playback functions are now handled by the global AudioContext
+
+  // Shuffle functionality is now handled by the global AudioContext
 
   // Helper functions for filtering and sorting
     const getFilteredAlbums = () => {
     // Universal sorting function that implements hierarchical order: Albums → EPs → Singles
     const sortWithHierarchy = (albums: RSSAlbum[]) => {
-      // If shuffle is active, randomize the order
-      if (shuffleSeed > 0) {
-        // Create a seeded random function for consistent shuffling
-        const seededRandom = (min: number, max: number) => {
-          const x = Math.sin(shuffleSeed) * 10000;
-          return min + (x - Math.floor(x)) * (max - min);
-        };
-        
-        // Shuffle the albums array
-        const shuffled = [...albums].sort(() => seededRandom(-1, 1));
-        return shuffled;
-      }
       
       return albums.sort((a, b) => {
         // Special album prioritization (preserved from original)
@@ -791,31 +458,7 @@ export default function HomePage() {
 
       {/* Content overlay */}
       <div className="relative z-10">
-        {/* Hidden audio element for main page playback */}
-        <audio
-          ref={audioRef}
-          onPlay={() => {
-            setIsPlaying(true);
-
-          }}
-          onPause={() => {
-            setIsPlaying(false);
-
-          }}
-          onEnded={playNextTrack}
-          onError={(e) => {
-            console.error('Audio error:', e);
-            setError('Audio playback error - please try again');
-            setTimeout(() => setError(null), 3000);
-          }}
-          preload="none"
-          crossOrigin="anonymous"
-          playsInline
-          webkit-playsinline="true"
-          autoPlay={false}
-          controls={false}
-          style={{ display: 'none' }}
-        />
+        {/* Audio element is now handled by the global AudioContext */}
         
         {/* Header */}
         <header 
@@ -1118,8 +761,7 @@ export default function HomePage() {
                 onSortChange={setSortType}
                 viewType={viewType}
                 onViewChange={setViewType}
-                onShuffle={handleShuffle}
-                showShuffle={true}
+                showShuffle={false}
                 resultCount={filteredAlbums.length}
                 resultLabel={activeFilter === 'all' ? 'Releases' : 
                   activeFilter === 'albums' ? 'Albums' :
@@ -1127,103 +769,10 @@ export default function HomePage() {
                 className="mb-8"
               />
 
-              {/* Shuffle Mode Track List */}
-              {isShuffleMode && shuffledTracks.length > 0 && (
-                <div className="mb-8">
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-bold flex items-center gap-3">
-                      🎵 Shuffle Mode
-                      <span className="text-sm bg-purple-600/80 px-2 py-1 rounded-full">
-                        {shuffledTracks.length} tracks
-                      </span>
-                    </h2>
-                    <button
-                      onClick={() => {
-                        setIsShuffleMode(false);
-                        setShuffledTracks([]);
-                        setShuffleTrackIndex(0);
-                        setViewType('grid');
-                        toast.success('🎵 Exited shuffle mode');
-                      }}
-                      className="px-4 py-2 bg-red-600/20 text-red-400 rounded-lg hover:bg-red-600/30 transition-colors text-sm font-medium"
-                    >
-                      Exit Shuffle
-                    </button>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    {shuffledTracks.map((item, index) => {
-                      const { track, album } = item;
-                      const isCurrentlyPlaying = isShuffleMode && shuffleTrackIndex === index && isPlaying;
-                      
-                      return (
-                        <div
-                          key={`shuffle-${index}`}
-                          className={`group flex items-center gap-4 p-4 backdrop-blur-sm rounded-xl transition-all duration-200 border ${
-                            isCurrentlyPlaying 
-                              ? 'bg-blue-600/20 border-blue-500/50' 
-                              : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
-                          }`}
-                        >
-                          <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 relative">
-                            <Image 
-                              src={getAlbumArtworkUrl(album.coverArt || '', 'thumbnail')} 
-                              alt={album.title}
-                              width={48}
-                              height={48}
-                              className="w-full h-full object-cover"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.src = getPlaceholderImageUrl('thumbnail');
-                              }}
-                            />
-                            {/* Play Button Overlay */}
-                            <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity duration-200">
-                              <button 
-                                className="bg-white text-black rounded-full p-1 transform hover:scale-110 transition-all duration-200 shadow-lg"
-                                onClick={() => playShuffledTrack(index)}
-                              >
-                                {isCurrentlyPlaying ? (
-                                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
-                                  </svg>
-                                ) : (
-                                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M8 5v14l11-7z"/>
-                                  </svg>
-                                )}
-                              </button>
-                            </div>
-                          </div>
-                          
-                          <div className="flex-1 min-w-0">
-                            <h3 className="font-semibold text-lg truncate group-hover:text-blue-400 transition-colors">
-                              {track.title}
-                            </h3>
-                            <p className="text-gray-400 text-sm truncate">{album.artist}</p>
-                            <p className="text-gray-500 text-xs truncate">from {album.title}</p>
-                          </div>
-                          
-                          <div className="flex items-center gap-4 text-sm text-gray-400">
-                            <span className="px-2 py-1 bg-white/10 rounded text-xs">
-                              #{index + 1}
-                            </span>
-                            {isCurrentlyPlaying && (
-                              <div className="flex items-center gap-1 text-blue-400">
-                                <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
-                                <span className="text-xs">Now Playing</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
+              {/* Shuffle functionality is now handled by the global AudioContext */}
 
               {/* Albums Display */}
-              {!isShuffleMode && activeFilter === 'all' ? (
+              {activeFilter === 'all' ? (
                 // Original sectioned layout for "All" filter
                 <>
                   {/* Albums Grid */}
@@ -1238,7 +787,6 @@ export default function HomePage() {
                               <AlbumCard
                                 key={`album-${index}`}
                                 album={album}
-                                isPlaying={isPlaying}
                                 onPlay={playAlbum}
                               />
                             ))}
@@ -1282,21 +830,6 @@ export default function HomePage() {
                                     </span>
                                   )}
                                 </div>
-                                
-                                <button
-                                  onClick={(e) => playAlbum(album, e)}
-                                  className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 transition-colors"
-                                >
-                                  {currentPlayingAlbum === album.title && isPlaying ? (
-                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                      <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
-                                    </svg>
-                                  ) : (
-                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                      <path d="M8 5v14l11-7z"/>
-                                    </svg>
-                                  )}
-                                </button>
                               </Link>
                             ))}
                           </div>
@@ -1317,7 +850,6 @@ export default function HomePage() {
                               <AlbumCard
                                 key={`ep-single-${index}`}
                                 album={album}
-                                isPlaying={isPlaying}
                                 onPlay={playAlbum}
                               />
                             ))}
@@ -1363,21 +895,6 @@ export default function HomePage() {
                                     </span>
                                   )}
                                 </div>
-                                
-                                <button
-                                  onClick={(e) => playAlbum(album, e)}
-                                  className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 transition-colors"
-                                >
-                                  {currentPlayingAlbum === album.title && isPlaying ? (
-                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                      <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
-                                    </svg>
-                                  ) : (
-                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                      <path d="M8 5v14l11-7z"/>
-                                    </svg>
-                                  )}
-                                </button>
                               </Link>
                             ))}
                           </div>
@@ -1394,7 +911,7 @@ export default function HomePage() {
                       <AlbumCard
                         key={`${album.title}-${index}`}
                         album={album}
-                        isPlaying={isPlaying}
+
                         onPlay={playAlbum}
                       />
                     ))}
@@ -1441,20 +958,7 @@ export default function HomePage() {
                           )}
                         </div>
                         
-                        <button
-                          onClick={(e) => playAlbum(album, e)}
-                          className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 transition-colors"
-                        >
-                          {currentPlayingAlbum === album.title && isPlaying ? (
-                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
-                            </svg>
-                          ) : (
-                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M8 5v14l11-7z"/>
-                            </svg>
-                          )}
-                        </button>
+                        {/* Play button removed - now handled by global audio context */}
                       </Link>
                     ))}
                   </div>
@@ -1469,128 +973,7 @@ export default function HomePage() {
           )}
         </div>
 
-        {/* Now Playing Bar - Fixed at bottom */}
-        {currentPlayingAlbum && (
-          <div className="fixed bottom-0 left-0 right-0 backdrop-blur-md bg-gradient-to-t from-black/60 via-black/40 to-transparent border-t border-white/10 p-4 z-50 shadow-2xl">
-            <div className="container mx-auto flex items-center gap-4 bg-white/5 rounded-xl p-4 backdrop-blur-sm border border-white/10">
-              {/* Current Album Info - Clickable */}
-              {(() => {
-                const currentAlbum = albums.find(album => album.title === currentPlayingAlbum);
-                const currentTrack = currentAlbum?.tracks[currentTrackIndex];
-                return currentAlbum ? (
-                  <Link
-                    href={generateAlbumUrl(currentAlbum.title)}
-                    className="flex items-center gap-3 min-w-0 flex-1 hover:bg-white/10 rounded-lg p-2 -m-2 transition-colors cursor-pointer"
-                  >
-                    <Image 
-                      src={getAlbumArtworkUrl(currentAlbum.coverArt || '', 'thumbnail')} 
-                      alt={currentPlayingAlbum}
-                      width={48}
-                      height={48}
-                      className="rounded object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = getPlaceholderImageUrl('thumbnail');
-                      }}
-                    />
-                    <div className="min-w-0">
-                      <p className="font-medium truncate">
-                        {currentTrack?.title || 'Unknown Track'}
-                      </p>
-                      <p className="text-sm text-gray-400 truncate">
-                        {currentAlbum.artist || 'Unknown Artist'} • {currentPlayingAlbum}
-                      </p>
-                    </div>
-                  </Link>
-                ) : (
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className="min-w-0">
-                      <p className="font-medium truncate">Unknown Track</p>
-                      <p className="text-sm text-gray-400 truncate">Unknown Artist</p>
-                    </div>
-                  </div>
-                );
-              })()}
-              
-              {/* Playback Controls */}
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => {
-                    if (audioRef.current) {
-                      if (isPlaying) {
-                        audioRef.current.pause();
-                      } else {
-                        audioRef.current.play();
-                      }
-                    }
-                  }}
-                  className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 transition-colors"
-                >
-                  {isPlaying ? (
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
-                    </svg>
-                  ) : (
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M8 5v14l11-7z"/>
-                    </svg>
-                  )}
-                </button>
-                
-                <button
-                  onClick={() => {
-                    if (currentTrackIndex > 0) {
-                      const currentAlbum = albums.find(album => album.title === currentPlayingAlbum);
-                      if (currentAlbum && audioRef.current) {
-                        const prevTrack = currentAlbum.tracks[currentTrackIndex - 1];
-                        if (prevTrack && prevTrack.url) {
-                          attemptAudioPlayback(prevTrack.url, 'Previous track').then((success) => {
-                            if (success) {
-                              setCurrentTrackIndex(currentTrackIndex - 1);
-                            }
-                          });
-                        }
-                      }
-                    }
-                  }}
-                  className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 transition-colors"
-                  disabled={currentTrackIndex === 0}
-                >
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
-                  </svg>
-                </button>
-                
-                <button
-                  onClick={playNextTrack}
-                  className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 transition-colors"
-                >
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
-                  </svg>
-                </button>
-              </div>
-              
-              {/* Close Button */}
-              <button
-                onClick={() => {
-                  if (audioRef.current) {
-                    audioRef.current.pause();
-                  }
-                  setIsPlaying(false);
-                  setCurrentPlayingAlbum(null);
-                  setCurrentTrackIndex(0);
-
-                }}
-                className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 transition-colors"
-              >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-        )}
+        {/* Now Playing Bar is now handled by the global AudioContext */}
       </div>
     </div>
   );

@@ -60,7 +60,15 @@ export async function GET(request: NextRequest) {
       'static.staticsave.com',
       'op3.dev',
       'd12wklypp119aj.cloudfront.net',
-      'files.heycitizen.xyz'
+      'files.heycitizen.xyz',
+      'rocknrollbreakheart.com',
+      'annipowellmusic.com',
+      'whiterabbitrecords.org',
+      'feed.falsefinish.club',
+      'f4.bcbits.com',
+      'static.wixstatic.com',
+      'noagendaassets.com',
+      'media.rssblue.com'
     ];
     
     if (!allowedDomains.includes(url.hostname)) {

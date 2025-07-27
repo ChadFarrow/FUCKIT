@@ -4,6 +4,8 @@ import './globals.css'
 import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import { ToastContainer } from '@/components/Toast'
+import { AudioProvider } from '@/contexts/AudioContext'
+import GlobalNowPlayingBar from '@/components/GlobalNowPlayingBar'
 
 
 
@@ -65,11 +67,13 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <ErrorBoundary>
-          <div className="min-h-screen bg-gray-50">
-            {children}
-          </div>
-
-          <ToastContainer />
+          <AudioProvider>
+            <div className="min-h-screen bg-gray-50">
+              {children}
+            </div>
+            <GlobalNowPlayingBar />
+            <ToastContainer />
+          </AudioProvider>
         </ErrorBoundary>
         <ServiceWorkerRegistration />
       </body>
