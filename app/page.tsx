@@ -403,10 +403,8 @@ export default function HomePage() {
     // Apply filtering based on active filter
     let filtered = albums;
     
-    // First, filter out explicit content by default unless explicit filter is active
-    const baseAlbums = activeFilter === 'explicit' 
-      ? albums // Include explicit content when explicit filter is active
-      : albums.filter(album => !album.explicit); // Hide explicit content by default
+    // Filter out explicit content by default
+    const baseAlbums = albums.filter(album => !album.explicit);
     
     switch (activeFilter) {
       case 'albums':
@@ -417,10 +415,6 @@ export default function HomePage() {
         break;
       case 'singles':
         filtered = baseAlbums.filter(album => album.tracks.length === 1);
-        break;
-      case 'explicit':
-        // When explicit filter is active, show all explicit content regardless of track count
-        filtered = albums.filter(album => album.explicit);
         break;
       default: // 'all'
         filtered = baseAlbums; // Show all non-explicit albums
