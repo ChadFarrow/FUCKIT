@@ -617,20 +617,25 @@ export default function HomePage() {
             
             devLog(`🎶 Loaded ${publisherAlbums.length} albums from ${publisherFeeds.length} publisher feeds`);
             
-            // Combine with existing albums
-            const existingKeys = new Set(
-              albumsData.map(album => `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`)
-            );
-            
-            const newAlbums = publisherAlbums.filter(album => {
-              const key = `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`;
-              return !existingKeys.has(key);
+            // Combine with existing albums using React state for proper deduplication
+            setAlbums(prevAlbums => {
+              const existingKeys = new Set(
+                prevAlbums.map(album => `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`)
+              );
+              
+              const newAlbums = publisherAlbums.filter(album => {
+                const key = `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`;
+                return !existingKeys.has(key);
+              });
+              
+              if (newAlbums.length > 0) {
+                devLog(`✅ Added ${newAlbums.length} new albums from ${publisherFeeds.length} publisher feeds`);
+                return [...prevAlbums, ...newAlbums];
+              } else {
+                devLog(`📦 No new albums from publisher feeds (${publisherAlbums.length} total, all duplicates)`);
+                return prevAlbums;
+              }
             });
-            
-            if (newAlbums.length > 0) {
-              setAlbums(prev => [...prev, ...newAlbums]);
-              devLog(`✅ Added ${newAlbums.length} new albums from ${publisherFeeds.length} publisher feeds`);
-            }
           };
           
           // Don't await this - let it run in background
