@@ -1,0 +1,1790 @@
+{
+  "timestamp": "2025-07-27T21:38:51.357Z",
+  "summary": {
+    "total": 192,
+    "successful": 192,
+    "failed": 0,
+    "large": 72
+  },
+  "largeImages": [
+    {
+      "url": "https://www.doerfelverse.com/art/you-are-my-world.gif",
+      "size": 34.927571296691895,
+      "sizeBytes": 36624213,
+      "contentType": "image/gif"
+    },
+    {
+      "url": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/HowBoutYou.gif",
+      "size": 31.681836128234863,
+      "sizeBytes": 33220813,
+      "contentType": "image/gif"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/autumn.gif",
+      "size": 20.032280921936035,
+      "sizeBytes": 21005369,
+      "contentType": "image/gif"
+    },
+    {
+      "url": "https://annipowellmusic.com/wp-content/MusicSideProject/MP3%20Masters%20and%20Copy%20of%20Cover/WIldandfreecover%20copy%202.png",
+      "size": 17.458937644958496,
+      "sizeBytes": 18307023,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://re.podtards.com/api/optimized-images/first-christmas-art.jpg",
+      "size": 9.823816299438477,
+      "sizeBytes": 10301018,
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/alandace.gif",
+      "size": 7.231586456298828,
+      "sizeBytes": 7582868,
+      "contentType": "image/gif"
+    },
+    {
+      "url": "https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/doerfel-verse-idea-9.png",
+      "size": 6.064803123474121,
+      "sizeBytes": 6359407,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://rocknrollbreakheart.com/msp/SatoshiStreamer/track%201/album-art.png",
+      "size": 5.48751163482666,
+      "sizeBytes": 5754073,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/dvep15-art.png",
+      "size": 5.119749069213867,
+      "sizeBytes": 5368446,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/itdvspacelogo.png",
+      "size": 4.544878005981445,
+      "sizeBytes": 4765650,
+      "contentType": "image/png"
+    },
+    {
+      "url": "http://rocknrollbreakheart.com/msp/RNRBH/album-art.png",
+      "size": 4.117883682250977,
+      "sizeBytes": 4317914,
+      "contentType": "image/png"
+    },
+    {
+      "url": "http://rocknrollbreakheart.com/msp/RNRBH/track%201/track-art.png",
+      "size": 4.117883682250977,
+      "sizeBytes": 4317914,
+      "contentType": "image/png"
+    },
+    {
+      "url": "http://rocknrollbreakheart.com/msp/RNRBH/track%202/track-art.png",
+      "size": 4.117883682250977,
+      "sizeBytes": 4317914,
+      "contentType": "image/png"
+    },
+    {
+      "url": "http://rocknrollbreakheart.com/msp/RNRBH/track%203/track-art.png",
+      "size": 4.117883682250977,
+      "sizeBytes": 4317914,
+      "contentType": "image/png"
+    },
+    {
+      "url": "http://rocknrollbreakheart.com/msp/RNRBH/track%204/track-art.png",
+      "size": 4.117883682250977,
+      "sizeBytes": 4317914,
+      "contentType": "image/png"
+    },
+    {
+      "url": "http://rocknrollbreakheart.com/msp/RNRBH/track%205/track-art.png",
+      "size": 4.117883682250977,
+      "sizeBytes": 4317914,
+      "contentType": "image/png"
+    },
+    {
+      "url": "http://rocknrollbreakheart.com/msp/RNRBH/track%206/track-art.png",
+      "size": 4.117883682250977,
+      "sizeBytes": 4317914,
+      "contentType": "image/png"
+    },
+    {
+      "url": "http://rocknrollbreakheart.com/msp/RNRBH/track%207/track-art.png",
+      "size": 4.117883682250977,
+      "sizeBytes": 4317914,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://re.podtards.com/api/optimized-images/disco-swag.png",
+      "size": 3.7549381256103516,
+      "sizeBytes": 3937338,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/dvep19.png",
+      "size": 3.5543689727783203,
+      "sizeBytes": 3727026,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/movie-art.png",
+      "size": 3.419405937194824,
+      "sizeBytes": 3585507,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/ep17-art.png",
+      "size": 3.340749740600586,
+      "sizeBytes": 3503030,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/kurtisdrums-christmix.png",
+      "size": 3.2344350814819336,
+      "sizeBytes": 3391551,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://www.doerfelverse.com/artists/opus/opus/opus.png",
+      "size": 3.1787967681884766,
+      "sizeBytes": 3333210,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/ToBeInNashville.png",
+      "size": 3.074888229370117,
+      "sizeBytes": 3224254,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/32a79df8-ec3e-4a14-bfcb-7a074e1974b9.jpg",
+      "size": 2.9682092666625977,
+      "sizeBytes": 3112393,
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/fade7.gif",
+      "size": 2.962278366088867,
+      "sizeBytes": 3106174,
+      "contentType": "image/gif"
+    },
+    {
+      "url": "https://ableandthewolf.com/static/media/05_MapsOfHome.90eaac78cbe34f1e5330.jpg",
+      "size": 2.949604034423828,
+      "sizeBytes": 3092884,
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/06376ab5-efca-459c-9801-49ceba5fdab1.jpg",
+      "size": 2.6475534439086914,
+      "sizeBytes": 2776161,
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/doerfelverse-ep13-art.png",
+      "size": 2.5743846893310547,
+      "sizeBytes": 2699438,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://ableandthewolf.com/static/media/02_WillowBrown.366ef47ccafa17a29dc6.jpg",
+      "size": 2.54128360748291,
+      "sizeBytes": 2664729,
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/you-feel-like-home-art.jpg",
+      "size": 2.5111122131347656,
+      "sizeBytes": 2633092,
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/morning-love-art.png",
+      "size": 2.4964542388916016,
+      "sizeBytes": 2617722,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/psalm-54-art.png",
+      "size": 2.4062747955322266,
+      "sizeBytes": 2523162,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://ableandthewolf.com/static/media/04_StayAwhile.dfbfd4a349471a817e3a.jpg",
+      "size": 2.379283905029297,
+      "sizeBytes": 2494860,
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/dvep16.png",
+      "size": 2.212787628173828,
+      "sizeBytes": 2320276,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/angel-beast-art.jpg",
+      "size": 2.1479806900024414,
+      "sizeBytes": 2252321,
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/lofi-montreal.png",
+      "size": 2.1465110778808594,
+      "sizeBytes": 2250780,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://ableandthewolf.com/static/media/07_StayAwhileReprise.8266f3dafb9ed8bb4a7b.jpg",
+      "size": 2.029463768005371,
+      "sizeBytes": 2128047,
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/so-far-away-art.jpg",
+      "size": 1.9994745254516602,
+      "sizeBytes": 2096601,
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://annipowellmusic.com/wp-content/MusicSideProject/Beauty%20Master%20and%20Album%20Cover/Beauty.jpg",
+      "size": 1.9989032745361328,
+      "sizeBytes": 2096002,
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "size": 1.9423542022705078,
+      "sizeBytes": 2036706,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/sing-for-you.png",
+      "size": 1.9193410873413086,
+      "sizeBytes": 2012575,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://ableandthewolf.com/static/media/03_LikeWine.174194a9839d720098aa.jpg",
+      "size": 1.8878231048583984,
+      "sizeBytes": 1979526,
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/sensitive-guy.png",
+      "size": 1.8672065734863281,
+      "sizeBytes": 1957908,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://re.podtards.com/api/optimized-images/let-go-art.png",
+      "size": 1.8008575439453125,
+      "sizeBytes": 1888336,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/bd-what-a-friend.png",
+      "size": 1.7777233123779297,
+      "sizeBytes": 1864078,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/if-i-promise-art.jpeg",
+      "size": 1.7639436721801758,
+      "sizeBytes": 1849629,
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/21536269-5192-49e7-a819-fab00f4a159e.jpg",
+      "size": 1.711634635925293,
+      "sizeBytes": 1794779,
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/your-chance.png",
+      "size": 1.6529054641723633,
+      "sizeBytes": 1733197,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/emma-rose.gif",
+      "size": 1.6202898025512695,
+      "sizeBytes": 1698997,
+      "contentType": "image/gif"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/thought-it-was-real-art.jpg",
+      "size": 1.6064529418945312,
+      "sizeBytes": 1684488,
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/happy-new-year-demo.png",
+      "size": 1.5889616012573242,
+      "sizeBytes": 1666147,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/wrath-of-banjo.png",
+      "size": 1.521174430847168,
+      "sizeBytes": 1595067,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/ef800a88-9a1c-4f8e-a7c5-f83d7d9b1c87.jpg",
+      "size": 1.502333641052246,
+      "sizeBytes": 1575311,
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://www.thisisjdog.com/media/ring-that-bell.jpg",
+      "size": 1.4868125915527344,
+      "sizeBytes": 1559036,
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/phatty-the-grasshopper.png",
+      "size": 1.483616828918457,
+      "sizeBytes": 1555685,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/generation-gap.png",
+      "size": 1.4606857299804688,
+      "sizeBytes": 1531640,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/way-in-my-life-art.jpg",
+      "size": 1.4393987655639648,
+      "sizeBytes": 1509319,
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/SoIntersectional.png",
+      "size": 1.423933982849121,
+      "sizeBytes": 1493103,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/Chocolates.png",
+      "size": 1.4110298156738281,
+      "sizeBytes": 1479572,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/624b19ac-5d8b-4fd6-8589-0eef7bcb9c9e.jpg",
+      "size": 1.359670639038086,
+      "sizeBytes": 1425718,
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/b54b9a19-b6ed-46c1-806c-7e82f7550edc.jpg",
+      "size": 1.3564481735229492,
+      "sizeBytes": 1422339,
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://annipowellmusic.com/wp-content/MusicSideProject/So%20It%20Goes%20Master%20and%20Album%20Cover/SoItGoesCoverJPG.JPG",
+      "size": 1.3255653381347656,
+      "sizeBytes": 1389956,
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/PayTheBills.jpg",
+      "size": 1.261368751525879,
+      "sizeBytes": 1322641,
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/breakaway-demo.png",
+      "size": 1.0550556182861328,
+      "sizeBytes": 1106306,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://annipowellmusic.com/wp-content/MusicSideProject/Peach%20Clouds%20Master%20and%20Album%20Cover/PeachCloudsCover.jpeg",
+      "size": 1.0364341735839844,
+      "sizeBytes": 1086780,
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/pour-over.png",
+      "size": 1.0304222106933594,
+      "sizeBytes": 1080476,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/bloodshot-lies-funk.png",
+      "size": 1.0193367004394531,
+      "sizeBytes": 1068852,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/make-it.png",
+      "size": 1.0189247131347656,
+      "sizeBytes": 1068420,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/christ-exalted.png",
+      "size": 1.015416145324707,
+      "sizeBytes": 1064741,
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/dead-time-live-2016.png",
+      "size": 1.0091514587402344,
+      "sizeBytes": 1058172,
+      "contentType": "image/png"
+    }
+  ],
+  "failedImages": [],
+  "allResults": [
+    {
+      "url": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "size": 1.9423542022705078,
+      "sizeBytes": 2036706,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/long-as-youre-loving-me.png",
+      "size": 0.899195671081543,
+      "sizeBytes": 942875,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/what-love-is.png",
+      "size": 0.5559759140014648,
+      "sizeBytes": 582983,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/now-i-know.png",
+      "size": 0.7774715423583984,
+      "sizeBytes": 815238,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/make-it.png",
+      "size": 1.0189247131347656,
+      "sizeBytes": 1068420,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/disco-swag.jpeg",
+      "size": 0.8621492385864258,
+      "sizeBytes": 904029,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/underwater.jpg",
+      "size": 0.12706565856933594,
+      "sizeBytes": 133238,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/possible.jpeg",
+      "size": 0.564967155456543,
+      "sizeBytes": 592411,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/think-ep.png",
+      "size": 0.8135166168212891,
+      "sizeBytes": 853034,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/love-is-a-war.png",
+      "size": 0.37662220001220703,
+      "sizeBytes": 394917,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/breakaway-demo.png",
+      "size": 1.0550556182861328,
+      "sizeBytes": 1106306,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/autumn.gif",
+      "size": 20.032280921936035,
+      "sizeBytes": 21005369,
+      "contentType": "image/gif",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/big-pine-song.png",
+      "size": 0.9349393844604492,
+      "sizeBytes": 980355,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/still-a-man.png",
+      "size": 0.5156173706054688,
+      "sizeBytes": 540664,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/pour-over.png",
+      "size": 1.0304222106933594,
+      "sizeBytes": 1080476,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/happy-new-year-demo.png",
+      "size": 1.5889616012573242,
+      "sizeBytes": 1666147,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/love-like-yours.png",
+      "size": 0.627772331237793,
+      "sizeBytes": 658267,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/worth-fighting-for.png",
+      "size": 0.6231660842895508,
+      "sizeBytes": 653437,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/movie-art.png",
+      "size": 3.419405937194824,
+      "sizeBytes": 3585507,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/morning-love-art.png",
+      "size": 2.4964542388916016,
+      "sizeBytes": 2617722,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/bloodshot-lies-acoustic.png",
+      "size": 0.7948293685913086,
+      "sizeBytes": 833439,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/you-feel-like-home-art.jpg",
+      "size": 2.5111122131347656,
+      "sizeBytes": 2633092,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/sing-for-you.png",
+      "size": 1.9193410873413086,
+      "sizeBytes": 2012575,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/maybe-its-you-art.jpg",
+      "size": 0.4122333526611328,
+      "sizeBytes": 432258,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/kurtisdrums.png",
+      "size": 0.7513704299926758,
+      "sizeBytes": 787869,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/way-in-my-life-art.jpg",
+      "size": 1.4393987655639648,
+      "sizeBytes": 1509319,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/angel-beast-art.jpg",
+      "size": 2.1479806900024414,
+      "sizeBytes": 2252321,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/if-i-promise-art.jpeg",
+      "size": 1.7639436721801758,
+      "sizeBytes": 1849629,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/bd-pulls-me-up.png",
+      "size": 0.4215230941772461,
+      "sizeBytes": 441999,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/come-back-to-me-art.jpeg",
+      "size": 0.4294404983520508,
+      "sizeBytes": 450301,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/heartbreakart.jpg",
+      "size": 0.7697811126708984,
+      "sizeBytes": 807174,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/theydontknowart.png",
+      "size": 0.6272869110107422,
+      "sizeBytes": 657758,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/thought-it-was-real-art.jpg",
+      "size": 1.6064529418945312,
+      "sizeBytes": 1684488,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/tired-of-dreaming.png",
+      "size": 0.9737300872802734,
+      "sizeBytes": 1021030,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/nostalgic.png",
+      "size": 0.6490325927734375,
+      "sizeBytes": 680560,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/3-years-art.jpg",
+      "size": 0.8835411071777344,
+      "sizeBytes": 926460,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/figured-you-out.png",
+      "size": 0.5319671630859375,
+      "sizeBytes": 557808,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/so-far-away-art.jpg",
+      "size": 1.9994745254516602,
+      "sizeBytes": 2096601,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/dont-forget-me-art.jpg",
+      "size": 0.2147674560546875,
+      "sizeBytes": 225200,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/bloodshot-lies-art.jpg",
+      "size": 0.42386913299560547,
+      "sizeBytes": 444459,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/bloodshot-lies-the-album.png",
+      "size": 0.7081642150878906,
+      "sizeBytes": 742564,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/movie.png",
+      "size": 0.9010372161865234,
+      "sizeBytes": 944806,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/heartbreak.png",
+      "size": 0.9177627563476562,
+      "sizeBytes": 962344,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/so-far-away.png",
+      "size": 0.9527168273925781,
+      "sizeBytes": 998996,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/thought-it-was-real.png",
+      "size": 0.9659528732299805,
+      "sizeBytes": 1012875,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/breakaway.png",
+      "size": 0.7138900756835938,
+      "sizeBytes": 748568,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/some1likeyou.png",
+      "size": 0.7956008911132812,
+      "sizeBytes": 834248,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/3-years.png",
+      "size": 0.7117509841918945,
+      "sizeBytes": 746325,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/another-man-ben.png",
+      "size": 0.5193452835083008,
+      "sizeBytes": 544573,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/my-brother.png",
+      "size": 0.8065710067749023,
+      "sizeBytes": 845751,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/bloodshot-lies-funk.png",
+      "size": 1.0193367004394531,
+      "sizeBytes": 1068852,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/itdvchadf.png",
+      "size": 0.5875415802001953,
+      "sizeBytes": 616082,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/v4v-music-podcast.png",
+      "size": 0.543421745300293,
+      "sizeBytes": 569819,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/doerf-citizen.png",
+      "size": 0.6810178756713867,
+      "sizeBytes": 714099,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/itdvlogo1.png",
+      "size": 0.7504253387451172,
+      "sizeBytes": 786878,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/itdvspacelogo.png",
+      "size": 4.544878005981445,
+      "sizeBytes": 4765650,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/dvep33.png",
+      "size": 0.6195707321166992,
+      "sizeBytes": 649667,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/fade7.gif",
+      "size": 2.962278366088867,
+      "sizeBytes": 3106174,
+      "contentType": "image/gif",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/itdvblackpaint2.png",
+      "size": 0.45566558837890625,
+      "sizeBytes": 477800,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/dvstudiosign.png",
+      "size": 0.41435909271240234,
+      "sizeBytes": 434487,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/dvep15-art.png",
+      "size": 5.119749069213867,
+      "sizeBytes": 5368446,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/dvep20.png",
+      "size": 0.9417018890380859,
+      "sizeBytes": 987446,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/dvep19.png",
+      "size": 3.5543689727783203,
+      "sizeBytes": 3727026,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/ep17-art.png",
+      "size": 3.340749740600586,
+      "sizeBytes": 3503030,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/dvep16.png",
+      "size": 2.212787628173828,
+      "sizeBytes": 2320276,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/doerfelverse-ep13-art.png",
+      "size": 2.5743846893310547,
+      "sizeBytes": 2699438,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/doerfelverse-ep10-art.jpeg",
+      "size": 0.6677083969116211,
+      "sizeBytes": 700143,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/doerfelverse-ep9-art.jpg",
+      "size": 0.49527645111083984,
+      "sizeBytes": 519335,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/doerfelverse-ep8-art.jpeg",
+      "size": 0.4571390151977539,
+      "sizeBytes": 479345,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/doerfelverse-ep7-art.jpeg",
+      "size": 0.45212841033935547,
+      "sizeBytes": 474091,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/dvspaceart.jpeg",
+      "size": 0.6478462219238281,
+      "sizeBytes": 679316,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/cropped-cropped-doerfel-verse-idea-9.png",
+      "size": 0.23394203186035156,
+      "sizeBytes": 245306,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.sirtjthewrathful.com/art/ep3art.jpg",
+      "size": 0.6577844619750977,
+      "sizeBytes": 689737,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/doerfel-verse-idea-9.png",
+      "size": 6.064803123474121,
+      "sizeBytes": 6359407,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/wrath-of-banjo.png",
+      "size": 1.521174430847168,
+      "sizeBytes": 1595067,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/the-banjo.png",
+      "size": 0.7402210235595703,
+      "sizeBytes": 776178,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/ben-doerfel-red.png",
+      "size": 0.44542789459228516,
+      "sizeBytes": 467065,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/emma-rose.gif",
+      "size": 1.6202898025512695,
+      "sizeBytes": 1698997,
+      "contentType": "image/gif",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/ben-doerfel.png",
+      "size": 0.6027326583862305,
+      "sizeBytes": 632011,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/bd-what-a-friend.png",
+      "size": 1.7777233123779297,
+      "sizeBytes": 1864078,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://ableandthewolf.com/static/media/01_MakinBeans.6dfb9c8e18b0f28adf4d.jpg",
+      "size": 0.6957454681396484,
+      "sizeBytes": 729542,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://ableandthewolf.com/static/media/02_WillowBrown.366ef47ccafa17a29dc6.jpg",
+      "size": 2.54128360748291,
+      "sizeBytes": 2664729,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://ableandthewolf.com/static/media/03_LikeWine.174194a9839d720098aa.jpg",
+      "size": 1.8878231048583984,
+      "sizeBytes": 1979526,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://ableandthewolf.com/static/media/04_StayAwhile.dfbfd4a349471a817e3a.jpg",
+      "size": 2.379283905029297,
+      "sizeBytes": 2494860,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://ableandthewolf.com/static/media/05_MapsOfHome.90eaac78cbe34f1e5330.jpg",
+      "size": 2.949604034423828,
+      "sizeBytes": 3092884,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://ableandthewolf.com/static/media/06_OneChristmas.f40e65fc41110ebca3d0.jpg",
+      "size": 0.8773298263549805,
+      "sizeBytes": 919947,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://ableandthewolf.com/static/media/07_StayAwhileReprise.8266f3dafb9ed8bb4a7b.jpg",
+      "size": 2.029463768005371,
+      "sizeBytes": 2128047,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/18sundays.gif",
+      "size": 0.8498296737670898,
+      "sizeBytes": 891111,
+      "contentType": "image/gif",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/ode-to-ashley.gif",
+      "size": 0.9098587036132812,
+      "sizeBytes": 954056,
+      "contentType": "image/gif",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/alandace.gif",
+      "size": 7.231586456298828,
+      "sizeBytes": 7582868,
+      "contentType": "image/gif",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/christ-exalted.png",
+      "size": 1.015416145324707,
+      "sizeBytes": 1064741,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/dead-time-live-2016.png",
+      "size": 1.0091514587402344,
+      "sizeBytes": 1058172,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/dfbv1.png",
+      "size": 0.6379356384277344,
+      "sizeBytes": 668924,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/dfbv2.png",
+      "size": 0.6315088272094727,
+      "sizeBytes": 662185,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://re.podtards.com/api/optimized-images/disco-swag.png",
+      "size": 3.7549381256103516,
+      "sizeBytes": 3937338,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://re.podtards.com/api/optimized-images/first-christmas-art.jpg",
+      "size": 9.823816299438477,
+      "sizeBytes": 10301018,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/generation-gap.png",
+      "size": 1.4606857299804688,
+      "sizeBytes": 1531640,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/kurtisdrums-christmix.png",
+      "size": 3.2344350814819336,
+      "sizeBytes": 3391551,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://re.podtards.com/api/optimized-images/let-go-art.png",
+      "size": 1.8008575439453125,
+      "sizeBytes": 1888336,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/phatty-the-grasshopper.png",
+      "size": 1.483616828918457,
+      "sizeBytes": 1555685,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/psalm-54-art.png",
+      "size": 2.4062747955322266,
+      "sizeBytes": 2523162,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/sensitive-guy.png",
+      "size": 1.8672065734863281,
+      "sizeBytes": 1957908,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/unsound-existence.png",
+      "size": 0.736811637878418,
+      "sizeBytes": 772603,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/you-are-my-world.gif",
+      "size": 34.927571296691895,
+      "sizeBytes": 36624213,
+      "contentType": "image/gif",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/your-chance.png",
+      "size": 1.6529054641723633,
+      "sizeBytes": 1733197,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/artists/opus/opus/opus.png",
+      "size": 3.1787967681884766,
+      "sizeBytes": 3333210,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/citybeach.png",
+      "size": 0.7182388305664062,
+      "sizeBytes": 753128,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/jeff-across-the-street.png",
+      "size": 0.8803634643554688,
+      "sizeBytes": 923128,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/lovin-you-forever.png",
+      "size": 0.7837467193603516,
+      "sizeBytes": 821818,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/another-man.png",
+      "size": 0.34557056427001953,
+      "sizeBytes": 362357,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/art/charlie.png",
+      "size": 0.47628211975097656,
+      "sizeBytes": 499418,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.thisisjdog.com/media/ring-that-bell.jpg",
+      "size": 1.4868125915527344,
+      "sizeBytes": 1559036,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://static.wixstatic.com/media/484406_9138bd56c7b64a388da3b927a5bb2220~mv2.png",
+      "size": 0.7430562973022461,
+      "sizeBytes": 779151,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://static.wixstatic.com/media/484406_1db02ef030c640db8a7fe3a79ec413e4~mv2.png",
+      "size": 0.6285724639892578,
+      "sizeBytes": 659106,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://music.behindthesch3m3s.com/wp-content/uploads/c_kostra/now%20i%20feel%20it.jpg",
+      "size": 0.03000926971435547,
+      "sizeBytes": 31467,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://f4.bcbits.com/img/a2986149142_16.jpg",
+      "size": 0.037117958068847656,
+      "sizeBytes": 38921,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://f4.bcbits.com/img/a3037583348_16.jpg",
+      "size": 0.16243553161621094,
+      "sizeBytes": 170326,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/d677db67-0310-4813-970e-e65927c689f1.jpg",
+      "size": 0.021821975708007812,
+      "sizeBytes": 22882,
+      "contentType": "image/*",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/e678589b-5a9f-4918-9622-34119d2eed2c.jpg",
+      "size": 0.008612632751464844,
+      "sizeBytes": 9031,
+      "contentType": "image/*",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/3a152941-c914-43da-aeca-5d7c58892a7f.jpg",
+      "size": 0.024580001831054688,
+      "sizeBytes": 25774,
+      "contentType": "image/*",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/a97e0586-ecda-4b79-9c38-be9a9effe05a.jpg",
+      "size": 0.020201683044433594,
+      "sizeBytes": 21183,
+      "contentType": "image/*",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/0ed13237-aca9-446f-9a03-de1a2d9331a3.jpg",
+      "size": 0.03319740295410156,
+      "sizeBytes": 34810,
+      "contentType": "image/*",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/ce8c4910-51bf-4d5e-a0b3-338e58e5ee79.jpg",
+      "size": 0.019301414489746094,
+      "sizeBytes": 20239,
+      "contentType": "image/*",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/acb43f23-cfec-4cc1-a418-4087a5378129.jpg",
+      "size": 0.031340599060058594,
+      "sizeBytes": 32863,
+      "contentType": "image/*",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/d1a871a7-7e4c-4a91-b799-87dcbb6bc41d.jpg",
+      "size": 0.015067100524902344,
+      "sizeBytes": 15799,
+      "contentType": "image/*",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/3294d8b5-f9f6-4241-a298-f04df818390c.jpg",
+      "size": 0.02057933807373047,
+      "sizeBytes": 21579,
+      "contentType": "image/*",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/d3145292-bf71-415f-a841-7f5c9a9466e1.jpg",
+      "size": 0.02176666259765625,
+      "sizeBytes": 22824,
+      "contentType": "image/*",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/91367816-33e6-4b6e-8eb7-44b2832708fd.jpg",
+      "size": 0.011389732360839844,
+      "sizeBytes": 11943,
+      "contentType": "image/*",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/8c8f8133-7ef1-4b72-a641-4e1a6a44d626.jpg",
+      "size": 0.2559661865234375,
+      "sizeBytes": 268400,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/9720d58b-22a5-4047-81de-f1940fec41c7.jpg",
+      "size": 0.5464801788330078,
+      "sizeBytes": 573026,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/21536269-5192-49e7-a819-fab00f4a159e.jpg",
+      "size": 1.711634635925293,
+      "sizeBytes": 1794779,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/624b19ac-5d8b-4fd6-8589-0eef7bcb9c9e.jpg",
+      "size": 1.359670639038086,
+      "sizeBytes": 1425718,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/997060e3-9dc1-4cd8-b3c1-3ae06d54bb03.jpg",
+      "size": 0.04124164581298828,
+      "sizeBytes": 43245,
+      "contentType": "image/*",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/b54b9a19-b6ed-46c1-806c-7e82f7550edc.jpg",
+      "size": 1.3564481735229492,
+      "sizeBytes": 1422339,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/1c7917cc-357c-4eaf-ab54-1a7cda504976.jpg",
+      "size": 0.046072959899902344,
+      "sizeBytes": 48311,
+      "contentType": "image/*",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/e1f9dfcb-ee9b-4a6d-aee7-189043917fb5.jpg",
+      "size": 0.04253959655761719,
+      "sizeBytes": 44606,
+      "contentType": "image/*",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/d4f791c3-4d0c-4fbd-a543-c136ee78a9de.jpg",
+      "size": 0.041851043701171875,
+      "sizeBytes": 43884,
+      "contentType": "image/*",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/22743c6e-b6b5-47af-bf44-9813dbff3c3c.jpg",
+      "size": 0.03119182586669922,
+      "sizeBytes": 32707,
+      "contentType": "image/*",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/6b7793b8-fd9d-432b-af1a-184cd41aaf9d.jpg",
+      "size": 0.01771068572998047,
+      "sizeBytes": 18571,
+      "contentType": "image/*",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/0bb8c9c7-1c55-4412-a517-572a98318921.jpg",
+      "size": 0.013442039489746094,
+      "sizeBytes": 14095,
+      "contentType": "image/*",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/16e46ed0-b392-4419-a937-a7815f6ca43b.jpg",
+      "size": 0.015680313110351562,
+      "sizeBytes": 16442,
+      "contentType": "image/*",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/2cd1b9ea-9ef3-4a54-aa25-55295689f442.jpg",
+      "size": 0.037415504455566406,
+      "sizeBytes": 39233,
+      "contentType": "image/*",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/33eeda7e-8591-4ff5-83f8-f36a879b0a09.jpg",
+      "size": 0.028840065002441406,
+      "sizeBytes": 30241,
+      "contentType": "image/*",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/32a79df8-ec3e-4a14-bfcb-7a074e1974b9.jpg",
+      "size": 2.9682092666625977,
+      "sizeBytes": 3112393,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/06376ab5-efca-459c-9801-49ceba5fdab1.jpg",
+      "size": 2.6475534439086914,
+      "sizeBytes": 2776161,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg",
+      "size": 0.4716310501098633,
+      "sizeBytes": 494541,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/MoeFactz.jpg",
+      "size": 0.34151172637939453,
+      "sizeBytes": 358101,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/milvesinteslas.jpg",
+      "size": 0.20122814178466797,
+      "sizeBytes": 211003,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/ThePlatform.jpg",
+      "size": 0.21042537689208984,
+      "sizeBytes": 220647,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/ChristmasTimeAgain.jpg",
+      "size": 0.16149044036865234,
+      "sizeBytes": 169335,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/KissMeAlways.png",
+      "size": 0.7777109146118164,
+      "sizeBytes": 815489,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/Incogneetus.jpg",
+      "size": 0.05128002166748047,
+      "sizeBytes": 53771,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/FreeSoftwareSong.jpg",
+      "size": 0.06687355041503906,
+      "sizeBytes": 70122,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/Chocolates.png",
+      "size": 1.4110298156738281,
+      "sizeBytes": 1479572,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/Boostagrams.png",
+      "size": 0.41370582580566406,
+      "sizeBytes": 433802,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/HowBoutYou.gif",
+      "size": 31.681836128234863,
+      "sizeBytes": 33220813,
+      "contentType": "image/gif",
+      "status": 200
+    },
+    {
+      "url": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/ToBeInNashville.png",
+      "size": 3.074888229370117,
+      "sizeBytes": 3224254,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/NotToWorry.jpg",
+      "size": 0.23288440704345703,
+      "sizeBytes": 244197,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/PorkchopsFried.jpg",
+      "size": 0.8148317337036133,
+      "sizeBytes": 854413,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/SoIntersectional.png",
+      "size": 1.423933982849121,
+      "sizeBytes": 1493103,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/CheckYourPockets.jpg",
+      "size": 0.3217887878417969,
+      "sizeBytes": 337420,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/PayTheBills.jpg",
+      "size": 1.261368751525879,
+      "sizeBytes": 1322641,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/LuvSong4U.jpg",
+      "size": 0.12446022033691406,
+      "sizeBytes": 130506,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/ZZXX.gif",
+      "size": 0.36467838287353516,
+      "sizeBytes": 382393,
+      "contentType": "image/gif",
+      "status": 200
+    },
+    {
+      "url": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/Lofi-Experience.png",
+      "size": 0.6358003616333008,
+      "sizeBytes": 666685,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/lofi-montreal.png",
+      "size": 2.1465110778808594,
+      "sizeBytes": 2250780,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://annipowellmusic.com/wp-content/MusicSideProject/MP3%20Masters%20and%20Copy%20of%20Cover/WIldandfreecover%20copy%202.png",
+      "size": 17.458937644958496,
+      "sizeBytes": 18307023,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://annipowellmusic.com/wp-content/MusicSideProject/Beauty%20Master%20and%20Album%20Cover/Beauty.jpg",
+      "size": 1.9989032745361328,
+      "sizeBytes": 2096002,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://annipowellmusic.com/wp-content/MusicSideProject/Peach%20Clouds%20Master%20and%20Album%20Cover/PeachCloudsCover.jpeg",
+      "size": 1.0364341735839844,
+      "sizeBytes": 1086780,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://annipowellmusic.com/wp-content/MusicSideProject/Beyond%20the%20Hills%20MP3%20Master%20and%20Album%20Cover/IMG_7423%20copy.JPG",
+      "size": 0.7247896194458008,
+      "sizeBytes": 759997,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://annipowellmusic.com/wp-content/MusicSideProject/Lingo%20Master%20and%20Album%20Cover/Lingo%20cover.JPG",
+      "size": 0.7071571350097656,
+      "sizeBytes": 741508,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://annipowellmusic.com/wp-content/MusicSideProject/So%20It%20Goes%20Master%20and%20Album%20Cover/SoItGoesCoverJPG.JPG",
+      "size": 1.3255653381347656,
+      "sizeBytes": 1389956,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/6dc5c681-8beb-4193-93a3-d405c962d103.jpg",
+      "size": 0.5179681777954102,
+      "sizeBytes": 543129,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/95ea253a-4058-402c-8503-204f6d3f1494.jpg",
+      "size": 0.0380859375,
+      "sizeBytes": 39936,
+      "contentType": "image/*",
+      "status": 200
+    },
+    {
+      "url": "https://d12wklypp119aj.cloudfront.net/image/ef800a88-9a1c-4f8e-a7c5-f83d7d9b1c87.jpg",
+      "size": 1.502333641052246,
+      "sizeBytes": 1575311,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "https://rocknrollbreakheart.com/msp/MidnightBreakheart/track%201/album-art.png",
+      "size": 0.6427555084228516,
+      "sizeBytes": 673978,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://rocknrollbreakheart.com/msp/MidnightBreakheart/track%202/album-art.png",
+      "size": 0.7551994323730469,
+      "sizeBytes": 791884,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://rocknrollbreakheart.com/msp/MidnightBreakheart/track%203/album-art.png",
+      "size": 0.6460685729980469,
+      "sizeBytes": 677452,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://rocknrollbreakheart.com/msp/MidnightBreakheart/track%204/album-art.png",
+      "size": 0.6440000534057617,
+      "sizeBytes": 675283,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://rocknrollbreakheart.com/msp/MidnightBreakheart/track%205/album-art.png",
+      "size": 0.6458425521850586,
+      "sizeBytes": 677215,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://rocknrollbreakheart.com/msp/MidnightBreakheart/track%206/album-art.png",
+      "size": 0.6454811096191406,
+      "sizeBytes": 676836,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://rocknrollbreakheart.com/msp/SatoshiStreamer/track%201/album-art.png",
+      "size": 5.48751163482666,
+      "sizeBytes": 5754073,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://media.rssblue.com/podcasts/panisee-attack/cover-art.andy-live.jpg",
+      "size": 0.19092655181884766,
+      "sizeBytes": 200201,
+      "contentType": "image/jpeg",
+      "status": 200
+    },
+    {
+      "url": "http://rocknrollbreakheart.com/msp/RNRBH/album-art.png",
+      "size": 4.117883682250977,
+      "sizeBytes": 4317914,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "http://rocknrollbreakheart.com/msp/RNRBH/track%201/track-art.png",
+      "size": 4.117883682250977,
+      "sizeBytes": 4317914,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "http://rocknrollbreakheart.com/msp/RNRBH/track%202/track-art.png",
+      "size": 4.117883682250977,
+      "sizeBytes": 4317914,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "http://rocknrollbreakheart.com/msp/RNRBH/track%203/track-art.png",
+      "size": 4.117883682250977,
+      "sizeBytes": 4317914,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "http://rocknrollbreakheart.com/msp/RNRBH/track%204/track-art.png",
+      "size": 4.117883682250977,
+      "sizeBytes": 4317914,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "http://rocknrollbreakheart.com/msp/RNRBH/track%205/track-art.png",
+      "size": 4.117883682250977,
+      "sizeBytes": 4317914,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "http://rocknrollbreakheart.com/msp/RNRBH/track%206/track-art.png",
+      "size": 4.117883682250977,
+      "sizeBytes": 4317914,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "http://rocknrollbreakheart.com/msp/RNRBH/track%207/track-art.png",
+      "size": 4.117883682250977,
+      "sizeBytes": 4317914,
+      "contentType": "image/png",
+      "status": 200
+    },
+    {
+      "url": "https://www.doerfelverse.com/artists/elijahlied/all-in-a-day/all-in-a-day.png",
+      "size": 0.7857084274291992,
+      "sizeBytes": 823875,
+      "contentType": "image/png",
+      "status": 200
+    }
+  ]
+}
