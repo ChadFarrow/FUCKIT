@@ -14,6 +14,7 @@ interface AudioContextType {
   // Audio controls
   playAlbum: (album: RSSAlbum, trackIndex?: number) => Promise<boolean>;
   playShuffledTrack: (index: number) => Promise<boolean>;
+  shuffleAllTracks: () => Promise<boolean>;
   pause: () => void;
   resume: () => void;
   seek: (time: number) => void;
@@ -266,6 +267,52 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     return false;
   };
 
+  // Shuffle all tracks function
+  const shuffleAllTracks = async (): Promise<boolean> => {
+    if (albums.length === 0) {
+      console.warn('No albums available for shuffle');
+      return false;
+    }
+
+    // Create a flat array of all tracks with their album info
+    const allTracks: Array<{
+      album: RSSAlbum;
+      trackIndex: number;
+      track: any;
+    }> = [];
+
+    albums.forEach(album => {
+      if (album.tracks && album.tracks.length > 0) {
+        album.tracks.forEach((track, trackIndex) => {
+          allTracks.push({
+            album,
+            trackIndex,
+            track
+          });
+        });
+      }
+    });
+
+    if (allTracks.length === 0) {
+      console.warn('No tracks available for shuffle');
+      return false;
+    }
+
+    // Shuffle the tracks array
+    const shuffledTracks = [...allTracks];
+    for (let i = shuffledTracks.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledTracks[i], shuffledTracks[j]] = [shuffledTracks[j], shuffledTracks[i]];
+    }
+
+    // Pick a random track to start with
+    const randomTrack = shuffledTracks[0];
+    console.log('🎲 Starting shuffle with:', randomTrack.track.title, 'from', randomTrack.album.title);
+
+    // Play the randomly selected track
+    return await playAlbum(randomTrack.album, randomTrack.trackIndex);
+  };
+
   // Pause function
   const pause = () => {
     if (audioRef.current) {
@@ -337,6 +384,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     duration,
     playAlbum,
     playShuffledTrack,
+    shuffleAllTracks,
     pause,
     resume,
     seek,

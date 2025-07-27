@@ -11,9 +11,9 @@ import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { generateAlbumUrl, generatePublisherSlug } from '@/lib/url-utils';
 import { getVersionString } from '@/lib/version';
 import ControlsBar, { FilterType, ViewType, SortType } from '@/components/ControlsBar';
+import { useAudio } from '@/contexts/AudioContext';
 import { AppError, ErrorCodes, ErrorCode, getErrorMessage, createErrorLogger } from '@/lib/error-utils';
 import { toast } from '@/components/Toast';
-import { useAudio } from '@/contexts/AudioContext';
 // RSS feed configuration - CDN removed, using original URLs directly
 
 const logger = createErrorLogger('MainPage');
@@ -53,7 +53,7 @@ export default function HomePage() {
   const [isClient, setIsClient] = useState(false);
   
   // Global audio context
-  const { playAlbum: globalPlayAlbum } = useAudio();
+  const { playAlbum: globalPlayAlbum, shuffleAllTracks } = useAudio();
   const hasLoadedRef = useRef(false);
   
   // Rotating background state
@@ -67,6 +67,20 @@ export default function HomePage() {
   const [sortType, setSortType] = useState<SortType>('name');
   
   // Shuffle functionality is now handled by the global AudioContext
+  const handleShuffle = async () => {
+    try {
+      console.log('🎲 Shuffle button clicked - starting shuffle all tracks');
+      const success = await shuffleAllTracks();
+      if (success) {
+        toast.success('🎲 Shuffle started!');
+      } else {
+        toast.error('Failed to start shuffle');
+      }
+    } catch (error) {
+      console.error('Error starting shuffle:', error);
+      toast.error('Error starting shuffle');
+    }
+  };
 
   useEffect(() => {
     setIsClient(true);
@@ -755,7 +769,8 @@ export default function HomePage() {
                 onSortChange={setSortType}
                 viewType={viewType}
                 onViewChange={setViewType}
-                showShuffle={false}
+                showShuffle={true}
+                onShuffle={handleShuffle}
                 resultCount={filteredAlbums.length}
                 resultLabel={activeFilter === 'all' ? 'Releases' : 
                   activeFilter === 'albums' ? 'Albums' :
