@@ -35,9 +35,10 @@ async function main() {
     // Step 2: Check for new publisher feeds
     console.log('\n🔍 Step 2: Scanning for new publisher feeds...');
     
-    // Import the auto-add publisher script logic
-    const { autoAddPublisherFeeds } = require('./auto-add-publisher-feeds.js');
-    const newPublishersAdded = await autoAddPublisherFeeds();
+    // Import the enhanced ensure complete publisher feeds script
+    const { ensureCompletePublisherFeeds } = require('./ensure-complete-publisher-feeds.js');
+    const result = await ensureCompletePublisherFeeds();
+    const newPublishersAdded = result.addedFeeds;
     
     // Step 3: Summary
     console.log('\n📈 Final Summary:');
