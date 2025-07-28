@@ -137,6 +137,17 @@ export const KNOWN_PUBLISHERS: { [slug: string]: { feedGuid: string; feedUrl: st
     feedGuid: '8a9c2e54-785a-4128-9412-737610f5d00a',
     feedUrl: 'iroh-aggregated',
     name: 'IROH'
+  },
+  // Ollie
+  'ollie': {
+    feedGuid: 'd2f43e9f-adfc-4811-b9c1-58d5ea383275',
+    feedUrl: 'https://wavlake.com/feed/artist/d2f43e9f-adfc-4811-b9c1-58d5ea383275',
+    name: 'Ollie'
+  },
+  'd2f43e9f': {
+    feedGuid: 'd2f43e9f-adfc-4811-b9c1-58d5ea383275',
+    feedUrl: 'https://wavlake.com/feed/artist/d2f43e9f-adfc-4811-b9c1-58d5ea383275',
+    name: 'Ollie'
   }
 };
 

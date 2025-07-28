@@ -8,6 +8,7 @@ import { RSSAlbum, RSSPublisherItem } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { generateAlbumUrl, getPublisherInfo } from '@/lib/url-utils';
 import ControlsBar, { FilterType, ViewType, SortType } from '@/components/ControlsBar';
+import CDNImage from '@/components/CDNImage';
 
 interface PublisherDetailClientProps {
   publisherId: string;
@@ -200,11 +201,12 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
         {/* Fallback background - use artist image or gradient */}
         {publisherInfo?.coverArt ? (
           <div className="fixed inset-0 z-0">
-            <Image 
+            <CDNImage 
               src={getAlbumArtworkUrl(publisherInfo.coverArt, 'large')} 
               alt={publisherInfo.title || 'Artist background'}
-              fill
-              className="object-cover"
+              width={1920}
+              height={1080}
+              className="w-full h-full object-cover"
               priority
             />
             {/* Dark overlay for readability */}
@@ -234,11 +236,12 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
         {/* Fallback background - use artist image or gradient */}
         {publisherInfo?.coverArt ? (
           <div className="fixed inset-0 z-0">
-            <Image 
+            <CDNImage 
               src={getAlbumArtworkUrl(publisherInfo.coverArt, 'large')} 
               alt={publisherInfo.title || 'Artist background'}
-              fill
-              className="object-cover"
+              width={1920}
+              height={1080}
+              className="w-full h-full object-cover"
               priority
             />
             {/* Dark overlay for readability */}
@@ -350,11 +353,12 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
       {/* Enhanced Background */}
       {publisherInfo?.coverArt ? (
         <div className="fixed inset-0 z-0">
-          <Image 
+          <CDNImage 
             src={getAlbumArtworkUrl(publisherInfo.coverArt, 'large')} 
             alt={publisherInfo.title || 'Publisher background'}
-            fill
-            className="object-cover"
+            width={1920}
+            height={1080}
+            className="w-full h-full object-cover"
             priority
           />
           {/* Gradient overlay for better readability */}
@@ -381,7 +385,7 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
             <div className="flex-shrink-0">
               {publisherInfo?.coverArt ? (
                 <div className="w-48 h-48 rounded-2xl overflow-hidden shadow-2xl ring-4 ring-white/20">
-                  <Image 
+                  <CDNImage 
                     src={getAlbumArtworkUrl(publisherInfo.coverArt, 'large')} 
                     alt={publisherInfo.title || 'Artist'}
                     width={192}
@@ -480,7 +484,7 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
                       >
                         <div className="relative aspect-square">
                           {album.coverArt ? (
-                            <Image 
+                            <CDNImage 
                               src={getAlbumArtworkUrl(album.coverArt, 'medium')} 
                               alt={album.title}
                               width={300}
@@ -537,7 +541,7 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
                       >
                         <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
                           {album.coverArt ? (
-                            <Image 
+                            <CDNImage 
                               src={getAlbumArtworkUrl(album.coverArt, 'thumbnail')} 
                               alt={album.title}
                               width={64}
