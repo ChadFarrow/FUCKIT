@@ -10,7 +10,29 @@
  * @returns The original artwork URL or placeholder
  */
 export function getAlbumArtworkUrl(originalUrl: string, size: 'thumbnail' | 'medium' | 'large' = 'medium'): string {
-  return originalUrl || getPlaceholderImageUrl(size);
+  if (!originalUrl) {
+    return getPlaceholderImageUrl(size);
+  }
+  
+  // For mobile, ensure we're using HTTPS and handle cross-origin issues
+  if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+    // Ensure HTTPS
+    if (originalUrl.startsWith('http://')) {
+      originalUrl = originalUrl.replace('http://', 'https://');
+    }
+    
+    // For doerfelverse.com images, use direct URL
+    if (originalUrl.includes('doerfelverse.com')) {
+      return originalUrl;
+    }
+    
+    // For re.podtards.com optimized images, use direct URL
+    if (originalUrl.includes('re.podtards.com/api/optimized-images/')) {
+      return originalUrl;
+    }
+  }
+  
+  return originalUrl;
 }
 
 /**

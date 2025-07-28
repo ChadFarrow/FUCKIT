@@ -139,11 +139,13 @@ export default function CDNImage({
   };
 
   const handleError = () => {
-    console.warn(`Image failed to load (attempt ${retryCount + 1}):`, currentSrc);
+    console.warn(`[CDNImage] Failed to load (attempt ${retryCount + 1}):`, currentSrc);
+    console.warn(`[CDNImage] Device info - Mobile: ${isMobile}, Width: ${window?.innerWidth}`);
     setIsLoading(false);
     
+    // First try the fallback URL if provided
     if (retryCount === 0 && fallbackSrc && fallbackSrc !== currentSrc) {
-      console.log('Optimized image failed, trying fallback URL:', fallbackSrc);
+      console.log('[CDNImage] Trying fallback URL:', fallbackSrc);
       setCurrentSrc(fallbackSrc);
       setHasError(false);
       setIsLoading(true);
@@ -151,20 +153,25 @@ export default function CDNImage({
       return;
     }
     
-    if (retryCount === 0) {
+    // Then try without optimization
+    if (retryCount === 1 && currentSrc.includes('/api/optimized-images/')) {
       const originalUrl = getOriginalUrl(currentSrc);
       if (originalUrl && originalUrl !== currentSrc) {
-        console.log('Optimized image failed, trying original URL:', originalUrl);
+        console.log('[CDNImage] Trying without optimization:', originalUrl);
         setCurrentSrc(originalUrl);
         setHasError(false);
         setIsLoading(true);
-        setRetryCount(1);
+        setRetryCount(2);
         return;
       }
     }
     
-    setHasError(true);
-    onError?.();
+    // Finally, try the placeholder
+    if (retryCount < 3) {
+      console.log('[CDNImage] All attempts failed, showing placeholder');
+      setHasError(true);
+      onError?.();
+    }
   };
 
   const handleLoad = () => {
@@ -229,7 +236,6 @@ export default function CDNImage({
           onLoad={handleLoad}
           loading={priority ? 'eager' : 'lazy'}
           referrerPolicy="no-referrer"
-          crossOrigin="anonymous"
           style={{ 
             objectFit: 'cover',
             width: '100%',
