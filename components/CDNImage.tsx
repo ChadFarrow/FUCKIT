@@ -44,8 +44,10 @@ export default function CDNImage({
   // Check if we're on mobile
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   
   useEffect(() => {
+    setIsClient(true);
     const checkDevice = () => {
       const width = window.innerWidth;
       setIsMobile(width <= 768);
@@ -185,8 +187,8 @@ export default function CDNImage({
     const dims = getImageDimensions();
     let imageSrc = src;
     
-    // For mobile, prefer direct URLs over optimized ones for better compatibility
-    if (isMobile && !src.includes('/api/optimized-images/')) {
+    // Only apply mobile-specific logic on the client side
+    if (isClient && isMobile && !src.includes('/api/optimized-images/')) {
       imageSrc = src;
     } else {
       imageSrc = getOptimizedUrl(src, dims.width, dims.height);
@@ -206,7 +208,7 @@ export default function CDNImage({
     return () => {
       if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [src, width, height, isMobile, isTablet]);
+  }, [src, width, height, isMobile, isTablet, isClient]);
 
   const dims = getImageDimensions();
 
@@ -224,7 +226,7 @@ export default function CDNImage({
         </div>
       )}
       
-      {isMobile ? (
+      {isClient && isMobile ? (
         // Use regular img tag for mobile with optimized loading
         <img
           src={currentSrc}
