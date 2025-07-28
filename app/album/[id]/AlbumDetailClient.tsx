@@ -151,6 +151,11 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
 
   // Update background when album data changes
   useEffect(() => {
+    // Don't run background effect while loading or if album is null
+    if (isLoading || !album) {
+      return;
+    }
+    
     // Prevent infinite loops by checking if we've already processed this cover art
     if (album?.coverArt === lastProcessedCoverArt) {
       return;
@@ -202,7 +207,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
     }, 2000); // 2 second timeout
     
     return () => clearTimeout(timeoutId);
-  }, [album?.coverArt, lastProcessedCoverArt]); // Added lastProcessedCoverArt to dependencies
+  }, [album?.coverArt, lastProcessedCoverArt, isLoading, album]); // Added isLoading and album to dependencies
 
   // Optimized background style calculation - memoized to prevent repeated logs
   const backgroundStyle = useMemo(() => {
