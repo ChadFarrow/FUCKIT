@@ -11,6 +11,8 @@
 
 const fs = require('fs');
 const path = require('path');
+const fetch = require('node-fetch');
+const { XMLParser } = require('fast-xml-parser');
 
 async function autoAddPublisherFeeds() {
   console.log('🔍 Scanning for publisher feeds in parsed data...\n');
@@ -108,6 +110,43 @@ async function autoAddPublisherFeeds() {
     
     console.log(`\n✅ Successfully added ${newFeeds.length} publisher feeds to configuration`);
     console.log('📁 Updated: data/feeds.json');
+
+    // --- NEW LOGIC: Add album feeds from publisher feeds ---
+    const allPublisherFeeds = feedsConfig.feeds.filter(f => f.type === 'publisher');
+    let newAlbumFeeds = [];
+    for (const pubFeed of allPublisherFeeds) {
+      const remoteItems = await fetchRemoteItemsFromPublisherFeed(pubFeed.originalUrl);
+      for (const albumUrl of remoteItems) {
+        // Check if already present
+        if (!feedsConfig.feeds.some(f => f.originalUrl === albumUrl)) {
+          const albumId = albumUrl
+            .replace(/^https?:\/\//, '')
+            .replace(/[^a-zA-Z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '')
+            .toLowerCase();
+          const newAlbumFeed = {
+            id: albumId,
+            originalUrl: albumUrl,
+            type: 'album',
+            title: albumId,
+            priority: 'extended',
+            status: 'active',
+            addedAt: new Date().toISOString(),
+            lastUpdated: new Date().toISOString()
+          };
+          feedsConfig.feeds.push(newAlbumFeed);
+          newAlbumFeeds.push(albumUrl);
+          console.log(`  🎶 Added album feed from publisher: ${albumUrl}`);
+        }
+      }
+    }
+    if (newAlbumFeeds.length > 0) {
+      fs.writeFileSync(feedsConfigPath, JSON.stringify(feedsConfig, null, 2));
+      console.log(`\n✅ Added ${newAlbumFeeds.length} new album feeds from publisher feeds.`);
+    } else {
+      console.log('\n✅ No new album feeds found in publisher feeds.');
+    }
+    // --- END NEW LOGIC ---
     
     // Summary
     console.log('\n📈 Summary:');
@@ -137,6 +176,35 @@ function generateFeedId(title) {
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
     .trim('-') + '-publisher';
+}
+
+async function fetchRemoteItemsFromPublisherFeed(publisherUrl) {
+  try {
+    const res = await fetch(publisherUrl);
+    if (!res.ok) {
+      console.warn(`⚠️  Failed to fetch publisher feed: ${publisherUrl} (${res.status})`);
+      return [];
+    }
+    const xml = await res.text();
+    const parser = new XMLParser({ ignoreAttributes: false });
+    const data = parser.parse(xml);
+    // Find <podcast:remoteItem> entries
+    const channel = data.rss && data.rss.channel ? data.rss.channel : null;
+    if (!channel) return [];
+    let remoteItems = [];
+    if (Array.isArray(channel['podcast:remoteItem'])) {
+      remoteItems = channel['podcast:remoteItem'];
+    } else if (channel['podcast:remoteItem']) {
+      remoteItems = [channel['podcast:remoteItem']];
+    }
+    // Extract feedUrl from each remoteItem
+    return remoteItems
+      .map(item => item['@_feedUrl'] || item['@_feedurl'] || item['@_url'])
+      .filter(Boolean);
+  } catch (e) {
+    console.warn(`⚠️  Error parsing publisher feed: ${publisherUrl}`);
+    return [];
+  }
 }
 
 // Export the function for use in other scripts

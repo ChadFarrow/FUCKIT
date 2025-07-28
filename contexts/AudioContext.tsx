@@ -75,27 +75,26 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   // Add user interaction handler to enable audio playback
   useEffect(() => {
     const enableAudio = () => {
-      if (audioRef.current) {
-        // Try to play a silent audio to unlock audio context
-        audioRef.current.volume = 0;
-        audioRef.current.play().catch(() => {
-          // Ignore errors - this is just to unlock the audio context
-        });
+      if (audioRef.current && !hasUserInteracted) {
+        // Only enable audio context unlock, don't actually play anything
+        // This prevents accidental auto-play on mobile
+        setHasUserInteracted(true);
+        console.log('🔓 Audio context unlocked via user interaction');
       }
     };
 
     // Check if we're on mobile
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
-    // Listen for user interactions to enable audio
+    // Listen for user interactions to enable audio - but don't auto-play
     const events = ['click', 'touchstart', 'touchend', 'keydown'];
     events.forEach(event => {
       document.addEventListener(event, enableAudio, { once: true });
     });
 
-    // For mobile, also try to enable audio on page load if possible
+    // For mobile, log detection but don't do anything that could trigger playback
     if (isMobile) {
-      console.log('📱 Mobile device detected - enabling mobile-specific audio handling');
+      console.log('📱 Mobile device detected - audio will require explicit user interaction');
     }
 
     return () => {
@@ -103,7 +102,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
         document.removeEventListener(event, enableAudio);
       });
     };
-  }, []);
+  }, [hasUserInteracted]);
 
   // Save state to localStorage when it changes
   useEffect(() => {
