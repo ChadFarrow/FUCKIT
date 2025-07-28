@@ -41,7 +41,74 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   const [backgroundLoaded, setBackgroundLoaded] = useState(false);
   const [albumArtLoaded, setAlbumArtLoaded] = useState(false);
   const [lastProcessedCoverArt, setLastProcessedCoverArt] = useState<string | null>(null);
+  const [isDesktop, setIsDesktop] = useState(false);
   
+
+  // Detect desktop for background loading optimization
+  useEffect(() => {
+    const checkDevice = () => {
+      setIsDesktop(window.innerWidth > 768);
+    };
+    
+    if (typeof window !== 'undefined') {
+      checkDevice();
+      window.addEventListener('resize', checkDevice);
+      return () => window.removeEventListener('resize', checkDevice);
+    }
+  }, []);
+
+  // Early background loading for desktop - start immediately when component mounts
+  useEffect(() => {
+    if (!isClient || !isDesktop) return;
+    
+    // Try to preload background image from album title
+    const preloadBackgroundImage = async () => {
+      try {
+        // Load pre-parsed album data to find the album and its cover art
+        const response = await fetch('/api/albums');
+        if (response.ok) {
+          const data = await response.json();
+          const albums = data.albums || [];
+          
+          // Find album by title (case-insensitive)
+          const decodedAlbumTitle = decodeURIComponent(albumTitle);
+          const foundAlbum = albums.find((album: any) => 
+            album.title.toLowerCase() === decodedAlbumTitle.toLowerCase()
+          );
+          
+          if (foundAlbum?.coverArt) {
+            console.log('🎨 Preloading background image for desktop:', foundAlbum.coverArt);
+            
+            // Preload the image
+            const img = new window.Image();
+            img.onload = () => {
+              console.log('✅ Background image preloaded successfully:', foundAlbum.coverArt);
+              setBackgroundImage(foundAlbum.coverArt);
+              setBackgroundLoaded(true);
+            };
+            img.onerror = (error) => {
+              console.error('❌ Background image preload failed:', foundAlbum.coverArt, error);
+              setBackgroundImage(null);
+              setBackgroundLoaded(true);
+            };
+            
+            img.decoding = 'async';
+            img.src = foundAlbum.coverArt;
+          } else {
+            console.log('🚫 No album found for preloading, using gradient background');
+            setBackgroundImage(null);
+            setBackgroundLoaded(true);
+          }
+        }
+      } catch (error) {
+        console.error('❌ Error preloading background image:', error);
+        setBackgroundImage(null);
+        setBackgroundLoaded(true);
+      }
+    };
+    
+    preloadBackgroundImage();
+  }, [isClient, isDesktop, albumTitle]);
 
   // Update Media Session API for iOS lock screen controls
   const updateMediaSession = (track: any) => {
@@ -149,10 +216,15 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   }, []);
 
 
-  // Update background when album data changes
+  // Update background when album data changes (only for mobile or when early loading fails)
   useEffect(() => {
     // Don't run background effect while loading or if album is null
     if (isLoading || !album) {
+      return;
+    }
+    
+    // On desktop, skip this if we already have a background image from early loading
+    if (isDesktop && backgroundImage) {
       return;
     }
     
@@ -164,7 +236,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
     console.log('🎨 Background update triggered:', { 
       albumTitle: album?.title, 
       coverArt: album?.coverArt,
-      hasCoverArt: !!album?.coverArt 
+      hasCoverArt: !!album?.coverArt,
+      isDesktop
     });
     
     // Mark this cover art as processed
@@ -207,7 +280,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
     }, 2000); // 2 second timeout
     
     return () => clearTimeout(timeoutId);
-  }, [album?.coverArt, lastProcessedCoverArt, isLoading, album]); // Added isLoading and album to dependencies
+  }, [album?.coverArt, lastProcessedCoverArt, isLoading, album, isDesktop, backgroundImage]); // Added isDesktop and backgroundImage to dependencies
 
   // Optimized background style calculation - memoized to prevent repeated logs
   const backgroundStyle = useMemo(() => {
@@ -594,11 +667,19 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
+      <div 
+        className="min-h-screen text-white"
+        style={isDesktop && backgroundImage ? backgroundStyle : {
+          background: 'linear-gradient(to bottom right, rgb(17, 24, 39), rgb(31, 41, 55), rgb(17, 24, 39))'
+        }}
+      >
         <div className="container mx-auto px-6 py-8">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
             <h1 className="text-2xl font-bold">Loading Album...</h1>
+            {isDesktop && backgroundImage && (
+              <p className="text-gray-400 mt-2">Background loaded, content loading...</p>
+            )}
           </div>
         </div>
       </div>
