@@ -159,24 +159,24 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
 
         {/* Track count badge */}
         {album.tracks.length > 0 && (
-          <div className="absolute top-2 right-2 bg-black/50 backdrop-blur-sm rounded-full px-2 py-1 text-xs text-white">
-            {album.tracks.length} track{album.tracks.length !== 1 ? 's' : ''}
+          <div className="absolute top-1 right-1 sm:top-2 sm:right-2 bg-black/50 backdrop-blur-sm rounded-full px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs text-white">
+            {album.tracks.length} {album.tracks.length !== 1 ? 'tracks' : 'track'}
           </div>
         )}
       </div>
 
       {/* Album Info */}
-      <div className="p-3">
-        <h3 className="font-semibold text-white text-sm leading-tight line-clamp-2 group-hover:text-blue-300 transition-colors duration-200">
+      <div className="p-2 sm:p-3">
+        <h3 className="font-semibold text-white text-xs sm:text-sm leading-tight line-clamp-2 group-hover:text-blue-300 transition-colors duration-200">
           {album.title}
         </h3>
-        <p className="text-gray-400 text-xs mt-1 line-clamp-1">
+        <p className="text-gray-400 text-[10px] sm:text-xs mt-0.5 sm:mt-1 line-clamp-1">
           {album.artist}
         </p>
         
         {/* Release date */}
         {album.releaseDate && (
-          <p className="text-gray-500 text-xs mt-1">
+          <p className="text-gray-500 text-[10px] sm:text-xs mt-0.5 sm:mt-1">
             {new Date(album.releaseDate).getFullYear()}
           </p>
         )}
