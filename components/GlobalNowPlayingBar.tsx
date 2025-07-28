@@ -56,6 +56,17 @@ const GlobalNowPlayingBar: React.FC = () => {
     albumArt: currentPlayingAlbum.coverArt || ''
   };
 
+  // Debug logging in development
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🎵 Now Playing Track Data:', {
+      title: currentTrack.title,
+      artist: currentTrack.artist,
+      albumTitle: currentTrack.albumTitle,
+      albumArt: currentTrack.albumArt,
+      hasAlbumArt: !!currentTrack.albumArt
+    });
+  }
+
   return (
     <div style={{ 
       position: 'fixed', 

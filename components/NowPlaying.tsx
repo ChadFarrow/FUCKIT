@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
+import CDNImage from '@/components/CDNImage';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 
 interface Track {
@@ -85,17 +85,13 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
         href={generateAlbumUrl(track.albumTitle)}
         className="flex items-center gap-3 min-w-0 flex-1 hover:bg-gray-700 rounded-lg p-2 -m-2 transition-colors cursor-pointer"
       >
-        <Image 
-          src={track.albumArt ? getAlbumArtworkUrl(track.albumArt, 'thumbnail') : getPlaceholderImageUrl('thumbnail')} 
+        <CDNImage 
+          src={track.albumArt || ''}
           alt={track.title}
           width={48}
           height={48}
           className="rounded-lg object-cover w-12 h-12 flex-shrink-0"
-          style={{ objectFit: 'cover' }}
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.src = getPlaceholderImageUrl('thumbnail');
-          }}
+          fallbackSrc={getPlaceholderImageUrl('thumbnail')}
         />
         <div className="min-w-0">
           <p className="font-bold truncate text-white">
