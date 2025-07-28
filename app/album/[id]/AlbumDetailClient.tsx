@@ -33,13 +33,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
     seek: globalSeek
   } = useAudio();
   
-  // Local audio state for this album
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [volume, setVolume] = useState(1);
-  const audioRef = useRef<HTMLAudioElement>(null);
+
 
   // Background state
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
@@ -96,10 +90,9 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   const togglePlay = async () => {
     if (globalIsPlaying && currentPlayingAlbum?.title === album?.title) {
       globalPause();
-      setIsPlaying(false);
     } else {
       if (album && album.tracks.length > 0) {
-        await playTrack(currentTrackIndex);
+        await playTrack(globalTrackIndex);
       }
     }
   };
@@ -117,8 +110,6 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
     
     if (success) {
       console.log('✅ Track playback started successfully via global audio context');
-      setCurrentTrackIndex(index);
-      setIsPlaying(true);
       
       // Update Media Session for lock screen controls
       updateMediaSession(album.tracks[index]);
@@ -130,55 +121,26 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   };
 
   const playAlbum = async () => {
-    
     if (album && album.tracks.length > 0) {
       await playTrack(0);
     }
   };
 
   const nextTrack = async () => {
-    if (album && currentTrackIndex < album.tracks.length - 1) {
-      await playTrack(currentTrackIndex + 1);
+    if (album && globalTrackIndex < album.tracks.length - 1) {
+      await playTrack(globalTrackIndex + 1);
     }
   };
 
   const prevTrack = async () => {
-    if (album && currentTrackIndex > 0) {
-      await playTrack(currentTrackIndex - 1);
+    if (album && globalTrackIndex > 0) {
+      await playTrack(globalTrackIndex - 1);
     }
-  };
-
-  const handleTimeUpdate = () => {
-    if (audioRef.current) {
-      setCurrentTime(audioRef.current.currentTime);
-    }
-  };
-
-  const handleLoadedMetadata = () => {
-    if (audioRef.current) {
-      setDuration(audioRef.current.duration);
-    }
-  };
-
-  const handleEnded = () => {
-    // Don't await here to avoid blocking the event handler
-    nextTrack();
   };
 
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
     const time = parseFloat(e.target.value);
-    if (audioRef.current) {
-      audioRef.current.currentTime = time;
-      setCurrentTime(time);
-    }
-  };
-
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newVolume = parseFloat(e.target.value);
-    setVolume(newVolume);
-    if (audioRef.current) {
-      audioRef.current.volume = newVolume;
-    }
+    globalSeek(time);
   };
 
   // Initialize client state
@@ -670,18 +632,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
       className="min-h-screen text-white relative"
       style={backgroundStyle}
     >
-      {/* Hidden audio element */}
-      <audio
-        ref={audioRef}
-        onTimeUpdate={handleTimeUpdate}
-        onLoadedMetadata={handleLoadedMetadata}
-        onEnded={handleEnded}
-        onPlay={() => setIsPlaying(true)}
-        onPause={() => setIsPlaying(false)}
-        preload="metadata"
-        crossOrigin="anonymous"
-        playsInline
-      />
+
 
       <div className="container mx-auto px-6 py-8 pb-40">
         {/* Back button */}
@@ -727,10 +678,10 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             {albumArtLoaded && (
               <div className="absolute inset-0 flex items-center justify-center">
                 <button
-                  onClick={isPlaying ? togglePlay : playAlbum}
+                  onClick={globalIsPlaying && currentPlayingAlbum?.title === album?.title ? togglePlay : playAlbum}
                   className="bg-white/90 hover:bg-white text-black rounded-full p-4 transform hover:scale-110 transition-all duration-200 shadow-xl border-2 border-white/20"
                 >
-                  {isPlaying ? (
+                  {globalIsPlaying && currentPlayingAlbum?.title === album?.title ? (
                     <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
                     </svg>
@@ -807,7 +758,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               <div 
                 key={index} 
                 className={`flex items-center justify-between p-4 hover:bg-white/10 rounded-lg transition-colors group cursor-pointer ${
-                  currentTrackIndex === index ? 'bg-white/20' : ''
+                  globalTrackIndex === index && currentPlayingAlbum?.title === album?.title ? 'bg-white/20' : ''
                 }`}
                 onClick={() => playTrack(index)}
               >
@@ -842,7 +793,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                               playTrack(index);
                             }}
                           >
-                            {currentTrackIndex === index && isPlaying ? (
+                            {globalTrackIndex === index && globalIsPlaying && currentPlayingAlbum?.title === album?.title ? (
                               <Pause className="h-3 w-3" />
                             ) : (
                               <Play className="h-3 w-3" />
@@ -876,7 +827,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                               playTrack(index);
                             }}
                           >
-                            {currentTrackIndex === index && isPlaying ? (
+                            {globalTrackIndex === index && globalIsPlaying && currentPlayingAlbum?.title === album?.title ? (
                               <Pause className="h-3 w-3" />
                             ) : (
                               <Play className="h-3 w-3" />
@@ -958,118 +909,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
         )}
       </div>
 
-      {/* Audio Player */}
-      {album && album.tracks && album.tracks.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 backdrop-blur-md bg-gradient-to-t from-black/60 via-black/40 to-transparent border-t border-white/10 p-4 shadow-2xl" style={{ paddingBottom: 'calc(16px + env(safe-area-inset-bottom))' }}>
-          <div className="container mx-auto flex flex-col md:flex-row items-center gap-4 bg-white/5 rounded-xl p-4 backdrop-blur-sm border border-white/10">
-            {/* Mobile Layout: Track Info + Controls Row */}
-            <div className="flex items-center gap-3 w-full md:w-auto md:flex-1">
-              <Image 
-                src={getPlaceholderImageUrl('thumbnail')} 
-                alt={album?.tracks?.[currentTrackIndex]?.title || album?.title || 'Track'}
-                width={48}
-                height={48}
-                className="rounded object-cover hidden md:block"
-                onError={(e) => {
-                  // Fallback to album artwork then placeholder on error
-                  const target = e.target as HTMLImageElement;
-                  if (target.src !== getAlbumArtworkUrl(album?.coverArt || '', 'thumbnail')) {
-                    target.src = getAlbumArtworkUrl(album?.coverArt || '', 'thumbnail');
-                  } else {
-                    target.src = getPlaceholderImageUrl('thumbnail');
-                  }
-                }}
-              />
-              <div className="min-w-0 flex-1 md:flex-initial">
-                <p className="font-medium truncate text-sm md:text-base">
-                  {album?.tracks?.[currentTrackIndex]?.title || 'No track selected'}
-                </p>
-                <p className="text-xs md:text-sm text-gray-400 truncate">{album?.artist}</p>
-              </div>
-              
-              {/* Mobile Playback Controls */}
-              <div className="flex items-center gap-2 md:hidden">
-                <button 
-                  onClick={prevTrack}
-                  className="text-gray-400 hover:text-white transition-colors p-2"
-                  disabled={currentTrackIndex === 0}
-                >
-                  <SkipBack className="h-5 w-5" />
-                </button>
-                
-                <button 
-                  onClick={togglePlay}
-                  className="bg-white text-black rounded-full p-2 hover:bg-gray-200 transition-colors"
-                >
-                  {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
-                </button>
-                
-                <button 
-                  onClick={nextTrack}
-                  className="text-gray-400 hover:text-white transition-colors p-2"
-                  disabled={currentTrackIndex === (album?.tracks?.length ?? 1) - 1}
-                >
-                  <SkipForward className="h-5 w-5" />
-                </button>
-              </div>
-            </div>
 
-            {/* Desktop Playback Controls */}
-            <div className="hidden md:flex items-center gap-4">
-              <button 
-                onClick={prevTrack}
-                className="text-gray-400 hover:text-white transition-colors"
-                disabled={currentTrackIndex === 0}
-              >
-                <SkipBack className="h-5 w-5" />
-              </button>
-              
-              <button 
-                onClick={togglePlay}
-                className="bg-white text-black rounded-full p-2 hover:bg-gray-200 transition-colors"
-              >
-                {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
-              </button>
-              
-              <button 
-                onClick={nextTrack}
-                className="text-gray-400 hover:text-white transition-colors"
-                disabled={currentTrackIndex === (album?.tracks?.length ?? 1) - 1}
-              >
-                <SkipForward className="h-5 w-5" />
-              </button>
-            </div>
-
-            {/* Progress Bar - Full Width on Mobile */}
-            <div className="flex items-center gap-2 w-full md:flex-1 md:max-w-md">
-              <span className="text-xs text-gray-400 w-10">{formatTime(currentTime)}</span>
-              <input
-                type="range"
-                min="0"
-                max={duration || 0}
-                value={currentTime}
-                onChange={handleSeek}
-                className="flex-1 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer slider"
-              />
-              <span className="text-xs text-gray-400 w-10">{formatTime(duration)}</span>
-            </div>
-
-            {/* Volume Control - Desktop Only */}
-            <div className="hidden md:flex items-center gap-2">
-              <Volume2 className="h-4 w-4 text-gray-400" />
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.1"
-                value={volume}
-                onChange={handleVolumeChange}
-                className="w-20 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer slider"
-              />
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 } 
