@@ -122,7 +122,7 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
           onLoad={handleImageLoad}
           onError={handleImageError}
           priority={false}
-          fallbackSrc={album.coverArt} // Add original URL as fallback
+          fallbackSrc={album.coverArt || undefined} // Add original URL as fallback
         />
         
         {/* Loading placeholder */}
