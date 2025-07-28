@@ -960,7 +960,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
 
       {/* Audio Player */}
       {album && album.tracks && album.tracks.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 backdrop-blur-md bg-gradient-to-t from-black/60 via-black/40 to-transparent border-t border-white/10 p-4 pb-safe shadow-2xl">
+        <div className="fixed bottom-0 left-0 right-0 backdrop-blur-md bg-gradient-to-t from-black/60 via-black/40 to-transparent border-t border-white/10 p-4 shadow-2xl" style={{ paddingBottom: 'calc(16px + env(safe-area-inset-bottom))' }}>
           <div className="container mx-auto flex flex-col md:flex-row items-center gap-4 bg-white/5 rounded-xl p-4 backdrop-blur-sm border border-white/10">
             {/* Mobile Layout: Track Info + Controls Row */}
             <div className="flex items-center gap-3 w-full md:w-auto md:flex-1">

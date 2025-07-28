@@ -48,6 +48,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [albums, setAlbums] = useState<RSSAlbum[]>([]);
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
   
   const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -292,10 +293,41 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       return false;
     }
 
+    // Check if we need user interaction first (mobile auto-play handling)
+    if (!hasUserInteracted && typeof window !== 'undefined') {
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (isMobile) {
+        console.log('📱 Mobile device detected - waiting for user interaction');
+        toast.info('Tap the play button to start playback', 5000);
+        
+        // Set up one-time click listener to enable audio
+        const enableAudio = async () => {
+          document.removeEventListener('click', enableAudio);
+          document.removeEventListener('touchstart', enableAudio);
+          setHasUserInteracted(true);
+          
+          // Try to play again after user interaction
+          const success = await attemptAudioPlayback(track.url || '', 'Album playback');
+          if (success) {
+            setCurrentPlayingAlbum(album);
+            setCurrentTrackIndex(trackIndex);
+            // Clear the prompt message
+            console.log('✅ Audio enabled after user interaction');
+          }
+        };
+        
+        document.addEventListener('click', enableAudio, { once: true });
+        document.addEventListener('touchstart', enableAudio, { once: true });
+        
+        return false;
+      }
+    }
+
     const success = await attemptAudioPlayback(track.url, 'Album playback');
     if (success) {
       setCurrentPlayingAlbum(album);
       setCurrentTrackIndex(trackIndex);
+      setHasUserInteracted(true);
     }
     return success;
   };

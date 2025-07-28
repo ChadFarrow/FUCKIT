@@ -176,9 +176,16 @@ export default function CDNImage({
   // Reset state when src changes
   useEffect(() => {
     const dims = getImageDimensions();
-    const optimizedSrc = getOptimizedUrl(src, dims.width, dims.height);
+    let imageSrc = src;
     
-    setCurrentSrc(optimizedSrc);
+    // For mobile, prefer direct URLs over optimized ones for better compatibility
+    if (isMobile && !src.includes('/api/optimized-images/')) {
+      imageSrc = src;
+    } else {
+      imageSrc = getOptimizedUrl(src, dims.width, dims.height);
+    }
+    
+    setCurrentSrc(imageSrc);
     setIsLoading(true);
     setHasError(false);
     setRetryCount(0);
@@ -217,12 +224,18 @@ export default function CDNImage({
           alt={alt}
           width={dims.width}
           height={dims.height}
-          className={`${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+          className={`${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300 ${className || ''}`}
           onError={handleError}
           onLoad={handleLoad}
           loading={priority ? 'eager' : 'lazy'}
           referrerPolicy="no-referrer"
-          style={{ objectFit: 'cover' }}
+          crossOrigin="anonymous"
+          style={{ 
+            objectFit: 'cover',
+            width: '100%',
+            height: '100%',
+            display: 'block'
+          }}
           {...props}
         />
       ) : (
