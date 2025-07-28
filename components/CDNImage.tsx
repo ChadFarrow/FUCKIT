@@ -58,13 +58,15 @@ export default function CDNImage({
       
       // Enhanced mobile logging
       if (width <= 768) {
-        console.log('📱 Mobile device detected:', {
-          width,
-          userAgent: ua,
-          platform: navigator.platform,
-          vendor: navigator.vendor,
+        if (process.env.NODE_ENV === 'development') {
+            console.log('📱 Mobile device detected:', {
+            width,
+            userAgent: ua,
+            platform: navigator.platform,
+            vendor: navigator.vendor,
           connection: (navigator as any).connection?.effectiveType || 'unknown'
-        });
+          });
+        }
       }
     };
     
@@ -163,11 +165,14 @@ export default function CDNImage({
   };
 
   const handleError = () => {
-    console.warn(`[CDNImage] Failed to load (attempt ${retryCount + 1}):`, currentSrc);
-    console.warn(`[CDNImage] Device info - Mobile: ${isMobile}, Width: ${window?.innerWidth}, UserAgent: ${userAgent.substring(0, 100)}`);
-    console.log(`[CDNImage] Debug - retryCount: ${retryCount}, fallbackSrc: ${fallbackSrc}, isMobile: ${isMobile}, currentSrc: ${currentSrc}`);
-    console.log(`[CDNImage] Retry conditions - retryCount === 0: ${retryCount === 0}, fallbackSrc && fallbackSrc !== currentSrc: ${fallbackSrc && fallbackSrc !== currentSrc}`);
-    console.log(`[CDNImage] Retry conditions - retryCount === 1: ${retryCount === 1}, isMobile: ${isMobile}, !currentSrc.includes('/api/'): ${!currentSrc.includes('/api/')}`);
+    // Only log in development mode to improve production performance
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(`[CDNImage] Failed to load (attempt ${retryCount + 1}):`, currentSrc);
+      console.warn(`[CDNImage] Device info - Mobile: ${isMobile}, Width: ${window?.innerWidth}, UserAgent: ${userAgent.substring(0, 100)}`);
+      console.log(`[CDNImage] Debug - retryCount: ${retryCount}, fallbackSrc: ${fallbackSrc}, isMobile: ${isMobile}, currentSrc: ${currentSrc}`);
+      console.log(`[CDNImage] Retry conditions - retryCount === 0: ${retryCount === 0}, fallbackSrc && fallbackSrc !== currentSrc: ${fallbackSrc && fallbackSrc !== currentSrc}`);
+      console.log(`[CDNImage] Retry conditions - retryCount === 1: ${retryCount === 1}, isMobile: ${isMobile}, !currentSrc.includes('/api/'): ${!currentSrc.includes('/api/')}`);
+    }
     setIsLoading(false);
     
     // Clear timeout
@@ -178,7 +183,9 @@ export default function CDNImage({
     
     // First try the fallback URL if provided and different
     if (retryCount === 0 && fallbackSrc && fallbackSrc !== currentSrc) {
-      console.log('[CDNImage] Trying fallback URL:', fallbackSrc);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[CDNImage] Trying fallback URL:', fallbackSrc);
+      }
       setCurrentSrc(fallbackSrc);
       setHasError(false);
       setIsLoading(true);
@@ -186,7 +193,9 @@ export default function CDNImage({
       
       // Set timeout for fallback
       const timeout = setTimeout(() => {
-        console.warn('[CDNImage] Fallback URL timeout');
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('[CDNImage] Fallback URL timeout');
+        }
         handleError();
       }, 10000); // 10 second timeout for mobile
       setTimeoutId(timeout);
@@ -195,7 +204,9 @@ export default function CDNImage({
     
     // If fallbackSrc is the same as currentSrc, skip to proxy attempt
     if (retryCount === 0 && fallbackSrc === currentSrc) {
-      console.log('[CDNImage] Fallback URL is same as current, trying proxy directly');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[CDNImage] Fallback URL is same as current, trying proxy directly');
+      }
       setRetryCount(1);
       handleError();
       return;
@@ -204,7 +215,9 @@ export default function CDNImage({
     // Try image proxy for CORS errors (all devices)
     if (retryCount === 1 && !currentSrc.includes('/api/')) {
       const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(currentSrc)}`;
-      console.log('[CDNImage] Trying image proxy for CORS fallback:', proxyUrl);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[CDNImage] Trying image proxy for CORS fallback:', proxyUrl);
+      }
       setCurrentSrc(proxyUrl);
       setHasError(false);
       setIsLoading(true);
@@ -212,7 +225,9 @@ export default function CDNImage({
       
       // Set timeout for proxy
       const timeout = setTimeout(() => {
-        console.warn('[CDNImage] Image proxy timeout');
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('[CDNImage] Image proxy timeout');
+        }
         handleError();
       }, 12000); // 12 second timeout for proxy
       setTimeoutId(timeout);
@@ -223,7 +238,9 @@ export default function CDNImage({
     if (retryCount === 2 && currentSrc.includes('/api/optimized-images/')) {
       const originalUrl = getOriginalUrl(currentSrc);
       if (originalUrl && originalUrl !== currentSrc) {
-        console.log('[CDNImage] Trying without optimization:', originalUrl);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('[CDNImage] Trying without optimization:', originalUrl);
+        }
         setCurrentSrc(originalUrl);
         setHasError(false);
         setIsLoading(true);
@@ -231,7 +248,9 @@ export default function CDNImage({
         
         // Set timeout for original URL
         const timeout = setTimeout(() => {
-          console.warn('[CDNImage] Original URL timeout');
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('[CDNImage] Original URL timeout');
+          }
           handleError();
         }, 15000); // 15 second timeout for mobile
         setTimeoutId(timeout);
@@ -240,14 +259,18 @@ export default function CDNImage({
     }
     
     // All retry attempts have failed - only now call onError and show placeholder
-    console.log('[CDNImage] All attempts failed, showing placeholder');
-    console.log(`[CDNImage] Final debug - retryCount: ${retryCount}, isMobile: ${isMobile}, currentSrc: ${currentSrc}`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[CDNImage] All attempts failed, showing placeholder');
+      console.log(`[CDNImage] Final debug - retryCount: ${retryCount}, isMobile: ${isMobile}, currentSrc: ${currentSrc}`);
+    }
     setHasError(true);
     onError?.(); // Only call onError after all retries have failed
   };
 
   const handleLoad = () => {
-    console.log('[CDNImage] Image loaded successfully:', currentSrc);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[CDNImage] Image loaded successfully:', currentSrc);
+    }
     setIsLoading(false);
     setHasError(false);
     
@@ -271,13 +294,17 @@ export default function CDNImage({
       if (src && !src.includes('re.podtards.com') && !src.includes('/api/')) {
         imageSrc = `/api/proxy-image?url=${encodeURIComponent(src)}`;
         if (process.env.NODE_ENV === 'development') {
-        console.log('[CDNImage] Mobile using proxy directly:', imageSrc);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('[CDNImage] Mobile using proxy directly:', imageSrc);
+        }
       }
       } else {
         // For internal URLs, use as-is or with light optimization
         imageSrc = getOptimizedUrl(src, dims.width, dims.height);
         if (process.env.NODE_ENV === 'development') {
-          console.log('[CDNImage] Mobile using optimized:', imageSrc);
+          if (process.env.NODE_ENV === 'development') {
+            console.log('[CDNImage] Mobile using optimized:', imageSrc);
+          }
         }
       }
     } else {
@@ -305,7 +332,9 @@ export default function CDNImage({
     if (isMobile && isClient && isLoading && !timeoutId) {
       const timeout = setTimeout(() => {
         if (process.env.NODE_ENV === 'development') {
-          console.warn('[CDNImage] Mobile load timeout after 15s, src:', currentSrc);
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('[CDNImage] Mobile load timeout after 15s, src:', currentSrc);
+          }
         }
         handleError();
       }, 15000); // Increased to 15 second timeout for mobile
@@ -351,7 +380,9 @@ export default function CDNImage({
           }}
           onLoad={(e) => {
             if (process.env.NODE_ENV === 'development') {
-              console.log('[CDNImage] Mobile image loaded successfully:', currentSrc);
+              if (process.env.NODE_ENV === 'development') {
+                console.log('[CDNImage] Mobile image loaded successfully:', currentSrc);
+              }
             }
             handleLoad();
           }}

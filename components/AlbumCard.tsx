@@ -67,16 +67,16 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
     ? getAlbumArtworkUrl(album.coverArt, 'medium')
     : getPlaceholderImageUrl('medium');
   
-  // Debug logging for mobile
-  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
-  if (isMobile) {
-    console.log(`Mobile album card for "${album.title}": coverArt=${album.coverArt}, artworkUrl=${artworkUrl}`);
-  }
-
   const albumUrl = generateAlbumUrl(album.title);
   
-  // Debug logging for navigation
-  console.log(`🎵 Album card: "${album.title}" -> URL: ${albumUrl}`);
+  // Only log in development mode to improve production performance
+  if (process.env.NODE_ENV === 'development') {
+    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+    if (isMobile) {
+      console.log(`Mobile album card for "${album.title}": coverArt=${album.coverArt}, artworkUrl=${artworkUrl}`);
+    }
+    console.log(`🎵 Album card: "${album.title}" -> URL: ${albumUrl}`);
+  }
 
   return (
     <Link 
@@ -126,6 +126,7 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
           onError={handleImageError}
           priority={false}
           fallbackSrc={album.coverArt || undefined} // Add original URL as fallback
+          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
         />
         
         {/* Loading placeholder */}
