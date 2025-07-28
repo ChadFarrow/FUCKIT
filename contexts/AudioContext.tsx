@@ -244,13 +244,9 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     };
 
     const handleEnded = async () => {
-      console.log('🎵 Track ended, attempting to play next track');
-      console.log('🔍 Current state:', {
-        currentPlayingAlbum: currentPlayingAlbum?.title,
-        currentTrackIndex,
-        totalTracks: currentPlayingAlbum?.tracks?.length,
-        currentTrack: currentPlayingAlbum?.tracks?.[currentTrackIndex]?.title
-      });
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🎵 Track ended, attempting to play next track');
+      }
       
       try {
         await playNextTrack();
@@ -290,7 +286,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
       audio.removeEventListener('error', handleError);
     };
-  }, []);
+  }, [currentPlayingAlbum, currentTrackIndex]);
 
   // Play album function
   const playAlbum = async (album: RSSAlbum, trackIndex: number = 0): Promise<boolean> => {
@@ -421,32 +417,26 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
 
   // Play next track
   const playNextTrack = async () => {
-    console.log('🔄 playNextTrack called');
-    
     if (!currentPlayingAlbum || !currentPlayingAlbum.tracks) {
-      console.warn('⚠️ Cannot play next track: missing album or tracks', {
-        currentPlayingAlbum: currentPlayingAlbum?.title,
-        hasTracksArray: !!currentPlayingAlbum?.tracks,
-        tracksLength: currentPlayingAlbum?.tracks?.length
-      });
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('⚠️ Cannot play next track: missing album or tracks');
+      }
       return;
     }
 
     const nextIndex = currentTrackIndex + 1;
-    console.log('🔍 Track progression:', {
-      currentIndex: currentTrackIndex,
-      nextIndex,
-      totalTracks: currentPlayingAlbum.tracks.length,
-      hasNextTrack: nextIndex < currentPlayingAlbum.tracks.length
-    });
 
     if (nextIndex < currentPlayingAlbum.tracks.length) {
       // Play next track in the album
-      console.log('🎵 Auto-playing next track:', currentPlayingAlbum.tracks[nextIndex].title);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🎵 Auto-playing next track:', currentPlayingAlbum.tracks[nextIndex].title);
+      }
       await playAlbum(currentPlayingAlbum, nextIndex);
     } else {
       // End of album - loop back to the first track
-      console.log('🔁 End of album reached, looping back to first track');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔁 End of album reached, looping back to first track');
+      }
       await playAlbum(currentPlayingAlbum, 0);
     }
   };

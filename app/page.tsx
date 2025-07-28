@@ -137,16 +137,22 @@ export default function HomePage() {
       const rotationAlbums = bloodshotAlbum ? [bloodshotAlbum] : [];
       
       if (rotationAlbums.length > 0 && typeof window !== 'undefined') {
-        console.log('🎨 Using Bloodshot Lies - The Album for background');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('🎨 Using Bloodshot Lies - The Album for background');
+        }
         
         // Preload the single background image for both desktop and mobile
         const img = document.createElement('img');
         img.onload = () => {
-          console.log('✅ Bloodshot Lies background image preloaded');
+          if (process.env.NODE_ENV === 'development') {
+            console.log('✅ Bloodshot Lies background image preloaded');
+          }
           setBackgroundAlbums(rotationAlbums);
         };
         img.onerror = (error) => {
-          console.warn('❌ Failed to preload Bloodshot Lies background:', error);
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('❌ Failed to preload Bloodshot Lies background:', error);
+          }
           setBackgroundAlbums(rotationAlbums); // Still set it, might work
         };
         img.src = bloodshotAlbum?.coverArt || '';

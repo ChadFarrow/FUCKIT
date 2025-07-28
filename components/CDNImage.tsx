@@ -270,11 +270,15 @@ export default function CDNImage({
       // For mobile, if it's an external URL, use proxy immediately
       if (src && !src.includes('re.podtards.com') && !src.includes('/api/')) {
         imageSrc = `/api/proxy-image?url=${encodeURIComponent(src)}`;
+        if (process.env.NODE_ENV === 'development') {
         console.log('[CDNImage] Mobile using proxy directly:', imageSrc);
+      }
       } else {
         // For internal URLs, use as-is or with light optimization
         imageSrc = getOptimizedUrl(src, dims.width, dims.height);
-        console.log('[CDNImage] Mobile using optimized:', imageSrc);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('[CDNImage] Mobile using optimized:', imageSrc);
+        }
       }
     } else {
       imageSrc = getOptimizedUrl(src, dims.width, dims.height);
@@ -300,7 +304,9 @@ export default function CDNImage({
   useEffect(() => {
     if (isMobile && isClient && isLoading && !timeoutId) {
       const timeout = setTimeout(() => {
-        console.warn('[CDNImage] Mobile load timeout after 15s, src:', currentSrc);
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('[CDNImage] Mobile load timeout after 15s, src:', currentSrc);
+        }
         handleError();
       }, 15000); // Increased to 15 second timeout for mobile
       setTimeoutId(timeout);
@@ -332,17 +338,21 @@ export default function CDNImage({
           height={dims.height}
           className={`${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300 ${className || ''}`}
           onError={(e) => {
-            console.error('[CDNImage] Mobile image load error:', {
-              src: currentSrc,
-              originalSrc: src,
-              error: e,
-              retryCount,
-              isMobile
-            });
+            if (process.env.NODE_ENV === 'development') {
+              console.error('[CDNImage] Mobile image load error:', {
+                src: currentSrc,
+                originalSrc: src,
+                error: e,
+                retryCount,
+                isMobile
+              });
+            }
             handleError();
           }}
           onLoad={(e) => {
-            console.log('[CDNImage] Mobile image loaded successfully:', currentSrc);
+            if (process.env.NODE_ENV === 'development') {
+              console.log('[CDNImage] Mobile image loaded successfully:', currentSrc);
+            }
             handleLoad();
           }}
           loading={priority ? 'eager' : 'lazy'}
