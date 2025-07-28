@@ -6,6 +6,7 @@ import Link from 'next/link';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import AddRSSFeed from '@/components/AddRSSFeed';
 import AlbumCard from '@/components/AlbumCard';
+import CDNImage from '@/components/CDNImage';
 import { RSSAlbum } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { generateAlbumUrl, generatePublisherSlug } from '@/lib/url-utils';
@@ -114,46 +115,14 @@ export default function HomePage() {
 
 
   // Static background loading - Bloodshot Lies album art
+  // CDNImage component handles loading internally, so we just need to track the state
   useEffect(() => {
-    const loadStaticBackground = async () => {
-      if (typeof window === 'undefined') return;
-      
-      try {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('🎨 Loading static Bloodshot Lies background...');
-        }
-        
-        // Static Bloodshot Lies album art URL
-        const bloodshotLiesArtUrl = 'https://www.doerfelverse.com/art/bloodshot-lies-the-album.png';
-        
-        // Preload the background image to ensure it's available
-        const img = new window.Image();
-        img.onload = () => {
-          setBackgroundImageLoaded(true);
-          
-          if (process.env.NODE_ENV === 'development') {
-            console.log('✅ Bloodshot Lies background image preloaded successfully');
-          }
-        };
-        
-        img.onerror = () => {
-          if (process.env.NODE_ENV === 'development') {
-            console.warn('⚠️ Bloodshot Lies background image failed to load, using gradient');
-          }
-          setBackgroundImageLoaded(true);
-        };
-        
-        img.decoding = 'async';
-        img.src = bloodshotLiesArtUrl;
-      } catch (error) {
-        if (process.env.NODE_ENV === 'development') {
-          console.error('❌ Error loading static background image:', error);
-        }
-        setBackgroundImageLoaded(true);
-      }
-    };
+    // Set a small delay to ensure the CDNImage component has time to load
+    const timer = setTimeout(() => {
+      setBackgroundImageLoaded(true);
+    }, 100);
     
-    loadStaticBackground();
+    return () => clearTimeout(timer);
   }, [isClient]);
 
   const handleAddFeed = async (feedUrl: string) => {
@@ -465,30 +434,24 @@ export default function HomePage() {
   return (
     <div className="min-h-screen text-white relative overflow-hidden">
       {/* Static Background - Bloodshot Lies Album Art */}
-      {backgroundImageLoaded && typeof window !== 'undefined' && (
-        <div className="fixed inset-0 z-0">
-          <div
-            className="absolute inset-0 transition-opacity duration-1000 ease-in-out opacity-100"
-            style={{
-              background: `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('https://www.doerfelverse.com/art/bloodshot-lies-the-album.png') center/cover fixed`,
-              backgroundAttachment: 'fixed'
-            }}
-          />
-        </div>
-      )}
-
-      {/* Fallback gradient background - show when background not loaded */}
+      <div className="fixed inset-0 z-0">
+        <CDNImage
+          src="https://www.doerfelverse.com/art/bloodshot-lies-the-album.png?v=1"
+          alt="Bloodshot Lies Album Art"
+          width={1920}
+          height={1080}
+          className="object-cover w-full h-full"
+          priority
+          onLoad={() => setBackgroundImageLoaded(true)}
+          onError={() => setBackgroundImageLoaded(true)} // Mark as loaded even on error to show fallback
+        />
+        {/* Gradient overlay for better readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/70 to-black/90"></div>
+      </div>
+      
+      {/* Fallback gradient background - show when not loaded or on error */}
       {!backgroundImageLoaded && (
         <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 z-0" />
-      )}
-
-      {/* Loading indicator for background */}
-      {!backgroundImageLoaded && (
-        <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 z-0">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-white/20 text-sm animate-pulse">Loading Bloodshot Lies background...</div>
-          </div>
-        </div>
       )}
 
       {/* Content overlay */}
