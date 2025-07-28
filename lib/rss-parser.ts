@@ -367,6 +367,10 @@ export class RSSParser {
               const mins = Math.floor(seconds / 60);
               const secs = seconds % 60;
               duration = `${mins}:${secs.toString().padStart(2, '0')}`;
+            } else {
+              // Invalid seconds value, use default
+              duration = '0:00';
+              verboseLog(`⚠️ Invalid duration seconds "${durationStr}" for track "${trackTitle}", using default`);
             }
           } else if (durationStr.includes(':')) {
             const parts = durationStr.split(':');
@@ -376,6 +380,10 @@ export class RSSParser {
               const secs = parseInt(parts[1]);
               if (!isNaN(mins) && !isNaN(secs) && mins >= 0 && secs >= 0 && secs < 60) {
                 duration = `${mins}:${secs.toString().padStart(2, '0')}`;
+              } else {
+                // Invalid MM:SS format, use default
+                duration = '0:00';
+                verboseLog(`⚠️ Invalid MM:SS duration "${durationStr}" for track "${trackTitle}", using default`);
               }
             } else if (parts.length === 3) {
               // HH:MM:SS format (like Wavlake uses)
@@ -390,9 +398,27 @@ export class RSSParser {
                 if (hours > 0) {
                   verboseLog(`🔄 Converted HH:MM:SS "${originalDuration}" to MM:SS "${duration}" for "${trackTitle}"`);
                 }
+              } else {
+                // Invalid HH:MM:SS format, use default
+                duration = '0:00';
+                verboseLog(`⚠️ Invalid HH:MM:SS duration "${durationStr}" for track "${trackTitle}", using default`);
               }
+            } else {
+              // Unknown format with colons, use default
+              duration = '0:00';
+              verboseLog(`⚠️ Unknown duration format "${durationStr}" for track "${trackTitle}", using default`);
             }
+          } else {
+            // Unknown format, use default
+            duration = '0:00';
+            verboseLog(`⚠️ Cannot parse duration "${durationStr}" for track "${trackTitle}", using default`);
           }
+        }
+        
+        // Final validation - check for NaN values
+        if (duration.includes('NaN')) {
+          duration = '0:00';
+          verboseLog(`⚠️ Duration contained NaN for track "${trackTitle}", using default`);
         }
         // Try multiple ways to get the track URL
         let url: string | undefined = undefined;

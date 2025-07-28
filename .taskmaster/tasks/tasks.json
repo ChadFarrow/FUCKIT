@@ -330,6 +330,83 @@
             "parentTaskId": 31
           }
         ]
+      },
+      {
+        "id": 32,
+        "title": "Fix Now Playing Navigation Bug",
+        "description": "Fix issue where clicking on the \"now playing\" element doesn't always navigate to the correct album. The now playing bar should consistently take users to the correct album page when clicked.",
+        "details": "Investigate and fix the navigation logic in the now playing component to ensure clicking always leads to the correct album page. This may involve checking the album ID mapping, routing logic, or state management issues.",
+        "testStrategy": "Test clicking on now playing bar with different albums to verify consistent navigation to correct album pages.",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 33,
+        "title": "Fix Main Page Album Navigation Bug",
+        "description": "Fix issue where clicking on albums from the main page doesn't always load the correct album. Album cards should consistently navigate to the correct album page when clicked.",
+        "details": "Investigate and fix the navigation logic for album cards on the main page to ensure clicking always leads to the correct album page. This may involve checking the album ID mapping, routing logic, or state management issues in the main page component.",
+        "testStrategy": "Test clicking on different album cards from the main page to verify consistent navigation to correct album pages.",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 34,
+        "title": "Fix NaN Duration Values in RSS Parsing",
+        "description": "Fix the issue where duration values are showing as \"NaN:NaN:NaN\" in the parsed feeds. The RSS parser needs better error handling for invalid duration values.",
+        "details": "The RSS parser in lib/rss-parser.ts has duration parsing logic that doesn't properly handle invalid duration values, resulting in \"NaN:NaN:NaN\" appearing in the parsed feeds. Need to add proper validation and fallback handling for malformed duration data.",
+        "testStrategy": "Test RSS parsing with feeds containing invalid duration values to ensure they default to \"0:00\" instead of \"NaN:NaN:NaN\".",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 35,
+        "title": "Fix Bottom Album Cut Off by Now Playing Bar",
+        "description": "Fix the layout issue where the bottom album on the main page is being cut off by the fixed now playing bar. Need to add proper bottom padding/margin to prevent content overlap.",
+        "details": "The fixed bottom now playing bar is overlapping with the last album on the main page, cutting off content. Need to add bottom padding or margin to the main content area to account for the height of the now playing bar.",
+        "testStrategy": "Test the main page layout to ensure the bottom album is fully visible and not cut off by the now playing bar, especially on different screen sizes.",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 36,
+        "title": "Fix Progress Bar Hover Preview Issue",
+        "description": "Fix the progress bar hover behavior where hovering over the progress bar fills the entire bar instead of showing the specific section being hovered over. The hover should preview the position without changing the actual playback position.",
+        "details": "The audio player progress bar hover functionality needs to be fixed so that hovering shows a preview of the position without filling the entire bar. This likely involves fixing the hover event handling and CSS styling for the progress bar component.",
+        "testStrategy": "Test hovering over different parts of the progress bar to ensure it shows the correct preview position without affecting the actual playback position or filling the entire bar.",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 37,
+        "title": "Fix Progress Bar Time Format Display",
+        "description": "Fix the progress bar time display to show proper HH:MM:SS format instead of just minutes. The time display should be consistent with standard audio player formatting.",
+        "details": "The progress bar time display is showing time in minutes format instead of the expected HH:MM:SS format. Need to fix the time formatting logic in the audio player component to display time properly.",
+        "testStrategy": "Test the progress bar time display to ensure it shows HH:MM:SS format correctly for tracks of different lengths, including tracks longer than 1 hour.",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 38,
+        "title": "Fix Album Artwork Not Showing on Mobile",
+        "description": "Fix the persistent issue where album artwork is not displaying properly on mobile devices. This appears to be a mobile-specific image loading or rendering problem that needs investigation and resolution.",
+        "details": "Album artwork is still not showing on mobile devices despite previous attempts to fix this issue. Need to investigate mobile-specific image loading, CORS handling, caching, or rendering issues that prevent album art from displaying on mobile browsers.",
+        "testStrategy": "Test album artwork display on various mobile devices and browsers to identify the specific cause and ensure images load properly across all mobile platforms.",
+        "status": "in-progress",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
       }
     ],
     "metadata": {
@@ -337,7 +414,7 @@
       "description": "Main task list for FUCKIT podcast/music streaming application",
       "created": "2025-01-27T00:00:00.000Z",
       "lastModified": "2025-01-27T00:00:00.000Z",
-      "updated": "2025-07-27T23:41:19.815Z"
+      "updated": "2025-07-28T20:33:07.275Z"
     }
   }
 }

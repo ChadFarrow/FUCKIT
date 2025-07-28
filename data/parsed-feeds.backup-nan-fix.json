@@ -9596,7 +9596,7 @@
           "tracks": [
             {
               "title": "I'm Back",
-              "duration": "0:00",
+              "duration": "NaN:NaN:NaN",
               "url": "http://rocknrollbreakheart.com/msp/RNRBH/track%201/Im%20Back.mp3",
               "trackNumber": 1,
               "image": "http://rocknrollbreakheart.com/msp/RNRBH/track%201/track-art.png",
@@ -9604,7 +9604,7 @@
             },
             {
               "title": "Rock'n'Roll Demon",
-              "duration": "0:00",
+              "duration": "NaN:NaN:NaN",
               "url": "http://rocknrollbreakheart.com/msp/RNRBH/track%202/RocknRoll%20Demon.mp3",
               "trackNumber": 2,
               "image": "http://rocknrollbreakheart.com/msp/RNRBH/track%202/track-art.png",
@@ -9612,7 +9612,7 @@
             },
             {
               "title": "Look What You Put Me Through",
-              "duration": "0:00",
+              "duration": "NaN:NaN:NaN",
               "url": "http://rocknrollbreakheart.com/msp/RNRBH/track%203/Look%20What%20You%20Put%20Me%20Through.mp3",
               "trackNumber": 3,
               "image": "http://rocknrollbreakheart.com/msp/RNRBH/track%203/track-art.png",
@@ -9620,7 +9620,7 @@
             },
             {
               "title": "Games",
-              "duration": "0:00",
+              "duration": "NaN:NaN:NaN",
               "url": "http://rocknrollbreakheart.com/msp/RNRBH/track%204/Games.mp3",
               "trackNumber": 4,
               "image": "http://rocknrollbreakheart.com/msp/RNRBH/track%204/track-art.png",
@@ -9628,7 +9628,7 @@
             },
             {
               "title": "You've Got a Lot of Nerve",
-              "duration": "0:00",
+              "duration": "NaN:NaN:NaN",
               "url": "http://rocknrollbreakheart.com/msp/RNRBH/track%205/Youve%20Got%20a%20Lot%20of%20Nerve.mp3",
               "trackNumber": 5,
               "image": "http://rocknrollbreakheart.com/msp/RNRBH/track%205/track-art.png",
@@ -9636,7 +9636,7 @@
             },
             {
               "title": "Fell Down",
-              "duration": "0:00",
+              "duration": "NaN:NaN:NaN",
               "url": "http://rocknrollbreakheart.com/msp/RNRBH/track%206/Fell%20Down.mp3",
               "trackNumber": 6,
               "image": "http://rocknrollbreakheart.com/msp/RNRBH/track%206/track-art.png",
@@ -9644,7 +9644,7 @@
             },
             {
               "title": "Sticky Situation",
-              "duration": "0:00",
+              "duration": "NaN:NaN:NaN",
               "url": "http://rocknrollbreakheart.com/msp/RNRBH/track%207/Sticky%20Situation.mp3",
               "trackNumber": 7,
               "image": "http://rocknrollbreakheart.com/msp/RNRBH/track%207/track-art.png",

@@ -267,11 +267,25 @@ export default function HomePage() {
       
       verboseLog(`📦 Converted ${rssAlbums.length} albums to RSSAlbum format`);
       
-      // Deduplicate albums
-      const uniqueAlbums = rssAlbums.filter((album, index, self) => {
+      // Deduplicate albums with better logging
+      const albumMap = new Map<string, RSSAlbum>();
+      const duplicates: string[] = [];
+      
+      rssAlbums.forEach((album) => {
         const key = `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`;
-        return index === self.findIndex(a => `${a.title.toLowerCase()}|${a.artist.toLowerCase()}` === key);
+        if (albumMap.has(key)) {
+          duplicates.push(`"${album.title}" by ${album.artist}`);
+          console.warn(`⚠️ Duplicate album found: "${album.title}" by ${album.artist}`);
+        } else {
+          albumMap.set(key, album);
+        }
       });
+      
+      const uniqueAlbums = Array.from(albumMap.values());
+      
+      if (duplicates.length > 0) {
+        console.warn(`📦 Found ${duplicates.length} duplicate albums:`, duplicates);
+      }
       
       verboseLog(`📦 Deduplicated ${rssAlbums.length} albums to ${uniqueAlbums.length} unique albums`);
       

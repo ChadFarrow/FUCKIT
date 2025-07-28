@@ -1,14 +1,33 @@
 /**
  * Generate a clean URL-friendly slug from a title
- * Replaces spaces with hyphens and removes special characters
+ * Preserves more information to avoid collisions
  */
 export function generateAlbumSlug(title: string): string {
-  return title
+  // First, normalize the title
+  let slug = title
     .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
-    .replace(/\s+/g, '-') // Replace spaces with hyphens
-    .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
-    .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+    .trim()
+    // Replace common special characters with their word equivalents
+    .replace(/&/g, 'and')
+    .replace(/\+/g, 'plus')
+    .replace(/@/g, 'at')
+    // Keep alphanumeric, spaces, and hyphens
+    .replace(/[^a-z0-9\s-]/g, '')
+    // Replace multiple spaces with single space
+    .replace(/\s+/g, ' ')
+    // Replace spaces with hyphens
+    .replace(/\s/g, '-')
+    // Replace multiple hyphens with single hyphen
+    .replace(/-+/g, '-')
+    // Remove leading/trailing hyphens
+    .replace(/^-|-$/g, '');
+  
+  // If the slug is empty after processing, use a fallback
+  if (!slug) {
+    slug = 'album-' + Date.now();
+  }
+  
+  return slug;
 }
 
 /**

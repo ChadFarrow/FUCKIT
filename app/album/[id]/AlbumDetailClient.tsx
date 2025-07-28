@@ -453,41 +453,56 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               console.log(`❌ No Generation Gap found in results`);
             }
             
-            // Find the matching album with more flexible matching
+            // Find the matching album with more precise matching
             const foundAlbum = albumsData.find((a: any) => {
               const albumTitleLower = a.title.toLowerCase();
               const searchTitleLower = decodedAlbumTitle.toLowerCase();
               
-              // Special case for "Stay Awhile" - it's its own album from Able and the Wolf
-              if (searchTitleLower.includes('stay awhile') && albumTitleLower.includes('stay awhile')) {
-                console.log(`🎯 Special match: "Stay Awhile" -> "${a.title}"`);
-                return true;
-              }
-              
-              // Exact match
+              // First try exact match (case-sensitive)
               if (a.title === decodedAlbumTitle || a.title === albumTitle) {
+                console.log(`✅ Exact match found: "${a.title}"`);
                 return true;
               }
               
-              // Case-insensitive match
+              // Then try case-insensitive exact match
               if (albumTitleLower === searchTitleLower) {
+                console.log(`✅ Case-insensitive exact match found: "${a.title}"`);
                 return true;
               }
               
-              // Contains match (search title contains album title or vice versa)
-              if (albumTitleLower.includes(searchTitleLower) || searchTitleLower.includes(albumTitleLower)) {
-                return true;
-              }
-              
-              // Normalized match (remove special characters)
-              const normalizedAlbum = albumTitleLower.replace(/[^a-z0-9]/g, '');
-              const normalizedSearch = searchTitleLower.replace(/[^a-z0-9]/g, '');
+              // Then try normalized exact match (remove special characters but preserve structure)
+              const normalizedAlbum = albumTitleLower.replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
+              const normalizedSearch = searchTitleLower.replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
               if (normalizedAlbum === normalizedSearch) {
+                console.log(`✅ Normalized exact match found: "${a.title}"`);
                 return true;
               }
               
-              // Partial normalized match
-              if (normalizedAlbum.includes(normalizedSearch) || normalizedSearch.includes(normalizedAlbum)) {
+              // For URL slugs, convert back to title format and try exact match
+              const slugToTitle = (slug: string) => slug.replace(/-/g, ' ');
+              const titleFromSlug = slugToTitle(searchTitleLower);
+              if (albumTitleLower === titleFromSlug) {
+                console.log(`✅ Slug-based exact match found: "${a.title}"`);
+                return true;
+              }
+              
+              // Special cases for known problematic titles
+              const specialCases: { [key: string]: string } = {
+                'stay awhile': 'Stay Awhile',
+                'all in a day': 'All in a Day',
+                'bloodshot lies': 'Bloodshot Lies',
+                'bloodshot lies album': 'Bloodshot Lies - The Album'
+              };
+              
+              if (specialCases[searchTitleLower] && a.title === specialCases[searchTitleLower]) {
+                console.log(`✅ Special case match found: "${a.title}"`);
+                return true;
+              }
+              
+              // Avoid fuzzy matching to prevent incorrect album loads
+              // Only use contains match as a last resort and log a warning
+              if (albumTitleLower.includes(searchTitleLower) && searchTitleLower.length > 5) {
+                console.warn(`⚠️ Using fuzzy match - might be incorrect: "${a.title}" contains "${decodedAlbumTitle}"`);
                 return true;
               }
               

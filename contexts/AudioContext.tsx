@@ -243,8 +243,9 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       setIsPlaying(false);
     };
 
-    const handleEnded = () => {
-      playNextTrack();
+    const handleEnded = async () => {
+      console.log('🎵 Track ended, attempting to play next track');
+      await playNextTrack();
     };
 
     const handleTimeUpdate = () => {
@@ -408,25 +409,29 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   };
 
   // Play next track
-  const playNextTrack = () => {
+  const playNextTrack = async () => {
     if (!currentPlayingAlbum || !currentPlayingAlbum.tracks) return;
 
     const nextIndex = currentTrackIndex + 1;
     if (nextIndex < currentPlayingAlbum.tracks.length) {
-      playAlbum(currentPlayingAlbum, nextIndex);
+      // Play next track in the album
+      console.log('🎵 Auto-playing next track:', currentPlayingAlbum.tracks[nextIndex].title);
+      await playAlbum(currentPlayingAlbum, nextIndex);
     } else {
-      // End of album - could loop or stop
-      stop();
+      // End of album - loop back to the first track
+      console.log('🔁 End of album reached, looping back to first track');
+      await playAlbum(currentPlayingAlbum, 0);
     }
   };
 
   // Play previous track
-  const playPreviousTrack = () => {
+  const playPreviousTrack = async () => {
     if (!currentPlayingAlbum || !currentPlayingAlbum.tracks) return;
 
     const prevIndex = currentTrackIndex - 1;
     if (prevIndex >= 0) {
-      playAlbum(currentPlayingAlbum, prevIndex);
+      console.log('🎵 Playing previous track:', currentPlayingAlbum.tracks[prevIndex].title);
+      await playAlbum(currentPlayingAlbum, prevIndex);
     }
   };
 

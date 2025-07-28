@@ -74,13 +74,16 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
   }
 
   const albumUrl = generateAlbumUrl(album.title);
+  
+  // Debug logging for navigation
+  console.log(`🎵 Album card: "${album.title}" -> URL: ${albumUrl}`);
 
   return (
     <Link 
       href={albumUrl}
       className={`group relative bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 overflow-hidden transition-all duration-300 hover:bg-white/10 hover:border-white/20 hover:scale-[1.02] active:scale-[0.98] block ${className}`}
       onClick={(e) => {
-        console.log('🔗 Navigating to album:', albumUrl);
+        console.log(`🔗 Navigating to album: "${album.title}" -> ${albumUrl}`);
       }}
       aria-label={`View album details for ${album.title} by ${album.artist}`}
     >
