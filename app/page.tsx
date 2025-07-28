@@ -56,12 +56,8 @@ export default function HomePage() {
   const { playAlbum: globalPlayAlbum, shuffleAllTracks } = useAudio();
   const hasLoadedRef = useRef(false);
   
-  // Rotating background state
-  const [currentBackgroundIndex, setCurrentBackgroundIndex] = useState(0);
-  const [backgroundAlbums, setBackgroundAlbums] = useState<RSSAlbum[]>([]);
+  // Static background state - Bloodshot Lies album art
   const [backgroundImageLoaded, setBackgroundImageLoaded] = useState(false);
-  const backgroundIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const backgroundTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Controls state
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
@@ -117,145 +113,48 @@ export default function HomePage() {
   }, []); // Run only once on mount
 
 
-  // Early background loading - load before albums for better UX
+  // Static background loading - Bloodshot Lies album art
   useEffect(() => {
-    const loadBackgroundEarly = async () => {
+    const loadStaticBackground = async () => {
       if (typeof window === 'undefined') return;
       
       try {
         if (process.env.NODE_ENV === 'development') {
-          console.log('🎨 Loading background image early...');
+          console.log('🎨 Loading static Bloodshot Lies background...');
         }
         
-        // Clear any existing background image cache to prevent stale images
-        if ('caches' in window) {
-          try {
-            const cache = await caches.open('images');
-            // Get all cached requests that might be background images
-            const requests = await cache.keys();
-            const backgroundImageRequests = requests.filter(request => 
-              request.url.includes('coverArt') || 
-              request.url.includes('.jpg') || 
-              request.url.includes('.png') || 
-              request.url.includes('.webp')
-            );
-            
-            // Delete potentially stale background image caches
-            await Promise.all(backgroundImageRequests.map(request => cache.delete(request)));
-            
-            if (process.env.NODE_ENV === 'development' && backgroundImageRequests.length > 0) {
-              console.log('🗑️ Cleared', backgroundImageRequests.length, 'cached background images to prevent stale content');
-            }
-          } catch (cacheError) {
-            // Ignore cache errors - not critical
-            if (process.env.NODE_ENV === 'development') {
-              console.warn('⚠️ Cache clearing failed (non-critical):', cacheError);
-            }
-          }
-        }
+        // Static Bloodshot Lies album art URL
+        const bloodshotLiesArtUrl = 'https://www.doerfelverse.com/art/bloodshot-lies-the-album.png';
         
-        // Add cache-busting parameter to API request
-        const cacheBuster = Date.now();
-        const response = await fetch(`/api/albums?t=${cacheBuster}`);
-        if (response.ok) {
-          const data = await response.json();
-          const allAlbums = data.albums || [];
+        // Preload the background image to ensure it's available
+        const img = new window.Image();
+        img.onload = () => {
+          setBackgroundImageLoaded(true);
           
-          // Find a suitable album for background - try Bloodshot Lies first, then any album with good artwork
-          let backgroundAlbum = allAlbums.find((album: any) =>
-            album.title.toLowerCase().includes('bloodshot lies') &&
-            album.coverArt &&
-            !album.coverArt.includes('placeholder')
-          );
-          
-          // Add cache-busting to background image URL
-          if (backgroundAlbum?.coverArt) {
-            const imageCacheBuster = Date.now();
-            backgroundAlbum.coverArt = backgroundAlbum.coverArt.includes('?') 
-              ? `${backgroundAlbum.coverArt}&cb=${imageCacheBuster}`
-              : `${backgroundAlbum.coverArt}?cb=${imageCacheBuster}`;
+          if (process.env.NODE_ENV === 'development') {
+            console.log('✅ Bloodshot Lies background image preloaded successfully');
           }
-
-          // If Bloodshot Lies not found, use any album with good artwork
-          if (!backgroundAlbum) {
-            backgroundAlbum = allAlbums.find((album: any) =>
-              album.coverArt &&
-              !album.coverArt.includes('placeholder') &&
-              album.coverArt.startsWith('http')
-            );
+        };
+        
+        img.onerror = () => {
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('⚠️ Bloodshot Lies background image failed to load, using gradient');
           }
-          
-          if (backgroundAlbum) {
-            if (process.env.NODE_ENV === 'development') {
-              console.log('✅ Found background album:', backgroundAlbum.title);
-            }
-            
-            // Add cache-busting parameter to background image URL
-            const originalCoverArt = backgroundAlbum.coverArt;
-            const separator = originalCoverArt.includes('?') ? '&' : '?';
-            backgroundAlbum.coverArt = `${originalCoverArt}${separator}t=${cacheBuster}`;
-            
-            // Preload the background image to ensure it's available
-            const img = new window.Image();
-            img.onload = () => {
-              setBackgroundAlbums([backgroundAlbum]);
-              setBackgroundImageLoaded(true);
-              
-              if (process.env.NODE_ENV === 'development') {
-                console.log('✅ Background image preloaded and set successfully');
-              }
-            };
-            
-            img.onerror = () => {
-              // Fallback to original URL without cache busting if the modified URL fails
-              backgroundAlbum.coverArt = originalCoverArt;
-              setBackgroundAlbums([backgroundAlbum]);
-              setBackgroundImageLoaded(true);
-              
-              if (process.env.NODE_ENV === 'development') {
-                console.warn('⚠️ Background image failed with cache-busting, using original URL');
-              }
-            };
-            
-            // Start loading the image
-            img.src = backgroundAlbum.coverArt;
-            
-            // Fallback timeout in case image takes too long to load
-            setTimeout(() => {
-              if (!backgroundImageLoaded) {
-                setBackgroundAlbums([backgroundAlbum]);
-                setBackgroundImageLoaded(true);
-                
-                if (process.env.NODE_ENV === 'development') {
-                  console.log('⏰ Background set via timeout fallback');
-                }
-              }
-            }, 3000); // 3 second timeout
-            
-          } else {
-            if (process.env.NODE_ENV === 'development') {
-              console.warn('❌ No suitable background album found');
-            }
-          }
-        }
+          setBackgroundImageLoaded(true);
+        };
+        
+        img.decoding = 'async';
+        img.src = bloodshotLiesArtUrl;
       } catch (error) {
         if (process.env.NODE_ENV === 'development') {
-          console.warn('❌ Failed to load background early:', error);
+          console.error('❌ Error loading static background image:', error);
         }
+        setBackgroundImageLoaded(true);
       }
     };
-
-    loadBackgroundEarly();
-
-    return () => {
-      if (backgroundIntervalRef.current) {
-        clearInterval(backgroundIntervalRef.current);
-      }
-      if (backgroundTimeoutRef.current) {
-        clearTimeout(backgroundTimeoutRef.current);
-      }
-    };
-  }, []); // Empty dependency array - load on mount
+    
+    loadStaticBackground();
+  }, [isClient]);
 
   const handleAddFeed = async (feedUrl: string) => {
     setIsAddingFeed(true);
@@ -565,34 +464,29 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen text-white relative overflow-hidden">
-      {/* Rotating Background - All Devices */}
-      {backgroundAlbums.length > 0 && backgroundImageLoaded && typeof window !== 'undefined' && (
+      {/* Static Background - Bloodshot Lies Album Art */}
+      {backgroundImageLoaded && typeof window !== 'undefined' && (
         <div className="fixed inset-0 z-0">
-          {backgroundAlbums.map((album, index) => (
-            <div
-              key={`${album.title}-${index}`}
-              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                index === currentBackgroundIndex ? 'opacity-100' : 'opacity-0'
-              }`}
-              style={{
-                background: `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('${album.coverArt}') center/cover fixed`,
-                backgroundAttachment: 'fixed'
-              }}
-            />
-          ))}
+          <div
+            className="absolute inset-0 transition-opacity duration-1000 ease-in-out opacity-100"
+            style={{
+              background: `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('https://www.doerfelverse.com/art/bloodshot-lies-the-album.png') center/cover fixed`,
+              backgroundAttachment: 'fixed'
+            }}
+          />
         </div>
       )}
 
-      {/* Fallback gradient background - show when no background or not loaded */}
-      {(!backgroundAlbums.length || !backgroundImageLoaded) && (
+      {/* Fallback gradient background - show when background not loaded */}
+      {!backgroundImageLoaded && (
         <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 z-0" />
       )}
 
       {/* Loading indicator for background */}
-      {backgroundAlbums.length > 0 && !backgroundImageLoaded && (
+      {!backgroundImageLoaded && (
         <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 z-0">
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-white/20 text-sm animate-pulse">Loading background...</div>
+            <div className="text-white/20 text-sm animate-pulse">Loading Bloodshot Lies background...</div>
           </div>
         </div>
       )}
