@@ -142,15 +142,15 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
           </div>
         )}
 
-        {/* Play/Pause Overlay */}
-        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center pointer-events-none">
+        {/* Play/Pause Overlay - Always visible on mobile, hover-based on desktop */}
+        <div className="absolute inset-0 bg-black/20 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center pointer-events-none">
           <button
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
               onPlay(album, e);
             }}
-            className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors duration-200 touch-manipulation pointer-events-auto"
+            className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 active:bg-white/40 transition-colors duration-200 touch-manipulation pointer-events-auto"
             aria-label={isPlaying ? 'Pause' : 'Play'}
           >
             {isPlaying ? (
