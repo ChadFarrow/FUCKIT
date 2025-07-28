@@ -245,7 +245,18 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
 
     const handleEnded = async () => {
       console.log('🎵 Track ended, attempting to play next track');
-      await playNextTrack();
+      console.log('🔍 Current state:', {
+        currentPlayingAlbum: currentPlayingAlbum?.title,
+        currentTrackIndex,
+        totalTracks: currentPlayingAlbum?.tracks?.length,
+        currentTrack: currentPlayingAlbum?.tracks?.[currentTrackIndex]?.title
+      });
+      
+      try {
+        await playNextTrack();
+      } catch (error) {
+        console.error('❌ Error in auto-play:', error);
+      }
     };
 
     const handleTimeUpdate = () => {
@@ -410,9 +421,25 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
 
   // Play next track
   const playNextTrack = async () => {
-    if (!currentPlayingAlbum || !currentPlayingAlbum.tracks) return;
+    console.log('🔄 playNextTrack called');
+    
+    if (!currentPlayingAlbum || !currentPlayingAlbum.tracks) {
+      console.warn('⚠️ Cannot play next track: missing album or tracks', {
+        currentPlayingAlbum: currentPlayingAlbum?.title,
+        hasTracksArray: !!currentPlayingAlbum?.tracks,
+        tracksLength: currentPlayingAlbum?.tracks?.length
+      });
+      return;
+    }
 
     const nextIndex = currentTrackIndex + 1;
+    console.log('🔍 Track progression:', {
+      currentIndex: currentTrackIndex,
+      nextIndex,
+      totalTracks: currentPlayingAlbum.tracks.length,
+      hasNextTrack: nextIndex < currentPlayingAlbum.tracks.length
+    });
+
     if (nextIndex < currentPlayingAlbum.tracks.length) {
       // Play next track in the album
       console.log('🎵 Auto-playing next track:', currentPlayingAlbum.tracks[nextIndex].title);
