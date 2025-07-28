@@ -133,16 +133,25 @@ export default function HomePage() {
           const data = await response.json();
           const allAlbums = data.albums || [];
           
-          // Find Bloodshot Lies album for background
-          const bloodshotAlbum = allAlbums.find((album: any) =>
+          // Find a suitable album for background - try Bloodshot Lies first, then any album with good artwork
+          let backgroundAlbum = allAlbums.find((album: any) =>
             album.title.toLowerCase().includes('bloodshot lies') &&
             album.coverArt &&
             !album.coverArt.includes('placeholder')
           );
+
+          // If Bloodshot Lies not found, use any album with good artwork
+          if (!backgroundAlbum) {
+            backgroundAlbum = allAlbums.find((album: any) =>
+              album.coverArt &&
+              !album.coverArt.includes('placeholder') &&
+              album.coverArt.startsWith('http')
+            );
+          }
           
-          if (bloodshotAlbum) {
+          if (backgroundAlbum) {
             if (process.env.NODE_ENV === 'development') {
-              console.log('✅ Found Bloodshot Lies album for background');
+              console.log('✅ Found background album:', backgroundAlbum.title);
             }
             
             // Reset loading state
@@ -153,7 +162,7 @@ export default function HomePage() {
             const img = document.createElement('img');
             img.onload = () => {
               if (process.env.NODE_ENV === 'development') {
-                console.log('✅ Background image preloaded early');
+                console.log('✅ Background image preloaded early:', backgroundAlbum.title);
               }
               // Clear timeout since image loaded successfully
               if (backgroundTimeoutRef.current) {
@@ -161,22 +170,22 @@ export default function HomePage() {
                 backgroundTimeoutRef.current = null;
               }
               // Set background and mark as loaded
-              setBackgroundAlbums([bloodshotAlbum]);
+              setBackgroundAlbums([backgroundAlbum]);
               setBackgroundImageLoaded(true);
             };
             img.onerror = (error) => {
               if (process.env.NODE_ENV === 'development') {
-                console.warn('❌ Failed to preload background early:', error);
+                console.warn('❌ Failed to preload background early:', error, backgroundAlbum.coverArt);
               }
               // Still set it, but don't mark as loaded
-              setBackgroundAlbums([bloodshotAlbum]);
+              setBackgroundAlbums([backgroundAlbum]);
               setBackgroundImageLoaded(false);
             };
             
             // Configure image loading
             img.crossOrigin = 'anonymous';
             img.decoding = 'async';
-            img.src = bloodshotAlbum.coverArt;
+            img.src = backgroundAlbum.coverArt;
             
             // Fallback timeout
             backgroundTimeoutRef.current = setTimeout(() => {
@@ -184,10 +193,14 @@ export default function HomePage() {
                 if (process.env.NODE_ENV === 'development') {
                   console.warn('⏰ Background image timeout - showing anyway');
                 }
-                setBackgroundAlbums([bloodshotAlbum]);
+                setBackgroundAlbums([backgroundAlbum]);
                 setBackgroundImageLoaded(true);
               }
             }, 8000); // Reduced timeout for faster fallback
+          } else {
+            if (process.env.NODE_ENV === 'development') {
+              console.warn('❌ No suitable background album found');
+            }
           }
         }
       } catch (error) {
