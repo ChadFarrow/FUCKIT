@@ -19,13 +19,13 @@ if [ "$branch" = "main" ]; then
     if [ $? -eq 0 ]; then
         echo "✅ Version incremented successfully"
         
-        # Add the updated version file to the current commit
+        # Add the updated version file and create a separate version commit
         git add lib/version.ts
         
-        # Amend the current commit to include version update
-        git commit --amend --no-edit --no-verify
+        # Create a separate commit for version update
+        git commit -m "chore: auto-increment version" --no-verify
         
-        echo "🔄 Version file added to commit"
+        echo "🔄 Version updated in separate commit"
     else
         echo "❌ Failed to increment version"
         exit 1
