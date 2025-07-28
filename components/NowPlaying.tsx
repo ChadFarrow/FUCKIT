@@ -8,6 +8,7 @@ import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 interface Track {
   title: string;
   artist: string;
+  albumTitle: string;
   duration: number;
   albumArt?: string;
 }
@@ -61,7 +62,7 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
     <div className="container mx-auto flex items-center gap-4">
       {/* Album Info - Left Side */}
       <Link
-        href={generateAlbumUrl(track.title)}
+        href={generateAlbumUrl(track.albumTitle)}
         className="flex items-center gap-3 min-w-0 flex-1 hover:bg-gray-700 rounded-lg p-2 -m-2 transition-colors cursor-pointer"
       >
         <Image 

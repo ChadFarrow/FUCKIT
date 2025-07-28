@@ -50,7 +50,8 @@ const GlobalNowPlayingBar: React.FC = () => {
   // Create track object for NowPlaying component
   const currentTrack = {
     title: currentPlayingAlbum.tracks?.[currentTrackIndex]?.title || `Track ${currentTrackIndex + 1}`,
-    artist: currentPlayingAlbum.title,
+    artist: currentPlayingAlbum.artist,
+    albumTitle: currentPlayingAlbum.title,
     duration: duration || 0,
     albumArt: currentPlayingAlbum.coverArt || ''
   };

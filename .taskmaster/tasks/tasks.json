@@ -337,7 +337,7 @@
         "description": "Fix issue where clicking on the \"now playing\" element doesn't always navigate to the correct album. The now playing bar should consistently take users to the correct album page when clicked.",
         "details": "Investigate and fix the navigation logic in the now playing component to ensure clicking always leads to the correct album page. This may involve checking the album ID mapping, routing logic, or state management issues.",
         "testStrategy": "Test clicking on now playing bar with different albums to verify consistent navigation to correct album pages.",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "high",
         "subtasks": []
@@ -370,7 +370,7 @@
         "description": "Fix the layout issue where the bottom album on the main page is being cut off by the fixed now playing bar. Need to add proper bottom padding/margin to prevent content overlap.",
         "details": "The fixed bottom now playing bar is overlapping with the last album on the main page, cutting off content. Need to add bottom padding or margin to the main content area to account for the height of the now playing bar.",
         "testStrategy": "Test the main page layout to ensure the bottom album is fully visible and not cut off by the now playing bar, especially on different screen sizes.",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "high",
         "subtasks": []
@@ -414,7 +414,7 @@
       "description": "Main task list for FUCKIT podcast/music streaming application",
       "created": "2025-01-27T00:00:00.000Z",
       "lastModified": "2025-01-27T00:00:00.000Z",
-      "updated": "2025-07-28T20:35:18.068Z"
+      "updated": "2025-07-28T21:51:54.593Z"
     }
   }
 }

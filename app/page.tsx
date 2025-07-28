@@ -59,7 +59,9 @@ export default function HomePage() {
   // Rotating background state
   const [currentBackgroundIndex, setCurrentBackgroundIndex] = useState(0);
   const [backgroundAlbums, setBackgroundAlbums] = useState<RSSAlbum[]>([]);
+  const [backgroundImageLoaded, setBackgroundImageLoaded] = useState(false);
   const backgroundIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const backgroundTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Controls state
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
@@ -141,30 +143,62 @@ export default function HomePage() {
           console.log('🎨 Using Bloodshot Lies - The Album for background');
         }
         
-        // Preload the single background image for both desktop and mobile
+        // Reset loading state
+        setBackgroundImageLoaded(false);
+        setBackgroundAlbums([]); // Clear previous albums first
+        
+        // Preload the single background image with more robust loading
         const img = document.createElement('img');
         img.onload = () => {
           if (process.env.NODE_ENV === 'development') {
-            console.log('✅ Bloodshot Lies background image preloaded');
+            console.log('✅ Bloodshot Lies background image preloaded and cached');
           }
+          // Clear timeout since image loaded successfully
+          if (backgroundTimeoutRef.current) {
+            clearTimeout(backgroundTimeoutRef.current);
+            backgroundTimeoutRef.current = null;
+          }
+          // Set albums and mark as loaded
           setBackgroundAlbums(rotationAlbums);
+          setBackgroundImageLoaded(true);
         };
         img.onerror = (error) => {
           if (process.env.NODE_ENV === 'development') {
             console.warn('❌ Failed to preload Bloodshot Lies background:', error);
           }
-          setBackgroundAlbums(rotationAlbums); // Still set it, might work
+          // Still set it, but don't mark as loaded
+          setBackgroundAlbums(rotationAlbums);
+          setBackgroundImageLoaded(false);
         };
+        
+        // Add cache-busting and crossorigin for better loading
+        img.crossOrigin = 'anonymous';
+        img.decoding = 'async';
         img.src = bloodshotAlbum?.coverArt || '';
+        
+        // Fallback timeout - if image doesn't load within 10 seconds, show it anyway
+        backgroundTimeoutRef.current = setTimeout(() => {
+          if (!backgroundImageLoaded) {
+            if (process.env.NODE_ENV === 'development') {
+              console.warn('⏰ Background image timeout - showing anyway');
+            }
+            setBackgroundAlbums(rotationAlbums);
+            setBackgroundImageLoaded(true);
+          }
+        }, 10000);
       } else {
-        // When no album found, set empty array
+        // When no album found, reset state
         setBackgroundAlbums([]);
+        setBackgroundImageLoaded(false);
       }
     }
 
     return () => {
       if (backgroundIntervalRef.current) {
         clearInterval(backgroundIntervalRef.current);
+      }
+      if (backgroundTimeoutRef.current) {
+        clearTimeout(backgroundTimeoutRef.current);
       }
     };
   }, [albums]);
@@ -478,25 +512,35 @@ export default function HomePage() {
   return (
     <div className="min-h-screen text-white relative overflow-hidden">
       {/* Rotating Background - All Devices */}
-      {backgroundAlbums.length > 0 && typeof window !== 'undefined' && (
+      {backgroundAlbums.length > 0 && backgroundImageLoaded && typeof window !== 'undefined' && (
         <div className="fixed inset-0 z-0">
           {backgroundAlbums.map((album, index) => (
             <div
               key={`${album.title}-${index}`}
-              className={`absolute inset-0 transition-opacity duration-3000 ease-in-out ${
+              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
                 index === currentBackgroundIndex ? 'opacity-100' : 'opacity-0'
               }`}
               style={{
-                background: `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('${album.coverArt}') center/cover`,
+                background: `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('${album.coverArt}') center/cover fixed`,
+                backgroundAttachment: 'fixed'
               }}
             />
           ))}
         </div>
       )}
 
-      {/* Fallback gradient background */}
-      {!backgroundAlbums.length && (
+      {/* Fallback gradient background - show when no background or not loaded */}
+      {(!backgroundAlbums.length || !backgroundImageLoaded) && (
         <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 z-0" />
+      )}
+
+      {/* Loading indicator for background */}
+      {backgroundAlbums.length > 0 && !backgroundImageLoaded && (
+        <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 z-0">
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-white/20 text-sm animate-pulse">Loading background...</div>
+          </div>
+        </div>
       )}
 
       {/* Content overlay */}
@@ -774,7 +818,7 @@ export default function HomePage() {
         )}
         
         {/* Main Content */}
-        <div className="container mx-auto px-3 sm:px-6 py-6 sm:py-8">
+        <div className="container mx-auto px-3 sm:px-6 py-6 sm:py-8 pb-28">
           {isLoading && albums.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 gap-4">
               <LoadingSpinner 
