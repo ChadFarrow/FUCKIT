@@ -51,6 +51,14 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
         const feedUrl = publisherInfo.feedUrl;
         console.log(`🏢 Publisher info found:`, publisherInfo);
         console.log(`🏢 Loading publisher feed: ${feedUrl}`);
+        
+        // Set publisher info immediately using the known publisher data
+        setPublisherInfo({
+          title: publisherInfo.name || `Artist: ${publisherId}`,
+          description: 'Independent artist and music creator',
+          artist: publisherInfo.name,
+          coverArt: undefined // Will be set from album data if available
+        });
 
         // Load publisher info from pre-parsed data
         console.log(`🏢 Loading publisher info from pre-parsed data...`);
@@ -101,8 +109,9 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
             coverArt: publisherFeedInfo.coverArt
           });
         } else {
-          // Fallback to basic info for IROH or other artists
-          const artistName = publisherId === '8a9c2e54' || publisherId === 'iroh' ? 'IROH' : publisherId;
+          // Fallback to basic info using known publisher data
+          const knownPublisher = getPublisherInfo(publisherId);
+          const artistName = knownPublisher?.name || publisherId;
           setPublisherInfo({
             title: artistName,
             description: 'Independent artist and music creator',
