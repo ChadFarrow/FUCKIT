@@ -154,49 +154,13 @@ export default function HomePage() {
               console.log('✅ Found background album:', backgroundAlbum.title);
             }
             
-            // Reset loading state
-            setBackgroundImageLoaded(false);
-            setBackgroundAlbums([]);
+            // Set background immediately - don't wait for image preload
+            setBackgroundAlbums([backgroundAlbum]);
+            setBackgroundImageLoaded(true);
             
-            // Preload the background image
-            const img = document.createElement('img');
-            img.onload = () => {
-              if (process.env.NODE_ENV === 'development') {
-                console.log('✅ Background image preloaded early:', backgroundAlbum.title);
-              }
-              // Clear timeout since image loaded successfully
-              if (backgroundTimeoutRef.current) {
-                clearTimeout(backgroundTimeoutRef.current);
-                backgroundTimeoutRef.current = null;
-              }
-              // Set background and mark as loaded
-              setBackgroundAlbums([backgroundAlbum]);
-              setBackgroundImageLoaded(true);
-            };
-            img.onerror = (error) => {
-              if (process.env.NODE_ENV === 'development') {
-                console.warn('❌ Failed to preload background early:', error, backgroundAlbum.coverArt);
-              }
-              // Still set it, but don't mark as loaded
-              setBackgroundAlbums([backgroundAlbum]);
-              setBackgroundImageLoaded(false);
-            };
-            
-            // Configure image loading
-            img.crossOrigin = 'anonymous';
-            img.decoding = 'async';
-            img.src = backgroundAlbum.coverArt;
-            
-            // Fallback timeout
-            backgroundTimeoutRef.current = setTimeout(() => {
-              if (!backgroundImageLoaded) {
-                if (process.env.NODE_ENV === 'development') {
-                  console.warn('⏰ Background image timeout - showing anyway');
-                }
-                setBackgroundAlbums([backgroundAlbum]);
-                setBackgroundImageLoaded(true);
-              }
-            }, 8000); // Reduced timeout for faster fallback
+            if (process.env.NODE_ENV === 'development') {
+              console.log('✅ Background set immediately without preload wait');
+            }
           } else {
             if (process.env.NODE_ENV === 'development') {
               console.warn('❌ No suitable background album found');

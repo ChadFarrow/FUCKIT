@@ -14,6 +14,9 @@ const withPWA = require('next-pwa')({
     /_next\/static\/.*\/.*\.css$/,
     /test-mobile-images/, // Exclude test pages from service worker
     /api\/proxy-image/, // Exclude proxy API from service worker
+    /api\/optimized-images/, // Exclude optimized images API from service worker
+    /\?_rsc=/, // Exclude RSC payloads from service worker
+    /album\/.*\?_rsc=/, // Exclude album RSC payloads
   ],
   runtimeCaching: [
     {
