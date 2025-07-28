@@ -271,7 +271,7 @@
         "description": "Implement comprehensive Bunny.net CDN integration with phased approach to safely add CDN functionality while maintaining stable foundation",
         "details": "Phase 1: Foundation Setup - Create optional CDN module with environment toggles, CDN-aware image component, configuration flags. Phase 2: Gradual Integration - Image optimization first with smart fallbacks, health monitoring. Phase 3: Audio Integration - CDN support to audio proxy with streaming optimization. Phase 4: Advanced Features - Automated content upload, cache invalidation, geographic optimization. Key principles: Always optional, graceful degradation, feature flags, comprehensive fallbacks, monitoring and alerts.",
         "testStrategy": "",
-        "status": "in-progress",
+        "status": "deferred",
         "dependencies": [],
         "priority": "medium",
         "subtasks": [
@@ -414,7 +414,7 @@
       "description": "Main task list for FUCKIT podcast/music streaming application",
       "created": "2025-01-27T00:00:00.000Z",
       "lastModified": "2025-01-27T00:00:00.000Z",
-      "updated": "2025-07-28T22:58:10.094Z"
+      "updated": "2025-07-28T23:49:17.985Z"
     }
   }
 }

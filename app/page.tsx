@@ -679,7 +679,7 @@ export default function HomePage() {
               return artists.length > 0 ? (
                 <div className="mb-8">
                   <h3 className="text-lg font-semibold mb-3 text-white flex items-center gap-2">
-                    <span>Artists</span>
+                    <span>Publisher Feeds</span>
                     <span className="text-xs bg-blue-600/80 px-2 py-1 rounded">PC 2.0</span>
                   </h3>
                   <div className="space-y-1 max-h-48 overflow-y-auto">

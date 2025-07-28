@@ -1,0 +1,45 @@
+{
+  "totalFeeds": 107,
+  "successfulParses": 101,
+  "failedParses": 6,
+  "albumsFound": 95,
+  "publishersFound": 6,
+  "totalTracks": 493,
+  "totalDuration": "00:00",
+  "podRollFeeds": 16,
+  "fundingFeeds": 5,
+  "parseTime": 125734,
+  "timestamp": "2025-07-28T23:45:34.482Z",
+  "errors": [
+    {
+      "feedId": "wavlake-album-1",
+      "feedUrl": "https://wavlake.com/feed/music/d677db67-0310-4813-970e-e65927c689f1",
+      "error": "No album data found"
+    },
+    {
+      "feedId": "iroh-album-6",
+      "feedUrl": "https://wavlake.com/feed/music/0bb8c9c7-1c55-4412-a517-572a98318921",
+      "error": "No album data found"
+    },
+    {
+      "feedId": "iroh-album-7",
+      "feedUrl": "https://wavlake.com/feed/music/16e46ed0-b392-4419-a937-a7815f6ca43b",
+      "error": "No album data found"
+    },
+    {
+      "feedId": "iroh-album-8",
+      "feedUrl": "https://wavlake.com/feed/music/2cd1b9ea-9ef3-4a54-aa25-55295689f442",
+      "error": "No album data found"
+    },
+    {
+      "feedId": "example-com-test-feed-xml",
+      "feedUrl": "https://example.com/test-feed.xml",
+      "error": "No album data found"
+    },
+    {
+      "feedId": "2-crystal-balls",
+      "feedUrl": "https://rocknrollbreakheart.com/msp/2CrystalBalls/2 crystal balls.xml",
+      "error": "No album data found"
+    }
+  ]
+}

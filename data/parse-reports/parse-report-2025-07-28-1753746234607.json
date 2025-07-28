@@ -1,0 +1,50 @@
+{
+  "totalFeeds": 107,
+  "successfulParses": 100,
+  "failedParses": 7,
+  "albumsFound": 94,
+  "publishersFound": 6,
+  "totalTracks": 478,
+  "totalDuration": "00:00",
+  "podRollFeeds": 16,
+  "fundingFeeds": 5,
+  "parseTime": 149980,
+  "timestamp": "2025-07-28T23:43:54.607Z",
+  "errors": [
+    {
+      "feedId": "wavlake-album-16",
+      "feedUrl": "https://wavlake.com/feed/music/997060e3-9dc1-4cd8-b3c1-3ae06d54bb03",
+      "error": "No album data found"
+    },
+    {
+      "feedId": "wavlake-album-17",
+      "feedUrl": "https://wavlake.com/feed/music/b54b9a19-b6ed-46c1-806c-7e82f7550edc",
+      "error": "No album data found"
+    },
+    {
+      "feedId": "example-com-test-feed-xml",
+      "feedUrl": "https://example.com/test-feed.xml",
+      "error": "No album data found"
+    },
+    {
+      "feedId": "2-crystal-balls",
+      "feedUrl": "https://rocknrollbreakheart.com/msp/2CrystalBalls/2 crystal balls.xml",
+      "error": "No album data found"
+    },
+    {
+      "feedId": "ollie-i-never-thought-things-would-be-different",
+      "feedUrl": "https://wavlake.com/feed/music/6c756ed0-6c1a-4473-86a8-9d30124fa01c",
+      "error": "No album data found"
+    },
+    {
+      "feedId": "ollie-ed653567-a662-4ed9-bc0d-387f8e19b6f3",
+      "feedUrl": "https://wavlake.com/feed/music/ed653567-a662-4ed9-bc0d-387f8e19b6f3",
+      "error": "No album data found"
+    },
+    {
+      "feedId": "ollie-3a925dda-cc31-4bb6-b285-3a09ed2e5307",
+      "feedUrl": "https://wavlake.com/feed/music/3a925dda-cc31-4bb6-b285-3a09ed2e5307",
+      "error": "No album data found"
+    }
+  ]
+}

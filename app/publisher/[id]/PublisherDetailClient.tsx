@@ -86,15 +86,22 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
         
         console.log(`🏢 Found ${publisherAlbums.length} albums for publisher`);
         
-        // Extract publisher info from the first album
+        // Extract publisher info from the newest album
         let publisherFeedInfo = null;
         if (publisherAlbums.length > 0) {
-          const firstAlbum = publisherAlbums[0];
+          // Sort albums by date (newest first) to get the most recent release
+          const sortedAlbums = [...publisherAlbums].sort((a, b) => {
+            const dateA = new Date(a.pubDate || a.date || 0);
+            const dateB = new Date(b.pubDate || b.date || 0);
+            return dateB.getTime() - dateA.getTime(); // Newest first
+          });
+          
+          const newestAlbum = sortedAlbums[0];
           publisherFeedInfo = {
-            title: firstAlbum.publisher?.title || firstAlbum.artist,
-            artist: firstAlbum.artist,
-            description: firstAlbum.publisher?.description || 'Independent artist and music creator',
-            coverArt: firstAlbum.publisher?.coverArt || firstAlbum.coverArt
+            title: newestAlbum.publisher?.title || newestAlbum.artist,
+            artist: newestAlbum.artist,
+            description: newestAlbum.publisher?.description || 'Independent artist and music creator',
+            coverArt: newestAlbum.publisher?.coverArt || newestAlbum.coverArt
           };
         }
         
@@ -204,7 +211,7 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
   const albumsWithMultipleTracks = sortAlbums(albums.filter(album => album.tracks.length > 6));
   const epsAndSingles = sortEpsAndSingles(albums.filter(album => album.tracks.length <= 6));
 
-  if (isLoading) {
+  if (isLoading && !publisherInfo?.title) {
     return (
       <div className="min-h-screen text-white relative overflow-hidden">
         {/* Fallback background - use artist image or gradient */}

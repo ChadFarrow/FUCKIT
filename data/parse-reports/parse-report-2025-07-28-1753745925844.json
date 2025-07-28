@@ -1,0 +1,50 @@
+{
+  "totalFeeds": 107,
+  "successfulParses": 100,
+  "failedParses": 7,
+  "albumsFound": 94,
+  "publishersFound": 6,
+  "totalTracks": 480,
+  "totalDuration": "00:00",
+  "podRollFeeds": 16,
+  "fundingFeeds": 5,
+  "parseTime": 147639,
+  "timestamp": "2025-07-28T23:38:45.844Z",
+  "errors": [
+    {
+      "feedId": "wavlake-album-3",
+      "feedUrl": "https://wavlake.com/feed/music/3a152941-c914-43da-aeca-5d7c58892a7f",
+      "error": "No album data found"
+    },
+    {
+      "feedId": "wavlake-album-16",
+      "feedUrl": "https://wavlake.com/feed/music/997060e3-9dc1-4cd8-b3c1-3ae06d54bb03",
+      "error": "No album data found"
+    },
+    {
+      "feedId": "wavlake-album-17",
+      "feedUrl": "https://wavlake.com/feed/music/b54b9a19-b6ed-46c1-806c-7e82f7550edc",
+      "error": "No album data found"
+    },
+    {
+      "feedId": "example-com-test-feed-xml",
+      "feedUrl": "https://example.com/test-feed.xml",
+      "error": "No album data found"
+    },
+    {
+      "feedId": "2-crystal-balls",
+      "feedUrl": "https://rocknrollbreakheart.com/msp/2CrystalBalls/2 crystal balls.xml",
+      "error": "No album data found"
+    },
+    {
+      "feedId": "ollie-1e0e29c2-f05d-42a6-8b6e-acbfe2b29318",
+      "feedUrl": "https://wavlake.com/feed/music/1e0e29c2-f05d-42a6-8b6e-acbfe2b29318",
+      "error": "No album data found"
+    },
+    {
+      "feedId": "ollie-3cc3847a-8d5f-4086-9501-c1500165da07",
+      "feedUrl": "https://wavlake.com/feed/music/3cc3847a-8d5f-4086-9501-c1500165da07",
+      "error": "No album data found"
+    }
+  ]
+}

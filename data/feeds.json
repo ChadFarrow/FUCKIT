@@ -1069,6 +1069,46 @@
       "status": "active",
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z"
+    },
+    {
+      "id": "spectral-hiding",
+      "originalUrl": "https://zine.bitpunk.fm/feeds/spectral-hiding.xml",
+      "type": "album",
+      "title": "Spectral Hiding",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-01-27T00:00:00.000Z",
+      "lastUpdated": "2025-01-27T00:00:00.000Z"
+    },
+    {
+      "id": "poetry-on-tape",
+      "originalUrl": "https://zine.bitpunk.fm/feeds/pot.xml",
+      "type": "album",
+      "title": "Poetry on Tape",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-01-27T00:00:00.000Z",
+      "lastUpdated": "2025-01-27T00:00:00.000Z"
+    },
+    {
+      "id": "bitpunk-fm",
+      "originalUrl": "https://zine.bitpunk.fm/feeds/bitpunk-fm.xml",
+      "type": "album",
+      "title": "bitpunk.fm",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-01-27T00:00:00.000Z",
+      "lastUpdated": "2025-01-27T00:00:00.000Z"
+    },
+    {
+      "id": "unwound",
+      "originalUrl": "https://zine.bitpunk.fm/feeds/unwound.xml",
+      "type": "album",
+      "title": "unwound",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-01-27T00:00:00.000Z",
+      "lastUpdated": "2025-01-27T00:00:00.000Z"
     }
   ],
   "lastUpdated": "2025-01-27T00:00:00.000Z",
