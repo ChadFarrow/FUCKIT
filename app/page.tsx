@@ -140,7 +140,7 @@ export default function HomePage() {
         console.log('🎨 Using Bloodshot Lies - The Album for background');
         
         // Preload the single background image
-        const img = new Image();
+        const img = document.createElement('img');
         img.onload = () => {
           console.log('✅ Bloodshot Lies background image preloaded');
           setBackgroundAlbums(rotationAlbums);
