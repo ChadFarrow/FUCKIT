@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
@@ -38,11 +38,19 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
   onVolumeChange,
   onClose
 }) => {
+  const [hoverPosition, setHoverPosition] = useState<number | null>(null);
+
   const formatTime = (seconds: number): string => {
     if (!seconds || isNaN(seconds)) return '0:00';
-    const mins = Math.floor(seconds / 60);
+    const hours = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
     const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    
+    if (hours > 0) {
+      return `${hours}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    } else {
+      return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
   };
 
   const handleProgressClick = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -52,6 +60,18 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
     const percentage = clickX / rect.width;
     const newTime = percentage * track.duration;
     onSeek(newTime);
+  };
+
+  const handleProgressHover = (event: React.MouseEvent<HTMLDivElement>) => {
+    const progressBar = event.currentTarget;
+    const rect = progressBar.getBoundingClientRect();
+    const hoverX = event.clientX - rect.left;
+    const percentage = Math.max(0, Math.min(1, hoverX / rect.width));
+    setHoverPosition(percentage);
+  };
+
+  const handleProgressLeave = () => {
+    setHoverPosition(null);
   };
 
   const generateAlbumUrl = (albumTitle: string): string => {
@@ -132,14 +152,36 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
         <div 
           className="flex-1 h-2 bg-gray-600 rounded-full cursor-pointer relative group"
           onClick={handleProgressClick}
+          onMouseMove={handleProgressHover}
+          onMouseLeave={handleProgressLeave}
         >
+          {/* Current progress */}
           <div 
             className="h-full bg-orange-500 rounded-full transition-all duration-100"
             style={{ width: `${track.duration ? (currentTime / track.duration) * 100 : 0}%` }}
           />
-          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity">
-            <div className="h-full bg-orange-400 rounded-full" />
-          </div>
+          
+          {/* Hover preview */}
+          {hoverPosition !== null && (
+            <div 
+              className="absolute top-0 left-0 h-full bg-orange-400/60 rounded-full pointer-events-none transition-all duration-75"
+              style={{ width: `${hoverPosition * 100}%` }}
+            />
+          )}
+          
+          {/* Hover time tooltip */}
+          {hoverPosition !== null && (
+            <div 
+              className="absolute -top-8 bg-gray-900 text-white text-xs px-2 py-1 rounded pointer-events-none"
+              style={{ 
+                left: `${hoverPosition * 100}%`, 
+                transform: 'translateX(-50%)',
+                minWidth: 'max-content'
+              }}
+            >
+              {formatTime(hoverPosition * track.duration)}
+            </div>
+          )}
         </div>
         <span className="text-xs text-white w-12 text-left">
           {formatTime(track.duration)}

@@ -117,81 +117,87 @@ export default function HomePage() {
   }, []); // Run only once on mount
 
 
-  // Mobile audio initialization is now handled by the global AudioContext
-
-  // Audio event listeners are now handled by the global AudioContext
-
-  // Rotating background effect - optimized for all devices with preloading
+  // Early background loading - load before albums for better UX
   useEffect(() => {
-    if (albums.length > 0) {
-      // Filter albums with good cover art for background rotation
-      const albumsWithArt = albums.filter(album => 
-        album.coverArt && 
-        album.coverArt !== getPlaceholderImageUrl('large') &&
-        !album.coverArt.includes('placeholder')
-      );
+    const loadBackgroundEarly = async () => {
+      if (typeof window === 'undefined') return;
       
-      // Use only Bloodshot Lies - The Album for background
-      const bloodshotAlbum = albumsWithArt.find(album => 
-        album.title.toLowerCase().includes('bloodshot lies')
-      );
-      
-      const rotationAlbums = bloodshotAlbum ? [bloodshotAlbum] : [];
-      
-      if (rotationAlbums.length > 0 && typeof window !== 'undefined') {
+      try {
         if (process.env.NODE_ENV === 'development') {
-          console.log('🎨 Using Bloodshot Lies - The Album for background');
+          console.log('🎨 Loading background image early...');
         }
         
-        // Reset loading state
-        setBackgroundImageLoaded(false);
-        setBackgroundAlbums([]); // Clear previous albums first
-        
-        // Preload the single background image with more robust loading
-        const img = document.createElement('img');
-        img.onload = () => {
-          if (process.env.NODE_ENV === 'development') {
-            console.log('✅ Bloodshot Lies background image preloaded and cached');
-          }
-          // Clear timeout since image loaded successfully
-          if (backgroundTimeoutRef.current) {
-            clearTimeout(backgroundTimeoutRef.current);
-            backgroundTimeoutRef.current = null;
-          }
-          // Set albums and mark as loaded
-          setBackgroundAlbums(rotationAlbums);
-          setBackgroundImageLoaded(true);
-        };
-        img.onerror = (error) => {
-          if (process.env.NODE_ENV === 'development') {
-            console.warn('❌ Failed to preload Bloodshot Lies background:', error);
-          }
-          // Still set it, but don't mark as loaded
-          setBackgroundAlbums(rotationAlbums);
-          setBackgroundImageLoaded(false);
-        };
-        
-        // Add cache-busting and crossorigin for better loading
-        img.crossOrigin = 'anonymous';
-        img.decoding = 'async';
-        img.src = bloodshotAlbum?.coverArt || '';
-        
-        // Fallback timeout - if image doesn't load within 10 seconds, show it anyway
-        backgroundTimeoutRef.current = setTimeout(() => {
-          if (!backgroundImageLoaded) {
+        // Load album data specifically for background
+        const response = await fetch('/api/albums');
+        if (response.ok) {
+          const data = await response.json();
+          const allAlbums = data.albums || [];
+          
+          // Find Bloodshot Lies album for background
+          const bloodshotAlbum = allAlbums.find((album: any) =>
+            album.title.toLowerCase().includes('bloodshot lies') &&
+            album.coverArt &&
+            !album.coverArt.includes('placeholder')
+          );
+          
+          if (bloodshotAlbum) {
             if (process.env.NODE_ENV === 'development') {
-              console.warn('⏰ Background image timeout - showing anyway');
+              console.log('✅ Found Bloodshot Lies album for background');
             }
-            setBackgroundAlbums(rotationAlbums);
-            setBackgroundImageLoaded(true);
+            
+            // Reset loading state
+            setBackgroundImageLoaded(false);
+            setBackgroundAlbums([]);
+            
+            // Preload the background image
+            const img = document.createElement('img');
+            img.onload = () => {
+              if (process.env.NODE_ENV === 'development') {
+                console.log('✅ Background image preloaded early');
+              }
+              // Clear timeout since image loaded successfully
+              if (backgroundTimeoutRef.current) {
+                clearTimeout(backgroundTimeoutRef.current);
+                backgroundTimeoutRef.current = null;
+              }
+              // Set background and mark as loaded
+              setBackgroundAlbums([bloodshotAlbum]);
+              setBackgroundImageLoaded(true);
+            };
+            img.onerror = (error) => {
+              if (process.env.NODE_ENV === 'development') {
+                console.warn('❌ Failed to preload background early:', error);
+              }
+              // Still set it, but don't mark as loaded
+              setBackgroundAlbums([bloodshotAlbum]);
+              setBackgroundImageLoaded(false);
+            };
+            
+            // Configure image loading
+            img.crossOrigin = 'anonymous';
+            img.decoding = 'async';
+            img.src = bloodshotAlbum.coverArt;
+            
+            // Fallback timeout
+            backgroundTimeoutRef.current = setTimeout(() => {
+              if (!backgroundImageLoaded) {
+                if (process.env.NODE_ENV === 'development') {
+                  console.warn('⏰ Background image timeout - showing anyway');
+                }
+                setBackgroundAlbums([bloodshotAlbum]);
+                setBackgroundImageLoaded(true);
+              }
+            }, 8000); // Reduced timeout for faster fallback
           }
-        }, 10000);
-      } else {
-        // When no album found, reset state
-        setBackgroundAlbums([]);
-        setBackgroundImageLoaded(false);
+        }
+      } catch (error) {
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('❌ Failed to load background early:', error);
+        }
       }
-    }
+    };
+
+    loadBackgroundEarly();
 
     return () => {
       if (backgroundIntervalRef.current) {
@@ -201,7 +207,7 @@ export default function HomePage() {
         clearTimeout(backgroundTimeoutRef.current);
       }
     };
-  }, [albums]);
+  }, []); // Empty dependency array - load on mount
 
   const handleAddFeed = async (feedUrl: string) => {
     setIsAddingFeed(true);
