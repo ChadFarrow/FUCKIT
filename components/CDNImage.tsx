@@ -176,7 +176,7 @@ export default function CDNImage({
       setTimeoutId(null);
     }
     
-    // First try the fallback URL if provided
+    // First try the fallback URL if provided and different
     if (retryCount === 0 && fallbackSrc && fallbackSrc !== currentSrc) {
       console.log('[CDNImage] Trying fallback URL:', fallbackSrc);
       setCurrentSrc(fallbackSrc);
@@ -193,10 +193,18 @@ export default function CDNImage({
       return;
     }
     
-    // Then try image proxy for mobile devices
-    if (retryCount === 1 && isMobile && !currentSrc.includes('/api/')) {
+    // If fallbackSrc is the same as currentSrc, skip to proxy attempt
+    if (retryCount === 0 && fallbackSrc === currentSrc) {
+      console.log('[CDNImage] Fallback URL is same as current, trying proxy directly');
+      setRetryCount(1);
+      handleError();
+      return;
+    }
+    
+    // Try image proxy for CORS errors (all devices)
+    if (retryCount === 1 && !currentSrc.includes('/api/')) {
       const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(currentSrc)}`;
-      console.log('[CDNImage] Trying image proxy for mobile:', proxyUrl);
+      console.log('[CDNImage] Trying image proxy for CORS fallback:', proxyUrl);
       setCurrentSrc(proxyUrl);
       setHasError(false);
       setIsLoading(true);
