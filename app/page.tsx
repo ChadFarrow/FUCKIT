@@ -136,10 +136,10 @@ export default function HomePage() {
       
       const rotationAlbums = bloodshotAlbum ? [bloodshotAlbum] : [];
       
-      if (rotationAlbums.length > 0 && typeof window !== 'undefined' && window.innerWidth > 768) {
+      if (rotationAlbums.length > 0 && typeof window !== 'undefined') {
         console.log('🎨 Using Bloodshot Lies - The Album for background');
         
-        // Preload the single background image
+        // Preload the single background image for both desktop and mobile
         const img = document.createElement('img');
         img.onload = () => {
           console.log('✅ Bloodshot Lies background image preloaded');
@@ -151,8 +151,8 @@ export default function HomePage() {
         };
         img.src = bloodshotAlbum?.coverArt || '';
       } else {
-        // For mobile or when no album found, set directly
-        setBackgroundAlbums(rotationAlbums);
+        // When no album found, set empty array
+        setBackgroundAlbums([]);
       }
     }
 
