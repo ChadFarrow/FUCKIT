@@ -929,8 +929,28 @@
       "status": "active",
       "addedAt": "2025-07-27T02:35:00.000Z",
       "lastUpdated": "2025-07-27T02:35:00.000Z"
+    },
+    {
+      "id": "wavlake-com-feed-music-883ea557-39c0-4bec-9618-c75978bc63b5",
+      "originalUrl": "https://wavlake.com/feed/music/883ea557-39c0-4bec-9618-c75978bc63b5",
+      "type": "album",
+      "title": "Lost Summer - Ollie",
+      "priority": "low",
+      "status": "active",
+      "addedAt": "2025-07-28T22:15:00.000Z",
+      "lastUpdated": "2025-07-28T22:15:00.000Z"
+    },
+    {
+      "id": "ollie-publisher",
+      "originalUrl": "https://wavlake.com/feed/artist/d2f43e9f-adfc-4811-b9c1-58d5ea383275",
+      "type": "publisher",
+      "title": "Ollie",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-28T22:18:47.777Z",
+      "lastUpdated": "2025-07-28T22:18:47.778Z"
     }
   ],
-  "lastUpdated": "2025-07-27T02:35:00.000Z",
+  "lastUpdated": "2025-07-28T22:18:47.778Z",
   "version": 2
 }

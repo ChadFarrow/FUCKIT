@@ -10,7 +10,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:26.674Z",
+      "lastParsed": "2025-07-28T22:15:54.024Z",
       "parsedData": {
         "album": {
           "title": "Music From The Doerfel-Verse",
@@ -195,7 +195,7 @@
               "duration": "5:22",
               "url": "https://www.doerfelverse.com/tracks/autumn.mp3",
               "trackNumber": 13,
-              "image": "https://re.podtards.com/api/optimized-images/autumn.gif",
+              "image": "https://www.doerfelverse.com/art/autumn.gif",
               "explicit": false
             },
             {
@@ -496,7 +496,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:26.940Z",
+      "lastParsed": "2025-07-28T22:15:54.289Z",
       "parsedData": {
         "album": {
           "title": "Bloodshot Lies - The Album",
@@ -966,7 +966,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:27.090Z",
+      "lastParsed": "2025-07-28T22:15:54.453Z",
       "parsedData": {
         "album": {
           "title": "Into The Doerfel-Verse",
@@ -1784,7 +1784,7 @@
               "trackNumber": 35,
               "subtitle": "Episode 21 - Queen Mother",
               "summary": "Where have all those Doerfels gone? Join us and find out!\nSPECIAL GUEST: We chat with our mom Cheryl, or as we like to call her, Queen Mother! oh yeah, and dad too :)\nRyan Fonda and Citybeach teamed up for a new self hosted song, \"Unsound Existance\"\nNew music by Ed and Bens church, Lifepoint Music\n \nAnd as always, we discuss a new song release.\nSubscribe to our music feed!\nhttps://www.doerfelverse.com/",
-              "image": "https://re.podtards.com/api/optimized-images/dvep15-art.png",
+              "image": "https://www.doerfelverse.com/art/dvep15-art.png",
               "explicit": false,
               "keywords": [
                 "into",
@@ -1932,7 +1932,7 @@
               "trackNumber": 41,
               "subtitle": "Episode 15 - Bluegrass in Montreal 2007",
               "summary": "Hang with Sir TJ in this out of the normal show format. He listens and does a comentary of a bluegrass show from when they were kids. Recorded live in Montreal, Canada, in 2007.\nTJ/banjo - Kim/fiddle - Edward/mandolin - Joey/bass - Ben/guitar \nhttps://www.doerfelverse.com/",
-              "image": "https://re.podtards.com/api/optimized-images/dvep15-art.png",
+              "image": "https://www.doerfelverse.com/art/dvep15-art.png",
               "explicit": false,
               "keywords": [
                 "into",
@@ -2059,7 +2059,7 @@
             },
             {
               "title": "Episode 9 - Daddy D",
-              "duration": "0",
+              "duration": "0:00",
               "url": "https:/www.doerfelverse.com/tracks/dvep9.mp3",
               "trackNumber": 47,
               "subtitle": "Episode 9 - Daddy D",
@@ -2238,7 +2238,7 @@
               "trackNumber": 55,
               "subtitle": "Episode 1 - So Friggin' Fine",
               "summary": "We discuss our reasons for making a podcast.\nShort history of the band.\nThanks to Adam Curry for featuring us on the first episode of his brand new music podcast Boostagram Ball, check it out!\nValue for Value model.\nWhat is a Doerfel?\nSpotify, and major streaming services screwing artists?\nWhat song we releasing next? listen to us figure it out, then check the following episode for the full track!\nFor better listening get a Podcasting 2.0 app. We love podcast guru and podverse. For music we recomend searching \"the doerfels\" at LNbeats.com\nSpecial thanks to Steven Bell and Sir Spencer Wolf of KC\nIn this feed we will be making episodes followed by a song. We also plan on sharing other artists music who are following the v4v model.\nBoost us your feedback or email us at tj@sirtjthewrathful.com or find us on No Agenda Social",
-              "image": "https://re.podtards.com/api/optimized-images/doerfel-verse-idea-9.png",
+              "image": "https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/doerfel-verse-idea-9.png",
               "explicit": false,
               "keywords": [
                 "doerfels",
@@ -2427,7 +2427,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:27.282Z",
+      "lastParsed": "2025-07-28T22:15:54.674Z",
       "parsedData": {
         "album": {
           "title": "Wrath Of Banjo",
@@ -2568,7 +2568,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:27.427Z",
+      "lastParsed": "2025-07-28T22:15:54.816Z",
       "parsedData": {
         "album": {
           "title": "Ben Doerfel",
@@ -2810,7 +2810,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:27.563Z",
+      "lastParsed": "2025-07-28T22:15:54.970Z",
       "parsedData": {
         "album": {
           "title": "Stay Awhile",
@@ -2903,7 +2903,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:27.787Z",
+      "lastParsed": "2025-07-28T22:15:55.220Z",
       "parsedData": {
         "album": {
           "title": "18 Sundays",
@@ -3052,20 +3052,20 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:27.947Z",
+      "lastParsed": "2025-07-28T22:15:55.461Z",
       "parsedData": {
         "album": {
           "title": "Alandace",
           "artist": "CityBeach",
           "description": "Written for Alandace by Shredward",
-          "coverArt": "https://re.podtards.com/api/optimized-images/alandace.gif",
+          "coverArt": "https://www.doerfelverse.com/art/alandace.gif",
           "tracks": [
             {
               "title": "Alandace",
               "duration": "5:43",
               "url": "https://www.doerfelverse.com/tracks/alandace.mp3",
               "trackNumber": 1,
-              "image": "https://re.podtards.com/api/optimized-images/alandace.gif",
+              "image": "https://www.doerfelverse.com/art/alandace.gif",
               "explicit": false
             }
           ],
@@ -3098,20 +3098,20 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:28.086Z",
+      "lastParsed": "2025-07-28T22:15:55.606Z",
       "parsedData": {
         "album": {
           "title": "Autumn",
           "artist": "CityBeach",
           "description": "Our daughter, Autumn, born Jan 12, 2024!",
-          "coverArt": "https://re.podtards.com/api/optimized-images/autumn.gif",
+          "coverArt": "https://www.doerfelverse.com/art/autumn.gif",
           "tracks": [
             {
               "title": "Autumn",
               "duration": "5:22",
               "url": "https://www.doerfelverse.com/tracks/autumn.mp3",
               "trackNumber": 1,
-              "image": "https://re.podtards.com/api/optimized-images/autumn.gif",
+              "image": "https://www.doerfelverse.com/art/autumn.gif",
               "explicit": false
             }
           ],
@@ -3179,7 +3179,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:28.230Z",
+      "lastParsed": "2025-07-28T22:15:55.753Z",
       "parsedData": {
         "album": {
           "title": "Christ Exalted",
@@ -3294,7 +3294,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:28.375Z",
+      "lastParsed": "2025-07-28T22:15:55.900Z",
       "parsedData": {
         "album": {
           "title": "Come Back To Me",
@@ -3340,7 +3340,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:28.528Z",
+      "lastParsed": "2025-07-28T22:15:56.039Z",
       "parsedData": {
         "album": {
           "title": "Dead Time(live 2016)",
@@ -3401,7 +3401,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:28.661Z",
+      "lastParsed": "2025-07-28T22:15:56.183Z",
       "parsedData": {
         "album": {
           "title": "DFB Volume 1",
@@ -3506,7 +3506,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:28.808Z",
+      "lastParsed": "2025-07-28T22:15:56.331Z",
       "parsedData": {
         "album": {
           "title": "DFB Volume 2",
@@ -3635,13 +3635,13 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:28.947Z",
+      "lastParsed": "2025-07-28T22:15:56.476Z",
       "parsedData": {
         "album": {
           "title": "Disco Swag",
           "artist": "The Doerfels",
           "description": "check out our podcast Into The Doerfel-Verse https://www.doerfelverse.com",
-          "coverArt": "https://re.podtards.com/api/optimized-images/disco-swag.png",
+          "coverArt": "https://www.doerfelverse.com/art/disco-swag.png",
           "tracks": [
             {
               "title": "Disco Swag - single",
@@ -3649,7 +3649,7 @@
               "url": "https://www.doerfelverse.com/tracks/disco-swag.mp3",
               "trackNumber": 1,
               "subtitle": "Disco Swag - single",
-              "image": "https://re.podtards.com/api/optimized-images/disco-swag.png",
+              "image": "https://www.doerfelverse.com/art/disco-swag.png",
               "explicit": false,
               "keywords": [
                 "disco",
@@ -3718,20 +3718,20 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:29.088Z",
+      "lastParsed": "2025-07-28T22:15:56.625Z",
       "parsedData": {
         "album": {
           "title": "First Married Christmas",
           "artist": "CityBeach",
           "description": "CityBeach is music produced by Edward Doerfel, often featuring his wife Alandace and other friends and family.",
-          "coverArt": "https://re.podtards.com/api/optimized-images/first-christmas-art.jpg",
+          "coverArt": "https://www.doerfelverse.com/art/first-christmas-art.jpg",
           "tracks": [
             {
               "title": "First Married Christmas",
               "duration": "4:21",
               "url": "https://www.doerfelverse.com/tracks/first-married-christmas.mp3",
               "trackNumber": 1,
-              "image": "https://re.podtards.com/api/optimized-images/first-christmas-art.jpg",
+              "image": "https://www.doerfelverse.com/art/first-christmas-art.jpg",
               "explicit": false
             }
           ],
@@ -3764,7 +3764,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:29.235Z",
+      "lastParsed": "2025-07-28T22:15:56.776Z",
       "parsedData": {
         "album": {
           "title": "Generation Gap",
@@ -3882,7 +3882,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:29.384Z",
+      "lastParsed": "2025-07-28T22:15:56.923Z",
       "parsedData": {
         "album": {
           "title": "Heartbreak",
@@ -3928,7 +3928,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:29.525Z",
+      "lastParsed": "2025-07-28T22:15:57.065Z",
       "parsedData": {
         "album": {
           "title": "Merry Christmix",
@@ -4058,20 +4058,20 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:29.668Z",
+      "lastParsed": "2025-07-28T22:15:57.216Z",
       "parsedData": {
         "album": {
           "title": "Let Go (What's holding you back)",
           "artist": "Middle Season",
           "description": "Middle Season is an Indie Rock band based in Nashville TN by music producer and guitarist Joey Ramon, he is originally from South America (Venezuela), currently fighting laziness, drinking a lot of coffee to stay up late and finish up his songs.",
-          "coverArt": "https://re.podtards.com/api/optimized-images/let-go-art.png",
+          "coverArt": "https://www.doerfelverse.com/art/let-go-art.png",
           "tracks": [
             {
               "title": "Let Go (What's holding you back)",
               "duration": "4:09",
               "url": "https://www.doerfelverse.com/tracks/let-go.mp3",
               "trackNumber": 1,
-              "image": "https://re.podtards.com/api/optimized-images/let-go-art.png",
+              "image": "https://www.doerfelverse.com/art/let-go-art.png",
               "explicit": false
             }
           ],
@@ -4104,7 +4104,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:29.825Z",
+      "lastParsed": "2025-07-28T22:15:57.360Z",
       "parsedData": {
         "album": {
           "title": "Phatty The Grasshopper",
@@ -4150,7 +4150,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:29.966Z",
+      "lastParsed": "2025-07-28T22:15:57.503Z",
       "parsedData": {
         "album": {
           "title": "Possible",
@@ -4196,7 +4196,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:30.107Z",
+      "lastParsed": "2025-07-28T22:15:57.661Z",
       "parsedData": {
         "album": {
           "title": "Pour Over",
@@ -4242,7 +4242,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:30.245Z",
+      "lastParsed": "2025-07-28T22:15:57.812Z",
       "parsedData": {
         "album": {
           "title": "Psalm 54",
@@ -4288,7 +4288,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:30.388Z",
+      "lastParsed": "2025-07-28T22:15:57.977Z",
       "parsedData": {
         "album": {
           "title": "Sensitive Guy",
@@ -4334,7 +4334,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:30.531Z",
+      "lastParsed": "2025-07-28T22:15:58.116Z",
       "parsedData": {
         "album": {
           "title": "They Don't Know",
@@ -4380,7 +4380,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:30.680Z",
+      "lastParsed": "2025-07-28T22:15:58.260Z",
       "parsedData": {
         "album": {
           "title": "Think EP",
@@ -4466,7 +4466,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:30.825Z",
+      "lastParsed": "2025-07-28T22:15:58.405Z",
       "parsedData": {
         "album": {
           "title": "Underwater - Single",
@@ -4512,7 +4512,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:30.964Z",
+      "lastParsed": "2025-07-28T22:15:58.556Z",
       "parsedData": {
         "album": {
           "title": "Unsound Existence (self-hosted version)",
@@ -4558,20 +4558,20 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:31.101Z",
+      "lastParsed": "2025-07-28T22:15:58.700Z",
       "parsedData": {
         "album": {
           "title": "You Are My World",
           "artist": "CityBeach",
           "description": "Wrote this for our friend's daughter... Basically used my own daughter as inspiration so it's honestly about our daughter, Autumn... Just replaced her name with our friend's daughters name. \n\nMusical inspiration: Empire of the Sun and a little One Republic",
-          "coverArt": "https://re.podtards.com/api/optimized-images/you-are-my-world.gif",
+          "coverArt": "https://www.doerfelverse.com/art/you-are-my-world.gif",
           "tracks": [
             {
               "title": "You Are My World",
               "duration": "3:40",
               "url": "https://www.doerfelverse.com/tracks/you-are-my-world.mp3",
               "trackNumber": 1,
-              "image": "https://re.podtards.com/api/optimized-images/you-are-my-world.gif",
+              "image": "https://www.doerfelverse.com/art/you-are-my-world.gif",
               "explicit": false
             }
           ],
@@ -4604,7 +4604,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:31.237Z",
+      "lastParsed": "2025-07-28T22:15:58.840Z",
       "parsedData": {
         "album": {
           "title": "You Feel Like Home(Single)",
@@ -4650,7 +4650,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:31.377Z",
+      "lastParsed": "2025-07-28T22:15:58.985Z",
       "parsedData": {
         "album": {
           "title": "Your Chance",
@@ -5025,7 +5025,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:31.517Z",
+      "lastParsed": "2025-07-28T22:15:59.134Z",
       "parsedData": {
         "album": {
           "title": "Opus",
@@ -5151,7 +5151,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:31.663Z",
+      "lastParsed": "2025-07-28T22:15:59.278Z",
       "parsedData": {
         "album": {
           "title": "Nostalgic",
@@ -5268,7 +5268,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:31.970Z",
+      "lastParsed": "2025-07-28T22:15:59.497Z",
       "parsedData": {
         "album": {
           "title": "CityBeach",
@@ -5361,7 +5361,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:32.112Z",
+      "lastParsed": "2025-07-28T22:15:59.642Z",
       "parsedData": {
         "album": {
           "title": "Kurtisdrums",
@@ -5599,7 +5599,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:32.268Z",
+      "lastParsed": "2025-07-28T22:15:59.795Z",
       "parsedData": {
         "album": {
           "title": "Ring That Bell",
@@ -5685,7 +5685,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:32.557Z",
+      "lastParsed": "2025-07-28T22:16:00.074Z",
       "parsedData": {
         "album": {
           "title": "deathdreams",
@@ -5811,7 +5811,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:32.902Z",
+      "lastParsed": "2025-07-28T22:16:00.331Z",
       "parsedData": {
         "album": {
           "title": "Ugly Side",
@@ -5923,7 +5923,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:33.085Z",
+      "lastParsed": "2025-07-28T22:16:00.483Z",
       "parsedData": {
         "album": {
           "title": "now i feel it",
@@ -6031,7 +6031,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:33.377Z",
+      "lastParsed": "2025-07-28T22:16:00.741Z",
       "parsedData": {
         "album": {
           "title": "Pilot",
@@ -6111,7 +6111,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:33.512Z",
+      "lastParsed": "2025-07-28T22:16:00.890Z",
       "parsedData": {
         "album": {
           "title": "Radio Brigade",
@@ -6191,7 +6191,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:33.655Z",
+      "lastParsed": "2025-07-28T22:16:01.029Z",
       "parsedData": {
         "album": {
           "title": "Tinderbox",
@@ -6207,86 +6207,86 @@
               "explicit": false
             },
             {
-              "title": "We Promise We'll Buy It",
-              "duration": "3:08",
-              "url": "https://op3.dev/e,pg=537df90e-0cc4-535b-84d0-dcb3ca87f1f8/https://d12wklypp119aj.cloudfront.net/track/3dedac40-8a50-4579-bea8-c7e488adba85.mp3",
-              "trackNumber": 2,
-              "explicit": false
-            },
-            {
               "title": "Surrounded",
               "duration": "3:24",
               "url": "https://op3.dev/e,pg=537df90e-0cc4-535b-84d0-dcb3ca87f1f8/https://d12wklypp119aj.cloudfront.net/track/ee10ef21-e7d1-4ba5-858f-9663439a457f.mp3",
-              "trackNumber": 3,
+              "trackNumber": 2,
               "explicit": false
             },
             {
               "title": "Sar Chasm",
               "duration": "2:24",
               "url": "https://op3.dev/e,pg=537df90e-0cc4-535b-84d0-dcb3ca87f1f8/https://d12wklypp119aj.cloudfront.net/track/5e2774af-1e11-4386-86cd-be27338584dd.mp3",
-              "trackNumber": 4,
+              "trackNumber": 3,
               "explicit": false
             },
             {
               "title": "Back Road",
               "duration": "1:38",
               "url": "https://op3.dev/e,pg=537df90e-0cc4-535b-84d0-dcb3ca87f1f8/https://d12wklypp119aj.cloudfront.net/track/1ea099a5-bb58-493a-ba4f-fa3e47502f60.mp3",
-              "trackNumber": 5,
+              "trackNumber": 4,
               "explicit": false
             },
             {
               "title": "Density",
               "duration": "3:25",
               "url": "https://op3.dev/e,pg=537df90e-0cc4-535b-84d0-dcb3ca87f1f8/https://d12wklypp119aj.cloudfront.net/track/1432bdff-80eb-4d3f-b9ae-f483b61bfb49.mp3",
-              "trackNumber": 6,
+              "trackNumber": 5,
               "explicit": false
             },
             {
               "title": "Creatives",
               "duration": "2:44",
               "url": "https://op3.dev/e,pg=537df90e-0cc4-535b-84d0-dcb3ca87f1f8/https://d12wklypp119aj.cloudfront.net/track/d1fb9eb1-d530-499b-927b-3c360ceadeee.mp3",
-              "trackNumber": 7,
+              "trackNumber": 6,
               "explicit": false
             },
             {
               "title": "Bad People",
               "duration": "2:12",
               "url": "https://op3.dev/e,pg=537df90e-0cc4-535b-84d0-dcb3ca87f1f8/https://d12wklypp119aj.cloudfront.net/track/33932ccc-c707-411b-b914-4e9a94ec7e89.mp3",
-              "trackNumber": 8,
+              "trackNumber": 7,
               "explicit": false
             },
             {
               "title": "Mom",
               "duration": "1:19",
               "url": "https://op3.dev/e,pg=537df90e-0cc4-535b-84d0-dcb3ca87f1f8/https://d12wklypp119aj.cloudfront.net/track/74bb6c2a-0071-4d18-a12a-ca345477d574.mp3",
-              "trackNumber": 9,
+              "trackNumber": 8,
               "explicit": false
             },
             {
               "title": "Late",
               "duration": "3:08",
               "url": "https://op3.dev/e,pg=537df90e-0cc4-535b-84d0-dcb3ca87f1f8/https://d12wklypp119aj.cloudfront.net/track/7ad63686-68ca-49fb-b5f3-a5426f1e87c9.mp3",
-              "trackNumber": 10,
+              "trackNumber": 9,
               "explicit": false
             },
             {
               "title": "Mouth to Mouth",
               "duration": "2:12",
               "url": "https://op3.dev/e,pg=537df90e-0cc4-535b-84d0-dcb3ca87f1f8/https://d12wklypp119aj.cloudfront.net/track/e465a2ab-3ab2-4901-b64f-eb0b8961a861.mp3",
-              "trackNumber": 11,
+              "trackNumber": 10,
               "explicit": false
             },
             {
               "title": "Analysis Paralysis",
               "duration": "5:46",
               "url": "https://op3.dev/e,pg=537df90e-0cc4-535b-84d0-dcb3ca87f1f8/https://d12wklypp119aj.cloudfront.net/track/df0e4035-dd96-42d4-9748-ad2f7444aa4a.mp3",
-              "trackNumber": 12,
+              "trackNumber": 11,
               "explicit": false
             },
             {
               "title": "Stranger Things",
               "duration": "3:22",
               "url": "https://op3.dev/e,pg=537df90e-0cc4-535b-84d0-dcb3ca87f1f8/https://d12wklypp119aj.cloudfront.net/track/2155dfff-142f-4138-9607-65e8321bda85.mp3",
+              "trackNumber": 12,
+              "explicit": false
+            },
+            {
+              "title": "We Promise We'll Buy It",
+              "duration": "3:08",
+              "url": "https://op3.dev/e,pg=537df90e-0cc4-535b-84d0-dcb3ca87f1f8/https://d12wklypp119aj.cloudfront.net/track/3dedac40-8a50-4579-bea8-c7e488adba85.mp3",
               "trackNumber": 13,
               "explicit": false
             }
@@ -6318,7 +6318,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:34.034Z",
+      "lastParsed": "2025-07-28T22:16:01.350Z",
       "parsedData": {
         "album": {
           "title": "Singles",
@@ -6368,7 +6368,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:34.292Z",
+      "lastParsed": "2025-07-28T22:16:01.629Z",
       "parsedData": {
         "album": {
           "title": "Bowl of Oranges a Bright Eyes Cover",
@@ -6411,7 +6411,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:34.531Z",
+      "lastParsed": "2025-07-28T22:16:01.902Z",
       "parsedData": {
         "album": {
           "title": "Goodbye Uncle Walt",
@@ -6454,7 +6454,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:34.787Z",
+      "lastParsed": "2025-07-28T22:16:02.141Z",
       "parsedData": {
         "album": {
           "title": "Fight!",
@@ -6532,7 +6532,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:35.045Z",
+      "lastParsed": "2025-07-28T22:16:02.470Z",
       "parsedData": {
         "album": {
           "title": "Safe Some Place",
@@ -6575,7 +6575,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:35.372Z",
+      "lastParsed": "2025-07-28T22:16:02.740Z",
       "parsedData": {
         "album": {
           "title": "You Should Waste It",
@@ -6618,7 +6618,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:35.613Z",
+      "lastParsed": "2025-07-28T22:16:03.011Z",
       "parsedData": {
         "album": {
           "title": "The Kid, The Dad, The Mom & the Tiny Window",
@@ -6682,7 +6682,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:35.882Z",
+      "lastParsed": "2025-07-28T22:16:03.262Z",
       "parsedData": {
         "album": {
           "title": "Kids",
@@ -6725,7 +6725,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:36.156Z",
+      "lastParsed": "2025-07-28T22:16:03.539Z",
       "parsedData": {
         "album": {
           "title": "Don't Worry, You Still Have Time To Ruin It - Demo",
@@ -6768,7 +6768,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:36.404Z",
+      "lastParsed": "2025-07-28T22:16:04.795Z",
       "parsedData": {
         "album": {
           "title": "Rose",
@@ -6811,7 +6811,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:36.701Z",
+      "lastParsed": "2025-07-28T22:16:07.047Z",
       "parsedData": {
         "album": {
           "title": "Fake Love - Demo",
@@ -6854,7 +6854,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:36.982Z",
+      "lastParsed": "2025-07-28T22:16:10.313Z",
       "parsedData": {
         "album": {
           "title": "Roommates - Demo",
@@ -6897,7 +6897,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:37.279Z",
+      "lastParsed": "2025-07-28T22:16:14.550Z",
       "parsedData": {
         "album": {
           "title": "Orange Pill, Pink Pill, White Pill - Demo",
@@ -6940,7 +6940,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:37.544Z",
+      "lastParsed": "2025-07-28T22:16:19.813Z",
       "parsedData": {
         "album": {
           "title": "Tyson vs Paul",
@@ -6983,7 +6983,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:38.848Z",
+      "lastParsed": "2025-07-28T22:16:21.256Z",
       "parsedData": {
         "album": {
           "title": "THEY RIDE",
@@ -7124,7 +7124,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:39.101Z",
+      "lastParsed": "2025-07-28T22:16:24.777Z",
       "parsedData": {
         "album": {
           "title": "More",
@@ -7237,7 +7237,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:40.393Z",
+      "lastParsed": "2025-07-28T22:16:25.058Z",
       "parsedData": {
         "publisherInfo": {
           "title": "Joe Martin",
@@ -7337,7 +7337,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:42.861Z",
+      "lastParsed": "2025-07-28T22:16:26.481Z",
       "parsedData": {
         "publisherInfo": {
           "title": "IROH",
@@ -7389,7 +7389,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:43.308Z",
+      "lastParsed": "2025-07-28T22:16:31.940Z",
       "parsedData": {
         "album": {
           "title": "Crocodile Tears",
@@ -7432,7 +7432,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:43.592Z",
+      "lastParsed": "2025-07-28T22:16:32.266Z",
       "parsedData": {
         "album": {
           "title": "Letters Of Regret",
@@ -7475,7 +7475,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:45.882Z",
+      "lastParsed": "2025-07-28T22:16:36.541Z",
       "parsedData": {
         "album": {
           "title": "Hero",
@@ -7518,7 +7518,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:46.141Z",
+      "lastParsed": "2025-07-28T22:16:36.846Z",
       "parsedData": {
         "album": {
           "title": "Bound For Lonesome",
@@ -7589,7 +7589,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:46.399Z",
+      "lastParsed": "2025-07-28T22:16:37.107Z",
       "parsedData": {
         "album": {
           "title": "The First Five Years",
@@ -7764,39 +7764,9 @@
       "status": "active",
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
-      "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:46.669Z",
-      "parsedData": {
-        "album": {
-          "title": "Daddy Gene",
-          "artist": "Joe Martin",
-          "description": "The story behind this song comes from a documentary film called 'The Last Man On The Moon', where astronaut Eugene Cernan travels to the moon as part of Apollo 17. At the time, he travelled further than anyone has ever been, and has still to this day travelled faster than anyone has ever been as part of the Apollo 10 mission. He promised his young daughter Tracy that he'd bring her back a moonbeam and wrote her initials in the lunar dust. I was so inspired by the magic of this story, that this song came very quickly and easily. Written from the perspective of Tracy about her dad, wondering if he was going to make it home safe.",
-          "coverArt": "https://d12wklypp119aj.cloudfront.net/image/0bb8c9c7-1c55-4412-a517-572a98318921.jpg",
-          "tracks": [
-            {
-              "title": "Daddy Gene",
-              "duration": "4:31",
-              "url": "https://op3.dev/e,pg=bf0fda2e-34fe-5213-b826-af082edf5905/https://d12wklypp119aj.cloudfront.net/track/5882508a-bbcb-48d8-93d1-a8a0f5a3c702.mp3",
-              "trackNumber": 1,
-              "explicit": false
-            }
-          ],
-          "releaseDate": "Tue, 23 May 2023 10:01:36 GMT",
-          "link": "https://wavlake.com/joemartin",
-          "summary": "The story behind this song comes from a documentary film called 'The Last Man On The Moon', where astronaut Eugene Cernan travels to the moon as part of Apollo 17. At the time, he travelled further than anyone has ever been, and has still to this day travelled faster than anyone has ever been as part of the Apollo 10 mission. He promised his young daughter Tracy that he'd bring her back a moonbeam and wrote her initials in the lunar dust. I was so inspired by the magic of this story, that this song came very quickly and easily. Written from the perspective of Tracy about her dad, wondering if he was going to make it home safe.",
-          "explicit": false,
-          "owner": {
-            "name": "Wavlake",
-            "email": "contact@wavlake.com"
-          },
-          "publisher": {
-            "feedGuid": "18bcbf10-6701-4ffb-b255-bc057390d738",
-            "feedUrl": "https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738",
-            "medium": "publisher"
-          }
-        }
-      },
-      "trackCount": 1
+      "parseStatus": "error",
+      "lastParsed": "2025-07-28T22:16:42.374Z",
+      "parseError": "No album data found"
     },
     {
       "id": "iroh-album-7",
@@ -7808,7 +7778,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:46.932Z",
+      "lastParsed": "2025-07-28T22:16:49.885Z",
       "parsedData": {
         "album": {
           "title": "Love Strong",
@@ -7851,7 +7821,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:47.200Z",
+      "lastParsed": "2025-07-28T22:16:53.400Z",
       "parsedData": {
         "album": {
           "title": "High Gravity",
@@ -7894,7 +7864,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:47.508Z",
+      "lastParsed": "2025-07-28T22:16:53.662Z",
       "parsedData": {
         "album": {
           "title": "Small World",
@@ -7965,7 +7935,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:48.758Z",
+      "lastParsed": "2025-07-28T22:16:53.925Z",
       "parsedData": {
         "album": {
           "title": "Strangers To Lovers - Live from Sloe Flower Studio",
@@ -8008,7 +7978,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:51.248Z",
+      "lastParsed": "2025-07-28T22:16:54.172Z",
       "parsedData": {
         "album": {
           "title": "Can't Promise You The World - Live from Sloe Flower Studio",
@@ -8051,7 +8021,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:54.500Z",
+      "lastParsed": "2025-07-28T22:16:54.442Z",
       "parsedData": {
         "publisherInfo": {
           "title": "Nate Johnivan",
@@ -8199,7 +8169,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:55.326Z",
+      "lastParsed": "2025-07-28T22:16:57.831Z",
       "parsedData": {
         "album": {
           "title": "The Heycitizen Experience",
@@ -8284,7 +8254,7 @@
               "duration": "5:01",
               "url": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/HowBoutYou.mp3",
               "trackNumber": 10,
-              "image": "https://re.podtards.com/api/optimized-images/HowBoutYou.gif",
+              "image": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/HowBoutYou.gif",
               "explicit": false
             },
             {
@@ -8388,7 +8358,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:55.588Z",
+      "lastParsed": "2025-07-28T22:16:58.093Z",
       "parsedData": {
         "album": {
           "title": "HeyCitizen's Lo-Fi Hip-Hop Beats to Study and Relax to",
@@ -8469,20 +8439,20 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:55.729Z",
+      "lastParsed": "2025-07-28T22:16:58.234Z",
       "parsedData": {
         "album": {
           "title": "Wild and Free",
           "artist": "Anni Powell",
           "description": "This debut EP released in 2021 was an experiment of music creation, recording, and production. With a bit of this and a bit of that, the end product amped up Anni's singer-songwriter style to full production pop-rock with notes of jazz. Anni wrote the music and lyrics and performed the vocals, piano and synth. Kristopher Ewaniuk produced, mixed & mastered, and added guitar and bass. Anni's sister Vicki played drums, brass by Rachel Ewaniuk, and back up vocals by Anni's husband, Toby, and friends Chelsea Lyn Meyer and Mike Geroni. The album cover was created by the talented artist, Erin Powell. Check out her artwork here: http://ginsengalley.com/",
-          "coverArt": "https://re.podtards.com/api/optimized-images/WIldandfreecover-copy-2.png",
+          "coverArt": "https://annipowellmusic.com/wp-content/MusicSideProject/MP3%20Masters%20and%20Copy%20of%20Cover/WIldandfreecover%20copy%202.png",
           "tracks": [
             {
               "title": "Blue Heron Pink Flamingo",
               "duration": "2:18",
               "url": "https://annipowellmusic.com/wp-content/MusicSideProject/MP3%20Masters%20and%20Copy%20of%20Cover/BHPFMP3/BHPF%20Master%20MP3.mp3",
               "trackNumber": 1,
-              "image": "https://re.podtards.com/api/optimized-images/WIldandfreecover-copy-2.png",
+              "image": "https://annipowellmusic.com/wp-content/MusicSideProject/MP3%20Masters%20and%20Copy%20of%20Cover/WIldandfreecover%20copy%202.png",
               "explicit": false
             },
             {
@@ -8490,7 +8460,7 @@
               "duration": "3:58",
               "url": "https://annipowellmusic.com/wp-content/MusicSideProject/MP3%20Masters%20and%20Copy%20of%20Cover/Where%20Theres%20a%20Will%20MP3/Where%20Theres%20a%20Will%20MP3Master.mp3",
               "trackNumber": 2,
-              "image": "https://re.podtards.com/api/optimized-images/WIldandfreecover-copy-2.png",
+              "image": "https://annipowellmusic.com/wp-content/MusicSideProject/MP3%20Masters%20and%20Copy%20of%20Cover/WIldandfreecover%20copy%202.png",
               "explicit": false
             },
             {
@@ -8498,7 +8468,7 @@
               "duration": "4:24",
               "url": "https://annipowellmusic.com/wp-content/MusicSideProject/MP3%20Masters%20and%20Copy%20of%20Cover/Wild%20and%20Free%20MP3/Wild%20and%20Free%20MP3%20Master.mp3",
               "trackNumber": 3,
-              "image": "https://re.podtards.com/api/optimized-images/WIldandfreecover-copy-2.png",
+              "image": "https://annipowellmusic.com/wp-content/MusicSideProject/MP3%20Masters%20and%20Copy%20of%20Cover/WIldandfreecover%20copy%202.png",
               "explicit": false
             },
             {
@@ -8506,7 +8476,7 @@
               "duration": "4:04",
               "url": "https://annipowellmusic.com/wp-content/MusicSideProject/MP3%20Masters%20and%20Copy%20of%20Cover/Dance%20With%20Me%20MP3/Dance%20With%20Me%20MP3%20Master.mp3",
               "trackNumber": 4,
-              "image": "https://re.podtards.com/api/optimized-images/WIldandfreecover-copy-2.png",
+              "image": "https://annipowellmusic.com/wp-content/MusicSideProject/MP3%20Masters%20and%20Copy%20of%20Cover/WIldandfreecover%20copy%202.png",
               "explicit": false
             },
             {
@@ -8514,7 +8484,7 @@
               "duration": "5:01",
               "url": "https://annipowellmusic.com/wp-content/MusicSideProject/MP3%20Masters%20and%20Copy%20of%20Cover/Friends%20MP3/Friends%20Master%20MP3.mp3",
               "trackNumber": 5,
-              "image": "https://re.podtards.com/api/optimized-images/WIldandfreecover-copy-2.png",
+              "image": "https://annipowellmusic.com/wp-content/MusicSideProject/MP3%20Masters%20and%20Copy%20of%20Cover/WIldandfreecover%20copy%202.png",
               "explicit": false
             }
           ],
@@ -8547,7 +8517,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:56.040Z",
+      "lastParsed": "2025-07-28T22:16:58.451Z",
       "parsedData": {
         "album": {
           "title": "Beauty",
@@ -8593,7 +8563,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:56.180Z",
+      "lastParsed": "2025-07-28T22:16:58.592Z",
       "parsedData": {
         "album": {
           "title": "Peach Clouds",
@@ -8639,7 +8609,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:56.334Z",
+      "lastParsed": "2025-07-28T22:16:58.728Z",
       "parsedData": {
         "album": {
           "title": "Beyond the Hills",
@@ -8685,7 +8655,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:56.489Z",
+      "lastParsed": "2025-07-28T22:16:58.870Z",
       "parsedData": {
         "album": {
           "title": "Lingo",
@@ -8731,7 +8701,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:56.633Z",
+      "lastParsed": "2025-07-28T22:16:59.010Z",
       "parsedData": {
         "album": {
           "title": "So It Goes",
@@ -8777,7 +8747,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:56.774Z",
+      "lastParsed": "2025-07-28T22:16:59.151Z",
       "parsedData": {
         "album": {
           "title": "Fountain Artist Takeover - Nate Johnivan",
@@ -9023,7 +8993,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:07:58.053Z",
+      "lastParsed": "2025-07-28T22:17:02.664Z",
       "parsedData": {
         "album": {
           "title": "Empty Passenger Seat",
@@ -9143,7 +9113,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:08:00.346Z",
+      "lastParsed": "2025-07-28T22:17:02.917Z",
       "parsedData": {
         "publisherInfo": {
           "title": "The Doerfels",
@@ -9351,7 +9321,7 @@
       "addedAt": "2025-07-27T01:26:28.499Z",
       "lastUpdated": "2025-07-27T01:26:28.499Z",
       "parseStatus": "error",
-      "lastParsed": "2025-07-27T02:08:01.033Z",
+      "lastParsed": "2025-07-28T22:17:03.282Z",
       "parseError": "No album data found"
     },
     {
@@ -9364,7 +9334,7 @@
       "addedAt": "2025-07-27T01:27:30.801Z",
       "lastUpdated": "2025-07-27T01:27:30.801Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:08:50.130Z",
+      "lastParsed": "2025-07-28T22:17:11.839Z",
       "parsedData": {
         "album": {
           "title": "Chasing Waterfalls",
@@ -9407,7 +9377,7 @@
       "addedAt": "2025-07-27T02:34:47.000Z",
       "lastUpdated": "2025-07-27T02:34:47.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:08:50.456Z",
+      "lastParsed": "2025-07-28T22:17:12.153Z",
       "parsedData": {
         "album": {
           "title": "Bestlegs",
@@ -9487,20 +9457,20 @@
       "addedAt": "2025-07-27T02:34:47.000Z",
       "lastUpdated": "2025-07-27T02:34:47.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:08:50.739Z",
+      "lastParsed": "2025-07-28T22:17:12.397Z",
       "parsedData": {
         "album": {
           "title": "Satoshi Streamer",
           "artist": "Rock'n'Roll Breakheart",
           "description": "I don't wanna be a boring value stealer \nI'd much rather be a cool Satoshi streamer\nI'm just streaming sats \n\nCollab with Randy Black of Mountain Music Happy Hour (https://m2h2music.com)",
-          "coverArt": "https://re.podtards.com/api/optimized-images/SatoshiStreamer-track-1-album-art.png",
+          "coverArt": "https://rocknrollbreakheart.com/msp/SatoshiStreamer/track%201/album-art.png",
           "tracks": [
             {
               "title": "Satoshi Streamer",
               "duration": "1:31",
               "url": "https://rocknrollbreakheart.com/msp/SatoshiStreamer/track%201/Satoshi%20Streamer.mp3",
               "trackNumber": 1,
-              "image": "https://re.podtards.com/api/optimized-images/SatoshiStreamer-track-1-album-art.png",
+              "image": "https://rocknrollbreakheart.com/msp/SatoshiStreamer/track%201/album-art.png",
               "explicit": false
             }
           ],
@@ -9527,7 +9497,7 @@
       "addedAt": "2025-07-27T02:34:47.000Z",
       "lastUpdated": "2025-07-27T02:34:47.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:08:50.899Z",
+      "lastParsed": "2025-07-28T22:17:12.542Z",
       "parsedData": {
         "album": {
           "title": "PANISEE Attack",
@@ -9573,7 +9543,7 @@
       "addedAt": "2025-07-27T02:34:47.000Z",
       "lastUpdated": "2025-07-27T02:34:47.000Z",
       "parseStatus": "error",
-      "lastParsed": "2025-07-27T02:08:51.243Z",
+      "lastParsed": "2025-07-28T22:17:12.883Z",
       "parseError": "No album data found"
     },
     {
@@ -9586,7 +9556,7 @@
       "addedAt": "2025-07-27T02:34:47.000Z",
       "lastUpdated": "2025-07-27T02:34:47.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:08:51.399Z",
+      "lastParsed": "2025-07-28T22:17:13.033Z",
       "parsedData": {
         "album": {
           "title": "Rock'n'Roll Breakheart",
@@ -9671,6 +9641,94 @@
       ]
     },
     {
+      "id": "my-friend-jimi-publisher",
+      "originalUrl": "https://wavlake.com/feed/artist/0ea699be-e985-4aa1-8c00-43542e4b9e0d",
+      "type": "publisher",
+      "title": "My Friend Jimi",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-27T02:35:00.000Z",
+      "lastUpdated": "2025-07-27T02:35:00.000Z",
+      "parseStatus": "success",
+      "lastParsed": "2025-07-28T22:17:13.183Z",
+      "parsedData": {
+        "publisherInfo": {
+          "title": "My Friend Jimi",
+          "description": "Indie Pop Musician from Wester Australia",
+          "artist": "My Friend Jimi",
+          "coverArt": "https://d12wklypp119aj.cloudfront.net/image/0ea699be-e985-4aa1-8c00-43542e4b9e0d.jpg"
+        },
+        "publisherItems": [
+          {
+            "feedGuid": "b220b396-0ebe-4760-8294-4bb27e06eabf",
+            "feedUrl": "https://wavlake.com/feed/music/b220b396-0ebe-4760-8294-4bb27e06eabf",
+            "medium": "music",
+            "title": ""
+          },
+          {
+            "feedGuid": "e3f0086f-5ee2-4ead-ba9d-78a9a29acac8",
+            "feedUrl": "https://wavlake.com/feed/music/e3f0086f-5ee2-4ead-ba9d-78a9a29acac8",
+            "medium": "music",
+            "title": ""
+          },
+          {
+            "feedGuid": "6c539346-f58e-4480-9276-32da31368f8e",
+            "feedUrl": "https://wavlake.com/feed/music/6c539346-f58e-4480-9276-32da31368f8e",
+            "medium": "music",
+            "title": ""
+          },
+          {
+            "feedGuid": "76407adf-773c-4eb2-b5e2-8aef137d781f",
+            "feedUrl": "https://wavlake.com/feed/music/76407adf-773c-4eb2-b5e2-8aef137d781f",
+            "medium": "music",
+            "title": ""
+          },
+          {
+            "feedGuid": "6e236029-d72e-48a4-8d0b-aecf78d39e87",
+            "feedUrl": "https://wavlake.com/feed/music/6e236029-d72e-48a4-8d0b-aecf78d39e87",
+            "medium": "music",
+            "title": ""
+          },
+          {
+            "feedGuid": "b6d8f17c-f448-4085-8ce2-8b247eb26e63",
+            "feedUrl": "https://wavlake.com/feed/music/b6d8f17c-f448-4085-8ce2-8b247eb26e63",
+            "medium": "music",
+            "title": ""
+          },
+          {
+            "feedGuid": "2b5b26a9-3b7a-4f78-9db2-424d94b182d8",
+            "feedUrl": "https://wavlake.com/feed/music/2b5b26a9-3b7a-4f78-9db2-424d94b182d8",
+            "medium": "music",
+            "title": ""
+          },
+          {
+            "feedGuid": "ed3d6bdf-011b-4416-ab87-591672c07145",
+            "feedUrl": "https://wavlake.com/feed/music/ed3d6bdf-011b-4416-ab87-591672c07145",
+            "medium": "music",
+            "title": ""
+          },
+          {
+            "feedGuid": "ef800a88-9a1c-4f8e-a7c5-f83d7d9b1c87",
+            "feedUrl": "https://wavlake.com/feed/music/ef800a88-9a1c-4f8e-a7c5-f83d7d9b1c87",
+            "medium": "music",
+            "title": ""
+          },
+          {
+            "feedGuid": "3d8c7279-6aa6-41e7-be1c-2680e57af6c8",
+            "feedUrl": "https://wavlake.com/feed/music/3d8c7279-6aa6-41e7-be1c-2680e57af6c8",
+            "medium": "music",
+            "title": ""
+          },
+          {
+            "feedGuid": "86061a0e-52df-4cad-8c6d-cd1e19ca1e63",
+            "feedUrl": "https://wavlake.com/feed/music/86061a0e-52df-4cad-8c6d-cd1e19ca1e63",
+            "medium": "music",
+            "title": ""
+          }
+        ]
+      }
+    },
+    {
       "id": "elijah-lied-all-in-a-day",
       "originalUrl": "https://www.doerfelverse.com/artists/elijahlied/all-in-a-day/all-in-a-day.xml",
       "type": "album",
@@ -9680,7 +9738,7 @@
       "addedAt": "2025-07-27T02:35:00.000Z",
       "lastUpdated": "2025-07-27T02:35:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-27T02:35:00.000Z",
+      "lastParsed": "2025-07-28T22:17:20.651Z",
       "parsedData": {
         "album": {
           "title": "all in a day",
@@ -9690,7 +9748,7 @@
           "tracks": [
             {
               "title": "all in a day(intro)",
-              "duration": "0:33",
+              "duration": "1:00",
               "url": "https://www.doerfelverse.com/artists/elijahlied/all-in-a-day/01-all-in-a-day-intro.mp3",
               "trackNumber": 1,
               "subtitle": "all in a day(intro)",
@@ -9704,18 +9762,109 @@
                 "in",
                 "a",
                 "day",
-                "ep"
+                "intro",
+                "ep",
+                "music",
+                "rap"
+              ]
+            },
+            {
+              "title": "all in a day",
+              "duration": "3:30",
+              "url": "https://www.doerfelverse.com/artists/elijahlied/all-in-a-day/02-all-in-a-day.mp3",
+              "trackNumber": 2,
+              "subtitle": "all in a day",
+              "summary": "all in a day by Elijah Lied",
+              "image": "https://www.doerfelverse.com/artists/elijahlied/all-in-a-day/all-in-a-day.png",
+              "explicit": false,
+              "keywords": [
+                "elijah",
+                "lied",
+                "all",
+                "in",
+                "a",
+                "day",
+                "ep",
+                "music",
+                "rap"
+              ]
+            },
+            {
+              "title": "nobody",
+              "duration": "2:23",
+              "url": "https://www.doerfelverse.com/artists/elijahlied/all-in-a-day/03-nobody.mp3",
+              "trackNumber": 3,
+              "subtitle": "nobody",
+              "summary": "nobody by Elijah Lied",
+              "image": "https://www.doerfelverse.com/artists/elijahlied/all-in-a-day/all-in-a-day.png",
+              "explicit": false,
+              "keywords": [
+                "elijah",
+                "lied",
+                "all",
+                "in",
+                "a",
+                "day",
+                "intro",
+                "ep",
+                "music",
+                "rap",
+                "nobody"
+              ]
+            },
+            {
+              "title": "don't do it",
+              "duration": "5:25",
+              "url": "https://www.doerfelverse.com/artists/elijahlied/all-in-a-day/04-dont-do-it.mp3",
+              "trackNumber": 4,
+              "subtitle": "don't do it",
+              "summary": "don't do it by Elijah Lied",
+              "image": "https://www.doerfelverse.com/artists/elijahlied/all-in-a-day/all-in-a-day.png",
+              "explicit": false,
+              "keywords": [
+                "elijah",
+                "lied",
+                "all",
+                "in",
+                "a",
+                "day",
+                "intro",
+                "ep",
+                "music",
+                "rap",
+                "dont",
+                "do",
+                "it"
+              ]
+            },
+            {
+              "title": "imagine",
+              "duration": "3:23",
+              "url": "https://www.doerfelverse.com/artists/elijahlied/all-in-a-day/05-imagine.mp3",
+              "trackNumber": 5,
+              "subtitle": "imagine",
+              "summary": "imagine by Elijah Lied",
+              "image": "https://www.doerfelverse.com/artists/elijahlied/all-in-a-day/all-in-a-day.png",
+              "explicit": false,
+              "keywords": [
+                "elijah",
+                "lied",
+                "all",
+                "in",
+                "a",
+                "day",
+                "intro",
+                "ep",
+                "music",
+                "rap",
+                "imagine"
               ]
             }
           ],
-          "releaseDate": "2025-02-15T22:06:05.000Z",
+          "releaseDate": "Sat, 15 Feb 2025 22:06:05 +0000",
           "link": "https://linktr.ee/milknetwork",
-          "subtitle": "i made an EP in one day",
-          "summary": "i made an EP in one day",
-          "explicit": false,
-          "categories": [
-            "Music"
-          ],
+          "subtitle": "all in a day(intro)",
+          "summary": "all in a day(intro) by Elijah Lied",
           "keywords": [
             "elijah",
             "lied",
@@ -9724,10 +9873,15 @@
             "a",
             "day",
             "ep"
-          ]
+          ],
+          "categories": [
+            "Music"
+          ],
+          "explicit": false,
+          "language": "en"
         }
       },
-      "trackCount": 1,
+      "trackCount": 5,
       "categories": [
         "Music"
       ],
@@ -9740,8 +9894,51 @@
         "day",
         "ep"
       ]
+    },
+    {
+      "id": "wavlake-com-feed-music-883ea557-39c0-4bec-9618-c75978bc63b5",
+      "originalUrl": "https://wavlake.com/feed/music/883ea557-39c0-4bec-9618-c75978bc63b5",
+      "type": "album",
+      "title": "Lost Summer - Ollie",
+      "priority": "low",
+      "status": "active",
+      "addedAt": "2025-07-28T22:15:00.000Z",
+      "lastUpdated": "2025-07-28T22:15:00.000Z",
+      "parseStatus": "success",
+      "lastParsed": "2025-07-28T22:17:20.920Z",
+      "parsedData": {
+        "album": {
+          "title": "Lost Summer",
+          "artist": "Ollie",
+          "description": "Song is a summer vibe, I wanted to rap a bit",
+          "coverArt": "https://d12wklypp119aj.cloudfront.net/image/883ea557-39c0-4bec-9618-c75978bc63b5.jpg",
+          "tracks": [
+            {
+              "title": "Lost Summer",
+              "duration": "2:37",
+              "url": "https://op3.dev/e,pg=3058af0c-1807-5732-9a08-9114675ef7d6/https://d12wklypp119aj.cloudfront.net/track/c51ecaa4-f237-4707-9c62-2de611820e4b.mp3",
+              "trackNumber": 1,
+              "explicit": false
+            }
+          ],
+          "releaseDate": "Fri, 04 Jul 2025 04:43:48 GMT",
+          "link": "https://wavlake.com/ollie",
+          "summary": "Song is a summer vibe, I wanted to rap a bit",
+          "explicit": false,
+          "owner": {
+            "name": "Wavlake",
+            "email": "contact@wavlake.com"
+          },
+          "publisher": {
+            "feedGuid": "d2f43e9f-adfc-4811-b9c1-58d5ea383275",
+            "feedUrl": "https://wavlake.com/feed/artist/d2f43e9f-adfc-4811-b9c1-58d5ea383275",
+            "medium": "publisher"
+          }
+        }
+      },
+      "trackCount": 1
     }
   ],
-  "lastUpdated": "2025-07-27T02:35:00.000Z",
+  "lastUpdated": "2025-07-28T22:17:26.221Z",
   "version": 1
 }

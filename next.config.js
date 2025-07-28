@@ -26,9 +26,12 @@ const withPWA = require('next-pwa')({
         cacheName: 'images',
         expiration: {
           maxEntries: 1000,
-          maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+          maxAgeSeconds: 60 * 60 * 24 * 1, // Reduced to 1 day for fresher content
         },
-        networkTimeoutSeconds: 10, // Add timeout for mobile
+        networkTimeoutSeconds: 3, // Reduced timeout to 3 seconds for faster fallback
+        cacheableResponse: {
+          statuses: [0, 200], // Cache successful responses and opaque responses
+        },
       },
     },
     // Network first for RSS feeds to prevent 503 errors

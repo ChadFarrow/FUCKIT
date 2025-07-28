@@ -127,8 +127,36 @@ export default function HomePage() {
           console.log('🎨 Loading background image early...');
         }
         
-        // Load album data specifically for background
-        const response = await fetch('/api/albums');
+        // Clear any existing background image cache to prevent stale images
+        if ('caches' in window) {
+          try {
+            const cache = await caches.open('images');
+            // Get all cached requests that might be background images
+            const requests = await cache.keys();
+            const backgroundImageRequests = requests.filter(request => 
+              request.url.includes('coverArt') || 
+              request.url.includes('.jpg') || 
+              request.url.includes('.png') || 
+              request.url.includes('.webp')
+            );
+            
+            // Delete potentially stale background image caches
+            await Promise.all(backgroundImageRequests.map(request => cache.delete(request)));
+            
+            if (process.env.NODE_ENV === 'development' && backgroundImageRequests.length > 0) {
+              console.log('🗑️ Cleared', backgroundImageRequests.length, 'cached background images to prevent stale content');
+            }
+          } catch (cacheError) {
+            // Ignore cache errors - not critical
+            if (process.env.NODE_ENV === 'development') {
+              console.warn('⚠️ Cache clearing failed (non-critical):', cacheError);
+            }
+          }
+        }
+        
+        // Add cache-busting parameter to API request
+        const cacheBuster = Date.now();
+        const response = await fetch(`/api/albums?t=${cacheBuster}`);
         if (response.ok) {
           const data = await response.json();
           const allAlbums = data.albums || [];
@@ -139,6 +167,14 @@ export default function HomePage() {
             album.coverArt &&
             !album.coverArt.includes('placeholder')
           );
+          
+          // Add cache-busting to background image URL
+          if (backgroundAlbum?.coverArt) {
+            const imageCacheBuster = Date.now();
+            backgroundAlbum.coverArt = backgroundAlbum.coverArt.includes('?') 
+              ? `${backgroundAlbum.coverArt}&cb=${imageCacheBuster}`
+              : `${backgroundAlbum.coverArt}?cb=${imageCacheBuster}`;
+          }
 
           // If Bloodshot Lies not found, use any album with good artwork
           if (!backgroundAlbum) {
@@ -154,13 +190,48 @@ export default function HomePage() {
               console.log('✅ Found background album:', backgroundAlbum.title);
             }
             
-            // Set background immediately - don't wait for image preload
-            setBackgroundAlbums([backgroundAlbum]);
-            setBackgroundImageLoaded(true);
+            // Add cache-busting parameter to background image URL
+            const originalCoverArt = backgroundAlbum.coverArt;
+            const separator = originalCoverArt.includes('?') ? '&' : '?';
+            backgroundAlbum.coverArt = `${originalCoverArt}${separator}t=${cacheBuster}`;
             
-            if (process.env.NODE_ENV === 'development') {
-              console.log('✅ Background set immediately without preload wait');
-            }
+            // Preload the background image to ensure it's available
+            const img = new window.Image();
+            img.onload = () => {
+              setBackgroundAlbums([backgroundAlbum]);
+              setBackgroundImageLoaded(true);
+              
+              if (process.env.NODE_ENV === 'development') {
+                console.log('✅ Background image preloaded and set successfully');
+              }
+            };
+            
+            img.onerror = () => {
+              // Fallback to original URL without cache busting if the modified URL fails
+              backgroundAlbum.coverArt = originalCoverArt;
+              setBackgroundAlbums([backgroundAlbum]);
+              setBackgroundImageLoaded(true);
+              
+              if (process.env.NODE_ENV === 'development') {
+                console.warn('⚠️ Background image failed with cache-busting, using original URL');
+              }
+            };
+            
+            // Start loading the image
+            img.src = backgroundAlbum.coverArt;
+            
+            // Fallback timeout in case image takes too long to load
+            setTimeout(() => {
+              if (!backgroundImageLoaded) {
+                setBackgroundAlbums([backgroundAlbum]);
+                setBackgroundImageLoaded(true);
+                
+                if (process.env.NODE_ENV === 'development') {
+                  console.log('⏰ Background set via timeout fallback');
+                }
+              }
+            }, 3000); // 3 second timeout
+            
           } else {
             if (process.env.NODE_ENV === 'development') {
               console.warn('❌ No suitable background album found');

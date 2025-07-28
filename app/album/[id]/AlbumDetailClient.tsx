@@ -79,21 +79,39 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
           if (foundAlbum?.coverArt) {
             console.log('🎨 Preloading background image for desktop:', foundAlbum.coverArt);
             
+            // Add cache-busting parameter to prevent stale cache issues
+            const cacheBuster = Date.now();
+            const imageUrlWithCacheBuster = foundAlbum.coverArt.includes('?') 
+              ? `${foundAlbum.coverArt}&cb=${cacheBuster}`
+              : `${foundAlbum.coverArt}?cb=${cacheBuster}`;
+            
             // Preload the image
             const img = new window.Image();
             img.onload = () => {
               console.log('✅ Background image preloaded successfully:', foundAlbum.coverArt);
-              setBackgroundImage(foundAlbum.coverArt);
+              setBackgroundImage(imageUrlWithCacheBuster);
               setBackgroundLoaded(true);
             };
             img.onerror = (error) => {
               console.error('❌ Background image preload failed:', foundAlbum.coverArt, error);
-              setBackgroundImage(null);
-              setBackgroundLoaded(true);
+              // Try without cache buster as fallback
+              const fallbackImg = new window.Image();
+              fallbackImg.onload = () => {
+                console.log('✅ Background image preloaded with fallback URL:', foundAlbum.coverArt);
+                setBackgroundImage(foundAlbum.coverArt || null);
+                setBackgroundLoaded(true);
+              };
+              fallbackImg.onerror = (fallbackError) => {
+                console.error('❌ Background image preload fallback also failed:', foundAlbum.coverArt, fallbackError);
+                setBackgroundImage(null);
+                setBackgroundLoaded(true);
+              };
+              fallbackImg.decoding = 'async';
+              fallbackImg.src = foundAlbum.coverArt;
             };
             
             img.decoding = 'async';
-            img.src = foundAlbum.coverArt;
+            img.src = imageUrlWithCacheBuster;
           } else {
             console.log('🚫 No album found for preloading, using gradient background');
             setBackgroundImage(null);
@@ -250,23 +268,41 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
     if (album?.coverArt) {
       console.log('🖼️ Loading background image:', album?.coverArt);
       
+      // Add cache-busting parameter to prevent stale cache issues
+      const cacheBuster = Date.now();
+      const imageUrlWithCacheBuster = album?.coverArt.includes('?') 
+        ? `${album?.coverArt}&cb=${cacheBuster}`
+        : `${album?.coverArt}?cb=${cacheBuster}`;
+      
       // Preload the image to ensure it's available for background
       const img = new window.Image();
       img.onload = () => {
         console.log('✅ Background image loaded successfully:', album?.coverArt);
-        setBackgroundImage(album?.coverArt);
+        setBackgroundImage(imageUrlWithCacheBuster);
         setBackgroundLoaded(true); // Mark background as loaded
       };
       img.onerror = (error) => {
         console.error('❌ Background image failed to load:', album?.coverArt, error);
-        // Fallback to gradient if image fails to load
-        setBackgroundImage(null);
-        setBackgroundLoaded(true); // Mark background as loaded even if image fails
+        // Try without cache buster as fallback
+        const fallbackImg = new window.Image();
+        fallbackImg.onload = () => {
+          console.log('✅ Background image loaded with fallback URL:', album?.coverArt);
+          setBackgroundImage(album?.coverArt || null);
+          setBackgroundLoaded(true);
+        };
+        fallbackImg.onerror = (fallbackError) => {
+          console.error('❌ Background image fallback also failed:', album?.coverArt, fallbackError);
+          // Fallback to gradient if image fails to load
+          setBackgroundImage(null);
+          setBackgroundLoaded(true); // Mark background as loaded even if image fails
+        };
+        fallbackImg.decoding = 'async';
+        fallbackImg.src = album?.coverArt;
       };
       
       // Set priority loading for background image
       img.decoding = 'async';
-      img.src = album?.coverArt;
+      img.src = imageUrlWithCacheBuster;
     } else {
       console.log('🚫 No cover art available, using gradient background');
       setBackgroundImage(null);
@@ -277,7 +313,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
     const timeoutId = setTimeout(() => {
       console.log('⏰ Background loading timeout - marking as loaded');
       setBackgroundLoaded(true);
-    }, 2000); // 2 second timeout
+    }, 3000); // Increased to 3 second timeout for better reliability
     
     return () => clearTimeout(timeoutId);
   }, [album?.coverArt, lastProcessedCoverArt, isLoading, album, isDesktop, backgroundImage]); // Added isDesktop and backgroundImage to dependencies
