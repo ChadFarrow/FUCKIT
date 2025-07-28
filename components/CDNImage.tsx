@@ -265,16 +265,17 @@ export default function CDNImage({
     const dims = getImageDimensions();
     let imageSrc = src;
     
-    // Enhanced mobile handling
+    // Mobile-first approach: bypass optimization, go straight to proxy if external
     if (isClient && isMobile) {
-      // For mobile, try to use optimized URLs but with better fallback
-      if (!src.includes('/api/optimized-images/')) {
-        imageSrc = getOptimizedUrl(src, dims.width, dims.height);
+      // For mobile, if it's an external URL, use proxy immediately
+      if (src && !src.includes('re.podtards.com') && !src.includes('/api/')) {
+        imageSrc = `/api/proxy-image?url=${encodeURIComponent(src)}`;
+        console.log('[CDNImage] Mobile using proxy directly:', imageSrc);
       } else {
-        imageSrc = src;
+        // For internal URLs, use as-is or with light optimization
+        imageSrc = getOptimizedUrl(src, dims.width, dims.height);
+        console.log('[CDNImage] Mobile using optimized:', imageSrc);
       }
-      
-      console.log('[CDNImage] Mobile image URL:', imageSrc);
     } else {
       imageSrc = getOptimizedUrl(src, dims.width, dims.height);
     }
@@ -299,9 +300,9 @@ export default function CDNImage({
   useEffect(() => {
     if (isMobile && isClient && isLoading && !timeoutId) {
       const timeout = setTimeout(() => {
-        console.warn('[CDNImage] Mobile load timeout');
+        console.warn('[CDNImage] Mobile load timeout after 15s, src:', currentSrc);
         handleError();
-      }, 8000); // 8 second timeout for mobile
+      }, 15000); // Increased to 15 second timeout for mobile
       setTimeoutId(timeout);
     }
   }, [isMobile, isClient, isLoading, timeoutId]);
@@ -330,8 +331,20 @@ export default function CDNImage({
           width={dims.width}
           height={dims.height}
           className={`${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300 ${className || ''}`}
-          onError={handleError}
-          onLoad={handleLoad}
+          onError={(e) => {
+            console.error('[CDNImage] Mobile image load error:', {
+              src: currentSrc,
+              originalSrc: src,
+              error: e,
+              retryCount,
+              isMobile
+            });
+            handleError();
+          }}
+          onLoad={(e) => {
+            console.log('[CDNImage] Mobile image loaded successfully:', currentSrc);
+            handleLoad();
+          }}
           loading={priority ? 'eager' : 'lazy'}
           referrerPolicy="no-referrer"
           crossOrigin="anonymous"
