@@ -297,7 +297,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
           setBackgroundLoaded(true); // Mark background as loaded even if image fails
         };
         fallbackImg.decoding = 'async';
-        fallbackImg.src = album?.coverArt;
+        fallbackImg.src = album?.coverArt || '';
       };
       
       // Set priority loading for background image
