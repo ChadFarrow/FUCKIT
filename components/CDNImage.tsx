@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface CDNImageProps {
   src: string;
@@ -40,12 +40,27 @@ export default function CDNImage({
   const [currentSrc, setCurrentSrc] = useState(src);
   const [retryCount, setRetryCount] = useState(0);
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+  const [isGif, setIsGif] = useState(false);
+  const [showGif, setShowGif] = useState(false);
+  const [gifLoaded, setGifLoaded] = useState(false);
+  const imageRef = useRef<HTMLImageElement>(null);
 
   // Check if we're on mobile
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const [userAgent, setUserAgent] = useState('');
+  
+  // Detect if the image is a GIF
+  useEffect(() => {
+    const isGifImage = src.toLowerCase().includes('.gif') || 
+                      currentSrc.toLowerCase().includes('.gif');
+    setIsGif(isGifImage);
+    
+    if (process.env.NODE_ENV === 'development' && isGifImage) {
+      console.log('🎬 GIF detected:', src);
+    }
+  }, [src, currentSrc]);
   
   useEffect(() => {
     setIsClient(true);
@@ -74,6 +89,35 @@ export default function CDNImage({
     window.addEventListener('resize', checkDevice);
     return () => window.removeEventListener('resize', checkDevice);
   }, []);
+
+  // Intersection Observer for GIF lazy loading
+  useEffect(() => {
+    if (!isGif || !isClient || priority) {
+      setShowGif(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setShowGif(true);
+            observer.disconnect();
+          }
+        });
+      },
+      {
+        rootMargin: '50px', // Start loading 50px before the image is visible
+        threshold: 0.1
+      }
+    );
+
+    if (imageRef.current) {
+      observer.observe(imageRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [isGif, isClient, priority]);
 
   // Generate optimized image URL
   const getOptimizedUrl = (originalUrl: string, targetWidth?: number, targetHeight?: number) => {
@@ -110,8 +154,8 @@ export default function CDNImage({
           if (targetHeight) params.set('h', targetHeight.toString());
           params.set('q', quality.toString());
           
-          // Use WebP for better compression if supported
-          if (typeof window !== 'undefined' && window.navigator.userAgent.includes('Chrome')) {
+          // Use WebP for better compression if supported (but not for GIFs)
+          if (typeof window !== 'undefined' && window.navigator.userAgent.includes('Chrome') && !isGif) {
             params.set('f', 'webp');
           }
           
@@ -128,6 +172,17 @@ export default function CDNImage({
   const getResponsiveSizes = () => {
     if (sizes) return sizes;
     
+    // For GIFs, use smaller sizes to improve performance
+    if (isGif) {
+      if (isMobile) {
+        return '(max-width: 768px) 200px, (max-width: 1024px) 300px, 400px';
+      } else if (isTablet) {
+        return '(max-width: 1024px) 300px, 400px';
+      } else {
+        return '(max-width: 768px) 200px, (max-width: 1024px) 300px, 400px';
+      }
+    }
+    
     if (isMobile) {
       return '(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw';
     } else if (isTablet) {
@@ -140,6 +195,17 @@ export default function CDNImage({
   const getImageDimensions = () => {
     if (width && height) {
       return { width, height };
+    }
+    
+    // For GIFs, use smaller dimensions to improve performance
+    if (isGif) {
+      if (isMobile) {
+        return { width: 200, height: 200 };
+      } else if (isTablet) {
+        return { width: 300, height: 300 };
+      } else {
+        return { width: 400, height: 400 };
+      }
     }
     
     // Default dimensions for mobile optimization
@@ -191,13 +257,13 @@ export default function CDNImage({
       setIsLoading(true);
       setRetryCount(1);
       
-      // Set timeout for fallback
+      // Set timeout for fallback (shorter for GIFs)
       const timeout = setTimeout(() => {
         if (process.env.NODE_ENV === 'development') {
           console.warn('[CDNImage] Fallback URL timeout');
         }
         handleError();
-      }, 10000); // 10 second timeout for mobile
+      }, isGif ? 8000 : 10000); // 8 second timeout for GIFs, 10 for others
       setTimeoutId(timeout);
       return;
     }
@@ -223,13 +289,13 @@ export default function CDNImage({
       setIsLoading(true);
       setRetryCount(2);
       
-      // Set timeout for proxy
+      // Set timeout for proxy (shorter for GIFs)
       const timeout = setTimeout(() => {
         if (process.env.NODE_ENV === 'development') {
           console.warn('[CDNImage] Image proxy timeout');
         }
         handleError();
-      }, 12000); // 12 second timeout for proxy
+      }, isGif ? 10000 : 12000); // 10 second timeout for GIFs, 12 for others
       setTimeoutId(timeout);
       return;
     }
@@ -246,13 +312,13 @@ export default function CDNImage({
         setIsLoading(true);
         setRetryCount(3);
         
-        // Set timeout for original URL
+        // Set timeout for original URL (shorter for GIFs)
         const timeout = setTimeout(() => {
           if (process.env.NODE_ENV === 'development') {
             console.warn('[CDNImage] Original URL timeout');
           }
           handleError();
-        }, 15000); // 15 second timeout for mobile
+        }, isGif ? 12000 : 15000); // 12 second timeout for GIFs, 15 for others
         setTimeoutId(timeout);
         return;
       }
@@ -270,9 +336,13 @@ export default function CDNImage({
   const handleLoad = () => {
     if (process.env.NODE_ENV === 'development') {
       console.log('[CDNImage] Image loaded successfully:', currentSrc);
+      if (isGif) {
+        console.log('🎬 GIF loaded successfully');
+      }
     }
     setIsLoading(false);
     setHasError(false);
+    setGifLoaded(true);
     
     // Clear timeout
     if (timeoutId) {
@@ -294,17 +364,13 @@ export default function CDNImage({
       if (src && !src.includes('re.podtards.com') && !src.includes('/api/')) {
         imageSrc = `/api/proxy-image?url=${encodeURIComponent(src)}`;
         if (process.env.NODE_ENV === 'development') {
-        if (process.env.NODE_ENV === 'development') {
           console.log('[CDNImage] Mobile using proxy directly:', imageSrc);
         }
-      }
       } else {
         // For internal URLs, use as-is or with light optimization
         imageSrc = getOptimizedUrl(src, dims.width, dims.height);
         if (process.env.NODE_ENV === 'development') {
-          if (process.env.NODE_ENV === 'development') {
-            console.log('[CDNImage] Mobile using optimized:', imageSrc);
-          }
+          console.log('[CDNImage] Mobile using optimized:', imageSrc);
         }
       }
     } else {
@@ -315,6 +381,7 @@ export default function CDNImage({
     setIsLoading(true);
     setHasError(false);
     setRetryCount(0);
+    setGifLoaded(false);
     
     // Clear existing timeout
     if (timeoutId) {
@@ -332,23 +399,26 @@ export default function CDNImage({
     if (isMobile && isClient && isLoading && !timeoutId) {
       const timeout = setTimeout(() => {
         if (process.env.NODE_ENV === 'development') {
-          if (process.env.NODE_ENV === 'development') {
-            console.warn('[CDNImage] Mobile load timeout after 15s, src:', currentSrc);
-          }
+          console.warn('[CDNImage] Mobile load timeout after 15s, src:', currentSrc);
         }
         handleError();
-      }, 15000); // Increased to 15 second timeout for mobile
+      }, isGif ? 12000 : 15000); // 12 second timeout for GIFs on mobile, 15 for others
       setTimeoutId(timeout);
     }
-  }, [isMobile, isClient, isLoading, timeoutId]);
+  }, [isMobile, isClient, isLoading, timeoutId, isGif]);
 
   const dims = getImageDimensions();
 
   return (
-    <div className={`relative ${className || ''}`}>
+    <div className={`relative ${className || ''}`} ref={imageRef}>
       {isLoading && (
         <div className="absolute inset-0 bg-gray-800/50 animate-pulse rounded flex items-center justify-center">
           <div className="w-6 h-6 bg-white/20 rounded-full animate-spin"></div>
+          {isGif && (
+            <div className="absolute bottom-1 right-1 bg-black/50 text-white text-xs px-1 py-0.5 rounded">
+              🎬 GIF
+            </div>
+          )}
         </div>
       )}
       
@@ -361,7 +431,7 @@ export default function CDNImage({
       {isClient && isMobile ? (
         // Enhanced mobile image handling
         <img
-          src={currentSrc}
+          src={showGif ? currentSrc : ''}
           alt={alt}
           width={dims.width}
           height={dims.height}
@@ -373,16 +443,15 @@ export default function CDNImage({
                 originalSrc: src,
                 error: e,
                 retryCount,
-                isMobile
+                isMobile,
+                isGif
               });
             }
             handleError();
           }}
           onLoad={(e) => {
             if (process.env.NODE_ENV === 'development') {
-              if (process.env.NODE_ENV === 'development') {
-                console.log('[CDNImage] Mobile image loaded successfully:', currentSrc);
-              }
+              console.log('[CDNImage] Mobile image loaded successfully:', currentSrc);
             }
             handleLoad();
           }}
@@ -400,7 +469,7 @@ export default function CDNImage({
       ) : (
         // Use Next.js Image for desktop with full optimization
         <Image
-          src={currentSrc}
+          src={showGif ? currentSrc : ''}
           alt={alt}
           width={dims.width}
           height={dims.height}
@@ -421,6 +490,7 @@ export default function CDNImage({
         <div className="absolute top-1 left-1 bg-black/50 text-white text-xs px-1 py-0.5 rounded opacity-0 hover:opacity-100 transition-opacity">
           {currentSrc.includes('/api/optimized-images/') ? '🖼️ Optimized' : '📡 Original'}
           {isMobile && ' 📱'}
+          {isGif && ' 🎬'}
         </div>
       )}
     </div>
