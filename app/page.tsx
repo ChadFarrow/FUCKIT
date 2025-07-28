@@ -119,7 +119,7 @@ export default function HomePage() {
 
   // Audio event listeners are now handled by the global AudioContext
 
-  // Rotating background effect - optimized for all devices
+  // Rotating background effect - optimized for all devices with preloading
   useEffect(() => {
     if (albums.length > 0) {
       // Filter albums with good cover art for background rotation
@@ -129,15 +129,30 @@ export default function HomePage() {
         !album.coverArt.includes('placeholder')
       );
       
-      // Take first 8 albums with art for rotation (reduced for better performance)
-      const rotationAlbums = albumsWithArt.slice(0, 8);
-      setBackgroundAlbums(rotationAlbums);
+      // Use only Bloodshot Lies - The Album for background
+      const bloodshotAlbum = albumsWithArt.find(album => 
+        album.title.toLowerCase().includes('bloodshot lies')
+      );
       
-      // Start rotation if we have albums with art and not on mobile
-      if (rotationAlbums.length > 1 && typeof window !== 'undefined' && window.innerWidth > 768) {
-        backgroundIntervalRef.current = setInterval(() => {
-          setCurrentBackgroundIndex(prev => (prev + 1) % rotationAlbums.length);
-        }, 10000); // Change every 10 seconds (increased for better performance)
+      const rotationAlbums = bloodshotAlbum ? [bloodshotAlbum] : [];
+      
+      if (rotationAlbums.length > 0 && typeof window !== 'undefined' && window.innerWidth > 768) {
+        console.log('🎨 Using Bloodshot Lies - The Album for background');
+        
+        // Preload the single background image
+        const img = new Image();
+        img.onload = () => {
+          console.log('✅ Bloodshot Lies background image preloaded');
+          setBackgroundAlbums(rotationAlbums);
+        };
+        img.onerror = (error) => {
+          console.warn('❌ Failed to preload Bloodshot Lies background:', error);
+          setBackgroundAlbums(rotationAlbums); // Still set it, might work
+        };
+        img.src = bloodshotAlbum?.coverArt || '';
+      } else {
+        // For mobile or when no album found, set directly
+        setBackgroundAlbums(rotationAlbums);
       }
     }
 
