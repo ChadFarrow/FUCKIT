@@ -744,13 +744,13 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
         {/* Album Header */}
         <div className="flex flex-col gap-6 mb-8">
           {/* Album Art with Play Button Overlay */}
-          <div className="relative group mx-auto">
+          <div className="relative group mx-auto w-[280px] h-[280px]">
             <Image 
               src={getAlbumArtworkUrl(album?.coverArt || '', 'large')} 
               alt={album.title}
               width={280}
               height={280}
-              className={`rounded-lg object-cover shadow-2xl mx-auto transition-opacity duration-500 w-70 h-70 ${
+              className={`rounded-lg object-cover shadow-2xl transition-opacity duration-500 w-full h-full ${
                 albumArtLoaded ? 'opacity-100' : 'opacity-0'
               }`}
               style={{ objectFit: 'cover' }}
@@ -766,30 +766,29 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             
             {/* Loading placeholder - show when album art is not loaded */}
             {!albumArtLoaded && (
-              <div className="absolute inset-0 w-[280px] h-[280px] bg-gray-800 animate-pulse rounded-lg flex items-center justify-center">
+              <div className="absolute inset-0 w-full h-full bg-gray-800 animate-pulse rounded-lg flex items-center justify-center">
                 <div className="text-gray-400 text-sm">Loading...</div>
               </div>
             )}
             
-            {/* Play Button Overlay - Always visible when album art is loaded */}
-            {albumArtLoaded && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <button
-                  onClick={globalIsPlaying && currentPlayingAlbum?.title === album?.title ? togglePlay : playAlbum}
-                  className="bg-white/90 hover:bg-white text-black rounded-full p-4 transform hover:scale-110 transition-all duration-200 shadow-xl border-2 border-white/20"
-                >
-                  {globalIsPlaying && currentPlayingAlbum?.title === album?.title ? (
-                    <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
-                    </svg>
-                  ) : (
-                    <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M8 5v14l11-7z"/>
-                    </svg>
-                  )}
-                </button>
-              </div>
-            )}
+            {/* Play Button Overlay - Always visible and prominent on mobile */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <button
+                onClick={globalIsPlaying && currentPlayingAlbum?.title === album?.title ? togglePlay : playAlbum}
+                className="bg-white/95 hover:bg-white active:bg-white text-black rounded-full p-4 transform hover:scale-110 active:scale-95 transition-all duration-200 shadow-2xl border-2 border-white/30 z-10 touch-manipulation"
+                style={{ minWidth: '64px', minHeight: '64px' }}
+              >
+                {globalIsPlaying && currentPlayingAlbum?.title === album?.title ? (
+                  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                  </svg>
+                ) : (
+                  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                )}
+              </button>
+            </div>
           </div>
           
           {/* Album Info */}

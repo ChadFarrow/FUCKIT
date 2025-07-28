@@ -305,29 +305,30 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     if (!hasUserInteracted && typeof window !== 'undefined') {
       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
       if (isMobile) {
-        console.log('📱 Mobile device detected - waiting for user interaction');
-        toast.info('Tap the play button to start playback', 5000);
+        console.log('📱 Mobile device detected - enabling audio and attempting playback');
         
-        // Set up one-time click listener to enable audio
-        const enableAudio = async () => {
-          document.removeEventListener('click', enableAudio);
-          document.removeEventListener('touchstart', enableAudio);
+        // Instead of blocking, try to enable audio and play in the same action
+        try {
+          // Set user interaction flag immediately since this is a user-initiated action
           setHasUserInteracted(true);
           
-          // Try to play again after user interaction
-          const success = await attemptAudioPlayback(track.url || '', 'Album playback');
+          // Attempt playback directly - the user just clicked/tapped
+          const success = await attemptAudioPlayback(track.url || '', 'Mobile album playback');
           if (success) {
             setCurrentPlayingAlbum(album);
             setCurrentTrackIndex(trackIndex);
-            // Clear the prompt message
-            console.log('✅ Audio enabled after user interaction');
+            console.log('✅ Mobile audio enabled and playback started');
+            return true;
+          } else {
+            // If it still fails, show the user a message
+            toast.info('Audio blocked by browser - please tap the play button again', 3000);
+            return false;
           }
-        };
-        
-        document.addEventListener('click', enableAudio, { once: true });
-        document.addEventListener('touchstart', enableAudio, { once: true });
-        
-        return false;
+        } catch (error) {
+          console.error('❌ Mobile audio enablement failed:', error);
+          toast.info('Please tap the play button again to enable audio', 3000);
+          return false;
+        }
       }
     }
 
