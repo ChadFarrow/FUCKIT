@@ -471,8 +471,8 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen text-white relative overflow-hidden">
-      {/* Rotating Background - Desktop Only */}
-      {backgroundAlbums.length > 0 && typeof window !== 'undefined' && window.innerWidth > 768 && (
+      {/* Rotating Background - All Devices */}
+      {backgroundAlbums.length > 0 && typeof window !== 'undefined' && (
         <div className="fixed inset-0 z-0">
           {backgroundAlbums.map((album, index) => (
             <div
@@ -481,7 +481,7 @@ export default function HomePage() {
                 index === currentBackgroundIndex ? 'opacity-100' : 'opacity-0'
               }`}
               style={{
-                background: `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('${album.coverArt}') center/cover fixed`,
+                background: `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('${album.coverArt}') center/cover`,
               }}
             />
           ))}
@@ -489,7 +489,7 @@ export default function HomePage() {
       )}
 
       {/* Fallback gradient background */}
-      {(!backgroundAlbums.length || (typeof window !== 'undefined' && window.innerWidth <= 768)) && (
+      {!backgroundAlbums.length && (
         <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 z-0" />
       )}
 
