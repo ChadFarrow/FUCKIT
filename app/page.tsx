@@ -470,16 +470,16 @@ export default function HomePage() {
         
         {/* Header */}
         <header 
-          className="border-b backdrop-blur-sm bg-black/30 pt-safe-plus pt-12"
+          className="border-b backdrop-blur-sm bg-black/30 pt-safe-plus pt-6"
           style={{
             borderColor: 'rgba(255, 255, 255, 0.1)'
           }}
         >
-          <div className="container mx-auto px-6 py-4">
+          <div className="container mx-auto px-6 py-2">
             {/* Mobile Header - Stacked Layout */}
-            <div className="block sm:hidden mb-6">
+            <div className="block sm:hidden mb-3">
               {/* Top row - Menu, Logo, About */}
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-4">
                   {/* Menu Button */}
                   <button
@@ -519,7 +519,7 @@ export default function HomePage() {
               
               {/* Bottom row - Title and Beta badge */}
               <div className="text-center">
-                <h1 className="text-2xl font-bold mb-2">Into the ValueVerse</h1>
+                <h1 className="text-xl font-bold mb-1">Into the ValueVerse</h1>
                                                   <div className="text-xs bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full border border-yellow-500/30">
                   Beta
                 </div>
@@ -527,7 +527,7 @@ export default function HomePage() {
             </div>
 
             {/* Desktop Header - Original Layout */}
-            <div className="hidden sm:block mb-8">
+            <div className="hidden sm:block mb-4">
               <div className="relative flex items-center justify-center">
                 {/* Left side - Menu Button and Logo */}
                 <div className="absolute left-0 flex items-center gap-4">
@@ -557,8 +557,8 @@ export default function HomePage() {
                 
                 {/* Center - Title */}
                 <div className="text-center">
-                  <h1 className="text-4xl font-bold mb-2">Into the ValueVerse</h1>
-                  <div className="text-sm bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full border border-yellow-500/30 inline-block">
+                  <h1 className="text-3xl font-bold mb-1">Into the ValueVerse</h1>
+                  <div className="text-xs bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full border border-yellow-500/30 inline-block">
                     Beta
                   </div>
                 </div>
