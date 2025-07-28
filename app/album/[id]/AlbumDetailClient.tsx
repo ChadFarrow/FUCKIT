@@ -94,20 +94,53 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             };
             img.onerror = (error) => {
               console.error('❌ Background image preload failed:', foundAlbum.coverArt, error);
-              // Try without cache buster as fallback
-              const fallbackImg = new window.Image();
-              fallbackImg.onload = () => {
-                console.log('✅ Background image preloaded with fallback URL:', foundAlbum.coverArt);
-                setBackgroundImage(foundAlbum.coverArt || null);
-                setBackgroundLoaded(true);
-              };
-              fallbackImg.onerror = (fallbackError) => {
-                console.error('❌ Background image preload fallback also failed:', foundAlbum.coverArt, fallbackError);
-                setBackgroundImage(null);
-                setBackgroundLoaded(true);
-              };
-              fallbackImg.decoding = 'async';
-              fallbackImg.src = foundAlbum.coverArt;
+              
+              // Try image proxy for external URLs
+              if (foundAlbum.coverArt && !foundAlbum.coverArt.includes('re.podtards.com')) {
+                const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(foundAlbum.coverArt)}`;
+                console.log('🔄 Trying image proxy for background:', proxyUrl);
+                
+                const proxyImg = new window.Image();
+                proxyImg.onload = () => {
+                  console.log('✅ Background image preloaded with proxy:', proxyUrl);
+                  setBackgroundImage(proxyUrl);
+                  setBackgroundLoaded(true);
+                };
+                proxyImg.onerror = (proxyError) => {
+                  console.error('❌ Background image proxy also failed:', proxyUrl, proxyError);
+                  // Final fallback - try original URL without cache buster
+                  const fallbackImg = new window.Image();
+                  fallbackImg.onload = () => {
+                    console.log('✅ Background image preloaded with fallback URL:', foundAlbum.coverArt);
+                    setBackgroundImage(foundAlbum.coverArt || null);
+                    setBackgroundLoaded(true);
+                  };
+                  fallbackImg.onerror = (fallbackError) => {
+                    console.error('❌ Background image preload fallback also failed:', foundAlbum.coverArt, fallbackError);
+                    setBackgroundImage(null);
+                    setBackgroundLoaded(true);
+                  };
+                  fallbackImg.decoding = 'async';
+                  fallbackImg.src = foundAlbum.coverArt;
+                };
+                proxyImg.decoding = 'async';
+                proxyImg.src = proxyUrl;
+              } else {
+                // For internal URLs, try without cache buster as fallback
+                const fallbackImg = new window.Image();
+                fallbackImg.onload = () => {
+                  console.log('✅ Background image preloaded with fallback URL:', foundAlbum.coverArt);
+                  setBackgroundImage(foundAlbum.coverArt || null);
+                  setBackgroundLoaded(true);
+                };
+                fallbackImg.onerror = (fallbackError) => {
+                  console.error('❌ Background image preload fallback also failed:', foundAlbum.coverArt, fallbackError);
+                  setBackgroundImage(null);
+                  setBackgroundLoaded(true);
+                };
+                fallbackImg.decoding = 'async';
+                fallbackImg.src = foundAlbum.coverArt;
+              }
             };
             
             img.decoding = 'async';
@@ -283,21 +316,55 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
       };
       img.onerror = (error) => {
         console.error('❌ Background image failed to load:', album?.coverArt, error);
-        // Try without cache buster as fallback
-        const fallbackImg = new window.Image();
-        fallbackImg.onload = () => {
-          console.log('✅ Background image loaded with fallback URL:', album?.coverArt);
-          setBackgroundImage(album?.coverArt || null);
-          setBackgroundLoaded(true);
-        };
-        fallbackImg.onerror = (fallbackError) => {
-          console.error('❌ Background image fallback also failed:', album?.coverArt, fallbackError);
-          // Fallback to gradient if image fails to load
-          setBackgroundImage(null);
-          setBackgroundLoaded(true); // Mark background as loaded even if image fails
-        };
-        fallbackImg.decoding = 'async';
-        fallbackImg.src = album?.coverArt || '';
+        
+        // Try image proxy for external URLs
+        if (album?.coverArt && !album?.coverArt.includes('re.podtards.com')) {
+          const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(album?.coverArt)}`;
+          console.log('🔄 Trying image proxy for background:', proxyUrl);
+          
+          const proxyImg = new window.Image();
+          proxyImg.onload = () => {
+            console.log('✅ Background image loaded with proxy:', proxyUrl);
+            setBackgroundImage(proxyUrl);
+            setBackgroundLoaded(true);
+          };
+          proxyImg.onerror = (proxyError) => {
+            console.error('❌ Background image proxy also failed:', proxyUrl, proxyError);
+            // Final fallback - try original URL without cache buster
+            const fallbackImg = new window.Image();
+            fallbackImg.onload = () => {
+              console.log('✅ Background image loaded with fallback URL:', album?.coverArt);
+              setBackgroundImage(album?.coverArt || null);
+              setBackgroundLoaded(true);
+            };
+            fallbackImg.onerror = (fallbackError) => {
+              console.error('❌ Background image fallback also failed:', album?.coverArt, fallbackError);
+              // Fallback to gradient if image fails to load
+              setBackgroundImage(null);
+              setBackgroundLoaded(true); // Mark background as loaded even if image fails
+            };
+            fallbackImg.decoding = 'async';
+            fallbackImg.src = album?.coverArt || '';
+          };
+          proxyImg.decoding = 'async';
+          proxyImg.src = proxyUrl;
+        } else {
+          // For internal URLs, try without cache buster as fallback
+          const fallbackImg = new window.Image();
+          fallbackImg.onload = () => {
+            console.log('✅ Background image loaded with fallback URL:', album?.coverArt);
+            setBackgroundImage(album?.coverArt || null);
+            setBackgroundLoaded(true);
+          };
+          fallbackImg.onerror = (fallbackError) => {
+            console.error('❌ Background image fallback also failed:', album?.coverArt, fallbackError);
+            // Fallback to gradient if image fails to load
+            setBackgroundImage(null);
+            setBackgroundLoaded(true); // Mark background as loaded even if image fails
+          };
+          fallbackImg.decoding = 'async';
+          fallbackImg.src = album?.coverArt || '';
+        }
       };
       
       // Set priority loading for background image
