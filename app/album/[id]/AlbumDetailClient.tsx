@@ -354,10 +354,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
           console.log(`🔍 Album lookup: "${decodedAlbumTitle}" → "${titleFromSlug}" → "${normalizedTitle}"`);
           console.log(`📋 Specific feed found:`, specificFeed);
           
-          if (specificFeed) {
-            feedUrls = [specificFeed];
-          } else {
-            // Load pre-parsed album data instead of parsing RSS feeds
+          // Always use pre-parsed album data instead of parsing RSS feeds
             const response = await fetch('/api/albums');
             
             if (!response.ok) {
@@ -509,7 +506,6 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             } else {
               setError('Album not found');
             }
-          }
         } catch (err) {
           console.error('Error loading album:', err);
           setError('Error loading album data');
