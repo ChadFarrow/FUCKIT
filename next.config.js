@@ -12,29 +12,33 @@ const withPWA = require('next-pwa')({
     /_next\/static\/.*\/.*\.js$/,
     /_next\/static\/.*\/.*\.mjs$/,
     /_next\/static\/.*\/.*\.css$/,
+    /test-mobile-images/, // Exclude test pages from service worker
+    /api\/proxy-image/, // Exclude proxy API from service worker
   ],
   runtimeCaching: [
     {
       urlPattern: /^https:\/\/.*\.(?:png|jpg|jpeg|svg|gif|webp)$/,
-      handler: 'CacheFirst',
+      handler: 'NetworkFirst', // Changed from CacheFirst to NetworkFirst for mobile
       options: {
         cacheName: 'images',
         expiration: {
           maxEntries: 1000,
           maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
         },
+        networkTimeoutSeconds: 10, // Add timeout for mobile
       },
     },
-    // Removed CacheFirst audio caching - now using NetworkFirst above
+    // Network first for RSS feeds to prevent 503 errors
     {
       urlPattern: /^https:\/\/.*\.xml$/,
-      handler: 'StaleWhileRevalidate',
+      handler: 'NetworkFirst', // Changed from StaleWhileRevalidate to NetworkFirst
       options: {
         cacheName: 'rss-feeds',
         expiration: {
           maxEntries: 100,
           maxAgeSeconds: 60 * 60, // 1 hour
         },
+        networkTimeoutSeconds: 15, // Add timeout
       },
     },
     // Network first for RSC payloads and critical Next.js files
@@ -74,6 +78,19 @@ const withPWA = require('next-pwa')({
           maxAgeSeconds: 60 * 30, // 30 minutes
         },
         networkTimeoutSeconds: 15,
+      },
+    },
+    // Network first for API routes to prevent 503 errors
+    {
+      urlPattern: /\/api\/feeds/,
+      handler: 'NetworkFirst',
+      options: {
+        cacheName: 'api-feeds',
+        expiration: {
+          maxEntries: 10,
+          maxAgeSeconds: 60 * 5, // 5 minutes
+        },
+        networkTimeoutSeconds: 10,
       },
     },
   ],

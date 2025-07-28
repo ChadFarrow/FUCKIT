@@ -45,13 +45,27 @@ export default function CDNImage({
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [userAgent, setUserAgent] = useState('');
   
   useEffect(() => {
     setIsClient(true);
     const checkDevice = () => {
       const width = window.innerWidth;
+      const ua = navigator.userAgent;
       setIsMobile(width <= 768);
       setIsTablet(width > 768 && width <= 1024);
+      setUserAgent(ua);
+      
+      // Enhanced mobile logging
+      if (width <= 768) {
+        console.log('📱 Mobile device detected:', {
+          width,
+          userAgent: ua,
+          platform: navigator.platform,
+          vendor: navigator.vendor,
+          connection: (navigator as any).connection?.effectiveType || 'unknown'
+        });
+      }
     };
     
     checkDevice();
@@ -109,24 +123,24 @@ export default function CDNImage({
     return originalUrl;
   };
 
-  // Get responsive image sizes
   const getResponsiveSizes = () => {
     if (sizes) return sizes;
     
     if (isMobile) {
-      return '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw';
+      return '(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw';
     } else if (isTablet) {
       return '(max-width: 1024px) 50vw, 33vw';
     } else {
-      return '(max-width: 1200px) 33vw, 25vw';
+      return '(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw';
     }
   };
 
-  // Get appropriate image dimensions
   const getImageDimensions = () => {
-    if (width && height) return { width, height };
+    if (width && height) {
+      return { width, height };
+    }
     
-    // Default responsive sizes
+    // Default dimensions for mobile optimization
     if (isMobile) {
       return { width: 300, height: 300 };
     } else if (isTablet) {
@@ -137,13 +151,27 @@ export default function CDNImage({
   };
 
   const getOriginalUrl = (imageUrl: string) => {
+    if (imageUrl.includes('/api/optimized-images/')) {
+      // Extract original URL from optimized URL
+      const filename = imageUrl.split('/').pop()?.split('?')[0];
+      if (filename) {
+        // This is a simplified fallback - in practice, you'd need a mapping
+        return fallbackSrc || imageUrl;
+      }
+    }
     return fallbackSrc || imageUrl;
   };
 
   const handleError = () => {
     console.warn(`[CDNImage] Failed to load (attempt ${retryCount + 1}):`, currentSrc);
-    console.warn(`[CDNImage] Device info - Mobile: ${isMobile}, Width: ${window?.innerWidth}`);
+    console.warn(`[CDNImage] Device info - Mobile: ${isMobile}, Width: ${window?.innerWidth}, UserAgent: ${userAgent.substring(0, 100)}`);
     setIsLoading(false);
+    
+    // Clear timeout
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      setTimeoutId(null);
+    }
     
     // First try the fallback URL if provided
     if (retryCount === 0 && fallbackSrc && fallbackSrc !== currentSrc) {
@@ -152,24 +180,56 @@ export default function CDNImage({
       setHasError(false);
       setIsLoading(true);
       setRetryCount(1);
+      
+      // Set timeout for fallback
+      const timeout = setTimeout(() => {
+        console.warn('[CDNImage] Fallback URL timeout');
+        handleError();
+      }, 10000); // 10 second timeout for mobile
+      setTimeoutId(timeout);
+      return;
+    }
+    
+    // Then try image proxy for mobile devices
+    if (retryCount === 1 && isMobile && !currentSrc.includes('/api/')) {
+      const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(currentSrc)}`;
+      console.log('[CDNImage] Trying image proxy for mobile:', proxyUrl);
+      setCurrentSrc(proxyUrl);
+      setHasError(false);
+      setIsLoading(true);
+      setRetryCount(2);
+      
+      // Set timeout for proxy
+      const timeout = setTimeout(() => {
+        console.warn('[CDNImage] Image proxy timeout');
+        handleError();
+      }, 12000); // 12 second timeout for proxy
+      setTimeoutId(timeout);
       return;
     }
     
     // Then try without optimization
-    if (retryCount === 1 && currentSrc.includes('/api/optimized-images/')) {
+    if (retryCount === 2 && currentSrc.includes('/api/optimized-images/')) {
       const originalUrl = getOriginalUrl(currentSrc);
       if (originalUrl && originalUrl !== currentSrc) {
         console.log('[CDNImage] Trying without optimization:', originalUrl);
         setCurrentSrc(originalUrl);
         setHasError(false);
         setIsLoading(true);
-        setRetryCount(2);
+        setRetryCount(3);
+        
+        // Set timeout for original URL
+        const timeout = setTimeout(() => {
+          console.warn('[CDNImage] Original URL timeout');
+          handleError();
+        }, 15000); // 15 second timeout for mobile
+        setTimeoutId(timeout);
         return;
       }
     }
     
     // Finally, try the placeholder
-    if (retryCount < 3) {
+    if (retryCount < 4) {
       console.log('[CDNImage] All attempts failed, showing placeholder');
       setHasError(true);
       onError?.();
@@ -177,8 +237,16 @@ export default function CDNImage({
   };
 
   const handleLoad = () => {
+    console.log('[CDNImage] Image loaded successfully:', currentSrc);
     setIsLoading(false);
     setHasError(false);
+    
+    // Clear timeout
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      setTimeoutId(null);
+    }
+    
     onLoad?.();
   };
 
@@ -187,9 +255,16 @@ export default function CDNImage({
     const dims = getImageDimensions();
     let imageSrc = src;
     
-    // Only apply mobile-specific logic on the client side
-    if (isClient && isMobile && !src.includes('/api/optimized-images/')) {
-      imageSrc = src;
+    // Enhanced mobile handling
+    if (isClient && isMobile) {
+      // For mobile, try to use optimized URLs but with better fallback
+      if (!src.includes('/api/optimized-images/')) {
+        imageSrc = getOptimizedUrl(src, dims.width, dims.height);
+      } else {
+        imageSrc = src;
+      }
+      
+      console.log('[CDNImage] Mobile image URL:', imageSrc);
     } else {
       imageSrc = getOptimizedUrl(src, dims.width, dims.height);
     }
@@ -203,6 +278,15 @@ export default function CDNImage({
     if (timeoutId) {
       clearTimeout(timeoutId);
       setTimeoutId(null);
+    }
+    
+    // Set initial timeout for mobile
+    if (isMobile) {
+      const timeout = setTimeout(() => {
+        console.warn('[CDNImage] Initial mobile load timeout');
+        handleError();
+      }, 8000); // 8 second timeout for mobile
+      setTimeoutId(timeout);
     }
     
     return () => {
@@ -227,7 +311,7 @@ export default function CDNImage({
       )}
       
       {isClient && isMobile ? (
-        // Use regular img tag for mobile with optimized loading
+        // Enhanced mobile image handling
         <img
           src={currentSrc}
           alt={alt}
@@ -238,6 +322,7 @@ export default function CDNImage({
           onLoad={handleLoad}
           loading={priority ? 'eager' : 'lazy'}
           referrerPolicy="no-referrer"
+          crossOrigin="anonymous"
           style={{ 
             objectFit: 'cover',
             width: '100%',
@@ -269,6 +354,7 @@ export default function CDNImage({
       {process.env.NODE_ENV === 'development' && (
         <div className="absolute top-1 left-1 bg-black/50 text-white text-xs px-1 py-0.5 rounded opacity-0 hover:opacity-100 transition-opacity">
           {currentSrc.includes('/api/optimized-images/') ? '🖼️ Optimized' : '📡 Original'}
+          {isMobile && ' 📱'}
         </div>
       )}
     </div>

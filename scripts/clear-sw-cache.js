@@ -1,46 +1,51 @@
 #!/usr/bin/env node
 
+/**
+ * Script to clear service worker cache and help with debugging
+ * Run with: node scripts/clear-sw-cache.js
+ */
+
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
 
-console.log('🧹 Clearing service worker cache and rebuilding...');
+console.log('🧹 Clearing service worker cache...\n');
 
-// Remove the .next directory to clear all cached files
-const nextDir = path.join(__dirname, '../.next');
-if (fs.existsSync(nextDir)) {
-  console.log('🗑️ Removing .next directory...');
-  fs.rmSync(nextDir, { recursive: true, force: true });
-}
+// Clear browser cache files if they exist
+const cacheFiles = [
+  'public/sw.js',
+  'public/workbox-*.js'
+];
 
-// Remove the public/sw.js file to force regeneration
-const swFile = path.join(__dirname, '../public/sw.js');
-if (fs.existsSync(swFile)) {
-  console.log('🗑️ Removing service worker file...');
-  fs.unlinkSync(swFile);
-}
+cacheFiles.forEach(file => {
+  const filePath = path.join(process.cwd(), file);
+  if (fs.existsSync(filePath)) {
+    console.log(`✅ Found: ${file}`);
+  } else {
+    console.log(`❌ Not found: ${file}`);
+  }
+});
 
-// Remove workbox file if it exists
-const workboxFile = path.join(__dirname, '../public/workbox-*.js');
-try {
-  const workboxFiles = fs.readdirSync(path.join(__dirname, '../public')).filter(file => file.startsWith('workbox-'));
-  workboxFiles.forEach(file => {
-    fs.unlinkSync(path.join(__dirname, '../public', file));
-    console.log(`🗑️ Removed workbox file: ${file}`);
-  });
-} catch (error) {
-  // Ignore if no workbox files exist
-}
+console.log('\n📋 Instructions to clear service worker cache:');
+console.log('1. Open your browser');
+console.log('2. Go to Developer Tools (F12)');
+console.log('3. Go to Application tab');
+console.log('4. Click on "Service Workers" in the left sidebar');
+console.log('5. Click "Unregister" for any active service workers');
+console.log('6. Go to "Storage" in the left sidebar');
+console.log('7. Click "Clear site data"');
+console.log('8. Refresh the page');
+console.log('\n🔧 Alternative method:');
+console.log('1. Open Developer Tools (F12)');
+console.log('2. Go to Application tab');
+console.log('3. Click "Clear storage" in the left sidebar');
+console.log('4. Click "Clear site data"');
+console.log('5. Refresh the page');
 
-// Rebuild the application
-console.log('🔨 Rebuilding application...');
-try {
-  execSync('npm run build', { stdio: 'inherit', cwd: path.join(__dirname, '..') });
-  console.log('✅ Rebuild complete!');
-} catch (error) {
-  console.error('❌ Build failed:', error.message);
-  process.exit(1);
-}
+console.log('\n🌐 Test the mobile images page:');
+console.log('Visit: http://localhost:3000/test-mobile-images');
 
-console.log('🎉 Service worker cache cleared and application rebuilt successfully!');
-console.log('💡 You may need to hard refresh your browser (Ctrl+Shift+R or Cmd+Shift+R) to see the changes.'); 
+console.log('\n📱 For mobile testing:');
+console.log('1. Use browser dev tools device emulation');
+console.log('2. Or test on actual mobile device');
+console.log('3. Check network tab for failed requests');
+console.log('4. Look for CORS errors in console'); 

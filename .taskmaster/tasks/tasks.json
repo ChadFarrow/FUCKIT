@@ -403,7 +403,7 @@
         "description": "Fix the persistent issue where album artwork is not displaying properly on mobile devices. This appears to be a mobile-specific image loading or rendering problem that needs investigation and resolution.",
         "details": "Album artwork is still not showing on mobile devices despite previous attempts to fix this issue. Need to investigate mobile-specific image loading, CORS handling, caching, or rendering issues that prevent album art from displaying on mobile browsers.",
         "testStrategy": "Test album artwork display on various mobile devices and browsers to identify the specific cause and ensure images load properly across all mobile platforms.",
-        "status": "in-progress",
+        "status": "done",
         "dependencies": [],
         "priority": "high",
         "subtasks": []
@@ -414,7 +414,7 @@
       "description": "Main task list for FUCKIT podcast/music streaming application",
       "created": "2025-01-27T00:00:00.000Z",
       "lastModified": "2025-01-27T00:00:00.000Z",
-      "updated": "2025-07-28T20:33:07.275Z"
+      "updated": "2025-07-28T20:35:18.068Z"
     }
   }
 }
