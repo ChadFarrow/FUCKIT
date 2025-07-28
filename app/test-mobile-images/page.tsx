@@ -69,7 +69,7 @@ export default function TestMobileImagesPage() {
     return (
       <div className="min-h-screen bg-gray-900 text-white p-4 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">You're Offline</h1>
+          <h1 className="text-2xl font-bold mb-4">You&apos;re Offline</h1>
           <p className="text-gray-400 mb-4">This test page requires an internet connection.</p>
           <button 
             onClick={() => window.location.reload()} 
@@ -134,14 +134,14 @@ export default function TestMobileImagesPage() {
           <li>• Check the Network tab for failed image requests</li>
           <li>• Test on different mobile devices/browsers</li>
           <li>• Look for CORS errors or timeout issues</li>
-          <li>• If you see 'offline', check your internet connection</li>
+          <li>• If you see &apos;offline&apos;, check your internet connection</li>
         </ul>
       </div>
 
       <div className="mt-4 bg-yellow-900/20 border border-yellow-600 p-4 rounded">
         <h3 className="text-lg font-semibold mb-2 text-yellow-400">Troubleshooting</h3>
         <p className="text-sm text-yellow-200 mb-2">
-          If you're seeing "offline" instead of this page:
+          If you&apos;re seeing &quot;offline&quot; instead of this page:
         </p>
         <ul className="text-sm text-yellow-200 space-y-1">
           <li>• Check your internet connection</li>
