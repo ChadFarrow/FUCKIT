@@ -165,6 +165,9 @@ export default function CDNImage({
   const handleError = () => {
     console.warn(`[CDNImage] Failed to load (attempt ${retryCount + 1}):`, currentSrc);
     console.warn(`[CDNImage] Device info - Mobile: ${isMobile}, Width: ${window?.innerWidth}, UserAgent: ${userAgent.substring(0, 100)}`);
+    console.log(`[CDNImage] Debug - retryCount: ${retryCount}, fallbackSrc: ${fallbackSrc}, isMobile: ${isMobile}, currentSrc: ${currentSrc}`);
+    console.log(`[CDNImage] Retry conditions - retryCount === 0: ${retryCount === 0}, fallbackSrc && fallbackSrc !== currentSrc: ${fallbackSrc && fallbackSrc !== currentSrc}`);
+    console.log(`[CDNImage] Retry conditions - retryCount === 1: ${retryCount === 1}, isMobile: ${isMobile}, !currentSrc.includes('/api/'): ${!currentSrc.includes('/api/')}`);
     setIsLoading(false);
     
     // Clear timeout
@@ -228,12 +231,11 @@ export default function CDNImage({
       }
     }
     
-    // Finally, try the placeholder
-    if (retryCount < 4) {
-      console.log('[CDNImage] All attempts failed, showing placeholder');
-      setHasError(true);
-      onError?.();
-    }
+    // All retry attempts have failed - only now call onError and show placeholder
+    console.log('[CDNImage] All attempts failed, showing placeholder');
+    console.log(`[CDNImage] Final debug - retryCount: ${retryCount}, isMobile: ${isMobile}, currentSrc: ${currentSrc}`);
+    setHasError(true);
+    onError?.(); // Only call onError after all retries have failed
   };
 
   const handleLoad = () => {
@@ -280,19 +282,21 @@ export default function CDNImage({
       setTimeoutId(null);
     }
     
-    // Set initial timeout for mobile
-    if (isMobile) {
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [src, width, height, isClient]); // Removed isMobile and isTablet from dependencies
+
+  // Handle mobile-specific timeouts separately
+  useEffect(() => {
+    if (isMobile && isClient && isLoading && !timeoutId) {
       const timeout = setTimeout(() => {
-        console.warn('[CDNImage] Initial mobile load timeout');
+        console.warn('[CDNImage] Mobile load timeout');
         handleError();
       }, 8000); // 8 second timeout for mobile
       setTimeoutId(timeout);
     }
-    
-    return () => {
-      if (timeoutId) clearTimeout(timeoutId);
-    };
-  }, [src, width, height, isMobile, isTablet, isClient]);
+  }, [isMobile, isClient, isLoading, timeoutId]);
 
   const dims = getImageDimensions();
 
