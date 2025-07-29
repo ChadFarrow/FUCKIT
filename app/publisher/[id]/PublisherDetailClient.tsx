@@ -87,9 +87,9 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
       if (initialData.publisherItems.length > 0) {
         // Try to match by publisher items first
         for (const item of initialData.publisherItems) {
-          // Try to find matching album by feedGuid
+          // Try to find matching album by feedGuid (through publisher property)
           const matchingAlbum = allAlbums.find((album: RSSAlbum) => 
-            album.feedGuid === item.feedGuid || 
+            album.publisher?.feedGuid === item.feedGuid || 
             album.feedUrl === item.feedUrl ||
             album.id === item.feedGuid
           );
