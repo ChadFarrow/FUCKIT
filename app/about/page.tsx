@@ -19,7 +19,7 @@ export default function AboutPage() {
                   priority
                 />
               </div>
-              <h1 className="text-4xl font-bold">Into the ValueVerse</h1>
+              <h1 className="text-4xl font-bold">Project StableKraft</h1>
             </Link>
           </div>
         </div>
@@ -29,7 +29,7 @@ export default function AboutPage() {
         <div className="max-w-4xl mx-auto">
           <div className="mb-12">
             <h1 className="text-4xl font-bold mb-8 text-center">
-              About Into the ValueVerse
+              About Project StableKraft
             </h1>
             
             {/* Main Description - moved from banner */}

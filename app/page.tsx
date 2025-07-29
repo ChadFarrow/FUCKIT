@@ -512,7 +512,7 @@ export default function HomePage() {
               
               {/* Bottom row - Title and Beta badge */}
               <div className="text-center">
-                <h1 className="text-xl font-bold mb-1">Into the ValueVerse</h1>
+                <h1 className="text-xl font-bold mb-1">Project StableKraft</h1>
                                                   <div className="text-xs bg-yellow-500/20 text-yellow-300 px-3 py-1 rounded-full border border-yellow-500/30">
                   Beta - if the page isn&apos;t loading try a hard refresh and wait a little for it to load
                 </div>
@@ -550,7 +550,7 @@ export default function HomePage() {
                 
                 {/* Center - Title */}
                 <div className="text-center">
-                  <h1 className="text-3xl font-bold mb-1">Into the ValueVerse</h1>
+                  <h1 className="text-3xl font-bold mb-1">Project StableKraft</h1>
                   <div className="text-xs bg-yellow-500/20 text-yellow-300 px-3 py-1 rounded-full border border-yellow-500/30 inline-block">
                     Beta - if the page isn&apos;t loading try a hard refresh and wait a little for it to load
                   </div>
@@ -682,9 +682,8 @@ export default function HomePage() {
               // Always show the section, even if empty, to indicate it exists
               return (
                 <div className="mb-8">
-                  <h3 className="text-lg font-semibold mb-3 text-white flex items-center gap-2">
-                    <span>Publisher Feeds</span>
-                    <span className="text-xs bg-blue-600/80 px-2 py-1 rounded">PC 2.0</span>
+                  <h3 className="text-lg font-semibold mb-3 text-white">
+                    Publisher Feeds
                   </h3>
                   <div className="space-y-1 max-h-48 overflow-y-auto">
                     {artists.length > 0 ? (
@@ -713,12 +712,7 @@ export default function HomePage() {
               );
             })()}
             
-            {/* Feed Stats */}
-            <div className="text-sm text-gray-400 space-y-1">
-              <p>Default feeds: {totalFeedsCount}</p>
-              <p>Custom feeds: {customFeeds.length}</p>
-              <p>Total releases: {albums.length}</p>
-            </div>
+
             
             {/* Version Display */}
             <div className="mt-6 pt-4 border-t border-gray-700">
