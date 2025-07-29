@@ -35,6 +35,7 @@ export default function ServiceWorkerRegistration() {
         })
         .catch((error) => {
           console.error('❌ Service Worker registration failed:', error);
+          // Don't throw - allow the app to continue without service worker
         });
 
       // Listen for service worker updates
@@ -53,10 +54,8 @@ export default function ServiceWorkerRegistration() {
           
           // Auto-reload after a short delay if no user interaction
           setTimeout(() => {
-            if (updateReady) {
-              console.log('🔄 Auto-reloading for update...');
-              window.location.reload();
-            }
+            console.log('🔄 Auto-reloading for update...');
+            window.location.reload();
           }, 3000);
         }
       });
@@ -114,7 +113,7 @@ export default function ServiceWorkerRegistration() {
         });
       });
     }
-  }, [updateReady]);
+  }, []); // Remove updateReady from dependencies to prevent infinite loop
 
   const handleUpdate = () => {
     if (updateReady) {

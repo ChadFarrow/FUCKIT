@@ -114,7 +114,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
         document.removeEventListener(event, enableAudio);
       });
     };
-  }, [hasUserInteracted]);
+  }, []); // Remove hasUserInteracted from dependencies to prevent infinite loop
 
   // Save state to localStorage when it changes
   useEffect(() => {
@@ -278,6 +278,12 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       const audioError = (event.target as HTMLAudioElement)?.error;
       console.error('🚫 Audio error:', audioError);
       setIsPlaying(false);
+      
+      // Prevent infinite error loops by clearing the source
+      if (audioRef.current) {
+        audioRef.current.src = '';
+        audioRef.current.load();
+      }
     };
 
     // Add event listeners
