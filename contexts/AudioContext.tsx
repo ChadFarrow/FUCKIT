@@ -478,8 +478,23 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     const firstTrack = shuffledTracks[0];
     console.log('🎲 Starting shuffle with:', firstTrack.track.title, 'from', firstTrack.album.title);
 
-    // Play the first track using the dedicated shuffle function
-    return await playShuffledTrack(0);
+    // Play the first track directly using the local shuffledTracks array to avoid race condition
+    const track = firstTrack.track;
+    const album = firstTrack.album;
+
+    if (!track || !track.url) {
+      console.error('❌ No valid track found in shuffled playlist');
+      return false;
+    }
+
+    const success = await attemptAudioPlayback(track.url, 'Shuffled track playback');
+    if (success) {
+      setCurrentPlayingAlbum(album);
+      setCurrentTrackIndex(firstTrack.trackIndex);
+      setCurrentShuffleIndex(0);
+      setHasUserInteracted(true);
+    }
+    return success;
   };
 
   // Pause function
