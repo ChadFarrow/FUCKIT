@@ -407,6 +407,50 @@
         "dependencies": [],
         "priority": "high",
         "subtasks": []
+      },
+      {
+        "id": 39,
+        "title": "Add shuffle functionality to publisher pages",
+        "description": "Implement shuffle button in publisher detail pages using the same global shuffle logic as the main albums page",
+        "details": "Add shuffle functionality to publisher pages by importing useAudio hook, creating handleShuffle function, and updating ControlsBar component to include shuffle button with showShuffle=true and onShuffle handler",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 40,
+        "title": "Fix publisher page loading and display issues",
+        "description": "Fix publisher pages to properly display artist names and artwork instead of showing loading states and publisher IDs",
+        "details": "Fix publisher page loading states, add bitpunk.fm publisher mapping, improve publisher info display, and ensure proper artwork loading for publisher pages",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 41,
+        "title": "Add Bitpunk.fm RSS feeds to application",
+        "description": "Add four new RSS feeds from zine.bitpunk.fm to expand the music catalog",
+        "details": "Added spectral-hiding, poetry-on-tape, bitpunk-fm, and unwound feeds from zine.bitpunk.fm to feeds.json and parsed-feeds.json, improving feed parsing efficiency with incremental parsing scripts",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 42,
+        "title": "Investigate track artwork display in list view",
+        "description": "Investigate why track artwork is not displaying properly in list view despite being present in data",
+        "details": "Analyzed track artwork display issue in album detail pages, confirmed track images are present in parsed data and accessible via API, identified potential UI rendering or CSS issues with track image display in list view",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
       }
     ],
     "metadata": {
@@ -414,7 +458,7 @@
       "description": "Main task list for FUCKIT podcast/music streaming application",
       "created": "2025-01-27T00:00:00.000Z",
       "lastModified": "2025-01-27T00:00:00.000Z",
-      "updated": "2025-07-28T23:49:17.985Z"
+      "updated": "2025-07-29T00:07:18.976Z"
     }
   }
 }

@@ -676,31 +676,38 @@ export default function HomePage() {
                 a.name.toLowerCase().localeCompare(b.name.toLowerCase())
               );
 
-              return artists.length > 0 ? (
+              // Always show the section, even if empty, to indicate it exists
+              return (
                 <div className="mb-8">
                   <h3 className="text-lg font-semibold mb-3 text-white flex items-center gap-2">
                     <span>Publisher Feeds</span>
                     <span className="text-xs bg-blue-600/80 px-2 py-1 rounded">PC 2.0</span>
                   </h3>
                   <div className="space-y-1 max-h-48 overflow-y-auto">
-                    {artists.map((artist) => (
-                      <Link
-                        key={artist.feedGuid}
-                        href={`/publisher/${generatePublisherSlug({ title: artist.name, feedGuid: artist.feedGuid })}`}
-                        className="flex items-center justify-between bg-gray-800/30 hover:bg-gray-800/50 rounded p-2 transition-colors group"
-                        onClick={() => setIsSidebarOpen(false)}
-                      >
-                        <span className="text-sm text-gray-300 group-hover:text-white truncate flex-1">
-                          {artist.name}
-                        </span>
-                        <span className="text-xs text-gray-500 group-hover:text-gray-400 ml-2">
-                          {artist.albumCount} releases
-                        </span>
-                      </Link>
-                    ))}
+                    {artists.length > 0 ? (
+                      artists.map((artist) => (
+                        <Link
+                          key={artist.feedGuid}
+                          href={`/publisher/${generatePublisherSlug({ title: artist.name, feedGuid: artist.feedGuid })}`}
+                          className="flex items-center justify-between bg-gray-800/30 hover:bg-gray-800/50 rounded p-2 transition-colors group"
+                          onClick={() => setIsSidebarOpen(false)}
+                        >
+                          <span className="text-sm text-gray-300 group-hover:text-white truncate flex-1">
+                            {artist.name}
+                          </span>
+                          <span className="text-xs text-gray-500 group-hover:text-gray-400 ml-2">
+                            {artist.albumCount} releases
+                          </span>
+                        </Link>
+                      ))
+                    ) : (
+                      <div className="text-sm text-gray-500 italic">
+                        {isLoading ? 'Loading publisher feeds...' : 'No publisher feeds available'}
+                      </div>
+                    )}
                   </div>
                 </div>
-              ) : null;
+              );
             })()}
             
             {/* Feed Stats */}
