@@ -640,6 +640,44 @@ export default function HomePage() {
             
 
             
+            {/* Music Show Playlist */}
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold mb-3 text-white">
+                Music Show Playlist
+              </h3>
+              <div className="space-y-2">
+                <a
+                  href="/api/playlist"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 p-3 rounded-lg bg-orange-600/20 hover:bg-orange-600/30 transition-colors group"
+                  onClick={() => setIsSidebarOpen(false)}
+                >
+                  <svg className="w-5 h-5 text-orange-400 group-hover:text-orange-300" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
+                  </svg>
+                  <span className="text-sm text-gray-300 group-hover:text-white">All Songs RSS Feed</span>
+                </a>
+                <button
+                  onClick={() => {
+                    const feedUrl = window.location.origin + '/api/playlist';
+                    navigator.clipboard.writeText(feedUrl);
+                    toast.success('Playlist feed URL copied to clipboard!');
+                    setIsSidebarOpen(false);
+                  }}
+                  className="w-full flex items-center gap-3 p-3 rounded-lg bg-gray-800/30 hover:bg-gray-800/50 transition-colors group text-left"
+                >
+                  <svg className="w-5 h-5 text-gray-400 group-hover:text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                  </svg>
+                  <span className="text-sm text-gray-300 group-hover:text-white">Copy Feed URL</span>
+                </button>
+              </div>
+              <p className="text-xs text-gray-500 mt-2 px-3">
+                Podcasting 2.0 musicL playlist
+              </p>
+            </div>
+            
             {/* Version Display */}
             <div className="mt-6 pt-4 border-t border-gray-700">
               <div className="flex items-center justify-between">
