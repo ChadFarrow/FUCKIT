@@ -8,6 +8,7 @@ import { RSSAlbum } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { generateAlbumUrl, generatePublisherSlug } from '@/lib/url-utils';
 import { useAudio } from '@/contexts/AudioContext';
+import ControlsBar from '@/components/ControlsBar';
 
 interface AlbumDetailClientProps {
   albumTitle: string;
@@ -30,7 +31,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
     duration: globalDuration,
     pause: globalPause,
     resume: globalResume,
-    seek: globalSeek
+    seek: globalSeek,
+    shuffleAllTracks
   } = useAudio();
   
 
@@ -951,7 +953,26 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
 
         {/* Track List */}
         <div className="bg-black/40 backdrop-blur-sm rounded-lg p-4 md:p-6">
-          <h2 className="text-xl font-semibold mb-4 text-center md:text-left">Tracks</h2>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+            <h2 className="text-xl font-semibold text-center sm:text-left">Tracks</h2>
+            
+            {/* Shuffle Controls */}
+            <ControlsBar
+              activeFilter="all"
+              onFilterChange={() => {}}
+              showFilters={false}
+              sortType="name"
+              onSortChange={() => {}}
+              viewType="list"
+              onViewChange={() => {}}
+              showViewToggle={false}
+              onShuffle={shuffleAllTracks}
+              showShuffle={true}
+              resultCount={album.tracks.length}
+              resultLabel="tracks"
+              className="flex-shrink-0"
+            />
+          </div>
           <div className="space-y-2">
             {album.tracks.map((track, index) => (
               <div 

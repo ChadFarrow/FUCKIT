@@ -12,6 +12,9 @@ interface AudioContextType {
   currentTime: number;
   duration: number;
   
+  // Shuffle state
+  isShuffleMode: boolean;
+  
   // Audio controls
   playAlbum: (album: RSSAlbum, trackIndex?: number) => Promise<boolean>;
   playShuffledTrack: (index: number) => Promise<boolean>;
@@ -49,6 +52,15 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   const [duration, setDuration] = useState(0);
   const [albums, setAlbums] = useState<RSSAlbum[]>([]);
   const [hasUserInteracted, setHasUserInteracted] = useState(false);
+  
+  // Shuffle state
+  const [isShuffleMode, setIsShuffleMode] = useState(false);
+  const [shuffledPlaylist, setShuffledPlaylist] = useState<Array<{
+    album: RSSAlbum;
+    trackIndex: number;
+    track: any;
+  }>>([]);
+  const [currentShuffleIndex, setCurrentShuffleIndex] = useState(0);
   
   const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -336,6 +348,13 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       setCurrentPlayingAlbum(album);
       setCurrentTrackIndex(trackIndex);
       setHasUserInteracted(true);
+      
+      // If this is a manual play (not from shuffle), exit shuffle mode
+      if (!isShuffleMode || currentShuffleIndex === 0) {
+        setIsShuffleMode(false);
+        setShuffledPlaylist([]);
+        setCurrentShuffleIndex(0);
+      }
     }
     return success;
   };
@@ -385,12 +404,17 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       [shuffledTracks[i], shuffledTracks[j]] = [shuffledTracks[j], shuffledTracks[i]];
     }
 
-    // Pick a random track to start with
-    const randomTrack = shuffledTracks[0];
-    console.log('🎲 Starting shuffle with:', randomTrack.track.title, 'from', randomTrack.album.title);
+    // Set up shuffle state
+    setShuffledPlaylist(shuffledTracks);
+    setCurrentShuffleIndex(0);
+    setIsShuffleMode(true);
 
-    // Play the randomly selected track
-    return await playAlbum(randomTrack.album, randomTrack.trackIndex);
+    // Play the first track in the shuffled playlist
+    const firstTrack = shuffledTracks[0];
+    console.log('🎲 Starting shuffle with:', firstTrack.track.title, 'from', firstTrack.album.title);
+
+    // Play the first track
+    return await playAlbum(firstTrack.album, firstTrack.trackIndex);
   };
 
   // Pause function
@@ -417,6 +441,27 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
 
   // Play next track
   const playNextTrack = async () => {
+    if (isShuffleMode && shuffledPlaylist.length > 0) {
+      // In shuffle mode, play next track from shuffled playlist
+      const nextShuffleIndex = currentShuffleIndex + 1;
+      
+      if (nextShuffleIndex < shuffledPlaylist.length) {
+        // Play next track in shuffled playlist
+        const nextTrack = shuffledPlaylist[nextShuffleIndex];
+        console.log('🎲 Playing next shuffled track:', nextTrack.track.title, 'from', nextTrack.album.title);
+        setCurrentShuffleIndex(nextShuffleIndex);
+        await playAlbum(nextTrack.album, nextTrack.trackIndex);
+      } else {
+        // End of shuffled playlist - loop back to the first track
+        console.log('🔁 End of shuffled playlist reached, looping back to first track');
+        setCurrentShuffleIndex(0);
+        const firstTrack = shuffledPlaylist[0];
+        await playAlbum(firstTrack.album, firstTrack.trackIndex);
+      }
+      return;
+    }
+
+    // Normal mode - play next track in current album
     if (!currentPlayingAlbum || !currentPlayingAlbum.tracks) {
       if (process.env.NODE_ENV === 'development') {
         console.warn('⚠️ Cannot play next track: missing album or tracks');
@@ -443,6 +488,28 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
 
   // Play previous track
   const playPreviousTrack = async () => {
+    if (isShuffleMode && shuffledPlaylist.length > 0) {
+      // In shuffle mode, play previous track from shuffled playlist
+      const prevShuffleIndex = currentShuffleIndex - 1;
+      
+      if (prevShuffleIndex >= 0) {
+        // Play previous track in shuffled playlist
+        const prevTrack = shuffledPlaylist[prevShuffleIndex];
+        console.log('🎲 Playing previous shuffled track:', prevTrack.track.title, 'from', prevTrack.album.title);
+        setCurrentShuffleIndex(prevShuffleIndex);
+        await playAlbum(prevTrack.album, prevTrack.trackIndex);
+      } else {
+        // Go to the last track in shuffled playlist
+        const lastIndex = shuffledPlaylist.length - 1;
+        const lastTrack = shuffledPlaylist[lastIndex];
+        console.log('🎲 Playing last shuffled track:', lastTrack.track.title, 'from', lastTrack.album.title);
+        setCurrentShuffleIndex(lastIndex);
+        await playAlbum(lastTrack.album, lastTrack.trackIndex);
+      }
+      return;
+    }
+
+    // Normal mode - play previous track in current album
     if (!currentPlayingAlbum || !currentPlayingAlbum.tracks) return;
 
     const prevIndex = currentTrackIndex - 1;
@@ -464,6 +531,11 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     setCurrentTime(0);
     setDuration(0);
     
+    // Clear shuffle state
+    setIsShuffleMode(false);
+    setShuffledPlaylist([]);
+    setCurrentShuffleIndex(0);
+    
     // Clear localStorage
     if (typeof window !== 'undefined') {
       localStorage.removeItem('audioPlayerState');
@@ -476,6 +548,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     currentTrackIndex,
     currentTime,
     duration,
+    isShuffleMode,
     playAlbum,
     playShuffledTrack,
     shuffleAllTracks,

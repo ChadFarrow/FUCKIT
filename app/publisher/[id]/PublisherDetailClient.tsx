@@ -77,13 +77,56 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
           title: publisherInfo.name || `Artist: ${publisherId}`,
           description: 'Independent artist and music creator',
           artist: publisherInfo.name,
-          coverArt: undefined // Will be set from album data if available
+          coverArt: undefined // Will be set from publisher feed data if available
         });
         
         // Stop loading immediately since we have publisher info
         setIsLoading(false);
 
-        // Load publisher info from pre-parsed data
+        // Load publisher feed data to get the publisher's own image
+        console.log(`🏢 Loading publisher feed data...`);
+        
+        try {
+          // Load parsed feeds data to get publisher feed information
+          const feedsResponse = await fetch('/api/feeds');
+          
+          if (feedsResponse.ok) {
+            const feedsData = await feedsResponse.json();
+            const feeds = feedsData.feeds || [];
+            
+            // Find the publisher feed for this publisher
+            const publisherFeed = feeds.find((feed: any) => {
+              if (feed.type === 'publisher') {
+                // Check if this feed matches our publisher
+                if (feed.originalUrl === feedUrl) return true;
+                if (feed.id && feed.id.includes(publisherId)) return true;
+                if (feed.parsedData?.publisherInfo?.artist === publisherInfo.name) return true;
+                return false;
+              }
+              return false;
+            });
+            
+            console.log(`🏢 Found publisher feed:`, publisherFeed);
+            
+            // Extract publisher info from the feed data
+            if (publisherFeed?.parsedData?.publisherInfo) {
+              const feedInfo = publisherFeed.parsedData.publisherInfo;
+              console.log(`🏢 Publisher feed info:`, feedInfo);
+              
+              setPublisherInfo({
+                title: feedInfo.artist || feedInfo.title || publisherInfo.name || `Artist: ${publisherId}`,
+                description: feedInfo.description || 'Independent artist and music creator',
+                artist: feedInfo.artist || publisherInfo.name,
+                coverArt: feedInfo.coverArt // This is the publisher's own image
+              });
+            }
+          }
+        } catch (feedError) {
+          console.error(`❌ Error loading publisher feed data:`, feedError);
+          // Continue with album-based fallback
+        }
+
+        // Load pre-parsed album data to get publisher info as fallback
         console.log(`🏢 Loading publisher info from pre-parsed data...`);
         
         // Load pre-parsed album data to get publisher info
@@ -109,8 +152,7 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
         
         console.log(`🏢 Found ${publisherAlbums.length} albums for publisher`);
         
-        // Extract publisher info from the newest album
-        let publisherFeedInfo = null;
+        // If we don't have publisher feed info, extract from albums as fallback
         if (publisherAlbums.length > 0) {
           // Sort albums by date (newest first) to get the most recent release
           const sortedAlbums = [...publisherAlbums].sort((a, b) => {
@@ -120,33 +162,23 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
           });
           
           const newestAlbum = sortedAlbums[0];
-          publisherFeedInfo = {
+          const albumPublisherInfo = {
             title: newestAlbum.publisher?.title || newestAlbum.artist,
             artist: newestAlbum.artist,
             description: newestAlbum.publisher?.description || 'Independent artist and music creator',
             coverArt: newestAlbum.publisher?.coverArt || newestAlbum.coverArt
           };
-        }
-        
-        console.log(`🏢 Publisher feed info:`, publisherFeedInfo);
-        
-        // Set publisher info immediately so page shows content
-        if (publisherFeedInfo) {
-          setPublisherInfo({
-            title: publisherFeedInfo.artist || publisherFeedInfo.title || `Artist: ${publisherId}`,
-            description: publisherFeedInfo.description || 'Independent artist and music creator',
-            artist: publisherFeedInfo.artist,
-            coverArt: publisherFeedInfo.coverArt
-          });
-        } else {
-          // Fallback to basic info using known publisher data
-          const knownPublisher = getPublisherInfo(publisherId);
-          const artistName = knownPublisher?.name || publisherId;
-          setPublisherInfo({
-            title: artistName,
-            description: 'Independent artist and music creator',
-            artist: artistName
-          });
+          
+          console.log(`🏢 Album-based publisher info:`, albumPublisherInfo);
+          
+          // Update with album-based info as fallback
+          setPublisherInfo(prev => ({
+            ...prev,
+            title: albumPublisherInfo.artist || albumPublisherInfo.title || prev?.title,
+            description: albumPublisherInfo.description || prev?.description,
+            artist: albumPublisherInfo.artist || prev?.artist,
+            coverArt: prev?.coverArt || albumPublisherInfo.coverArt // Keep existing coverArt if we have it from publisher feed
+          }));
         }
         
         // Stop loading state early so page shows content
@@ -420,9 +452,32 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
         {/* Hero Section */}
         <div className="container mx-auto px-4 pb-8">
           <div className="flex flex-col lg:flex-row items-start lg:items-end gap-8 mb-12">
-            {/* Artist Avatar */}
+            {/* Artist Avatar - Use newest release artwork */}
             <div className="flex-shrink-0">
-              {publisherInfo?.coverArt ? (
+              {albums.length > 0 ? (
+                (() => {
+                  // Sort albums by date to get the newest release for the avatar
+                  const sortedByDate = [...albums].sort((a, b) => {
+                    const dateA = new Date(a.releaseDate || 0);
+                    const dateB = new Date(b.releaseDate || 0);
+                    return dateB.getTime() - dateA.getTime(); // Newest first
+                  });
+                  const newestAlbum = sortedByDate[0];
+                  
+                  return newestAlbum.coverArt ? (
+                    <div className="w-48 h-48 rounded-2xl overflow-hidden shadow-2xl ring-4 ring-white/20">
+                      <CDNImage 
+                        src={getAlbumArtworkUrl(newestAlbum.coverArt, 'large')} 
+                        alt={newestAlbum.title || 'Latest Release'}
+                        width={192}
+                        height={192}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : null;
+                })()
+              ) : null}
+              {(!albums.length || !albums.find(a => a.coverArt)) && publisherInfo?.coverArt ? (
                 <div className="w-48 h-48 rounded-2xl overflow-hidden shadow-2xl ring-4 ring-white/20">
                   <CDNImage 
                     src={getAlbumArtworkUrl(publisherInfo.coverArt, 'large')} 

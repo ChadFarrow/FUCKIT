@@ -160,7 +160,8 @@ node_modules/
 .windsurf/mcp.json
 *.mcp.json 
 
+data/cache/
+
 # Task files
 # tasks.json
 # tasks/ 
-data/cache/

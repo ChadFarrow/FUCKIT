@@ -458,7 +458,467 @@
       "description": "Main task list for FUCKIT podcast/music streaming application",
       "created": "2025-01-27T00:00:00.000Z",
       "lastModified": "2025-01-27T00:00:00.000Z",
-      "updated": "2025-07-29T00:07:18.976Z"
+      "updated": "2025-07-29T21:19:06.541Z"
+    }
+  },
+  "v1-5": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Fix Background Art Not Loading",
+        "description": "Resolve issues with album artwork backgrounds not displaying properly",
+        "status": "done",
+        "priority": "high",
+        "dependencies": [],
+        "details": "Investigate and fix the background art loading issues. This may involve CDN configuration, image optimization, or fallback mechanisms for when images fail to load.",
+        "testStrategy": "Test background art loading across different devices, network conditions, and browsers. Verify CDN delivery and fallback mechanisms.",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Fix Site Not Loading in General Sometimes",
+        "description": "Resolve intermittent site loading issues and improve overall reliability",
+        "status": "done",
+        "priority": "high",
+        "dependencies": [],
+        "details": "Investigate and fix intermittent site loading issues. This may involve API rate limiting, server configuration, or client-side error handling improvements.",
+        "testStrategy": "Monitor site availability, test under various load conditions, and implement proper error handling and retry mechanisms.",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Fix Missing Albums Sometimes",
+        "description": "Resolve issues where albums occasionally don't appear in the feed",
+        "status": "done",
+        "priority": "high",
+        "dependencies": [],
+        "details": "Investigate and fix issues where albums are sometimes missing from feeds. This may involve RSS parsing improvements, caching issues, or data validation.",
+        "testStrategy": "Test RSS feed parsing reliability, verify album data consistency, and implement better error handling for missing data.",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Improve RSS Feed Parsing Reliability",
+        "description": "Enhance RSS feed processing to handle various feed formats and edge cases",
+        "status": "done",
+        "priority": "medium",
+        "dependencies": [],
+        "details": "Improve RSS feed parsing to handle different feed formats, malformed XML, and edge cases. Add better error handling and validation.",
+        "testStrategy": "Test with various RSS feed formats, malformed feeds, and edge cases. Verify parsing accuracy and error handling.",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Enhance Error Handling",
+        "description": "Improve error handling and user feedback throughout the application",
+        "status": "done",
+        "priority": "medium",
+        "dependencies": [],
+        "details": "Implement comprehensive error handling with proper user feedback, retry mechanisms, and graceful degradation.",
+        "testStrategy": "Test error scenarios, verify user feedback, and ensure graceful degradation under various failure conditions.",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Improve Loading States",
+        "description": "Enhance loading indicators and user experience during content loading",
+        "status": "done",
+        "priority": "low",
+        "dependencies": [],
+        "details": "Add better loading states, progress indicators, and user feedback during content loading operations.",
+        "testStrategy": "Test loading states across different network conditions and verify user experience improvements.",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Optimize Mobile Experience",
+        "description": "Improve the application experience on mobile devices",
+        "status": "done",
+        "priority": "medium",
+        "dependencies": [],
+        "details": "Review and optimize the mobile user experience, including touch interactions, responsive design, and performance.",
+        "testStrategy": "Test on various mobile devices and screen sizes, verify touch interactions and responsive behavior.",
+        "subtasks": []
+      },
+      {
+        "id": 11,
+        "title": "Improve Website Flow and UI",
+        "description": "Enhance the overall user experience by improving website navigation, layout, and visual design",
+        "details": "Focus on improving user flow, navigation patterns, visual hierarchy, and overall UI/UX design to create a more intuitive and engaging experience for users browsing and discovering music content.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 12,
+        "title": "Move Banner to About Section and Add PayPal Links",
+        "description": "Relocate the top banner content to an about section and add PayPal donation links for Doerfels and PodcastIndex",
+        "details": "Move the current banner content from the top of the page to a dedicated about section. Add PayPal donation links for both Doerfels and PodcastIndex to support the creators and services used by the application. This will improve the site layout and provide users with ways to support the content creators.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 13,
+        "title": "Remove Green Downloading Updates Button",
+        "description": "Remove the green downloading updates button from the user interface",
+        "details": "Remove the green downloading updates button that appears in the UI. This will clean up the interface and remove potentially confusing or unnecessary UI elements related to update downloads.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "low",
+        "subtasks": []
+      },
+      {
+        "id": 14,
+        "title": "Fix Slow Album Loading Performance",
+        "description": "Resolve performance issues causing albums to load slowly on the site",
+        "details": "Investigate and fix the slow loading performance for albums. This may involve optimizing image loading, improving CDN delivery, reducing bundle sizes, implementing better caching strategies, or optimizing the data fetching and rendering pipeline to improve overall site performance when loading album content.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 15,
+        "title": "Address GitGuardian Secret Detection Alert",
+        "description": "Immediately address the GitGuardian security alert about detected secrets in commit 3de37e1",
+        "details": "GitGuardian detected a \"Generic High Entropy Secret\" in commit 3de37e1. This requires immediate action: 1) Review the alert details on GitGuardian, 2) Identify the exposed secret in the commit, 3) Rotate/regenerate the compromised credential, 4) Remove the secret from Git history, 5) Update environment variables with new credentials, 6) Verify no other instances exist in the codebase. This is a critical security incident that must be resolved immediately.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 16,
+        "title": "Review and Audit Current Security Setup",
+        "description": "Conduct a comprehensive review of the current security configuration and practices",
+        "details": "Review the existing security setup including: 1) Check SECURITY.md and SECURITY_CREDENTIALS.md files for completeness, 2) Audit environment variable usage and storage, 3) Review .gitignore patterns for sensitive files, 4) Check deployment security configurations, 5) Verify API key management practices, 6) Review CDN and external service security settings, 7) Assess access controls and permissions, 8) Update security documentation as needed.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 17,
+        "title": "Scan Codebase for Additional Security Vulnerabilities",
+        "description": "Perform a comprehensive security scan to identify any other potential security concerns",
+        "details": "Conduct a thorough security audit of the codebase: 1) Scan for hardcoded credentials or secrets, 2) Check for exposed API endpoints or sensitive data, 3) Review authentication and authorization mechanisms, 4) Audit third-party dependencies for known vulnerabilities, 5) Check for SQL injection or XSS vulnerabilities, 6) Review file upload and processing security, 7) Audit logging and error handling for information disclosure, 8) Check for proper input validation and sanitization, 9) Review CORS and CSP configurations.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 20,
+        "title": "Fix RSS Feed Parsing Duplication and Performance Issues",
+        "description": "Resolve duplicate RSS feed parsing and optimize batch processing performance",
+        "details": "The console logs show RSS feeds being parsed multiple times unnecessarily. This includes: 1) Same feeds parsed repeatedly (e.g., \"Safe Some Place\", \"Goodbye Uncle Walt\" appearing multiple times), 2) Redundant batch processing operations, 3) Performance impact from duplicate parsing. Need to implement proper deduplication, caching, and optimize the batch processing logic to prevent redundant operations and improve loading performance.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 22,
+        "title": "Optimize Production Console Logging and Debug Output",
+        "description": "Reduce excessive console logging in production environment",
+        "details": "Production environment shows excessive debug logging including: 1) RSS parsing details, 2) Track addition confirmations, 3) Cover art discovery logs, 4) Batch processing updates, 5) GlobalAudioPlayer state checks. Need to implement proper logging levels, reduce debug output in production, and only show essential logs while maintaining debugging capability for development.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "low",
+        "subtasks": []
+      },
+      {
+        "id": 23,
+        "title": "Fix Global Playbar - Implement Consistent Bottom Player Bar",
+        "description": "Create a persistent global player bar at the bottom that continues playing across all pages",
+        "details": "Currently there are 2 different player bars that come and go depending on navigation. Need to implement a single, persistent global player bar at the bottom of the site that: 1) Stays visible on all pages, 2) Continues playing music when navigating between pages, 3) Shows current track info and controls consistently, 4) Replaces the current inconsistent player implementations, 5) Integrates with the existing audio state management, 6) Provides seamless playback experience across the entire site. This will eliminate the confusion of having multiple player bars appearing and disappearing.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 24,
+        "title": "Fix Duplicate Albums and Artwork Mismatches",
+        "description": "Resolve issues with duplicate albums appearing in the feed and incorrect artwork being displayed for albums.",
+        "details": "- Investigate RSS feed parsing to identify why duplicate albums are being created\n- Fix album deduplication logic to prevent the same album from appearing multiple times\n- Resolve artwork mismatches where albums are showing incorrect cover art\n- Improve album identification and matching across different RSS feeds\n- Add proper album title normalization and comparison\n- Implement better error handling for malformed RSS data\n- Add debugging to track album parsing and deduplication process",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 25,
+        "title": "Upload Cache to Bunny.net CDN",
+        "description": "Upload all cached audio and artwork files to Bunny.net Storage and update metadata with CDN URLs",
+        "details": "The project has a comprehensive cache system with 9,656 items in cache-metadata.json, organized audio and artwork directories, and a working upload script (scripts/upload-cache-to-bunny.js). Need to upload all cached files to Bunny.net Storage and update the metadata with CDN URLs for improved performance and reliability.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 26,
+        "title": "Fix Mobile UI Issues - iOS Header Overlap and Auto-Play",
+        "description": "Fixed iOS mobile header overlap where title and beta badge were colliding, and prevented mobile browser auto-play issue",
+        "details": "- Created separate mobile/desktop header layouts to prevent overlap\n- Fixed mobile auto-play by changing audio initialization from play().then(pause()) to just load()\n- Improved mobile responsive design for better iOS compatibility",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 27,
+        "title": "Fix JSX Compilation Error - Missing Closing Div",
+        "description": "Resolved JSX compilation error that was preventing builds from succeeding due to missing closing div tag in Main Content section",
+        "details": "- Identified missing closing div tag in Main Content section of app/page.tsx\n- Fixed JSX structure to properly close container elements\n- Verified build success after fix\n- Build now completes successfully without compilation errors",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 28,
+        "title": "Add Additional RSS Feeds to Data Configuration",
+        "description": "Added multiple RSS feeds to the feeds.json configuration including breakheart music content and other requested feeds",
+        "details": "Added RSS feeds to data/feeds.json:\n- midnight-breakheart: https://rocknrollbreakheart.com/msp/MidnightBreakheart/midnight breakheart.xml\n- satoshi-streamer: https://rocknrollbreakheart.com/msp/SatoshiStreamer/satoshi streamer.xml  \n- panisee-attack: https://feeds.rssblue.com/panisee-attack\n- 2-crystal-balls: https://rocknrollbreakheart.com/msp/2CrystalBalls/2 crystal balls.xml\n- rock-n-roll-breakheart: https://rocknrollbreakheart.com/msp/RNRBH/rock'n'roll%20breakheart.xml\n\nAll feeds configured as album type with extended priority and active status.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 29,
+        "title": "Fix Mobile Album Artwork Loading Issues",
+        "description": "Enhanced CDNImage component with better mobile detection, CORS handling, timeout protection, and reliable fallback strategies for iOS devices",
+        "details": "",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 30,
+        "title": "Fix Missing Elijah Lied Album Parsing",
+        "description": "Fixed missing 'All in a Day' album by manually adding parsed feed data to resolve /album/all-in-a-day page loading issue",
+        "details": "",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 31,
+        "title": "Bunny.net CDN Re-integration Roadmap",
+        "description": "Implement comprehensive Bunny.net CDN integration with phased approach to safely add CDN functionality while maintaining stable foundation",
+        "details": "Phase 1: Foundation Setup - Create optional CDN module with environment toggles, CDN-aware image component, configuration flags. Phase 2: Gradual Integration - Image optimization first with smart fallbacks, health monitoring. Phase 3: Audio Integration - CDN support to audio proxy with streaming optimization. Phase 4: Advanced Features - Automated content upload, cache invalidation, geographic optimization. Key principles: Always optional, graceful degradation, feature flags, comprehensive fallbacks, monitoring and alerts.",
+        "testStrategy": "",
+        "status": "deferred",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Phase 1.1: Create Optional CDN Environment Module",
+            "description": "Build lib/bunny-cdn.ts with environment variable toggles for optional CDN usage",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 31
+          },
+          {
+            "id": 2,
+            "title": "Phase 1.2: Add CDN Environment Variables",
+            "description": "Configure Bunny.net API keys and zone settings as optional environment variables",
+            "details": "",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 31
+          },
+          {
+            "id": 3,
+            "title": "Phase 1.3: Enhance CDNImage Component",
+            "description": "Update CDNImage.tsx to optionally use CDN URLs with fallback to original URLs",
+            "details": "",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 31
+          },
+          {
+            "id": 4,
+            "title": "Phase 2.1: Implement Smart Fallback System",
+            "description": "Create CDN → Original URL → Placeholder fallback progression with error handling",
+            "details": "",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 31
+          },
+          {
+            "id": 5,
+            "title": "Phase 3.1: Add CDN Support to Audio Proxy",
+            "description": "Enhance proxy-audio route to support CDN-delivered audio with streaming optimization",
+            "details": "",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 31
+          },
+          {
+            "id": 6,
+            "title": "Phase 4.1: Create Content Upload Script",
+            "description": "Build automated script to sync audio and artwork content to Bunny.net storage",
+            "details": "",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 31
+          }
+        ]
+      },
+      {
+        "id": 32,
+        "title": "Fix Now Playing Navigation Bug",
+        "description": "Fix issue where clicking on the \"now playing\" element doesn't always navigate to the correct album. The now playing bar should consistently take users to the correct album page when clicked.",
+        "details": "Investigate and fix the navigation logic in the now playing component to ensure clicking always leads to the correct album page. This may involve checking the album ID mapping, routing logic, or state management issues.",
+        "testStrategy": "Test clicking on now playing bar with different albums to verify consistent navigation to correct album pages.",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 33,
+        "title": "Fix Main Page Album Navigation Bug",
+        "description": "Fix issue where clicking on albums from the main page doesn't always load the correct album. Album cards should consistently navigate to the correct album page when clicked.",
+        "details": "Investigate and fix the navigation logic for album cards on the main page to ensure clicking always leads to the correct album page. This may involve checking the album ID mapping, routing logic, or state management issues in the main page component.",
+        "testStrategy": "Test clicking on different album cards from the main page to verify consistent navigation to correct album pages.",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 34,
+        "title": "Fix NaN Duration Values in RSS Parsing",
+        "description": "Fix the issue where duration values are showing as \"NaN:NaN:NaN\" in the parsed feeds. The RSS parser needs better error handling for invalid duration values.",
+        "details": "The RSS parser in lib/rss-parser.ts has duration parsing logic that doesn't properly handle invalid duration values, resulting in \"NaN:NaN:NaN\" appearing in the parsed feeds. Need to add proper validation and fallback handling for malformed duration data.",
+        "testStrategy": "Test RSS parsing with feeds containing invalid duration values to ensure they default to \"0:00\" instead of \"NaN:NaN:NaN\".",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 35,
+        "title": "Fix Bottom Album Cut Off by Now Playing Bar",
+        "description": "Fix the layout issue where the bottom album on the main page is being cut off by the fixed now playing bar. Need to add proper bottom padding/margin to prevent content overlap.",
+        "details": "The fixed bottom now playing bar is overlapping with the last album on the main page, cutting off content. Need to add bottom padding or margin to the main content area to account for the height of the now playing bar.",
+        "testStrategy": "Test the main page layout to ensure the bottom album is fully visible and not cut off by the now playing bar, especially on different screen sizes.",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 36,
+        "title": "Fix Progress Bar Hover Preview Issue",
+        "description": "Fix the progress bar hover behavior where hovering over the progress bar fills the entire bar instead of showing the specific section being hovered over. The hover should preview the position without changing the actual playback position.",
+        "details": "The audio player progress bar hover functionality needs to be fixed so that hovering shows a preview of the position without filling the entire bar. This likely involves fixing the hover event handling and CSS styling for the progress bar component.",
+        "testStrategy": "Test hovering over different parts of the progress bar to ensure it shows the correct preview position without affecting the actual playback position or filling the entire bar.",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 37,
+        "title": "Fix Progress Bar Time Format Display",
+        "description": "Fix the progress bar time display to show proper HH:MM:SS format instead of just minutes. The time display should be consistent with standard audio player formatting.",
+        "details": "The progress bar time display is showing time in minutes format instead of the expected HH:MM:SS format. Need to fix the time formatting logic in the audio player component to display time properly.",
+        "testStrategy": "Test the progress bar time display to ensure it shows HH:MM:SS format correctly for tracks of different lengths, including tracks longer than 1 hour.",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 38,
+        "title": "Fix Album Artwork Not Showing on Mobile",
+        "description": "Fix the persistent issue where album artwork is not displaying properly on mobile devices. This appears to be a mobile-specific image loading or rendering problem that needs investigation and resolution.",
+        "details": "Album artwork is still not showing on mobile devices despite previous attempts to fix this issue. Need to investigate mobile-specific image loading, CORS handling, caching, or rendering issues that prevent album art from displaying on mobile browsers.",
+        "testStrategy": "Test album artwork display on various mobile devices and browsers to identify the specific cause and ensure images load properly across all mobile platforms.",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 39,
+        "title": "Add shuffle functionality to publisher pages",
+        "description": "Implement shuffle button in publisher detail pages using the same global shuffle logic as the main albums page",
+        "details": "Add shuffle functionality to publisher pages by importing useAudio hook, creating handleShuffle function, and updating ControlsBar component to include shuffle button with showShuffle=true and onShuffle handler",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 40,
+        "title": "Fix publisher page loading and display issues",
+        "description": "Fix publisher pages to properly display artist names and artwork instead of showing loading states and publisher IDs",
+        "details": "Fix publisher page loading states, add bitpunk.fm publisher mapping, improve publisher info display, and ensure proper artwork loading for publisher pages",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 41,
+        "title": "Add Bitpunk.fm RSS feeds to application",
+        "description": "Add four new RSS feeds from zine.bitpunk.fm to expand the music catalog",
+        "details": "Added spectral-hiding, poetry-on-tape, bitpunk-fm, and unwound feeds from zine.bitpunk.fm to feeds.json and parsed-feeds.json, improving feed parsing efficiency with incremental parsing scripts",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 42,
+        "title": "Investigate track artwork display in list view",
+        "description": "Investigate why track artwork is not displaying properly in list view despite being present in data",
+        "details": "Analyzed track artwork display issue in album detail pages, confirmed track images are present in parsed data and accessible via API, identified potential UI rendering or CSS issues with track image display in list view",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-07-29T00:50:20.824Z",
+      "updated": "2025-07-29T00:50:20.824Z",
+      "description": "Project StableKraft version 1.5 - Major milestone with 97.2% completion rate, human-readable publisher URLs, and comprehensive music platform functionality"
     }
   }
 }

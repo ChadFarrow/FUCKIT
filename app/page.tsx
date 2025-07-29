@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import AddRSSFeed from '@/components/AddRSSFeed';
 import AlbumCard from '@/components/AlbumCard';
 import CDNImage from '@/components/CDNImage';
 import { RSSAlbum } from '@/lib/rss-parser';
@@ -47,8 +46,6 @@ export default function HomePage() {
   const [albums, setAlbums] = useState<RSSAlbum[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loadingProgress, setLoadingProgress] = useState(0);
-  const [customFeeds, setCustomFeeds] = useState<string[]>([]);
-  const [isAddingFeed, setIsAddingFeed] = useState(false);
   const [totalFeedsCount, setTotalFeedsCount] = useState(0);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
@@ -110,7 +107,7 @@ export default function HomePage() {
     
     // Load all feeds at once for smooth experience
     devLog('🔄 Loading all feeds for smooth experience');
-    loadAlbumsData([], 'all');
+          loadAlbumsData('all');
   }, []); // Run only once on mount
 
 
@@ -125,49 +122,9 @@ export default function HomePage() {
     return () => clearTimeout(timer);
   }, [isClient]);
 
-  const handleAddFeed = async (feedUrl: string) => {
-    setIsAddingFeed(true);
-    try {
-      // First, save the feed permanently via API
-      const response = await fetch('/api/admin/feeds', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          url: feedUrl,
-          type: 'album'
-        }),
-      });
 
-      const data = await response.json();
-      
-      if (!data.success) {
-        throw new Error(data.error || 'Failed to save feed');
-      }
 
-      // Show success message
-      toast.success('RSS feed added successfully!');
-      
-      // Add to custom feeds for immediate loading
-      const newCustomFeeds = [...customFeeds, feedUrl];
-      setCustomFeeds(newCustomFeeds);
-      
-      // Reload with the new feed
-      await loadAlbumsData(newCustomFeeds);
-      
-      console.log('✅ RSS feed added and loaded:', feedUrl);
-    } catch (err) {
-      const errorMessage = getErrorMessage(err);
-      logger.error('Error adding RSS feed', err, { feedUrl });
-      setError(`Failed to add RSS feed: ${errorMessage}`);
-      toast.error(`Failed to add feed: ${errorMessage}`);
-    } finally {
-      setIsAddingFeed(false);
-    }
-  };
-
-  const loadAlbumsData = async (additionalFeeds: string[] = [], loadTier: 'core' | 'extended' | 'lowPriority' | 'all' = 'all') => {
+  const loadAlbumsData = async (loadTier: 'core' | 'extended' | 'lowPriority' | 'all' = 'all') => {
     verboseLog('🔄 loadAlbumsData called with loadTier:', loadTier);
     
     try {
@@ -614,38 +571,7 @@ export default function HomePage() {
               </Link>
             </div>
             
-            {/* Add RSS Feed Component */}
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold mb-4">Add RSS Feed</h3>
-              <AddRSSFeed onAddFeed={handleAddFeed} isLoading={isAddingFeed} />
-            </div>
-            
-            {/* Custom Feeds Display */}
-            {customFeeds.length > 0 && (
-              <div className="mb-8">
-                <h3 className="text-lg font-semibold mb-3 text-white">Custom RSS Feeds ({customFeeds.length})</h3>
-                <div className="space-y-2 max-h-60 overflow-y-auto">
-                  {customFeeds.map((feed, index) => (
-                    <div key={index} className="flex items-center justify-between bg-gray-800/50 rounded p-2">
-                      <span className="text-sm text-gray-300 truncate flex-1">{feed}</span>
-                      <button
-                        onClick={() => {
-                          const newCustomFeeds = customFeeds.filter((_, i) => i !== index);
-                          setCustomFeeds(newCustomFeeds);
-                          loadAlbumsData(newCustomFeeds);
-                        }}
-                        className="ml-2 text-red-400 hover:text-red-300 transition-colors"
-                        title="Remove feed"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+
 
             {/* Artists with Publisher Feeds */}
             {(() => {
@@ -747,7 +673,7 @@ export default function HomePage() {
               <h2 className="text-2xl font-semibold mb-4 text-red-400">Error Loading Albums</h2>
               <p className="text-gray-400">{error}</p>
               <button 
-                onClick={() => loadAlbumsData(customFeeds)}
+                onClick={() => loadAlbumsData('all')}
                 className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
                 Retry
