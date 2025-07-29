@@ -229,6 +229,19 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
+      // Bitpunk.fm domains
+      {
+        protocol: 'https',
+        hostname: 'files.bitpunk.fm',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.bitpunk.fm',
+        port: '',
+        pathname: '/**',
+      },
       // Anni Powell Music domain
       {
         protocol: 'https',
