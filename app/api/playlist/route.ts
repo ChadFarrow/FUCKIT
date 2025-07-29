@@ -113,6 +113,7 @@ export async function GET(request: NextRequest) {
                       feedId: feed.id,
                       globalTrackNumber: trackId - 1,
                       episodeTitle: episode.title,
+                      episodeNumber: parseInt(episodeNumber),
                       startTime: startTime,
                       endTime: endTime
                     })
@@ -126,11 +127,21 @@ export async function GET(request: NextRequest) {
         }
       }
       
-      // Shuffle tracks for variety
-      for (let i = musicTracks.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [musicTracks[i], musicTracks[j]] = [musicTracks[j], musicTracks[i]]
-      }
+      // Sort music tracks by episode number (ascending from episode 1)
+      musicTracks.sort((a, b) => {
+        // First sort by episode number
+        if (a.episodeNumber !== b.episodeNumber) {
+          return a.episodeNumber - b.episodeNumber;
+        }
+        // Then by start time within the same episode
+        return a.startTime - b.startTime;
+      });
+      
+      // Update track numbers after sorting
+      musicTracks.forEach((track, index) => {
+        track.trackNumber = index + 1;
+        track.globalTrackNumber = index + 1;
+      });
       
       // Return results
       if (format === 'json') {
