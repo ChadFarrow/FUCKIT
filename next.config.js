@@ -269,6 +269,13 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
+      // Nostr image hosting
+      {
+        protocol: 'https',
+        hostname: 'i.nostr.build',
+        port: '',
+        pathname: '/**',
+      },
     ],
     unoptimized: process.env.NODE_ENV === 'development', // Optimize in production
     formats: ['image/webp', 'image/avif'],
