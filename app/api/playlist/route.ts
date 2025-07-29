@@ -79,6 +79,7 @@ export async function GET(request: NextRequest) {
                     !chapter.title.includes('Episode') && 
                     !chapter.title.includes('episode') &&
                     !chapter.title.includes('Into The Doerfel-Verse') &&
+                    !chapter.title.includes('Doerfel-Jukebox') &&  // Filter out jukebox transition segments
                     chapter.title.trim() !== '' &&
                     chapter.startTime > 0
                   )
@@ -92,6 +93,12 @@ export async function GET(request: NextRequest) {
                     const startTime = Math.floor(chapter.startTime)
                     const endTime = nextChapter ? Math.floor(nextChapter.startTime) : Math.floor(chapter.startTime) + 180 // Default 3 min if no end
                     const duration = endTime - startTime
+                    
+                    // Skip tracks with invalid durations (0 seconds or negative)
+                    if (duration <= 0) {
+                      console.log(`⚠️ Skipping track "${chapter.title}" with invalid duration: ${duration}s`)
+                      continue;
+                    }
                     
                     // Format duration as MM:SS
                     const minutes = Math.floor(duration / 60)
