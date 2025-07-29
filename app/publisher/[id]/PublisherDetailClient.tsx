@@ -14,17 +14,30 @@ import { toast } from '@/components/Toast';
 
 interface PublisherDetailClientProps {
   publisherId: string;
+  initialData?: {
+    publisherInfo: any;
+    publisherItems: any[];
+    feedId: string;
+  } | null;
 }
 
 
-export default function PublisherDetailClient({ publisherId }: PublisherDetailClientProps) {
+export default function PublisherDetailClient({ publisherId, initialData }: PublisherDetailClientProps) {
   console.log('🎯 PublisherDetailClient component loaded with publisherId:', publisherId);
   
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(!initialData);
   const [albums, setAlbums] = useState<RSSAlbum[]>([]);
-  const [publisherItems, setPublisherItems] = useState<RSSPublisherItem[]>([]);
+  const [publisherItems, setPublisherItems] = useState<RSSPublisherItem[]>(initialData?.publisherItems || []);
   const [error, setError] = useState<string | null>(null);
-  const [publisherInfo, setPublisherInfo] = useState<{ title?: string; description?: string; artist?: string; coverArt?: string } | null>(null);
+  const [publisherInfo, setPublisherInfo] = useState<{ title?: string; description?: string; artist?: string; coverArt?: string; avatarArt?: string } | null>(
+    initialData?.publisherInfo ? {
+      title: initialData.publisherInfo.artist || initialData.publisherInfo.title,
+      description: initialData.publisherInfo.description,
+      artist: initialData.publisherInfo.artist,
+      coverArt: initialData.publisherInfo.coverArt,
+      avatarArt: initialData.publisherInfo.avatarArt || initialData.publisherInfo.coverArt
+    } : null
+  );
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [albumsLoading, setAlbumsLoading] = useState(false);
   const [viewType, setViewType] = useState<ViewType>('grid');
@@ -52,6 +65,38 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
   useEffect(() => {
     console.log('🎯 PublisherDetailClient useEffect triggered');
     
+    // If we have initial data, use it and convert publisher items to albums
+    if (initialData) {
+      console.log('📋 Using initial data for publisher');
+      
+      // Convert publisher items to album format for display
+      if (initialData.publisherItems && initialData.publisherItems.length > 0) {
+        const albumsFromItems = initialData.publisherItems.map((item: any) => ({
+          id: item.id || `album-${Math.random()}`,
+          title: item.title,
+          artist: item.artist,
+          description: item.description,
+          coverArt: item.coverArt,
+          tracks: Array(item.trackCount).fill(null).map((_, i) => ({
+            id: `track-${i}`,
+            title: `${item.title} - Track ${i + 1}`,
+            duration: 0,
+            url: item.link
+          })),
+          releaseDate: item.releaseDate,
+          link: item.link,
+          feedUrl: item.link
+        }));
+        
+        console.log(`🏢 Setting ${albumsFromItems.length} albums from initial data`);
+        setAlbums(albumsFromItems);
+      }
+      
+      // Set loading to false since we have data
+      setIsLoading(false);
+      return;
+    }
+    
     const loadPublisher = async () => {
       try {
         setIsLoading(true);
@@ -77,22 +122,23 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
           title: publisherInfo.name || `Artist: ${publisherId}`,
           description: 'Independent artist and music creator',
           artist: publisherInfo.name,
-          coverArt: undefined // Will be set from publisher feed data if available
+          coverArt: undefined, // Will be set from publisher feed data if available
+          avatarArt: undefined // Will be set from latest remote item if available
         });
         
         // Stop loading immediately since we have publisher info
         setIsLoading(false);
 
-        // Load publisher feed data to get the publisher's own image
+        // Load publisher feed data to get the publisher's own image and items
         console.log(`🏢 Loading publisher feed data...`);
         
         try {
-          // Load parsed feeds data to get publisher feed information
-          const feedsResponse = await fetch('/api/feeds');
+          // Load parsed feeds data directly to get publisher feed information
+          const parsedFeedsResponse = await fetch('/api/parsed-feeds');
           
-          if (feedsResponse.ok) {
-            const feedsData = await feedsResponse.json();
-            const feeds = feedsData.feeds || [];
+          if (parsedFeedsResponse.ok) {
+            const parsedFeedsData = await parsedFeedsResponse.json();
+            const feeds = parsedFeedsData.feeds || [];
             
             // Find the publisher feed for this publisher
             const publisherFeed = feeds.find((feed: any) => {
@@ -113,12 +159,59 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
               const feedInfo = publisherFeed.parsedData.publisherInfo;
               console.log(`🏢 Publisher feed info:`, feedInfo);
               
+              // Find the last remote item's artwork for avatar
+              let lastItemAvatarArt = null;
+              if (feedInfo.remoteItems && feedInfo.remoteItems.length > 0) {
+                const lastItem = feedInfo.remoteItems[feedInfo.remoteItems.length - 1]; // Last item
+                console.log(`🎨 Last remote item:`, lastItem);
+                
+                // Find the corresponding album in our parsed data
+                const matchingFeed = feeds.find((feed: any) => 
+                  feed.originalUrl === lastItem.feedUrl || 
+                  feed.parsedData?.album?.feedGuid === lastItem.feedGuid
+                );
+                
+                if (matchingFeed?.parsedData?.album?.coverArt) {
+                  lastItemAvatarArt = matchingFeed.parsedData.album.coverArt;
+                  console.log(`🎨 Found last item artwork:`, lastItemAvatarArt);
+                }
+              }
+              
               setPublisherInfo({
                 title: feedInfo.artist || feedInfo.title || publisherInfo.name || `Artist: ${publisherId}`,
                 description: feedInfo.description || 'Independent artist and music creator',
                 artist: feedInfo.artist || publisherInfo.name,
-                coverArt: feedInfo.coverArt // This is the publisher's own image
+                coverArt: feedInfo.coverArt, // This is the publisher's main image for background
+                avatarArt: lastItemAvatarArt || feedInfo.coverArt // Use last item's art for avatar, fallback to publisher art
               });
+            }
+            
+            // Extract publisher items from the feed data
+            if (publisherFeed?.parsedData?.publisherItems) {
+              const items = publisherFeed.parsedData.publisherItems;
+              console.log(`🏢 Found ${items.length} publisher items`);
+              
+              // Convert publisher items to album format for display
+              const albumsFromItems = items.map((item: any) => ({
+                id: item.id || `album-${Math.random()}`,
+                title: item.title,
+                artist: item.artist,
+                description: item.description,
+                coverArt: item.coverArt,
+                tracks: Array(item.trackCount).fill(null).map((_, i) => ({
+                  id: `track-${i}`,
+                  title: `${item.title} - Track ${i + 1}`,
+                  duration: 0,
+                  url: item.link
+                })),
+                releaseDate: item.releaseDate,
+                link: item.link,
+                feedUrl: item.link
+              }));
+              
+              console.log(`🏢 Setting ${albumsFromItems.length} albums from publisher items`);
+              setAlbums(albumsFromItems);
+              setPublisherItems(items);
             }
           }
         } catch (feedError) {
@@ -177,8 +270,15 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
             title: albumPublisherInfo.artist || albumPublisherInfo.title || prev?.title,
             description: albumPublisherInfo.description || prev?.description,
             artist: albumPublisherInfo.artist || prev?.artist,
-            coverArt: prev?.coverArt || albumPublisherInfo.coverArt // Keep existing coverArt if we have it from publisher feed
+            coverArt: prev?.coverArt || albumPublisherInfo.coverArt, // Keep existing coverArt if we have it from publisher feed
+            avatarArt: prev?.avatarArt || prev?.coverArt || albumPublisherInfo.coverArt // Keep existing avatarArt, fallback to coverArt
           }));
+          
+          // If we don't have albums from publisher items, use the album data
+          if (!albums.length) {
+            console.log(`🏢 Setting ${publisherAlbums.length} publisher albums from album data`);
+            setAlbums(publisherAlbums);
+          }
         }
         
         // Stop loading state early so page shows content
@@ -188,17 +288,15 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
         setAlbumsLoading(true);
         
         try {
-          // Set the albums from pre-parsed data
-          console.log(`🏢 Setting ${publisherAlbums.length} publisher albums from pre-parsed data`);
-          setAlbums(publisherAlbums);
-          
           // For publisher items, we can use the albums data
-          setPublisherItems(publisherAlbums.map((album: any) => ({
-            title: album.title,
-            description: album.description || album.summary,
-            url: album.feedUrl,
-            image: album.coverArt
-          })));
+          if (!publisherItems.length) {
+            setPublisherItems(publisherAlbums.map((album: any) => ({
+              title: album.title,
+              description: album.description || album.summary,
+              url: album.feedUrl,
+              image: album.coverArt
+            })));
+          }
           
         } catch (albumError) {
           console.error(`❌ Error loading publisher albums:`, albumError);
@@ -217,7 +315,7 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
 
     loadPublisher();
     
-  }, [publisherId]);
+  }, [publisherId, initialData]);
 
   // Sort albums: Pin "Stay Awhile" first, then "Bloodshot Lies", then by artist/title
   const sortAlbums = (albums: RSSAlbum[]) => {
@@ -423,7 +521,7 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
     <div className="min-h-screen text-white relative overflow-hidden">
       {/* Enhanced Background */}
       {publisherInfo?.coverArt ? (
-        <div className="fixed inset-0 z-0">
+        <div className="fixed inset-0">
           <CDNImage 
             src={getAlbumArtworkUrl(publisherInfo.coverArt, 'large')} 
             alt={publisherInfo.title || 'Publisher background'}
@@ -452,11 +550,22 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
         {/* Hero Section */}
         <div className="container mx-auto px-4 pb-8">
           <div className="flex flex-col lg:flex-row items-start lg:items-end gap-8 mb-12">
-            {/* Artist Avatar - Use newest release artwork only */}
+            {/* Artist Avatar - Use latest item artwork first, then publisher artwork as fallback */}
             <div className="flex-shrink-0">
-              {albums.length > 0 ? (
+              {publisherInfo?.avatarArt ? (
+                // Use latest item's artwork for avatar
+                <div className="w-48 h-48 rounded-2xl overflow-hidden shadow-2xl ring-4 ring-white/20">
+                  <CDNImage 
+                    src={getAlbumArtworkUrl(publisherInfo.avatarArt, 'large')} 
+                    alt={publisherInfo.title || 'Artist'}
+                    width={192}
+                    height={192}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ) : albums.length > 0 ? (
+                // Fallback to newest release artwork
                 (() => {
-                  // Sort albums by date to get the newest release for the avatar
                   const sortedByDate = [...albums].sort((a, b) => {
                     const dateA = new Date(a.releaseDate || 0);
                     const dateB = new Date(b.releaseDate || 0);

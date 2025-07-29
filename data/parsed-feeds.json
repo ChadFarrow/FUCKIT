@@ -9674,9 +9674,120 @@
       "addedAt": "2025-07-27T02:35:00.000Z",
       "lastUpdated": "2025-07-27T02:35:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-28T23:52:56.816Z",
+      "lastParsed": "2025-07-29T21:54:04.669Z",
       "parsedData": {
-        "publisherItems": []
+        "publisherItems": [
+          {
+            "id": "wavlake-com-feed-music-ef800a88-9a1c-4f8e-a7c5-f83d7d9b1c87",
+            "title": "Chasing Waterfalls",
+            "artist": "My Friend Jimi",
+            "coverArt": "https://d12wklypp119aj.cloudfront.net/image/ef800a88-9a1c-4f8e-a7c5-f83d7d9b1c87.jpg",
+            "trackCount": 1,
+            "releaseDate": "Tue, 28 Jan 2025 14:34:54 GMT",
+            "link": "https://wavlake.com/my-friend-jimi",
+            "description": "My Friend Jimi"
+          },
+          {
+            "id": "my-friend-jimi-b220b396-0ebe-4760-8294-4bb27e06eabf",
+            "title": "Real Me",
+            "artist": "My Friend Jimi",
+            "coverArt": "https://d12wklypp119aj.cloudfront.net/image/b220b396-0ebe-4760-8294-4bb27e06eabf.jpg",
+            "trackCount": 1,
+            "releaseDate": "2025-07-29T21:53:36.194Z",
+            "link": "https://wavlake.com/feed/music/b220b396-0ebe-4760-8294-4bb27e06eabf",
+            "description": "My Friend Jimi"
+          },
+          {
+            "id": "my-friend-jimi-e3f0086f-5ee2-4ead-ba9d-78a9a29acac8",
+            "title": "Lonely Girl",
+            "artist": "My Friend Jimi",
+            "coverArt": "https://d12wklypp119aj.cloudfront.net/image/e3f0086f-5ee2-4ead-ba9d-78a9a29acac8.jpg",
+            "trackCount": 1,
+            "releaseDate": "2025-07-29T21:53:37.340Z",
+            "link": "https://wavlake.com/feed/music/e3f0086f-5ee2-4ead-ba9d-78a9a29acac8",
+            "description": "Lonely Girl."
+          },
+          {
+            "id": "my-friend-jimi-6c539346-f58e-4480-9276-32da31368f8e",
+            "title": "Just One Sip",
+            "artist": "My Friend Jimi",
+            "coverArt": "https://d12wklypp119aj.cloudfront.net/image/6c539346-f58e-4480-9276-32da31368f8e.jpg",
+            "trackCount": 1,
+            "releaseDate": "2025-07-29T21:53:38.502Z",
+            "link": "https://wavlake.com/feed/music/6c539346-f58e-4480-9276-32da31368f8e",
+            "description": "Indie Pop / Rock song out of Perth Western Australia"
+          },
+          {
+            "id": "my-friend-jimi-76407adf-773c-4eb2-b5e2-8aef137d781f",
+            "title": "Weather Man",
+            "artist": "My Friend Jimi",
+            "coverArt": "https://d12wklypp119aj.cloudfront.net/image/76407adf-773c-4eb2-b5e2-8aef137d781f.jpg",
+            "trackCount": 1,
+            "releaseDate": "2025-07-29T21:53:39.663Z",
+            "link": "https://wavlake.com/feed/music/76407adf-773c-4eb2-b5e2-8aef137d781f",
+            "description": "My Friend ever song I published"
+          },
+          {
+            "id": "my-friend-jimi-6e236029-d72e-48a4-8d0b-aecf78d39e87",
+            "title": "Falling Out of Love",
+            "artist": "My Friend Jimi",
+            "coverArt": "https://d12wklypp119aj.cloudfront.net/image/6e236029-d72e-48a4-8d0b-aecf78d39e87.jpg",
+            "trackCount": 1,
+            "releaseDate": "2025-07-29T21:53:40.808Z",
+            "link": "https://wavlake.com/feed/music/6e236029-d72e-48a4-8d0b-aecf78d39e87",
+            "description": "This is a bit of a sad one."
+          },
+          {
+            "id": "my-friend-jimi-b6d8f17c-f448-4085-8ce2-8b247eb26e63",
+            "title": "Bullet Train",
+            "artist": "My Friend Jimi",
+            "coverArt": "https://d12wklypp119aj.cloudfront.net/image/b6d8f17c-f448-4085-8ce2-8b247eb26e63.jpg",
+            "trackCount": 1,
+            "releaseDate": "2025-07-29T21:53:42.965Z",
+            "link": "https://wavlake.com/feed/music/b6d8f17c-f448-4085-8ce2-8b247eb26e63",
+            "description": "My Friend Jimi"
+          },
+          {
+            "id": "my-friend-jimi-2b5b26a9-3b7a-4f78-9db2-424d94b182d8",
+            "title": "Endless Deja Vu",
+            "artist": "My Friend Jimi",
+            "coverArt": "https://d12wklypp119aj.cloudfront.net/image/2b5b26a9-3b7a-4f78-9db2-424d94b182d8.jpg",
+            "trackCount": 1,
+            "releaseDate": "2025-07-29T21:53:46.148Z",
+            "link": "https://wavlake.com/feed/music/2b5b26a9-3b7a-4f78-9db2-424d94b182d8",
+            "description": "Indie Rock Artist from Western Australia"
+          },
+          {
+            "id": "my-friend-jimi-ed3d6bdf-011b-4416-ab87-591672c07145",
+            "title": "West Coast Drive",
+            "artist": "My Friend Jimi",
+            "coverArt": "https://d12wklypp119aj.cloudfront.net/image/ed3d6bdf-011b-4416-ab87-591672c07145.jpg",
+            "trackCount": 1,
+            "releaseDate": "2025-07-29T21:53:47.299Z",
+            "link": "https://wavlake.com/feed/music/ed3d6bdf-011b-4416-ab87-591672c07145",
+            "description": "My Friend Jimi"
+          },
+          {
+            "id": "my-friend-jimi-3d8c7279-6aa6-41e7-be1c-2680e57af6c8",
+            "title": "Mrs Valentine",
+            "artist": "My Friend Jimi",
+            "coverArt": "https://d12wklypp119aj.cloudfront.net/image/3d8c7279-6aa6-41e7-be1c-2680e57af6c8.jpg",
+            "trackCount": 1,
+            "releaseDate": "2025-07-29T21:53:48.449Z",
+            "link": "https://wavlake.com/feed/music/3d8c7279-6aa6-41e7-be1c-2680e57af6c8",
+            "description": "My Friend Jimi"
+          },
+          {
+            "id": "my-friend-jimi-86061a0e-52df-4cad-8c6d-cd1e19ca1e63",
+            "title": "Manic Tendencies",
+            "artist": "My Friend Jimi",
+            "coverArt": "https://d12wklypp119aj.cloudfront.net/image/86061a0e-52df-4cad-8c6d-cd1e19ca1e63.jpg",
+            "trackCount": 1,
+            "releaseDate": "2025-07-29T21:53:49.609Z",
+            "link": "https://wavlake.com/feed/music/86061a0e-52df-4cad-8c6d-cd1e19ca1e63",
+            "description": "Manic Tendencies"
+          }
+        ]
       }
     },
     {
@@ -11776,6 +11887,752 @@
         }
       },
       "trackCount": 14
+    },
+    {
+      "id": "my-friend-jimi-b220b396-0ebe-4760-8294-4bb27e06eabf",
+      "originalUrl": "https://wavlake.com/feed/music/b220b396-0ebe-4760-8294-4bb27e06eabf",
+      "type": "album",
+      "title": "My Friend Jimi Album - b220b396",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T21:52:51.982Z",
+      "lastUpdated": "2025-07-29T21:52:51.983Z",
+      "parseStatus": "success",
+      "lastParsed": "2025-07-29T21:53:36.195Z",
+      "parsedData": {
+        "album": {
+          "title": "Real Me",
+          "artist": "My Friend Jimi",
+          "description": "My Friend Jimi",
+          "coverArt": "https://d12wklypp119aj.cloudfront.net/image/b220b396-0ebe-4760-8294-4bb27e06eabf.jpg",
+          "tracks": [
+            {
+              "title": "Real Me",
+              "duration": "0:00",
+              "url": "https://op3.dev/e,pg=2180c5d7-06bb-524d-a12d-3ea30590c697/https://d12wklypp119aj.cloudfront.net/track/4f596f59-4dc3-4eb0-8ea7-a4bdf9d13585.mp3",
+              "trackNumber": 1,
+              "explicit": false
+            }
+          ],
+          "releaseDate": "2025-07-29T21:53:36.194Z",
+          "link": "https://wavlake.com/feed/music/b220b396-0ebe-4760-8294-4bb27e06eabf",
+          "summary": "My Friend Jimi",
+          "explicit": false,
+          "owner": {
+            "name": "Wavlake",
+            "email": "contact@wavlake.com"
+          },
+          "publisher": {
+            "feedGuid": "0ea699be-e985-4aa1-8c00-43542e4b9e0d",
+            "feedUrl": "https://wavlake.com/feed/artist/0ea699be-e985-4aa1-8c00-43542e4b9e0d",
+            "medium": "publisher"
+          }
+        }
+      },
+      "trackCount": 1
+    },
+    {
+      "id": "my-friend-jimi-e3f0086f-5ee2-4ead-ba9d-78a9a29acac8",
+      "originalUrl": "https://wavlake.com/feed/music/e3f0086f-5ee2-4ead-ba9d-78a9a29acac8",
+      "type": "album",
+      "title": "My Friend Jimi Album - e3f0086f",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T21:52:51.983Z",
+      "lastUpdated": "2025-07-29T21:52:51.983Z",
+      "parseStatus": "success",
+      "lastParsed": "2025-07-29T21:53:37.340Z",
+      "parsedData": {
+        "album": {
+          "title": "Lonely Girl",
+          "artist": "My Friend Jimi",
+          "description": "Lonely Girl.",
+          "coverArt": "https://d12wklypp119aj.cloudfront.net/image/e3f0086f-5ee2-4ead-ba9d-78a9a29acac8.jpg",
+          "tracks": [
+            {
+              "title": "Lonely Girl",
+              "duration": "0:00",
+              "url": "https://op3.dev/e,pg=d0a31be9-4ce2-524d-9bea-b5933ef8edbe/https://d12wklypp119aj.cloudfront.net/track/2f1cf2aa-8d32-44f0-b74d-c43fe8ce0290.mp3",
+              "trackNumber": 1,
+              "explicit": false
+            }
+          ],
+          "releaseDate": "2025-07-29T21:53:37.340Z",
+          "link": "https://wavlake.com/feed/music/e3f0086f-5ee2-4ead-ba9d-78a9a29acac8",
+          "summary": "Lonely Girl.",
+          "explicit": false,
+          "owner": {
+            "name": "Wavlake",
+            "email": "contact@wavlake.com"
+          },
+          "publisher": {
+            "feedGuid": "0ea699be-e985-4aa1-8c00-43542e4b9e0d",
+            "feedUrl": "https://wavlake.com/feed/artist/0ea699be-e985-4aa1-8c00-43542e4b9e0d",
+            "medium": "publisher"
+          }
+        }
+      },
+      "trackCount": 1
+    },
+    {
+      "id": "my-friend-jimi-6c539346-f58e-4480-9276-32da31368f8e",
+      "originalUrl": "https://wavlake.com/feed/music/6c539346-f58e-4480-9276-32da31368f8e",
+      "type": "album",
+      "title": "My Friend Jimi Album - 6c539346",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T21:52:51.983Z",
+      "lastUpdated": "2025-07-29T21:52:51.983Z",
+      "parseStatus": "success",
+      "lastParsed": "2025-07-29T21:53:38.502Z",
+      "parsedData": {
+        "album": {
+          "title": "Just One Sip",
+          "artist": "My Friend Jimi",
+          "description": "Indie Pop / Rock song out of Perth Western Australia",
+          "coverArt": "https://d12wklypp119aj.cloudfront.net/image/6c539346-f58e-4480-9276-32da31368f8e.jpg",
+          "tracks": [
+            {
+              "title": "Just One Sip",
+              "duration": "0:00",
+              "url": "https://op3.dev/e,pg=de36f509-6b73-55e6-9e81-b2a695ed7952/https://d12wklypp119aj.cloudfront.net/track/a8664b7d-f8a9-4117-81de-30fd14ff72d7.mp3",
+              "trackNumber": 1,
+              "explicit": false
+            }
+          ],
+          "releaseDate": "2025-07-29T21:53:38.502Z",
+          "link": "https://wavlake.com/feed/music/6c539346-f58e-4480-9276-32da31368f8e",
+          "summary": "Indie Pop / Rock song out of Perth Western Australia",
+          "explicit": false,
+          "owner": {
+            "name": "Wavlake",
+            "email": "contact@wavlake.com"
+          },
+          "publisher": {
+            "feedGuid": "0ea699be-e985-4aa1-8c00-43542e4b9e0d",
+            "feedUrl": "https://wavlake.com/feed/artist/0ea699be-e985-4aa1-8c00-43542e4b9e0d",
+            "medium": "publisher"
+          }
+        }
+      },
+      "trackCount": 1
+    },
+    {
+      "id": "my-friend-jimi-76407adf-773c-4eb2-b5e2-8aef137d781f",
+      "originalUrl": "https://wavlake.com/feed/music/76407adf-773c-4eb2-b5e2-8aef137d781f",
+      "type": "album",
+      "title": "My Friend Jimi Album - 76407adf",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T21:52:51.983Z",
+      "lastUpdated": "2025-07-29T21:52:51.983Z",
+      "parseStatus": "success",
+      "lastParsed": "2025-07-29T21:53:39.663Z",
+      "parsedData": {
+        "album": {
+          "title": "Weather Man",
+          "artist": "My Friend Jimi",
+          "description": "My Friend ever song I published",
+          "coverArt": "https://d12wklypp119aj.cloudfront.net/image/76407adf-773c-4eb2-b5e2-8aef137d781f.jpg",
+          "tracks": [
+            {
+              "title": "Weather Man",
+              "duration": "0:00",
+              "url": "https://op3.dev/e,pg=78771e44-95b0-5f9b-93c7-a3dda7d41522/https://d12wklypp119aj.cloudfront.net/track/e0cb2750-1763-470c-8ebc-8098b6448b55.mp3",
+              "trackNumber": 1,
+              "explicit": false
+            }
+          ],
+          "releaseDate": "2025-07-29T21:53:39.663Z",
+          "link": "https://wavlake.com/feed/music/76407adf-773c-4eb2-b5e2-8aef137d781f",
+          "summary": "My Friend ever song I published",
+          "explicit": false,
+          "owner": {
+            "name": "Wavlake",
+            "email": "contact@wavlake.com"
+          },
+          "publisher": {
+            "feedGuid": "0ea699be-e985-4aa1-8c00-43542e4b9e0d",
+            "feedUrl": "https://wavlake.com/feed/artist/0ea699be-e985-4aa1-8c00-43542e4b9e0d",
+            "medium": "publisher"
+          }
+        }
+      },
+      "trackCount": 1
+    },
+    {
+      "id": "my-friend-jimi-6e236029-d72e-48a4-8d0b-aecf78d39e87",
+      "originalUrl": "https://wavlake.com/feed/music/6e236029-d72e-48a4-8d0b-aecf78d39e87",
+      "type": "album",
+      "title": "My Friend Jimi Album - 6e236029",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T21:52:51.983Z",
+      "lastUpdated": "2025-07-29T21:52:51.983Z",
+      "parseStatus": "success",
+      "lastParsed": "2025-07-29T21:53:40.809Z",
+      "parsedData": {
+        "album": {
+          "title": "Falling Out of Love",
+          "artist": "My Friend Jimi",
+          "description": "This is a bit of a sad one.",
+          "coverArt": "https://d12wklypp119aj.cloudfront.net/image/6e236029-d72e-48a4-8d0b-aecf78d39e87.jpg",
+          "tracks": [
+            {
+              "title": "Falling Out of Love",
+              "duration": "0:00",
+              "url": "https://op3.dev/e,pg=629f4a80-9fc3-59af-9f40-f1e63b33b5ec/https://d12wklypp119aj.cloudfront.net/track/cbc64e83-b981-486f-9643-31605dfda6b8.mp3",
+              "trackNumber": 1,
+              "explicit": false
+            }
+          ],
+          "releaseDate": "2025-07-29T21:53:40.808Z",
+          "link": "https://wavlake.com/feed/music/6e236029-d72e-48a4-8d0b-aecf78d39e87",
+          "summary": "This is a bit of a sad one.",
+          "explicit": false,
+          "owner": {
+            "name": "Wavlake",
+            "email": "contact@wavlake.com"
+          },
+          "publisher": {
+            "feedGuid": "0ea699be-e985-4aa1-8c00-43542e4b9e0d",
+            "feedUrl": "https://wavlake.com/feed/artist/0ea699be-e985-4aa1-8c00-43542e4b9e0d",
+            "medium": "publisher"
+          }
+        }
+      },
+      "trackCount": 1
+    },
+    {
+      "id": "my-friend-jimi-b6d8f17c-f448-4085-8ce2-8b247eb26e63",
+      "originalUrl": "https://wavlake.com/feed/music/b6d8f17c-f448-4085-8ce2-8b247eb26e63",
+      "type": "album",
+      "title": "My Friend Jimi Album - b6d8f17c",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T21:52:51.983Z",
+      "lastUpdated": "2025-07-29T21:52:51.983Z",
+      "parseStatus": "success",
+      "lastParsed": "2025-07-29T21:53:42.965Z",
+      "parsedData": {
+        "album": {
+          "title": "Bullet Train",
+          "artist": "My Friend Jimi",
+          "description": "My Friend Jimi",
+          "coverArt": "https://d12wklypp119aj.cloudfront.net/image/b6d8f17c-f448-4085-8ce2-8b247eb26e63.jpg",
+          "tracks": [
+            {
+              "title": "Bullet Train",
+              "duration": "0:00",
+              "url": "https://op3.dev/e,pg=999c4870-396c-5a6b-b22e-4c05ee46127d/https://d12wklypp119aj.cloudfront.net/track/3f239db2-6d3c-4164-86c0-92c84f5caafa.mp3",
+              "trackNumber": 1,
+              "explicit": false
+            }
+          ],
+          "releaseDate": "2025-07-29T21:53:42.965Z",
+          "link": "https://wavlake.com/feed/music/b6d8f17c-f448-4085-8ce2-8b247eb26e63",
+          "summary": "My Friend Jimi",
+          "explicit": false,
+          "owner": {
+            "name": "Wavlake",
+            "email": "contact@wavlake.com"
+          },
+          "publisher": {
+            "feedGuid": "0ea699be-e985-4aa1-8c00-43542e4b9e0d",
+            "feedUrl": "https://wavlake.com/feed/artist/0ea699be-e985-4aa1-8c00-43542e4b9e0d",
+            "medium": "publisher"
+          }
+        }
+      },
+      "trackCount": 1
+    },
+    {
+      "id": "my-friend-jimi-2b5b26a9-3b7a-4f78-9db2-424d94b182d8",
+      "originalUrl": "https://wavlake.com/feed/music/2b5b26a9-3b7a-4f78-9db2-424d94b182d8",
+      "type": "album",
+      "title": "My Friend Jimi Album - 2b5b26a9",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T21:52:51.983Z",
+      "lastUpdated": "2025-07-29T21:52:51.983Z",
+      "parseStatus": "success",
+      "lastParsed": "2025-07-29T21:53:46.148Z",
+      "parsedData": {
+        "album": {
+          "title": "Endless Deja Vu",
+          "artist": "My Friend Jimi",
+          "description": "Indie Rock Artist from Western Australia",
+          "coverArt": "https://d12wklypp119aj.cloudfront.net/image/2b5b26a9-3b7a-4f78-9db2-424d94b182d8.jpg",
+          "tracks": [
+            {
+              "title": "Endless Deja Vu",
+              "duration": "0:00",
+              "url": "https://op3.dev/e,pg=092e8cd8-6f44-5189-b574-9c0a5881b334/https://d12wklypp119aj.cloudfront.net/track/35e81e15-6820-4f83-9a3d-4ef2cf0da14b.mp3",
+              "trackNumber": 1,
+              "explicit": false
+            }
+          ],
+          "releaseDate": "2025-07-29T21:53:46.148Z",
+          "link": "https://wavlake.com/feed/music/2b5b26a9-3b7a-4f78-9db2-424d94b182d8",
+          "summary": "Indie Rock Artist from Western Australia",
+          "explicit": false,
+          "owner": {
+            "name": "Wavlake",
+            "email": "contact@wavlake.com"
+          },
+          "publisher": {
+            "feedGuid": "0ea699be-e985-4aa1-8c00-43542e4b9e0d",
+            "feedUrl": "https://wavlake.com/feed/artist/0ea699be-e985-4aa1-8c00-43542e4b9e0d",
+            "medium": "publisher"
+          }
+        }
+      },
+      "trackCount": 1
+    },
+    {
+      "id": "my-friend-jimi-ed3d6bdf-011b-4416-ab87-591672c07145",
+      "originalUrl": "https://wavlake.com/feed/music/ed3d6bdf-011b-4416-ab87-591672c07145",
+      "type": "album",
+      "title": "My Friend Jimi Album - ed3d6bdf",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T21:52:51.983Z",
+      "lastUpdated": "2025-07-29T21:52:51.983Z",
+      "parseStatus": "success",
+      "lastParsed": "2025-07-29T21:53:47.299Z",
+      "parsedData": {
+        "album": {
+          "title": "West Coast Drive",
+          "artist": "My Friend Jimi",
+          "description": "My Friend Jimi",
+          "coverArt": "https://d12wklypp119aj.cloudfront.net/image/ed3d6bdf-011b-4416-ab87-591672c07145.jpg",
+          "tracks": [
+            {
+              "title": "West Coast Drive",
+              "duration": "0:00",
+              "url": "https://op3.dev/e,pg=0ca05681-c035-5e50-b538-6e42328f0dfd/https://d12wklypp119aj.cloudfront.net/track/454d3146-049c-49b1-b25e-c6551c083265.mp3",
+              "trackNumber": 1,
+              "explicit": false
+            }
+          ],
+          "releaseDate": "2025-07-29T21:53:47.299Z",
+          "link": "https://wavlake.com/feed/music/ed3d6bdf-011b-4416-ab87-591672c07145",
+          "summary": "My Friend Jimi",
+          "explicit": false,
+          "owner": {
+            "name": "Wavlake",
+            "email": "contact@wavlake.com"
+          },
+          "publisher": {
+            "feedGuid": "0ea699be-e985-4aa1-8c00-43542e4b9e0d",
+            "feedUrl": "https://wavlake.com/feed/artist/0ea699be-e985-4aa1-8c00-43542e4b9e0d",
+            "medium": "publisher"
+          }
+        }
+      },
+      "trackCount": 1
+    },
+    {
+      "id": "my-friend-jimi-3d8c7279-6aa6-41e7-be1c-2680e57af6c8",
+      "originalUrl": "https://wavlake.com/feed/music/3d8c7279-6aa6-41e7-be1c-2680e57af6c8",
+      "type": "album",
+      "title": "My Friend Jimi Album - 3d8c7279",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T21:52:51.983Z",
+      "lastUpdated": "2025-07-29T21:52:51.983Z",
+      "parseStatus": "success",
+      "lastParsed": "2025-07-29T21:53:48.449Z",
+      "parsedData": {
+        "album": {
+          "title": "Mrs Valentine",
+          "artist": "My Friend Jimi",
+          "description": "My Friend Jimi",
+          "coverArt": "https://d12wklypp119aj.cloudfront.net/image/3d8c7279-6aa6-41e7-be1c-2680e57af6c8.jpg",
+          "tracks": [
+            {
+              "title": "Mrs Valentine",
+              "duration": "0:00",
+              "url": "https://op3.dev/e,pg=85e076c0-d4e3-5ae4-9586-0ab862dadf64/https://d12wklypp119aj.cloudfront.net/track/8e175c89-437c-4543-ae0a-aba553da0e05.mp3",
+              "trackNumber": 1,
+              "explicit": false
+            }
+          ],
+          "releaseDate": "2025-07-29T21:53:48.449Z",
+          "link": "https://wavlake.com/feed/music/3d8c7279-6aa6-41e7-be1c-2680e57af6c8",
+          "summary": "My Friend Jimi",
+          "explicit": false,
+          "owner": {
+            "name": "Wavlake",
+            "email": "contact@wavlake.com"
+          },
+          "publisher": {
+            "feedGuid": "0ea699be-e985-4aa1-8c00-43542e4b9e0d",
+            "feedUrl": "https://wavlake.com/feed/artist/0ea699be-e985-4aa1-8c00-43542e4b9e0d",
+            "medium": "publisher"
+          }
+        }
+      },
+      "trackCount": 1
+    },
+    {
+      "id": "my-friend-jimi-86061a0e-52df-4cad-8c6d-cd1e19ca1e63",
+      "originalUrl": "https://wavlake.com/feed/music/86061a0e-52df-4cad-8c6d-cd1e19ca1e63",
+      "type": "album",
+      "title": "My Friend Jimi Album - 86061a0e",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T21:52:51.983Z",
+      "lastUpdated": "2025-07-29T21:52:51.983Z",
+      "parseStatus": "success",
+      "lastParsed": "2025-07-29T21:53:49.609Z",
+      "parsedData": {
+        "album": {
+          "title": "Manic Tendencies",
+          "artist": "My Friend Jimi",
+          "description": "Manic Tendencies",
+          "coverArt": "https://d12wklypp119aj.cloudfront.net/image/86061a0e-52df-4cad-8c6d-cd1e19ca1e63.jpg",
+          "tracks": [
+            {
+              "title": "Manic Tendencies",
+              "duration": "0:00",
+              "url": "https://op3.dev/e,pg=6fda2d81-0226-5a78-81ff-6752f8b8033f/https://d12wklypp119aj.cloudfront.net/track/fa64530a-706d-4f39-bbe3-981063b9b5ff.mp3",
+              "trackNumber": 1,
+              "explicit": false
+            }
+          ],
+          "releaseDate": "2025-07-29T21:53:49.609Z",
+          "link": "https://wavlake.com/feed/music/86061a0e-52df-4cad-8c6d-cd1e19ca1e63",
+          "summary": "Manic Tendencies",
+          "explicit": false,
+          "owner": {
+            "name": "Wavlake",
+            "email": "contact@wavlake.com"
+          },
+          "publisher": {
+            "feedGuid": "0ea699be-e985-4aa1-8c00-43542e4b9e0d",
+            "feedUrl": "https://wavlake.com/feed/artist/0ea699be-e985-4aa1-8c00-43542e4b9e0d",
+            "medium": "publisher"
+          }
+        }
+      },
+      "trackCount": 1
+    },
+    {
+      "id": "death-by-lions-the-sheer-magnitude-of-it-all",
+      "originalUrl": "https://wavlake.com/feed/e9ae5762-130d-4a16-b8b2-98804cc1802e",
+      "type": "album",
+      "title": "The Sheer Magnitude Of it All - Death by Lions",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T21:55:23.287Z",
+      "lastUpdated": "2025-07-29T21:55:23.288Z",
+      "parseStatus": "success",
+      "lastParsed": "2025-07-29T21:55:48.096Z",
+      "parsedData": {
+        "album": {
+          "title": "The Sheer Magnitude Of it All",
+          "artist": "Death by Lions",
+          "description": "Post hardcore band from Grand Rapids Michigan",
+          "coverArt": "https://d12wklypp119aj.cloudfront.net/image/e9ae5762-130d-4a16-b8b2-98804cc1802e.jpg",
+          "tracks": [
+            {
+              "title": "A Coward",
+              "duration": "00:03:20",
+              "url": "https://op3.dev/e,pg=beeeef0b-51e9-52ac-b8d7-9ed54d5be3b0/https://d12wklypp119aj.cloudfront.net/track/d4da346a-3589-46e7-9b92-6490092e687a.mp3",
+              "trackNumber": 1,
+              "explicit": false
+            },
+            {
+              "title": "The Protaganist",
+              "duration": "00:02:54",
+              "url": "https://op3.dev/e,pg=beeeef0b-51e9-52ac-b8d7-9ed54d5be3b0/https://d12wklypp119aj.cloudfront.net/track/edc7c3fa-4b4b-45aa-bbea-a93f0e2162d9.mp3",
+              "trackNumber": 2,
+              "explicit": false
+            },
+            {
+              "title": "Hold the Line",
+              "duration": "00:02:56",
+              "url": "https://op3.dev/e,pg=beeeef0b-51e9-52ac-b8d7-9ed54d5be3b0/https://d12wklypp119aj.cloudfront.net/track/fa854a10-5ce5-4488-beb5-b63b501986cb.mp3",
+              "trackNumber": 3,
+              "explicit": false
+            },
+            {
+              "title": "I Guess This Will Have to Do",
+              "duration": "00:02:56",
+              "url": "https://op3.dev/e,pg=beeeef0b-51e9-52ac-b8d7-9ed54d5be3b0/https://d12wklypp119aj.cloudfront.net/track/26b9b1a9-af8f-46d5-8e29-668b42772199.mp3",
+              "trackNumber": 4,
+              "explicit": false
+            },
+            {
+              "title": "OMG",
+              "duration": "00:02:24",
+              "url": "https://op3.dev/e,pg=beeeef0b-51e9-52ac-b8d7-9ed54d5be3b0/https://d12wklypp119aj.cloudfront.net/track/3317db34-c350-45f9-b521-6519fe70022b.mp3",
+              "trackNumber": 5,
+              "explicit": false
+            },
+            {
+              "title": "A Chemical to Balance",
+              "duration": "00:02:44",
+              "url": "https://op3.dev/e,pg=beeeef0b-51e9-52ac-b8d7-9ed54d5be3b0/https://d12wklypp119aj.cloudfront.net/track/8ed4bcfe-a4f9-42a7-9529-d30c3d634656.mp3",
+              "trackNumber": 6,
+              "explicit": false
+            }
+          ],
+          "releaseDate": "Tue, 29 Jul 2025 21:55:48 GMT",
+          "link": "https://wavlake.com/death-by-lions",
+          "summary": "Post hardcore band from Grand Rapids Michigan",
+          "explicit": false,
+          "owner": {
+            "name": "Wavlake",
+            "email": "contact@wavlake.com"
+          },
+          "publisher": {
+            "feedGuid": "1e7f8807-31a7-454c-b612-f2563ba4cf67",
+            "feedUrl": "https://wavlake.com/feed/artist/1e7f8807-31a7-454c-b612-f2563ba4cf67",
+            "medium": "publisher"
+          }
+        }
+      },
+      "trackCount": 6
+    },
+    {
+      "id": "death-by-lions-second-album",
+      "originalUrl": "https://wavlake.com/feed/music/ef437ae2-c7f1-449b-84ee-fba14daabd02",
+      "type": "album",
+      "title": "Death by Lions Album 2",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T21:56:09.081Z",
+      "lastUpdated": "2025-07-29T21:56:09.081Z",
+      "parseStatus": "success",
+      "lastParsed": "2025-07-29T21:56:34.373Z",
+      "parsedData": {
+        "album": {
+          "title": "Thanks For Being Great",
+          "artist": "Death by Lions",
+          "description": "Post hardcore band from Grand Rapids Michigan",
+          "coverArt": "https://d12wklypp119aj.cloudfront.net/image/ef437ae2-c7f1-449b-84ee-fba14daabd02.jpg",
+          "tracks": [
+            {
+              "title": "Sip and Fall",
+              "duration": "00:02:45",
+              "url": "https://op3.dev/e,pg=69daacd1-1e22-574c-a296-601298837db6/https://d12wklypp119aj.cloudfront.net/track/587430fb-cb65-4472-bc69-41dda534d774.mp3",
+              "trackNumber": 1,
+              "explicit": false
+            },
+            {
+              "title": "Tyrant Kings",
+              "duration": "00:03:09",
+              "url": "https://op3.dev/e,pg=69daacd1-1e22-574c-a296-601298837db6/https://d12wklypp119aj.cloudfront.net/track/77003113-012e-404e-99cf-03104b265c91.mp3",
+              "trackNumber": 2,
+              "explicit": false
+            },
+            {
+              "title": "The Desperate",
+              "duration": "00:02:22",
+              "url": "https://op3.dev/e,pg=69daacd1-1e22-574c-a296-601298837db6/https://d12wklypp119aj.cloudfront.net/track/dbce1517-313a-48af-b624-28a84ed1cadb.mp3",
+              "trackNumber": 3,
+              "explicit": false
+            },
+            {
+              "title": "400 Horses",
+              "duration": "00:02:47",
+              "url": "https://op3.dev/e,pg=69daacd1-1e22-574c-a296-601298837db6/https://d12wklypp119aj.cloudfront.net/track/aef1cc19-e082-4b40-aa1a-975cc98e3b9d.mp3",
+              "trackNumber": 4,
+              "explicit": false
+            },
+            {
+              "title": "Thanks For Being Great",
+              "duration": "00:04:12",
+              "url": "https://op3.dev/e,pg=69daacd1-1e22-574c-a296-601298837db6/https://d12wklypp119aj.cloudfront.net/track/6cc25ad8-89f9-4646-9af9-9d6261c96c69.mp3",
+              "trackNumber": 5,
+              "explicit": false
+            },
+            {
+              "title": "Should You Need Us",
+              "duration": "00:03:13",
+              "url": "https://op3.dev/e,pg=69daacd1-1e22-574c-a296-601298837db6/https://d12wklypp119aj.cloudfront.net/track/0d7a44ce-aeed-4275-a07c-6bc038d7c344.mp3",
+              "trackNumber": 6,
+              "explicit": false
+            }
+          ],
+          "releaseDate": "Tue, 29 Jul 2025 21:56:34 GMT",
+          "link": "https://wavlake.com/death-by-lions",
+          "summary": "Post hardcore band from Grand Rapids Michigan",
+          "explicit": false,
+          "owner": {
+            "name": "Wavlake",
+            "email": "contact@wavlake.com"
+          },
+          "publisher": {
+            "feedGuid": "1e7f8807-31a7-454c-b612-f2563ba4cf67",
+            "feedUrl": "https://wavlake.com/feed/artist/1e7f8807-31a7-454c-b612-f2563ba4cf67",
+            "medium": "publisher"
+          }
+        }
+      },
+      "trackCount": 6
+    },
+    {
+      "id": "death-by-lions-publisher",
+      "originalUrl": "https://wavlake.com/feed/artist/1e7f8807-31a7-454c-b612-f2563ba4cf67",
+      "type": "publisher",
+      "title": "Death by Lions",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T21:56:09.080Z",
+      "lastUpdated": "2025-07-29T21:56:09.081Z",
+      "parseStatus": "success",
+      "lastParsed": "2025-07-29T21:58:11.143Z",
+      "parsedData": {
+        "publisherInfo": {
+          "title": "Death by Lions",
+          "artist": "Death by Lions",
+          "description": "Wes (Drums) - Earthmover and Walls of Jericho, Brian (Guitar) - Subsist, Nate (Vocals)- Red Arrow Highway, Drawing Monsters, Jamie (Bass) - Chokehold, Dustin (Guitar)- Fine Fine Titans",
+          "coverArt": "https://d12wklypp119aj.cloudfront.net/image/1e7f8807-31a7-454c-b612-f2563ba4cf67.jpg",
+          "link": "https://wavlake.com/death-by-lions",
+          "lastUpdated": "Tue, 29 Jul 2025 21:57:07 GMT"
+        },
+        "publisherItems": [
+          {
+            "id": "death-by-lions-the-sheer-magnitude-of-it-all",
+            "title": "The Sheer Magnitude Of it All",
+            "artist": "Death by Lions",
+            "coverArt": "https://d12wklypp119aj.cloudfront.net/image/e9ae5762-130d-4a16-b8b2-98804cc1802e.jpg",
+            "trackCount": 6,
+            "releaseDate": "Tue, 29 Jul 2025 21:55:48 GMT",
+            "link": "https://wavlake.com/death-by-lions",
+            "description": "Post hardcore band from Grand Rapids Michigan"
+          },
+          {
+            "id": "death-by-lions-second-album",
+            "title": "Thanks For Being Great",
+            "artist": "Death by Lions",
+            "coverArt": "https://d12wklypp119aj.cloudfront.net/image/ef437ae2-c7f1-449b-84ee-fba14daabd02.jpg",
+            "trackCount": 6,
+            "releaseDate": "Tue, 29 Jul 2025 21:56:34 GMT",
+            "link": "https://wavlake.com/death-by-lions",
+            "description": "Post hardcore band from Grand Rapids Michigan"
+          },
+          {
+            "id": "death-by-lions-i-guess-this-will-have-to-do-single",
+            "title": "I Guess This Will Have To Do",
+            "artist": "Death By Lions",
+            "coverArt": "https://music.behindthesch3m3s.com/wp-content/uploads/Death_by_Lions/vlcsnap-2024-07-12-10h38m44s702.png",
+            "trackCount": 1,
+            "releaseDate": "Sat, 13 Jul 2024 18:08:09 +0000",
+            "link": "https://music.behindthesch3m3s.com/wp-content/uploads/Death_by_Lions/i_guess_this_will_have_to_do.xml",
+            "description": "The music video from Death by Lions"
+          }
+        ]
+      }
+    },
+    {
+      "id": "death-by-lions-i-guess-this-will-have-to-do-single",
+      "originalUrl": "https://music.behindthesch3m3s.com/wp-content/uploads/Death_by_Lions/i_guess_this_will_have_to_do.xml",
+      "type": "album",
+      "title": "I Guess This Will Have to Do - Death by Lions (Single)",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T21:57:45.981Z",
+      "lastUpdated": "2025-07-29T21:57:45.982Z",
+      "parseStatus": "success",
+      "lastParsed": "2025-07-29T21:58:07.954Z",
+      "parsedData": {
+        "album": {
+          "title": "I Guess This Will Have To Do",
+          "artist": "Death By Lions",
+          "description": "The music video from Death by Lions",
+          "coverArt": "https://music.behindthesch3m3s.com/wp-content/uploads/Death_by_Lions/vlcsnap-2024-07-12-10h38m44s702.png",
+          "tracks": [
+            {
+              "title": "I Guess This Will Have To Do",
+              "duration": "192",
+              "url": "https://customer-dlnbepb8zpz7h846.cloudflarestream.com/6f9428975e59191d3523baaeba01ca94/manifest/video.m3u8",
+              "trackNumber": 1,
+              "explicit": false
+            }
+          ],
+          "releaseDate": "Sat, 13 Jul 2024 18:08:09 +0000",
+          "link": "https://music.behindthesch3m3s.com/wp-content/uploads/Death_by_Lions/i_guess_this_will_have_to_do.xml",
+          "summary": "The music video from Death by Lions",
+          "explicit": false,
+          "owner": {
+            "name": "Death By Lions",
+            "email": ""
+          },
+          "publisher": {
+            "feedGuid": "1e7f8807-31a7-454c-b612-f2563ba4cf67",
+            "feedUrl": "https://wavlake.com/feed/artist/1e7f8807-31a7-454c-b612-f2563ba4cf67",
+            "medium": "publisher"
+          }
+        }
+      },
+      "trackCount": 1
+    },
+    {
+      "id": "bitpunk-fm-publisher",
+      "originalUrl": "https://zine.bitpunk.fm/feeds/publisher.xml",
+      "type": "publisher",
+      "title": "bitpunk.fm",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T22:05:00.000Z",
+      "lastUpdated": "2025-07-29T22:05:00.000Z",
+      "parseStatus": "success",
+      "lastParsed": "2025-07-29T22:20:39.693Z",
+      "parsedData": {
+        "publisherInfo": {
+          "title": "Bitpunk.fm Publisher feed",
+          "artist": "Bitpunk.fm",
+          "description": "Cassette Poet.",
+          "coverArt": "https://files.bitpunk.fm/cover_feed.png",
+          "link": "https://bitpunk.fm",
+          "feedUrl": "https://zine.bitpunk.fm/feeds/publisher.xml",
+          "feedGuid": "5883e6be-4e0c-11f0-9524-00155dc57d8e",
+          "explicit": false,
+          "language": "en",
+          "remoteItems": [
+            {
+              "feedUrl": "https://zine.bitpunk.fm/feeds/bitpunk-fm.xml",
+              "feedGuid": "37157267-a9bb-5d6d-8cd6-277e810687cc",
+              "medium": "podcast",
+              "order": 0
+            },
+            {
+              "feedUrl": "https://zine.bitpunk.fm/feeds/live.xml",
+              "feedGuid": "b45af779-56a9-57d8-8b4f-a71170b4b46a",
+              "medium": "podcast",
+              "order": 1
+            },
+            {
+              "feedUrl": "https://zine.bitpunk.fm/feeds/pot.xml",
+              "feedGuid": "62d01c61-a436-5356-95a8-582ac50c18aa",
+              "medium": "podcast",
+              "order": 2
+            },
+            {
+              "feedUrl": "https://zine.bitpunk.fm/feeds/radio.xml",
+              "feedGuid": "6edc3d5e-0e55-11f0-b58a-00163efe1f87",
+              "medium": "podcast",
+              "order": 3
+            },
+            {
+              "feedUrl": "https://zine.bitpunk.fm/feeds/spectral-hiding.xml",
+              "feedGuid": "ef5db97e-a5f3-5375-96a5-ea4749b3e8c3",
+              "medium": "music",
+              "order": 4
+            },
+            {
+              "feedUrl": "https://zine.bitpunk.fm/feeds/unwound.xml",
+              "feedGuid": "5eec058a-5e25-597a-a713-f88b166dc2e1",
+              "medium": "podcast",
+              "order": 5
+            }
+          ]
+        }
+      }
     }
   ],
   "lastUpdated": "2025-07-29T00:27:13.515Z",
