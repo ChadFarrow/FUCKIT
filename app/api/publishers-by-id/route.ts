@@ -2,13 +2,17 @@ import { NextResponse } from 'next/server';
 import * as fs from 'fs';
 import * as path from 'path';
 
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: Request) {
   try {
-    const { id } = await params;
-    const publisherId = decodeURIComponent(id);
+    const { searchParams } = new URL(request.url);
+    const publisherId = searchParams.get('id');
+    
+    if (!publisherId) {
+      return NextResponse.json({ 
+        error: 'Publisher ID is required',
+        timestamp: new Date().toISOString()
+      }, { status: 400 });
+    }
     
     console.log(`🔍 Looking for publisher: ${publisherId}`);
     
@@ -19,14 +23,7 @@ export async function GET(
       return NextResponse.json({ 
         error: 'Parsed feeds not found',
         timestamp: new Date().toISOString()
-      }, { 
-        status: 404,
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
-        }
-      });
+      }, { status: 404 });
     }
 
     // Read file with error handling
@@ -39,14 +36,7 @@ export async function GET(
       return NextResponse.json({ 
         error: 'Failed to read parsed feeds',
         timestamp: new Date().toISOString()
-      }, { 
-        status: 500,
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
-        }
-      });
+      }, { status: 500 });
     }
     
     // Validate parsed feeds data structure
@@ -55,14 +45,7 @@ export async function GET(
       return NextResponse.json({ 
         error: 'Invalid parsed feeds format',
         timestamp: new Date().toISOString()
-      }, { 
-        status: 500,
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
-        }
-      });
+      }, { status: 500 });
     }
     
     // Find the specific publisher feed by ID or feedGuid
@@ -83,14 +66,7 @@ export async function GET(
         error: 'Publisher not found',
         publisherId,
         timestamp: new Date().toISOString()
-      }, { 
-        status: 404,
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
-        }
-      });
+      }, { status: 404 });
     }
     
     console.log(`✅ Found publisher: ${publisherFeed.id}`);
@@ -110,7 +86,7 @@ export async function GET(
     return NextResponse.json(response, {
       status: 200,
       headers: {
-        'Cache-Control': 'public, max-age=300, s-maxage=300', // Cache for 5 minutes
+        'Cache-Control': 'public, max-age=300, s-maxage=300',
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
@@ -118,21 +94,14 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error('Unexpected error in publisher API:', error);
+    console.error('Unexpected error in publishers-by-id API:', error);
     return NextResponse.json(
       { 
         error: 'Internal server error',
         message: process.env.NODE_ENV === 'development' ? (error as Error).message : 'An unexpected error occurred',
         timestamp: new Date().toISOString()
-      },
-      { 
-        status: 500,
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
-        }
-      }
+      }, 
+      { status: 500 }
     );
   }
 }
@@ -143,7 +112,7 @@ export async function OPTIONS() {
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Headers': 'Content-Type'
     },
   });
 } 

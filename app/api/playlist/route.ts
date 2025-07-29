@@ -74,10 +74,11 @@ export async function GET(request: NextRequest) {
                 if (chapterResponse.ok) {
                   const chapterData = await chapterResponse.json()
                   
-                  // Extract music segments (chapters that are not the main episode)
+                  // Extract music segments (chapters that are not the main episode or intro)
                   const musicChapters = chapterData.chapters.filter((chapter: any) => 
                     !chapter.title.includes('Episode') && 
                     !chapter.title.includes('episode') &&
+                    !chapter.title.includes('Into The Doerfel-Verse') &&
                     chapter.title.trim() !== '' &&
                     chapter.startTime > 0
                   )

@@ -12,6 +12,9 @@ interface AudioContextType {
   currentTime: number;
   duration: number;
   
+  // Media type state
+  isVideoMode: boolean;
+  
   // Shuffle state
   isShuffleMode: boolean;
   
@@ -26,8 +29,9 @@ interface AudioContextType {
   playPreviousTrack: () => void;
   stop: () => void;
   
-  // Audio element ref for direct access
+  // Media element refs for direct access
   audioRef: React.RefObject<HTMLAudioElement>;
+  videoRef: React.RefObject<HTMLVideoElement>;
 }
 
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
@@ -53,6 +57,9 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   const [albums, setAlbums] = useState<RSSAlbum[]>([]);
   const [hasUserInteracted, setHasUserInteracted] = useState(false);
   
+  // Video mode state
+  const [isVideoMode, setIsVideoMode] = useState(false);
+  
   // Shuffle state
   const [isShuffleMode, setIsShuffleMode] = useState(false);
   const [shuffledPlaylist, setShuffledPlaylist] = useState<Array<{
@@ -63,6 +70,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   const [currentShuffleIndex, setCurrentShuffleIndex] = useState(0);
   
   const audioRef = useRef<HTMLAudioElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   // Load state from localStorage on mount
   useEffect(() => {
@@ -147,6 +155,13 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     loadAlbums();
   }, []);
 
+  // Helper function to detect if URL is a video
+  const isVideoUrl = (url: string): boolean => {
+    const videoExtensions = ['.mp4', '.webm', '.ogg', '.m3u8', '.m4v', '.mov', '.avi', '.mkv'];
+    const urlLower = url.toLowerCase();
+    return videoExtensions.some(ext => urlLower.includes(ext));
+  };
+
   // Helper function to get URLs to try for audio playback
   const getAudioUrlsToTry = (originalUrl: string): string[] => {
     const urlsToTry = [];
@@ -172,12 +187,21 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     return urlsToTry;
   };
 
-  // Helper function to attempt audio playback with fallback URLs
+  // Helper function to attempt media playback with fallback URLs
   const attemptAudioPlayback = async (originalUrl: string, context = 'playback'): Promise<boolean> => {
-    const audio = audioRef.current;
-    if (!audio) {
-      console.error('❌ Audio element reference is null');
+    const isVideo = isVideoUrl(originalUrl);
+    const mediaElement = isVideo ? videoRef.current : audioRef.current;
+    
+    if (!mediaElement) {
+      console.error(`❌ ${isVideo ? 'Video' : 'Audio'} element reference is null`);
       return false;
+    }
+    
+    // Update video mode state
+    setIsVideoMode(isVideo);
+    
+    if (isVideo) {
+      console.log('🎬 Video URL detected, switching to video mode:', originalUrl);
     }
     
     const urlsToTry = getAudioUrlsToTry(originalUrl);
@@ -187,28 +211,35 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       console.log(`🔄 ${context} attempt ${i + 1}/${urlsToTry.length}: ${audioUrl.includes('proxy-audio') ? 'Proxied URL' : 'Direct URL'}`);
       
       try {
-        // Check if audio element is still valid
-        if (!audioRef.current) {
-          console.error('❌ Audio element became null during playback attempt');
+        // Check if media element is still valid
+        const currentMediaElement = isVideo ? videoRef.current : audioRef.current;
+        if (!currentMediaElement) {
+          console.error(`❌ ${isVideo ? 'Video' : 'Audio'} element became null during playback attempt`);
           return false;
         }
         
         // Set new source and load
-        audioRef.current.src = audioUrl;
-        audioRef.current.load();
-        audioRef.current.volume = 0.8;
+        currentMediaElement.src = audioUrl;
+        currentMediaElement.load();
         
-        // Wait a bit for the audio to load before attempting to play
+        // Set volume for audio, videos typically control their own volume
+        if (!isVideo) {
+          (currentMediaElement as HTMLAudioElement).volume = 0.8;
+        }
+        
+        // Wait a bit for the media to load before attempting to play
         await new Promise(resolve => setTimeout(resolve, 100));
         
-        // Ensure audio is not muted for playback
-        audioRef.current.muted = false;
-        audioRef.current.volume = 0.8;
+        // Ensure media is not muted for playback
+        currentMediaElement.muted = false;
+        if (!isVideo) {
+          (currentMediaElement as HTMLAudioElement).volume = 0.8;
+        }
         
-        const playPromise = audioRef.current.play();
+        const playPromise = currentMediaElement.play();
         if (playPromise !== undefined) {
           await playPromise;
-          console.log(`✅ ${context} started successfully with ${audioUrl.includes('proxy-audio') ? 'proxied' : 'direct'} URL`);
+          console.log(`✅ ${context} started successfully with ${audioUrl.includes('proxy-audio') ? 'proxied' : 'direct'} URL (${isVideo ? 'VIDEO' : 'AUDIO'} mode)`);
           return true;
         }
       } catch (attemptError) {
@@ -241,10 +272,11 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     return false; // All attempts failed
   };
 
-  // Audio event listeners
+  // Media event listeners
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio) return;
+    const video = videoRef.current;
+    if (!audio || !video) return;
 
     const handlePlay = () => {
       setIsPlaying(true);
@@ -267,43 +299,51 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     };
 
     const handleTimeUpdate = () => {
-      setCurrentTime(audio.currentTime);
+      const currentElement = isVideoMode ? video : audio;
+      setCurrentTime(currentElement.currentTime);
     };
 
     const handleLoadedMetadata = () => {
-      setDuration(audio.duration);
+      const currentElement = isVideoMode ? video : audio;
+      setDuration(currentElement.duration);
     };
 
     const handleError = (event: Event) => {
-      const audioError = (event.target as HTMLAudioElement)?.error;
-      console.error('🚫 Audio error:', audioError);
+      const mediaError = (event.target as HTMLMediaElement)?.error;
+      console.error(`🚫 ${isVideoMode ? 'Video' : 'Audio'} error:`, mediaError);
       setIsPlaying(false);
       
       // Prevent infinite error loops by clearing the source
-      if (audioRef.current) {
-        audioRef.current.src = '';
-        audioRef.current.load();
+      const currentElement = isVideoMode ? videoRef.current : audioRef.current;
+      if (currentElement) {
+        currentElement.src = '';
+        currentElement.load();
       }
     };
 
-    // Add event listeners
-    audio.addEventListener('play', handlePlay);
-    audio.addEventListener('pause', handlePause);
-    audio.addEventListener('ended', handleEnded);
-    audio.addEventListener('timeupdate', handleTimeUpdate);
-    audio.addEventListener('loadedmetadata', handleLoadedMetadata);
-    audio.addEventListener('error', handleError);
+    // Add event listeners to both audio and video elements
+    const elements = [audio, video];
+    elements.forEach(element => {
+      element.addEventListener('play', handlePlay);
+      element.addEventListener('pause', handlePause);
+      element.addEventListener('ended', handleEnded);
+      element.addEventListener('timeupdate', handleTimeUpdate);
+      element.addEventListener('loadedmetadata', handleLoadedMetadata);
+      element.addEventListener('error', handleError);
+    });
 
     // Cleanup
     return () => {
-      audio.removeEventListener('play', handlePlay);
-      audio.removeEventListener('pause', handlePause);
-      audio.removeEventListener('ended', handleEnded);
-      audio.removeEventListener('timeupdate', handleTimeUpdate);
-      audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
-      audio.removeEventListener('error', handleError);
+      elements.forEach(element => {
+        element.removeEventListener('play', handlePlay);
+        element.removeEventListener('pause', handlePause);
+        element.removeEventListener('ended', handleEnded);
+        element.removeEventListener('timeupdate', handleTimeUpdate);
+        element.removeEventListener('loadedmetadata', handleLoadedMetadata);
+        element.removeEventListener('error', handleError);
+      });
     };
-  }, [currentPlayingAlbum, currentTrackIndex]);
+  }, [currentPlayingAlbum, currentTrackIndex, isVideoMode]);
 
   // Play album function
   const playAlbum = async (album: RSSAlbum, trackIndex: number = 0): Promise<boolean> => {
@@ -444,23 +484,26 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
 
   // Pause function
   const pause = () => {
-    if (audioRef.current) {
-      audioRef.current.pause();
+    const currentElement = isVideoMode ? videoRef.current : audioRef.current;
+    if (currentElement) {
+      currentElement.pause();
     }
   };
 
   // Resume function
   const resume = () => {
-    if (audioRef.current) {
-      audioRef.current.play();
+    const currentElement = isVideoMode ? videoRef.current : audioRef.current;
+    if (currentElement) {
+      currentElement.play();
     }
   };
 
   // Seek function
   const seek = (time: number) => {
-    if (audioRef.current && duration) {
-      audioRef.current.currentTime = Math.max(0, Math.min(time, duration));
-      setCurrentTime(audioRef.current.currentTime);
+    const currentElement = isVideoMode ? videoRef.current : audioRef.current;
+    if (currentElement && duration) {
+      currentElement.currentTime = Math.max(0, Math.min(time, duration));
+      setCurrentTime(currentElement.currentTime);
     }
   };
 
@@ -541,15 +584,22 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
 
   // Stop function
   const stop = () => {
+    // Stop both audio and video elements
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
     }
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+    
     setIsPlaying(false);
     setCurrentPlayingAlbum(null);
     setCurrentTrackIndex(0);
     setCurrentTime(0);
     setDuration(0);
+    setIsVideoMode(false);
     
     // Clear shuffle state
     setIsShuffleMode(false);
@@ -568,6 +618,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     currentTrackIndex,
     currentTime,
     duration,
+    isVideoMode,
     isShuffleMode,
     playAlbum,
     playShuffledTrack,
@@ -578,7 +629,8 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     playNextTrack,
     playPreviousTrack,
     stop,
-    audioRef
+    audioRef,
+    videoRef
   };
 
   return (
@@ -587,6 +639,18 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       {/* Hidden audio element */}
       <audio
         ref={audioRef}
+        preload="metadata"
+        crossOrigin="anonymous"
+        playsInline
+        webkit-playsinline="true"
+        autoPlay={false}
+        controls={false}
+        muted={false}
+        style={{ display: 'none' }}
+      />
+      {/* Hidden video element */}
+      <video
+        ref={videoRef}
         preload="metadata"
         crossOrigin="anonymous"
         playsInline
