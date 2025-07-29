@@ -1309,6 +1309,26 @@
       "status": "active",
       "addedAt": "2025-07-29T22:05:00.000Z",
       "lastUpdated": "2025-07-29T22:05:00.000Z"
+    },
+    {
+      "id": "drawing-monsters-old-wolf-wrong-scene",
+      "originalUrl": "https://wavlake.com/feed/music/c26d9d57-9e9e-444f-b131-1baf4ed85a0a",
+      "type": "album",
+      "title": "Drawing Monsters - Old Wolf, Wrong Scene",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T22:30:00.000Z",
+      "lastUpdated": "2025-07-29T22:30:00.000Z"
+    },
+    {
+      "id": "drawing-monsters-publisher",
+      "originalUrl": "https://wavlake.com/feed/artist/cbcb895d-9a01-465f-af7b-9a09ffbc29f5",
+      "type": "publisher",
+      "title": "Drawing Monsters",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T22:30:00.000Z",
+      "lastUpdated": "2025-07-29T22:30:00.000Z"
     }
   ],
   "lastUpdated": "2025-07-28T00:00:00.000Z",
