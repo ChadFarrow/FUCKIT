@@ -24,6 +24,9 @@
     "fix-all": "node scripts/fix-all-issues.js"
   },
   "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/core": "^2.0.1",
+    "@opentelemetry/instrumentation": "^0.203.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

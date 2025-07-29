@@ -72,6 +72,7 @@ export async function GET(
       feed.parsedData &&
       (feed.id === publisherId || 
        feed.id.includes(publisherId) ||
+       feed.parsedData.publisherInfo?.feedGuid?.includes(publisherId) ||
        feed.parsedData.publisherItems?.some((item: any) => 
          item.feedGuid && item.feedGuid.includes(publisherId)
        ))

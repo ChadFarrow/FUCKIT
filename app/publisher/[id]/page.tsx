@@ -37,6 +37,7 @@ async function loadPublisherData(publisherId: string) {
       feed.parsedData &&
       (feed.id === `${publisherId}-publisher` || 
        feed.id.includes(publisherId) ||
+       feed.parsedData.publisherInfo?.feedGuid?.includes(publisherId) ||
        feed.parsedData.publisherItems?.some((item: any) => 
          item.feedGuid && item.feedGuid.includes(publisherId)
        ))
