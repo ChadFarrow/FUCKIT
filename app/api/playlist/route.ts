@@ -38,9 +38,76 @@ export async function GET(request: NextRequest) {
     const data = JSON.parse(rawData)
     
     // Filter feeds if feedId is provided
-    const feedsToProcess = feedId 
+    let feedsToProcess = feedId 
       ? data.feeds.filter((feed: any) => feed.id === feedId)
       : data.feeds
+    
+    // For general playlist (no feedId), exclude podcast feeds that contain episodes rather than songs
+    if (!feedId) {
+      feedsToProcess = feedsToProcess.filter((feed: any) => {
+        // Exclude feeds that are primarily podcast episodes
+        // Check if the feed contains mostly long-form content or episodes
+        if (feed.id === 'intothedoerfelverse') {
+          console.log(`🎵 Excluding podcast feed from general playlist: ${feed.title}`)
+          return false
+        }
+        return true
+      })
+    }
+    
+    // Special handling for podcast feeds
+    if (feedId === 'intothedoerfelverse') {
+      // This is a podcast feed, not a music feed - return empty playlist with explanation
+      const playlistTitle = 'Into The Doerfel-Verse - Podcast Episodes'
+      const playlistDescription = 'This is a podcast about music, not a music playlist. The episodes contain discussions about music and may include music segments, but are not individual songs suitable for a music playlist.'
+      
+      if (format === 'json') {
+        return NextResponse.json({
+          title: playlistTitle,
+          description: playlistDescription,
+          tracks: [],
+          totalTracks: 0,
+          feedId: feedId,
+          isPodcast: true,
+          message: 'This feed contains podcast episodes, not individual music tracks. For music, try the main "Play All Songs" playlist.'
+        })
+      }
+      
+      // Return RSS with explanation
+      const currentDate = new Date().toUTCString()
+      const rssXml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" 
+  xmlns:podcast="https://podcastindex.org/namespace/1.0"
+  xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+  <channel>
+    <title>${escapeXml(playlistTitle)}</title>
+    <description>${escapeXml(playlistDescription)}</description>
+    <link>https://project-stablekraft.com</link>
+    <language>en-us</language>
+    <pubDate>${currentDate}</pubDate>
+    <lastBuildDate>${currentDate}</lastBuildDate>
+    <generator>Project StableKraft Playlist Generator</generator>
+    
+    <podcast:medium>podcast</podcast:medium>
+    <itunes:type>episodic</itunes:type>
+    <itunes:category text="Music Commentary" />
+    
+    <item>
+      <title>This is a podcast feed, not a music playlist</title>
+      <description>${escapeXml(playlistDescription + ' For individual music tracks, use the main "Play All Songs" playlist.')}</description>
+      <guid isPermaLink="false">podcast-explanation-${Date.now()}</guid>
+      <pubDate>${currentDate}</pubDate>
+    </item>
+  </channel>
+</rss>`
+      
+      return new NextResponse(rssXml, {
+        headers: {
+          'Content-Type': 'application/rss+xml; charset=utf-8',
+          'Cache-Control': 'public, max-age=3600',
+        },
+      })
+    }
     
     // Collect all tracks from selected feeds
     const allTracks: any[] = []
@@ -49,6 +116,24 @@ export async function GET(request: NextRequest) {
     feedsToProcess.forEach((feed: any) => {
       if (feed.parsedData?.album?.tracks) {
         feed.parsedData.album.tracks.forEach((track: any) => {
+          // Filter out podcast episodes - songs should be under 15 minutes typically
+          // Convert duration to seconds for comparison
+          const durationParts = track.duration.split(':').map((p: string) => parseInt(p))
+          let durationSeconds = 0
+          
+          if (durationParts.length === 2) {
+            durationSeconds = durationParts[0] * 60 + durationParts[1]
+          } else if (durationParts.length === 3) {
+            durationSeconds = durationParts[0] * 3600 + durationParts[1] * 60 + durationParts[2]
+          }
+          
+          // Skip tracks longer than 15 minutes (900 seconds) - likely podcast episodes
+          // Also skip tracks with "Episode" in the title
+          if (durationSeconds > 900 || track.title.toLowerCase().includes('episode')) {
+            console.log(`🎵 Filtering out podcast episode: "${track.title}" (${track.duration})`)
+            return
+          }
+          
           allTracks.push({
             ...track,
             albumTitle: feed.parsedData.album.title,

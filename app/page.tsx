@@ -477,7 +477,7 @@ export default function HomePage() {
               {/* Bottom row - Title and Beta badge */}
               <div className="text-center">
                 <h1 className="text-xl font-bold mb-1">Project StableKraft</h1>
-                <p className="text-xs text-gray-400 mb-2">- "its was all this reimagined, its a different kind of speech, it was repition, it was what you wanted it to be" - The Contortionist - Reimagined</p>
+                <p className="text-xs text-gray-400 mb-2">- &quot;its was all this reimagined, its a different kind of speech, it was repition, it was what you wanted it to be&quot; - The Contortionist - Reimagined</p>
                                                   <div className="text-xs bg-yellow-500/20 text-yellow-300 px-3 py-1 rounded-full border border-yellow-500/30">
                   Beta - if the page isn&apos;t loading try a hard refresh and wait a little for it to load
                 </div>
@@ -516,7 +516,7 @@ export default function HomePage() {
                 {/* Center - Title */}
                 <div className="text-center">
                   <h1 className="text-3xl font-bold mb-1">Project StableKraft</h1>
-                  <p className="text-sm text-gray-400 mb-2">- "its was all this reimagined, its a different kind of speech, it was repition, it was what you wanted it to be" - The Contortionist - Reimagined</p>
+                  <p className="text-sm text-gray-400 mb-2">- &quot;its was all this reimagined, its a different kind of speech, it was repition, it was what you wanted it to be&quot; - The Contortionist - Reimagined</p>
                   <div className="text-xs bg-yellow-500/20 text-yellow-300 px-3 py-1 rounded-full border border-yellow-500/30 inline-block">
                     Beta - if the page isn&apos;t loading try a hard refresh and wait a little for it to load
                   </div>
@@ -667,16 +667,6 @@ export default function HomePage() {
                   <span className="text-sm text-gray-300 group-hover:text-white">Play All Songs</span>
                 </Link>
                 
-                <Link
-                  href="/playlist?feedId=intothedoerfelverse"
-                  className="flex items-center gap-3 p-3 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 transition-colors group"
-                  onClick={() => setIsSidebarOpen(false)}
-                >
-                  <svg className="w-5 h-5 text-blue-400 group-hover:text-blue-300" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
-                  </svg>
-                  <span className="text-sm text-gray-300 group-hover:text-white">Into The Doerfel-Verse</span>
-                </Link>
                 
                 <div className="border-t border-gray-700 mt-3 mb-3"></div>
                 
@@ -708,18 +698,6 @@ export default function HomePage() {
                   <span className="text-sm text-gray-300 group-hover:text-white">Copy RSS URL</span>
                 </button>
                 
-                <a
-                  href="/api/playlist?feedId=intothedoerfelverse"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-3 rounded-lg bg-gray-800/30 hover:bg-gray-800/50 transition-colors group"
-                  onClick={() => setIsSidebarOpen(false)}
-                >
-                  <svg className="w-5 h-5 text-gray-400 group-hover:text-gray-300" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
-                  </svg>
-                  <span className="text-sm text-gray-300 group-hover:text-white">Doerfel-Verse RSS</span>
-                </a>
               </div>
               <p className="text-xs text-gray-500 mt-2 px-3">
                 Podcasting 2.0 musicL playlist

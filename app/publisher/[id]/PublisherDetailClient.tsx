@@ -472,13 +472,13 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
         filtered = epsAndSingles.filter(album => album.tracks.length === 1);
         break;
       default: // 'all'
-        // For "All", maintain the hierarchical order: Albums, EPs, then Singles
+        // For &quot;All&quot;, maintain the hierarchical order: Albums, EPs, then Singles
         filtered = [...albumsWithMultipleTracks, ...epsAndSingles];
     }
 
     // Sort albums
     return filtered.sort((a, b) => {
-      // For "All" filter, maintain hierarchy first, then apply sorting within each category
+      // For &quot;All&quot; filter, maintain hierarchy first, then apply sorting within each category
       if (activeFilter === 'all') {
         const aIsAlbum = a.tracks.length > 6;
         const bIsAlbum = b.tracks.length > 6;
@@ -529,7 +529,7 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
         <div className="fixed inset-0">
           <CDNImage 
             src={getAlbumArtworkUrl(publisherInfo.coverArt, 'large')} 
-            alt={publisherInfo.title || 'Publisher background'}
+            alt={publisherInfo.title || "Publisher background"}
             width={1920}
             height={1080}
             className="w-full h-full object-cover"
@@ -562,7 +562,7 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
                 <div className="w-48 h-48 rounded-2xl overflow-hidden shadow-2xl ring-4 ring-white/20">
                   <CDNImage 
                     src={getAlbumArtworkUrl(publisherInfo.avatarArt, 'large')} 
-                    alt={publisherInfo.title || 'Artist'}
+                    alt={publisherInfo.title || "Artist"}
                     width={192}
                     height={192}
                     className="w-full h-full object-cover"
@@ -582,7 +582,7 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
                     <div className="w-48 h-48 rounded-2xl overflow-hidden shadow-2xl ring-4 ring-white/20">
                       <CDNImage 
                         src={getAlbumArtworkUrl(newestAlbum.coverArt, 'large')} 
-                        alt={newestAlbum.title || 'Latest Release'}
+                        alt={newestAlbum.title || "Latest Release"}
                         width={192}
                         height={192}
                         className="w-full h-full object-cover"
