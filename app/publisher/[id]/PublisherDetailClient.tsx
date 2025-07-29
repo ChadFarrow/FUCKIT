@@ -166,10 +166,15 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
                 console.log(`🎨 Last remote item:`, lastItem);
                 
                 // Find the corresponding album in our parsed data
-                const matchingFeed = feeds.find((feed: any) => 
-                  feed.originalUrl === lastItem.feedUrl || 
-                  feed.parsedData?.album?.feedGuid === lastItem.feedGuid
-                );
+                console.log(`🔍 Looking for feed with URL: "${lastItem.feedUrl}" or GUID: "${lastItem.feedGuid}"`);
+                console.log(`🔍 Available feeds:`, feeds.map((f: any) => ({ id: f.id, url: f.originalUrl, guid: f.parsedData?.album?.feedGuid })));
+                
+                const matchingFeed = feeds.find((feed: any) => {
+                  const urlMatch = feed.originalUrl === lastItem.feedUrl;
+                  const guidMatch = feed.parsedData?.album?.feedGuid === lastItem.feedGuid;
+                  console.log(`🔍 Checking feed ${feed.id}: urlMatch=${urlMatch} (${feed.originalUrl} vs ${lastItem.feedUrl}), guidMatch=${guidMatch} (${feed.parsedData?.album?.feedGuid} vs ${lastItem.feedGuid})`);
+                  return urlMatch || guidMatch;
+                });
                 
                 if (matchingFeed?.parsedData?.album?.coverArt) {
                   lastItemAvatarArt = matchingFeed.parsedData.album.coverArt;
