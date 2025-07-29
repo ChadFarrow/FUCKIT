@@ -169,12 +169,12 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
           console.log(`⚠️ No valid albums found - all ${initialData.publisherItems.length} items have empty titles`);
           // For publishers with empty titles, we need to fetch the actual album data
           setAlbumsLoading(true);
-          await fetchPublisherAlbums();
+          fetchPublisherAlbums();
         }
       } else {
         console.log('⚠️ No publisher items found');
         setAlbumsLoading(true);
-        await fetchPublisherAlbums();
+        fetchPublisherAlbums();
       }
       
       // Set loading to false since we have data
@@ -748,6 +748,12 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
                 <ControlsBar
                   activeFilter={activeFilter}
                   onFilterChange={setActiveFilter}
+                  filterOptions={[
+                    { value: 'all', label: 'All' },
+                    { value: 'albums', label: 'Albums' },
+                    { value: 'eps', label: 'EPs' },
+                    { value: 'singles', label: 'Singles' },
+                  ]}
                   sortType={sortType}
                   onSortChange={setSortType}
                   viewType={viewType}

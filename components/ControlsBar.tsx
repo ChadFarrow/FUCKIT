@@ -11,6 +11,7 @@ interface ControlsBarProps {
   activeFilter: FilterType;
   onFilterChange: (filter: FilterType) => void;
   showFilters?: boolean;
+  filterOptions?: { value: FilterType; label: string }[];
   
   // Sort props
   sortType: SortType;
@@ -50,6 +51,7 @@ export default function ControlsBar({
   activeFilter,
   onFilterChange,
   showFilters = true,
+  filterOptions = defaultFilters,
   sortType,
   onSortChange,
   sortOptions = defaultSortOptions,
@@ -70,7 +72,7 @@ export default function ControlsBar({
         {showFilters && (
           <div className="p-3 border-b border-white/10">
             <div className="flex gap-1 overflow-x-auto pb-1">
-              {defaultFilters.map((filter) => (
+              {filterOptions.map((filter) => (
                 <button
                   key={filter.value}
                   onClick={() => onFilterChange(filter.value)}
@@ -164,7 +166,7 @@ export default function ControlsBar({
             <div className="flex items-center gap-2">
               <Filter className="w-4 h-4 text-gray-400 flex-shrink-0" />
               <div className="flex gap-1">
-                {defaultFilters.map((filter) => (
+                {filterOptions.map((filter) => (
                   <button
                     key={filter.value}
                     onClick={() => onFilterChange(filter.value)}
