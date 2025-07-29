@@ -405,7 +405,7 @@ export default function CDNImage({
       }, isGif ? 12000 : 15000); // 12 second timeout for GIFs on mobile, 15 for others
       setTimeoutId(timeout);
     }
-  }, [isMobile, isClient, isLoading, timeoutId, isGif]);
+  }, [isClient, isLoading, timeoutId, isGif]); // Removed isMobile from dependencies to prevent infinite loops
 
   const dims = getImageDimensions();
 

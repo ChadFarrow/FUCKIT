@@ -10,9 +10,10 @@ export default function ServiceWorkerRegistration() {
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
       let registration: ServiceWorkerRegistration;
 
-      // Register service worker
+      // Register service worker with cache busting
+      const swUrl = `/sw.js?v=${Date.now()}`;
       navigator.serviceWorker
-        .register('/sw.js', {
+        .register(swUrl, {
           scope: '/',
           updateViaCache: 'none' // Don't cache the service worker itself
         })
