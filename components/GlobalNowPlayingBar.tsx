@@ -53,7 +53,8 @@ const GlobalNowPlayingBar: React.FC = () => {
     artist: currentPlayingAlbum.artist,
     albumTitle: currentPlayingAlbum.title,
     duration: duration || 0,
-    albumArt: currentPlayingAlbum.coverArt || ''
+    // Prioritize individual track image, fallback to album coverArt
+    albumArt: currentPlayingAlbum.tracks?.[currentTrackIndex]?.image || currentPlayingAlbum.coverArt || ''
   };
 
   // Debug logging in development
