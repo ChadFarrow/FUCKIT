@@ -90,8 +90,8 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
           // Try to find matching album by feedGuid (through publisher property)
           const matchingAlbum = allAlbums.find((album: RSSAlbum) => 
             album.publisher?.feedGuid === item.feedGuid || 
-            album.feedUrl === item.feedUrl ||
-            album.id === item.feedGuid
+            album.publisher?.feedUrl === item.feedUrl ||
+            album.link === item.feedUrl
           );
           
           if (matchingAlbum) {
@@ -110,10 +110,9 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
         console.log(`🎵 Found ${artistAlbums.length} albums by artist search`);
         matchedAlbums.push(...artistAlbums);
       } else {
-        // Last resort: search by publisherId in album IDs or artist names
+        // Last resort: search by publisherId in artist names
         console.log(`🔍 Fallback search by publisherId: ${publisherId}`);
         const fallbackAlbums = allAlbums.filter((album: RSSAlbum) => 
-          album.id.toLowerCase().includes(publisherId.toLowerCase()) ||
           (album.artist && album.artist.toLowerCase().includes(publisherId.toLowerCase()))
         );
         console.log(`🎵 Found ${fallbackAlbums.length} albums by fallback search`);
@@ -383,7 +382,7 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
             setPublisherItems(publisherAlbums.map((album: any) => ({
               title: album.title,
               description: album.description || album.summary,
-              url: album.feedUrl,
+              url: album.link,
               image: album.coverArt
             })));
           }
