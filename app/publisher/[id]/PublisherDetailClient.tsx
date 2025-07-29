@@ -452,7 +452,7 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
         {/* Hero Section */}
         <div className="container mx-auto px-4 pb-8">
           <div className="flex flex-col lg:flex-row items-start lg:items-end gap-8 mb-12">
-            {/* Artist Avatar - Use newest release artwork */}
+            {/* Artist Avatar - Use newest release artwork only */}
             <div className="flex-shrink-0">
               {albums.length > 0 ? (
                 (() => {
@@ -474,19 +474,12 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
                         className="w-full h-full object-cover"
                       />
                     </div>
-                  ) : null;
+                  ) : (
+                    <div className="w-48 h-48 rounded-2xl bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center shadow-2xl ring-4 ring-white/20">
+                      <Music className="w-20 h-20 text-white/80" />
+                    </div>
+                  );
                 })()
-              ) : null}
-              {(!albums.length || !albums.find(a => a.coverArt)) && publisherInfo?.coverArt ? (
-                <div className="w-48 h-48 rounded-2xl overflow-hidden shadow-2xl ring-4 ring-white/20">
-                  <CDNImage 
-                    src={getAlbumArtworkUrl(publisherInfo.coverArt, 'large')} 
-                    alt={publisherInfo.title || 'Artist'}
-                    width={192}
-                    height={192}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
               ) : (
                 <div className="w-48 h-48 rounded-2xl bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center shadow-2xl ring-4 ring-white/20">
                   <Music className="w-20 h-20 text-white/80" />
