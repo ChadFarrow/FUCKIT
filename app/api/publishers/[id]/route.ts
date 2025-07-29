@@ -65,12 +65,16 @@ export async function GET(
       });
     }
     
-    // Find the specific publisher feed
+    // Find the specific publisher feed by ID or feedGuid
     const publisherFeed = parsedFeedsData.feeds.find((feed: any) => 
       feed.type === 'publisher' && 
       feed.parseStatus === 'success' &&
       feed.parsedData &&
-      (feed.id === publisherId || feed.id.includes(publisherId))
+      (feed.id === publisherId || 
+       feed.id.includes(publisherId) ||
+       feed.parsedData.publisherItems?.some((item: any) => 
+         item.feedGuid && item.feedGuid.includes(publisherId)
+       ))
     );
     
     if (!publisherFeed) {

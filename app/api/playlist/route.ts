@@ -55,49 +55,146 @@ export async function GET(request: NextRequest) {
       })
     }
     
-    // Special handling for podcast feeds
+    // Special handling for podcast feeds with music segments
     if (feedId === 'intothedoerfelverse') {
-      // This is a podcast feed, not a music feed - return empty playlist with explanation
-      const playlistTitle = 'Into The Doerfel-Verse - Podcast Episodes'
-      const playlistDescription = 'This is a podcast about music, not a music playlist. The episodes contain discussions about music and may include music segments, but are not individual songs suitable for a music playlist.'
+      // Extract music segments from podcast episodes using chapter data
+      const musicTracks: any[] = []
+      let trackId = 1
       
+      for (const feed of feedsToProcess) {
+        if (feed.parsedData?.album?.tracks) {
+          for (const episode of feed.parsedData.album.tracks) {
+            // Try to fetch chapter data for this episode
+            const episodeNumber = episode.title.match(/Episode (\d+)/)?.[1]
+            if (episodeNumber) {
+              try {
+                const chapterUrl = `https://www.doerfelverse.com/chapters/dvep${episodeNumber}.json`
+                const chapterResponse = await fetch(chapterUrl)
+                
+                if (chapterResponse.ok) {
+                  const chapterData = await chapterResponse.json()
+                  
+                  // Extract music segments (chapters that are not the main episode)
+                  const musicChapters = chapterData.chapters.filter((chapter: any) => 
+                    !chapter.title.includes('Episode') && 
+                    !chapter.title.includes('episode') &&
+                    chapter.title.trim() !== '' &&
+                    chapter.startTime > 0
+                  )
+                  
+                  // Convert chapters to track format
+                  for (let i = 0; i < musicChapters.length; i++) {
+                    const chapter = musicChapters[i]
+                    const nextChapter = musicChapters[i + 1] || chapterData.chapters[chapterData.chapters.findIndex((c: any) => c === chapter) + 1]
+                    
+                    // Calculate duration
+                    const startTime = Math.floor(chapter.startTime)
+                    const endTime = nextChapter ? Math.floor(nextChapter.startTime) : Math.floor(chapter.startTime) + 180 // Default 3 min if no end
+                    const duration = endTime - startTime
+                    
+                    // Format duration as MM:SS
+                    const minutes = Math.floor(duration / 60)
+                    const seconds = duration % 60
+                    const formattedDuration = `${minutes}:${seconds.toString().padStart(2, '0')}`
+                    
+                    musicTracks.push({
+                      title: chapter.title,
+                      duration: formattedDuration,
+                      url: `${episode.url}#t=${startTime},${endTime}`, // URL with time fragment
+                      trackNumber: trackId++,
+                      subtitle: `From ${episode.title}`,
+                      summary: `Music segment from ${episode.title} at ${Math.floor(startTime / 60)}:${(startTime % 60).toString().padStart(2, '0')}`,
+                      image: chapter.img || episode.image,
+                      explicit: false,
+                      albumTitle: feed.parsedData.album.title,
+                      albumArtist: feed.parsedData.album.artist || 'The Doerfels',
+                      albumCoverArt: chapter.img || feed.parsedData.album.coverArt,
+                      feedId: feed.id,
+                      globalTrackNumber: trackId - 1,
+                      episodeTitle: episode.title,
+                      startTime: startTime,
+                      endTime: endTime
+                    })
+                  }
+                }
+              } catch (error) {
+                console.error(`Failed to fetch chapters for episode ${episodeNumber}:`, error)
+              }
+            }
+          }
+        }
+      }
+      
+      // Shuffle tracks for variety
+      for (let i = musicTracks.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [musicTracks[i], musicTracks[j]] = [musicTracks[j], musicTracks[i]]
+      }
+      
+      // Return results
       if (format === 'json') {
         return NextResponse.json({
-          title: playlistTitle,
-          description: playlistDescription,
-          tracks: [],
-          totalTracks: 0,
-          feedId: feedId,
-          isPodcast: true,
-          message: 'This feed contains podcast episodes, not individual music tracks. For music, try the main "Play All Songs" playlist.'
+          title: 'Into The Doerfel-Verse - Music Segments',
+          description: 'Music tracks played during Into The Doerfel-Verse podcast episodes, extracted from chapter markers',
+          tracks: musicTracks,
+          totalTracks: musicTracks.length,
+          feedId: feedId
         })
       }
       
-      // Return RSS with explanation
+      // Generate RSS for music segments
       const currentDate = new Date().toUTCString()
+      const playlistTitle = 'Into The Doerfel-Verse - Music Segments'
+      
       const rssXml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" 
   xmlns:podcast="https://podcastindex.org/namespace/1.0"
-  xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+  xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+  xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>${escapeXml(playlistTitle)}</title>
-    <description>${escapeXml(playlistDescription)}</description>
+    <description>Music tracks played during Into The Doerfel-Verse podcast episodes, extracted from chapter markers</description>
     <link>https://project-stablekraft.com</link>
     <language>en-us</language>
     <pubDate>${currentDate}</pubDate>
     <lastBuildDate>${currentDate}</lastBuildDate>
     <generator>Project StableKraft Playlist Generator</generator>
     
-    <podcast:medium>podcast</podcast:medium>
-    <itunes:type>episodic</itunes:type>
-    <itunes:category text="Music Commentary" />
+    <podcast:medium>musicL</podcast:medium>
+    <podcast:guid>doerfelverse-music-segments-2025</podcast:guid>
     
+    <itunes:author>The Doerfels</itunes:author>
+    <itunes:summary>Music tracks played during Into The Doerfel-Verse podcast episodes</itunes:summary>
+    <itunes:type>episodic</itunes:type>
+    <itunes:category text="Music" />
+    <itunes:image href="https://www.doerfelverse.com/art/itdvchadf.png" />
+    
+    ${musicTracks.map((track, index) => `
     <item>
-      <title>This is a podcast feed, not a music playlist</title>
-      <description>${escapeXml(playlistDescription + ' For individual music tracks, use the main "Play All Songs" playlist.')}</description>
-      <guid isPermaLink="false">podcast-explanation-${Date.now()}</guid>
-      <pubDate>${currentDate}</pubDate>
-    </item>
+      <title>${escapeXml(track.title)} - ${escapeXml(track.albumArtist)}</title>
+      <description>From "${escapeXml(track.episodeTitle)}" at ${Math.floor(track.startTime / 60)}:${(track.startTime % 60).toString().padStart(2, '0')}</description>
+      <guid isPermaLink="false">doerfelverse-music-segment-${track.globalTrackNumber}</guid>
+      <pubDate>${new Date(Date.now() - index * 3600000).toUTCString()}</pubDate>
+      
+      <enclosure url="${escapeXml(track.url)}" type="audio/mpeg" length="0" />
+      
+      <podcast:track>${track.globalTrackNumber}</podcast:track>
+      ${track.image ? `<podcast:images srcset="${escapeXml(track.image)} 3000w" />` : ''}
+      
+      <itunes:title>${escapeXml(track.title)}</itunes:title>
+      <itunes:artist>${escapeXml(track.albumArtist)}</itunes:artist>
+      <itunes:album>${escapeXml(track.albumTitle)}</itunes:album>
+      <itunes:duration>${formatDuration(track.duration)}</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+      ${track.image ? `<itunes:image href="${escapeXml(track.image)}" />` : ''}
+      
+      <content:encoded><![CDATA[
+        <p>Track: ${escapeXml(track.title)}</p>
+        <p>Artist: ${escapeXml(track.albumArtist)}</p>
+        <p>From: ${escapeXml(track.episodeTitle)}</p>
+        <p>Time: ${Math.floor(track.startTime / 60)}:${(track.startTime % 60).toString().padStart(2, '0')} - ${Math.floor(track.endTime / 60)}:${(track.endTime % 60).toString().padStart(2, '0')}</p>
+      ]]></content:encoded>
+    </item>`).join('')}
   </channel>
 </rss>`
       
