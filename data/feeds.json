@@ -1159,6 +1159,156 @@
       "status": "active",
       "addedAt": "2025-07-28T00:00:00.000Z",
       "lastUpdated": "2025-07-28T00:00:00.000Z"
+    },
+    {
+      "id": "my-friend-jimi-b220b396-0ebe-4760-8294-4bb27e06eabf",
+      "originalUrl": "https://wavlake.com/feed/music/b220b396-0ebe-4760-8294-4bb27e06eabf",
+      "type": "album",
+      "title": "My Friend Jimi Album - b220b396",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T21:52:51.982Z",
+      "lastUpdated": "2025-07-29T21:52:51.983Z"
+    },
+    {
+      "id": "my-friend-jimi-e3f0086f-5ee2-4ead-ba9d-78a9a29acac8",
+      "originalUrl": "https://wavlake.com/feed/music/e3f0086f-5ee2-4ead-ba9d-78a9a29acac8",
+      "type": "album",
+      "title": "My Friend Jimi Album - e3f0086f",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T21:52:51.983Z",
+      "lastUpdated": "2025-07-29T21:52:51.983Z"
+    },
+    {
+      "id": "my-friend-jimi-6c539346-f58e-4480-9276-32da31368f8e",
+      "originalUrl": "https://wavlake.com/feed/music/6c539346-f58e-4480-9276-32da31368f8e",
+      "type": "album",
+      "title": "My Friend Jimi Album - 6c539346",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T21:52:51.983Z",
+      "lastUpdated": "2025-07-29T21:52:51.983Z"
+    },
+    {
+      "id": "my-friend-jimi-76407adf-773c-4eb2-b5e2-8aef137d781f",
+      "originalUrl": "https://wavlake.com/feed/music/76407adf-773c-4eb2-b5e2-8aef137d781f",
+      "type": "album",
+      "title": "My Friend Jimi Album - 76407adf",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T21:52:51.983Z",
+      "lastUpdated": "2025-07-29T21:52:51.983Z"
+    },
+    {
+      "id": "my-friend-jimi-6e236029-d72e-48a4-8d0b-aecf78d39e87",
+      "originalUrl": "https://wavlake.com/feed/music/6e236029-d72e-48a4-8d0b-aecf78d39e87",
+      "type": "album",
+      "title": "My Friend Jimi Album - 6e236029",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T21:52:51.983Z",
+      "lastUpdated": "2025-07-29T21:52:51.983Z"
+    },
+    {
+      "id": "my-friend-jimi-b6d8f17c-f448-4085-8ce2-8b247eb26e63",
+      "originalUrl": "https://wavlake.com/feed/music/b6d8f17c-f448-4085-8ce2-8b247eb26e63",
+      "type": "album",
+      "title": "My Friend Jimi Album - b6d8f17c",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T21:52:51.983Z",
+      "lastUpdated": "2025-07-29T21:52:51.983Z"
+    },
+    {
+      "id": "my-friend-jimi-2b5b26a9-3b7a-4f78-9db2-424d94b182d8",
+      "originalUrl": "https://wavlake.com/feed/music/2b5b26a9-3b7a-4f78-9db2-424d94b182d8",
+      "type": "album",
+      "title": "My Friend Jimi Album - 2b5b26a9",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T21:52:51.983Z",
+      "lastUpdated": "2025-07-29T21:52:51.983Z"
+    },
+    {
+      "id": "my-friend-jimi-ed3d6bdf-011b-4416-ab87-591672c07145",
+      "originalUrl": "https://wavlake.com/feed/music/ed3d6bdf-011b-4416-ab87-591672c07145",
+      "type": "album",
+      "title": "My Friend Jimi Album - ed3d6bdf",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T21:52:51.983Z",
+      "lastUpdated": "2025-07-29T21:52:51.983Z"
+    },
+    {
+      "id": "my-friend-jimi-3d8c7279-6aa6-41e7-be1c-2680e57af6c8",
+      "originalUrl": "https://wavlake.com/feed/music/3d8c7279-6aa6-41e7-be1c-2680e57af6c8",
+      "type": "album",
+      "title": "My Friend Jimi Album - 3d8c7279",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T21:52:51.983Z",
+      "lastUpdated": "2025-07-29T21:52:51.983Z"
+    },
+    {
+      "id": "my-friend-jimi-86061a0e-52df-4cad-8c6d-cd1e19ca1e63",
+      "originalUrl": "https://wavlake.com/feed/music/86061a0e-52df-4cad-8c6d-cd1e19ca1e63",
+      "type": "album",
+      "title": "My Friend Jimi Album - 86061a0e",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T21:52:51.983Z",
+      "lastUpdated": "2025-07-29T21:52:51.983Z"
+    },
+    {
+      "id": "death-by-lions-the-sheer-magnitude-of-it-all",
+      "originalUrl": "https://wavlake.com/feed/e9ae5762-130d-4a16-b8b2-98804cc1802e",
+      "type": "album",
+      "title": "The Sheer Magnitude Of it All - Death by Lions",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T21:55:23.287Z",
+      "lastUpdated": "2025-07-29T21:55:23.288Z"
+    },
+    {
+      "id": "death-by-lions-publisher",
+      "originalUrl": "https://wavlake.com/feed/artist/1e7f8807-31a7-454c-b612-f2563ba4cf67",
+      "type": "publisher",
+      "title": "Death by Lions",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T21:56:09.080Z",
+      "lastUpdated": "2025-07-29T21:56:09.081Z"
+    },
+    {
+      "id": "death-by-lions-second-album",
+      "originalUrl": "https://wavlake.com/feed/music/ef437ae2-c7f1-449b-84ee-fba14daabd02",
+      "type": "album",
+      "title": "Death by Lions Album 2",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T21:56:09.081Z",
+      "lastUpdated": "2025-07-29T21:56:09.081Z"
+    },
+    {
+      "id": "death-by-lions-i-guess-this-will-have-to-do-single",
+      "originalUrl": "https://music.behindthesch3m3s.com/wp-content/uploads/Death_by_Lions/i_guess_this_will_have_to_do.xml",
+      "type": "album",
+      "title": "I Guess This Will Have to Do - Death by Lions (Single)",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T21:57:45.981Z",
+      "lastUpdated": "2025-07-29T21:57:45.982Z"
+    },
+    {
+      "id": "bitpunk-fm-publisher",
+      "originalUrl": "https://zine.bitpunk.fm/feeds/publisher.xml",
+      "type": "publisher",
+      "title": "bitpunk.fm",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-29T22:05:00.000Z",
+      "lastUpdated": "2025-07-29T22:05:00.000Z"
     }
   ],
   "lastUpdated": "2025-07-28T00:00:00.000Z",

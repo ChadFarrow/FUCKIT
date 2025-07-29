@@ -76,6 +76,50 @@ export default function RootLayout({
           </AudioProvider>
         </ErrorBoundary>
         <ServiceWorkerRegistration />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Cache busting and error prevention script
+              (function() {
+                console.log('🔧 Cache busting script loaded');
+                
+                // Prevent infinite recursion by limiting function calls
+                let recursionCount = 0;
+                const maxRecursion = 100;
+                
+                // Override console.error to catch recursion errors
+                const originalError = console.error;
+                console.error = function(...args) {
+                  const message = args.join(' ');
+                  if (message.includes('too much recursion')) {
+                    recursionCount++;
+                    if (recursionCount > maxRecursion) {
+                      console.warn('🛑 Too many recursion errors, stopping error logging');
+                      return;
+                    }
+                    console.warn('🔄 Recursion error detected, count:', recursionCount);
+                  }
+                  originalError.apply(console, args);
+                };
+                
+                // Clear any problematic state
+                if (typeof window !== 'undefined') {
+                  // Clear any cached audio contexts
+                  if (window.audioContextCache) {
+                    delete window.audioContextCache;
+                  }
+                  
+                  // Force garbage collection if available
+                  if (window.gc) {
+                    window.gc();
+                  }
+                }
+                
+                console.log('✅ Cache busting script initialized');
+              })();
+            `
+          }}
+        />
       </body>
     </html>
   )

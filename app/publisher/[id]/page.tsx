@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
 import PublisherDetailClient from './PublisherDetailClient';
 import { getPublisherInfo } from '@/lib/url-utils';
+import fs from 'fs';
+import path from 'path';
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
@@ -16,9 +18,48 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   };
 }
 
+async function loadPublisherData(publisherId: string) {
+  try {
+    const parsedFeedsPath = path.join(process.cwd(), 'data', 'parsed-feeds.json');
+    
+    if (!fs.existsSync(parsedFeedsPath)) {
+      console.error('Parsed feeds file not found at:', parsedFeedsPath);
+      return null;
+    }
+
+    const fileContent = fs.readFileSync(parsedFeedsPath, 'utf-8');
+    const parsedFeedsData = JSON.parse(fileContent);
+    
+    // Find the publisher feed
+    const publisherFeed = parsedFeedsData.feeds.find((feed: any) => 
+      feed.type === 'publisher' && 
+      feed.parseStatus === 'success' &&
+      feed.parsedData &&
+      (feed.id === `${publisherId}-publisher` || feed.id.includes(publisherId))
+    );
+    
+    if (!publisherFeed) {
+      console.log(`Publisher feed not found: ${publisherId}`);
+      return null;
+    }
+    
+    return {
+      publisherInfo: publisherFeed.parsedData?.publisherInfo || null,
+      publisherItems: publisherFeed.parsedData?.publisherItems || [],
+      feedId: publisherFeed.id
+    };
+  } catch (error) {
+    console.error('Error loading publisher data:', error);
+    return null;
+  }
+}
+
 export default async function PublisherDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const publisherId = decodeURIComponent(id);
   
-  return <PublisherDetailClient publisherId={publisherId} />;
+  // Load publisher data server-side
+  const publisherData = await loadPublisherData(publisherId);
+  
+  return <PublisherDetailClient publisherId={publisherId} initialData={publisherData} />;
 }

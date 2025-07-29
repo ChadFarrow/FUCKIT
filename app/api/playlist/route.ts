@@ -27,16 +27,26 @@ function formatDuration(duration: string): string {
 
 export async function GET(request: NextRequest) {
   try {
+    // Get query parameters
+    const searchParams = request.nextUrl.searchParams
+    const feedId = searchParams.get('feedId')
+    const format = searchParams.get('format') || 'rss' // 'rss' or 'json'
+    
     // Read parsed feeds data
     const dataPath = join(process.cwd(), 'data', 'parsed-feeds.json')
     const rawData = readFileSync(dataPath, 'utf8')
     const data = JSON.parse(rawData)
     
-    // Collect all tracks from all feeds
+    // Filter feeds if feedId is provided
+    const feedsToProcess = feedId 
+      ? data.feeds.filter((feed: any) => feed.id === feedId)
+      : data.feeds
+    
+    // Collect all tracks from selected feeds
     const allTracks: any[] = []
     let trackId = 1
     
-    data.feeds.forEach((feed: any) => {
+    feedsToProcess.forEach((feed: any) => {
       if (feed.parsedData?.album?.tracks) {
         feed.parsedData.album.tracks.forEach((track: any) => {
           allTracks.push({
@@ -44,6 +54,7 @@ export async function GET(request: NextRequest) {
             albumTitle: feed.parsedData.album.title,
             albumArtist: feed.parsedData.album.artist || 'Various Artists',
             albumCoverArt: feed.parsedData.album.coverArt,
+            feedId: feed.id,
             globalTrackNumber: trackId++
           })
         })
@@ -56,7 +67,23 @@ export async function GET(request: NextRequest) {
       [allTracks[i], allTracks[j]] = [allTracks[j], allTracks[i]]
     }
     
+    // Return JSON format if requested
+    if (format === 'json') {
+      return NextResponse.json({
+        title: feedId ? `${feedsToProcess[0]?.title || 'Selected'} - Playlist` : 'Project StableKraft - All Songs Playlist',
+        description: feedId 
+          ? `All songs from ${feedsToProcess[0]?.title || 'the selected feed'}`
+          : 'A complete playlist of all songs from Project StableKraft',
+        tracks: allTracks,
+        totalTracks: allTracks.length,
+        feedId: feedId || null
+      })
+    }
+    
     const currentDate = new Date().toUTCString()
+    const playlistTitle = feedId && feedsToProcess.length > 0 
+      ? `${feedsToProcess[0].title} - Playlist`
+      : 'Project StableKraft - All Songs Playlist'
     
     // Generate RSS XML with Podcasting 2.0 namespace
     const rssXml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -65,8 +92,10 @@ export async function GET(request: NextRequest) {
   xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
   xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Project StableKraft - All Songs Playlist</title>
-    <description>A complete playlist of all songs from Project StableKraft, featuring music from The Doerfels, Able and the Wolf, and many more independent artists.</description>
+    <title>${escapeXml(playlistTitle)}</title>
+    <description>${escapeXml(feedId 
+      ? `All songs from ${feedsToProcess[0]?.title || 'the selected feed'}`
+      : 'A complete playlist of all songs from Project StableKraft, featuring music from The Doerfels, Able and the Wolf, and many more independent artists.')}</description>
     <link>https://project-stablekraft.com</link>
     <language>en-us</language>
     <pubDate>${currentDate}</pubDate>
@@ -78,8 +107,10 @@ export async function GET(request: NextRequest) {
     <podcast:guid>stablekraft-all-songs-playlist-2025</podcast:guid>
     
     <!-- iTunes Tags -->
-    <itunes:author>Project StableKraft</itunes:author>
-    <itunes:summary>A complete playlist of all songs from Project StableKraft, featuring music from The Doerfels, Able and the Wolf, and many more independent artists.</itunes:summary>
+    <itunes:author>${escapeXml(feedId && feedsToProcess.length > 0 ? feedsToProcess[0].parsedData?.album?.artist || 'Project StableKraft' : 'Project StableKraft')}</itunes:author>
+    <itunes:summary>${escapeXml(feedId 
+      ? `All songs from ${feedsToProcess[0]?.title || 'the selected feed'}`
+      : 'A complete playlist of all songs from Project StableKraft, featuring music from The Doerfels, Able and the Wolf, and many more independent artists.')}</itunes:summary>
     <itunes:type>episodic</itunes:type>
     <itunes:owner>
       <itunes:name>Project StableKraft</itunes:name>
@@ -91,8 +122,8 @@ export async function GET(request: NextRequest) {
     
     <!-- Image -->
     <image>
-      <url>https://www.doerfelverse.com/art/carol-of-the-bells.png</url>
-      <title>Project StableKraft - All Songs Playlist</title>
+      <url>${escapeXml(feedId && feedsToProcess.length > 0 && feedsToProcess[0].parsedData?.album?.coverArt ? feedsToProcess[0].parsedData.album.coverArt : 'https://www.doerfelverse.com/art/carol-of-the-bells.png')}</url>
+      <title>${escapeXml(playlistTitle)}</title>
       <link>https://project-stablekraft.com</link>
     </image>
     

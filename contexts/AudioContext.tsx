@@ -367,8 +367,8 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
 
   // Play shuffled track function
   const playShuffledTrack = async (index: number): Promise<boolean> => {
-    if (!isShuffleMode || !shuffledPlaylist[index]) {
-      console.error('❌ Invalid shuffle track index or not in shuffle mode');
+    if (!shuffledPlaylist[index]) {
+      console.error('❌ Invalid shuffle track index:', index, 'playlist length:', shuffledPlaylist.length);
       return false;
     }
 

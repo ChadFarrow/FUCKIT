@@ -591,12 +591,25 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                 return true;
               }
               
+              // Try reverse slug generation to match
+              const generateSlug = (title: string) => title.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-');
+              const albumSlug = generateSlug(a.title);
+              const searchSlug = generateSlug(searchTitleLower);
+              if (albumSlug === searchSlug) {
+                console.log(`✅ Reverse slug match found: "${a.title}" (slug: ${albumSlug})`);
+                return true;
+              }
+              
               // Special cases for known problematic titles
               const specialCases: { [key: string]: string } = {
                 'stay awhile': 'Stay Awhile',
                 'all in a day': 'All in a Day',
                 'bloodshot lies': 'Bloodshot Lies',
-                'bloodshot lies album': 'Bloodshot Lies - The Album'
+                'bloodshot lies album': 'Bloodshot Lies - The Album',
+                'into the doerfel verse': 'Into The Doerfel-Verse',
+                'into the doerfel-verse': 'Into The Doerfel-Verse',
+                'into-the-doerfel-verse': 'Into The Doerfel-Verse',
+                'into the doerfelverse': 'Into The Doerfel-Verse'
               };
               
               if (specialCases[searchTitleLower] && a.title === specialCases[searchTitleLower]) {

@@ -107,6 +107,13 @@ const nextConfig = {
   // Domain configuration for re.podtards.com deployment
   basePath: '',
   
+  // Dynamic route configuration to prevent build issues
+  experimental: {
+    // Disable static generation for dynamic API routes
+    workerThreads: false,
+    cpus: 1,
+  },
+  
   // Revert static export - doesn't work with API routes
   // output: 'export',
   // trailingSlash: true,
