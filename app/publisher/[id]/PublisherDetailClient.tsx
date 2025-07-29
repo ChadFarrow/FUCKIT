@@ -9,6 +9,8 @@ import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { generateAlbumUrl, getPublisherInfo } from '@/lib/url-utils';
 import ControlsBar, { FilterType, ViewType, SortType } from '@/components/ControlsBar';
 import CDNImage from '@/components/CDNImage';
+import { useAudio } from '@/contexts/AudioContext';
+import { toast } from '@/components/Toast';
 
 interface PublisherDetailClientProps {
   publisherId: string;
@@ -28,6 +30,24 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
   const [viewType, setViewType] = useState<ViewType>('grid');
   const [sortType, setSortType] = useState<SortType>('name');
   
+  // Global audio context for shuffle functionality
+  const { shuffleAllTracks } = useAudio();
+  
+  // Shuffle functionality for publisher albums
+  const handleShuffle = async () => {
+    try {
+      console.log('🎲 Shuffle button clicked - starting shuffle for publisher albums');
+      const success = await shuffleAllTracks();
+      if (success) {
+        toast.success('🎲 Shuffle started!');
+      } else {
+        toast.error('Failed to start shuffle');
+      }
+    } catch (error) {
+      console.error('Error starting shuffle:', error);
+      toast.error('Error starting shuffle');
+    }
+  };
 
   useEffect(() => {
     console.log('🎯 PublisherDetailClient useEffect triggered');
@@ -485,6 +505,8 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
                   onSortChange={setSortType}
                   viewType={viewType}
                   onViewChange={setViewType}
+                  showShuffle={true}
+                  onShuffle={handleShuffle}
                   resultCount={filteredAlbums.length}
                   resultLabel={activeFilter === 'all' ? 'Releases' : 
                     activeFilter === 'albums' ? 'Albums' :
