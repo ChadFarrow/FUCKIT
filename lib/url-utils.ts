@@ -148,6 +148,17 @@ export const KNOWN_PUBLISHERS: { [slug: string]: { feedGuid: string; feedUrl: st
     feedGuid: 'd2f43e9f-adfc-4811-b9c1-58d5ea383275',
     feedUrl: 'https://wavlake.com/feed/artist/d2f43e9f-adfc-4811-b9c1-58d5ea383275',
     name: 'Ollie'
+  },
+  // Bitpunk.fm
+  'bitpunk-fm': {
+    feedGuid: '5883e6be-4e0c-11f0-9524-00155dc57d8e',
+    feedUrl: 'https://zine.bitpunk.fm/feeds/publisher.xml',
+    name: 'bitpunk.fm'
+  },
+  '5883e6be': {
+    feedGuid: '5883e6be-4e0c-11f0-9524-00155dc57d8e',
+    feedUrl: 'https://zine.bitpunk.fm/feeds/publisher.xml',
+    name: 'bitpunk.fm'
   }
 };
 
