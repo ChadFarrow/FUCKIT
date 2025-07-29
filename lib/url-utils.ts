@@ -104,30 +104,84 @@ export function generateCleanUrl(type: 'album' | 'publisher', identifier: string
  * Maps clean slugs to their corresponding feed URLs
  */
 export const KNOWN_PUBLISHERS: { [slug: string]: { feedGuid: string; feedUrl: string; name?: string } } = {
+  // The Doerfels - Family band from Buffalo, NY
+  'the-doerfels': {
+    feedGuid: 'doerfels-publisher-special',
+    feedUrl: 'https://re.podtards.com/api/feeds/doerfels-pubfeed',
+    name: 'The Doerfels'
+  },
+  'doerfels': {
+    feedGuid: 'doerfels-publisher-special',
+    feedUrl: 'https://re.podtards.com/api/feeds/doerfels-pubfeed',
+    name: 'The Doerfels'
+  },
+  
+  // IROH - Heavy Hazy Rock
+  'iroh': {
+    feedGuid: '8a9c2e54-785a-4128-9412-737610f5d00a',
+    feedUrl: 'https://wavlake.com/feed/artist/8a9c2e54-785a-4128-9412-737610f5d00a',
+    name: 'IROH'
+  },
+  
+  // Joe Martin - Independent singer songwriter
+  'joe-martin': {
+    feedGuid: '18bcbf10-6701-4ffb-b255-bc057390d738',
+    feedUrl: 'https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738',
+    name: 'Joe Martin'
+  },
+  
   // My Friend Jimi
   'my-friend-jimi': {
     feedGuid: '0ea699be-e985-4aa1-8c00-43542e4b9e0d',
     feedUrl: 'https://wavlake.com/feed/artist/0ea699be-e985-4aa1-8c00-43542e4b9e0d',
     name: 'My Friend Jimi'
   },
-  // Nate Johnivan
+  
+  // Ollie
+  'ollie': {
+    feedGuid: 'd2f43e9f-adfc-4811-b9c1-58d5ea383275',
+    feedUrl: 'https://wavlake.com/feed/artist/d2f43e9f-adfc-4811-b9c1-58d5ea383275',
+    name: 'Ollie'
+  },
+  
+  // BitPunk.fm - Low-fi audiozine
+  'bitpunkfm': {
+    feedGuid: '5883e6be-4e0c-11f0-9524-00155dc57d8e',
+    feedUrl: 'https://zine.bitpunk.fm/feeds/publisher.xml',
+    name: 'BitPunk.fm'
+  },
+  'bitpunk-fm': {
+    feedGuid: '5883e6be-4e0c-11f0-9524-00155dc57d8e',
+    feedUrl: 'https://zine.bitpunk.fm/feeds/publisher.xml',
+    name: 'BitPunk.fm'
+  },
+  
+  // Red Arrow Highway
+  'red-arrow-highway': {
+    feedGuid: '09465303-930a-4ee6-a18d-063cdc7fe3c9',
+    feedUrl: 'https://wavlake.com/feed/artist/09465303-930a-4ee6-a18d-063cdc7fe3c9',
+    name: 'Red Arrow Highway'
+  },
+  
+  // Drawing Monsters
+  'drawing-monsters': {
+    feedGuid: 'cbcb895d-9a01-465f-af7b-9a09ffbc29f5',
+    feedUrl: 'https://wavlake.com/feed/artist/cbcb895d-9a01-465f-af7b-9a09ffbc29f5',
+    name: 'Drawing Monsters'
+  },
+  
+  // Wavlake Publisher (generic)
+  'wavlake-publisher': {
+    feedGuid: 'aa909244-7555-4b52-ad88-7233860c6fb4',
+    feedUrl: 'https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4',
+    name: 'Wavlake Publisher'
+  },
   'nate-johnivan': {
     feedGuid: 'aa909244-7555-4b52-ad88-7233860c6fb4',
     feedUrl: 'https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4',
     name: 'Nate Johnivan'
   },
-  // Joe Martin
-  'joe-martin': {
-    feedGuid: '18bcbf10-6701-4ffb-b255-bc057390d738',
-    feedUrl: 'https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738',
-    name: 'Joe Martin'
-  },
-  // IROH - Using aggregated feed approach for multiple albums
-  'iroh': {
-    feedGuid: '8a9c2e54-785a-4128-9412-737610f5d00a',
-    feedUrl: 'iroh-aggregated',
-    name: 'IROH'
-  },
+  
   // Fallback for UUID-based URLs (backward compatibility)
   '18bcbf10': {
     feedGuid: '18bcbf10-6701-4ffb-b255-bc057390d738',
@@ -146,35 +200,28 @@ export const KNOWN_PUBLISHERS: { [slug: string]: { feedGuid: string; feedUrl: st
   },
   '8a9c2e54': {
     feedGuid: '8a9c2e54-785a-4128-9412-737610f5d00a',
-    feedUrl: 'iroh-aggregated',
+    feedUrl: 'https://wavlake.com/feed/artist/8a9c2e54-785a-4128-9412-737610f5d00a',
     name: 'IROH'
-  },
-  // Ollie
-  'ollie': {
-    feedGuid: 'd2f43e9f-adfc-4811-b9c1-58d5ea383275',
-    feedUrl: 'https://wavlake.com/feed/artist/d2f43e9f-adfc-4811-b9c1-58d5ea383275',
-    name: 'Ollie'
   },
   'd2f43e9f': {
     feedGuid: 'd2f43e9f-adfc-4811-b9c1-58d5ea383275',
     feedUrl: 'https://wavlake.com/feed/artist/d2f43e9f-adfc-4811-b9c1-58d5ea383275',
     name: 'Ollie'
   },
-  // Bitpunk.fm
-  'bitpunk-fm': {
-    feedGuid: '5883e6be-4e0c-11f0-9524-00155dc57d8e',
-    feedUrl: 'https://zine.bitpunk.fm/feeds/publisher.xml',
-    name: 'bitpunk.fm'
-  },
-  'bitpunkfm': {
-    feedGuid: '5883e6be-4e0c-11f0-9524-00155dc57d8e',
-    feedUrl: 'https://zine.bitpunk.fm/feeds/publisher.xml',
-    name: 'bitpunk.fm'
-  },
   '5883e6be': {
     feedGuid: '5883e6be-4e0c-11f0-9524-00155dc57d8e',
     feedUrl: 'https://zine.bitpunk.fm/feeds/publisher.xml',
-    name: 'bitpunk.fm'
+    name: 'BitPunk.fm'
+  },
+  '09465303': {
+    feedGuid: '09465303-930a-4ee6-a18d-063cdc7fe3c9',
+    feedUrl: 'https://wavlake.com/feed/artist/09465303-930a-4ee6-a18d-063cdc7fe3c9',
+    name: 'Red Arrow Highway'
+  },
+  'cbcb895d': {
+    feedGuid: 'cbcb895d-9a01-465f-af7b-9a09ffbc29f5',
+    feedUrl: 'https://wavlake.com/feed/artist/cbcb895d-9a01-465f-af7b-9a09ffbc29f5',
+    name: 'Drawing Monsters'
   }
 };
 
@@ -188,7 +235,7 @@ export function getPublisherInfo(slug: string): { feedGuid: string; feedUrl: str
   }
   
   // Try to find by partial UUID match
-  for (const [key, publisher] of Object.entries(KNOWN_PUBLISHERS)) {
+  for (const [, publisher] of Object.entries(KNOWN_PUBLISHERS)) {
     if (publisher.feedGuid.startsWith(slug) || slug.startsWith(publisher.feedGuid.split('-')[0])) {
       return publisher;
     }
