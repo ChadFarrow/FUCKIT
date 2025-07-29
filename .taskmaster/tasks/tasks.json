@@ -451,6 +451,17 @@
         "dependencies": [],
         "priority": "medium",
         "subtasks": []
+      },
+      {
+        "id": 43,
+        "title": "Fix publisher avatar to use last remote item artwork",
+        "description": "Updated publisher pages to use artwork from the last remote item in the publisher feed for the avatar instead of the first item, while keeping the publisher's main artwork for background",
+        "details": "Modified PublisherDetailClient.tsx to select feedInfo.remoteItems[feedInfo.remoteItems.length - 1] instead of feedInfo.remoteItems[0] for avatar artwork. Also updated parsing script comments to clarify the chronological order of remote items.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
       }
     ],
     "metadata": {
@@ -458,7 +469,7 @@
       "description": "Main task list for FUCKIT podcast/music streaming application",
       "created": "2025-01-27T00:00:00.000Z",
       "lastModified": "2025-01-27T00:00:00.000Z",
-      "updated": "2025-07-29T21:19:06.541Z"
+      "updated": "2025-07-29T22:22:24.118Z"
     }
   },
   "v1-5": {

@@ -80,7 +80,7 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
           tracks: Array(item.trackCount).fill(null).map((_, i) => ({
             id: `track-${i}`,
             title: `${item.title} - Track ${i + 1}`,
-            duration: 0,
+            duration: '0:00',
             url: item.link
           })),
           releaseDate: item.releaseDate,
@@ -201,7 +201,7 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
                 tracks: Array(item.trackCount).fill(null).map((_, i) => ({
                   id: `track-${i}`,
                   title: `${item.title} - Track ${i + 1}`,
-                  duration: 0,
+                  duration: '0:00',
                   url: item.link
                 })),
                 releaseDate: item.releaseDate,
