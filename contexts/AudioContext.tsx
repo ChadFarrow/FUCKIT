@@ -170,7 +170,26 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       const url = new URL(originalUrl);
       const isExternal = url.hostname !== window.location.hostname;
       
-      if (isExternal) {
+      // Special handling for op3.dev analytics URLs - extract direct URL
+      if (originalUrl.includes('op3.dev/e,') && originalUrl.includes('/https://')) {
+        const directUrl = originalUrl.split('/https://')[1];
+        if (directUrl) {
+          const fullDirectUrl = `https://${directUrl}`;
+          console.log('🔗 Extracted direct URL from op3.dev:', fullDirectUrl);
+          // Try direct URL first for better reliability
+          urlsToTry.push(fullDirectUrl);
+          // Then try proxy with direct URL
+          urlsToTry.push(`/api/proxy-audio?url=${encodeURIComponent(fullDirectUrl)}`);
+          // Fallback to original op3 URL with proxy
+          urlsToTry.push(`/api/proxy-audio?url=${encodeURIComponent(originalUrl)}`);
+          // Last resort: original op3 URL direct
+          urlsToTry.push(originalUrl);
+        } else {
+          // If extraction fails, use normal logic
+          urlsToTry.push(`/api/proxy-audio?url=${encodeURIComponent(originalUrl)}`);
+          urlsToTry.push(originalUrl);
+        }
+      } else if (isExternal) {
         // Try proxy first for external URLs
         urlsToTry.push(`/api/proxy-audio?url=${encodeURIComponent(originalUrl)}`);
         // Fallback to direct URL
