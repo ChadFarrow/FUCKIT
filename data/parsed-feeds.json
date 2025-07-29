@@ -11281,8 +11281,503 @@
       "categories": [
         "Education"
       ]
+    },
+    {
+      "id": "vance-latta-love-in-its-purest-form",
+      "originalUrl": "https://feed.falsefinish.club/Vance Latta/Vance Latta - Love In Its Purest Form/love in its purest form.xml",
+      "type": "album",
+      "title": "Vance Latta - Love In Its Purest Form",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-28T00:00:00.000Z",
+      "lastUpdated": "2025-07-28T00:00:00.000Z",
+      "parseStatus": "success",
+      "lastParsed": "2025-07-29T00:22:48.746Z",
+      "parsedData": {
+        "album": {
+          "title": "Love In Its Purest Form",
+          "artist": "Vance Latta",
+          "description": "Love In Its Purest Form is an audial onslaught of ethereal, synthesized, alternative, nocturnal melodies from the inner depths of your dreams, nightmares, realities and higher consciousness.\n\nWritten in my college dorm room and recorded between 2021 and 2023 through many trials and tribulations.\ncredits\nreleased November 25, 2023\n\nAll sounds and lyrics written and recorded by Vance Latta.\nAdditional drum input provided by Kaden Latta.\nMixed and mastered by Kevin Carafa.",
+          "coverArt": "https://feed.falsefinish.club/Vance%20Latta/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form/cover.png",
+          "tracks": [
+            {
+              "title": "Raining In The House",
+              "duration": "4:26",
+              "url": "https://feed.falsefinish.club/Vance%20Latta/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form%20-%2001%20Raining%20In%20The%20House.mp3",
+              "trackNumber": 1,
+              "explicit": false
+            },
+            {
+              "title": "Ravening",
+              "duration": "3:24",
+              "url": "https://feed.falsefinish.club/Vance%20Latta/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form%20-%2002%20Ravening.mp3",
+              "trackNumber": 2,
+              "explicit": false
+            },
+            {
+              "title": "Joyride",
+              "duration": "4:06",
+              "url": "https://feed.falsefinish.club/Vance%20Latta/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form%20-%2003%20Joyride.mp3",
+              "trackNumber": 3,
+              "explicit": false
+            },
+            {
+              "title": "Hearts Provide",
+              "duration": "3:40",
+              "url": "https://feed.falsefinish.club/Vance%20Latta/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form%20-%2004%20Hearts%20Provide.mp3",
+              "trackNumber": 4,
+              "explicit": false
+            },
+            {
+              "title": "Mysterious Places",
+              "duration": "4:20",
+              "url": "https://feed.falsefinish.club/Vance%20Latta/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form%20-%2005%20Mysterious%20Places.mp3",
+              "trackNumber": 5,
+              "explicit": false
+            },
+            {
+              "title": "Purple Nights",
+              "duration": "3:47",
+              "url": "https://feed.falsefinish.club/Vance%20Latta/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form%20-%2006%20Purple%20Nights.mp3",
+              "trackNumber": 6,
+              "explicit": false
+            },
+            {
+              "title": "This Must Be Heaven",
+              "duration": "3:43",
+              "url": "https://feed.falsefinish.club/Vance%20Latta/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form%20-%2007%20This%20Must%20Be%20Heaven.mp3",
+              "trackNumber": 7,
+              "explicit": false
+            },
+            {
+              "title": "Tears",
+              "duration": "3:50",
+              "url": "https://feed.falsefinish.club/Vance%20Latta/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form%20-%2008%20Tears.mp3",
+              "trackNumber": 8,
+              "explicit": false
+            },
+            {
+              "title": "The Ether",
+              "duration": "3:41",
+              "url": "https://feed.falsefinish.club/Vance%20Latta/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form%20-%2009%20The%20Ether.mp3",
+              "trackNumber": 9,
+              "explicit": false
+            },
+            {
+              "title": "Gin",
+              "duration": "5:50",
+              "url": "https://feed.falsefinish.club/Vance%20Latta/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form%20-%2010%20Gin.mp3",
+              "trackNumber": 10,
+              "explicit": false
+            }
+          ],
+          "releaseDate": "Tue, 25 Jun 2024 22:37:51 +0000",
+          "link": "https://vancelatta.bandcamp.com/album/love-in-its-purest-form",
+          "keywords": [
+            "music"
+          ],
+          "categories": [
+            "Music"
+          ],
+          "explicit": false
+        }
+      },
+      "trackCount": 10,
+      "categories": [
+        "Music"
+      ],
+      "keywords": [
+        "music"
+      ]
+    },
+    {
+      "id": "delta-og-aged-friends-old-whiskey",
+      "originalUrl": "https://music.behindthesch3m3s.com/wp-content/uploads/Delta_OG/Aged_Friends_and_Old_Whiskey/aged_friends_old_whiskey.xml",
+      "type": "album",
+      "title": "Delta OG - Aged Friends & Old Whiskey",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-28T00:00:00.000Z",
+      "lastUpdated": "2025-07-28T00:00:00.000Z",
+      "parseStatus": "success",
+      "lastParsed": "2025-07-29T00:23:18.727Z",
+      "parsedData": {
+        "album": {
+          "title": "Aged Friends & Old Whiskey",
+          "artist": "Delta OG",
+          "description": "Blues and Rock & Roll Band from the California Delta.",
+          "coverArt": "https://music.behindthesch3m3s.com/wp-content/uploads/Delta_OG/Aged_Friends_and_Old_Whiskey/deltaog-bg.png",
+          "tracks": [
+            {
+              "title": "The Devil Never Change",
+              "duration": "3:01",
+              "url": "https://music.behindthesch3m3s.com/wp-content/uploads/Delta_OG/Aged_Friends_and_Old_Whiskey/The%20Devil%20Never%20Change.wav",
+              "trackNumber": 1,
+              "explicit": false
+            },
+            {
+              "title": "I'm Coming Home Today",
+              "duration": "3:25",
+              "url": "https://music.behindthesch3m3s.com/wp-content/uploads/Delta_OG/Aged_Friends_and_Old_Whiskey/Im%20Coming%20Home%20Today.wav",
+              "trackNumber": 2,
+              "explicit": false
+            },
+            {
+              "title": "Montgomery Station",
+              "duration": "3:47",
+              "url": "https://music.behindthesch3m3s.com/wp-content/uploads/Delta_OG/Aged_Friends_and_Old_Whiskey/Montgomery%20Station.wav",
+              "trackNumber": 3,
+              "explicit": false
+            },
+            {
+              "title": "Boogie Stillin'",
+              "duration": "3:42",
+              "url": "https://music.behindthesch3m3s.com/wp-content/uploads/Delta_OG/Aged_Friends_and_Old_Whiskey/Boogie%20Still.wav",
+              "trackNumber": 4,
+              "explicit": false
+            },
+            {
+              "title": "Light & Shade",
+              "duration": "5:33",
+              "url": "https://music.behindthesch3m3s.com/wp-content/uploads/Delta_OG/Aged_Friends_and_Old_Whiskey/Light%20And%20Shade.wav",
+              "trackNumber": 5,
+              "explicit": false
+            },
+            {
+              "title": "The Way She Rolls",
+              "duration": "3:10",
+              "url": "https://music.behindthesch3m3s.com/wp-content/uploads/Delta_OG/Aged_Friends_and_Old_Whiskey/The%20Way%20She%20Rolls.wav",
+              "trackNumber": 6,
+              "explicit": false
+            }
+          ],
+          "releaseDate": "Mon, 20 May 2024 19:54:50 +0000",
+          "link": "https://deltaogband.com/",
+          "keywords": [
+            "music"
+          ],
+          "categories": [
+            "Music"
+          ],
+          "explicit": false
+        }
+      },
+      "trackCount": 6,
+      "categories": [
+        "Music"
+      ],
+      "keywords": [
+        "music"
+      ]
+    },
+    {
+      "id": "bowl-covers",
+      "originalUrl": "https://feed.bowlafterbowl.com/demu/bowl-covers/feed.xml",
+      "type": "album",
+      "title": "Bowl Covers",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-28T00:00:00.000Z",
+      "lastUpdated": "2025-07-28T00:00:00.000Z",
+      "parseStatus": "success",
+      "lastParsed": "2025-07-29T00:25:44.026Z",
+      "parsedData": {
+        "album": {
+          "title": "Bowl Covers",
+          "artist": "Bowl After Bowl",
+          "description": "A collection of covers performed on the Bowl After Bowl outro.",
+          "coverArt": "https://feed.bowlafterbowl.com/demu/bowl-covers/images/bowl-covers.png",
+          "tracks": [
+            {
+              "title": "Spencer covers Furr by Blitzen Trapper",
+              "duration": "5:28",
+              "url": "https://feed.bowlafterbowl.com/demu/bowl-covers/audio/ep-386-furr-cover.mp3",
+              "trackNumber": 1,
+              "image": "https://feed.bowlafterbowl.com/demu/bowl-covers/images/bowl-covers.png",
+              "explicit": false
+            },
+            {
+              "title": "Spencer covers Lean On Me by Bill Withers",
+              "duration": "4:48",
+              "url": "https://feed.bowlafterbowl.com/demu/bowl-covers/audio/ep-387-lean-on-me-cover.mp3",
+              "trackNumber": 2,
+              "image": "https://feed.bowlafterbowl.com/demu/bowl-covers/images/lean-on-me-cover.png",
+              "explicit": false
+            },
+            {
+              "title": "Spencer covers Burning Down the House by Talking Heads",
+              "duration": "3:35",
+              "url": "https://feed.bowlafterbowl.com/demu/bowl-covers/audio/ep-388-burning-down-the-house-cover.mp3",
+              "trackNumber": 3,
+              "image": "https://feed.bowlafterbowl.com/demu/bowl-covers/images/burning-down-the-house-cover.png",
+              "explicit": false
+            },
+            {
+              "title": "Spencer covers Drops of Jupiter by Train",
+              "duration": "5:47",
+              "url": "https://feed.bowlafterbowl.com/demu/bowl-covers/audio/ep-395-drops-of-jupiter-cover.mp3",
+              "trackNumber": 4,
+              "image": "https://feed.bowlafterbowl.com/demu/bowl-covers/images/drops-of-jupiter-cover.png",
+              "explicit": false
+            }
+          ],
+          "releaseDate": "Wed, 21 May 2025 04:20:33 -0500",
+          "link": "https://bowlafterbowl.com",
+          "categories": [
+            "Music",
+            "Society & Culture"
+          ],
+          "explicit": false,
+          "language": "en"
+        }
+      },
+      "trackCount": 4,
+      "categories": [
+        "Music",
+        "Society & Culture"
+      ]
+    },
+    {
+      "id": "red-arrow-highway-brothers-never-die",
+      "originalUrl": "https://wavlake.com/feed/a424ef37-84db-4ad4-8f84-8bce208e231b",
+      "type": "album",
+      "title": "Red Arrow Highway - Brothers Never Die",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-28T00:00:00.000Z",
+      "lastUpdated": "2025-07-28T00:00:00.000Z",
+      "parseStatus": "success",
+      "lastParsed": "2025-07-29T00:26:08.471Z",
+      "parsedData": {
+        "album": {
+          "title": "Brothers Never Die",
+          "artist": "Red Arrow Highway",
+          "description": "Music by Justin Suarez, Vocals by Nate Johnivan. Written and Recorded in 2022.  Mixed and mastered by Will Beasley at Will Beasley Recording.",
+          "coverArt": "https://d12wklypp119aj.cloudfront.net/image/a424ef37-84db-4ad4-8f84-8bce208e231b.jpg",
+          "tracks": [
+            {
+              "title": "Never Die",
+              "duration": "2:25",
+              "url": "https://op3.dev/e,pg=600ce632-d7be-55c8-9155-6de5af71d79d/https://d12wklypp119aj.cloudfront.net/track/739f9295-5aee-46a9-b4d4-a52c7f650e49.mp3",
+              "trackNumber": 1,
+              "explicit": false
+            },
+            {
+              "title": "Q",
+              "duration": "2:45",
+              "url": "https://op3.dev/e,pg=600ce632-d7be-55c8-9155-6de5af71d79d/https://d12wklypp119aj.cloudfront.net/track/8aff2937-3835-4f71-aecc-fb5a78de4189.mp3",
+              "trackNumber": 2,
+              "explicit": false
+            },
+            {
+              "title": "Real World",
+              "duration": "3:21",
+              "url": "https://op3.dev/e,pg=600ce632-d7be-55c8-9155-6de5af71d79d/https://d12wklypp119aj.cloudfront.net/track/fa9d8d4a-6234-42de-abec-a6e4fa292331.mp3",
+              "trackNumber": 3,
+              "explicit": false
+            },
+            {
+              "title": "Jouska",
+              "duration": "2:56",
+              "url": "https://op3.dev/e,pg=600ce632-d7be-55c8-9155-6de5af71d79d/https://d12wklypp119aj.cloudfront.net/track/6686dbf9-28c3-4b51-8f4d-9fa9b8d55ce9.mp3",
+              "trackNumber": 4,
+              "explicit": false
+            },
+            {
+              "title": "Nobody Dies Tonight",
+              "duration": "2:56",
+              "url": "https://op3.dev/e,pg=600ce632-d7be-55c8-9155-6de5af71d79d/https://d12wklypp119aj.cloudfront.net/track/d5232d61-bd8d-49b5-bffa-4ab5d421e2fe.mp3",
+              "trackNumber": 5,
+              "explicit": false
+            },
+            {
+              "title": "Freeze Frame",
+              "duration": "3:03",
+              "url": "https://op3.dev/e,pg=600ce632-d7be-55c8-9155-6de5af71d79d/https://d12wklypp119aj.cloudfront.net/track/6fa4bb12-f305-4401-be16-d24b55a5e401.mp3",
+              "trackNumber": 6,
+              "explicit": false
+            },
+            {
+              "title": "Cheers",
+              "duration": "3:15",
+              "url": "https://op3.dev/e,pg=600ce632-d7be-55c8-9155-6de5af71d79d/https://d12wklypp119aj.cloudfront.net/track/e415c78f-32c5-4a25-9908-1c1edbd6c85b.mp3",
+              "trackNumber": 7,
+              "explicit": false
+            },
+            {
+              "title": "Brothers",
+              "duration": "2:48",
+              "url": "https://op3.dev/e,pg=600ce632-d7be-55c8-9155-6de5af71d79d/https://d12wklypp119aj.cloudfront.net/track/10c0864d-03be-4fef-902c-c06ef385d725.mp3",
+              "trackNumber": 8,
+              "explicit": false
+            },
+            {
+              "title": "Wool Jacket Wolves",
+              "duration": "3:18",
+              "url": "https://op3.dev/e,pg=600ce632-d7be-55c8-9155-6de5af71d79d/https://d12wklypp119aj.cloudfront.net/track/d4de01fb-e5f2-4367-852f-90afce6082cb.mp3",
+              "trackNumber": 9,
+              "explicit": false
+            },
+            {
+              "title": "Leaving Chicago",
+              "duration": "2:44",
+              "url": "https://op3.dev/e,pg=600ce632-d7be-55c8-9155-6de5af71d79d/https://d12wklypp119aj.cloudfront.net/track/6f76f1cd-3501-4b6b-ae38-b6a35078f1fe.mp3",
+              "trackNumber": 10,
+              "explicit": false
+            }
+          ],
+          "releaseDate": "Fri, 13 Oct 2023 13:55:59 GMT",
+          "link": "https://wavlake.com/red-arrow-highway",
+          "summary": "Music by Justin Suarez, Vocals by Nate Johnivan. Written and Recorded in 2022.  Mixed and mastered by Will Beasley at Will Beasley Recording.",
+          "explicit": false,
+          "owner": {
+            "name": "Wavlake",
+            "email": "contact@wavlake.com"
+          },
+          "publisher": {
+            "feedGuid": "09465303-930a-4ee6-a18d-063cdc7fe3c9",
+            "feedUrl": "https://wavlake.com/feed/artist/09465303-930a-4ee6-a18d-063cdc7fe3c9",
+            "medium": "publisher"
+          }
+        }
+      },
+      "trackCount": 10
+    },
+    {
+      "id": "drawing-monsters-nate-and-cole-find-a-radio",
+      "originalUrl": "https://wavlake.com/feed/music/47bc7992-48ad-4a4b-907c-9972490bcdba",
+      "type": "album",
+      "title": "Drawing Monsters - Nate and Cole Find a Radio",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-28T00:00:00.000Z",
+      "lastUpdated": "2025-07-28T00:00:00.000Z",
+      "parseStatus": "success",
+      "lastParsed": "2025-07-29T00:27:13.241Z",
+      "parsedData": {
+        "album": {
+          "title": "Nate and Cole Find a Radio",
+          "artist": "Drawing Monsters",
+          "description": "A clawing your way out of a hole kind of album.\nWritten by Drawing Monsters, Recorded at Stonehouse Studios in 2014.\nLyrics, Vocals and Guitar: Nate Johnivan\nVocals: Cole Hansen\nBass: Steve Sullivan\nDrums: Dustin Posthuma",
+          "coverArt": "https://d12wklypp119aj.cloudfront.net/image/47bc7992-48ad-4a4b-907c-9972490bcdba.jpg",
+          "tracks": [
+            {
+              "title": "Chapter 3: The Big Reveal",
+              "duration": "0:38",
+              "url": "https://op3.dev/e,pg=3aea8c54-1f96-5917-9f49-d72b2941547c/https://d12wklypp119aj.cloudfront.net/track/cfc830fb-3ad7-414a-b6d4-28dc9f8076b7.mp3",
+              "trackNumber": 1,
+              "explicit": false
+            },
+            {
+              "title": "Chapter 2: The Adventure",
+              "duration": "0:38",
+              "url": "https://op3.dev/e,pg=3aea8c54-1f96-5917-9f49-d72b2941547c/https://d12wklypp119aj.cloudfront.net/track/3239f9b1-a700-4350-8fc1-e0a3b4952b3b.mp3",
+              "trackNumber": 2,
+              "explicit": false
+            },
+            {
+              "title": "Between Stops",
+              "duration": "2:00",
+              "url": "https://op3.dev/e,pg=3aea8c54-1f96-5917-9f49-d72b2941547c/https://d12wklypp119aj.cloudfront.net/track/30c518e7-db7b-4d8f-869d-fa54db9a319e.mp3",
+              "trackNumber": 3,
+              "explicit": false
+            },
+            {
+              "title": "Wealthy Street",
+              "duration": "4:15",
+              "url": "https://op3.dev/e,pg=3aea8c54-1f96-5917-9f49-d72b2941547c/https://d12wklypp119aj.cloudfront.net/track/a9976926-c1f7-43a4-9437-a1c59e8b0b7f.mp3",
+              "trackNumber": 4,
+              "explicit": false
+            },
+            {
+              "title": "Moving Day",
+              "duration": "3:16",
+              "url": "https://op3.dev/e,pg=3aea8c54-1f96-5917-9f49-d72b2941547c/https://d12wklypp119aj.cloudfront.net/track/a947fe1c-0bdb-4122-b347-486e21d83611.mp3",
+              "trackNumber": 5,
+              "explicit": false
+            },
+            {
+              "title": "The Professor",
+              "duration": "3:35",
+              "url": "https://op3.dev/e,pg=3aea8c54-1f96-5917-9f49-d72b2941547c/https://d12wklypp119aj.cloudfront.net/track/fbe2d7c2-5cb4-433f-8bed-ed2323958c79.mp3",
+              "trackNumber": 6,
+              "explicit": false
+            },
+            {
+              "title": "Son of Beast",
+              "duration": "4:00",
+              "url": "https://op3.dev/e,pg=3aea8c54-1f96-5917-9f49-d72b2941547c/https://d12wklypp119aj.cloudfront.net/track/1611c20e-4ab5-4e92-a719-e25a933ed15a.mp3",
+              "trackNumber": 7,
+              "explicit": false
+            },
+            {
+              "title": "Car Crash",
+              "duration": "4:08",
+              "url": "https://op3.dev/e,pg=3aea8c54-1f96-5917-9f49-d72b2941547c/https://d12wklypp119aj.cloudfront.net/track/7219015f-92a6-4d14-b913-59296afa23c2.mp3",
+              "trackNumber": 8,
+              "explicit": false
+            },
+            {
+              "title": "Trail of Dead",
+              "duration": "2:53",
+              "url": "https://op3.dev/e,pg=3aea8c54-1f96-5917-9f49-d72b2941547c/https://d12wklypp119aj.cloudfront.net/track/2c15dd21-ae70-4a99-8d9b-9f1bd420794e.mp3",
+              "trackNumber": 9,
+              "explicit": false
+            },
+            {
+              "title": "Say When",
+              "duration": "2:40",
+              "url": "https://op3.dev/e,pg=3aea8c54-1f96-5917-9f49-d72b2941547c/https://d12wklypp119aj.cloudfront.net/track/5901b1d1-df80-4213-930d-e8cb499ea310.mp3",
+              "trackNumber": 10,
+              "explicit": false
+            },
+            {
+              "title": "Deep End of the Room",
+              "duration": "2:47",
+              "url": "https://op3.dev/e,pg=3aea8c54-1f96-5917-9f49-d72b2941547c/https://d12wklypp119aj.cloudfront.net/track/9a28e2fa-b3af-4715-8f76-46e89301b70c.mp3",
+              "trackNumber": 11,
+              "explicit": false
+            },
+            {
+              "title": "Tiny Ships",
+              "duration": "4:01",
+              "url": "https://op3.dev/e,pg=3aea8c54-1f96-5917-9f49-d72b2941547c/https://d12wklypp119aj.cloudfront.net/track/bf9188a7-f3a3-4ee5-9f21-555ef948bff5.mp3",
+              "trackNumber": 12,
+              "explicit": false
+            },
+            {
+              "title": "Chapter 1: The Setup",
+              "duration": "0:38",
+              "url": "https://op3.dev/e,pg=3aea8c54-1f96-5917-9f49-d72b2941547c/https://d12wklypp119aj.cloudfront.net/track/148467bd-7bd8-4fb0-8de1-acb6df4eb45e.mp3",
+              "trackNumber": 13,
+              "explicit": false
+            },
+            {
+              "title": "Downtown in Team",
+              "duration": "2:57",
+              "url": "https://op3.dev/e,pg=3aea8c54-1f96-5917-9f49-d72b2941547c/https://d12wklypp119aj.cloudfront.net/track/ea5edef8-bda7-4979-a15a-2828f88aa2ed.mp3",
+              "trackNumber": 14,
+              "explicit": false
+            }
+          ],
+          "releaseDate": "Thu, 26 Jan 2023 15:39:15 GMT",
+          "link": "https://wavlake.com/drawing-monsters",
+          "summary": "A clawing your way out of a hole kind of album.\nWritten by Drawing Monsters, Recorded at Stonehouse Studios in 2014.\nLyrics, Vocals and Guitar: Nate Johnivan\nVocals: Cole Hansen\nBass: Steve Sullivan\nDrums: Dustin Posthuma",
+          "explicit": false,
+          "owner": {
+            "name": "Wavlake",
+            "email": "contact@wavlake.com"
+          },
+          "publisher": {
+            "feedGuid": "cbcb895d-9a01-465f-af7b-9a09ffbc29f5",
+            "feedUrl": "https://wavlake.com/feed/artist/cbcb895d-9a01-465f-af7b-9a09ffbc29f5",
+            "medium": "publisher"
+          }
+        }
+      },
+      "trackCount": 14
     }
   ],
-  "lastUpdated": "2025-07-28T23:53:35.865Z",
+  "lastUpdated": "2025-07-29T00:27:13.515Z",
   "version": 1
 }

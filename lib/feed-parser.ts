@@ -230,7 +230,9 @@ export class FeedParser {
         return [];
       }
       const content = fs.readFileSync(this.parsedDataPath, 'utf-8');
-      return JSON.parse(content);
+      const data = JSON.parse(content);
+      // Handle both array format and object with feeds property
+      return Array.isArray(data) ? data : (data.feeds || []);
     } catch (error) {
       console.error('Error reading parsed feeds:', error);
       return [];

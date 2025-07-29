@@ -104,6 +104,12 @@ export function generateCleanUrl(type: 'album' | 'publisher', identifier: string
  * Maps clean slugs to their corresponding feed URLs
  */
 export const KNOWN_PUBLISHERS: { [slug: string]: { feedGuid: string; feedUrl: string; name?: string } } = {
+  // My Friend Jimi
+  'my-friend-jimi': {
+    feedGuid: '0ea699be-e985-4aa1-8c00-43542e4b9e0d',
+    feedUrl: 'https://wavlake.com/feed/artist/0ea699be-e985-4aa1-8c00-43542e4b9e0d',
+    name: 'My Friend Jimi'
+  },
   // Nate Johnivan
   'nate-johnivan': {
     feedGuid: 'aa909244-7555-4b52-ad88-7233860c6fb4',
@@ -128,6 +134,11 @@ export const KNOWN_PUBLISHERS: { [slug: string]: { feedGuid: string; feedUrl: st
     feedUrl: 'https://wavlake.com/feed/artist/18bcbf10-6701-4ffb-b255-bc057390d738',
     name: 'Joe Martin'
   },
+  '0ea699be': {
+    feedGuid: '0ea699be-e985-4aa1-8c00-43542e4b9e0d',
+    feedUrl: 'https://wavlake.com/feed/artist/0ea699be-e985-4aa1-8c00-43542e4b9e0d',
+    name: 'My Friend Jimi'
+  },
   'aa909244': {
     feedGuid: 'aa909244-7555-4b52-ad88-7233860c6fb4',
     feedUrl: 'https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4',
@@ -151,6 +162,11 @@ export const KNOWN_PUBLISHERS: { [slug: string]: { feedGuid: string; feedUrl: st
   },
   // Bitpunk.fm
   'bitpunk-fm': {
+    feedGuid: '5883e6be-4e0c-11f0-9524-00155dc57d8e',
+    feedUrl: 'https://zine.bitpunk.fm/feeds/publisher.xml',
+    name: 'bitpunk.fm'
+  },
+  'bitpunkfm': {
     feedGuid: '5883e6be-4e0c-11f0-9524-00155dc57d8e',
     feedUrl: 'https://zine.bitpunk.fm/feeds/publisher.xml',
     name: 'bitpunk.fm'

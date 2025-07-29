@@ -1109,8 +1109,58 @@
       "status": "active",
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z"
+    },
+    {
+      "id": "vance-latta-love-in-its-purest-form",
+      "originalUrl": "https://feed.falsefinish.club/Vance Latta/Vance Latta - Love In Its Purest Form/love in its purest form.xml",
+      "type": "album",
+      "title": "Vance Latta - Love In Its Purest Form",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-28T00:00:00.000Z",
+      "lastUpdated": "2025-07-28T00:00:00.000Z"
+    },
+    {
+      "id": "delta-og-aged-friends-old-whiskey",
+      "originalUrl": "https://music.behindthesch3m3s.com/wp-content/uploads/Delta_OG/Aged_Friends_and_Old_Whiskey/aged_friends_old_whiskey.xml",
+      "type": "album",
+      "title": "Delta OG - Aged Friends & Old Whiskey",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-28T00:00:00.000Z",
+      "lastUpdated": "2025-07-28T00:00:00.000Z"
+    },
+    {
+      "id": "bowl-covers",
+      "originalUrl": "https://feed.bowlafterbowl.com/demu/bowl-covers/feed.xml",
+      "type": "album",
+      "title": "Bowl Covers",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-28T00:00:00.000Z",
+      "lastUpdated": "2025-07-28T00:00:00.000Z"
+    },
+    {
+      "id": "red-arrow-highway-brothers-never-die",
+      "originalUrl": "https://wavlake.com/feed/a424ef37-84db-4ad4-8f84-8bce208e231b",
+      "type": "album",
+      "title": "Red Arrow Highway - Brothers Never Die",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-28T00:00:00.000Z",
+      "lastUpdated": "2025-07-28T00:00:00.000Z"
+    },
+    {
+      "id": "drawing-monsters-nate-and-cole-find-a-radio",
+      "originalUrl": "https://wavlake.com/feed/music/47bc7992-48ad-4a4b-907c-9972490bcdba",
+      "type": "album",
+      "title": "Drawing Monsters - Nate and Cole Find a Radio",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-07-28T00:00:00.000Z",
+      "lastUpdated": "2025-07-28T00:00:00.000Z"
     }
   ],
-  "lastUpdated": "2025-01-27T00:00:00.000Z",
+  "lastUpdated": "2025-07-28T00:00:00.000Z",
   "version": 2
 }

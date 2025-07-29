@@ -237,6 +237,9 @@ export default function HomePage() {
           explicit: track.explicit,
           keywords: track.keywords
         })),
+        publisher: album.publisher, // Preserve publisher information
+        podroll: album.podroll,
+        funding: album.funding,
         feedId: album.feedId,
         feedUrl: album.feedUrl,
         lastUpdated: album.lastUpdated
