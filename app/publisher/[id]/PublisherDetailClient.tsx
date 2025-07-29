@@ -59,6 +59,9 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
           artist: publisherInfo.name,
           coverArt: undefined // Will be set from album data if available
         });
+        
+        // Stop loading immediately since we have publisher info
+        setIsLoading(false);
 
         // Load publisher info from pre-parsed data
         console.log(`🏢 Loading publisher info from pre-parsed data...`);
@@ -211,7 +214,7 @@ export default function PublisherDetailClient({ publisherId }: PublisherDetailCl
   const albumsWithMultipleTracks = sortAlbums(albums.filter(album => album.tracks.length > 6));
   const epsAndSingles = sortEpsAndSingles(albums.filter(album => album.tracks.length <= 6));
 
-  if (isLoading && !publisherInfo?.title) {
+  if (isLoading && !publisherInfo?.title && !publisherInfo?.artist) {
     return (
       <div className="min-h-screen text-white relative overflow-hidden">
         {/* Fallback background - use artist image or gradient */}
