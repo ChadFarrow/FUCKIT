@@ -66,11 +66,12 @@ export async function GET(
     }
     
     // Find the specific publisher feed by ID or feedGuid
+    // This matches the logic from the server-side loadPublisherData function
     const publisherFeed = parsedFeedsData.feeds.find((feed: any) => 
       feed.type === 'publisher' && 
       feed.parseStatus === 'success' &&
       feed.parsedData &&
-      (feed.id === publisherId || 
+      (feed.id === `${publisherId}-publisher` || 
        feed.id.includes(publisherId) ||
        feed.parsedData.publisherInfo?.feedGuid?.includes(publisherId) ||
        feed.parsedData.publisherItems?.some((item: any) => 

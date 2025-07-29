@@ -62,6 +62,75 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
     }
   };
 
+  // Fetch albums from individual feed URLs when publisher items have empty titles
+  const fetchPublisherAlbums = async () => {
+    if (!initialData?.publisherItems) {
+      setAlbumsLoading(false);
+      return;
+    }
+
+    try {
+      console.log(`🔍 Fetching album data for ${initialData.publisherItems.length} publisher items`);
+      
+      // Fetch albums data to find matches by feedGuid
+      const response = await fetch('/api/albums');
+      if (!response.ok) {
+        throw new Error('Failed to fetch albums');
+      }
+      
+      const albumsData = await response.json();
+      const allAlbums = albumsData.albums || [];
+      
+      // Match publisher items to actual albums by feedGuid or feedUrl
+      const matchedAlbums: RSSAlbum[] = [];
+      
+      if (initialData.publisherItems.length > 0) {
+        // Try to match by publisher items first
+        for (const item of initialData.publisherItems) {
+          // Try to find matching album by feedGuid
+          const matchingAlbum = allAlbums.find((album: RSSAlbum) => 
+            album.feedGuid === item.feedGuid || 
+            album.feedUrl === item.feedUrl ||
+            album.id === item.feedGuid
+          );
+          
+          if (matchingAlbum) {
+            console.log(`✅ Found matching album: ${matchingAlbum.title}`);
+            matchedAlbums.push(matchingAlbum);
+          } else {
+            console.log(`❌ No matching album found for feedGuid: ${item.feedGuid}`);
+          }
+        }
+      } else if (initialData.publisherInfo?.artist) {
+        // If no publisher items, try to find albums by artist name
+        console.log(`🎭 No publisher items, searching by artist: ${initialData.publisherInfo.artist}`);
+        const artistAlbums = allAlbums.filter((album: RSSAlbum) => 
+          album.artist && album.artist.toLowerCase().includes(initialData.publisherInfo.artist.toLowerCase())
+        );
+        console.log(`🎵 Found ${artistAlbums.length} albums by artist search`);
+        matchedAlbums.push(...artistAlbums);
+      } else {
+        // Last resort: search by publisherId in album IDs or artist names
+        console.log(`🔍 Fallback search by publisherId: ${publisherId}`);
+        const fallbackAlbums = allAlbums.filter((album: RSSAlbum) => 
+          album.id.toLowerCase().includes(publisherId.toLowerCase()) ||
+          (album.artist && album.artist.toLowerCase().includes(publisherId.toLowerCase()))
+        );
+        console.log(`🎵 Found ${fallbackAlbums.length} albums by fallback search`);
+        matchedAlbums.push(...fallbackAlbums);
+      }
+      
+      console.log(`🎵 Found ${matchedAlbums.length} matching albums out of ${initialData.publisherItems.length} items`);
+      setAlbums(matchedAlbums);
+      
+    } catch (error) {
+      console.error('Error fetching publisher albums:', error);
+      setError('Failed to load publisher albums');
+    } finally {
+      setAlbumsLoading(false);
+    }
+  };
+
   useEffect(() => {
     console.log('🎯 PublisherDetailClient useEffect triggered');
     
@@ -71,25 +140,41 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
       
       // Convert publisher items to album format for display
       if (initialData.publisherItems && initialData.publisherItems.length > 0) {
-        const albumsFromItems = initialData.publisherItems.map((item: any) => ({
-          id: item.id || `album-${Math.random()}`,
-          title: item.title,
-          artist: item.artist,
-          description: item.description,
-          coverArt: item.coverArt,
-          tracks: Array(item.trackCount).fill(null).map((_, i) => ({
-            id: `track-${i}`,
-            title: `${item.title} - Track ${i + 1}`,
-            duration: '0:00',
-            url: item.link
-          })),
-          releaseDate: item.releaseDate,
-          link: item.link,
-          feedUrl: item.link
-        }));
+        // Filter out items with empty or missing titles, as they won't render properly
+        const validItems = initialData.publisherItems.filter((item: any) => 
+          item.title && item.title.trim() !== ''
+        );
         
-        console.log(`🏢 Setting ${albumsFromItems.length} albums from initial data`);
-        setAlbums(albumsFromItems);
+        if (validItems.length > 0) {
+          const albumsFromItems = validItems.map((item: any) => ({
+            id: item.id || `album-${Math.random()}`,
+            title: item.title,
+            artist: item.artist,
+            description: item.description,
+            coverArt: item.coverArt,
+            tracks: Array(item.trackCount).fill(null).map((_, i) => ({
+              id: `track-${i}`,
+              title: `${item.title} - Track ${i + 1}`,
+              duration: '0:00',
+              url: item.link
+            })),
+            releaseDate: item.releaseDate,
+            link: item.link,
+            feedUrl: item.link
+          }));
+          
+          console.log(`🏢 Setting ${albumsFromItems.length} albums from initial data (filtered from ${initialData.publisherItems.length} items)`);
+          setAlbums(albumsFromItems);
+        } else {
+          console.log(`⚠️ No valid albums found - all ${initialData.publisherItems.length} items have empty titles`);
+          // For publishers with empty titles, we need to fetch the actual album data
+          setAlbumsLoading(true);
+          await fetchPublisherAlbums();
+        }
+      } else {
+        console.log('⚠️ No publisher items found');
+        setAlbumsLoading(true);
+        await fetchPublisherAlbums();
       }
       
       // Set loading to false since we have data
