@@ -10,15 +10,21 @@ export default function PerformanceMonitor() {
         for (const entry of list.getEntries()) {
           if (entry.entryType === 'largest-contentful-paint') {
             console.log('LCP:', entry.startTime);
-          } else if (entry.entryType === 'first-input') {
-            console.log('FID:', entry.processingStart - entry.startTime);
-          } else if (entry.entryType === 'layout-shift') {
-            console.log('CLS:', entry.value);
+          } else if (entry.entryType === 'first-input' && 'duration' in entry) {
+            // First Input Delay is represented by the duration
+            console.log('FID:', entry.duration);
+          } else if (entry.entryType === 'layout-shift' && 'value' in entry) {
+            console.log('CLS:', (entry as any).value);
           }
         }
       });
 
-      observer.observe({ entryTypes: ['largest-contentful-paint', 'first-input', 'layout-shift'] });
+      try {
+        observer.observe({ entryTypes: ['largest-contentful-paint', 'first-input', 'layout-shift'] });
+      } catch (e) {
+        // Some browsers might not support all entry types
+        console.warn('Performance monitoring not fully supported:', e);
+      }
 
       // Monitor page load time
       window.addEventListener('load', () => {
