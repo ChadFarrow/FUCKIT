@@ -1,0 +1,165 @@
+# Music Track Extraction Feature PRD
+
+## Overview
+Enhance the RSS feed checker to identify, extract, and organize music tracks from podcast RSS feeds, specifically designed to work with music-focused podcasts like the Doerfel-Verse feed.
+
+## Problem Statement
+Current RSS feed checkers only parse basic episode information but don't specifically identify and extract music tracks embedded within podcast episodes. Music podcasts often contain:
+- Multiple music tracks within single episodes
+- Value-for-value music sharing with timestamps
+- Links to external music feeds
+- Chapter-based music track organization
+
+## Goals
+1. **Track Identification**: Automatically detect music tracks within podcast episodes
+2. **Metadata Extraction**: Extract track titles, artists, timestamps, and duration
+3. **Music Feed Discovery**: Find and parse related music-only RSS feeds
+4. **Value-for-Value Integration**: Support Lightning Network value-for-value music sharing
+5. **User Interface**: Display music tracks in an organized, searchable interface
+
+## Target Users
+- Music podcast listeners
+- Independent musicians and podcasters
+- Music discovery enthusiasts
+- Value-for-value podcast supporters
+
+## Technical Requirements
+
+### Core Functionality
+1. **RSS Feed Analysis**
+   - Parse podcast RSS feeds for music-related metadata
+   - Extract chapter information from JSON chapter files
+   - Identify value time splits for music sharing
+   - Parse podcast roll for related music feeds
+
+2. **Music Track Detection**
+   - Analyze episode descriptions for music track mentions
+   - Extract timestamps from chapter data
+   - Identify value-for-value music segments
+   - Parse external music feed links
+
+3. **Metadata Extraction**
+   - Track title and artist information
+   - Start/end timestamps within episodes
+   - Duration and audio quality information
+   - Value-for-value payment details
+   - External links and references
+
+4. **Feed Discovery**
+   - Follow podcast roll links to music feeds
+   - Parse related music-only RSS feeds
+   - Aggregate music content across multiple feeds
+   - Maintain feed relationships and hierarchies
+
+### Data Models
+```typescript
+interface MusicTrack {
+  id: string;
+  title: string;
+  artist: string;
+  episodeId: string;
+  episodeTitle: string;
+  startTime: number; // seconds
+  endTime: number; // seconds
+  duration: number; // seconds
+  audioUrl?: string;
+  valueForValue?: {
+    lightningAddress: string;
+    suggestedAmount: number;
+    customKey?: string;
+    customValue?: string;
+  };
+  source: 'chapter' | 'value-split' | 'description' | 'external-feed';
+  feedUrl: string;
+  discoveredAt: Date;
+}
+
+interface MusicFeed {
+  id: string;
+  title: string;
+  description: string;
+  feedUrl: string;
+  parentFeedUrl?: string;
+  relationship: 'podcast-roll' | 'value-split' | 'related';
+  tracks: MusicTrack[];
+  lastUpdated: Date;
+}
+```
+
+### API Endpoints
+1. `GET /api/music-tracks?feedUrl={url}` - Extract music tracks from a feed
+2. `GET /api/music-feeds?feedUrl={url}` - Discover related music feeds
+3. `GET /api/music-tracks/search?q={query}` - Search across all discovered tracks
+4. `POST /api/music-tracks/analyze` - Analyze multiple feeds for music content
+
+### User Interface
+1. **Music Track List View**
+   - Grid/list view of discovered music tracks
+   - Filtering by artist, episode, feed, or source
+   - Sorting by date, duration, or popularity
+   - Search functionality
+
+2. **Track Detail View**
+   - Full track metadata display
+   - Audio player integration
+   - Value-for-value payment interface
+   - Related tracks and feeds
+
+3. **Feed Analysis Dashboard**
+   - Music content statistics
+   - Feed relationship visualization
+   - Discovery timeline
+   - Export functionality
+
+## Implementation Phases
+
+### Phase 1: Core Parser (Week 1-2)
+- Implement RSS feed music track detection
+- Parse chapter JSON files for track information
+- Extract value time splits
+- Basic metadata extraction
+
+### Phase 2: Feed Discovery (Week 3)
+- Implement podcast roll parsing
+- Follow and parse related music feeds
+- Build feed relationship tracking
+- Aggregate music content
+
+### Phase 3: User Interface (Week 4)
+- Create music track display components
+- Implement search and filtering
+- Build track detail views
+- Add value-for-value integration
+
+### Phase 4: Advanced Features (Week 5)
+- Audio player integration
+- Export functionality
+- Analytics and statistics
+- Performance optimization
+
+## Success Metrics
+1. **Accuracy**: Successfully identify 90%+ of music tracks in test feeds
+2. **Coverage**: Support major podcast platforms and RSS formats
+3. **Performance**: Parse feeds in under 5 seconds
+4. **User Engagement**: Track usage of music discovery features
+
+## Technical Considerations
+1. **Rate Limiting**: Respect feed server rate limits
+2. **Caching**: Cache parsed feed data to reduce API calls
+3. **Error Handling**: Graceful handling of malformed feeds
+4. **Scalability**: Support processing of large feed collections
+5. **Privacy**: Respect user privacy and feed access permissions
+
+## Future Enhancements
+1. **Music Recognition**: Audio fingerprinting for track identification
+2. **Recommendations**: AI-powered music recommendations
+3. **Social Features**: Sharing and commenting on discovered tracks
+4. **Mobile App**: Native mobile application for music discovery
+5. **API Integration**: Connect with music streaming services
+
+## Dependencies
+- Existing RSS feed parsing infrastructure
+- JSON parsing capabilities
+- Audio file handling
+- Lightning Network integration (for value-for-value)
+- Database schema updates for music track storage 
