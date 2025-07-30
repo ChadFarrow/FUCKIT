@@ -74,6 +74,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<Hls | null>(null);
   const albumsLoadedRef = useRef(false);
+  const isRetryingRef = useRef(false);
 
   // Load state from localStorage on mount
   useEffect(() => {
@@ -383,6 +384,9 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     
     const urlsToTry = getAudioUrlsToTry(originalUrl);
     
+    // Set retry flag to prevent error handler interference
+    isRetryingRef.current = true;
+    
     for (let i = 0; i < urlsToTry.length; i++) {
       const audioUrl = urlsToTry[i];
       console.log(`🔄 ${context} attempt ${i + 1}/${urlsToTry.length}: ${typeof audioUrl === 'string' && audioUrl.includes('proxy-audio') ? 'Proxied URL' : 'Direct URL'}`);
@@ -400,6 +404,11 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
         console.error(`❌ ${isVideo ? 'Video' : 'Audio'} element became null during playback attempt`);
         return false;
       }
+      
+      // Clear any previous error state before setting new source
+      currentMediaElement.pause();
+      currentMediaElement.removeAttribute('src');
+      currentMediaElement.load();
       
       // Set new source and load
       currentMediaElement.src = audioUrl;
@@ -423,6 +432,8 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
         if (playPromise !== undefined) {
           await playPromise;
           console.log(`✅ ${context} started successfully with ${typeof audioUrl === 'string' && audioUrl.includes('proxy-audio') ? 'proxied' : 'direct'} URL (${isVideo ? 'VIDEO' : 'AUDIO'} mode)`);
+          // Clear retry flag on success
+          isRetryingRef.current = false;
           return true;
         }
       } catch (attemptError) {
@@ -451,6 +462,9 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
         await new Promise(resolve => setTimeout(resolve, 500));
       }
     }
+    
+    // Clear retry flag
+    isRetryingRef.current = false;
     
     return false; // All attempts failed
   };
@@ -494,18 +508,25 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     const handleError = (event: Event) => {
       const mediaError = (event.target as HTMLMediaElement)?.error;
       console.error(`🚫 ${isVideoMode ? 'Video' : 'Audio'} error:`, mediaError);
+      
+      // Don't interfere if we're in the middle of retrying
+      if (isRetryingRef.current) {
+        console.log('🔄 Error during retry process - letting retry logic handle it');
+        return;
+      }
+      
       setIsPlaying(false);
       
-      // Don't clear source if we're using HLS.js, as it manages the video element
-      if (!hlsRef.current) {
-        // Prevent infinite error loops by clearing the source
-        const currentElement = isVideoMode ? videoRef.current : audioRef.current;
-        if (currentElement) {
-          currentElement.src = '';
-          currentElement.load();
-        }
-      } else {
-        console.log('🔄 HLS error handled by hls.js, not clearing source');
+      // Don't clear the source immediately - let the retry logic in attemptAudioPlayback handle it
+      // Only log the error for debugging
+      if (mediaError?.code === 4) {
+        console.log('🔄 Media not suitable error - retry logic will handle this');
+      } else if (mediaError?.code === 3) {
+        console.log('🔄 Decode error - retry logic will handle this');
+      } else if (mediaError?.code === 2) {
+        console.log('🔄 Network error - retry logic will handle this');
+      } else if (mediaError?.code === 1) {
+        console.log('🔄 Aborted error - retry logic will handle this');
       }
     };
 
