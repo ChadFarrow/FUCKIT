@@ -335,20 +335,18 @@ export default function CDNImage({
       setTimeoutId(null);
     }
     
+    // Set timeout for initial load only
+    const timeout = setTimeout(() => {
+      handleError();
+    }, isGif ? 12000 : 15000);
+    setTimeoutId(timeout);
+    
     return () => {
-      if (timeoutId) clearTimeout(timeoutId);
+      if (timeout) clearTimeout(timeout);
     };
   }, [src, width, height, isClient, isMobile, quality]); // Added quality to dependencies
 
-  // Handle mobile-specific timeouts separately
-  useEffect(() => {
-    if (isMobile && isClient && !timeoutId && currentSrc) {
-      const timeout = setTimeout(() => {
-        handleError();
-      }, isGif ? 12000 : 15000); // 12 second timeout for GIFs on mobile, 15 for others
-      setTimeoutId(timeout);
-    }
-  }, [isClient, isMobile, currentSrc, isGif]); // Removed timeoutId and isLoading to prevent infinite loops
+  // Handle mobile-specific timeouts separately - removed to fix infinite recursion
 
   const dims = getImageDimensions();
 
