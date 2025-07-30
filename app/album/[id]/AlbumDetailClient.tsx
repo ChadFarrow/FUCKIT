@@ -721,7 +721,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                 loadPodrollAlbums(foundAlbum.podroll);
               }
               // Load Publisher feed albums if publisher exists
-              if (foundAlbum.publisher && foundAlbum.publisher.feedUrl) {
+              if (foundAlbum.publisher && foundAlbum.publisher.feedUrl && typeof foundAlbum.publisher.feedUrl === 'string') {
                 loadPublisherAlbums(foundAlbum.publisher.feedUrl);
               }
             } else {
@@ -742,7 +742,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
         loadPodrollAlbums(initialAlbum.podroll);
       }
       // Load Publisher feed albums if publisher exists
-      if (initialAlbum.publisher && initialAlbum.publisher.feedUrl) {
+      if (initialAlbum.publisher && initialAlbum.publisher.feedUrl && typeof initialAlbum.publisher.feedUrl === 'string') {
         loadPublisherAlbums(initialAlbum.publisher.feedUrl);
       }
     }
@@ -761,9 +761,11 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
       const allAlbums = data.albums || [];
       
       // Filter albums that match the podroll URLs
-      const podrollUrls = podrollItems.map(item => item.url);
+      const podrollUrls = podrollItems.map(item => item.url).filter(url => typeof url === 'string');
       const podrollAlbumsData = allAlbums.filter((album: any) => {
-        return podrollUrls.some(url => album.feedUrl === url);
+        return album.feedUrl && 
+               typeof album.feedUrl === 'string' &&
+               podrollUrls.some(url => album.feedUrl === url);
       });
       
       setPodrollAlbums(podrollAlbumsData);
@@ -774,6 +776,12 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
 
   const loadPublisherAlbums = async (publisherFeedUrl: string) => {
     try {
+      // Validate input
+      if (!publisherFeedUrl || typeof publisherFeedUrl !== 'string') {
+        console.warn('⚠️ Invalid publisher feed URL:', publisherFeedUrl);
+        return;
+      }
+      
       console.log(`🏢 Loading albums from publisher feed: ${publisherFeedUrl}`);
       
       // Load pre-parsed album data and filter for publisher albums
@@ -788,7 +796,10 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
       
       // Filter albums that belong to the publisher
       const publisherAlbumsData = allAlbums.filter((album: any) => {
-        return album.publisher && album.publisher.feedUrl === publisherFeedUrl;
+        return album.publisher && 
+               album.publisher.feedUrl && 
+               typeof album.publisher.feedUrl === 'string' &&
+               album.publisher.feedUrl === publisherFeedUrl;
       });
       
       // Add publisher albums to podroll albums (they're displayed in the same section)

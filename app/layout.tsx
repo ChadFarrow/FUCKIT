@@ -6,6 +6,7 @@ import ErrorBoundary from '@/components/ErrorBoundary'
 import { ToastContainer } from '@/components/Toast'
 import { AudioProvider } from '@/contexts/AudioContext'
 import GlobalNowPlayingBar from '@/components/GlobalNowPlayingBar'
+import PerformanceMonitor from '@/components/PerformanceMonitor'
 
 
 
@@ -68,6 +69,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        {/* Resource hints for performance */}
+        <link rel="preconnect" href="https://www.doerfelverse.com" />
+        <link rel="dns-prefetch" href="https://www.doerfelverse.com" />
+        <link rel="preload" href="/api/albums" as="fetch" crossOrigin="anonymous" />
+        <link rel="preload" href="/logo.webp" as="image" />
+      </head>
       <body className={inter.className}>
         <ErrorBoundary>
           <AudioProvider>
@@ -79,6 +87,7 @@ export default function RootLayout({
           </AudioProvider>
         </ErrorBoundary>
         <ServiceWorkerRegistration />
+        <PerformanceMonitor />
       </body>
     </html>
   )

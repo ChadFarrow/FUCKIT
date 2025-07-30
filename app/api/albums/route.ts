@@ -53,11 +53,13 @@ export async function GET() {
       lastUpdated: new Date().toISOString()
     }, {
       headers: {
-        'Cache-Control': 'public, max-age=600, s-maxage=600', // Cache for 10 minutes
+        'Cache-Control': 'public, max-age=300, s-maxage=300', // Cache for 5 minutes
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type'
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'DENY'
       },
     });
   } catch (error) {

@@ -56,10 +56,6 @@ export default function CDNImage({
     const isGifImage = src.toLowerCase().includes('.gif') || 
                       currentSrc.toLowerCase().includes('.gif');
     setIsGif(isGifImage);
-    
-    if (process.env.NODE_ENV === 'development' && isGifImage) {
-      console.log('🎬 GIF detected:', src);
-    }
   }, [src, currentSrc]);
   
   useEffect(() => {
@@ -71,18 +67,7 @@ export default function CDNImage({
       setIsTablet(width > 768 && width <= 1024);
       setUserAgent(ua);
       
-      // Enhanced mobile logging
-      if (width <= 768) {
-        if (process.env.NODE_ENV === 'development') {
-            console.log('📱 Mobile device detected:', {
-            width,
-            userAgent: ua,
-            platform: navigator.platform,
-            vendor: navigator.vendor,
-          connection: (navigator as any).connection?.effectiveType || 'unknown'
-          });
-        }
-      }
+      // Mobile detection without logging for performance
     };
     
     checkDevice();
@@ -231,14 +216,7 @@ export default function CDNImage({
   };
 
   const handleError = () => {
-    // Only log in development mode to improve production performance
-    if (process.env.NODE_ENV === 'development') {
-      console.warn(`[CDNImage] Failed to load (attempt ${retryCount + 1}):`, currentSrc);
-      console.warn(`[CDNImage] Device info - Mobile: ${isMobile}, Width: ${window?.innerWidth}, UserAgent: ${userAgent.substring(0, 100)}`);
-      console.log(`[CDNImage] Debug - retryCount: ${retryCount}, fallbackSrc: ${fallbackSrc}, isMobile: ${isMobile}, currentSrc: ${currentSrc}`);
-      console.log(`[CDNImage] Retry conditions - retryCount === 0: ${retryCount === 0}, fallbackSrc && fallbackSrc !== currentSrc: ${fallbackSrc && fallbackSrc !== currentSrc}`);
-      console.log(`[CDNImage] Retry conditions - retryCount === 1: ${retryCount === 1}, isMobile: ${isMobile}, !currentSrc.includes('/api/'): ${!currentSrc.includes('/api/')}`);
-    }
+    // Minimal error handling for performance
     setIsLoading(false);
     
     // Clear timeout
@@ -249,9 +227,6 @@ export default function CDNImage({
     
     // First try the fallback URL if provided and different
     if (retryCount === 0 && fallbackSrc && fallbackSrc !== currentSrc) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('[CDNImage] Trying fallback URL:', fallbackSrc);
-      }
       setCurrentSrc(fallbackSrc);
       setHasError(false);
       setIsLoading(true);
@@ -259,9 +234,6 @@ export default function CDNImage({
       
       // Set timeout for fallback (shorter for GIFs)
       const timeout = setTimeout(() => {
-        if (process.env.NODE_ENV === 'development') {
-          console.warn('[CDNImage] Fallback URL timeout');
-        }
         handleError();
       }, isGif ? 8000 : 10000); // 8 second timeout for GIFs, 10 for others
       setTimeoutId(timeout);
@@ -270,9 +242,6 @@ export default function CDNImage({
     
     // If fallbackSrc is the same as currentSrc, skip to proxy attempt
     if (retryCount === 0 && fallbackSrc === currentSrc) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('[CDNImage] Fallback URL is same as current, trying proxy directly');
-      }
       setRetryCount(1);
       handleError();
       return;
@@ -281,9 +250,6 @@ export default function CDNImage({
     // Try image proxy for CORS errors (all devices)
     if (retryCount === 1 && !currentSrc.includes('/api/')) {
       const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(currentSrc)}`;
-      if (process.env.NODE_ENV === 'development') {
-        console.log('[CDNImage] Trying image proxy for CORS fallback:', proxyUrl);
-      }
       setCurrentSrc(proxyUrl);
       setHasError(false);
       setIsLoading(true);
@@ -291,9 +257,6 @@ export default function CDNImage({
       
       // Set timeout for proxy (shorter for GIFs)
       const timeout = setTimeout(() => {
-        if (process.env.NODE_ENV === 'development') {
-          console.warn('[CDNImage] Image proxy timeout');
-        }
         handleError();
       }, isGif ? 10000 : 12000); // 10 second timeout for GIFs, 12 for others
       setTimeoutId(timeout);
@@ -304,9 +267,6 @@ export default function CDNImage({
     if (retryCount === 2 && currentSrc.includes('/api/optimized-images/')) {
       const originalUrl = getOriginalUrl(currentSrc);
       if (originalUrl && originalUrl !== currentSrc) {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('[CDNImage] Trying without optimization:', originalUrl);
-        }
         setCurrentSrc(originalUrl);
         setHasError(false);
         setIsLoading(true);
@@ -314,9 +274,6 @@ export default function CDNImage({
         
         // Set timeout for original URL (shorter for GIFs)
         const timeout = setTimeout(() => {
-          if (process.env.NODE_ENV === 'development') {
-            console.warn('[CDNImage] Original URL timeout');
-          }
           handleError();
         }, isGif ? 12000 : 15000); // 12 second timeout for GIFs, 15 for others
         setTimeoutId(timeout);
@@ -325,21 +282,11 @@ export default function CDNImage({
     }
     
     // All retry attempts have failed - only now call onError and show placeholder
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[CDNImage] All attempts failed, showing placeholder');
-      console.log(`[CDNImage] Final debug - retryCount: ${retryCount}, isMobile: ${isMobile}, currentSrc: ${currentSrc}`);
-    }
     setHasError(true);
     onError?.(); // Only call onError after all retries have failed
   };
 
   const handleLoad = () => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[CDNImage] Image loaded successfully:', currentSrc);
-      if (isGif) {
-        console.log('🎬 GIF loaded successfully');
-      }
-    }
     setIsLoading(false);
     setHasError(false);
     setGifLoaded(true);
@@ -363,15 +310,9 @@ export default function CDNImage({
       // For mobile, if it's an external URL, use proxy immediately
       if (src && !src.includes('re.podtards.com') && !src.includes('/api/')) {
         imageSrc = `/api/proxy-image?url=${encodeURIComponent(src)}`;
-        if (process.env.NODE_ENV === 'development') {
-          console.log('[CDNImage] Mobile using proxy directly:', imageSrc);
-        }
       } else {
         // For internal URLs, use as-is or with light optimization
         imageSrc = getOptimizedUrl(src, dims.width, dims.height);
-        if (process.env.NODE_ENV === 'development') {
-          console.log('[CDNImage] Mobile using optimized:', imageSrc);
-        }
       }
     } else {
       imageSrc = getOptimizedUrl(src, dims.width, dims.height);
@@ -398,9 +339,6 @@ export default function CDNImage({
   useEffect(() => {
     if (isMobile && isClient && isLoading && !timeoutId) {
       const timeout = setTimeout(() => {
-        if (process.env.NODE_ENV === 'development') {
-          console.warn('[CDNImage] Mobile load timeout after 15s, src:', currentSrc);
-        }
         handleError();
       }, isGif ? 12000 : 15000); // 12 second timeout for GIFs on mobile, 15 for others
       setTimeoutId(timeout);
@@ -436,25 +374,8 @@ export default function CDNImage({
           width={dims.width}
           height={dims.height}
           className={`${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300 ${className || ''}`}
-          onError={(e) => {
-            if (process.env.NODE_ENV === 'development') {
-              console.error('[CDNImage] Mobile image load error:', {
-                src: currentSrc,
-                originalSrc: src,
-                error: e,
-                retryCount,
-                isMobile,
-                isGif
-              });
-            }
-            handleError();
-          }}
-          onLoad={(e) => {
-            if (process.env.NODE_ENV === 'development') {
-              console.log('[CDNImage] Mobile image loaded successfully:', currentSrc);
-            }
-            handleLoad();
-          }}
+          onError={handleError}
+          onLoad={handleLoad}
           loading={priority ? 'eager' : 'lazy'}
           referrerPolicy="no-referrer"
           crossOrigin="anonymous"
@@ -485,14 +406,7 @@ export default function CDNImage({
         />
       )}
       
-      {/* Debug info in development */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="absolute top-1 left-1 bg-black/50 text-white text-xs px-1 py-0.5 rounded opacity-0 hover:opacity-100 transition-opacity">
-          {currentSrc.includes('/api/optimized-images/') ? '🖼️ Optimized' : '📡 Original'}
-          {isMobile && ' 📱'}
-          {isGif && ' 🎬'}
-        </div>
-      )}
+      {/* Debug info removed for performance */}
     </div>
   );
 } 

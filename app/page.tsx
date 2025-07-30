@@ -53,6 +53,12 @@ export default function HomePage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
   
+  // Progressive loading states
+  const [criticalAlbums, setCriticalAlbums] = useState<RSSAlbum[]>([]);
+  const [enhancedAlbums, setEnhancedAlbums] = useState<RSSAlbum[]>([]);
+  const [isCriticalLoaded, setIsCriticalLoaded] = useState(false);
+  const [isEnhancedLoaded, setIsEnhancedLoaded] = useState(false);
+  
   // Global audio context
   const { playAlbum: globalPlayAlbum, shuffleAllTracks } = useAudio();
   const hasLoadedRef = useRef(false);
@@ -120,8 +126,8 @@ export default function HomePage() {
       localStorage.removeItem('albumsCacheTimestamp');
     }
     
-    // Load all feeds at once for smooth experience
-    loadAlbumsData('all');
+    // Progressive loading: Load critical data first, then enhance
+    loadCriticalAlbums();
   }, []); // Run only once on mount
 
 
@@ -138,12 +144,46 @@ export default function HomePage() {
 
 
 
-  const loadAlbumsData = async (loadTier: 'core' | 'extended' | 'lowPriority' | 'all' = 'all') => {
+  // Progressive loading: Load critical albums first (core feeds only)
+  const loadCriticalAlbums = async () => {
     try {
       setIsLoading(true);
       setError(null);
       setLoadingProgress(0);
       
+      // Load critical albums first (core feeds)
+      const criticalAlbums = await loadAlbumsData('core');
+      setCriticalAlbums(criticalAlbums);
+      setIsCriticalLoaded(true);
+      setLoadingProgress(30);
+      
+      // Start loading enhanced data in background
+      loadEnhancedAlbums();
+      
+    } catch (error) {
+      setError('Failed to load critical albums');
+      setIsLoading(false);
+    }
+  };
+
+  // Progressive loading: Load enhanced albums (all feeds)
+  const loadEnhancedAlbums = async () => {
+    try {
+      // Load all albums in background
+      const allAlbums = await loadAlbumsData('all');
+      setEnhancedAlbums(allAlbums);
+      setIsEnhancedLoaded(true);
+      setLoadingProgress(100);
+      setIsLoading(false);
+      
+    } catch (error) {
+      console.warn('Failed to load enhanced albums, using critical albums only');
+      setIsLoading(false);
+    }
+  };
+
+  const loadAlbumsData = async (loadTier: 'core' | 'extended' | 'lowPriority' | 'all' = 'all') => {
+    try {
       // Fetch pre-parsed album data from the new API endpoint
       const response = await fetch('/api/albums');
       
@@ -153,8 +193,6 @@ export default function HomePage() {
       
       const data = await response.json();
       const albums = data.albums || [];
-      
-      setLoadingProgress(50);
       
       // Filter albums based on load tier if needed
       let filteredAlbums = albums;
@@ -180,8 +218,6 @@ export default function HomePage() {
         filteredAlbums = albums.filter((album: any) => 
           tierFeedIds.has(album.feedId)
         );
-        
-        verboseLog(`📊 Filtered to ${filteredAlbums.length} albums for ${loadTier} tier`);
       }
       
       setLoadingProgress(75);
@@ -211,46 +247,27 @@ export default function HomePage() {
         lastUpdated: album.lastUpdated
       }));
       
-      verboseLog(`📦 Converted ${rssAlbums.length} albums to RSSAlbum format`);
-      
-      // Deduplicate albums with better logging
+      // Deduplicate albums
       const albumMap = new Map<string, RSSAlbum>();
-      const duplicates: string[] = [];
       
       rssAlbums.forEach((album) => {
         const key = `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`;
-        if (albumMap.has(key)) {
-          duplicates.push(`"${album.title}" by ${album.artist}`);
-          console.warn(`⚠️ Duplicate album found: "${album.title}" by ${album.artist}`);
-        } else {
+        if (!albumMap.has(key)) {
           albumMap.set(key, album);
         }
       });
       
       const uniqueAlbums = Array.from(albumMap.values());
       
-      if (duplicates.length > 0) {
-        console.warn(`📦 Found ${duplicates.length} duplicate albums:`, duplicates);
-      }
-      
-      verboseLog(`📦 Deduplicated ${rssAlbums.length} albums to ${uniqueAlbums.length} unique albums`);
-      
-      // Set albums state
-      setAlbums(uniqueAlbums);
-      setLoadingProgress(100);
-      
       // Cache the results
       if (typeof window !== 'undefined') {
         try {
           localStorage.setItem('cachedAlbums', JSON.stringify(uniqueAlbums));
           localStorage.setItem('albumsCacheTimestamp', Date.now().toString());
-          verboseLog('💾 Cached albums in localStorage');
         } catch (error) {
           console.warn('⚠️ Failed to cache albums:', error);
         }
       }
-      
-      devLog(`✅ Successfully loaded ${uniqueAlbums.length} albums from pre-parsed data`);
       
       return uniqueAlbums;
       
@@ -262,7 +279,6 @@ export default function HomePage() {
       toast.error(`Failed to load albums: ${errorMessage}`);
       return [];
     } finally {
-      verboseLog('🏁 loadAlbumsData finally block - setting isLoading to false');
       setIsLoading(false);
     }
   };
@@ -328,7 +344,10 @@ export default function HomePage() {
   // Shuffle functionality is now handled by the global AudioContext
 
   // Helper functions for filtering and sorting
-    const getFilteredAlbums = () => {
+  const getFilteredAlbums = () => {
+    // Use progressive loading: show critical albums first, then enhanced
+    const albumsToUse = isEnhancedLoaded ? enhancedAlbums : criticalAlbums;
+    
     // Universal sorting function that implements hierarchical order: Albums → EPs → Singles
     const sortWithHierarchy = (albums: RSSAlbum[]) => {
       
@@ -377,10 +396,10 @@ export default function HomePage() {
     };
     
     // Apply filtering based on active filter
-    let filtered = albums;
+    let filtered = albumsToUse;
     
     // Filter out explicit content by default
-    const baseAlbums = albums.filter(album => !album.explicit);
+    const baseAlbums = albumsToUse.filter(album => !album.explicit);
     
     switch (activeFilter) {
       case 'albums':
@@ -406,6 +425,9 @@ export default function HomePage() {
   };
 
   const filteredAlbums = getFilteredAlbums();
+  
+  // Show loading state for progressive loading
+  const showProgressiveLoading = isCriticalLoaded && !isEnhancedLoaded && filteredAlbums.length > 0;
 
   return (
     <div className="min-h-screen text-white relative overflow-hidden">
@@ -552,8 +574,15 @@ export default function HomePage() {
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
                     <span className="text-yellow-400">
-                      Loading {albums.length > 0 ? `${albums.length} albums` : `RSS feeds`}...
+                      {isCriticalLoaded ? 'Loading more albums...' : 'Loading albums...'}
                       {loadingProgress > 0 && ` (${Math.round(loadingProgress)}%)`}
+                    </span>
+                  </div>
+                ) : showProgressiveLoading ? (
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></span>
+                    <span className="text-blue-400">
+                      Loading more albums... ({filteredAlbums.length} loaded)
                     </span>
                   </div>
                 ) : error ? (
@@ -594,7 +623,8 @@ export default function HomePage() {
             {/* Artists with Publisher Feeds */}
             {(() => {
               // Extract unique artists with publisher feeds, excluding Doerfels artists
-              const artistsWithPublishers = albums
+              const albumsToUse = isEnhancedLoaded ? enhancedAlbums : criticalAlbums;
+              const artistsWithPublishers = albumsToUse
                 .filter(album => album.publisher && album.publisher.feedGuid)
                 .filter(album => {
                   // Exclude Doerfels family artists
@@ -628,6 +658,9 @@ export default function HomePage() {
                 <div className="mb-4">
                   <h3 className="text-sm font-semibold mb-2 text-white">
                     Publisher Feeds
+                    {showProgressiveLoading && (
+                      <span className="ml-2 text-xs text-blue-400">(Loading more...)</span>
+                    )}
                   </h3>
                   <div className="space-y-1 max-h-32 overflow-y-auto">
                     {artists.length > 0 ? (
@@ -755,7 +788,7 @@ export default function HomePage() {
         
         {/* Main Content */}
         <div className="container mx-auto px-3 sm:px-6 py-6 sm:py-8 pb-28">
-          {isLoading && albums.length === 0 ? (
+          {isLoading && !isCriticalLoaded ? (
             <div className="flex flex-col items-center justify-center py-12 gap-4">
               <LoadingSpinner 
                 size="large"
@@ -768,13 +801,13 @@ export default function HomePage() {
               <h2 className="text-2xl font-semibold mb-4 text-red-400">Error Loading Albums</h2>
               <p className="text-gray-400">{error}</p>
               <button 
-                onClick={() => loadAlbumsData('all')}
+                onClick={() => loadCriticalAlbums()}
                 className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
                 Retry
               </button>
             </div>
-          ) : albums.length > 0 ? (
+          ) : filteredAlbums.length > 0 ? (
             <div className="max-w-7xl mx-auto">
               {/* Controls Bar */}
               <ControlsBar
@@ -795,6 +828,18 @@ export default function HomePage() {
               />
 
               {/* Shuffle functionality is now handled by the global AudioContext */}
+
+              {/* Progressive Loading Indicator */}
+              {showProgressiveLoading && (
+                <div className="mb-6 p-4 bg-blue-600/20 border border-blue-500/30 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="w-4 h-4 bg-blue-400 rounded-full animate-pulse"></div>
+                    <span className="text-blue-300 text-sm">
+                      Loading more albums in the background... ({filteredAlbums.length} loaded so far)
+                    </span>
+                  </div>
+                </div>
+              )}
 
               {/* Albums Display */}
               {activeFilter === 'all' ? (
@@ -993,7 +1038,17 @@ export default function HomePage() {
           ) : (
             <div className="text-center py-12">
               <h2 className="text-2xl font-semibold mb-4">No Albums Found</h2>
-              <p className="text-gray-400">Unable to load any album information from the RSS feeds.</p>
+              <p className="text-gray-400">
+                {isCriticalLoaded ? 'Unable to load additional album information.' : 'Unable to load any album information from the RSS feeds.'}
+              </p>
+              {isCriticalLoaded && (
+                <button 
+                  onClick={() => loadEnhancedAlbums()}
+                  className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                  Load More Albums
+                </button>
+              )}
             </div>
           )}
         </div>

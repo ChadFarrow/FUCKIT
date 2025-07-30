@@ -2,7 +2,7 @@ const withPWA = require('next-pwa')({
   dest: 'public',
   register: true,
   skipWaiting: true,
-  disable: process.env.NODE_ENV === 'development' || true, // Temporarily disable Service Worker to fix API issues
+  disable: true, // Disable Service Worker for performance
   // Exclude RSC payloads and critical Next.js files from service worker caching
   exclude: [
     /_next\/static\/.*\/_buildManifest\.js$/,
@@ -114,11 +114,11 @@ const nextConfig = {
   // Image optimization configuration
   images: {
     // Performance optimizations
-    unoptimized: process.env.NODE_ENV === 'development', // Optimize in production
-    formats: ['image/webp', 'image/avif'],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
+    unoptimized: true, // Disable optimization for better performance
+    formats: ['image/webp'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256],
+    minimumCacheTTL: 60 * 60 * 24 * 7, // 7 days for faster updates
     // Improved loading state configuration
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
