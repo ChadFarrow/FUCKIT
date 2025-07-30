@@ -46,8 +46,35 @@ npx @next/bundle-analyzer
 ### 2. Implement Code Splitting
 ```typescript
 // Use dynamic imports for heavy components
-const HeavyComponent = dynamic(() => import('./HeavyComponent'), {
-  loading: () => <LoadingSpinner />,
+const AlbumCard = dynamic(() => import('@/components/AlbumCardLazy'), {
+  loading: () => (
+    <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 animate-pulse">
+      <div className="aspect-square bg-gray-800/50 rounded-lg mb-3"></div>
+      <div className="h-4 bg-gray-700/50 rounded mb-2"></div>
+      <div className="h-3 bg-gray-700/50 rounded w-2/3"></div>
+    </div>
+  ),
+  ssr: true
+});
+
+const CDNImage = dynamic(() => import('@/components/CDNImageLazy'), {
+  loading: () => (
+    <div className="animate-pulse bg-gray-800/50 rounded flex items-center justify-center">
+      <div className="w-6 h-6 bg-white/20 rounded-full animate-spin"></div>
+    </div>
+  ),
+  ssr: false
+});
+
+const AdminPanel = dynamic(() => import('@/components/AdminPanel'), {
+  loading: () => (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+        <p className="text-lg">Loading admin panel...</p>
+      </div>
+    </div>
+  ),
   ssr: false
 });
 ```
@@ -291,6 +318,7 @@ NEXT_TELEMETRY_DISABLED=1
 - [x] Implement progressive loading
 - [x] Add resource hints
 - [x] Add performance monitoring
+- [x] Implement code splitting
 - [ ] Implement virtual scrolling
 - [ ] Optimize bundle size
 - [ ] Implement error boundaries
@@ -312,5 +340,11 @@ After implementing these optimizations, you should see:
 - **Background enhancement** - Additional albums load without blocking the UI
 - **Better perceived performance** - Users can interact with content while more loads
 - **Graceful degradation** - Site works even if enhanced loading fails
+
+### Code Splitting Benefits:
+- **Reduced initial bundle size** - Heavy components load on-demand
+- **Faster initial page load** - Only essential components load first
+- **Better caching** - Components can be cached separately
+- **Improved performance** - Less JavaScript to parse on initial load
 
 Monitor the performance metrics after deployment to ensure the optimizations are working as expected. 
