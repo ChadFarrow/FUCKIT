@@ -11,7 +11,12 @@ export async function GET() {
       return NextResponse.json({ error: 'Parsed feeds data not found' }, { status: 404 });
     }
 
-    const parsedData = JSON.parse(fs.readFileSync(parsedFeedsPath, 'utf-8'));
+    console.log('📊 Loading parsed feeds from:', parsedFeedsPath);
+    const fileContent = fs.readFileSync(parsedFeedsPath, 'utf-8');
+    console.log('📊 File size:', fileContent.length, 'characters');
+    
+    const parsedData = JSON.parse(fileContent);
+    console.log('📊 Parsed feeds count:', parsedData.feeds?.length || 0);
     
     // Extract albums from parsed feeds
     const albums = parsedData.feeds
@@ -44,6 +49,9 @@ export async function GET() {
         };
       });
 
+    console.log('📊 Extracted albums count:', albums.length);
+    console.log('📊 Response size estimate:', JSON.stringify({ albums, totalCount: albums.length }).length, 'characters');
+
     return NextResponse.json({
       albums,
       totalCount: albums.length,
@@ -52,7 +60,6 @@ export async function GET() {
       headers: {
         'Cache-Control': 'public, max-age=600, s-maxage=600', // Cache for 10 minutes
         'Content-Type': 'application/json',
-        'Content-Encoding': 'gzip', // Enable compression
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type'

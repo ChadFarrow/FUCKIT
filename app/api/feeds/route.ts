@@ -75,7 +75,7 @@ export async function GET() {
       headers: {
         'Cache-Control': 'public, max-age=600, s-maxage=600', // Increased to 10 minutes for better performance
         'Content-Type': 'application/json',
-        'Content-Encoding': 'gzip', // Enable compression
+
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type'
