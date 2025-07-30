@@ -3,6 +3,18 @@
  * Preserves more information to avoid collisions
  */
 export function generateAlbumSlug(title: string): string {
+  // Special case handling for known problematic titles
+  const specialCases: { [key: string]: string } = {
+    'bitpunk.fm': 'bitpunkfm',
+    'into the doerfel-verse': 'into-the-doerfel-verse',
+    'into the doerfel verse': 'into-the-doerfel-verse'
+  };
+  
+  const lowerTitle = title.toLowerCase().trim();
+  if (specialCases[lowerTitle]) {
+    return specialCases[lowerTitle];
+  }
+  
   // First, normalize the title
   let slug = title
     .toLowerCase()

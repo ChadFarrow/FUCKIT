@@ -20,18 +20,16 @@ import { toast } from '@/components/Toast';
 // Temporarily disable error logger to prevent recursion
 // const logger = createErrorLogger('MainPage');
 
-// Development logging utility
+// Development logging utility - disabled for performance
 const isDev = process.env.NODE_ENV === 'development';
 const isVerbose = process.env.NEXT_PUBLIC_LOG_LEVEL === 'verbose';
 
 const devLog = (...args: any[]) => {
-  // Temporarily disable logging to prevent recursion
-  // if (isDev) console.log(...args);
+  // Disabled for performance
 };
 
 const verboseLog = (...args: any[]) => {
-  // Temporarily disable logging to prevent recursion
-  // if (isVerbose) console.log(...args);
+  // Disabled for performance
 };
 
 // RSS feed URLs - hardcoded for client-side compatibility
@@ -109,29 +107,21 @@ export default function HomePage() {
   // Audio playback is now handled by the global AudioContext
   
   useEffect(() => {
-    verboseLog('🔄 useEffect triggered - starting to load albums');
-    verboseLog('🔄 hasLoadedRef.current:', hasLoadedRef.current);
-    verboseLog('🔄 isClient:', isClient);
-    
     // Prevent multiple loads
     if (hasLoadedRef.current) {
-      verboseLog('🔄 Already loaded, skipping...');
       return;
     }
     
     hasLoadedRef.current = true;
-    verboseLog('🔄 Attempting to load albums...');
     
-    // Clear cache to force fresh data load with updated CDN URLs
+    // Clear cache to force fresh data load
     if (typeof window !== 'undefined') {
       localStorage.removeItem('cachedAlbums');
       localStorage.removeItem('albumsCacheTimestamp');
-      devLog('🧹 Cache cleared to force fresh data load');
     }
     
     // Load all feeds at once for smooth experience
-    devLog('🔄 Loading all feeds for smooth experience');
-          loadAlbumsData('all');
+    loadAlbumsData('all');
   }, []); // Run only once on mount
 
 
@@ -149,14 +139,10 @@ export default function HomePage() {
 
 
   const loadAlbumsData = async (loadTier: 'core' | 'extended' | 'lowPriority' | 'all' = 'all') => {
-    verboseLog('🔄 loadAlbumsData called with loadTier:', loadTier);
-    
     try {
       setIsLoading(true);
       setError(null);
       setLoadingProgress(0);
-      
-      verboseLog('🚀 Loading pre-parsed album data from API...');
       
       // Fetch pre-parsed album data from the new API endpoint
       const response = await fetch('/api/albums');
@@ -168,7 +154,6 @@ export default function HomePage() {
       const data = await response.json();
       const albums = data.albums || [];
       
-      verboseLog(`✅ Loaded ${albums.length} pre-parsed albums from API`);
       setLoadingProgress(50);
       
       // Filter albums based on load tier if needed

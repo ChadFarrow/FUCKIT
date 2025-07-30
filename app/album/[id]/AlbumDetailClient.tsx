@@ -502,6 +502,12 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             'orange-pill-pink-pill-white-pill---demo': 'https://wavlake.com/feed/music/21536269-5192-49e7-a819-fab00f4a159e',
             'tyson-vs-paul': 'https://wavlake.com/feed/music/624b19ac-5d8b-4fd6-8589-0eef7bcb9c9e',
             
+            // bitpunk.fm albums
+            'bitpunk.fm': 'https://zine.bitpunk.fm/feeds/bitpunk-fm.xml',
+            'bitpunkfm': 'https://zine.bitpunk.fm/feeds/bitpunk-fm.xml',
+            'bitpunk-fm': 'https://zine.bitpunk.fm/feeds/bitpunk-fm.xml',
+            'bitpunk fm': 'https://zine.bitpunk.fm/feeds/bitpunk-fm.xml',
+            
             // Joe Martin albums
             'crocodile-tears': 'https://wavlake.com/feed/music/1c7917cc-357c-4eaf-ab54-1a7cda504976',
             'letters-of-regret': 'https://wavlake.com/feed/music/e1f9dfcb-ee9b-4a6d-aee7-189043917fb5',
@@ -615,7 +621,10 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                 'into-the-doerfel-verse': 'Into The Doerfel-Verse',
                 'into the doerfelverse': 'Into The Doerfel-Verse',
                 'i guess this will have to do': 'I Guess This Will Have To Do',
-                'i-guess-this-will-have-to-do': 'I Guess This Will Have To Do'
+                'i-guess-this-will-have-to-do': 'I Guess This Will Have To Do',
+                'bitpunkfm': 'bitpunk.fm',
+                'bitpunk-fm': 'bitpunk.fm',
+                'bitpunk fm': 'bitpunk.fm'
               };
               
               if (specialCases[searchTitleLower] && a.title === specialCases[searchTitleLower]) {
