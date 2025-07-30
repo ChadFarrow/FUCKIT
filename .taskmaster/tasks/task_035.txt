@@ -1,0 +1,11 @@
+# Task ID: 35
+# Title: Fix Bottom Album Cut Off by Now Playing Bar
+# Status: done
+# Dependencies: None
+# Priority: high
+# Description: Fix the layout issue where the bottom album on the main page is being cut off by the fixed now playing bar. Need to add proper bottom padding/margin to prevent content overlap.
+# Details:
+The fixed bottom now playing bar is overlapping with the last album on the main page, cutting off content. Need to add bottom padding or margin to the main content area to account for the height of the now playing bar.
+
+# Test Strategy:
+Test the main page layout to ensure the bottom album is fully visible and not cut off by the now playing bar, especially on different screen sizes.

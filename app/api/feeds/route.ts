@@ -73,8 +73,9 @@ export async function GET() {
     return NextResponse.json(organizedFeeds, {
       status: 200,
       headers: {
-        'Cache-Control': 'public, max-age=300, s-maxage=300', // Cache for 5 minutes
+        'Cache-Control': 'public, max-age=600, s-maxage=600', // Increased to 10 minutes for better performance
         'Content-Type': 'application/json',
+        'Content-Encoding': 'gzip', // Enable compression
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type'

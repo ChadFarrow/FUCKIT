@@ -1,0 +1,11 @@
+# Task ID: 39
+# Title: Add shuffle functionality to publisher pages
+# Status: done
+# Dependencies: None
+# Priority: medium
+# Description: Implement shuffle button in publisher detail pages using the same global shuffle logic as the main albums page
+# Details:
+Add shuffle functionality to publisher pages by importing useAudio hook, creating handleShuffle function, and updating ControlsBar component to include shuffle button with showShuffle=true and onShuffle handler
+
+# Test Strategy:
+

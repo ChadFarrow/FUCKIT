@@ -1,0 +1,11 @@
+# Task ID: 37
+# Title: Fix Progress Bar Time Format Display
+# Status: done
+# Dependencies: None
+# Priority: medium
+# Description: Fix the progress bar time display to show proper HH:MM:SS format instead of just minutes. The time display should be consistent with standard audio player formatting.
+# Details:
+The progress bar time display is showing time in minutes format instead of the expected HH:MM:SS format. Need to fix the time formatting logic in the audio player component to display time properly.
+
+# Test Strategy:
+Test the progress bar time display to ensure it shows HH:MM:SS format correctly for tracks of different lengths, including tracks longer than 1 hour.

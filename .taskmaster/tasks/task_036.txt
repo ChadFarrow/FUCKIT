@@ -1,0 +1,11 @@
+# Task ID: 36
+# Title: Fix Progress Bar Hover Preview Issue
+# Status: done
+# Dependencies: None
+# Priority: medium
+# Description: Fix the progress bar hover behavior where hovering over the progress bar fills the entire bar instead of showing the specific section being hovered over. The hover should preview the position without changing the actual playback position.
+# Details:
+The audio player progress bar hover functionality needs to be fixed so that hovering shows a preview of the position without filling the entire bar. This likely involves fixing the hover event handling and CSS styling for the progress bar component.
+
+# Test Strategy:
+Test hovering over different parts of the progress bar to ensure it shows the correct preview position without affecting the actual playback position or filling the entire bar.

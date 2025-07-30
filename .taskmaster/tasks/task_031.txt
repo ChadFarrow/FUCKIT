@@ -1,8 +1,8 @@
 # Task ID: 31
 # Title: Bunny.net CDN Re-integration Roadmap
-# Status: pending
+# Status: deferred
 # Dependencies: None
-# Priority: high
+# Priority: medium
 # Description: Implement comprehensive Bunny.net CDN integration with phased approach to safely add CDN functionality while maintaining stable foundation
 # Details:
 Phase 1: Foundation Setup - Create optional CDN module with environment toggles, CDN-aware image component, configuration flags. Phase 2: Gradual Integration - Image optimization first with smart fallbacks, health monitoring. Phase 3: Audio Integration - CDN support to audio proxy with streaming optimization. Phase 4: Advanced Features - Automated content upload, cache invalidation, geographic optimization. Key principles: Always optional, graceful degradation, feature flags, comprehensive fallbacks, monitoring and alerts.
@@ -11,7 +11,7 @@ Phase 1: Foundation Setup - Create optional CDN module with environment toggles,
 
 
 # Subtasks:
-## 1. Phase 1.1: Create Optional CDN Environment Module [pending]
+## 1. Phase 1.1: Create Optional CDN Environment Module [done]
 ### Dependencies: None
 ### Description: Build lib/bunny-cdn.ts with environment variable toggles for optional CDN usage
 ### Details:

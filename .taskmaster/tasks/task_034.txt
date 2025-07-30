@@ -1,0 +1,11 @@
+# Task ID: 34
+# Title: Fix NaN Duration Values in RSS Parsing
+# Status: done
+# Dependencies: None
+# Priority: high
+# Description: Fix the issue where duration values are showing as "NaN:NaN:NaN" in the parsed feeds. The RSS parser needs better error handling for invalid duration values.
+# Details:
+The RSS parser in lib/rss-parser.ts has duration parsing logic that doesn't properly handle invalid duration values, resulting in "NaN:NaN:NaN" appearing in the parsed feeds. Need to add proper validation and fallback handling for malformed duration data.
+
+# Test Strategy:
+Test RSS parsing with feeds containing invalid duration values to ensure they default to "0:00" instead of "NaN:NaN:NaN".

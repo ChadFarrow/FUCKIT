@@ -1,0 +1,11 @@
+# Task ID: 45
+# Title: Fix Site Loading Performance Issues
+# Status: pending
+# Dependencies: None
+# Priority: high
+# Description: Investigate and resolve current site loading slowdown issues
+# Details:
+Based on investigation, the site loading performance issues appear to be caused by: 1) Large parsed-feeds.json file (512KB) - Has grown from ~400K to 512K, causing slower API responses; 2) Multiple backup files - 20+ backup files in data/ directory may be affecting file system performance; 3) API caching strategy - Current 5-minute cache may not be optimal for the large data size; 4) Image loading optimization - Multiple image domains and CDN configurations may need tuning. Immediate actions needed: Optimize parsed-feeds.json by removing unnecessary data or implementing pagination, clean up backup files to reduce file system overhead, implement better caching strategy for large data files, consider implementing data compression or streaming for large responses, review image loading and CDN configuration for performance bottlenecks.
+
+# Test Strategy:
+Measure page load times before and after optimizations, analyze network requests, check API response times, verify caching effectiveness, and test on different devices and network conditions.

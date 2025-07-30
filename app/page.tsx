@@ -136,8 +136,12 @@ export default function HomePage() {
       
       verboseLog('🚀 Loading pre-parsed album data from API...');
       
-      // Fetch pre-parsed album data from the new API endpoint
-      const response = await fetch('/api/albums');
+      // Fetch pre-parsed album data from the new API endpoint with performance optimizations
+      const response = await fetch('/api/albums', {
+        headers: {
+          'Cache-Control': 'max-age=600', // Cache for 10 minutes
+        },
+      });
       
       if (!response.ok) {
         throw new Error(`Failed to fetch albums: ${response.status} ${response.statusText}`);
@@ -156,7 +160,11 @@ export default function HomePage() {
         // Get feeds configuration to filter by priority
         let feedsConfig: any = { core: [], extended: [], low: [], publisher: [], all: [] };
         try {
-          const feedsResponse = await fetch('/api/feeds');
+          const feedsResponse = await fetch('/api/feeds', {
+            headers: {
+              'Cache-Control': 'max-age=600', // Cache for 10 minutes
+            },
+          });
           if (feedsResponse.ok) {
             feedsConfig = await feedsResponse.json();
           }
