@@ -516,7 +516,11 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             'cant-promise-you-the-world---live-from-sloe-flower-studio': 'https://wavlake.com/feed/music/06376ab5-efca-459c-9801-49ceba5fdab1',
             
             // Publisher feed
-            'iroh': 'https://wavlake.com/feed/artist/8a9c2e54-785a-4128-9412-737610f5d00a'
+            'iroh': 'https://wavlake.com/feed/artist/8a9c2e54-785a-4128-9412-737610f5d00a',
+            
+            // Death By Lions albums
+            'i guess this will have to do': 'https://music.behindthesch3m3s.com/wp-content/uploads/Death_by_Lions/i_guess_this_will_have_to_do.xml',
+            'i-guess-this-will-have-to-do': 'https://music.behindthesch3m3s.com/wp-content/uploads/Death_by_Lions/i_guess_this_will_have_to_do.xml'
           };
           
           // Convert URL slug back to title format (e.g., "stay-awhile" -> "stay awhile")
@@ -609,7 +613,9 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                 'into the doerfel verse': 'Into The Doerfel-Verse',
                 'into the doerfel-verse': 'Into The Doerfel-Verse',
                 'into-the-doerfel-verse': 'Into The Doerfel-Verse',
-                'into the doerfelverse': 'Into The Doerfel-Verse'
+                'into the doerfelverse': 'Into The Doerfel-Verse',
+                'i guess this will have to do': 'I Guess This Will Have To Do',
+                'i-guess-this-will-have-to-do': 'I Guess This Will Have To Do'
               };
               
               if (specialCases[searchTitleLower] && a.title === specialCases[searchTitleLower]) {

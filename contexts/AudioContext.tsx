@@ -260,17 +260,34 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
           
           hlsRef.current = hls;
           
+          // Clear any existing src to avoid conflicts
+          videoElement.src = '';
+          videoElement.load();
+          
           // Set up event listeners
           const manifestParsed = new Promise<boolean>((resolve) => {
+            let hasResolved = false;
+            
             hls.on(Hls.Events.MANIFEST_PARSED, () => {
               console.log('✅ HLS manifest parsed successfully');
-              videoElement.play().then(() => {
-                console.log(`✅ ${context} started successfully`);
-                resolve(true);
-              }).catch(error => {
-                console.error('❌ HLS playback failed:', error);
-                resolve(false);
-              });
+              // Don't try to play immediately, wait for video to be ready
+            });
+            
+            hls.on(Hls.Events.LEVEL_LOADED, () => {
+              console.log('✅ HLS level loaded, attempting playback');
+              if (!hasResolved) {
+                videoElement.play().then(() => {
+                  console.log(`✅ ${context} started successfully`);
+                  hasResolved = true;
+                  resolve(true);
+                }).catch(error => {
+                  console.error('❌ HLS playback failed:', error);
+                  if (!hasResolved) {
+                    hasResolved = true;
+                    resolve(false);
+                  }
+                });
+              }
             });
             
             hls.on(Hls.Events.ERROR, (event, data) => {
@@ -279,15 +296,21 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
                 console.error('❌ Fatal HLS error, trying next URL');
                 hls.destroy();
                 hlsRef.current = null;
-                resolve(false);
+                if (!hasResolved) {
+                  hasResolved = true;
+                  resolve(false);
+                }
               }
             });
             
-            // Timeout after 15 seconds
+            // Timeout after 20 seconds
             setTimeout(() => {
               console.warn(`⏰ ${context} timed out for URL ${i + 1}`);
-              resolve(false);
-            }, 15000);
+              if (!hasResolved) {
+                hasResolved = true;
+                resolve(false);
+              }
+            }, 20000);
           });
           
           // Load the HLS stream
@@ -474,11 +497,16 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       console.error(`🚫 ${isVideoMode ? 'Video' : 'Audio'} error:`, mediaError);
       setIsPlaying(false);
       
-      // Prevent infinite error loops by clearing the source
-      const currentElement = isVideoMode ? videoRef.current : audioRef.current;
-      if (currentElement) {
-        currentElement.src = '';
-        currentElement.load();
+      // Don't clear source if we're using HLS.js, as it manages the video element
+      if (!hlsRef.current) {
+        // Prevent infinite error loops by clearing the source
+        const currentElement = isVideoMode ? videoRef.current : audioRef.current;
+        if (currentElement) {
+          currentElement.src = '';
+          currentElement.load();
+        }
+      } else {
+        console.log('🔄 HLS error handled by hls.js, not clearing source');
       }
     };
 
@@ -839,7 +867,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       {/* Hidden video element */}
       <video
         ref={videoRef}
-        preload="metadata"
+        preload="none"
         crossOrigin="anonymous"
         playsInline
         webkit-playsinline="true"
