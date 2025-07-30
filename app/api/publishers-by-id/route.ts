@@ -54,9 +54,9 @@ export async function GET(request: Request) {
       feed.parseStatus === 'success' &&
       feed.parsedData &&
       (feed.id === publisherId || 
-       feed.id.includes(publisherId) ||
+       (typeof feed.id === 'string' && feed.id.includes(publisherId)) ||
        feed.parsedData.publisherItems?.some((item: any) => 
-         item.feedGuid && item.feedGuid.includes(publisherId)
+         item.feedGuid && typeof item.feedGuid === 'string' && item.feedGuid.includes(publisherId)
        ))
     );
     

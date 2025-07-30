@@ -168,13 +168,13 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   // Helper function to detect if URL is a video
   const isVideoUrl = (url: string): boolean => {
     const videoExtensions = ['.mp4', '.webm', '.ogg', '.m3u8', '.m4v', '.mov', '.avi', '.mkv'];
-    const urlLower = url.toLowerCase();
+    const urlLower = typeof url === 'string' ? url.toLowerCase() : '';
     return videoExtensions.some(ext => urlLower.includes(ext));
   };
 
   // Helper function to detect if URL is an HLS stream
   const isHlsUrl = (url: string): boolean => {
-    return url.toLowerCase().includes('.m3u8');
+    return typeof url === 'string' && url.toLowerCase().includes('.m3u8');
   };
 
   // Helper function to get URLs to try for audio/video playback
@@ -196,7 +196,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       }
       
       // Special handling for op3.dev analytics URLs - extract direct URL
-      if (originalUrl.includes('op3.dev/e,') && originalUrl.includes('/https://')) {
+      if (typeof originalUrl === 'string' && originalUrl.includes('op3.dev/e,') && originalUrl.includes('/https://')) {
         const directUrl = originalUrl.split('/https://')[1];
         if (directUrl) {
           const fullDirectUrl = `https://${directUrl}`;
@@ -246,7 +246,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
 
     for (let i = 0; i < urlsToTry.length; i++) {
       const currentUrl = urlsToTry[i];
-      console.log(`🔄 ${context} attempt ${i + 1}/${urlsToTry.length}: ${currentUrl.includes('proxy-audio') ? 'Proxied HLS URL' : 'Direct HLS URL'}`);
+      console.log(`🔄 ${context} attempt ${i + 1}/${urlsToTry.length}: ${typeof currentUrl === 'string' && currentUrl.includes('proxy-audio') ? 'Proxied HLS URL' : 'Direct HLS URL'}`);
 
       try {
         // Clean up any existing HLS instance
@@ -394,7 +394,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     
     for (let i = 0; i < urlsToTry.length; i++) {
       const audioUrl = urlsToTry[i];
-      console.log(`🔄 ${context} attempt ${i + 1}/${urlsToTry.length}: ${audioUrl.includes('proxy-audio') ? 'Proxied URL' : 'Direct URL'}`);
+      console.log(`🔄 ${context} attempt ${i + 1}/${urlsToTry.length}: ${typeof audioUrl === 'string' && audioUrl.includes('proxy-audio') ? 'Proxied URL' : 'Direct URL'}`);
       
       try {
         // Clean up any existing HLS instance when switching to regular media
@@ -431,7 +431,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
         const playPromise = currentMediaElement.play();
         if (playPromise !== undefined) {
           await playPromise;
-          console.log(`✅ ${context} started successfully with ${audioUrl.includes('proxy-audio') ? 'proxied' : 'direct'} URL (${isVideo ? 'VIDEO' : 'AUDIO'} mode)`);
+          console.log(`✅ ${context} started successfully with ${typeof audioUrl === 'string' && audioUrl.includes('proxy-audio') ? 'proxied' : 'direct'} URL (${isVideo ? 'VIDEO' : 'AUDIO'} mode)`);
           return true;
         }
       } catch (attemptError) {
@@ -450,7 +450,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
           } else if (attemptError.name === 'AbortError') {
             console.log('🚫 Audio request aborted - trying next URL');
             continue; // Try next URL
-          } else if (attemptError.message.includes('CORS') || attemptError.message.includes('cross-origin')) {
+          } else if (typeof attemptError.message === 'string' && (attemptError.message.includes('CORS') || attemptError.message.includes('cross-origin'))) {
             console.log('🚫 CORS error - trying next URL');
             continue; // Try next URL
           }

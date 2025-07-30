@@ -84,7 +84,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             
             // Add cache-busting parameter to prevent stale cache issues
             const cacheBuster = Date.now();
-            const imageUrlWithCacheBuster = foundAlbum.coverArt.includes('?') 
+            const imageUrlWithCacheBuster = (typeof foundAlbum.coverArt === 'string' && foundAlbum.coverArt.includes('?')) 
               ? `${foundAlbum.coverArt}&cb=${cacheBuster}`
               : `${foundAlbum.coverArt}?cb=${cacheBuster}`;
             
@@ -99,7 +99,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               console.error('❌ Background image preload failed:', foundAlbum.coverArt, error);
               
               // Try image proxy for external URLs
-              if (foundAlbum.coverArt && !foundAlbum.coverArt.includes('re.podtards.com')) {
+              if (foundAlbum.coverArt && typeof foundAlbum.coverArt === 'string' && !foundAlbum.coverArt.includes('re.podtards.com')) {
                 const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(foundAlbum.coverArt)}`;
                 console.log('🔄 Trying image proxy for background:', proxyUrl);
                 

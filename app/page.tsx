@@ -389,14 +389,14 @@ export default function HomePage() {
       
       return albums.sort((a, b) => {
         // Special album prioritization (preserved from original)
-        const aIsStayAwhile = a.title.toLowerCase().includes('stay awhile');
-        const bIsStayAwhile = b.title.toLowerCase().includes('stay awhile');
+        const aIsStayAwhile = typeof a.title === 'string' && a.title.toLowerCase().includes('stay awhile');
+        const bIsStayAwhile = typeof b.title === 'string' && b.title.toLowerCase().includes('stay awhile');
         
         if (aIsStayAwhile && !bIsStayAwhile) return -1;
         if (!aIsStayAwhile && bIsStayAwhile) return 1;
         
-        const aIsBloodshot = a.title.toLowerCase().includes('bloodshot lie');
-        const bIsBloodshot = b.title.toLowerCase().includes('bloodshot lie');
+        const aIsBloodshot = typeof a.title === 'string' && a.title.toLowerCase().includes('bloodshot lie');
+        const bIsBloodshot = typeof b.title === 'string' && b.title.toLowerCase().includes('bloodshot lie');
         
         if (aIsBloodshot && !bIsBloodshot) return -1;
         if (!aIsBloodshot && bIsBloodshot) return 1;
@@ -664,7 +664,7 @@ export default function HomePage() {
                 .filter(album => album.publisher && album.publisher.feedGuid)
                 .filter(album => {
                   // Exclude Doerfels family artists
-                  const artistName = album.artist.toLowerCase();
+                  const artistName = typeof album.artist === 'string' ? album.artist.toLowerCase() : '';
                   return !artistName.includes('doerfel') && 
                          !artistName.includes('ben doerfel') && 
                          !artistName.includes('sirtj') &&

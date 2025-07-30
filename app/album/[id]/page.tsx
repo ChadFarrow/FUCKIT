@@ -86,7 +86,8 @@ async function getAlbumData(albumTitle: string): Promise<RSSAlbum | null> {
       if (albumTitleLower === searchTitleLower) return true;
       
       // Contains match
-      if (albumTitleLower.includes(searchTitleLower) || searchTitleLower.includes(albumTitleLower)) return true;
+      if ((typeof albumTitleLower === 'string' && albumTitleLower.includes(searchTitleLower)) || 
+          (typeof searchTitleLower === 'string' && searchTitleLower.includes(albumTitleLower))) return true;
       
       // Normalized match
       const normalizedAlbum = albumTitleLower.replace(/[^a-z0-9]/g, '');

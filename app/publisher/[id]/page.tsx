@@ -36,10 +36,10 @@ async function loadPublisherData(publisherId: string) {
       feed.parseStatus === 'success' &&
       feed.parsedData &&
       (feed.id === `${publisherId}-publisher` || 
-       feed.id.includes(publisherId) ||
-       feed.parsedData.publisherInfo?.feedGuid?.includes(publisherId) ||
+       (typeof feed.id === 'string' && feed.id.includes(publisherId)) ||
+       (typeof feed.parsedData.publisherInfo?.feedGuid === 'string' && feed.parsedData.publisherInfo.feedGuid.includes(publisherId)) ||
        feed.parsedData.publisherItems?.some((item: any) => 
-         item.feedGuid && item.feedGuid.includes(publisherId)
+         item.feedGuid && typeof item.feedGuid === 'string' && item.feedGuid.includes(publisherId)
        ))
     );
     
