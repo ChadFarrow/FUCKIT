@@ -2,7 +2,7 @@ const withPWA = require('next-pwa')({
   dest: 'public',
   register: true,
   skipWaiting: true,
-  disable: process.env.NODE_ENV === 'development',
+  disable: process.env.NODE_ENV === 'development' || true, // Temporarily disable Service Worker to fix API issues
   // Exclude RSC payloads and critical Next.js files from service worker caching
   exclude: [
     /_next\/static\/.*\/_buildManifest\.js$/,

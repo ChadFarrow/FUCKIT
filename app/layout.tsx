@@ -83,6 +83,16 @@ export default function RootLayout({
               (function() {
                 console.log('🔧 Cache busting script loaded');
                 
+                // Unregister any existing Service Workers to fix API issues
+                if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+                  navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    for(let registration of registrations) {
+                      registration.unregister();
+                      console.log('🗑️ Unregistered Service Worker:', registration.scope);
+                    }
+                  });
+                }
+                
                 // Prevent infinite recursion by limiting function calls
                 let recursionCount = 0;
                 const maxRecursion = 100;
