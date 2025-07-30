@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useRef, useState, useEffect, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, useRef, useState, useEffect, ReactNode } from 'react';
 import { RSSAlbum } from '@/lib/rss-parser';
 import { toast } from '@/components/Toast';
 import Hls from 'hls.js';
@@ -361,7 +361,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   };
 
   // Helper function to attempt media playback with fallback URLs
-  const attemptAudioPlayback = useCallback(async (originalUrl: string, context = 'playback'): Promise<boolean> => {
+  const attemptAudioPlayback = async (originalUrl: string, context = 'playback'): Promise<boolean> => {
     const isVideo = isVideoUrl(originalUrl);
     const isHls = isHlsUrl(originalUrl);
     const mediaElement = isVideo ? videoRef.current : audioRef.current;
@@ -468,7 +468,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     isRetryingRef.current = false;
     
     return false; // All attempts failed
-  }, [isVideoMode]);
+  };
 
   // Media event listeners
   useEffect(() => {
@@ -586,7 +586,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   }, [isVideoMode, currentPlayingAlbum, currentTrackIndex]); // Add necessary dependencies but avoid functions that change frequently
 
   // Play album function
-  const playAlbum = useCallback(async (album: RSSAlbum, trackIndex: number = 0): Promise<boolean> => {
+  const playAlbum = async (album: RSSAlbum, trackIndex: number = 0): Promise<boolean> => {
     if (!album.tracks || album.tracks.length === 0) {
       console.error('❌ No tracks found in album');
       return false;
@@ -628,10 +628,10 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       }
       return false;
     }
-  }, [hasUserInteracted, isShuffleMode, attemptAudioPlayback]);
+  };
 
   // Play shuffled track function
-  const playShuffledTrack = useCallback(async (index: number): Promise<boolean> => {
+  const playShuffledTrack = async (index: number): Promise<boolean> => {
     if (!shuffledPlaylist[index]) {
       console.error('❌ Invalid shuffle track index:', index, 'playlist length:', shuffledPlaylist.length);
       return false;
@@ -654,7 +654,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       setHasUserInteracted(true);
     }
     return success;
-  }, [shuffledPlaylist, attemptAudioPlayback]);
+  };
 
   // Shuffle all tracks function
   const shuffleAllTracks = async (): Promise<boolean> => {
@@ -748,7 +748,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   };
 
   // Play next track
-  const playNextTrack = useCallback(async () => {
+  const playNextTrack = async () => {
     if (isShuffleMode && shuffledPlaylist.length > 0) {
       // In shuffle mode, play next track from shuffled playlist
       const nextShuffleIndex = currentShuffleIndex + 1;
@@ -789,7 +789,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       }
       await playAlbum(currentPlayingAlbum, 0);
     }
-  }, [isShuffleMode, shuffledPlaylist, currentShuffleIndex, currentPlayingAlbum, currentTrackIndex, playShuffledTrack, playAlbum]);
+  };
 
   // Update the ref whenever playNextTrack changes
   useEffect(() => {
@@ -797,7 +797,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   }, [playNextTrack]);
 
   // Play previous track
-  const playPreviousTrack = useCallback(async () => {
+  const playPreviousTrack = async () => {
     if (isShuffleMode && shuffledPlaylist.length > 0) {
       // In shuffle mode, play previous track from shuffled playlist
       const prevShuffleIndex = currentShuffleIndex - 1;
@@ -825,7 +825,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       console.log('🎵 Playing previous track:', currentPlayingAlbum.tracks[prevIndex].title);
       await playAlbum(currentPlayingAlbum, prevIndex);
     }
-  }, [isShuffleMode, shuffledPlaylist, currentShuffleIndex, currentPlayingAlbum, currentTrackIndex, playShuffledTrack, playAlbum]);
+  };
 
   // Stop function
   const stop = () => {

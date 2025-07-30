@@ -535,7 +535,7 @@
         "description": "Create a specialized version of the site that only shows content from Doerfels, filtering out all other publishers and feeds for TJ's use",
         "details": "Develop a Doerfels-only version of the application that filters content to show only Doerfels-related music and shows. This includes creating a separate deployment or configuration option, implementing content filtering logic, updating the UI to reflect the Doerfels-only branding, and ensuring all functionality works with the filtered content set.",
         "testStrategy": "Test the Doerfels-only version to ensure it only displays Doerfels content, maintains all core functionality (playback, navigation, search), and provides a clean user experience focused on Doerfels music and shows.",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "medium",
         "subtasks": []
@@ -557,7 +557,7 @@
       "description": "Main task list for FUCKIT podcast/music streaming application",
       "created": "2025-01-27T00:00:00.000Z",
       "lastModified": "2025-01-27T00:00:00.000Z",
-      "updated": "2025-07-30T23:05:58.971Z"
+      "updated": "2025-07-30T23:07:43.316Z"
     }
   },
   "v1-5": {

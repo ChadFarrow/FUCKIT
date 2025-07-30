@@ -40,6 +40,9 @@ async function loadPublisherData(publisherId: string) {
        (typeof feed.parsedData.publisherInfo?.feedGuid === 'string' && feed.parsedData.publisherInfo.feedGuid.includes(publisherId)) ||
        feed.parsedData.publisherItems?.some((item: any) => 
          item.feedGuid && typeof item.feedGuid === 'string' && item.feedGuid.includes(publisherId)
+       ) ||
+       feed.parsedData.remoteItems?.some((item: any) => 
+         item.feedGuid && typeof item.feedGuid === 'string' && item.feedGuid.includes(publisherId)
        ))
     );
     
@@ -50,7 +53,7 @@ async function loadPublisherData(publisherId: string) {
     
     return {
       publisherInfo: publisherFeed.parsedData?.publisherInfo || null,
-      publisherItems: publisherFeed.parsedData?.publisherItems || [],
+      publisherItems: publisherFeed.parsedData?.publisherItems || publisherFeed.parsedData?.remoteItems || [],
       feedId: publisherFeed.id
     };
   } catch (error) {

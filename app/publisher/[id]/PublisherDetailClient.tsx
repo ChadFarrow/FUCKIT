@@ -91,14 +91,15 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
           const matchingAlbum = allAlbums.find((album: RSSAlbum) => 
             album.publisher?.feedGuid === item.feedGuid || 
             album.publisher?.feedUrl === item.feedUrl ||
-            album.link === item.feedUrl
+            album.link === item.feedUrl ||
+            (album as any).feedUrl === item.feedUrl
           );
           
           if (matchingAlbum) {
             console.log(`✅ Found matching album: ${matchingAlbum.title}`);
             matchedAlbums.push(matchingAlbum);
           } else {
-            console.log(`❌ No matching album found for feedGuid: ${item.feedGuid}`);
+            console.log(`❌ No matching album found for feedGuid: ${item.feedGuid}, feedUrl: ${item.feedUrl}`);
           }
         }
       } else if (initialData.publisherInfo?.artist) {
@@ -276,26 +277,26 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
             }
             
             // Extract publisher items from the feed data
-            if (publisherFeed?.parsedData?.publisherItems) {
-              const items = publisherFeed.parsedData.publisherItems;
+            if (publisherFeed?.parsedData?.publisherItems || publisherFeed?.parsedData?.remoteItems) {
+              const items = publisherFeed.parsedData.publisherItems || publisherFeed.parsedData.remoteItems;
               console.log(`🏢 Found ${items.length} publisher items`);
               
               // Convert publisher items to album format for display
               const albumsFromItems = items.map((item: any) => ({
                 id: item.id || `album-${Math.random()}`,
-                title: item.title,
-                artist: item.artist,
-                description: item.description,
+                title: item.title || item.feedUrl?.split('/').pop()?.replace('.xml', '') || 'Unknown Album',
+                artist: item.artist || publisherInfo.name || 'Unknown Artist',
+                description: item.description || 'Album from publisher',
                 coverArt: item.coverArt,
-                tracks: Array(item.trackCount).fill(null).map((_, i) => ({
+                tracks: Array(item.trackCount || 1).fill(null).map((_, i) => ({
                   id: `track-${i}`,
-                  title: `${item.title} - Track ${i + 1}`,
+                  title: `${item.title || 'Track'} - Track ${i + 1}`,
                   duration: '0:00',
-                  url: item.link
+                  url: item.link || item.feedUrl
                 })),
-                releaseDate: item.releaseDate,
-                link: item.link,
-                feedUrl: item.link
+                releaseDate: item.releaseDate || new Date().toISOString(),
+                link: item.link || item.feedUrl,
+                feedUrl: item.link || item.feedUrl
               }));
               
               console.log(`🏢 Setting ${albumsFromItems.length} albums from publisher items`);

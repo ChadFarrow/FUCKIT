@@ -8,7 +8,27 @@ export function generateAlbumSlug(title: string): string {
     'bitpunk.fm': 'bitpunkfm',
     'into the doerfel-verse': 'into-the-doerfel-verse',
     'into the doerfel verse': 'into-the-doerfel-verse',
-    'music from the doerfel-verse': 'music-from-the-doerfel-verse'
+    'music from the doerfel-verse': 'music-from-the-doerfel-verse',
+    'bloodshot lies - the album': 'bloodshot-lies',
+    'dead time(live 2016)': 'dead-timelive-2016',
+    'let go (what\'s holding you back)': 'let-go-whats-holding-you-back',
+    'they don\'t know': 'they-dont-know',
+    'underwater - single': 'underwater-single',
+    'unsound existence (self-hosted version)': 'unsound-existence-self-hosted-version',
+    'you feel like home(single)': 'you-feel-like-homesingle',
+    'the kid, the dad, the mom & the tiny window': 'the-kid-the-dad-the-mom-and-the-tiny-window',
+    'don\'t worry, you still have time to ruin it - demo': 'dont-worry-you-still-have-time-to-ruin-it-demo',
+    'fake love - demo': 'fake-love-demo',
+    'roommates - demo': 'roommates-demo',
+    'orange pill, pink pill, white pill - demo': 'orange-pill-pink-pill-white-pill-demo',
+    'strangers to lovers - live from sloe flower studio': 'strangers-to-lovers-live-from-sloe-flower-studio',
+    'can\'t promise you the world - live from sloe flower studio': 'cant-promise-you-the-world-live-from-sloe-flower-studio',
+    'heycitizen\'s lo-fi hip-hop beats to study and relax to': 'heycitizens-lo-fi-hip-hop-beats-to-study-and-relax-to',
+    'fountain artist takeover - nate johnivan': 'fountain-artist-takeover-nate-johnivan',
+    'rock\'n\'roll breakheart': 'rocknroll-breakheart',
+    'thankful (feat. witt lowry)': 'thankful-feat-witt-lowry',
+    'bitpunk.fm unwound': 'bitpunkfm-unwound',
+    'aged friends & old whiskey': 'aged-friends-and-old-whiskey'
   };
   
   const lowerTitle = title.toLowerCase().trim();
