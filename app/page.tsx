@@ -445,11 +445,6 @@ export default function HomePage() {
       case 'singles':
         filtered = baseAlbums.filter(album => album.tracks.length === 1);
         break;
-      case 'playlist':
-        // Redirect to playlist page
-        router.push('/playlist');
-        filtered = baseAlbums; // Return albums while redirecting
-        break;
       default: // 'all'
         filtered = baseAlbums; // Show all non-explicit albums
     }
@@ -725,82 +720,6 @@ export default function HomePage() {
             
 
             
-            {/* Music Show Playlist */}
-            <div className="mb-4">
-              <h3 className="text-sm font-semibold mb-2 text-white">
-                Music Show Playlist
-              </h3>
-              <div className="space-y-1">
-                {/* In-App Playlists */}
-                <Link
-                  href="/playlist"
-                  className="flex items-center gap-2 p-2 rounded-lg bg-purple-600/20 hover:bg-purple-600/30 transition-colors group"
-                  onClick={() => setIsSidebarOpen(false)}
-                >
-                  <svg className="w-4 h-4 text-purple-400 group-hover:text-purple-300" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
-                  </svg>
-                  <span className="text-xs text-gray-300 group-hover:text-white">Play All Songs</span>
-                </Link>
-                
-                <Link
-                  href="/playlist?feedId=intothedoerfelverse"
-                  className="flex items-center gap-2 p-2 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 transition-colors group"
-                  onClick={() => setIsSidebarOpen(false)}
-                >
-                  <svg className="w-4 h-4 text-blue-400 group-hover:text-blue-300" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
-                  </svg>
-                  <span className="text-xs text-gray-300 group-hover:text-white">Into The Doerfel-Verse</span>
-                </Link>
-                
-                <div className="border-t border-gray-700 mt-2 mb-2"></div>
-                
-                {/* RSS Feeds */}
-                <a
-                  href="/api/playlist"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 p-2 rounded-lg bg-orange-600/20 hover:bg-orange-600/30 transition-colors group"
-                  onClick={() => setIsSidebarOpen(false)}
-                >
-                  <svg className="w-4 h-4 text-orange-400 group-hover:text-orange-300" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
-                  </svg>
-                  <span className="text-xs text-gray-300 group-hover:text-white">All Songs RSS</span>
-                </a>
-                <button
-                  onClick={() => {
-                    const feedUrl = window.location.origin + '/api/playlist';
-                    navigator.clipboard.writeText(feedUrl);
-                    toast.success('Playlist feed URL copied to clipboard!');
-                    setIsSidebarOpen(false);
-                  }}
-                  className="w-full flex items-center gap-2 p-2 rounded-lg bg-gray-800/30 hover:bg-gray-800/50 transition-colors group text-left"
-                >
-                  <svg className="w-4 h-4 text-gray-400 group-hover:text-gray-300" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-                  </svg>
-                  <span className="text-xs text-gray-300 group-hover:text-white">Copy RSS URL</span>
-                </button>
-                
-                <a
-                  href="/api/playlist?feedId=intothedoerfelverse"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 p-2 rounded-lg bg-gray-800/30 hover:bg-gray-800/50 transition-colors group"
-                  onClick={() => setIsSidebarOpen(false)}
-                >
-                  <svg className="w-4 h-4 text-gray-400 group-hover:text-gray-300" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
-                  </svg>
-                  <span className="text-xs text-gray-300 group-hover:text-white">Doerfel-Verse RSS</span>
-                </a>
-              </div>
-              <p className="text-xs text-gray-500 mt-1 px-2">
-                Podcasting 2.0 musicL playlist
-              </p>
-            </div>
             
             {/* Version Display - Moved to top for better visibility */}
             <div className="mt-auto pt-2 border-t border-gray-700">
@@ -857,7 +776,7 @@ export default function HomePage() {
                 resultLabel={activeFilter === 'all' ? 'Releases' : 
                   activeFilter === 'albums' ? 'Albums' :
                   activeFilter === 'eps' ? 'EPs' : 
-                  activeFilter === 'singles' ? 'Singles' : 'Playlist'}
+                  activeFilter === 'singles' ? 'Singles' : 'Releases'}
                 className="mb-8"
               />
 
