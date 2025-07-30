@@ -512,6 +512,9 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                 'into the doerfel-verse': 'Into The Doerfel-Verse',
                 'into-the-doerfel-verse': 'Into The Doerfel-Verse',
                 'into the doerfelverse': 'Into The Doerfel-Verse',
+                'music from the doerfel verse': 'Music From The Doerfel-Verse',
+                'music from the doerfel-verse': 'Music From The Doerfel-Verse',
+                'music-from-the-doerfel-verse': 'Music From The Doerfel-Verse',
                 'i guess this will have to do': 'I Guess This Will Have To Do',
                 'i-guess-this-will-have-to-do': 'I Guess This Will Have To Do',
                 'bitpunkfm': 'bitpunk.fm',
@@ -520,6 +523,13 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               };
               
               if (specialCases[searchTitleLower] && a.title === specialCases[searchTitleLower]) {
+                return true;
+              }
+              
+              // Try hyphen-aware matching for titles with hyphens
+              const albumTitleWithoutHyphens = albumTitleLower.replace(/-/g, ' ');
+              const searchTitleWithoutHyphens = searchTitleLower.replace(/-/g, ' ');
+              if (albumTitleWithoutHyphens === searchTitleWithoutHyphens) {
                 return true;
               }
               

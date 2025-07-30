@@ -7,7 +7,8 @@ export function generateAlbumSlug(title: string): string {
   const specialCases: { [key: string]: string } = {
     'bitpunk.fm': 'bitpunkfm',
     'into the doerfel-verse': 'into-the-doerfel-verse',
-    'into the doerfel verse': 'into-the-doerfel-verse'
+    'into the doerfel verse': 'into-the-doerfel-verse',
+    'music from the doerfel-verse': 'music-from-the-doerfel-verse'
   };
   
   const lowerTitle = title.toLowerCase().trim();

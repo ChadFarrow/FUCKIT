@@ -524,7 +524,7 @@
         "description": "Implement functionality to automatically detect and add any individual tracks found within shows/episodes to the site's music catalog",
         "details": "Create a system to automatically extract and add individual tracks from shows/episodes to the site. This includes parsing show content to identify individual songs, extracting track metadata (artist, title, duration), and adding them to the main music catalog. Need to implement track detection algorithms, metadata extraction, and integration with the existing album/feed system.",
         "testStrategy": "Test the automatic track detection and addition system. Verify that individual tracks from shows are properly identified, extracted, and added to the site catalog. Check that track metadata is accurate and that the tracks appear in search results and main music listings.",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "medium",
         "subtasks": []
@@ -557,7 +557,7 @@
       "description": "Main task list for FUCKIT podcast/music streaming application",
       "created": "2025-01-27T00:00:00.000Z",
       "lastModified": "2025-01-27T00:00:00.000Z",
-      "updated": "2025-07-30T21:30:35.970Z"
+      "updated": "2025-07-30T23:05:58.971Z"
     }
   },
   "v1-5": {
