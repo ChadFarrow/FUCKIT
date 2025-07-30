@@ -50,9 +50,12 @@ export async function GET() {
       lastUpdated: new Date().toISOString()
     }, {
       headers: {
-        'Cache-Control': 'no-cache, no-store, must-revalidate', // Disable caching
-        'Pragma': 'no-cache',
-        'Expires': '0'
+        'Cache-Control': 'public, max-age=600, s-maxage=600', // Cache for 10 minutes
+        'Content-Type': 'application/json',
+        'Content-Encoding': 'gzip', // Enable compression
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type'
       },
     });
   } catch (error) {

@@ -484,6 +484,17 @@
         "dependencies": [],
         "priority": "high",
         "subtasks": []
+      },
+      {
+        "id": 46,
+        "title": "Critical: Fix Infinite Recursion Error",
+        "description": "Fix infinite recursion error causing site to crash",
+        "details": "The site is experiencing 'too much recursion' errors in NextJS, likely caused by recent performance optimizations. Need to immediately identify and fix the recursive function calls that are causing the browser to crash. This is a critical issue that prevents the site from functioning.",
+        "testStrategy": "Test site functionality after fix, ensure no infinite loops, verify all features work properly.",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
       }
     ],
     "metadata": {

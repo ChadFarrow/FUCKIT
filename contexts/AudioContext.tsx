@@ -73,6 +73,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<Hls | null>(null);
+  const albumsLoadedRef = useRef(false);
 
   // Load state from localStorage on mount
   useEffect(() => {
@@ -140,9 +141,16 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     }
   }, [currentPlayingAlbum, currentTrackIndex, currentTime, duration]);
 
-  // Load albums data for playback
+  // Load albums data for playback - only once
   useEffect(() => {
     const loadAlbums = async () => {
+      // Prevent multiple loads
+      if (albumsLoadedRef.current) {
+        return;
+      }
+      
+      albumsLoadedRef.current = true;
+      
       try {
         const response = await fetch('/api/albums');
         if (response.ok) {
@@ -155,7 +163,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     };
     
     loadAlbums();
-  }, []);
+  }, []); // Run only once on mount
 
   // Helper function to detect if URL is a video
   const isVideoUrl = (url: string): boolean => {
