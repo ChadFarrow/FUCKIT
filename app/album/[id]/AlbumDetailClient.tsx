@@ -385,7 +385,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
     }, 3000); // Increased to 3 second timeout for better reliability
     
     return () => clearTimeout(timeoutId);
-  }, [album?.coverArt, lastProcessedCoverArt, isLoading, album, isDesktop, backgroundImage]); // Added isDesktop and backgroundImage to dependencies
+  }, [album?.coverArt, lastProcessedCoverArt, isLoading, album, isDesktop]); // Removed backgroundImage from dependencies to prevent infinite loop
 
   // Optimized background style calculation - memoized to prevent repeated logs
   const backgroundStyle = useMemo(() => {
