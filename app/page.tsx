@@ -445,6 +445,11 @@ export default function HomePage() {
       case 'singles':
         filtered = baseAlbums.filter(album => album.tracks.length === 1);
         break;
+      case 'playlist':
+        // Redirect to playlist page
+        router.push('/playlist');
+        filtered = baseAlbums; // Return albums while redirecting
+        break;
       default: // 'all'
         filtered = baseAlbums; // Show all non-explicit albums
     }

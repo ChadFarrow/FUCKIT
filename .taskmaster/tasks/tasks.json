@@ -464,17 +464,6 @@
         "subtasks": []
       },
       {
-        "id": 44,
-        "title": "Add Other Music Show",
-        "description": "Add additional music show content to expand the application's music catalog",
-        "details": "Research and add new music show RSS feeds or content sources to expand the available music catalog. This may involve finding new publishers, shows, or music discovery sources that align with the application's content focus.",
-        "testStrategy": "Test new feeds for proper parsing, verify content quality and consistency, and ensure integration with existing publisher and album systems.",
-        "status": "pending",
-        "dependencies": [],
-        "priority": "medium",
-        "subtasks": []
-      },
-      {
         "id": 45,
         "title": "Fix Site Loading Performance Issues",
         "description": "Investigate and resolve current site loading slowdown issues",
@@ -530,17 +519,6 @@
         "subtasks": []
       },
       {
-        "id": 50,
-        "title": "Fix Playlist Shows Tracks But Plays Full Episode Audio",
-        "description": "Fix issue where playlist displays individual track entries but when clicked, plays the full episode audio instead of the specific track segment",
-        "details": "Investigate and resolve the mismatch between playlist track display and audio playback. The playlist should show individual tracks with their specific timestamps, but currently plays the full episode when a track is selected. Need to check track timestamp parsing, audio segment extraction, and ensure the audio player correctly handles track-specific time ranges.",
-        "testStrategy": "Test playlist functionality by selecting individual tracks and verifying that only the specific track segment plays, not the full episode. Check that track timestamps are properly parsed and applied to audio playback controls.",
-        "status": "pending",
-        "dependencies": [],
-        "priority": "high",
-        "subtasks": []
-      },
-      {
         "id": 51,
         "title": "Auto-Add All Tracks Found in Shows to Site",
         "description": "Implement functionality to automatically detect and add any individual tracks found within shows/episodes to the site's music catalog",
@@ -568,7 +546,7 @@
         "description": "Work on and fix the auto playlist maker functionality for music shows that was started but needs completion and debugging",
         "details": "Continue development and fix issues with the auto playlist maker for music shows. This includes completing the implementation, debugging any existing issues, ensuring proper playlist generation from music show content, and integrating it with the existing playlist system. Need to investigate the current implementation status and identify what needs to be fixed or completed.",
         "testStrategy": "Test the auto playlist maker functionality to ensure it properly generates playlists from music show content, handles various show formats correctly, and integrates seamlessly with the existing playlist system. Verify that generated playlists are accurate and functional.",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "high",
         "subtasks": []
@@ -579,7 +557,7 @@
       "description": "Main task list for FUCKIT podcast/music streaming application",
       "created": "2025-01-27T00:00:00.000Z",
       "lastModified": "2025-01-27T00:00:00.000Z",
-      "updated": "2025-07-30T21:22:07.849Z"
+      "updated": "2025-07-30T21:30:35.970Z"
     }
   },
   "v1-5": {
