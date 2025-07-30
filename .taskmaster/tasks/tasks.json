@@ -506,6 +506,61 @@
         "dependencies": [],
         "priority": "high",
         "subtasks": []
+      },
+      {
+        "id": 48,
+        "title": "Fix Auto-Play Not Working",
+        "description": "Fix auto-play functionality so that audio automatically starts playing when users click on album tracks or when the player is initialized",
+        "details": "The audio player should automatically start playing when users click on album tracks or when the player is initialized. This includes resolving any browser autoplay restrictions, ensuring proper audio context initialization, and handling mobile device autoplay limitations. Need to investigate current audio context setup, browser autoplay policies, and mobile device compatibility.",
+        "testStrategy": "Test auto-play functionality across different browsers and devices. Verify that clicking on tracks starts playback immediately, and that the audio context initializes properly without user interaction requirements.",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 49,
+        "title": "Fix Playlist Pages Don't Load",
+        "description": "Fix issues where playlist pages are not loading properly or are showing errors when users try to access them",
+        "details": "Investigate and resolve issues with playlist page loading. This includes checking the playlist route implementation, data fetching, error handling, and ensuring proper rendering of playlist content. Need to identify whether the issue is with the API endpoint, data processing, or frontend rendering.",
+        "testStrategy": "Test playlist page access and functionality. Verify that playlist pages load correctly, display proper content, and handle any errors gracefully. Check both individual playlist pages and playlist listing pages.",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 50,
+        "title": "Fix Playlist Shows Tracks But Plays Full Episode Audio",
+        "description": "Fix issue where playlist displays individual track entries but when clicked, plays the full episode audio instead of the specific track segment",
+        "details": "Investigate and resolve the mismatch between playlist track display and audio playback. The playlist should show individual tracks with their specific timestamps, but currently plays the full episode when a track is selected. Need to check track timestamp parsing, audio segment extraction, and ensure the audio player correctly handles track-specific time ranges.",
+        "testStrategy": "Test playlist functionality by selecting individual tracks and verifying that only the specific track segment plays, not the full episode. Check that track timestamps are properly parsed and applied to audio playback controls.",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 51,
+        "title": "Auto-Add All Tracks Found in Shows to Site",
+        "description": "Implement functionality to automatically detect and add any individual tracks found within shows/episodes to the site's music catalog",
+        "details": "Create a system to automatically extract and add individual tracks from shows/episodes to the site. This includes parsing show content to identify individual songs, extracting track metadata (artist, title, duration), and adding them to the main music catalog. Need to implement track detection algorithms, metadata extraction, and integration with the existing album/feed system.",
+        "testStrategy": "Test the automatic track detection and addition system. Verify that individual tracks from shows are properly identified, extracted, and added to the site catalog. Check that track metadata is accurate and that the tracks appear in search results and main music listings.",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 52,
+        "title": "Create Doerfels-Only Version for TJ",
+        "description": "Create a specialized version of the site that only shows content from Doerfels, filtering out all other publishers and feeds for TJ's use",
+        "details": "Develop a Doerfels-only version of the application that filters content to show only Doerfels-related music and shows. This includes creating a separate deployment or configuration option, implementing content filtering logic, updating the UI to reflect the Doerfels-only branding, and ensuring all functionality works with the filtered content set.",
+        "testStrategy": "Test the Doerfels-only version to ensure it only displays Doerfels content, maintains all core functionality (playback, navigation, search), and provides a clean user experience focused on Doerfels music and shows.",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
       }
     ],
     "metadata": {
@@ -513,7 +568,7 @@
       "description": "Main task list for FUCKIT podcast/music streaming application",
       "created": "2025-01-27T00:00:00.000Z",
       "lastModified": "2025-01-27T00:00:00.000Z",
-      "updated": "2025-07-30T00:41:58.800Z"
+      "updated": "2025-07-30T20:31:25.483Z"
     }
   },
   "v1-5": {

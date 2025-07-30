@@ -97,38 +97,16 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
 
   // Add user interaction handler to enable audio playback
   useEffect(() => {
-    let hasSetup = false;
-    
-    const enableAudio = () => {
-      if (audioRef.current && !hasUserInteracted && !hasSetup) {
-        // Only enable audio context unlock, don't actually play anything
-        // This prevents accidental auto-play on mobile
-        hasSetup = true;
-        setHasUserInteracted(true);
-        console.log('🔓 Audio context unlocked via user interaction');
-      }
-    };
-
     // Check if we're on mobile
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
-    // Listen for user interactions to enable audio - but don't auto-play
-    const events = ['click', 'touchstart', 'touchend', 'keydown'];
-    events.forEach(event => {
-      document.addEventListener(event, enableAudio, { once: true });
-    });
-
-    // For mobile, log detection but don't do anything that could trigger playback
     if (isMobile) {
-      console.log('📱 Mobile device detected - audio will require explicit user interaction');
+      console.log('📱 Mobile device detected - audio will play on first track click');
     }
 
-    return () => {
-      events.forEach(event => {
-        document.removeEventListener(event, enableAudio);
-      });
-    };
-  }, [hasUserInteracted]); // Add hasUserInteracted to dependencies to prevent infinite loops
+    // No need for generic interaction handlers - playAlbum will handle it
+    return () => {};
+  }, []); // Run only once on mount
 
   // Save state to localStorage when it changes - with debouncing
   useEffect(() => {
@@ -453,10 +431,10 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
         // Handle specific error types
         if (attemptError instanceof DOMException) {
           if (attemptError.name === 'NotAllowedError') {
-            console.log('🚫 Autoplay blocked - user interaction required. Please click or tap to enable audio.');
-            // Show user-friendly toast message
-            toast.info('Click anywhere on the page to enable audio playback', 8000);
-            break; // Don't try other URLs for autoplay issues
+            console.log('🚫 Autoplay blocked - this should not happen on user click');
+            // If we get NotAllowedError on a user click, something is wrong
+            // Don't show a generic message, return false to let playAlbum handle it
+            return false;
           } else if (attemptError.name === 'NotSupportedError') {
             console.log('🚫 Audio format not supported');
             continue; // Try next URL
@@ -574,42 +552,17 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       return false;
     }
 
-    // Check if we need user interaction first (mobile auto-play handling)
-    if (!hasUserInteracted && typeof window !== 'undefined') {
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      if (isMobile) {
-        console.log('📱 Mobile device detected - enabling audio and attempting playback');
-        
-        // Instead of blocking, try to enable audio and play in the same action
-        try {
-          // Set user interaction flag immediately since this is a user-initiated action
-          setHasUserInteracted(true);
-          
-          // Attempt playback directly - the user just clicked/tapped
-          const success = await attemptAudioPlayback(track.url || '', 'Mobile album playback');
-          if (success) {
-            setCurrentPlayingAlbum(album);
-            setCurrentTrackIndex(trackIndex);
-            console.log('✅ Mobile audio enabled and playback started');
-            return true;
-          } else {
-            // If it still fails, show the user a message
-            toast.info('Audio blocked by browser - please tap the play button again', 3000);
-            return false;
-          }
-        } catch (error) {
-          console.error('❌ Mobile audio enablement failed:', error);
-          toast.info('Please tap the play button again to enable audio', 3000);
-          return false;
-        }
-      }
+    // Since playAlbum is called from user clicks, we can safely set hasUserInteracted
+    if (!hasUserInteracted) {
+      console.log('🎵 First user interaction detected - enabling audio');
+      setHasUserInteracted(true);
     }
 
+    // Try to play the track immediately
     const success = await attemptAudioPlayback(track.url, 'Album playback');
     if (success) {
       setCurrentPlayingAlbum(album);
       setCurrentTrackIndex(trackIndex);
-      setHasUserInteracted(true);
       
       // If this is a manual play (not from shuffle), exit shuffle mode
       if (!isShuffleMode) {
@@ -617,8 +570,18 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
         setShuffledPlaylist([]);
         setCurrentShuffleIndex(0);
       }
+      
+      console.log('✅ Playback started successfully');
+      return true;
+    } else {
+      // Only show retry message if it's a browser autoplay restriction
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (isMobile) {
+        console.log('📱 Mobile playback failed - may need another tap');
+        toast.info('Tap the play button once more to enable audio', 3000);
+      }
+      return false;
     }
-    return success;
   };
 
   // Play shuffled track function
@@ -876,7 +839,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       {/* Hidden audio element */}
       <audio
         ref={audioRef}
-        preload="metadata"
+        preload="none"
         crossOrigin="anonymous"
         playsInline
         webkit-playsinline="true"
