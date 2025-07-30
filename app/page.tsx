@@ -17,18 +17,21 @@ import { AppError, ErrorCodes, ErrorCode, getErrorMessage, createErrorLogger } f
 import { toast } from '@/components/Toast';
 // RSS feed configuration - CDN removed, using original URLs directly
 
-const logger = createErrorLogger('MainPage');
+// Temporarily disable error logger to prevent recursion
+// const logger = createErrorLogger('MainPage');
 
 // Development logging utility
 const isDev = process.env.NODE_ENV === 'development';
 const isVerbose = process.env.NEXT_PUBLIC_LOG_LEVEL === 'verbose';
 
 const devLog = (...args: any[]) => {
-  if (isDev) console.log(...args);
+  // Temporarily disable logging to prevent recursion
+  // if (isDev) console.log(...args);
 };
 
 const verboseLog = (...args: any[]) => {
-  if (isVerbose) console.log(...args);
+  // Temporarily disable logging to prevent recursion
+  // if (isVerbose) console.log(...args);
 };
 
 // RSS feed URLs - hardcoded for client-side compatibility
@@ -122,7 +125,7 @@ export default function HomePage() {
     }, 100);
     
     return () => clearTimeout(timer);
-  }, [isClient]);
+  }, []); // Remove isClient dependency to prevent potential loops
 
 
 
@@ -249,7 +252,8 @@ export default function HomePage() {
       
     } catch (err) {
       const errorMessage = getErrorMessage(err);
-      logger.error('Error loading albums', err);
+      // Temporarily disable error logging to prevent recursion
+      // logger.error('Error loading albums', err);
       setError(`Error loading album data: ${errorMessage}`);
       toast.error(`Failed to load albums: ${errorMessage}`);
       return [];
@@ -300,11 +304,12 @@ export default function HomePage() {
         }
       }
       
-      logger.error('Audio playback error', error, {
-        album: album.title,
-        trackUrl: firstTrack?.url,
-        errorName: error instanceof DOMException ? error.name : 'Unknown'
-      });
+      // Temporarily disable error logging to prevent recursion
+      // logger.error('Audio playback error', error, {
+      //   album: album.title,
+      //   trackUrl: firstTrack?.url,
+      //   errorName: error instanceof DOMException ? error.name : 'Unknown'
+      // });
       
       const appError = new AppError(errorMessage, errorCode, 400, false);
       setError(appError.message);
