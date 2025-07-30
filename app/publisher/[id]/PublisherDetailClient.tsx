@@ -327,7 +327,7 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
           
           // Check if this album belongs to the publisher
           if (album.publisher.feedUrl === feedUrl) return true;
-          if (album.publisher.feedGuid && album.publisher.feedGuid.includes(publisherId)) return true;
+          if (album.publisher.feedGuid && typeof album.publisher.feedGuid === 'string' && album.publisher.feedGuid.includes(publisherId)) return true;
           
           return false;
         });
@@ -410,15 +410,15 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
   const sortAlbums = (albums: RSSAlbum[]) => {
     return albums.sort((a, b) => {
       // Check if either album is "Stay Awhile" (case-insensitive)
-      const aIsStayAwhile = a.title.toLowerCase().includes('stay awhile');
-      const bIsStayAwhile = b.title.toLowerCase().includes('stay awhile');
+      const aIsStayAwhile = a.title && typeof a.title === 'string' && a.title.toLowerCase().includes('stay awhile');
+      const bIsStayAwhile = b.title && typeof b.title === 'string' && b.title.toLowerCase().includes('stay awhile');
       
       if (aIsStayAwhile && !bIsStayAwhile) return -1; // a comes first
       if (!aIsStayAwhile && bIsStayAwhile) return 1; // b comes first
       
       // Check if either album is "Bloodshot Lies" (case-insensitive)
-      const aIsBloodshot = a.title.toLowerCase().includes('bloodshot lie');
-      const bIsBloodshot = b.title.toLowerCase().includes('bloodshot lie');
+      const aIsBloodshot = a.title && typeof a.title === 'string' && a.title.toLowerCase().includes('bloodshot lie');
+      const bIsBloodshot = b.title && typeof b.title === 'string' && b.title.toLowerCase().includes('bloodshot lie');
       
       if (aIsBloodshot && !bIsBloodshot) return -1; // a comes first
       if (!aIsBloodshot && bIsBloodshot) return 1; // b comes first

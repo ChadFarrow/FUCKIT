@@ -128,21 +128,25 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
         document.removeEventListener(event, enableAudio);
       });
     };
-  }, []); // Empty dependency array to prevent infinite loops
+  }, [hasUserInteracted]); // Add hasUserInteracted to dependencies to prevent infinite loops
 
-  // Save state to localStorage when it changes
+  // Save state to localStorage when it changes - with debouncing
   useEffect(() => {
     if (typeof window !== 'undefined' && currentPlayingAlbum) {
-      const state = {
-        currentPlayingAlbumTitle: currentPlayingAlbum.title,
-        currentTrackIndex,
-        currentTime,
-        duration,
-        timestamp: Date.now()
-      };
-      localStorage.setItem('audioPlayerState', JSON.stringify(state));
+      const timeoutId = setTimeout(() => {
+        const state = {
+          currentPlayingAlbumTitle: currentPlayingAlbum.title,
+          currentTrackIndex,
+          currentTime,
+          duration,
+          timestamp: Date.now()
+        };
+        localStorage.setItem('audioPlayerState', JSON.stringify(state));
+      }, 100); // Debounce to prevent excessive writes
+      
+      return () => clearTimeout(timeoutId);
     }
-  }, [currentPlayingAlbum, currentTrackIndex, currentTime, duration]);
+  }, [currentPlayingAlbum?.title, currentTrackIndex, currentTime, duration]); // Use specific properties instead of entire objects
 
   // Load albums data for playback - only once
   useEffect(() => {
@@ -170,19 +174,25 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
 
   // Helper function to detect if URL is a video
   const isVideoUrl = (url: string): boolean => {
+    if (!url || typeof url !== 'string') return false;
     const videoExtensions = ['.mp4', '.webm', '.ogg', '.m3u8', '.m4v', '.mov', '.avi', '.mkv'];
-    const urlLower = typeof url === 'string' ? url.toLowerCase() : '';
+    const urlLower = url.toLowerCase();
     return videoExtensions.some(ext => urlLower.includes(ext));
   };
 
   // Helper function to detect if URL is an HLS stream
   const isHlsUrl = (url: string): boolean => {
-    return typeof url === 'string' && url.toLowerCase().includes('.m3u8');
+    return Boolean(url && typeof url === 'string' && url.toLowerCase().includes('.m3u8'));
   };
 
   // Helper function to get URLs to try for audio/video playback
   const getAudioUrlsToTry = (originalUrl: string): string[] => {
     const urlsToTry = [];
+    
+    if (!originalUrl || typeof originalUrl !== 'string') {
+      console.warn('⚠️ Invalid audio URL provided:', originalUrl);
+      return [];
+    }
     
     try {
       const url = new URL(originalUrl);
@@ -199,7 +209,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       }
       
       // Special handling for op3.dev analytics URLs - extract direct URL
-      if (typeof originalUrl === 'string' && originalUrl.includes('op3.dev/e,') && originalUrl.includes('/https://')) {
+      if (originalUrl.includes('op3.dev/e,') && originalUrl.includes('/https://')) {
         const directUrl = originalUrl.split('/https://')[1];
         if (directUrl) {
           const fullDirectUrl = `https://${directUrl}`;
@@ -549,7 +559,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
         hlsRef.current = null;
       }
     };
-  }, [currentPlayingAlbum, currentTrackIndex, isVideoMode]);
+  }, [isVideoMode]); // Only depend on isVideoMode to prevent recursion
 
   // Play album function
   const playAlbum = async (album: RSSAlbum, trackIndex: number = 0): Promise<boolean> => {

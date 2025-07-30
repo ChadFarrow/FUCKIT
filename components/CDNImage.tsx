@@ -53,8 +53,8 @@ export default function CDNImage({
   
   // Detect if the image is a GIF
   useEffect(() => {
-    const isGifImage = src.toLowerCase().includes('.gif') || 
-                      currentSrc.toLowerCase().includes('.gif');
+    const isGifImage = Boolean((src && typeof src === 'string' && src.toLowerCase().includes('.gif')) || 
+                      (currentSrc && typeof currentSrc === 'string' && currentSrc.toLowerCase().includes('.gif')));
     setIsGif(isGifImage);
   }, [src, currentSrc]);
   
@@ -71,8 +71,9 @@ export default function CDNImage({
     };
     
     checkDevice();
-    window.addEventListener('resize', checkDevice);
-    return () => window.removeEventListener('resize', checkDevice);
+    const handleResize = () => checkDevice();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // Intersection Observer for GIF lazy loading
@@ -302,6 +303,8 @@ export default function CDNImage({
 
   // Reset state when src changes
   useEffect(() => {
+    if (!src) return;
+    
     const dims = getImageDimensions();
     let imageSrc = src;
     
@@ -333,17 +336,17 @@ export default function CDNImage({
     return () => {
       if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [src, width, height, isClient, isMobile]); // Fixed dependencies to prevent infinite loops
+  }, [src, width, height, isClient, isMobile, quality]); // Added quality to dependencies
 
   // Handle mobile-specific timeouts separately
   useEffect(() => {
-    if (isMobile && isClient && isLoading && !timeoutId) {
+    if (isMobile && isClient && !timeoutId && currentSrc) {
       const timeout = setTimeout(() => {
         handleError();
       }, isGif ? 12000 : 15000); // 12 second timeout for GIFs on mobile, 15 for others
       setTimeoutId(timeout);
     }
-  }, [isClient, isMobile, timeoutId, isGif]); // Fixed dependencies to prevent infinite loops
+  }, [isClient, isMobile, currentSrc, isGif]); // Removed timeoutId and isLoading to prevent infinite loops
 
   const dims = getImageDimensions();
 

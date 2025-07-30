@@ -14,38 +14,43 @@ export async function GET() {
     const fileContent = fs.readFileSync(parsedFeedsPath, 'utf-8');
     const parsedData = JSON.parse(fileContent);
     
-    // Extract albums from parsed feeds
+    // Extract albums from parsed feeds with proper type checking
     const albums = parsedData.feeds
       .filter((feed: any) => feed.parseStatus === 'success' && feed.parsedData?.album)
       .map((feed: any) => {
         const album = feed.parsedData.album;
+        
+        // Ensure all string fields are properly typed
+        const title = typeof album.title === 'string' ? album.title : '';
+        const artist = typeof album.artist === 'string' ? album.artist : '';
+        const description = typeof album.description === 'string' ? album.description : '';
+        const coverArt = typeof album.coverArt === 'string' ? album.coverArt : '';
+        
         return {
-          id: generateAlbumSlug(album.title),
-          title: album.title,
-          artist: album.artist,
-          description: album.description,
-          coverArt: album.coverArt,
-          tracks: album.tracks.map((track: any) => ({
-            title: track.title,
-            duration: track.duration,
-            url: track.url,
-            trackNumber: track.trackNumber,
-            subtitle: track.subtitle,
-            summary: track.summary,
-            image: track.image,
-            explicit: track.explicit,
-            keywords: track.keywords
+          id: generateAlbumSlug(title),
+          title,
+          artist,
+          description,
+          coverArt,
+          tracks: (album.tracks || []).map((track: any) => ({
+            title: typeof track.title === 'string' ? track.title : '',
+            duration: typeof track.duration === 'string' ? track.duration : '0:00',
+            url: typeof track.url === 'string' ? track.url : '',
+            trackNumber: typeof track.trackNumber === 'number' ? track.trackNumber : 0,
+            subtitle: typeof track.subtitle === 'string' ? track.subtitle : '',
+            summary: typeof track.summary === 'string' ? track.summary : '',
+            image: typeof track.image === 'string' ? track.image : '',
+            explicit: typeof track.explicit === 'boolean' ? track.explicit : false,
+            keywords: Array.isArray(track.keywords) ? track.keywords.filter((k: any) => typeof k === 'string') : []
           })),
-          podroll: album.podroll,
-          publisher: album.publisher,
-          funding: album.funding,
-          feedId: feed.id,
-          feedUrl: feed.originalUrl,
-          lastUpdated: feed.lastParsed
+          podroll: album.podroll || null,
+          publisher: album.publisher || null,
+          funding: album.funding || null,
+          feedId: typeof feed.id === 'string' ? feed.id : '',
+          feedUrl: typeof feed.originalUrl === 'string' ? feed.originalUrl : '',
+          lastUpdated: typeof feed.lastParsed === 'string' ? feed.lastParsed : new Date().toISOString()
         };
       });
-
-
 
     return NextResponse.json({
       albums,

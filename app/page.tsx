@@ -386,17 +386,20 @@ export default function HomePage() {
     
     // Universal sorting function that implements hierarchical order: Albums → EPs → Singles
     const sortWithHierarchy = (albums: RSSAlbum[]) => {
-      
       return albums.sort((a, b) => {
-        // Special album prioritization (preserved from original)
-        const aIsStayAwhile = typeof a.title === 'string' && a.title.toLowerCase().includes('stay awhile');
-        const bIsStayAwhile = typeof b.title === 'string' && b.title.toLowerCase().includes('stay awhile');
+        // Pin "Stay Awhile" first - with proper type checking
+        const aTitle = a.title && typeof a.title === 'string' ? a.title : '';
+        const bTitle = b.title && typeof b.title === 'string' ? b.title : '';
+        
+        const aIsStayAwhile = aTitle.toLowerCase().includes('stay awhile');
+        const bIsStayAwhile = bTitle.toLowerCase().includes('stay awhile');
         
         if (aIsStayAwhile && !bIsStayAwhile) return -1;
         if (!aIsStayAwhile && bIsStayAwhile) return 1;
         
-        const aIsBloodshot = typeof a.title === 'string' && a.title.toLowerCase().includes('bloodshot lie');
-        const bIsBloodshot = typeof b.title === 'string' && b.title.toLowerCase().includes('bloodshot lie');
+        // Pin "Bloodshot Lies" second - with proper type checking
+        const aIsBloodshot = aTitle.toLowerCase().includes('bloodshot lie');
+        const bIsBloodshot = bTitle.toLowerCase().includes('bloodshot lie');
         
         if (aIsBloodshot && !bIsBloodshot) return -1;
         if (!aIsBloodshot && bIsBloodshot) return 1;
@@ -414,20 +417,15 @@ export default function HomePage() {
         if (!aIsAlbum && bIsAlbum) return 1;
         
         // EPs come second (if both are not albums)
-        if (!aIsAlbum && !bIsAlbum) {
-          if (aIsEP && bIsSingle) return -1;
-          if (aIsSingle && bIsEP) return 1;
-        }
+        if (aIsEP && !bIsEP) return -1;
+        if (!aIsEP && bIsEP) return 1;
         
-        // Within same category, apply the selected sort
-        switch (sortType) {
-          case 'year':
-            return new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime();
-          case 'tracks':
-            return b.tracks.length - a.tracks.length;
-          default: // name
-            return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
-        }
+        // Singles come last (if both are not albums or EPs)
+        if (aIsSingle && !bIsSingle) return -1;
+        if (!aIsSingle && bIsSingle) return 1;
+        
+        // If same type, sort by title
+        return aTitle.localeCompare(bTitle);
       });
     };
     
@@ -664,7 +662,7 @@ export default function HomePage() {
                 .filter(album => album.publisher && album.publisher.feedGuid)
                 .filter(album => {
                   // Exclude Doerfels family artists
-                  const artistName = typeof album.artist === 'string' ? album.artist.toLowerCase() : '';
+                  const artistName = album.artist && typeof album.artist === 'string' ? album.artist.toLowerCase() : '';
                   return !artistName.includes('doerfel') && 
                          !artistName.includes('ben doerfel') && 
                          !artistName.includes('sirtj') &&

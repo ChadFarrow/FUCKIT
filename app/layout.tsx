@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration'
 import ErrorBoundary from '@/components/ErrorBoundary'
+import ClientErrorBoundary from '@/components/ClientErrorBoundary'
 import { ToastContainer } from '@/components/Toast'
 import { AudioProvider } from '@/contexts/AudioContext'
 import GlobalNowPlayingBar from '@/components/GlobalNowPlayingBar'
@@ -75,19 +76,40 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://www.doerfelverse.com" />
         <link rel="preload" href="/api/albums" as="fetch" crossOrigin="anonymous" />
         <link rel="preload" href="/logo.webp" as="image" />
+        
+        {/* Global Error Handler Script */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Global error handler for debugging
+              window.addEventListener('error', function(event) {
+                console.error('🔍 Layout error caught:', event.error);
+                if (event.error && event.error.stack) {
+                  console.error('Stack trace:', event.error.stack);
+                }
+              });
+
+              window.addEventListener('unhandledrejection', function(event) {
+                console.error('🔍 Layout promise rejection caught:', event.reason);
+              });
+            `
+          }}
+        />
       </head>
       <body className={inter.className}>
-        <ErrorBoundary>
-          <AudioProvider>
-            <div className="min-h-screen bg-gray-50">
-              {children}
-            </div>
-            <GlobalNowPlayingBar />
-            <ToastContainer />
-          </AudioProvider>
-        </ErrorBoundary>
-        <ServiceWorkerRegistration />
-        <PerformanceMonitor />
+        <ClientErrorBoundary>
+          <ErrorBoundary>
+            <AudioProvider>
+              <div className="min-h-screen bg-gray-50">
+                {children}
+              </div>
+              <GlobalNowPlayingBar />
+              <ToastContainer />
+            </AudioProvider>
+          </ErrorBoundary>
+          <ServiceWorkerRegistration />
+          <PerformanceMonitor />
+        </ClientErrorBoundary>
       </body>
     </html>
   )
