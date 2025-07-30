@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useRef, useState, useEffect, ReactNode } from 'react';
 import { RSSAlbum } from '@/lib/rss-parser';
 import { toast } from '@/components/Toast';
+import Hls from 'hls.js';
 
 interface AudioContextType {
   // Audio state
@@ -71,6 +72,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   
   const audioRef = useRef<HTMLAudioElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const hlsRef = useRef<Hls | null>(null);
 
   // Load state from localStorage on mount
   useEffect(() => {
@@ -162,6 +164,11 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     return videoExtensions.some(ext => urlLower.includes(ext));
   };
 
+  // Helper function to detect if URL is an HLS stream
+  const isHlsUrl = (url: string): boolean => {
+    return url.toLowerCase().includes('.m3u8');
+  };
+
   // Helper function to get URLs to try for audio playback
   const getAudioUrlsToTry = (originalUrl: string): string[] => {
     const urlsToTry = [];
@@ -206,9 +213,117 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     return urlsToTry;
   };
 
+  // Helper function to attempt HLS playback
+  const attemptHlsPlayback = async (hlsUrl: string, context = 'HLS playback'): Promise<boolean> => {
+    const videoElement = videoRef.current;
+    
+    if (!videoElement) {
+      console.error('❌ Video element reference is null for HLS playback');
+      return false;
+    }
+
+    try {
+      // Clean up any existing HLS instance
+      if (hlsRef.current) {
+        hlsRef.current.destroy();
+        hlsRef.current = null;
+      }
+
+      console.log(`🔄 ${context}: Loading HLS stream`);
+
+      if (Hls.isSupported()) {
+        // Use hls.js for browsers that support it
+        const hls = new Hls({
+          enableWorker: true,
+          lowLatencyMode: false,
+        });
+        
+        hlsRef.current = hls;
+        
+        // Set up event listeners
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+          console.log('✅ HLS manifest parsed successfully');
+          videoElement.play().catch(error => {
+            console.error('❌ HLS playback failed:', error);
+          });
+        });
+        
+        hls.on(Hls.Events.ERROR, (event, data) => {
+          console.error('❌ HLS error:', data);
+          if (data.fatal) {
+            hls.destroy();
+            hlsRef.current = null;
+          }
+        });
+        
+        // Load the HLS stream
+        hls.loadSource(hlsUrl);
+        hls.attachMedia(videoElement);
+        
+        // Wait for the video to be ready
+        return new Promise((resolve) => {
+          const handleCanPlay = () => {
+            videoElement.removeEventListener('canplay', handleCanPlay);
+            console.log(`✅ ${context} ready for playback`);
+            resolve(true);
+          };
+          
+          const handleError = () => {
+            videoElement.removeEventListener('error', handleError);
+            videoElement.removeEventListener('canplay', handleCanPlay);
+            console.error(`❌ ${context} failed`);
+            resolve(false);
+          };
+          
+          videoElement.addEventListener('canplay', handleCanPlay);
+          videoElement.addEventListener('error', handleError);
+          
+          // Timeout after 10 seconds
+          setTimeout(() => {
+            videoElement.removeEventListener('canplay', handleCanPlay);
+            videoElement.removeEventListener('error', handleError);
+            console.warn(`⏰ ${context} timed out`);
+            resolve(false);
+          }, 10000);
+        });
+        
+      } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+        // Safari native HLS support
+        console.log('🍎 Using Safari native HLS support');
+        videoElement.src = hlsUrl;
+        videoElement.load();
+        
+        const playPromise = videoElement.play();
+        if (playPromise !== undefined) {
+          await playPromise;
+          console.log(`✅ ${context} started successfully with Safari native HLS`);
+          return true;
+        }
+      } else {
+        console.error('❌ HLS not supported in this browser');
+        toast.error('Video streaming not supported in this browser', 5000);
+        return false;
+      }
+      
+    } catch (error) {
+      console.error(`❌ ${context} failed:`, error);
+      
+      // Clean up on error
+      if (hlsRef.current) {
+        hlsRef.current.destroy();
+        hlsRef.current = null;
+      }
+      
+      return false;
+    }
+    
+    return false;
+  };
+
   // Helper function to attempt media playback with fallback URLs
   const attemptAudioPlayback = async (originalUrl: string, context = 'playback'): Promise<boolean> => {
     const isVideo = isVideoUrl(originalUrl);
+    const isHls = isHlsUrl(originalUrl);
     const mediaElement = isVideo ? videoRef.current : audioRef.current;
     
     if (!mediaElement) {
@@ -223,6 +338,11 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       console.log('🎬 Video URL detected, switching to video mode:', originalUrl);
     }
     
+    if (isHls) {
+      console.log('📺 HLS stream detected, using hls.js:', originalUrl);
+      return attemptHlsPlayback(originalUrl, context);
+    }
+    
     const urlsToTry = getAudioUrlsToTry(originalUrl);
     
     for (let i = 0; i < urlsToTry.length; i++) {
@@ -230,16 +350,22 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       console.log(`🔄 ${context} attempt ${i + 1}/${urlsToTry.length}: ${audioUrl.includes('proxy-audio') ? 'Proxied URL' : 'Direct URL'}`);
       
       try {
-        // Check if media element is still valid
-        const currentMediaElement = isVideo ? videoRef.current : audioRef.current;
-        if (!currentMediaElement) {
-          console.error(`❌ ${isVideo ? 'Video' : 'Audio'} element became null during playback attempt`);
-          return false;
-        }
-        
-        // Set new source and load
-        currentMediaElement.src = audioUrl;
-        currentMediaElement.load();
+        // Clean up any existing HLS instance when switching to regular media
+      if (hlsRef.current) {
+        hlsRef.current.destroy();
+        hlsRef.current = null;
+      }
+
+      // Check if media element is still valid
+      const currentMediaElement = isVideo ? videoRef.current : audioRef.current;
+      if (!currentMediaElement) {
+        console.error(`❌ ${isVideo ? 'Video' : 'Audio'} element became null during playback attempt`);
+        return false;
+      }
+      
+      // Set new source and load
+      currentMediaElement.src = audioUrl;
+      currentMediaElement.load();
         
         // Set volume for audio, videos typically control their own volume
         if (!isVideo) {
@@ -361,6 +487,12 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
         element.removeEventListener('loadedmetadata', handleLoadedMetadata);
         element.removeEventListener('error', handleError);
       });
+      
+      // Clean up HLS instance
+      if (hlsRef.current) {
+        hlsRef.current.destroy();
+        hlsRef.current = null;
+      }
     };
   }, [currentPlayingAlbum, currentTrackIndex, isVideoMode]);
 
@@ -626,6 +758,12 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     if (videoRef.current) {
       videoRef.current.pause();
       videoRef.current.currentTime = 0;
+    }
+    
+    // Clean up HLS instance
+    if (hlsRef.current) {
+      hlsRef.current.destroy();
+      hlsRef.current = null;
     }
     
     setIsPlaying(false);
