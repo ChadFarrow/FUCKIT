@@ -4,6 +4,7 @@ import React, { createContext, useContext, useRef, useState, useEffect, ReactNod
 import { RSSAlbum } from '@/lib/rss-parser';
 import { toast } from '@/components/Toast';
 import Hls from 'hls.js';
+import { monitoring } from '@/lib/monitoring';
 
 interface AudioContextType {
   // Audio state
@@ -208,10 +209,30 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
           urlsToTry.push(originalUrl);
         }
       } else if (isExternal) {
-        // Try proxy first for external URLs
-        urlsToTry.push(`/api/proxy-audio?url=${encodeURIComponent(originalUrl)}`);
-        // Fallback to direct URL
-        urlsToTry.push(originalUrl);
+        // Check if URL is from a known CORS-problematic domain
+        const corsProblematicDomains = [
+          'cloudfront.net',
+          'amazonaws.com',
+          'wavlake.com',
+          'buzzsprout.com',
+          'anchor.fm',
+          'libsyn.com'
+        ];
+        
+        const isDomainProblematic = corsProblematicDomains.some(domain => 
+          url.hostname.includes(domain)
+        );
+        
+        if (isDomainProblematic) {
+          // For known CORS-problematic domains, use proxy first and skip direct URL
+          console.log(`🚫 Known CORS-problematic domain detected (${url.hostname}), using proxy only`);
+          monitoring.info('audio-playback', `CORS-problematic domain detected: ${url.hostname}`, { originalUrl });
+          urlsToTry.push(`/api/proxy-audio?url=${encodeURIComponent(originalUrl)}`);
+        } else {
+          // For other external URLs, try proxy first then direct as fallback
+          urlsToTry.push(`/api/proxy-audio?url=${encodeURIComponent(originalUrl)}`);
+          urlsToTry.push(originalUrl);
+        }
       } else {
         // For local URLs, try direct first
         urlsToTry.push(originalUrl);
@@ -432,13 +453,34 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
         const playPromise = currentMediaElement.play();
         if (playPromise !== undefined) {
           await playPromise;
-          console.log(`✅ ${context} started successfully with ${typeof audioUrl === 'string' && audioUrl.includes('proxy-audio') ? 'proxied' : 'direct'} URL (${isVideo ? 'VIDEO' : 'AUDIO'} mode)`);
+          const isProxied = typeof audioUrl === 'string' && audioUrl.includes('proxy-audio');
+          console.log(`✅ ${context} started successfully with ${isProxied ? 'proxied' : 'direct'} URL (${isVideo ? 'VIDEO' : 'AUDIO'} mode)`);
+          
+          // Monitor successful playback
+          monitoring.info('audio-playback', `Playback success on attempt ${i + 1}`, {
+            context,
+            method: isProxied ? 'proxy' : 'direct',
+            mode: isVideo ? 'video' : 'audio',
+            url: originalUrl
+          });
+          
           // Clear retry flag on success
           isRetryingRef.current = false;
           return true;
         }
       } catch (attemptError) {
         console.warn(`⚠️ ${context} attempt ${i + 1} failed:`, attemptError);
+        
+        // Monitor failed attempts
+        const isProxied = typeof audioUrl === 'string' && audioUrl.includes('proxy-audio');
+        const errorMessage = attemptError instanceof Error ? attemptError.message : String(attemptError);
+        
+        monitoring.warn('audio-playback', `Playback failed on attempt ${i + 1}`, {
+          context,
+          method: isProxied ? 'proxy' : 'direct',
+          error: errorMessage,
+          url: originalUrl
+        });
         
         // Handle specific error types
         if (attemptError instanceof DOMException) {
