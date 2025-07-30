@@ -48,4 +48,17 @@ console.log('\n📱 For mobile testing:');
 console.log('1. Use browser dev tools device emulation');
 console.log('2. Or test on actual mobile device');
 console.log('3. Check network tab for failed requests');
-console.log('4. Look for CORS errors in console'); 
+console.log('4. Look for CORS errors in console');
+
+console.log('\nService Worker cache cleared successfully!');
+
+// Also clear data service cache via API
+console.log('Clearing server-side caches...');
+fetch('http://localhost:3000/api/admin/clear-cache?type=data', { method: 'POST' })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Server cache clearing result:', data);
+  })
+  .catch(error => {
+    console.warn('Could not clear server cache (server may not be running):', error.message);
+  }); 

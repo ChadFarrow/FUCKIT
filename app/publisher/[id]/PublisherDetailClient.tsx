@@ -11,6 +11,7 @@ import ControlsBar, { FilterType, ViewType, SortType } from '@/components/Contro
 import CDNImage from '@/components/CDNImage';
 import { useAudio } from '@/contexts/AudioContext';
 import { toast } from '@/components/Toast';
+import dataService from '@/lib/data-service';
 
 interface PublisherDetailClientProps {
   publisherId: string;
@@ -62,7 +63,7 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
     }
   };
 
-  // Fetch albums from individual feed URLs when publisher items have empty titles
+  // Simplified album fetching using data service
   const fetchPublisherAlbums = async () => {
     if (!initialData?.publisherItems) {
       setAlbumsLoading(false);
@@ -70,75 +71,23 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
     }
 
     try {
-      console.log(`🔍 Fetching album data for ${initialData.publisherItems.length} publisher items`);
+      console.log(`🔍 Fetching albums using simplified data service`);
       
-      // Fetch parsed feeds data to match feedGuids
-      const parsedFeedsResponse = await fetch('/api/parsed-feeds');
-      if (!parsedFeedsResponse.ok) {
-        throw new Error('Failed to fetch parsed feeds');
+      // Extract feedGuids from publisher items
+      const feedGuids = initialData.publisherItems
+        .map((item: any) => item.feedGuid)
+        .filter((guid: string) => guid && guid.trim() !== '');
+
+      if (feedGuids.length === 0) {
+        console.log('⚠️ No valid feedGuids found in publisher items');
+        setAlbumsLoading(false);
+        return;
       }
+
+      // Use simplified data service
+      const matchedAlbums = await dataService.findAlbumsByFeedGuids(feedGuids);
       
-      const parsedFeedsData = await parsedFeedsResponse.json();
-      const allFeeds = parsedFeedsData.feeds || [];
-      
-      // Match publisher items to actual albums by feedGuid
-      const matchedAlbums: RSSAlbum[] = [];
-      
-      console.log(`🔍 Processing ${initialData.publisherItems.length} publisher items`);
-      
-      for (const item of initialData.publisherItems) {
-        console.log(`🔍 Looking for album with feedGuid: ${item.feedGuid}`);
-        
-        // Find the corresponding feed by feedGuid or feedUrl
-        const matchingFeed = allFeeds.find((feed: any) => {
-          const feedMatches = feed.originalUrl === item.feedUrl;
-          const guidMatches = feed.parsedData?.album?.feedGuid === item.feedGuid;
-          const idMatches = feed.id === item.feedGuid;
-          
-          return (feedMatches || guidMatches || idMatches) && 
-                 feed.parseStatus === 'success' && 
-                 feed.parsedData?.album;
-        });
-        
-        if (matchingFeed && matchingFeed.parsedData.album) {
-          const album = matchingFeed.parsedData.album;
-          console.log(`✅ Found matching album: ${album.title} by ${album.artist}`);
-          matchedAlbums.push(album);
-        } else {
-          console.log(`❌ No album found for feedGuid: ${item.feedGuid}, feedUrl: ${item.feedUrl}`);
-          
-          // Try to find by feedGuid in feed IDs (some feeds use feedGuid as their ID)
-          const guidBasedFeed = allFeeds.find((feed: any) => 
-            feed.id.includes(item.feedGuid) && 
-            feed.parseStatus === 'success' && 
-            feed.parsedData?.album
-          );
-          
-          if (guidBasedFeed) {
-            const album = guidBasedFeed.parsedData.album;
-            console.log(`✅ Found album by GUID-based ID: ${album.title} by ${album.artist}`);
-            matchedAlbums.push(album);
-          }
-        }
-      }
-      
-      // If we still don't have albums, try artist-based matching as fallback
-      if (matchedAlbums.length === 0 && initialData.publisherInfo?.artist) {
-        console.log(`🎭 No matched albums, trying artist search: ${initialData.publisherInfo.artist}`);
-        const artistAlbums = allFeeds
-          .filter((feed: any) => 
-            feed.parseStatus === 'success' && 
-            feed.parsedData?.album &&
-            feed.parsedData.album.artist &&
-            feed.parsedData.album.artist.toLowerCase().includes(initialData.publisherInfo.artist.toLowerCase())
-          )
-          .map((feed: any) => feed.parsedData.album);
-        
-        console.log(`🎵 Found ${artistAlbums.length} albums by artist search`);
-        matchedAlbums.push(...artistAlbums);
-      }
-      
-      console.log(`🎵 Final result: ${matchedAlbums.length} matching albums`);
+      console.log(`🎵 Data service found ${matchedAlbums.length} albums`);
       setAlbums(matchedAlbums);
       
     } catch (error) {

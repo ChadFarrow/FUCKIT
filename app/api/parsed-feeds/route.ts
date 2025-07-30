@@ -58,6 +58,87 @@ export async function GET(request: Request) {
       });
     }
 
+    // Enhanced validation and data cleanup
+    const validationWarnings: string[] = [];
+    const validatedFeeds = parsedFeedsData.feeds.map((feed: any) => {
+      // Validate required fields
+      if (!feed.id) {
+        validationWarnings.push(`Feed missing ID: ${feed.originalUrl || 'unknown'}`);
+      }
+      if (!feed.originalUrl) {
+        validationWarnings.push(`Feed missing originalUrl: ${feed.id || 'unknown'}`);
+      }
+      if (!feed.parseStatus) {
+        validationWarnings.push(`Feed missing parseStatus: ${feed.id || 'unknown'}`);
+        feed.parseStatus = 'unknown';
+      }
+
+      // Validate publisher feeds specifically
+      if (feed.type === 'publisher' && feed.parseStatus === 'success') {
+        const publisherItems = feed.parsedData?.publisherItems || feed.parsedData?.remoteItems || [];
+        let validItemsCount = 0;
+        let emptyTitleCount = 0;
+
+        publisherItems.forEach((item: any) => {
+          if (!item.title || item.title.trim() === '') {
+            emptyTitleCount++;
+          } else {
+            validItemsCount++;
+          }
+          
+          // Add feedGuid validation
+          if (!item.feedGuid) {
+            validationWarnings.push(`Publisher item missing feedGuid: ${feed.id}`);
+          }
+        });
+
+        // Add metadata about publisher items
+        feed.metadata = {
+          ...feed.metadata,
+          totalItems: publisherItems.length,
+          validItems: validItemsCount,
+          emptyTitleItems: emptyTitleCount,
+          validationIssues: emptyTitleCount > 0 ? ['empty_titles'] : []
+        };
+
+        if (emptyTitleCount > 0) {
+          validationWarnings.push(`Publisher feed ${feed.id} has ${emptyTitleCount} items with empty titles`);
+        }
+      }
+
+      // Validate album feeds
+      if (feed.type === 'album' && feed.parseStatus === 'success') {
+        const album = feed.parsedData?.album;
+        if (album) {
+          if (!album.title) {
+            validationWarnings.push(`Album missing title: ${feed.id}`);
+          }
+          if (!album.artist) {
+            validationWarnings.push(`Album missing artist: ${feed.id}`);
+          }
+          if (!album.tracks || !Array.isArray(album.tracks)) {
+            validationWarnings.push(`Album missing or invalid tracks: ${feed.id}`);
+          }
+        }
+      }
+
+      return feed;
+    });
+
+    // Update the data with validated feeds
+    parsedFeedsData.feeds = validatedFeeds;
+    
+    // Add validation summary
+    parsedFeedsData.validation = {
+      timestamp: new Date().toISOString(),
+      totalFeeds: validatedFeeds.length,
+      successfulFeeds: validatedFeeds.filter((f: any) => f.parseStatus === 'success').length,
+      publisherFeeds: validatedFeeds.filter((f: any) => f.type === 'publisher').length,
+      albumFeeds: validatedFeeds.filter((f: any) => f.type === 'album').length,
+      warningsCount: validationWarnings.length,
+      warnings: process.env.NODE_ENV === 'development' ? validationWarnings : validationWarnings.slice(0, 10)
+    };
+
     // Check query parameters for pagination
     const url = new URL(request.url);
     const limit = parseInt(url.searchParams.get('limit') || '0');
