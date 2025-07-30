@@ -169,13 +169,23 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     return url.toLowerCase().includes('.m3u8');
   };
 
-  // Helper function to get URLs to try for audio playback
+  // Helper function to get URLs to try for audio/video playback
   const getAudioUrlsToTry = (originalUrl: string): string[] => {
     const urlsToTry = [];
     
     try {
       const url = new URL(originalUrl);
       const isExternal = url.hostname !== window.location.hostname;
+      const isHls = isHlsUrl(originalUrl);
+      
+      // Special handling for HLS streams
+      if (isHls) {
+        // For HLS streams, try video proxy first, then audio proxy, then direct
+        urlsToTry.push(`/api/proxy-video?url=${encodeURIComponent(originalUrl)}`);
+        urlsToTry.push(`/api/proxy-audio?url=${encodeURIComponent(originalUrl)}`);
+        urlsToTry.push(originalUrl);
+        return urlsToTry;
+      }
       
       // Special handling for op3.dev analytics URLs - extract direct URL
       if (originalUrl.includes('op3.dev/e,') && originalUrl.includes('/https://')) {
@@ -222,101 +232,107 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       return false;
     }
 
-    try {
-      // Clean up any existing HLS instance
-      if (hlsRef.current) {
-        hlsRef.current.destroy();
-        hlsRef.current = null;
-      }
+    // Get URLs to try including proxied versions
+    const urlsToTry = getAudioUrlsToTry(hlsUrl);
+    console.log(`🔄 ${context}: Trying ${urlsToTry.length} HLS URLs`);
 
-      console.log(`🔄 ${context}: Loading HLS stream`);
+    for (let i = 0; i < urlsToTry.length; i++) {
+      const currentUrl = urlsToTry[i];
+      console.log(`🔄 ${context} attempt ${i + 1}/${urlsToTry.length}: ${currentUrl.includes('proxy-audio') ? 'Proxied HLS URL' : 'Direct HLS URL'}`);
 
-      if (Hls.isSupported()) {
-        // Use hls.js for browsers that support it
-        const hls = new Hls({
-          enableWorker: true,
-          lowLatencyMode: false,
-        });
-        
-        hlsRef.current = hls;
-        
-        // Set up event listeners
-        hls.on(Hls.Events.MANIFEST_PARSED, () => {
-          console.log('✅ HLS manifest parsed successfully');
-          videoElement.play().catch(error => {
-            console.error('❌ HLS playback failed:', error);
-          });
-        });
-        
-        hls.on(Hls.Events.ERROR, (event, data) => {
-          console.error('❌ HLS error:', data);
-          if (data.fatal) {
-            hls.destroy();
-            hlsRef.current = null;
-          }
-        });
-        
-        // Load the HLS stream
-        hls.loadSource(hlsUrl);
-        hls.attachMedia(videoElement);
-        
-        // Wait for the video to be ready
-        return new Promise((resolve) => {
-          const handleCanPlay = () => {
-            videoElement.removeEventListener('canplay', handleCanPlay);
-            console.log(`✅ ${context} ready for playback`);
-            resolve(true);
-          };
-          
-          const handleError = () => {
-            videoElement.removeEventListener('error', handleError);
-            videoElement.removeEventListener('canplay', handleCanPlay);
-            console.error(`❌ ${context} failed`);
-            resolve(false);
-          };
-          
-          videoElement.addEventListener('canplay', handleCanPlay);
-          videoElement.addEventListener('error', handleError);
-          
-          // Timeout after 10 seconds
-          setTimeout(() => {
-            videoElement.removeEventListener('canplay', handleCanPlay);
-            videoElement.removeEventListener('error', handleError);
-            console.warn(`⏰ ${context} timed out`);
-            resolve(false);
-          }, 10000);
-        });
-        
-      } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
-        // Safari native HLS support
-        console.log('🍎 Using Safari native HLS support');
-        videoElement.src = hlsUrl;
-        videoElement.load();
-        
-        const playPromise = videoElement.play();
-        if (playPromise !== undefined) {
-          await playPromise;
-          console.log(`✅ ${context} started successfully with Safari native HLS`);
-          return true;
+      try {
+        // Clean up any existing HLS instance
+        if (hlsRef.current) {
+          hlsRef.current.destroy();
+          hlsRef.current = null;
         }
-      } else {
-        console.error('❌ HLS not supported in this browser');
-        toast.error('Video streaming not supported in this browser', 5000);
-        return false;
+
+        if (Hls.isSupported()) {
+          // Use hls.js for browsers that support it
+          const hls = new Hls({
+            enableWorker: true,
+            lowLatencyMode: false,
+            xhrSetup: function(xhr, url) {
+              // Add any necessary headers for CORS
+              xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+            }
+          });
+          
+          hlsRef.current = hls;
+          
+          // Set up event listeners
+          const manifestParsed = new Promise<boolean>((resolve) => {
+            hls.on(Hls.Events.MANIFEST_PARSED, () => {
+              console.log('✅ HLS manifest parsed successfully');
+              videoElement.play().then(() => {
+                console.log(`✅ ${context} started successfully`);
+                resolve(true);
+              }).catch(error => {
+                console.error('❌ HLS playback failed:', error);
+                resolve(false);
+              });
+            });
+            
+            hls.on(Hls.Events.ERROR, (event, data) => {
+              console.error('❌ HLS error:', data);
+              if (data.fatal) {
+                console.error('❌ Fatal HLS error, trying next URL');
+                hls.destroy();
+                hlsRef.current = null;
+                resolve(false);
+              }
+            });
+            
+            // Timeout after 15 seconds
+            setTimeout(() => {
+              console.warn(`⏰ ${context} timed out for URL ${i + 1}`);
+              resolve(false);
+            }, 15000);
+          });
+          
+          // Load the HLS stream
+          hls.loadSource(currentUrl);
+          hls.attachMedia(videoElement);
+          
+          // Wait for manifest to be parsed and playback to start
+          const success = await manifestParsed;
+          if (success) {
+            return true;
+          }
+          
+        } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+          // Safari native HLS support
+          console.log('🍎 Using Safari native HLS support');
+          videoElement.src = currentUrl;
+          videoElement.load();
+          
+          const playPromise = videoElement.play();
+          if (playPromise !== undefined) {
+            await playPromise;
+            console.log(`✅ ${context} started successfully with Safari native HLS`);
+            return true;
+          }
+        } else {
+          console.error('❌ HLS not supported in this browser');
+          toast.error('Video streaming not supported in this browser', 5000);
+          return false;
+        }
+        
+      } catch (error) {
+        console.error(`❌ ${context} attempt ${i + 1} failed:`, error);
+        
+        // Clean up on error
+        if (hlsRef.current) {
+          hlsRef.current.destroy();
+          hlsRef.current = null;
+        }
+        
+        // Add a small delay before trying the next URL
+        await new Promise(resolve => setTimeout(resolve, 1000));
       }
-      
-    } catch (error) {
-      console.error(`❌ ${context} failed:`, error);
-      
-      // Clean up on error
-      if (hlsRef.current) {
-        hlsRef.current.destroy();
-        hlsRef.current = null;
-      }
-      
-      return false;
     }
     
+    console.error(`❌ All ${urlsToTry.length} HLS URLs failed for ${context}`);
     return false;
   };
 

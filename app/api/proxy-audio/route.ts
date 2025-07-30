@@ -68,7 +68,8 @@ export async function GET(request: NextRequest) {
       'f4.bcbits.com',
       'static.wixstatic.com',
       'noagendaassets.com',
-      'media.rssblue.com'
+      'media.rssblue.com',
+      'customer-dlnbepb8zpz7h846.cloudflarestream.com'
     ];
     
     if (!allowedDomains.includes(url.hostname)) {
@@ -103,7 +104,13 @@ export async function GET(request: NextRequest) {
     }
 
     // Stream the response instead of buffering everything
-    const contentType = response.headers.get('Content-Type') || 'audio/mpeg';
+    let contentType = response.headers.get('Content-Type') || 'audio/mpeg';
+    
+    // Handle HLS manifest files
+    if (audioUrl.includes('.m3u8')) {
+      contentType = 'application/vnd.apple.mpegurl';
+    }
+    
     const contentLength = response.headers.get('Content-Length');
     
     // Create response with proper headers for streaming
