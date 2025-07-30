@@ -150,6 +150,22 @@ export class RSSParser {
         );
       }
       
+      // Ensure xmlText is a string before calling includes
+      if (typeof xmlText !== 'string') {
+        this.logger.error('Response is not a string', null, { 
+          feedUrl, 
+          responseType: typeof xmlText,
+          responsePreview: String(xmlText).substring(0, 200) 
+        });
+        throw new AppError(
+          'Response is not a string',
+          ErrorCodes.RSS_INVALID_FORMAT,
+          400,
+          false,
+          { feedUrl }
+        );
+      }
+      
       if (!xmlText.includes('<') || !xmlText.includes('>')) {
         this.logger.error('Invalid XML response', null, { 
           feedUrl, 
@@ -286,13 +302,13 @@ export class RSSParser {
         try {
           const url = new URL(coverArt);
           // Security check for potentially unsafe URLs
-          if (url.href.includes('javascript:') || url.href.includes('data:')) {
+          if (typeof url.href === 'string' && (url.href.includes('javascript:') || url.href.includes('data:'))) {
             console.warn('Potentially unsafe cover art URL detected:', coverArt);
             coverArt = null;
           }
         } catch (error) {
           // If URL parsing fails, only keep valid HTTP(S) URLs
-          if (coverArt && !coverArt.startsWith('http')) {
+          if (coverArt && typeof coverArt === 'string' && !coverArt.startsWith('http')) {
             verboseLog('Invalid cover art URL format:', coverArt);
             coverArt = null;
           }
@@ -372,7 +388,7 @@ export class RSSParser {
               duration = '0:00';
               verboseLog(`⚠️ Invalid duration seconds "${durationStr}" for track "${trackTitle}", using default`);
             }
-          } else if (durationStr.includes(':')) {
+          } else if (typeof durationStr === 'string' && durationStr.includes(':')) {
             const parts = durationStr.split(':');
             if (parts.length === 2) {
               // MM:SS format
@@ -416,7 +432,7 @@ export class RSSParser {
         }
         
         // Final validation - check for NaN values
-        if (duration.includes('NaN')) {
+        if (typeof duration === 'string' && duration.includes('NaN')) {
           duration = '0:00';
           verboseLog(`⚠️ Duration contained NaN for track "${trackTitle}", using default`);
         }
@@ -651,7 +667,7 @@ export class RSSParser {
           );
         } catch (error) {
           // Enhanced error handling for NetworkError
-          if (error instanceof TypeError && error.message.includes('NetworkError')) {
+          if (error instanceof TypeError && typeof error.message === 'string' && error.message.includes('NetworkError')) {
             console.error(`❌ NetworkError when attempting to fetch resource.`);
             console.log('🔍 Error details:', {
               message: error.message,
@@ -738,6 +754,12 @@ export class RSSParser {
       }
       
       const xmlText = await response.text();
+      
+      // Ensure xmlText is a string before calling includes
+      if (typeof xmlText !== 'string') {
+        console.error('parsePublisherFeedInfo: Response is not a string:', typeof xmlText);
+        throw new Error('Response is not a string');
+      }
       
       // Use different XML parsing based on environment
       let xmlDoc: any;
@@ -921,6 +943,12 @@ export class RSSParser {
       }
       
       const xmlText = await response.text();
+      
+      // Ensure xmlText is a string before calling includes
+      if (typeof xmlText !== 'string') {
+        console.error('parsePublisherFeed: Response is not a string:', typeof xmlText);
+        throw new Error('Response is not a string');
+      }
       
       // Use different XML parsing based on environment
       let xmlDoc: any;

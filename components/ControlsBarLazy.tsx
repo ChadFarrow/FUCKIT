@@ -22,17 +22,30 @@ const ControlsBar = dynamic(() => import('./ControlsBar'), {
 export type { FilterType, ViewType, SortType } from './ControlsBar';
 
 interface ControlsBarLazyProps {
+  // Filter props
   activeFilter: any;
   onFilterChange: (filter: any) => void;
+  showFilters?: boolean;
+  filterOptions?: { value: any; label: string }[];
+  
+  // Sort props
   sortType: any;
   onSortChange: (sort: any) => void;
+  sortOptions?: { value: any; label: string }[];
+  
+  // View props
   viewType: any;
   onViewChange: (view: any) => void;
-  showShuffle?: boolean;
+  showViewToggle?: boolean;
+  
+  // Shuffle prop
   onShuffle?: () => void;
-  resultCount: number;
-  resultLabel: string;
+  showShuffle?: boolean;
+  
+  // Customization
   className?: string;
+  resultCount?: number;
+  resultLabel?: string;
 }
 
 export default function ControlsBarLazy(props: ControlsBarLazyProps) {

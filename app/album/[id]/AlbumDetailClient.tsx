@@ -20,6 +20,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   const [isLoading, setIsLoading] = useState(!initialAlbum);
   const [error, setError] = useState<string | null>(null);
   const [podrollAlbums, setPodrollAlbums] = useState<RSSAlbum[]>([]);
+  const [loadingStarted, setLoadingStarted] = useState(false);
   
   // Global audio context
   const { 
@@ -401,7 +402,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
 
   // Load album data if not provided initially
   useEffect(() => {
-    if (!initialAlbum) {
+    if (!initialAlbum && !loadingStarted) {
+      setLoadingStarted(true);
       const loadAlbum = async () => {
         try {
           setIsLoading(true);
@@ -539,8 +541,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
           const normalizedTitle = titleFromSlug.toLowerCase();
           const specificFeed = titleToFeedMap[normalizedTitle];
           
-          console.log(`🔍 Album lookup: "${decodedAlbumTitle}" → "${titleFromSlug}" → "${normalizedTitle}"`);
-          console.log(`📋 Specific feed found:`, specificFeed);
+          // Album lookup logging (removed to prevent infinite recursion)
           
           // Always use pre-parsed album data instead of parsing RSS feeds
             const response = await fetch('/api/albums');
@@ -552,21 +553,9 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             const data = await response.json();
             const albumsData = data.albums || [];
             
-            console.log(`�� Found ${albumsData.length} albums in pre-parsed data`);
-            console.log(`🔍 Looking for: "${decodedAlbumTitle}"`);
+            // Search for matching album in pre-parsed data
             
-            // Debug: Log all found albums
-            albumsData.forEach((album: any, index: number) => {
-              console.log(`📋 Album ${index + 1}: "${album.title}" by ${album.artist}`);
-            });
             
-            // Check if Generation Gap is in the results
-            const hasGenerationGap = albumsData.find((a: any) => a.title.toLowerCase().includes('generation'));
-            if (hasGenerationGap) {
-              console.log(`✅ Found Generation Gap-like album: "${hasGenerationGap.title}"`);
-            } else {
-              console.log(`❌ No Generation Gap found in results`);
-            }
             
             // Find the matching album with more precise matching
             const foundAlbum = albumsData.find((a: any) => {
@@ -575,13 +564,11 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               
               // First try exact match (case-sensitive)
               if (a.title === decodedAlbumTitle || a.title === albumTitle) {
-                console.log(`✅ Exact match found: "${a.title}"`);
-                return true;
+                  return true;
               }
               
               // Then try case-insensitive exact match
               if (albumTitleLower === searchTitleLower) {
-                console.log(`✅ Case-insensitive exact match found: "${a.title}"`);
                 return true;
               }
               
@@ -589,7 +576,6 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               const normalizedAlbum = albumTitleLower.replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
               const normalizedSearch = searchTitleLower.replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
               if (normalizedAlbum === normalizedSearch) {
-                console.log(`✅ Normalized exact match found: "${a.title}"`);
                 return true;
               }
               
@@ -597,7 +583,6 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               const slugToTitle = (slug: string) => slug.replace(/-/g, ' ');
               const titleFromSlug = slugToTitle(searchTitleLower);
               if (albumTitleLower === titleFromSlug) {
-                console.log(`✅ Slug-based exact match found: "${a.title}"`);
                 return true;
               }
               
@@ -606,7 +591,6 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               const albumSlug = generateSlug(a.title);
               const searchSlug = generateSlug(searchTitleLower);
               if (albumSlug === searchSlug) {
-                console.log(`✅ Reverse slug match found: "${a.title}" (slug: ${albumSlug})`);
                 return true;
               }
               
@@ -628,14 +612,12 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               };
               
               if (specialCases[searchTitleLower] && a.title === specialCases[searchTitleLower]) {
-                console.log(`✅ Special case match found: "${a.title}"`);
                 return true;
               }
               
               // Avoid fuzzy matching to prevent incorrect album loads
               // Only use contains match as a last resort and log a warning
               if (albumTitleLower.includes(searchTitleLower) && searchTitleLower.length > 5) {
-                console.warn(`⚠️ Using fuzzy match - might be incorrect: "${a.title}" contains "${decodedAlbumTitle}"`);
                 return true;
               }
               
@@ -690,7 +672,6 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                            bTitle.replace(/[^a-z0-9]/g, '') === correctTitle.replace(/[^a-z0-9]/g, '');
                   });
                   
-                  console.log(`🔍 Track sorting: "${a.title}" -> index ${aIndex}, "${b.title}" -> index ${bIndex}`);
                   
                   // If both found, sort by index
                   if (aIndex !== -1 && bIndex !== -1) {
@@ -703,17 +684,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                   return 0;
                 });
                 
-                console.log('✅ Track order corrected for "They Ride"');
-              }
-              
-              console.log('📊 Album loaded:', processedAlbum.title);
-              console.log('🎵 Track count:', processedAlbum.tracks.length);
-              console.log('🖼️ Tracks with images:', processedAlbum.tracks.filter((t: any) => t.image).length);
-              processedAlbum.tracks.forEach((track: any, index: number) => {
-                if (track.image) {
-                  console.log(`  Track ${index + 1}: "${track.title}" - Image: ${track.image}`);
                 }
-              });
+              
               
               setAlbum(processedAlbum);
               // Load PodRoll albums if they exist
@@ -736,7 +708,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
       };
 
       loadAlbum();
-    } else {
+    } else if (initialAlbum) {
       // Load PodRoll albums if they exist
       if (initialAlbum.podroll && initialAlbum.podroll.length > 0) {
         loadPodrollAlbums(initialAlbum.podroll);
@@ -746,7 +718,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
         loadPublisherAlbums(initialAlbum.publisher.feedUrl);
       }
     }
-  }, [albumTitle, initialAlbum]);
+  }, [albumTitle, initialAlbum, loadingStarted]);
 
   const loadPodrollAlbums = async (podrollItems: { url: string; title?: string; description?: string }[]) => {
     try {

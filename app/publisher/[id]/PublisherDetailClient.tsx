@@ -229,7 +229,7 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
               if (feed.type === 'publisher') {
                 // Check if this feed matches our publisher
                 if (feed.originalUrl === feedUrl) return true;
-                if (feed.id && feed.id.includes(publisherId)) return true;
+                if (feed.id && typeof feed.id === 'string' && feed.id.includes(publisherId)) return true;
                 if (feed.parsedData?.publisherInfo?.artist === publisherInfo.name) return true;
                 return false;
               }
