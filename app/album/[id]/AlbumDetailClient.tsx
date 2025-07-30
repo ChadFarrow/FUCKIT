@@ -9,6 +9,7 @@ import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { generateAlbumUrl, generatePublisherSlug } from '@/lib/url-utils';
 import { useAudio } from '@/contexts/AudioContext';
 import ControlsBar from '@/components/ControlsBar';
+import CDNImage from '@/components/CDNImage';
 
 interface AlbumDetailClientProps {
   albumTitle: string;
@@ -867,8 +868,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
         <div className="flex flex-col gap-6 mb-8">
           {/* Album Art with Play Button Overlay */}
           <div className="relative group mx-auto w-[280px] h-[280px]">
-            <Image 
-              src={getAlbumArtworkUrl(album?.coverArt || '', 'large')} 
+            <CDNImage 
+              src={album?.coverArt || ''} 
               alt={album.title}
               width={280}
               height={280}
@@ -876,14 +877,9 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                 albumArtLoaded ? 'opacity-100' : 'opacity-0'
               }`}
               style={{ objectFit: 'cover' }}
-              priority={true} // Always prioritize album art loading
+              priority // Always prioritize album art loading
               onLoad={() => setAlbumArtLoaded(true)}
-              onError={(e) => {
-                // Fallback to placeholder on error
-                const target = e.target as HTMLImageElement;
-                target.src = getPlaceholderImageUrl('large');
-                setAlbumArtLoaded(true);
-              }}
+              onError={() => setAlbumArtLoaded(true)}
             />
             
             {/* Loading placeholder - show when album art is not loaded */}
@@ -1002,19 +998,13 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                 <div className="flex items-center gap-3 min-w-0 flex-1">
                   <div className="relative w-10 h-10 md:w-12 md:h-12 flex-shrink-0 overflow-hidden rounded">
                     {/* Always use album artwork for tracks */}
-                    <Image 
-                      src={getAlbumArtworkUrl(album?.coverArt || '', 'thumbnail')} 
+                    <CDNImage 
+                      src={album?.coverArt || ''} 
                       alt={album.title}
                       width={48}
                       height={48}
-                      className="absolute inset-0 w-full h-full object-cover"
-                      style={{ objectFit: 'cover' }}
-                      onError={(e) => {
-                        // Fallback to track number if album image fails
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                        target.nextElementSibling?.classList.remove('hidden');
-                      }}
+                      className="w-full h-full object-cover"
+                      priority={index < 5} // Priority for first 5 tracks
                     />
                     {/* Play Button Overlay - On album artwork */}
                     <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity duration-200">
@@ -1031,12 +1021,6 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                           <Play className="h-3 w-3" />
                         )}
                       </button>
-                    </div>
-                    {/* Track number fallback background - hidden by default */}
-                    <div className="absolute inset-0 bg-gray-800 flex items-center justify-center hidden">
-                      <span className="text-gray-400 text-sm font-medium">
-                        {track.trackNumber || index + 1}
-                      </span>
                     </div>
                   </div>
                   <div className="min-w-0 flex-1">
