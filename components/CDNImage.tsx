@@ -333,7 +333,7 @@ export default function CDNImage({
     return () => {
       if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [src, width, height, isClient]); // Removed isMobile and isTablet from dependencies
+  }, [src, width, height, isClient, isMobile]); // Fixed dependencies to prevent infinite loops
 
   // Handle mobile-specific timeouts separately
   useEffect(() => {
@@ -343,7 +343,7 @@ export default function CDNImage({
       }, isGif ? 12000 : 15000); // 12 second timeout for GIFs on mobile, 15 for others
       setTimeoutId(timeout);
     }
-  }, [isClient, isLoading, timeoutId, isGif]); // Removed isMobile from dependencies to prevent infinite loops
+  }, [isClient, isMobile, timeoutId, isGif]); // Fixed dependencies to prevent infinite loops
 
   const dims = getImageDimensions();
 

@@ -45,6 +45,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   const [albumArtLoaded, setAlbumArtLoaded] = useState(false);
   const [lastProcessedCoverArt, setLastProcessedCoverArt] = useState<string | null>(null);
   const [isDesktop, setIsDesktop] = useState(false);
+  const preloadAttemptedRef = useRef(false);
+  const backgroundUpdateAttemptedRef = useRef(false);
   
 
   // Detect desktop for background loading optimization
@@ -62,7 +64,9 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
 
   // Early background loading for desktop - start immediately when component mounts
   useEffect(() => {
-    if (!isClient || !isDesktop) return;
+    if (!isClient || !isDesktop || preloadAttemptedRef.current) return;
+    
+    preloadAttemptedRef.current = true;
     
     // Try to preload background image from album title
     const preloadBackgroundImage = async () => {
@@ -162,7 +166,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
     };
     
     preloadBackgroundImage();
-  }, [isClient, isDesktop, albumTitle]);
+  }, [isClient, isDesktop, albumTitle]); // Fixed dependencies to prevent infinite loops
 
   // Update Media Session API for iOS lock screen controls
   const updateMediaSession = (track: any) => {
@@ -273,7 +277,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   // Update background when album data changes (only for mobile or when early loading fails)
   useEffect(() => {
     // Don't run background effect while loading or if album is null
-    if (isLoading || !album) {
+    if (isLoading || !album || backgroundUpdateAttemptedRef.current) {
       return;
     }
     
@@ -286,6 +290,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
     if (album?.coverArt === lastProcessedCoverArt) {
       return;
     }
+    
+    backgroundUpdateAttemptedRef.current = true;
     
     console.log('🎨 Background update triggered:', { 
       albumTitle: album?.title, 
@@ -306,7 +312,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
       
       // Add cache-busting parameter to prevent stale cache issues
       const cacheBuster = Date.now();
-      const imageUrlWithCacheBuster = album?.coverArt.includes('?') 
+      const imageUrlWithCacheBuster = (typeof album?.coverArt === 'string' && album?.coverArt.includes('?')) 
         ? `${album?.coverArt}&cb=${cacheBuster}`
         : `${album?.coverArt}?cb=${cacheBuster}`;
       
@@ -321,7 +327,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
         console.error('❌ Background image failed to load:', album?.coverArt, error);
         
         // Try image proxy for external URLs
-        if (album?.coverArt && !album?.coverArt.includes('re.podtards.com')) {
+        if (album?.coverArt && typeof album?.coverArt === 'string' && !album?.coverArt.includes('re.podtards.com')) {
           const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(album?.coverArt)}`;
           console.log('🔄 Trying image proxy for background:', proxyUrl);
           

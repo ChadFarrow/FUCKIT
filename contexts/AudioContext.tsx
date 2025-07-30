@@ -97,10 +97,13 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
 
   // Add user interaction handler to enable audio playback
   useEffect(() => {
+    let hasSetup = false;
+    
     const enableAudio = () => {
-      if (audioRef.current && !hasUserInteracted) {
+      if (audioRef.current && !hasUserInteracted && !hasSetup) {
         // Only enable audio context unlock, don't actually play anything
         // This prevents accidental auto-play on mobile
+        hasSetup = true;
         setHasUserInteracted(true);
         console.log('🔓 Audio context unlocked via user interaction');
       }
@@ -125,7 +128,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
         document.removeEventListener(event, enableAudio);
       });
     };
-  }, []); // Remove hasUserInteracted from dependencies to prevent infinite loop
+  }, []); // Empty dependency array to prevent infinite loops
 
   // Save state to localStorage when it changes
   useEffect(() => {
