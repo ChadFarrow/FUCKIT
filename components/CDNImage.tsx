@@ -219,6 +219,9 @@ export default function CDNImage({
   };
 
   const handleError = () => {
+    // Prevent recursion by checking if component is unmounted or src changed
+    if (!src) return;
+    
     // Minimal error handling for performance
     setIsLoading(false);
     
@@ -234,19 +237,12 @@ export default function CDNImage({
       setHasError(false);
       setIsLoading(true);
       setRetryCount(1);
-      
-      // Set timeout for fallback (shorter for GIFs)
-      const timeout = setTimeout(() => {
-        handleError();
-      }, isGif ? 8000 : 10000); // 8 second timeout for GIFs, 10 for others
-      setTimeoutId(timeout);
       return;
     }
     
     // If fallbackSrc is the same as currentSrc, skip to proxy attempt
     if (retryCount === 0 && fallbackSrc === currentSrc) {
       setRetryCount(1);
-      handleError();
       return;
     }
     
@@ -257,12 +253,6 @@ export default function CDNImage({
       setHasError(false);
       setIsLoading(true);
       setRetryCount(2);
-      
-      // Set timeout for proxy (shorter for GIFs)
-      const timeout = setTimeout(() => {
-        handleError();
-      }, isGif ? 10000 : 12000); // 10 second timeout for GIFs, 12 for others
-      setTimeoutId(timeout);
       return;
     }
     
@@ -274,12 +264,6 @@ export default function CDNImage({
         setHasError(false);
         setIsLoading(true);
         setRetryCount(3);
-        
-        // Set timeout for original URL (shorter for GIFs)
-        const timeout = setTimeout(() => {
-          handleError();
-        }, isGif ? 12000 : 15000); // 12 second timeout for GIFs, 15 for others
-        setTimeoutId(timeout);
         return;
       }
     }
@@ -334,19 +318,43 @@ export default function CDNImage({
       clearTimeout(timeoutId);
       setTimeoutId(null);
     }
+  }, [src, width, height, isClient, isMobile]); // Only run when src prop changes
+
+  // Separate effect for handling timeouts to prevent recursion
+  useEffect(() => {
+    if (hasError || !isLoading || !currentSrc) return;
     
-    // Set timeout for initial load only
-    const timeout = setTimeout(() => {
-      handleError();
-    }, isGif ? 12000 : 15000);
+    // Clear existing timeout
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      setTimeoutId(null);
+    }
+    
+    // Set timeout based on retry count and whether it's a GIF
+    let timeout: NodeJS.Timeout;
+    if (retryCount === 0) {
+      // Initial load timeout
+      timeout = setTimeout(() => handleError(), isGif ? 12000 : 15000);
+    } else if (retryCount === 1) {
+      // Fallback/proxy timeout
+      timeout = setTimeout(() => handleError(), isGif ? 8000 : 10000);
+    } else if (retryCount === 2) {
+      // Proxy timeout
+      timeout = setTimeout(() => handleError(), isGif ? 10000 : 12000);
+    } else if (retryCount === 3) {
+      // Original URL timeout
+      timeout = setTimeout(() => handleError(), isGif ? 12000 : 15000);
+    } else {
+      // No more retries
+      return;
+    }
+    
     setTimeoutId(timeout);
     
     return () => {
       if (timeout) clearTimeout(timeout);
     };
-  }, [src, width, height, isClient, isMobile, quality]); // Added quality to dependencies
-
-  // Handle mobile-specific timeouts separately - removed to fix infinite recursion
+  }, [currentSrc, retryCount, isLoading, hasError, isGif]); // Run when retry state changes
 
   const dims = getImageDimensions();
 
