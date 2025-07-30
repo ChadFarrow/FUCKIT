@@ -43,28 +43,29 @@ function PlaylistContent() {
   const { playAlbum, currentPlayingAlbum, isPlaying, pause, resume, currentTrackIndex: audioCurrentTrackIndex } = useAudio();
 
   useEffect(() => {
+    const loadPlaylist = async () => {
+      try {
+        setIsLoading(true);
+        const url = feedId 
+          ? `/api/playlist?format=json&feedId=${feedId}`
+          : '/api/playlist?format=json';
+        
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Failed to load playlist');
+        
+        const data: PlaylistData = await response.json();
+        setPlaylist(data);
+      } catch (error) {
+        console.error('Error loading playlist:', error);
+        toast.error('Failed to load playlist');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     loadPlaylist();
   }, [feedId]);
 
-  const loadPlaylist = async () => {
-    try {
-      setIsLoading(true);
-      const url = feedId 
-        ? `/api/playlist?format=json&feedId=${feedId}`
-        : '/api/playlist?format=json';
-      
-      const response = await fetch(url);
-      if (!response.ok) throw new Error('Failed to load playlist');
-      
-      const data: PlaylistData = await response.json();
-      setPlaylist(data);
-    } catch (error) {
-      console.error('Error loading playlist:', error);
-      toast.error('Failed to load playlist');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handlePlayTrack = async (track: PlaylistTrack, index: number) => {
     setCurrentTrackIndex(index);

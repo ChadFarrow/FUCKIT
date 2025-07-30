@@ -18,6 +18,7 @@ interface CDNImageProps {
   fallbackSrc?: string;
   sizes?: string;
   placeholder?: 'blur' | 'empty';
+  style?: React.CSSProperties;
 }
 
 export default function CDNImage({
@@ -33,6 +34,7 @@ export default function CDNImage({
   fallbackSrc,
   sizes,
   placeholder = 'empty',
+  style,
   ...props
 }: CDNImageProps) {
   const [isLoading, setIsLoading] = useState(true);
@@ -386,7 +388,8 @@ export default function CDNImage({
             objectFit: 'cover',
             width: '100%',
             height: '100%',
-            display: 'block'
+            display: 'block',
+            ...style
           }}
           {...props}
         />
@@ -405,6 +408,7 @@ export default function CDNImage({
           onLoad={handleLoad}
           placeholder={placeholder}
           unoptimized={currentSrc.includes('/api/optimized-images/')} // Don't double-optimize
+          style={style}
           {...props}
         />
       )}

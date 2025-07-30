@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import zlib from 'zlib';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const parsedFeedsPath = path.join(process.cwd(), 'data', 'parsed-feeds.json');
     
@@ -57,12 +58,35 @@ export async function GET() {
       });
     }
 
-    return NextResponse.json(parsedFeedsData, {
+    // Check query parameters for pagination
+    const url = new URL(request.url);
+    const limit = parseInt(url.searchParams.get('limit') || '0');
+    const offset = parseInt(url.searchParams.get('offset') || '0');
+    
+    let responseData = parsedFeedsData;
+    
+    // Apply pagination if requested
+    if (limit > 0) {
+      const totalFeeds = parsedFeedsData.feeds.length;
+      const paginatedFeeds = parsedFeedsData.feeds.slice(offset, offset + limit);
+      
+      responseData = {
+        ...parsedFeedsData,
+        feeds: paginatedFeeds,
+        pagination: {
+          total: totalFeeds,
+          limit,
+          offset,
+          hasMore: offset + limit < totalFeeds
+        }
+      };
+    }
+
+    return NextResponse.json(responseData, {
       status: 200,
       headers: {
-        'Cache-Control': 'public, max-age=600, s-maxage=600', // Increased to 10 minutes for better performance
+        'Cache-Control': 'public, max-age=900, s-maxage=900', // Increased to 15 minutes for better performance
         'Content-Type': 'application/json',
-
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type'

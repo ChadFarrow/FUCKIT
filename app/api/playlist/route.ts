@@ -11,18 +11,121 @@ function escapeXml(str: string): string {
     .replace(/'/g, '&apos;')
 }
 
-function formatDuration(duration: string): string {
-  // Convert duration from MM:SS or HH:MM:SS to seconds
-  const parts = duration.split(':').map(p => parseInt(p))
-  let seconds = 0
+function formatDuration(seconds: number): string {
+  const minutes = Math.floor(seconds / 60)
+  const remainingSeconds = seconds % 60
+  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
+}
+
+async function fetchDoerfelsFeed(): Promise<string> {
+  const response = await fetch('https://www.doerfelverse.com/feeds/intothedoerfelverse.xml')
+  if (!response.ok) {
+    throw new Error(`Failed to fetch Doerfels feed: ${response.status}`)
+  }
+  return await response.text()
+}
+
+function parseValueTimeSplits(xmlContent: string): any[] {
+  const tracks: any[] = []
   
-  if (parts.length === 2) {
-    seconds = parts[0] * 60 + parts[1]
-  } else if (parts.length === 3) {
-    seconds = parts[0] * 3600 + parts[1] * 60 + parts[2]
+  // Parse podcast:valueTimeSplit elements
+  const valueTimeSplitRegex = /<podcast:valueTimeSplit[^>]*startTime="([^"]*)"[^>]*duration="([^"]*)"[^>]*remotePercentage="([^"]*)"[^>]*>[\s\S]*?<podcast:remoteItem[^>]*feedGuid="([^"]*)"[^>]*itemGuid="([^"]*)"[^>]*\/>[\s\S]*?<\/podcast:valueTimeSplit>/g
+  
+  let match
+  let trackId = 1
+  
+  while ((match = valueTimeSplitRegex.exec(xmlContent)) !== null) {
+    const [, startTime, duration, remotePercentage, feedGuid, itemGuid] = match
+    
+    // Convert to numbers
+    const startTimeNum = parseFloat(startTime)
+    const durationNum = parseFloat(duration)
+    const remotePercentageNum = parseFloat(remotePercentage)
+    
+    // Skip invalid entries
+    if (isNaN(startTimeNum) || isNaN(durationNum) || durationNum <= 0) {
+      console.log(`⚠️ Skipping invalid valueTimeSplit: startTime=${startTime}, duration=${duration}`)
+      continue
+    }
+    
+    // Find the episode this track belongs to by looking for the enclosing item
+    const beforeMatch = xmlContent.substring(0, match.index)
+    const lastItemStart = beforeMatch.lastIndexOf('<item>')
+    const lastItemEnd = beforeMatch.lastIndexOf('</item>')
+    
+    let episodeTitle = 'Unknown Episode'
+    let episodeUrl = ''
+    let episodeImage = ''
+    
+    if (lastItemStart > lastItemEnd) {
+      // Extract episode info from the current item
+      const itemStart = xmlContent.indexOf('<item>', match.index)
+      const itemEnd = xmlContent.indexOf('</item>', match.index)
+      
+      if (itemStart !== -1 && itemEnd !== -1) {
+        const itemContent = xmlContent.substring(itemStart, itemEnd)
+        
+        // Extract title
+        const titleMatch = itemContent.match(/<title[^>]*>([^<]*)<\/title>/)
+        if (titleMatch) {
+          episodeTitle = titleMatch[1].trim()
+        }
+        
+        // Extract enclosure URL
+        const enclosureMatch = itemContent.match(/<enclosure[^>]*url="([^"]*)"[^>]*\/>/)
+        if (enclosureMatch) {
+          episodeUrl = enclosureMatch[1]
+        }
+        
+        // Extract image
+        const imageMatch = itemContent.match(/<itunes:image[^>]*href="([^"]*)"[^>]*\/>/)
+        if (imageMatch) {
+          episodeImage = imageMatch[1]
+        }
+      }
+    }
+    
+    // Create track entry
+    tracks.push({
+      id: trackId++,
+      title: `Track ${trackId - 1}`, // We'll need to fetch actual track info later
+      duration: formatDuration(durationNum),
+      durationSeconds: durationNum,
+      startTime: startTimeNum,
+      endTime: startTimeNum + durationNum,
+      remotePercentage: remotePercentageNum,
+      feedGuid: feedGuid,
+      itemGuid: itemGuid,
+      episodeTitle: episodeTitle,
+      episodeUrl: episodeUrl,
+      episodeImage: episodeImage,
+      trackUrl: `${episodeUrl}#t=${Math.floor(startTimeNum)},${Math.floor(startTimeNum + durationNum)}`,
+      artist: 'The Doerfels', // Default, will be updated when we fetch remote item data
+      album: episodeTitle
+    })
   }
   
-  return seconds.toString()
+  return tracks
+}
+
+async function fetchRemoteItemData(feedGuid: string, itemGuid: string): Promise<any> {
+  try {
+    // This would need to be implemented to fetch the actual track data
+    // from the remote feed using feedGuid and itemGuid
+    // For now, return placeholder data
+    return {
+      title: `Track from ${feedGuid}`,
+      artist: 'Unknown Artist',
+      duration: '0:00'
+    }
+  } catch (error) {
+    console.error(`Failed to fetch remote item data for ${feedGuid}/${itemGuid}:`, error)
+    return {
+      title: `Track from ${feedGuid}`,
+      artist: 'Unknown Artist',
+      duration: '0:00'
+    }
+  }
 }
 
 export async function GET(request: NextRequest) {
@@ -32,261 +135,48 @@ export async function GET(request: NextRequest) {
     const feedId = searchParams.get('feedId')
     const format = searchParams.get('format') || 'rss' // 'rss' or 'json'
     
-    // Read parsed feeds data
-    const dataPath = join(process.cwd(), 'data', 'parsed-feeds.json')
-    const rawData = readFileSync(dataPath, 'utf8')
-    const data = JSON.parse(rawData)
-    
-    // Filter feeds if feedId is provided
-    let feedsToProcess = feedId 
-      ? data.feeds.filter((feed: any) => feed.id === feedId)
-      : data.feeds
-    
-    // For general playlist (no feedId), exclude podcast feeds that contain episodes rather than songs
-    if (!feedId) {
-      feedsToProcess = feedsToProcess.filter((feed: any) => {
-        // Exclude feeds that are primarily podcast episodes
-        // Check if the feed contains mostly long-form content or episodes
-        if (feed.id === 'intothedoerfelverse') {
-          console.log(`🎵 Excluding podcast feed from general playlist: ${feed.title}`)
-          return false
-        }
-        return true
-      })
+    // Only handle Doerfels feed for now
+    if (feedId !== 'intothedoerfelverse') {
+      return NextResponse.json(
+        { error: 'Only Doerfels feed (intothedoerfelverse) is supported for auto playlist generation' },
+        { status: 400 }
+      )
     }
     
-    // Special handling for podcast feeds with music segments
-    if (feedId === 'intothedoerfelverse') {
-      // Extract music segments from podcast episodes using chapter data
-      const musicTracks: any[] = []
-      let trackId = 1
-      
-      for (const feed of feedsToProcess) {
-        if (feed.parsedData?.album?.tracks) {
-          for (const episode of feed.parsedData.album.tracks) {
-            // Try to fetch chapter data for this episode
-            const episodeNumber = episode.title.match(/Episode (\d+)/)?.[1]
-            if (episodeNumber) {
-              try {
-                const chapterUrl = `https://www.doerfelverse.com/chapters/dvep${episodeNumber}.json`
-                const chapterResponse = await fetch(chapterUrl)
-                
-                if (chapterResponse.ok) {
-                  const chapterData = await chapterResponse.json()
-                  
-                  // Extract music segments (chapters that are not the main episode or intro)
-                  const musicChapters = chapterData.chapters.filter((chapter: any) => 
-                    !chapter.title.includes('Episode') && 
-                    !chapter.title.includes('episode') &&
-                    !chapter.title.includes('Into The Doerfel-Verse') &&
-                    !chapter.title.includes('Doerfel-Jukebox') &&  // Filter out jukebox transition segments
-                    chapter.title.trim() !== '' &&
-                    chapter.startTime > 0
-                  )
-                  
-                  // Convert chapters to track format
-                  for (let i = 0; i < musicChapters.length; i++) {
-                    const chapter = musicChapters[i]
-                    const nextChapter = musicChapters[i + 1] || chapterData.chapters[chapterData.chapters.findIndex((c: any) => c === chapter) + 1]
-                    
-                    // Calculate duration
-                    const startTime = Math.floor(chapter.startTime)
-                    const endTime = nextChapter ? Math.floor(nextChapter.startTime) : Math.floor(chapter.startTime) + 180 // Default 3 min if no end
-                    const duration = endTime - startTime
-                    
-                    // Skip tracks with invalid durations (0 seconds or negative)
-                    if (duration <= 0) {
-                      console.log(`⚠️ Skipping track "${chapter.title}" with invalid duration: ${duration}s`)
-                      continue;
-                    }
-                    
-                    // Format duration as MM:SS
-                    const minutes = Math.floor(duration / 60)
-                    const seconds = duration % 60
-                    const formattedDuration = `${minutes}:${seconds.toString().padStart(2, '0')}`
-                    
-                    musicTracks.push({
-                      title: chapter.title,
-                      duration: formattedDuration,
-                      url: `${episode.url}#t=${startTime},${endTime}`, // URL with time fragment
-                      trackNumber: trackId++,
-                      subtitle: `From ${episode.title}`,
-                      summary: `Music segment from ${episode.title} at ${Math.floor(startTime / 60)}:${(startTime % 60).toString().padStart(2, '0')}`,
-                      image: chapter.img || episode.image,
-                      explicit: false,
-                      albumTitle: feed.parsedData.album.title,
-                      albumArtist: feed.parsedData.album.artist || 'The Doerfels',
-                      albumCoverArt: chapter.img || feed.parsedData.album.coverArt,
-                      feedId: feed.id,
-                      globalTrackNumber: trackId - 1,
-                      episodeTitle: episode.title,
-                      episodeNumber: parseInt(episodeNumber),
-                      startTime: startTime,
-                      endTime: endTime
-                    })
-                  }
-                }
-              } catch (error) {
-                console.error(`Failed to fetch chapters for episode ${episodeNumber}:`, error)
-              }
-            }
-          }
-        }
-      }
-      
-      // Sort music tracks by episode number (ascending from episode 1)
-      musicTracks.sort((a, b) => {
-        // First sort by episode number
-        if (a.episodeNumber !== b.episodeNumber) {
-          return a.episodeNumber - b.episodeNumber;
-        }
-        // Then by start time within the same episode
-        return a.startTime - b.startTime;
-      });
-      
-      // Update track numbers after sorting
-      musicTracks.forEach((track, index) => {
-        track.trackNumber = index + 1;
-        track.globalTrackNumber = index + 1;
-      });
-      
-      // Return results
-      if (format === 'json') {
-        return NextResponse.json({
-          title: 'Into The Doerfel-Verse - Music Segments',
-          description: 'Music tracks played during Into The Doerfel-Verse podcast episodes, extracted from chapter markers',
-          tracks: musicTracks,
-          totalTracks: musicTracks.length,
-          feedId: feedId
-        })
-      }
-      
-      // Generate RSS for music segments
-      const currentDate = new Date().toUTCString()
-      const playlistTitle = 'Into The Doerfel-Verse - Music Segments'
-      
-      const rssXml = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" 
-  xmlns:podcast="https://podcastindex.org/namespace/1.0"
-  xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
-  xmlns:content="http://purl.org/rss/1.0/modules/content/">
-  <channel>
-    <title>${escapeXml(playlistTitle)}</title>
-    <description>Music tracks played during Into The Doerfel-Verse podcast episodes, extracted from chapter markers</description>
-    <link>https://project-stablekraft.com</link>
-    <language>en-us</language>
-    <pubDate>${currentDate}</pubDate>
-    <lastBuildDate>${currentDate}</lastBuildDate>
-    <generator>Project StableKraft Playlist Generator</generator>
+    // Fetch the Doerfels RSS feed
+    console.log('🎵 Fetching Doerfels RSS feed for auto playlist generation...')
+    const feedXml = await fetchDoerfelsFeed()
     
-    <podcast:medium>musicL</podcast:medium>
-    <podcast:guid>doerfelverse-music-segments-2025</podcast:guid>
+    // Parse valueTimeSplit elements
+    console.log('🎵 Parsing podcast:valueTimeSplit elements...')
+    const tracks = parseValueTimeSplits(feedXml)
     
-    <itunes:author>The Doerfels</itunes:author>
-    <itunes:summary>Music tracks played during Into The Doerfel-Verse podcast episodes</itunes:summary>
-    <itunes:type>episodic</itunes:type>
-    <itunes:category text="Music" />
-    <itunes:image href="https://www.doerfelverse.com/art/itdvchadf.png" />
+    console.log(`🎵 Found ${tracks.length} tracks from valueTimeSplit elements`)
     
-    ${musicTracks.map((track, index) => `
-    <item>
-      <title>${escapeXml(track.title)} - ${escapeXml(track.albumArtist)}</title>
-      <description>From "${escapeXml(track.episodeTitle)}" at ${Math.floor(track.startTime / 60)}:${(track.startTime % 60).toString().padStart(2, '0')}</description>
-      <guid isPermaLink="false">doerfelverse-music-segment-${track.globalTrackNumber}</guid>
-      <pubDate>${new Date(Date.now() - index * 3600000).toUTCString()}</pubDate>
-      
-      <enclosure url="${escapeXml(track.url)}" type="audio/mpeg" length="0" />
-      
-      <podcast:track>${track.globalTrackNumber}</podcast:track>
-      ${track.image ? `<podcast:images srcset="${escapeXml(track.image)} 3000w" />` : ''}
-      
-      <itunes:title>${escapeXml(track.title)}</itunes:title>
-      <itunes:artist>${escapeXml(track.albumArtist)}</itunes:artist>
-      <itunes:album>${escapeXml(track.albumTitle)}</itunes:album>
-      <itunes:duration>${formatDuration(track.duration)}</itunes:duration>
-      <itunes:explicit>false</itunes:explicit>
-      ${track.image ? `<itunes:image href="${escapeXml(track.image)}" />` : ''}
-      
-      <content:encoded><![CDATA[
-        <p>Track: ${escapeXml(track.title)}</p>
-        <p>Artist: ${escapeXml(track.albumArtist)}</p>
-        <p>From: ${escapeXml(track.episodeTitle)}</p>
-        <p>Time: ${Math.floor(track.startTime / 60)}:${(track.startTime % 60).toString().padStart(2, '0')} - ${Math.floor(track.endTime / 60)}:${(track.endTime % 60).toString().padStart(2, '0')}</p>
-      ]]></content:encoded>
-    </item>`).join('')}
-  </channel>
-</rss>`
-      
-      return new NextResponse(rssXml, {
-        headers: {
-          'Content-Type': 'application/rss+xml; charset=utf-8',
-          'Cache-Control': 'public, max-age=3600',
-        },
-      })
-    }
+    // Sort tracks by start time (chronological order)
+    tracks.sort((a, b) => a.startTime - b.startTime)
     
-    // Collect all tracks from selected feeds
-    const allTracks: any[] = []
-    let trackId = 1
-    
-    feedsToProcess.forEach((feed: any) => {
-      if (feed.parsedData?.album?.tracks) {
-        feed.parsedData.album.tracks.forEach((track: any) => {
-          // Filter out podcast episodes - songs should be under 15 minutes typically
-          // Convert duration to seconds for comparison
-          const durationParts = track.duration.split(':').map((p: string) => parseInt(p))
-          let durationSeconds = 0
-          
-          if (durationParts.length === 2) {
-            durationSeconds = durationParts[0] * 60 + durationParts[1]
-          } else if (durationParts.length === 3) {
-            durationSeconds = durationParts[0] * 3600 + durationParts[1] * 60 + durationParts[2]
-          }
-          
-          // Skip tracks longer than 15 minutes (900 seconds) - likely podcast episodes
-          // Also skip tracks with "Episode" in the title
-          if (durationSeconds > 900 || track.title.toLowerCase().includes('episode')) {
-            console.log(`🎵 Filtering out podcast episode: "${track.title}" (${track.duration})`)
-            return
-          }
-          
-          allTracks.push({
-            ...track,
-            albumTitle: feed.parsedData.album.title,
-            albumArtist: feed.parsedData.album.artist || 'Various Artists',
-            albumCoverArt: feed.parsedData.album.coverArt,
-            feedId: feed.id,
-            globalTrackNumber: trackId++
-          })
-        })
-      }
+    // Update track IDs after sorting
+    tracks.forEach((track, index) => {
+      track.id = index + 1
     })
-    
-    // Shuffle tracks for variety
-    for (let i = allTracks.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [allTracks[i], allTracks[j]] = [allTracks[j], allTracks[i]]
-    }
     
     // Return JSON format if requested
     if (format === 'json') {
       return NextResponse.json({
-        title: feedId ? `${feedsToProcess[0]?.title || 'Selected'} - Playlist` : 'Project StableKraft - All Songs Playlist',
-        description: feedId 
-          ? `All songs from ${feedsToProcess[0]?.title || 'the selected feed'}`
-          : 'A complete playlist of all songs from Project StableKraft',
-        tracks: allTracks,
-        totalTracks: allTracks.length,
-        feedId: feedId || null
+        title: 'Into The Doerfel-Verse - Auto Generated Playlist',
+        description: 'Individual tracks extracted from Into The Doerfel-Verse podcast episodes using podcast:valueTimeSplit elements',
+        tracks: tracks,
+        totalTracks: tracks.length,
+        feedId: feedId,
+        generatedAt: new Date().toISOString()
       })
     }
     
+    // Generate RSS XML
     const currentDate = new Date().toUTCString()
-    const playlistTitle = feedId && feedsToProcess.length > 0 
-      ? `${feedsToProcess[0].title} - Playlist`
-      : 'Project StableKraft - All Songs Playlist'
+    const playlistTitle = 'Into The Doerfel-Verse - Auto Generated Playlist'
     
-    // Generate RSS XML with Podcasting 2.0 namespace
     const rssXml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" 
   xmlns:podcast="https://podcastindex.org/namespace/1.0"
@@ -294,66 +184,48 @@ export async function GET(request: NextRequest) {
   xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>${escapeXml(playlistTitle)}</title>
-    <description>${escapeXml(feedId 
-      ? `All songs from ${feedsToProcess[0]?.title || 'the selected feed'}`
-      : 'A complete playlist of all songs from Project StableKraft, featuring music from The Doerfels, Able and the Wolf, and many more independent artists.')}</description>
+    <description>Individual tracks extracted from Into The Doerfel-Verse podcast episodes using podcast:valueTimeSplit elements</description>
     <link>https://project-stablekraft.com</link>
     <language>en-us</language>
     <pubDate>${currentDate}</pubDate>
     <lastBuildDate>${currentDate}</lastBuildDate>
-    <generator>Project StableKraft Playlist Generator</generator>
+    <generator>Project StableKraft Auto Playlist Generator</generator>
     
-    <!-- Podcasting 2.0 Tags -->
     <podcast:medium>musicL</podcast:medium>
-    <podcast:guid>stablekraft-all-songs-playlist-2025</podcast:guid>
+    <podcast:guid>doerfelverse-auto-playlist-2025</podcast:guid>
     
-    <!-- iTunes Tags -->
-    <itunes:author>${escapeXml(feedId && feedsToProcess.length > 0 ? feedsToProcess[0].parsedData?.album?.artist || 'Project StableKraft' : 'Project StableKraft')}</itunes:author>
-    <itunes:summary>${escapeXml(feedId 
-      ? `All songs from ${feedsToProcess[0]?.title || 'the selected feed'}`
-      : 'A complete playlist of all songs from Project StableKraft, featuring music from The Doerfels, Able and the Wolf, and many more independent artists.')}</itunes:summary>
+    <itunes:author>The Doerfels</itunes:author>
+    <itunes:summary>Individual tracks extracted from Into The Doerfel-Verse podcast episodes</itunes:summary>
     <itunes:type>episodic</itunes:type>
-    <itunes:owner>
-      <itunes:name>Project StableKraft</itunes:name>
-      <itunes:email>contact@project-stablekraft.com</itunes:email>
-    </itunes:owner>
-    <itunes:explicit>false</itunes:explicit>
     <itunes:category text="Music" />
-    <itunes:image href="https://www.doerfelverse.com/art/carol-of-the-bells.png" />
+    <itunes:image href="https://www.doerfelverse.com/art/itdvchadf.png" />
     
-    <!-- Image -->
-    <image>
-      <url>${escapeXml(feedId && feedsToProcess.length > 0 && feedsToProcess[0].parsedData?.album?.coverArt ? feedsToProcess[0].parsedData.album.coverArt : 'https://www.doerfelverse.com/art/carol-of-the-bells.png')}</url>
-      <title>${escapeXml(playlistTitle)}</title>
-      <link>https://project-stablekraft.com</link>
-    </image>
-    
-    ${allTracks.map((track, index) => `
+    ${tracks.map((track, index) => `
     <item>
-      <title>${escapeXml(track.title)} - ${escapeXml(track.albumArtist)}</title>
-      <description>From the album "${escapeXml(track.albumTitle)}" by ${escapeXml(track.albumArtist)}</description>
-      <guid isPermaLink="false">stablekraft-playlist-track-${track.globalTrackNumber}</guid>
+      <title>${escapeXml(track.title)} - ${escapeXml(track.artist)}</title>
+      <description>From "${escapeXml(track.episodeTitle)}" at ${Math.floor(track.startTime / 60)}:${(track.startTime % 60).toString().padStart(2, '0')} (${track.duration})</description>
+      <guid isPermaLink="false">doerfelverse-auto-track-${track.id}</guid>
       <pubDate>${new Date(Date.now() - index * 3600000).toUTCString()}</pubDate>
       
-      <enclosure url="${escapeXml(track.url)}" type="audio/mpeg" length="0" />
+      <enclosure url="${escapeXml(track.trackUrl)}" type="audio/mpeg" length="0" />
       
-      <!-- Podcasting 2.0 Tags -->
-      <podcast:track>${track.globalTrackNumber}</podcast:track>
-      ${track.image ? `<podcast:images srcset="${escapeXml(track.image)} 3000w" />` : ''}
+      <podcast:track>${track.id}</podcast:track>
+      ${track.episodeImage ? `<podcast:images srcset="${escapeXml(track.episodeImage)} 3000w" />` : ''}
       
-      <!-- iTunes Tags -->
       <itunes:title>${escapeXml(track.title)}</itunes:title>
-      <itunes:artist>${escapeXml(track.albumArtist)}</itunes:artist>
-      <itunes:album>${escapeXml(track.albumTitle)}</itunes:album>
-      <itunes:duration>${formatDuration(track.duration)}</itunes:duration>
-      <itunes:explicit>${track.explicit ? 'true' : 'false'}</itunes:explicit>
-      ${track.image ? `<itunes:image href="${escapeXml(track.image)}" />` : ''}
+      <itunes:artist>${escapeXml(track.artist)}</itunes:artist>
+      <itunes:album>${escapeXml(track.album)}</itunes:album>
+      <itunes:duration>${track.durationSeconds}</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+      ${track.episodeImage ? `<itunes:image href="${escapeXml(track.episodeImage)}" />` : ''}
       
       <content:encoded><![CDATA[
         <p>Track: ${escapeXml(track.title)}</p>
-        <p>Artist: ${escapeXml(track.albumArtist)}</p>
-        <p>Album: ${escapeXml(track.albumTitle)}</p>
-        ${track.summary ? `<p>${escapeXml(track.summary)}</p>` : ''}
+        <p>Artist: ${escapeXml(track.artist)}</p>
+        <p>From: ${escapeXml(track.episodeTitle)}</p>
+        <p>Time: ${Math.floor(track.startTime / 60)}:${(track.startTime % 60).toString().padStart(2, '0')} - ${Math.floor(track.endTime / 60)}:${(track.endTime % 60).toString().padStart(2, '0')}</p>
+        <p>Duration: ${track.duration}</p>
+        <p>Remote Percentage: ${track.remotePercentage}%</p>
       ]]></content:encoded>
     </item>`).join('')}
   </channel>
@@ -366,9 +238,9 @@ export async function GET(request: NextRequest) {
       },
     })
   } catch (error) {
-    console.error('Error generating playlist:', error)
+    console.error('Error generating auto playlist:', error)
     return NextResponse.json(
-      { error: 'Failed to generate playlist' },
+      { error: 'Failed to generate auto playlist', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     )
   }

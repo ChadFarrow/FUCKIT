@@ -480,7 +480,7 @@
         "description": "Investigate and resolve current site loading slowdown issues",
         "details": "Based on investigation, the site loading performance issues appear to be caused by: 1) Large parsed-feeds.json file (512KB) - Has grown from ~400K to 512K, causing slower API responses; 2) Multiple backup files - 20+ backup files in data/ directory may be affecting file system performance; 3) API caching strategy - Current 5-minute cache may not be optimal for the large data size; 4) Image loading optimization - Multiple image domains and CDN configurations may need tuning. Immediate actions needed: Optimize parsed-feeds.json by removing unnecessary data or implementing pagination, clean up backup files to reduce file system overhead, implement better caching strategy for large data files, consider implementing data compression or streaming for large responses, review image loading and CDN configuration for performance bottlenecks.",
         "testStrategy": "Measure page load times before and after optimizations, analyze network requests, check API response times, verify caching effectiveness, and test on different devices and network conditions.",
-        "status": "in-progress",
+        "status": "done",
         "dependencies": [],
         "priority": "high",
         "subtasks": []
@@ -491,7 +491,7 @@
         "description": "Fix infinite recursion error causing site to crash",
         "details": "The site is experiencing 'too much recursion' errors in NextJS, likely caused by recent performance optimizations. Need to immediately identify and fix the recursive function calls that are causing the browser to crash. This is a critical issue that prevents the site from functioning.",
         "testStrategy": "Test site functionality after fix, ensure no infinite loops, verify all features work properly.",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "high",
         "subtasks": []
@@ -502,7 +502,7 @@
         "description": "Fix Service Worker issues causing API decoding failures",
         "details": "The site is experiencing Service Worker issues where it's intercepting API requests to /api/albums and causing 'Decoding failed' errors. Need to fix the Service Worker configuration to properly handle API requests and prevent decoding failures. The Service Worker is interfering with the API responses and causing the site to fail loading album data. UPDATE: Service Worker is now disabled but 'Decoding failed' errors persist. This suggests the issue is not with Service Worker but with the API response itself or how it's being processed. CRITICAL: Infinite recursion errors persist even after removing debugging code. The page loads visually but JavaScript crashes with 'too much recursion' errors in NextJS. Need to identify the root cause in React component logic, likely in useEffect dependencies, state updates, or component re-rendering cycles.",
         "testStrategy": "Test API endpoints directly, verify Service Worker doesn't interfere with API requests, ensure album data loads properly.",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "high",
         "subtasks": []
@@ -524,7 +524,7 @@
         "description": "Fix issues where playlist pages are not loading properly or are showing errors when users try to access them",
         "details": "Investigate and resolve issues with playlist page loading. This includes checking the playlist route implementation, data fetching, error handling, and ensuring proper rendering of playlist content. Need to identify whether the issue is with the API endpoint, data processing, or frontend rendering.",
         "testStrategy": "Test playlist page access and functionality. Verify that playlist pages load correctly, display proper content, and handle any errors gracefully. Check both individual playlist pages and playlist listing pages.",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "high",
         "subtasks": []
@@ -561,6 +561,17 @@
         "dependencies": [],
         "priority": "medium",
         "subtasks": []
+      },
+      {
+        "id": 53,
+        "title": "Fix and Complete Auto Playlist Maker for Music Shows",
+        "description": "Work on and fix the auto playlist maker functionality for music shows that was started but needs completion and debugging",
+        "details": "Continue development and fix issues with the auto playlist maker for music shows. This includes completing the implementation, debugging any existing issues, ensuring proper playlist generation from music show content, and integrating it with the existing playlist system. Need to investigate the current implementation status and identify what needs to be fixed or completed.",
+        "testStrategy": "Test the auto playlist maker functionality to ensure it properly generates playlists from music show content, handles various show formats correctly, and integrates seamlessly with the existing playlist system. Verify that generated playlists are accurate and functional.",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
       }
     ],
     "metadata": {
@@ -568,7 +579,7 @@
       "description": "Main task list for FUCKIT podcast/music streaming application",
       "created": "2025-01-27T00:00:00.000Z",
       "lastModified": "2025-01-27T00:00:00.000Z",
-      "updated": "2025-07-30T20:31:25.483Z"
+      "updated": "2025-07-30T21:22:07.849Z"
     }
   },
   "v1-5": {
