@@ -15,6 +15,9 @@ const withPWA = require('next-pwa')({
     /test-mobile-images/, // Exclude test pages from service worker
     /api\/proxy-image/, // Exclude proxy API from service worker
     /api\/optimized-images/, // Exclude optimized images API from service worker
+    /api\/albums/, // Exclude albums API from service worker to prevent decoding issues
+    /api\/parsed-feeds/, // Exclude parsed-feeds API from service worker
+    /api\/feeds/, // Exclude feeds API from service worker
     /\?_rsc=/, // Exclude RSC payloads from service worker
     /album\/.*\?_rsc=/, // Exclude album RSC payloads
   ],
@@ -86,19 +89,7 @@ const withPWA = require('next-pwa')({
         networkTimeoutSeconds: 15,
       },
     },
-    // Network first for API routes to prevent 503 errors
-    {
-      urlPattern: /\/api\/feeds/,
-      handler: 'NetworkFirst',
-      options: {
-        cacheName: 'api-feeds',
-        expiration: {
-          maxEntries: 10,
-          maxAgeSeconds: 60 * 5, // 5 minutes
-        },
-        networkTimeoutSeconds: 10,
-      },
-    },
+
   ],
 });
 

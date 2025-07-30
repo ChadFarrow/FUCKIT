@@ -61,15 +61,15 @@ export default function ServiceWorkerRegistration() {
         }
       });
 
-      // Handle RSC fetch failures
-      const handleRSCFetchFailure = () => {
-        console.warn('🔄 RSC fetch failed, attempting to clear service worker cache...');
+      // Handle API and RSC fetch failures
+      const handleFetchFailure = () => {
+        console.warn('🔄 API/RSC fetch failed, attempting to clear service worker cache...');
         
-        // Clear service worker cache for RSC files
+        // Clear service worker cache for problematic files
         if ('caches' in window) {
           caches.keys().then(cacheNames => {
             cacheNames.forEach(cacheName => {
-              if (cacheName.includes('next-js-files') || cacheName.includes('start-url')) {
+              if (cacheName.includes('next-js-files') || cacheName.includes('start-url') || cacheName.includes('api-')) {
                 caches.delete(cacheName).then(() => {
                   console.log(`🗑️ Cleared cache: ${cacheName}`);
                 });
@@ -79,10 +79,23 @@ export default function ServiceWorkerRegistration() {
         }
       };
 
-      // Listen for RSC fetch errors
+      // Listen for fetch errors
       window.addEventListener('error', (event) => {
-        if (event.message && event.message.includes('Failed to fetch RSC payload')) {
-          handleRSCFetchFailure();
+        const message = event.message || '';
+        if (message.includes('Failed to fetch RSC payload') || 
+            message.includes('Decoding failed') || 
+            message.includes('ServiceWorker intercepted')) {
+          handleFetchFailure();
+        }
+      });
+
+      // Listen for unhandled promise rejections
+      window.addEventListener('unhandledrejection', (event) => {
+        const message = event.reason?.message || '';
+        if (message.includes('Decoding failed') || 
+            message.includes('ServiceWorker intercepted')) {
+          console.warn('🔄 Unhandled promise rejection related to Service Worker:', event.reason);
+          handleFetchFailure();
         }
       });
 

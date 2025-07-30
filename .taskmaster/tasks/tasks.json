@@ -495,6 +495,17 @@
         "dependencies": [],
         "priority": "high",
         "subtasks": []
+      },
+      {
+        "id": 47,
+        "title": "Fix Service Worker API Interception and Decoding Errors",
+        "description": "Fix Service Worker issues causing API decoding failures",
+        "details": "The site is experiencing Service Worker issues where it's intercepting API requests to /api/albums and causing 'Decoding failed' errors. Need to fix the Service Worker configuration to properly handle API requests and prevent decoding failures. The Service Worker is interfering with the API responses and causing the site to fail loading album data.",
+        "testStrategy": "Test API endpoints directly, verify Service Worker doesn't interfere with API requests, ensure album data loads properly.",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
       }
     ],
     "metadata": {
