@@ -104,13 +104,14 @@ export default function RootLayout({
                 const originalError = console.error;
                 console.error = function(...args) {
                   const message = args.join(' ');
-                  if (message.includes('too much recursion')) {
+                  if (message.includes('too much recursion') || message.includes('Maximum call stack')) {
                     recursionCount++;
                     if (recursionCount > maxRecursion) {
                       console.warn('🛑 Too many recursion errors, stopping error logging');
                       return;
                     }
                     console.warn('🔄 Recursion error detected, count:', recursionCount);
+                    return; // Don't log the recursion error itself
                   }
                   originalError.apply(console, args);
                 };

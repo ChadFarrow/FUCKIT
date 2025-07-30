@@ -149,9 +149,35 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              onPlay(album, e);
+              
+              // Only trigger play if not scrolling
+              const scrolling = document.body.classList.contains('is-scrolling');
+              if (!scrolling) {
+                onPlay(album, e);
+              }
             }}
-            className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 active:bg-white/40 transition-colors duration-200 touch-manipulation pointer-events-auto"
+            onTouchStart={(e) => {
+              e.stopPropagation();
+              // Mark that we're interacting with button
+              (e.currentTarget as HTMLElement).dataset.touched = 'true';
+            }}
+            onTouchEnd={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              
+              const button = e.currentTarget as HTMLElement;
+              if (button.dataset.touched === 'true') {
+                delete button.dataset.touched;
+                // Small delay to ensure it's a deliberate tap, not accidental during scroll
+                setTimeout(() => {
+                  const scrolling = document.body.classList.contains('is-scrolling');
+                  if (!scrolling) {
+                    onPlay(album, e);
+                  }
+                }, 150);
+              }
+            }}
+            className="w-16 h-16 md:w-12 md:h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 active:bg-white/40 transition-colors duration-200 touch-manipulation pointer-events-auto"
             aria-label={isPlaying ? 'Pause' : 'Play'}
           >
             {isPlaying ? (

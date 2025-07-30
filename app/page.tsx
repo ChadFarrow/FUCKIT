@@ -85,6 +85,25 @@ export default function HomePage() {
 
   useEffect(() => {
     setIsClient(true);
+    
+    // Add scroll detection for mobile
+    let scrollTimer: NodeJS.Timeout;
+    const handleScroll = () => {
+      document.body.classList.add('is-scrolling');
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => {
+        document.body.classList.remove('is-scrolling');
+      }, 150);
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('touchmove', handleScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('touchmove', handleScroll);
+      clearTimeout(scrollTimer);
+    };
   }, []);
 
   // Audio playback is now handled by the global AudioContext
