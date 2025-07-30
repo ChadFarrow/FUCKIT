@@ -154,27 +154,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       try {
         const response = await fetch('/api/albums');
         if (response.ok) {
-          // Check content type to ensure we're getting JSON
-          const contentType = response.headers.get('content-type');
-          if (!contentType || !contentType.includes('application/json')) {
-            throw new Error(`Unexpected content type: ${contentType}`);
-          }
-          
-          // Get response text first for debugging
-          const responseText = await response.text();
-          console.log('📊 AudioContext API response length:', responseText.length);
-          
-          // Parse JSON with error handling
-          let data;
-          try {
-            data = JSON.parse(responseText);
-          } catch (parseError) {
-            console.error('❌ AudioContext JSON parse error:', parseError);
-            console.error('📊 AudioContext Response preview:', responseText.substring(0, 500));
-            const errorMessage = parseError instanceof Error ? parseError.message : 'Unknown parse error';
-            throw new Error(`Failed to parse JSON response: ${errorMessage}`);
-          }
-          
+          const data = await response.json();
           setAlbums(data.albums || []);
         }
       } catch (error) {

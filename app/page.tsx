@@ -143,26 +143,7 @@ export default function HomePage() {
         throw new Error(`Failed to fetch albums: ${response.status} ${response.statusText}`);
       }
       
-      // Check content type to ensure we're getting JSON
-      const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        throw new Error(`Unexpected content type: ${contentType}`);
-      }
-      
-      // Get response text first for debugging
-      const responseText = await response.text();
-      console.log('📊 API response length:', responseText.length);
-      
-      // Parse JSON with error handling
-      let data;
-      try {
-        data = JSON.parse(responseText);
-      } catch (parseError) {
-        console.error('❌ JSON parse error:', parseError);
-        console.error('📊 Response preview:', responseText.substring(0, 500));
-        const errorMessage = parseError instanceof Error ? parseError.message : 'Unknown parse error';
-        throw new Error(`Failed to parse JSON response: ${errorMessage}`);
-      }
+      const data = await response.json();
       const albums = data.albums || [];
       
       verboseLog(`✅ Loaded ${albums.length} pre-parsed albums from API`);
