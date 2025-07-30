@@ -75,6 +75,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   const hlsRef = useRef<Hls | null>(null);
   const albumsLoadedRef = useRef(false);
   const isRetryingRef = useRef(false);
+  const playNextTrackRef = useRef<() => Promise<void>>();
 
   // Load state from localStorage on mount
   useEffect(() => {
@@ -489,7 +490,10 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       }
       
       try {
-        await playNextTrack();
+        // Use the ref to get the latest playNextTrack function
+        if (playNextTrackRef.current) {
+          await playNextTrackRef.current();
+        }
       } catch (error) {
         console.error('❌ Error in auto-play:', error);
       }
@@ -765,6 +769,11 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       await playAlbum(currentPlayingAlbum, 0);
     }
   };
+
+  // Update the ref whenever playNextTrack changes
+  useEffect(() => {
+    playNextTrackRef.current = playNextTrack;
+  });
 
   // Play previous track
   const playPreviousTrack = async () => {
