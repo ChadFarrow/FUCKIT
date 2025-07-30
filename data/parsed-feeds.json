@@ -966,7 +966,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-28T23:51:37.367Z",
+      "lastParsed": "2025-07-30T10:54:33.703Z",
       "parsedData": {
         "album": {
           "title": "Into The Doerfel-Verse",
@@ -975,1282 +975,788 @@
           "coverArt": "https://www.doerfelverse.com/art/itdvchadf.png",
           "tracks": [
             {
-              "title": "Episode 54 - V4V Executive Council Feat. ChadF",
-              "duration": "109:35",
-              "url": "https://www.doerfelverse.com/tracks/dvep54.mp3",
+              "title": "Episode 55 - Florida Family Takeover",
+              "url": "https://www.doerfelverse.com/tracks/dvep55.mp3",
+              "duration": 6083,
               "trackNumber": 1,
-              "subtitle": "Episode 54 - V4V Executive Council Feat. ChadF",
-              "summary": "Special guest ChadF!\nHelp produce the DV by helping us with studio gear HERE\nOr Donate through Paypal HERE\nThanks for traveling Into The Doerfel-Verse! \nwww.doerfelverse.com",
+              "pubDate": "Tue, 29 Jul 2025 00:03:57 +0000",
+              "guid": {
+                "#text": "61b2ef47-18a4-4fcc-b750-8e09460bb85e",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Family visits from FL and we hang and jam :)</p>\n<p>If you recieve any Value, please consider giving value back in a way that's meaningful to you.</p>\n<p>Help produce the DV by helping us with studio gear <a href=\"https://www.amazon.com/registries/gl/guest-view/2X2SOTRO8TQJL\" target=\"_blank\" rel=\"noopener\">HERE</a></p>\n<p>Or Donate through Boosting or Paypal <a href=\"https://www.paypal.com/donate/?hosted_button_id=ATL9BD9EQRSNN\" target=\"_blank\" rel=\"noopener\">HERE</a></p>\n<p>Thanks for traveling Into The Doerfel-Verse!&nbsp;</p>\n<p>www.doerfelverse.com</p>",
               "image": "https://www.doerfelverse.com/art/itdvchadf.png",
-              "explicit": false,
-              "keywords": [
-                "doerfelverse",
-                "doerfel",
-                "verse",
-                "doerfels",
-                "doerfuls",
-                "into",
-                "the",
-                "music",
-                "valueverse",
-                "54",
-                "chadf"
-              ]
+              "link": ""
+            },
+            {
+              "title": "Episode 54 - V4V Executive Council Feat. ChadF",
+              "url": "https://www.doerfelverse.com/tracks/dvep54.mp3",
+              "duration": 6575,
+              "trackNumber": 2,
+              "pubDate": "Sun, 20 Jul 2025 02:53:20 +0000",
+              "guid": {
+                "#text": "de2b4ba2-17cb-43b3-915d-e5d684f721a8",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Special guest ChadF!</p>\n<p>Help produce the DV by helping us with studio gear <a href=\"https://www.amazon.com/registries/gl/guest-view/2X2SOTRO8TQJL\" target=\"_blank\" rel=\"noopener\">HERE</a></p>\n<p>Or Donate through Paypal <a href=\"https://www.paypal.com/donate/?hosted_button_id=ATL9BD9EQRSNN\" target=\"_blank\" rel=\"noopener\">HERE</a></p>\n<p>Thanks for traveling Into The Doerfel-Verse!&nbsp;</p>\n<p>www.doerfelverse.com</p>",
+              "image": "https://www.doerfelverse.com/art/itdvchadf.png",
+              "link": ""
             },
             {
               "title": "Episode 53 - Work Tape Demos",
-              "duration": "80:31",
               "url": "https://www.doerfelverse.com/tracks/dvep53.mp3",
-              "trackNumber": 2,
-              "subtitle": "Episode 53 - Work Tape Demos",
-              "summary": "Clip 1 youtube link HERE\nClip 2 audible link HERE\nHelp produce the DV by helping us with studio gear HERE\nOr Donate through Paypal HERE\nThanks for traveling Into The Doerfel-Verse! \nwww.doerfelverse.com",
+              "duration": 4831,
+              "trackNumber": 3,
+              "pubDate": "Sun, 13 Jul 2025 21:45:15 +0000",
+              "guid": {
+                "#text": "4af754e0-1bf0-4cc5-b8e0-12e5868545b6",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Clip 1 youtube link <a href=\"https://youtu.be/1bZ0OSEViyo?si=w3Kr0zZKzJB4RtlT\" target=\"_blank\" rel=\"noopener\">HERE</a></p>\n<p>Clip 2 audible link <a href=\"https://www.audible.com/pd/Post-Christian-Audiobook/154591320X?source_code=ASSGB149080119000H&amp;share_location=pdp\" target=\"_blank\" rel=\"noopener\">HERE</a></p>\n<p>Help produce the DV by helping us with studio gear <a href=\"https://www.amazon.com/registries/gl/guest-view/2X2SOTRO8TQJL\" target=\"_blank\" rel=\"noopener\">HERE</a></p>\n<p>Or Donate through Paypal <a href=\"https://www.paypal.com/donate/?hosted_button_id=ATL9BD9EQRSNN\" target=\"_blank\" rel=\"noopener\">HERE</a></p>\n<p>Thanks for traveling Into The Doerfel-Verse!&nbsp;</p>\n<p>www.doerfelverse.com</p>",
               "image": "https://www.doerfelverse.com/art/v4v-music-podcast.png",
-              "explicit": false,
-              "keywords": [
-                "doerfelverse",
-                "doerfel",
-                "verse",
-                "doerfels",
-                "doerfuls",
-                "into",
-                "the",
-                "music",
-                "valueverse",
-                "53"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 52 - Mini-sode",
-              "duration": "34:40",
               "url": "https://www.doerfelverse.com/tracks/dvep52.mp3",
-              "trackNumber": 3,
-              "subtitle": "Episode 52 - Mini-sode",
-              "summary": "Just a little Mini-sode :)\nHelp produce the DV by helping us with studio gear HERE\nOr Donate through Paypal HERE\nThanks for traveling Into The Doerfel-Verse!",
+              "duration": 2080,
+              "trackNumber": 4,
+              "pubDate": "Sat, 21 Jun 2025 02:34:42 +0000",
+              "guid": {
+                "#text": "e97a1ec0-c547-473b-afa8-b1112e3b6097",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Just a little Mini-sode :)</p>\n<p>Help produce the DV by helping us with studio gear <a href=\"https://www.amazon.com/registries/gl/guest-view/2X2SOTRO8TQJL\" target=\"_blank\" rel=\"noopener\">HERE</a></p>\n<p>Or Donate through Paypal <a href=\"https://www.paypal.com/donate/?hosted_button_id=ATL9BD9EQRSNN\" target=\"_blank\" rel=\"noopener\">HERE</a></p>\n<p>Thanks for traveling Into The Doerfel-Verse!&nbsp;</p>",
               "image": "https://www.doerfelverse.com/art/v4v-music-podcast.png",
-              "explicit": false,
-              "keywords": [
-                "doerfelverse",
-                "doerfel",
-                "verse",
-                "doerfels",
-                "doerfuls",
-                "into",
-                "the",
-                "music",
-                "valueverse",
-                "52"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 51 - The Greensands",
-              "duration": "73:45",
               "url": "https://www.doerfelverse.com/tracks/dvep51.mp3",
-              "trackNumber": 4,
-              "subtitle": "Episode 51 - The Greensands",
-              "summary": "The Greensands join us for a great chat about their music and the Valueverse\nHelp produce the DV by helping us with studio gear HERE\nThanks for traveling Into The Doerfel-Verse!",
+              "duration": 4425,
+              "trackNumber": 5,
+              "pubDate": "Tue, 17 Jun 2025 22:15:15 +0000",
+              "guid": {
+                "#text": "9810c397-6762-4b88-9de7-489572e05b8e",
+                "@_isPermaLink": false
+              },
+              "description": "<p>The Greensands join us for a great chat about their music and the Valueverse</p>\n<p>Help produce the DV by helping us with studio gear <a href=\"https://www.amazon.com/registries/gl/guest-view/2X2SOTRO8TQJL\" target=\"_blank\" rel=\"noopener\">HERE</a></p>\n<p>Thanks for traveling Into The Doerfel-Verse!&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>",
               "image": "https://www.doerfelverse.com/art/v4v-music-podcast.png",
-              "explicit": false,
-              "keywords": [
-                "doerfelverse",
-                "doerfel",
-                "verse",
-                "doerfels",
-                "doerfuls",
-                "into",
-                "the",
-                "music",
-                "valueverse",
-                "51",
-                "greensands"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 50 - Valueverse Jams",
-              "duration": "76:05",
               "url": "https://www.doerfelverse.com/tracks/dvep50.mp3",
-              "trackNumber": 5,
-              "subtitle": "Episode 50 - Valueverse Jams",
-              "summary": "Listen to some of my fav Valueverse tracks with me on episode 50!\nHelp produce the DV by helping us with studio gear HERE\nThanks for traveling Into The Doerfel-Verse!",
+              "duration": 4565,
+              "trackNumber": 6,
+              "pubDate": "Sun, 08 Jun 2025 03:55:34 +0000",
+              "guid": {
+                "#text": "eab0299d-ba9a-4952-8cee-a1c013776b2f",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Listen to some of my fav Valueverse tracks with me on episode 50!</p>\n<p>Help produce the DV by helping us with studio gear <a href=\"https://www.amazon.com/registries/gl/guest-view/2X2SOTRO8TQJL\" target=\"_blank\" rel=\"noopener\">HERE</a></p>\n<p>Thanks for traveling Into The Doerfel-Verse!&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>",
               "image": "https://www.doerfelverse.com/art/v4v-music-podcast.png",
-              "explicit": false,
-              "keywords": [
-                "doerfelverse",
-                "doerfel",
-                "verse",
-                "doerfels",
-                "doerfuls",
-                "into",
-                "the",
-                "music",
-                "valueverse",
-                "50"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 49 - Hunting Doerfels",
-              "duration": "98:50",
               "url": "https://www.doerfelverse.com/tracks/dvep49.mp3",
-              "trackNumber": 6,
-              "subtitle": "Episode 49 - Hunting Doerfels",
-              "summary": "The Spotlight happened about 2 weeks ago, and I try to get everyones take on it. But tracking all the guys down to chat about it is a challange!\nThanks for traveling Into The Doerfel-Verse!",
+              "duration": 5930,
+              "trackNumber": 7,
+              "pubDate": "Thu, 22 May 2025 03:24:01 +0000",
+              "guid": {
+                "#text": "cd4b88ff-84d1-4dcf-b675-06c2f839ec1f",
+                "@_isPermaLink": false
+              },
+              "description": "<p>The Spotlight happened about 2 weeks ago, and I try to get everyones take on it. But tracking all the guys down to chat about it is a challange!</p>\n<p>Thanks for traveling Into The Doerfel-Verse!&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>",
               "image": "https://www.doerfelverse.com/art/v4v-music-podcast.png",
-              "explicit": false,
-              "keywords": [
-                "doerfelverse",
-                "doerfel",
-                "verse",
-                "doerfels",
-                "doerfuls",
-                "into",
-                "the",
-                "music",
-                "valueverse",
-                "49",
-                "Spotlight",
-                "hunting"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 48  -  Boo-bury",
-              "duration": "84:31",
               "url": "https://www.doerfelverse.com/tracks/dvep48.mp3",
-              "trackNumber": 7,
-              "subtitle": "Episode 48  -  Boo-bury",
-              "summary": "Our guest Boo-bury is always at the forfront of intovation taking v4v to the next level! Be sure not to miss his brand new show \nThe Satellite Spotlight\nIt will be livestreamed May 10 starting at 6pm central. Citybeach will be performing at 9PM. Go to www.liveislit.com for more info!\nHis Podcast can also be found at www.behindthesch3m3s.com\nThanks for traveling Into The Doerfel-Verse!",
+              "duration": 5071,
+              "trackNumber": 8,
+              "pubDate": "Sun, 27 Apr 2025 00:45:29 +0000",
+              "guid": {
+                "#text": "1e81d901-78fe-43e0-8a68-263accfc2e9f",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Our guest Boo-bury is always at the forfront of intovation taking v4v to the next level! Be sure not to miss his brand new show&nbsp;</p>\n<h3><a href=\"https://liveislit.com/artist-event/the-satellite-spotlight/\">The Satellite Spotlight</a></h3>\n<p>It will be livestreamed May 10 starting at 6pm central. Citybeach will be performing at 9PM. Go to www.liveislit.com for more info!</p>\n<p>His Podcast can also be found at www.behindthesch3m3s.com</p>\n<p>Thanks for traveling Into The Doerfel-Verse!&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>",
               "image": "https://www.doerfelverse.com/art/v4v-music-podcast.png",
-              "explicit": false,
-              "keywords": [
-                "doerfelverse",
-                "doerfel",
-                "verse",
-                "doerfels",
-                "doerfuls",
-                "into",
-                "the",
-                "music",
-                "valueverse",
-                "48",
-                "boobury"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 47 - My Friend Jimi",
-              "duration": "89:20",
               "url": "https://www.doerfelverse.com/tracks/dvep47.mp3",
-              "trackNumber": 8,
-              "subtitle": "Episode 47 - My Friend Jimi",
-              "summary": "Today we were joined by My Friend Jimi! We listen to some his songs and get to hear the origin of his musical journey. You can follow him on Instagram.\nWe've also made a Fountain playlist featuring all of his current songs in the ValueVerse, plus a few songs from soe other v4v artists that you can put on if you want to hear more of his music.\nThanks for traveling Into The Doerfel-Verse!",
+              "duration": 5360,
+              "trackNumber": 9,
+              "pubDate": "Fri, 18 Apr 2025 19:48:07 +0000",
+              "guid": {
+                "#text": "7d029f86-20aa-4880-bc2e-d5fc9ad9b809",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Today we were joined by My Friend Jimi! We listen to some his songs and get to hear the origin of his musical journey. You can follow him on <a href=\"https://www.instagram.com/my_friend_jimi/\" target=\"_blank\" rel=\"noopener\">Instagram</a>.</p>\n<p>We've also made a <a href=\"https://fountain.fm/playlist/Q76CSm1X0NTAbiClabBI\" target=\"_blank\" rel=\"noopener\">Fountain</a> playlist featuring all of his current songs in the ValueVerse, plus a few songs from soe other v4v artists that you can put on if you want to hear more of his music.</p>\n<p>Thanks for traveling Into The Doerfel-Verse!&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>",
               "image": "https://www.doerfelverse.com/art/v4v-music-podcast.png",
-              "explicit": false,
-              "keywords": [
-                "doerfelverse",
-                "doerfel",
-                "verse",
-                "doerfels",
-                "doerfuls",
-                "into",
-                "the",
-                "music",
-                "valueverse",
-                "47",
-                "my",
-                "friend",
-                "jimi"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 46 - Banjovi",
-              "duration": "92:30",
               "url": "https://www.doerfelverse.com/tracks/dvep46.mp3",
-              "trackNumber": 9,
-              "subtitle": "Episode 46 - Banjovi",
-              "summary": "On this episode the banjo nerds really took over! TJ and special guest, Banjovi(Tate Greer), talk and play all things banjo. Tate's website is www.banjovibanjo.com",
+              "duration": 5550,
+              "trackNumber": 10,
+              "pubDate": "Tue, 15 Apr 2025 12:27:17 +0000",
+              "guid": {
+                "#text": "e6d90938-d3f1-44dd-bd94-62b1bf151136",
+                "@_isPermaLink": false
+              },
+              "description": "<p>On this episode the banjo nerds really took over! TJ and special guest, Banjovi(Tate Greer), talk and play all things banjo. Tate's website is <a href=\"https://www.banjovibanjo.com/\" target=\"_blank\" rel=\"noopener\">www.banjovibanjo.com</a></p>\n<p>&nbsp;</p>",
               "image": "https://www.doerfelverse.com/art/v4v-music-podcast.png",
-              "explicit": false,
-              "keywords": [
-                "doerfelverse",
-                "doerfel",
-                "verse",
-                "doerfels",
-                "doerfuls",
-                "into",
-                "the",
-                "music",
-                "valueverse",
-                "46",
-                "banjovi"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 45 - V4V music talk plus new song!",
-              "duration": "32:30",
               "url": "https://www.doerfelverse.com/tracks/dvep45.mp3",
-              "trackNumber": 10,
-              "subtitle": "Episode 45 - V4V music talk plus new song!",
-              "summary": "Just an update on Doerfel-happenings and a new song to release :)\n90% goes right to the artists when you boost while their song is playing! We truly value your support!",
+              "duration": 1950,
+              "trackNumber": 11,
+              "pubDate": "Sat, 05 Apr 2025 01:42:15 +0000",
+              "guid": {
+                "#text": "e04d22c0-ae48-4217-8c54-6add4058e989",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Just an update on Doerfel-happenings and a new song to release :)</p>\n<p>90% goes right to the artists when you boost while their song is playing! We truly value your support!</p>",
               "image": "https://www.doerfelverse.com/art/v4v-music-podcast.png",
-              "explicit": false,
-              "keywords": [
-                "doerfelverse",
-                "doerfel",
-                "verse",
-                "doerfels",
-                "doerfuls",
-                "into",
-                "the",
-                "music",
-                "valueverse",
-                "45"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 44 - HeyCitizen",
-              "duration": "80:54",
               "url": "https://www.doerfelverse.com/tracks/dvep44.mp3",
-              "trackNumber": 11,
-              "subtitle": "Episode 44 - HeyCitizen",
-              "summary": "ATTENTION CITIZENS! HeyCitizen is in da verse! Check more of his music on LN Beats\nAnd he has Lo-Fi songs\n90% goes right to the artists when you boost while their song is playing! If you enjoy listening, share the show and give us a shout, we truly value you!",
+              "duration": 4854,
+              "trackNumber": 12,
+              "pubDate": "Mon, 24 Mar 2025 01:42:36 +0000",
+              "guid": {
+                "#text": "b82645fd-18b0-47a2-8620-e82b147320ee",
+                "@_isPermaLink": false
+              },
+              "description": "<p>ATTENTION CITIZENS! HeyCitizen is in da verse! Check more of his music on <a href=\"https://lnbeats.com/album/a2d2e313-9cbd-5169-b89c-ab07b33ecc33\" target=\"_blank\" rel=\"noopener\">LN Beats</a></p>\n<p>And he has <a href=\"https://lnbeats.com/album/187f22db-79cb-5ac4-aa60-54e424e3915e\" target=\"_blank\" rel=\"noopener\">Lo-Fi songs</a></p>\n<p>90% goes right to the artists when you boost while their song is playing! If you enjoy listening, share the show and give us a shout, we truly value you!</p>",
               "image": "https://www.doerfelverse.com/art/doerf-citizen.png",
-              "explicit": false,
-              "keywords": [
-                "doerfelverse",
-                "doerfel",
-                "verse",
-                "doerfels",
-                "doerfuls",
-                "into",
-                "the",
-                "music",
-                "valueverse",
-                "44",
-                "heycitizen",
-                "hey",
-                "citizen"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 43 - Jimmy V",
-              "duration": "87:26",
               "url": "https://www.doerfelverse.com/tracks/dvep43.mp3",
-              "trackNumber": 12,
-              "subtitle": "Episode 43 - Jimmy V",
-              "summary": "Jimmy V is in da verse! Check out his music and podcast at jiimmyv4v.com\n90% goes right to the artists when you boost while their song is playing! We would love to hear from you if you enjoy listening! Share the show and give us a shout, we truly value you!",
+              "duration": 5246,
+              "trackNumber": 13,
+              "pubDate": "Sun, 09 Mar 2025 04:11:36 +0000",
+              "guid": {
+                "#text": "cd7da484-5911-4180-b93a-d6c440281b0a",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Jimmy V is in da verse! Check out his music and podcast at <a href=\"https://jimmyv4v.com/\" target=\"_blank\" rel=\"noopener\">jiimmyv4v.com</a></p>\n<p>90% goes right to the artists when you boost while their song is playing! We would love to hear from you if you enjoy listening! Share the show and give us a shout, we truly value you!</p>",
               "image": "https://www.doerfelverse.com/art/v4v-music-podcast.png",
-              "explicit": false,
-              "keywords": [
-                "doerfelverse",
-                "doerfel",
-                "verse",
-                "doerfels",
-                "doerfuls",
-                "into",
-                "the",
-                "music",
-                "valueverse",
-                "43",
-                "jimmy",
-                "v"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 42 - Steven B",
-              "duration": "93:27",
               "url": "https://www.doerfelverse.com/tracks/dvep42.mp3",
-              "trackNumber": 13,
-              "subtitle": "Episode 42 - Steven B",
-              "summary": "Steven B is in da verse!\nHe is the creator of the value for value music site/player www.lnbeats.com, and other value for value tools for musicians and podcsters, www.musicsideproject.com www.sovereignfeeds.com\n90% goes right to the artists when you boost while their song is playing! We would love to hear from you if you enjoy listening! Share the show and give us a shout, we truly value you!",
+              "duration": 5607,
+              "trackNumber": 14,
+              "pubDate": "Tue, 04 Mar 2025 21:46:16 +0000",
+              "guid": {
+                "#text": "65562379-6827-4e32-a6d8-d139502750bf",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Steven B is in da verse!</p>\n<p>He is the creator of the value for value music site/player <a href=\"https://lnbeats.com/album/2b62ef49-fcff-523c-b81a-0a7dde2b0609\" target=\"_blank\" rel=\"noopener\">www.lnbeats.com</a>, and other value for value tools for musicians and podcsters, www.musicsideproject.com www.sovereignfeeds.com</p>\n<p>90% goes right to the artists when you boost while their song is playing! We would love to hear from you if you enjoy listening! Share the show and give us a shout, we truly value you!</p>",
               "image": "https://www.doerfelverse.com/art/v4v-music-podcast.png",
-              "explicit": false,
-              "keywords": [
-                "doerfelverse",
-                "doerfel",
-                "verse",
-                "doerfels",
-                "doerfuls",
-                "into",
-                "the",
-                "music",
-                "valueverse",
-                "42",
-                "steven",
-                "b",
-                "bell"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 41- Mike Neumann",
-              "duration": "92:58",
               "url": "https://www.doerfelverse.com/tracks/dvep41.mp3",
-              "trackNumber": 14,
-              "subtitle": "Episode 41- Mike Neumann",
-              "summary": "Mike Neumann is in da verse!\nCheck out his music podcast It's A Mood!\nJdogs upcoming song here\n90% goes right to the artists when you boost while their song is playing! We would love to hear from you if you enjoy listening! Share the show and give us a shout, we truly value you!",
+              "duration": 5578,
+              "trackNumber": 15,
+              "pubDate": "Sun, 23 Feb 2025 05:04:34 +0000",
+              "guid": {
+                "#text": "e0fa9a1b-8763-4285-9bd3-d7b3fd46d5eb",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Mike Neumann is in da verse!</p>\n<p>Check out his music podcast <a href=\"https://podverse.fm/podcast/YsFhrDLaf\" target=\"_blank\" rel=\"noopener\">It's A Mood</a>!</p>\n<p>Jdogs upcoming song <a href=\"https://www.youtube.com/shorts/4yoKBmxvE6M\" target=\"_blank\" rel=\"noopener\">here</a></p>\n<p>90% goes right to the artists when you boost while their song is playing! We would love to hear from you if you enjoy listening! Share the show and give us a shout, we truly value you!</p>",
               "image": "https://www.doerfelverse.com/art/v4v-music-podcast.png",
-              "explicit": false,
-              "keywords": [
-                "doerfelverse",
-                "doerfel",
-                "verse",
-                "doerfels",
-                "doerfuls",
-                "40",
-                "into",
-                "the",
-                "music",
-                "valueverse",
-                "mike",
-                "neumann"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 40 - Somewhat special guest?...Kurtisdrums!",
-              "duration": "73:50",
               "url": "https://www.doerfelverse.com/tracks/dvep40.mp3",
-              "trackNumber": 15,
-              "subtitle": "Episode 40 - Somewhat special guest?...Kurtisdrums!",
-              "summary": "Kurtisdrums is back in the verse!\n90% goes right to the artists when you boost while their song is playing! We would love to hear from you if you enjoy listening! Share the show and give us a shout, we truly value you!\ncontact me: tj@doerfelverse.com",
+              "duration": 4430,
+              "trackNumber": 16,
+              "pubDate": "Sat, 08 Feb 2025 05:36:47 +0000",
+              "guid": {
+                "#text": "3f9acfcf-a39e-4b33-9335-b09e96ada95b",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Kurtisdrums is back in the verse!</p>\n<p>90% goes right to the artists when you boost while their song is playing! We would love to hear from you if you enjoy listening! Share the show and give us a shout, we truly value you!</p>\n<p>contact me: tj@doerfelverse.com</p>",
               "image": "https://www.doerfelverse.com/art/itdvlogo1.png",
-              "explicit": false,
-              "keywords": [
-                "doerfelverse",
-                "doerfel",
-                "verse",
-                "doerfels",
-                "doerfuls",
-                "40",
-                "into",
-                "the",
-                "music",
-                "valueverse",
-                "kurtisdrums"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 39 - ChadF",
-              "duration": "101:52",
               "url": "https://www.doerfelverse.com/tracks/dvep39.mp3",
-              "trackNumber": 16,
-              "subtitle": "Episode 39 - ChadF",
-              "summary": "We got the OG EXECUTIVE PRODUCER of the DoerfelVerse himself ChadF to hang! We also have a surpise visit from Shredward and we get a sneak peek of his new upcoming CityBeach album. We chat, listen to some tracks, and talk v4v nerd talk!\n90% goes right to the artists when you boost while their song is playing! We would love to hear from you if you enjoy listening! Share the show and give us a shout, we truly value you!\ncontact me: tj@doerfelverse.com",
+              "duration": 6112,
+              "trackNumber": 17,
+              "pubDate": "Sun, 02 Feb 2025 02:42:02 +0000",
+              "guid": {
+                "#text": "5023f51a-fea9-4112-9dcd-59961686c7ec",
+                "@_isPermaLink": false
+              },
+              "description": "<p>We got the OG EXECUTIVE PRODUCER of the DoerfelVerse himself ChadF to hang! We also have a surpise visit from Shredward and we get a sneak peek of his new upcoming CityBeach album. We chat, listen to some tracks, and talk v4v nerd talk!</p>\n<p>90% goes right to the artists when you boost while their song is playing! We would love to hear from you if you enjoy listening! Share the show and give us a shout, we truly value you!</p>\n<p>contact me: tj@doerfelverse.com</p>",
               "image": "https://www.doerfelverse.com/art/itdvlogo1.png",
-              "explicit": false,
-              "keywords": [
-                "doerfelverse",
-                "doerfel",
-                "verse",
-                "doerfels",
-                "doerfuls",
-                "39",
-                "into",
-                "the",
-                "music",
-                "valueverse",
-                "chadf"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 38 - Musical Chairs with Salty Crayon",
-              "duration": "92:09",
               "url": "https://www.doerfelverse.com/tracks/dvep38.mp3",
-              "trackNumber": 17,
-              "subtitle": "Episode 38 - Musical Chairs with Salty Crayon",
-              "summary": "Join TJ, Cousin Mike, and Special guest, Salty Crayon! Check out his music podcast Upbeats! https://upbeatspodcast.com/en/\n90% goes right to the artists when you boost while their song is playing! We would love to hear from you if you enjoy listening! Share the show and give us a shout, we love to know if anyone is listening and cares!\ncontact me: tj@doerfelverse.com",
+              "duration": 5529,
+              "trackNumber": 18,
+              "pubDate": "Sun, 19 Jan 2025 18:08:20 +0000",
+              "guid": {
+                "#text": "3d70b7ee-02a2-4025-aec0-cd883269dc54",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Join TJ, Cousin Mike, and Special guest, Salty Crayon! Check out his music podcast Upbeats! <a href=\"https://upbeatspodcast.com/en/\" target=\"_blank\" rel=\"noopener\">https://upbeatspodcast.com/en/</a></p>\n<p>90% goes right to the artists when you boost while their song is playing! We would love to hear from you if you enjoy listening! Share the show and give us a shout, we love to know if anyone is listening and cares!</p>\n<p>contact me: tj@doerfelverse.com</p>",
               "image": "https://www.doerfelverse.com/art/itdvlogo1.png",
-              "explicit": false,
-              "keywords": [
-                "doerfelverse",
-                "doerfel",
-                "verse",
-                "doerfels",
-                "doerfuls",
-                "38",
-                "jukebox",
-                "Vol",
-                "4",
-                "into",
-                "the",
-                "music",
-                "valueverse",
-                "salty",
-                "crayon",
-                "musical chairs"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 37 - Jukebox Vol. 4",
-              "duration": "82:14",
               "url": "https://www.doerfelverse.com/tracks/dvep37.mp3",
-              "trackNumber": 18,
-              "subtitle": "Episode 37 - Jukebox Vol. 4",
-              "summary": "Show notes:\n*Feeling Bout You - Kurtisdrums\n*Playing God - Opus\nWho is Opus? I discuss what i know. Then I play clips from the band Vulfpeck, which is who Theo got his career going with, and how they beat the system and spotify. Clips: https://youtu.be/KXvncV79LXk https://youtu.be/T7qf7VTubbI \n*That's The Life - The Katzman\n*Grow - The Doerfels\n*Let You Down - The Johner Boys \n*Happy New Year - The Doerfels\n90% goes right to the artists when you boost while their song is playing! We would love to hear from you if you enjoy listening! Share the show and give us a shout, we love to know if anyone is listening and cares!\ncontact me: tj@doerfelverse.com",
+              "duration": 4934,
+              "trackNumber": 19,
+              "pubDate": "Sun, 05 Jan 2025 16:24:49 +0000",
+              "guid": {
+                "#text": "a8781ede-9927-454c-8f94-af16b9490ff3",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Show notes:</p>\n<p>*Feeling Bout You - Kurtisdrums</p>\n<p>*Playing God - Opus</p>\n<p>Who is Opus? I discuss what i know. Then I play clips from the band Vulfpeck, which is who Theo got his career going with, and how they beat the system and spotify. Clips: <a href=\"https://youtu.be/KXvncV79LXk\" target=\"_blank\" rel=\"noopener\" aria-label=\"Share link\">https://youtu.be/KXvncV79LXk</a> <a href=\"https://youtu.be/T7qf7VTubbI\" target=\"_blank\" rel=\"noopener\" aria-label=\"Share link\">https://youtu.be/T7qf7VTubbI</a>&nbsp;</p>\n<p>*That's The Life - The Katzman</p>\n<p>*Grow - The Doerfels</p>\n<p>*Let You Down - The Johner Boys&nbsp;</p>\n<p>*Happy New Year - The Doerfels</p>\n<p>90% goes right to the artists when you boost while their song is playing! We would love to hear from you if you enjoy listening! Share the show and give us a shout, we love to know if anyone is listening and cares!</p>\n<p>contact me: tj@doerfelverse.com</p>",
               "image": "https://www.doerfelverse.com/art/itdvlogo1.png",
-              "explicit": false,
-              "keywords": [
-                "doerfelverse",
-                "doerfel",
-                "verse",
-                "doerfels",
-                "doerfuls",
-                "36",
-                "jukebox",
-                "Vol",
-                "4",
-                "into",
-                "the",
-                "music",
-                "valueverse"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 36 - Doerfel Jukebox Vol. 3",
-              "duration": "51:01",
               "url": "https://www.doerfelverse.com/tracks/dvep36.mp3",
-              "trackNumber": 19,
-              "subtitle": "Episode 36 - Doerfel Jukebox Vol. 3",
-              "summary": "I am joined by a couple of my children, Jdog and Hazel, and we play music from the valueverse!\nTrack list:\nPorkChops Fried - HeyCitizenChange Your Mind - Ainsley CostelloThat Duck - Sir Seat SitterBig Sciota - Generation GapSensitive Guy - Miles FondaSecrets - Jordan DedoLet Go - Middle Season\n90% goes right to the artists when you boost while their song is playing!\ncontact me: tj@doerfelverse.com",
+              "duration": 3061,
+              "trackNumber": 20,
+              "pubDate": "Thu, 07 Nov 2024 21:13:20 +0000",
+              "guid": {
+                "#text": "1a251fbc-8cf5-45c5-a3f1-36e8a797aade",
+                "@_isPermaLink": false
+              },
+              "description": "<p>I am joined by a couple of my children, Jdog and Hazel, and we play music from the valueverse!</p>\n<p>Track list:</p>\n<p>PorkChops Fried - HeyCitizen<br />Change Your Mind - Ainsley Costello<br />That Duck - Sir Seat Sitter<br />Big Sciota - Generation Gap<br />Sensitive Guy - Miles Fonda<br />Secrets - Jordan Dedo<br />Let Go - Middle Season</p>\n<p>90% goes right to the artists when you boost while their song is playing!</p>\n<p>contact me: tj@doerfelverse.com</p>",
               "image": "https://www.doerfelverse.com/art/itdvlogo1.png",
-              "explicit": false,
-              "keywords": [
-                "doerfelverse",
-                "doerfel",
-                "verse",
-                "doerfels",
-                "doerfuls",
-                "36",
-                "jukebox",
-                "Vol. 3"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 35 - Doerfel-Jukebox Vol. 2",
-              "duration": "67:53",
               "url": "https://www.doerfelverse.com/tracks/dvep35.mp3",
-              "trackNumber": 20,
-              "subtitle": "Episode 35 - Doerfel-Jukebox Vol. 2",
-              "summary": "Sir TJ The Wrathful plays some tracks and talks about music in podcasting 2.0\nTrack list:\nWorth Fighting For\nAnimosity\nYou\nSafe\nHallucinations\nOrdinary\nMaybe It's You\nMake It\nLIVE boosters: Salty Crayon\ncontact me: tj@doerfelverse.com",
+              "duration": 4073,
+              "trackNumber": 21,
+              "pubDate": "Mon, 14 Oct 2024 20:13:17 +0000",
+              "guid": {
+                "#text": "5afc6897-f24c-41c4-8ce6-dd3255c4412f",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Sir TJ The Wrathful plays some tracks and talks about music in podcasting 2.0</p>\n<p>Track list:</p>\n<p>Worth Fighting For</p>\n<p>Animosity</p>\n<p>You</p>\n<p>Safe</p>\n<p>Hallucinations</p>\n<p>Ordinary</p>\n<p>Maybe It's You</p>\n<p>Make It</p>\n<p>LIVE boosters: Salty Crayon</p>\n<p>contact me: tj@doerfelverse.com</p>",
               "image": "https://www.doerfelverse.com/art/itdvlogo1.png",
-              "explicit": false,
-              "keywords": [
-                "doerfelverse",
-                "jukebox",
-                "doerfels",
-                "doerfel",
-                "music",
-                "from",
-                "the",
-                "into",
-                "doorful",
-                "doorfull"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 34 - D.A.I. with Tommy Jr",
-              "duration": "76:48",
               "url": "https://www.doerfelverse.com/tracks/dvep34.mp3",
-              "trackNumber": 21,
-              "subtitle": "Episode 34 - D.A.I. with Tommy Jr",
-              "summary": "Meet Doerfel number nine, Tommy Jr! And join TJ and Cousin Mike on an unexpected journy down a strange musical universe!\nwww.doerfelverse.com",
+              "duration": 4608,
+              "trackNumber": 22,
+              "pubDate": "Sat, 28 Sep 2024 05:06:41 +0000",
+              "guid": {
+                "#text": "cd8e0692-44b8-4365-968c-84c8c8b6222c",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Meet Doerfel number nine, Tommy Jr! And join TJ and Cousin Mike on an unexpected journy down a strange musical universe!</p>\n<p>www.doerfelverse.com</p>",
               "image": "https://www.doerfelverse.com/art/itdvspacelogo.png",
-              "explicit": false,
-              "keywords": [
-                "doerfels",
-                "doerfelverse",
-                "doerfel",
-                "doorful",
-                "doerful",
-                "intothedoerfelverse",
-                "into",
-                "the",
-                "verse",
-                "doerfel-verse",
-                "episode",
-                "34",
-                "adam. curry"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 33 with Adam Curry",
-              "duration": "80:53",
               "url": "https://www.doerfelverse.com/tracks/dvep33.mp3",
-              "trackNumber": 22,
-              "subtitle": "Episode 33 with Adam Curry",
-              "summary": "Had an absolute BLAST! Check out Adams awesome podcasts! No Agenda, Curry and The Keeper, and Boostagram Ball(Music Podcast)\nwww.doerfelverse.com",
+              "duration": 4853,
+              "trackNumber": 23,
+              "pubDate": "Wed, 18 Sep 2024 04:54:21 +0000",
+              "guid": {
+                "#text": "5b89608c-f2f3-4393-8920-9899327c3da7",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Had an absolute BLAST! Check out Adams awesome podcasts! <a href=\"https://www.noagendashow.net/\" target=\"_blank\" rel=\"noopener\">No Agenda</a>, <a href=\"https://www.curryandthekeeper.com/\" target=\"_blank\" rel=\"noopener\">Curry and The Keeper</a>, and <a href=\"https://www.boostagramball.com/\" target=\"_blank\" rel=\"noopener\">Boostagram Ball(Music Podcast)</a></p>\n<p>www.doerfelverse.com</p>",
               "image": "https://www.doerfelverse.com/art/dvep33.png",
-              "explicit": false,
-              "keywords": [
-                "doerfels",
-                "doerfelverse",
-                "doerfel",
-                "doorful",
-                "doerful",
-                "intothedoerfelverse",
-                "into",
-                "the",
-                "verse",
-                "doerfel-verse",
-                "episode",
-                "33",
-                "adam. curry"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 32.5",
-              "duration": "79:28",
               "url": "https://www.doerfelverse.com/tracks/dvep32-5.mp3",
-              "trackNumber": 23,
-              "subtitle": "Episode 32.5",
-              "summary": "This is it, testing all systems for the big episode 33 coming up! Where have we been? what's going on? Well we discuss and play some live music and pick a new song to release from the Doerfel-vault!\nSubscribe in a Podcasting 2.0 app and you can follow along and get involved by sending us value in a Boostagram, it's super fun, and is a form of real value! There are many apps, if you've never tried one give Fountain a spin!\nwww.doerfelverse.com",
+              "duration": 4768,
+              "trackNumber": 24,
+              "pubDate": "Sun, 15 Sep 2024 14:53:20 +0000",
+              "guid": {
+                "#text": "c1a4342f-3bf3-4e14-bb48-229b009ca521",
+                "@_isPermaLink": false
+              },
+              "description": "<p>This is it, testing all systems for the big episode 33 coming up! Where have we been? what's going on? Well we discuss and play some live music and pick a new song to release from the Doerfel-vault!</p>\n<p>Subscribe in a Podcasting 2.0 app and you can follow along and get involved by sending us value in a Boostagram, it's super fun, and is a form of real value! There are many apps, if you've never tried one give <a href=\"https://fountain.fm/show/RgrxW3Hu1M8q0D87dIKE\" target=\"_blank\" rel=\"noopener\">Fountain</a> a spin!</p>\n<p>www.doerfelverse.com</p>",
               "image": "https://www.doerfelverse.com/art/fade7.gif",
-              "explicit": false,
-              "keywords": [
-                "doerfels",
-                "doerfelverse",
-                "doerfel",
-                "doorful",
-                "doerful",
-                "intothedoerfelverse",
-                "into",
-                "the",
-                "verse",
-                "doerfel-verse",
-                "episode",
-                "32.5"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 32 - Doerfel-Node",
-              "duration": "48:00",
               "url": "https://www.doerfelverse.com/tracks/dvep32.mp3",
-              "trackNumber": 24,
-              "subtitle": "Episode 32 - Doerfel-Node",
-              "summary": "What's a node you ask? Well, we arent really sure, but we got one, and we are learning! Also, Shreddy has some new songs to preview!\nSpecial thanks to Sir Spencer, ChadF, and Salty Crayon for helping me get our node up ad running!\nSubscribe in a Podcasting 2.0 app and you can follow along and get involved by sending us value in a Boostagram, it's super fun! There are many apps, if you've never tried one give Fountain a spin!\nwww.doerfelverse.com",
+              "duration": 2880,
+              "trackNumber": 25,
+              "pubDate": "Wed, 03 Jul 2024 01:58:43 +0000",
+              "guid": {
+                "#text": "1e4ce96c-41d4-4a7b-b83c-3a9cada507eb",
+                "@_isPermaLink": false
+              },
+              "description": "<p>What's a node you ask? Well, we arent really sure, but we got one, and we are learning! Also, Shreddy has some new songs to preview!</p>\n<p>Special thanks to Sir Spencer, ChadF, and Salty Crayon for helping me get our node up ad running!</p>\n<p>Subscribe in a Podcasting 2.0 app and you can follow along and get involved by sending us value in a Boostagram, it's super fun! There are many apps, if you've never tried one give <a href=\"https://fountain.fm/show/RgrxW3Hu1M8q0D87dIKE\" target=\"_blank\" rel=\"noopener\">Fountain</a> a spin!</p>\n<p>www.doerfelverse.com</p>",
               "image": "https://www.doerfelverse.com/art/fade7.gif",
-              "explicit": false,
-              "keywords": [
-                "doerfels",
-                "doerfelverse",
-                "doerfel",
-                "doorful",
-                "doerful",
-                "intothedoerfelverse",
-                "into",
-                "the",
-                "verse",
-                "doerfel-verse"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 31 - Doerfel-Jukebox Vol. 1",
-              "duration": "76:58",
               "url": "https://www.doerfelverse.com/tracks/dvep31.mp3",
-              "trackNumber": 25,
+              "duration": 4618,
+              "trackNumber": 26,
+              "pubDate": "Wed, 19 Jun 2024 23:22:32 +0000",
+              "guid": {
+                "#text": "bcfc7a81-5dc1-4291-ad6a-2beab7da2f14",
+                "@_isPermaLink": false
+              },
+              "description": "<p>TJ, Kurt, and Cousin Mike pick songs for our first ever Doerfel-Jukebox episode. It's even possible we might release a brand new BANGER near the end!?&nbsp;</p>\n<p>www.doerfelverse.com</p>",
               "image": "https://www.doerfelverse.com/art/fade7.gif",
-              "explicit": false
+              "link": ""
             },
             {
               "title": "Episode 30 - Oh My Baby",
-              "duration": "48:16",
               "url": "https://www.doerfelverse.com/tracks/dvep30.mp3",
-              "trackNumber": 26,
-              "subtitle": "Episode 30 - Oh My Baby",
-              "summary": "What's been happening? LOTS! Join TJ, Ed, Kurt, Jdog, and Cousin Mike as we catch up.\nFinding any value? Show some love and let us know via Boostagram or Paypal! Thanks for listening!\nSubscribe to our music feed!\nhttps://www.doerfelverse.com/",
+              "duration": 2896,
+              "trackNumber": 27,
+              "pubDate": "Sun, 26 May 2024 20:15:25 +0000",
+              "guid": {
+                "#text": "65d7b255-0ba8-4f7f-9135-c4312c3411da",
+                "@_isPermaLink": false
+              },
+              "description": "<p>What's been happening? LOTS! Join TJ, Ed, Kurt, Jdog, and Cousin Mike as we catch up.</p>\n<p>Finding any value? Show some love and let us know via Boostagram or <a href=\"https://www.paypal.com/donate/?hosted_button_id=ATL9BD9EQRSNN\" target=\"_blank\" rel=\"noopener\">Paypal</a>! Thanks for listening!</p>\n<p>Subscribe to our <a href=\"https://podverse.fm/podcast/RdiHfSiIo7\" target=\"_blank\" rel=\"noopener\">music feed!</a></p>\n<p><a href=\"https://www.doerfelverse.com/\" target=\"_blank\" rel=\"noopener\">https://www.doerfelverse.com/</a></p>",
               "image": "https://www.doerfelverse.com/art/itdvblackpaint2.png",
-              "explicit": false,
-              "keywords": [
-                "into",
-                "the",
-                "doerfelverse",
-                "doerfel",
-                "doerfels",
-                "doerfel-verse",
-                "intothedoerfelverse",
-                "doerful",
-                "doorful",
-                "doorfull",
-                "episode",
-                "30",
-                "oh",
-                "my",
-                "baby"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 29 - Jam with Tommy G",
-              "duration": "45:55",
               "url": "https://www.doerfelverse.com/tracks/dvep29.mp3",
-              "trackNumber": 27,
-              "subtitle": "Episode 29 - Jam with Tommy G",
-              "summary": "This episode we are joined by Alandace's dad and have a blast jamming on some tunes! We chat and thank those sending value!\nPlease consider supporting us! We have no advertising or streaming income, this is straight up value for value! Hear music you like? Show some love and let us know via Boostagram or Paypal! Thanks for listening!\nSubscribe to our music feed!\nhttps://www.doerfelverse.com/",
+              "duration": 2755,
+              "trackNumber": 28,
+              "pubDate": "Mon, 29 Apr 2024 21:08:30 +0000",
+              "guid": {
+                "#text": "aea897a5-73ab-405a-a2c0-ce15a228bef0",
+                "@_isPermaLink": false
+              },
+              "description": "<p>This episode we are joined by Alandace's dad and have a blast jamming on some tunes! We chat and thank those sending value!</p>\n<p>Please consider supporting us! We have no advertising or streaming income, this is straight up value for value! Hear music you like? Show some love and let us know via Boostagram or <a href=\"https://www.paypal.com/donate/?hosted_button_id=ATL9BD9EQRSNN\" target=\"_blank\" rel=\"noopener\">Paypal</a>! Thanks for listening!</p>\n<p>Subscribe to our <a href=\"https://podverse.fm/podcast/RdiHfSiIo7\" target=\"_blank\" rel=\"noopener\">music feed!</a></p>\n<p><a href=\"https://www.doerfelverse.com/\" target=\"_blank\" rel=\"noopener\">https://www.doerfelverse.com/</a></p>",
               "image": "https://www.doerfelverse.com/art/itdvspacelogo.png",
-              "explicit": false,
-              "keywords": [
-                "into",
-                "the",
-                "doerfelverse",
-                "doerfel",
-                "doerfels",
-                "doerfel-verse",
-                "intothedoerfelverse",
-                "doerful",
-                "doorful",
-                "doorfull",
-                "episode",
-                "29",
-                "tommy",
-                "g"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 28 - Shhh Top Secret",
-              "duration": "108:08",
               "url": "https://www.doerfelverse.com/tracks/dvep28.mp3",
-              "trackNumber": 28,
-              "subtitle": "Episode 28 - Shhh Top Secret",
-              "summary": "The elders (Sir TJ and Cousin Mike) get together and chat about...\n18 Sundays music, who are they?? Miles Fonda and young music life.\nWhat are these weird Doerfel tracks? jam band? bluegrass fusion??\nThanking our amazing producers!\nPlease consider supporting and sending value, as we have no advertising or streaming income, this is straight up value for value! Hear music you like? Show some love and let us know via Boostagram or Paypal! thanks for listening :) Really, if you dont let us know in some way you are listening and find value, we need you to! So that we know someone is listening and cares! let us know, Boost, Paypal, heck even email us at tj@doerfelverse.com! We just want to know if anyones listening and enjoying :)\nSubscribe to our music feed!\nhttps://www.doerfelverse.com/",
+              "duration": 6488,
+              "trackNumber": 29,
+              "pubDate": "Mon, 22 Apr 2024 05:25:06 +0000",
+              "guid": {
+                "#text": "bca31d18-769e-48ba-be24-25dfad1f6e0d",
+                "@_isPermaLink": false
+              },
+              "description": "<p>The elders (Sir TJ and Cousin Mike) get together and chat about...</p>\n<p>18 Sundays music, who are they?? Miles Fonda and young music life.</p>\n<p>What are these weird Doerfel tracks? jam band? bluegrass fusion??</p>\n<p>Thanking our amazing producers!</p>\n<p>Please consider supporting and sending value, as we have no advertising or streaming income, this is straight up value for value! Hear music you like? Show some love and let us know via Boostagram or <a href=\"https://www.paypal.com/donate/?hosted_button_id=ATL9BD9EQRSNN\" target=\"_blank\" rel=\"noopener\">Paypal</a>! thanks for listening :) Really, if you dont let us know in some way you are listening and find value, we need you to! So that we know someone is listening and cares! let us know, Boost, Paypal, heck even email us at tj@doerfelverse.com! We just want to know if anyones listening and enjoying :)</p>\n<p>Subscribe to our <a href=\"https://podverse.fm/podcast/RdiHfSiIo7\" target=\"_blank\" rel=\"noopener\">music feed!</a></p>\n<p><a href=\"https://www.doerfelverse.com/\" target=\"_blank\" rel=\"noopener\">https://www.doerfelverse.com/</a></p>",
               "image": "https://www.doerfelverse.com/art/itdvspacelogo.png",
-              "explicit": false,
-              "keywords": [
-                "into",
-                "the",
-                "doerfelverse",
-                "doerfel",
-                "doerfels",
-                "doerfel-verse",
-                "intothedoerfelverse",
-                "doerful",
-                "doorful",
-                "doorfull",
-                "episode",
-                "28"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 27 - Into The Normy-Verse",
-              "duration": "84:41",
               "url": "https://www.doerfelverse.com/tracks/dvep27.mp3",
-              "trackNumber": 29,
-              "subtitle": "Episode 27 - Into The Normy-Verse",
-              "summary": "Where have we been? Tap play and find out! \nSpecial Thanks to the one and only, Chad F as our executive producer for the last month, this guy has shown so much value we cannot fully express our grattitude!\nWhat is the Normy-Verse? What is v4v? We talk about both right at the start!\nThen we talk about song picks, and talk about some brand new music! Tune and and let us kow what you think!\nPlease consider supporting and sending value, as we have no advertising or streaming income, this is straight up value for value! Hear music you like? Show some love and let us know via Boostagram or Paypal! thanks for listening :)\nSubscribe to our music feed!\nhttps://www.doerfelverse.com/",
+              "duration": 5081,
+              "trackNumber": 30,
+              "pubDate": "Mon, 08 Apr 2024 05:11:16 +0000",
+              "guid": {
+                "#text": "bcbf28ca-5999-45cb-a2ba-ee23f32d43ad",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Where have we been? Tap play and find out!&nbsp;</p>\n<p>Special Thanks to the one and only, Chad F as our executive producer for the last month, this guy has shown so much value we cannot fully express our grattitude!</p>\n<p>What is the Normy-Verse? What is v4v? We talk about both right at the start!</p>\n<p>Then we talk about song picks, and talk about some brand new music! Tune and and let us kow what you think!</p>\n<p>Please consider supporting and sending value, as we have no advertising or streaming income, this is straight up value for value! Hear music you like? Show some love and let us know via Boostagram or <a href=\"https://www.paypal.com/donate/?hosted_button_id=ATL9BD9EQRSNN\" target=\"_blank\" rel=\"noopener\">Paypal</a>! thanks for listening :)</p>\n<p>Subscribe to our <a href=\"https://podverse.fm/podcast/RdiHfSiIo7\" target=\"_blank\" rel=\"noopener\">music feed!</a></p>\n<p><a href=\"https://www.doerfelverse.com/\" target=\"_blank\" rel=\"noopener\">https://www.doerfelverse.com/</a></p>",
               "image": "https://www.doerfelverse.com/art/itdvspacelogo.png",
-              "explicit": false,
-              "keywords": [
-                "into",
-                "the",
-                "doerfelverse",
-                "doerfel",
-                "doerfels",
-                "doerfel-verse",
-                "intothedoerfelverse",
-                "doerful",
-                "doorful",
-                "doorfull",
-                "episode",
-                "27"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 26 - Garage to Studio",
-              "duration": "81:13",
               "url": "https://www.doerfelverse.com/tracks/dvep26.mp3",
-              "trackNumber": 30,
-              "subtitle": "Episode 26 - Garage to Studio",
-              "summary": "Chad Farrow is still THE executive producer for the month of March, and to see what we did with his donation check out the garage to studio transformition pictures below! We've been working hard and it's starting to pay off with the studio re-modeling!\nAlso we preview A new CityBeach song AND pick a new song for release, what song will it be??? listen and find out, and tell us what you think in a boostagram!\n\n\n\nSubscribe to our music feed!\nhttps://www.doerfelverse.com/",
+              "duration": 4873,
+              "trackNumber": 31,
+              "pubDate": "Wed, 20 Mar 2024 00:04:08 +0000",
+              "guid": {
+                "#text": "172d577e-c011-4f59-b00a-a9aef903a98c",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Chad Farrow is still THE executive producer for the month of March, and to see what we did with his donation check out the garage to studio transformition pictures below! We've been working hard and it's starting to pay off with the studio re-modeling!</p>\n<p>Also we preview A new CityBeach song AND pick a new song for release, what song will it be??? listen and find out, and tell us what you think in a boostagram!</p>\n<p><img src=\"https://www.doerfelverse.com/art/garage2.png\" alt=\"\" /></p>\n<p><img src=\"https://www.doerfelverse.com/art/studio-small.png\" alt=\"\" /></p>\n<p><img src=\"https://www.doerfelverse.com/art/baby-in-studio-small.png\" alt=\"\" /></p>\n<p>Subscribe to our <a href=\"https://podverse.fm/podcast/RdiHfSiIo7\" target=\"_blank\" rel=\"noopener\">music feed!</a></p>\n<p><a href=\"https://www.doerfelverse.com/\" target=\"_blank\" rel=\"noopener\">https://www.doerfelverse.com/</a></p>",
               "image": "https://www.doerfelverse.com/art/dvstudiosign.png",
-              "explicit": false,
-              "keywords": [
-                "into",
-                "the",
-                "doerfelverse",
-                "doerfel",
-                "doerfels",
-                "doerfel-verse",
-                "intothedoerfelverse",
-                "doerful",
-                "doorful",
-                "doorfull",
-                "episode",
-                "26",
-                "garage",
-                "studio"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 25 - Alandace Part 2",
-              "duration": "66:28",
               "url": "https://www.doerfelverse.com/tracks/dvep25.mp3",
-              "trackNumber": 31,
-              "subtitle": "Episode 25 - Alandace Part 2",
-              "summary": "We talk about Fountain. We play a brand new song Alandace is working on and talk about recording. We thank our producers. \nSpecial Thanks to our first ever DoerfelVerse executive producer, Chad Farrow, sent $100 via paypal! \nMore v4v talk. We have more special news!?\nSubscribe to our music feed!\nhttps://www.doerfelverse.com/",
+              "duration": 3988,
+              "trackNumber": 32,
+              "pubDate": "Mon, 04 Mar 2024 05:51:21 +0000",
+              "guid": {
+                "#text": "8dad7ec9-65c9-4317-bf63-22251863a7d4",
+                "@_isPermaLink": false
+              },
+              "description": "<p>We talk about <a href=\"https://fountain.fm/\" target=\"_blank\" rel=\"noopener\">Fountain</a>. We play a brand new song Alandace is working on and talk about recording. We thank our producers.&nbsp;</p>\n<p>Special Thanks to our first ever DoerfelVerse executive producer, Chad Farrow, sent $100 via <a href=\"https://www.paypal.com/donate/?hosted_button_id=ATL9BD9EQRSNN\" target=\"_blank\" rel=\"noopener\">paypal</a>!&nbsp;</p>\n<p>More v4v talk. We have more special news!?</p>\n<p>Subscribe to our <a href=\"https://podverse.fm/podcast/RdiHfSiIo7\" target=\"_blank\" rel=\"noopener\">music feed!</a></p>\n<p><a href=\"https://www.doerfelverse.com/\" target=\"_blank\" rel=\"noopener\">https://www.doerfelverse.com/</a></p>",
               "image": "https://www.doerfelverse.com/art/itdvspacelogo.png",
-              "explicit": false,
-              "keywords": [
-                "into",
-                "the",
-                "doerfelverse",
-                "doerfel",
-                "doerfels",
-                "doerfel-verse",
-                "intothedoerfelverse",
-                "doerful",
-                "doorful",
-                "doorfull",
-                "episode",
-                "25",
-                "alandace",
-                "part",
-                "2"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 24 - Alandace",
-              "duration": "102:29",
               "url": "https://www.doerfelverse.com/tracks/dvep24.mp3",
-              "trackNumber": 32,
-              "subtitle": "Episode 24 - Alandace",
-              "summary": "Join us as we officially introduce another Doerfel...Shredwards wife, Alandace!(a-lan-dis) She shares about her musical up-bringing and we listen to some new tracks. You can hear her with Shreddy on CityBeach!\nSubscribe to our music feed!\nhttps://www.doerfelverse.com/",
+              "duration": 6149,
+              "trackNumber": 33,
+              "pubDate": "Tue, 27 Feb 2024 21:48:22 +0000",
+              "guid": {
+                "#text": "283bd44a-1ee8-40d9-ba7d-d316d72bbda7",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Join us as we officially introduce another Doerfel...Shredwards wife, Alandace!(a-lan-dis) She shares about her musical up-bringing and we listen to some new tracks. You can hear her with Shreddy on CityBeach!</p>\n<p>Subscribe to our <a href=\"https://podverse.fm/podcast/RdiHfSiIo7\" target=\"_blank\" rel=\"noopener\">music feed!</a></p>\n<p><a href=\"https://www.doerfelverse.com/\" target=\"_blank\" rel=\"noopener\">https://www.doerfelverse.com/</a></p>",
               "image": "https://www.doerfelverse.com/art/itdvspacelogo.png",
-              "explicit": false,
-              "keywords": [
-                "into",
-                "the",
-                "doerfelverse",
-                "doerfel",
-                "doerfels",
-                "doerfel-verse",
-                "intothedoerfelverse",
-                "doerful",
-                "doorful",
-                "doorfull",
-                "episode",
-                "24",
-                "alandace"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 23 - Ryan AND Seth Fonda",
-              "duration": "90:56",
               "url": "https://www.doerfelverse.com/tracks/dvep23.mp3",
-              "trackNumber": 33,
-              "subtitle": "Episode 23 - Ryan AND Seth Fonda",
-              "summary": "Join us AND our brothers Ryan and Seth Fonda as we talk value for value music and life!\nRyan's wavlake here. Seth's Wavlake here.\nSubscribe to our music feed!\nhttps://www.doerfelverse.com/",
+              "duration": 5456,
+              "trackNumber": 34,
+              "pubDate": "Mon, 19 Feb 2024 21:05:10 +0000",
+              "guid": {
+                "#text": "d90fd95b-45a3-4426-9600-4be1120620b7",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Join us AND our brothers <a href=\"https://www.instagram.com/ryanfondamusic/\" target=\"_blank\" rel=\"noopener\">Ryan</a> and <a href=\"https://www.instagram.com/seth_fonda_music/\" target=\"_blank\" rel=\"noopener\">Seth</a> Fonda as we talk value for value music and life!</p>\n<p>Ryan's <a href=\"https://www.wavlake.com/ryan-fonda\" target=\"_blank\" rel=\"noopener\">wavlake here</a>. Seth's <a href=\"https://www.wavlake.com/seth-fonda\" target=\"_blank\" rel=\"noopener\">Wavlake here.</a></p>\n<p>Subscribe to our <a href=\"https://podverse.fm/podcast/RdiHfSiIo7\" target=\"_blank\" rel=\"noopener\">music feed!</a></p>\n<p><a href=\"https://www.doerfelverse.com/\" target=\"_blank\" rel=\"noopener\">https://www.doerfelverse.com/</a></p>",
               "image": "https://www.doerfelverse.com/art/itdvspacelogo.png",
-              "explicit": false,
-              "keywords": [
-                "into",
-                "the",
-                "doerfelverse",
-                "doerfel",
-                "doerfels",
-                "doerfel-verse",
-                "intothedoerfelverse",
-                "doerful",
-                "doorful",
-                "doorfull",
-                "episode",
-                "23",
-                "ryan",
-                "seth",
-                "fonda"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 22 - Halftime",
-              "duration": "41:56",
               "url": "https://www.doerfelverse.com/tracks/dvep22.mp3",
-              "trackNumber": 34,
-              "subtitle": "Episode 22 - Halftime",
-              "summary": "Sir TJ and Jdog share some random Doerfel info, read the last weeks Boostagrams, and pick a song, or songggs?\nSubscribe to our music feed!\nhttps://www.doerfelverse.com/",
+              "duration": 2516,
+              "trackNumber": 35,
+              "pubDate": "Mon, 12 Feb 2024 04:44:07 +0000",
+              "guid": {
+                "#text": "b77d6814-649b-44ae-8b62-61e677ae835c",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Sir TJ and Jdog share some random Doerfel info, read the last weeks Boostagrams, and pick a song, or songggs?</p>\n<p>Subscribe to our <a href=\"https://podverse.fm/podcast/RdiHfSiIo7\" target=\"_blank\" rel=\"noopener\">music feed!</a></p>\n<p><a href=\"https://www.doerfelverse.com/\" target=\"_blank\" rel=\"noopener\">https://www.doerfelverse.com/</a></p>",
               "image": "https://www.doerfelverse.com/art/itdvspacelogo.png",
-              "explicit": false,
-              "keywords": [
-                "into",
-                "the",
-                "doerfelverse",
-                "doerfel",
-                "doerfels",
-                "doerfel-verse",
-                "intothedoerfelverse",
-                "doerful",
-                "doorful",
-                "doorfull",
-                "episode",
-                "22",
-                "halftime"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 21 - Queen Mother",
-              "duration": "95:17",
               "url": "https://www.doerfelverse.com/tracks/dvep21.mp3",
-              "trackNumber": 35,
-              "subtitle": "Episode 21 - Queen Mother",
-              "summary": "Where have all those Doerfels gone? Join us and find out!\nSPECIAL GUEST: We chat with our mom Cheryl, or as we like to call her, Queen Mother! oh yeah, and dad too :)\nRyan Fonda and Citybeach teamed up for a new self hosted song, \"Unsound Existance\"\nNew music by Ed and Bens church, Lifepoint Music\n \nAnd as always, we discuss a new song release.\nSubscribe to our music feed!\nhttps://www.doerfelverse.com/",
+              "duration": 5717,
+              "trackNumber": 36,
+              "pubDate": "Tue, 06 Feb 2024 03:17:07 +0000",
+              "guid": {
+                "#text": "83b4ce3e-84ba-4df2-9e6b-99164f3a83ff",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Where have all those Doerfels gone? Join us and find out!</p>\n<p>SPECIAL GUEST: We chat with our mom Cheryl, or as we like to call her, Queen Mother! oh yeah, and dad too :)</p>\n<p>Ryan Fonda and Citybeach teamed up for a new self hosted song, <a href=\"https://podverse.fm/podcast/F-BYertNVC\" target=\"_blank\" rel=\"noopener\">\"Unsound Existance\"</a></p>\n<p>New music by Ed and Bens church, <a href=\"https://podverse.fm/podcast/ODjni4AyT5\" target=\"_blank\" rel=\"noopener\">Lifepoint Music</a></p>\n<p>&nbsp;</p>\n<p>And as always, we discuss a new song release.</p>\n<p>Subscribe to our <a href=\"https://podverse.fm/podcast/RdiHfSiIo7\" target=\"_blank\" rel=\"noopener\">music feed!</a></p>\n<p><a href=\"https://www.doerfelverse.com/\" target=\"_blank\" rel=\"noopener\">https://www.doerfelverse.com/</a></p>",
               "image": "https://www.doerfelverse.com/art/dvep15-art.png",
-              "explicit": false,
-              "keywords": [
-                "into",
-                "the",
-                "doerfelverse",
-                "doerfel",
-                "doerfels",
-                "doerfel-verse",
-                "intothedoerfelverse",
-                "doerful",
-                "doorful",
-                "doorfull",
-                "episode",
-                "21",
-                "queen",
-                "mother"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 20 - Goals",
-              "duration": "87:06",
               "url": "https://www.doerfelverse.com/tracks/dvep20.mp3",
-              "trackNumber": 36,
-              "subtitle": "Episode 20 - Goals",
-              "summary": "He shoots, he scores! Oh wait this isn't a hockey game :) We play and talk about our song, \"Thought It Was Real\". Talk about the origin of our Hockey stick instruments(Jim Stoneman). And pick a new song for release.\nSpecial thanks to DV Producers for music and Ep20:\nBoostagrams:ChadFSalty Crayonboo-buryAdam Currysirtruckdriverallencpauladam287greatbrittain94Streamers:meremortalspodcastsaintsandsatsgilliganmikeneumannsandymeyer\nSubscribe to our music feed!\nhttps://www.doerfelverse.com/",
+              "duration": 5226,
+              "trackNumber": 37,
+              "pubDate": "Mon, 08 Jan 2024 11:45:36 +0000",
+              "guid": {
+                "#text": "ae5ca787-26d5-4d6e-8f61-0173e9945744",
+                "@_isPermaLink": false
+              },
+              "description": "<p>He shoots, he scores! Oh wait this isn't a hockey game :) We play and talk about our song, \"<a href=\"https://lnbeats.com/album/68c2dcdc-d955-5a37-8ac1-7a9d18631878\" target=\"_blank\" rel=\"noopener\">Thought It Was Real</a>\". Talk about the origin of our Hockey stick instruments(Jim Stoneman). And pick a new song for release.</p>\n<p>Special thanks to DV Producers for music and Ep20:</p>\n<p>Boostagrams:<br />ChadF<br />Salty Crayon<br />boo-bury<br />Adam Curry<br />sirtruckdriver<br />allencpaul<br />adam287<br />greatbrittain94<br /><br />Streamers:<br />meremortalspodcast<br />saintsandsats<br />gilligan<br />mikeneumann<br />sandymeyer</p>\n<p>Subscribe to our <a href=\"https://podverse.fm/podcast/RdiHfSiIo7\" target=\"_blank\" rel=\"noopener\">music feed!</a></p>\n<p><a href=\"https://www.doerfelverse.com/\" target=\"_blank\" rel=\"noopener\">https://www.doerfelverse.com/</a></p>",
               "image": "https://www.doerfelverse.com/art/dvep20.png",
-              "explicit": false,
-              "keywords": [
-                "into",
-                "the",
-                "doerfelverse",
-                "doerfel",
-                "doerfels",
-                "doerfel-verse",
-                "intothedoerfelverse",
-                "doerful",
-                "doorful",
-                "doorfull",
-                "episode",
-                "20",
-                "thought",
-                "it",
-                "was",
-                "real"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 19 - Wondoerfel New Year",
-              "duration": "65:52",
               "url": "https://www.doerfelverse.com/tracks/dvep19.mp3",
-              "trackNumber": 37,
-              "subtitle": "Episode 19 - Wondoerfel New Year",
-              "summary": "Join us as we chat about upcoming plans for 2024, share sneak peaks of upcoming music, and pick a new song to release!\nSpecial thanks to DV Producers for music and Ep19:\nChadFadamc1999thekeeperallencpaulsaintsandsatsnicolas_b58Kolomona - Sir LibramikeneumannKyrin(Mere Mortals Podcast)Bearsnareuser52425381(Uncle Joe)\nSubscribe to our music feed!\nhttps://www.doerfelverse.com/",
+              "duration": 3952,
+              "trackNumber": 38,
+              "pubDate": "Mon, 01 Jan 2024 21:15:41 +0000",
+              "guid": {
+                "#text": "2b07b11b-feaa-4b53-8172-e40d209642c8",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Join us as we chat about upcoming plans for 2024, share sneak peaks of upcoming music, and pick a new song to release!</p>\n<p>Special thanks to DV Producers for music and Ep19:</p>\n<p>ChadF<br />adamc1999<br />thekeeper<br />allencpaul<br />saintsandsats<br />nicolas_b58<br />Kolomona - Sir Libra<br />mikeneumann<br />Kyrin(Mere Mortals Podcast)<br />Bearsnare<br />user52425381(Uncle Joe)</p>\n<p>Subscribe to our <a href=\"https://podverse.fm/podcast/RdiHfSiIo7\" target=\"_blank\" rel=\"noopener\">music feed!</a></p>\n<p><a href=\"https://www.doerfelverse.com/\" target=\"_blank\" rel=\"noopener\">https://www.doerfelverse.com/</a></p>",
               "image": "https://www.doerfelverse.com/art/dvep19.png",
-              "explicit": false,
-              "keywords": [
-                "into",
-                "the",
-                "doerfelverse",
-                "doerfel",
-                "doerfels",
-                "doerfel-verse",
-                "intothedoerfelverse",
-                "doerful",
-                "doorful",
-                "doorfull",
-                "episode",
-                "19"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 18 - DoerJam 3 Feat. Doug Yeomans",
-              "duration": "78:27",
               "url": "https://www.doerfelverse.com/tracks/dvep18.mp3",
-              "trackNumber": 38,
-              "subtitle": "Episode 18 - DoerJam 3 Feat. Doug Yeomans",
-              "summary": "Sir TJ on banjo and dobro, Shredward on mandolin, Ben on guitar, and our guest Doug Yeomans on guitar and vocals.\nDoug brings some original tunes and we hang with Doug and talk music career, our stories, and v4v music.\nListen to our latest song here.\nDon't miss a beat and subscribe to our music feed with all our songs here.\nhttps://www.doerfelverse.com/",
+              "duration": 4707,
+              "trackNumber": 39,
+              "pubDate": "Fri, 29 Dec 2023 22:52:39 +0000",
+              "guid": {
+                "#text": "1fc2f122-4969-4ba3-907c-eedf5bc95bc3",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Sir TJ on banjo and dobro, Shredward on mandolin, Ben on guitar, and our guest <a href=\"https://dougyeomansmusic.com/\" target=\"_blank\" rel=\"noopener\">Doug Yeomans</a> on guitar and vocals.</p>\n<p>Doug brings some original tunes and we hang with Doug and talk music career, our stories, and v4v music.</p>\n<p>Listen to our latest song <a href=\"https://lnbeats.com/album/2b62ef49-fcff-523c-b81a-0a7dde2b0609/aHR0cHM6Ly93d3cuZG9lcmZlbHZlcnNlLmNvbS90cmFja3MvbG92ZS1saWtlLXlvdXJzLm1wMw\" target=\"_blank\" rel=\"noopener\">here.</a></p>\n<p>Don't miss a beat and subscribe to our music feed with all our songs <a href=\"https://podverse.fm/podcast/RdiHfSiIo7\" target=\"_blank\" rel=\"noopener\">here.</a></p>\n<p><a href=\"https://www.doerfelverse.com/\" target=\"_blank\" rel=\"noopener\">https://www.doerfelverse.com/</a></p>",
               "image": "https://www.doerfelverse.com/art/itdvspacelogo.png",
-              "explicit": false,
-              "keywords": [
-                "into",
-                "the",
-                "doerfelverse",
-                "doerfel",
-                "doerfels",
-                "doerfel-verse",
-                "intothedoerfelverse",
-                "episode",
-                "18",
-                "doug",
-                "yeomans",
-                "jam",
-                "live"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 17 - BabyVerse",
-              "duration": "39:38",
               "url": "https://www.doerfelverse.com/tracks/dvep17.mp3",
-              "trackNumber": 39,
-              "subtitle": "Episode 17 - BabyVerse",
-              "summary": "Sir TJ is joined by his wife and children for an episode full of chaos and exciting news!\nPsalms 127:3-5\nChildren are a gift from the Lord;\nthey are a reward from him.\nChildren born to a young man\nare like arrows in a warrior&rsquo;s hands.\nHow joyful is the man whose quiver is full of them!\nHe will not be put to shame when he confronts his accusers at the city gates.\nhttps://www.doerfelverse.com/",
+              "duration": 2378,
+              "trackNumber": 40,
+              "pubDate": "Tue, 19 Dec 2023 04:30:53 +0000",
+              "guid": {
+                "#text": "5632650e-51b5-4555-a48e-03690926f5bf",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Sir TJ is joined by his wife and children for an episode full of chaos and exciting news!</p>\n<div><span data-usfm=\"PSA.127.3\">Psalms 127:3-5</span></div>\n<div><span data-usfm=\"PSA.127.3\">Children are a gift from the Lord;</span></div>\n<div><span data-usfm=\"PSA.127.3\">they are a reward from him.</span></div>\n<div><span data-usfm=\"PSA.127.4\">Children born to a young man</span></div>\n<div><span data-usfm=\"PSA.127.4\">are like arrows in a warrior&rsquo;s hands.</span></div>\n<div><span data-usfm=\"PSA.127.5\">How joyful is the man whose quiver is full of them!</span></div>\n<div><span data-usfm=\"PSA.127.5\">He will not be put to shame when he confronts his accusers at the city gates.</span></div>\n<p><a href=\"https://www.doerfelverse.com/\" target=\"_blank\" rel=\"noopener\">https://www.doerfelverse.com/</a></p>",
               "image": "https://www.doerfelverse.com/art/ep17-art.png",
-              "explicit": false,
-              "keywords": [
-                "into",
-                "the",
-                "doerfelverse",
-                "doerfel",
-                "doerfels",
-                "doerfel-verse",
-                "intothedoerfelverse",
-                "episode",
-                "17",
-                "babyverse"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 16 - DragonCello/DoerJam2",
-              "duration": "107:02",
               "url": "https://www.doerfelverse.com/tracks/doerfelverse-ep16.mp3",
-              "trackNumber": 40,
-              "subtitle": "Episode 16 - DragonCello/DoerJam2",
-              "summary": "DoerJam number 2! Sir TJ, Shreddy, Kurtisdrums, Benny, and Cousin Mike hang with their instruments. We jam on some songs, play some tracks, and talk about random stuff that pops into our heads...\nSongs jammed on are: Morristown Blues, Now I Know(to be released), Dead Time, and...something intresting to end the show..!\nThis is a value for value podcast. This means we do it for the love of it, and if you find any value, we just ask that you send that back in a way, like time, talent, or treasure. Time means listening and sharring the show and music with someone you think might like it! Talent means ANYTHING you can think of, like baking and sending us Cookies(thanks Mike Neumanns better half!). Or making show art, jingles, or anything using your talent. Treasure, that's any number meaningful to you. V4v is making music meaningful again :)\nhttps://www.doerfelverse.com/",
+              "duration": 6422,
+              "trackNumber": 41,
+              "pubDate": "Sat, 09 Dec 2023 06:01:33 +0000",
+              "guid": {
+                "#text": "05ba8081-205b-4dfc-a78f-a0545f661ad1",
+                "@_isPermaLink": false
+              },
+              "description": "<p>DoerJam number 2! Sir TJ, Shreddy, Kurtisdrums, Benny, and Cousin Mike hang with their instruments. We jam on some songs, play some tracks, and talk about random stuff that pops into our heads...</p>\n<p>Songs jammed on are: <a href=\"https://lnbeats.com/album/c3fb85f3-e45b-5927-b8b9-8aab074f3da3/aHR0cHM6Ly93d3cuc2lydGp0aGV3cmF0aGZ1bC5jb20vd3AtY29udGVudC91cGxvYWRzLzIwMjMvMDcvQmV3YXJlLW9mLUJhbmpvX01vcnJpc3Rvd24tQmx1ZXMubXAz\" target=\"_blank\" rel=\"noopener\">Morristown Blues</a>, Now I Know(to be released), Dead Time, and...something intresting to end the show..!</p>\n<p>This is a value for value podcast. This means we do it for the love of it, and if you find any value, we just ask that you send that back in a way, like time, talent, or treasure. Time means listening and sharring the show and music with someone you think might like it! Talent means ANYTHING you can think of, like baking and sending us Cookies(thanks Mike Neumanns better half!). Or making show art, jingles, or anything using your talent. Treasure, that's any number meaningful to you. V4v is making music meaningful again :)</p>\n<p><a href=\"https://www.doerfelverse.com/\" target=\"_blank\" rel=\"noopener\">https://www.doerfelverse.com/</a></p>",
               "image": "https://www.doerfelverse.com/art/dvep16.png",
-              "explicit": false,
-              "keywords": [
-                "into",
-                "the",
-                "doerfelverse",
-                "doerfel",
-                "doerfels",
-                "doerfel-verse",
-                "intothedoerfelverse",
-                "doerful",
-                "doorfull",
-                "episode",
-                "16"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 15 - Bluegrass in Montreal 2007",
-              "duration": "72:11",
               "url": "https://www.doerfelverse.com/tracks/doerfelverse-ep15.mp3",
-              "trackNumber": 41,
-              "subtitle": "Episode 15 - Bluegrass in Montreal 2007",
-              "summary": "Hang with Sir TJ in this out of the normal show format. He listens and does a comentary of a bluegrass show from when they were kids. Recorded live in Montreal, Canada, in 2007.\nTJ/banjo - Kim/fiddle - Edward/mandolin - Joey/bass - Ben/guitar \nhttps://www.doerfelverse.com/",
+              "duration": 4331,
+              "trackNumber": 42,
+              "pubDate": "Mon, 04 Dec 2023 20:36:44 +0000",
+              "guid": {
+                "#text": "20c7d12a-3d1a-4860-9957-51fb2604fa16",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Hang with Sir TJ in this out of the normal show format. He listens and does a comentary of a bluegrass show from when they were kids. Recorded live in Montreal, Canada, in 2007.</p>\n<p>TJ/banjo - Kim/fiddle - Edward/mandolin - Joey/bass - Ben/guitar&nbsp;</p>\n<p><a href=\"https://www.doerfelverse.com/\" target=\"_blank\" rel=\"noopener\">https://www.doerfelverse.com/</a></p>",
               "image": "https://www.doerfelverse.com/art/dvep15-art.png",
-              "explicit": false,
-              "keywords": [
-                "into",
-                "the",
-                "doerfelverse",
-                "doerfel",
-                "doerfels",
-                "doerfel-verse",
-                "intothedoerfelverse",
-                "doerful",
-                "doorfull"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 14 - Chill and Chit-Chat",
-              "duration": "39:31",
               "url": "https://www.doerfelverse.com/tracks/doerfelverse-ep14.mp3",
-              "trackNumber": 42,
-              "subtitle": "Episode 14 - Chill and Chit-Chat",
-              "summary": "Sir TJ and Cousin Mike chit-chat about happenings in the doerfelverse and thank our Producers. We also take a sneak peak into Cousin Mike's musical past, and pick a song for release.\nWe are about a week behind schedule from time of recording do to us all having full time jobs for survival..Lol. So if you sent a boostagram recently and don't hear it read, allow another episode to be released, it may be read then.\nBut if we ever missed a boostagram please shoot me an email at tj@sirtjthewrathful.com, we definatly want to read it and give thanks to all our producers!\nhttps://www.doerfelverse.com/",
+              "duration": 2371,
+              "trackNumber": 43,
+              "pubDate": "Thu, 30 Nov 2023 00:43:32 +0000",
+              "guid": {
+                "#text": "77360740-11c4-4a52-b4ce-094c420f041b",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Sir TJ and Cousin Mike chit-chat about happenings in the doerfelverse and thank our Producers. We also take a sneak peak into Cousin Mike's musical past, and pick a song for release.</p>\n<p>We are about a week behind schedule from time of recording do to us all having full time jobs for survival..Lol. So if you sent a boostagram recently and don't hear it read, allow another episode to be released, it may be read then.</p>\n<p>But if we ever missed a boostagram please shoot me an email at tj@sirtjthewrathful.com, we definatly want to read it and give thanks to all our producers!</p>\n<p><a href=\"https://www.doerfelverse.com/\" target=\"_blank\" rel=\"noopener\">https://www.doerfelverse.com/</a></p>",
               "image": "https://www.doerfelverse.com/art/itdvspacelogo.png",
-              "explicit": false,
-              "keywords": [
-                "into",
-                "the",
-                "doerfelverse",
-                "doerfel",
-                "doerfels",
-                "doerfel-verse",
-                "intothedoerfelverse",
-                "doerful",
-                "doorfull"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 13 - Chugging Chel with Zac Polk",
-              "duration": "120:24",
               "url": "https://www.doerfelverse.com/tracks/doerfelverse-ep13.mp3",
-              "trackNumber": 43,
-              "subtitle": "Episode 13 - Chugging Chel with Zac Polk",
-              "summary": "Learn some old school Doerfel-lingo with our long-time musician friend Zac Polk.\nWe share stories, talk about v4v music in podcasting 2.0, play some tracks, and pick a new single to release.\nZacs Podcast is here.  We got Zac to make a GetAlby and he is in the split for this episode so if you enjoy and find value maybe send a boostagram welcoming him to the world of v4v :)\nCheck out the song we picked by subscribing to, \"Music From The Doerfel-verse\" feed and that will keep you up to date with all our most recent releases. Or easiy check it out on LNBeats.com\nhttps://www.doerfelverse.com",
+              "duration": 7224,
+              "trackNumber": 44,
+              "pubDate": "Sat, 25 Nov 2023 04:18:46 +0000",
+              "guid": {
+                "#text": "72186194-d406-48e3-bcfd-c14ec47cfafd",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Learn some old school Doerfel-lingo with our long-time musician friend Zac Polk.</p>\n<p>We share stories, talk about v4v music in podcasting 2.0, play some tracks, and pick a new single to release.</p>\n<p>Zacs Podcast is <a href=\"https://www.podomatic.com/podcasts/zpolk66podcast\" target=\"_blank\" rel=\"noopener\">here.</a>&nbsp; We got Zac to make a GetAlby and he is in the split for this episode so if you enjoy and find value maybe send a boostagram welcoming him to the world of <a href=\"https://podcastindex.org/podcast/value4value\" target=\"_blank\" rel=\"noopener\">v4v</a> :)</p>\n<p>Check out the song we picked by subscribing to, \"<a href=\"https://podverse.fm/podcast/RdiHfSiIo7\" target=\"_blank\" rel=\"noopener\">Music From The Doerfel-verse</a>\" feed and that will keep you up to date with all our most recent releases. Or easiy check it out on <a href=\"https://lnbeats.com/album/2b62ef49-fcff-523c-b81a-0a7dde2b0609\" target=\"_blank\" rel=\"noopener\">LNBeats.com</a></p>\n<p>https://www.doerfelverse.com</p>",
               "image": "https://www.doerfelverse.com/art/doerfelverse-ep13-art.png",
-              "explicit": false,
-              "keywords": [
-                "intothedoerfelverse",
-                "doerfels",
-                "doerfel",
-                "into",
-                "the",
-                "episode13",
-                "episode",
-                "13",
-                "zac",
-                "polk",
-                "zacpolk"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 12 - DoerJam!",
-              "duration": "60:32",
               "url": "https://www.doerfelverse.com/tracks/doerfelverse-ep12.mp3",
-              "trackNumber": 44,
-              "subtitle": "Episode 12 - DoerJam!",
-              "summary": "Episode 12 - DoerJam!\nSir TJ The Wrathful on Dobro - Shredward on Mandolin - Ben on Guitar -\nOur live podcast jams are now called DoerJams thanks to Mike Neumann's better half :) Check out Mike's music show, It's A Mood!\nIntro DoerJam: Heart Is Falling Out\nDoerfelVerse Producers: bustedcanoe7, queenmother, Adam Curry, meremortalspodcast, ChadF, salty_crayon, duhlaurien, thebearsnare.com, sirtruckdriver, saintsandsats, latosh, Mike Neaumann\nHere are some great music podcasts if you can only handle so much Doerfels at once. These are great for discovering other V4V artists!\nBoostagram Ball, It's A Mood, Homegrown Hits, Mutton, Mead & Music, Rolling On Show, UpBEATs\nYou can find all the known Music Show Podcasts by clicking on radio over at LNBeats.com\nFeatured DoerJam Song: Pulls Me Up\nSong Of The Week is.......? Let us know what song you want to hear more of!\nThis is a value for value podcast, so if you find any value let us know, we love to hear from yall!\nTry a modern podcast app today, some we reccomend are: Podverse, Podcast Guru, Fountain, CurioCaster\nwww.doerfelverse.com\nMusic From The DoerfelVerse feed on www.LNbeats.com",
+              "duration": 3632,
+              "trackNumber": 45,
+              "pubDate": "Tue, 14 Nov 2023 04:17:39 +0000",
+              "guid": {
+                "#text": "0f678a82-71ac-4d96-9c27-c7f6aada2f06",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Episode 12 - DoerJam!</p>\n<p>Sir TJ The Wrathful on Dobro - Shredward on Mandolin - Ben on Guitar -</p>\n<p>Our live podcast jams are now called DoerJams thanks to Mike Neumann's better half :) Check out Mike's music show,&nbsp;<a href=\"https://podverse.fm/episode/nszMzcyIY\" target=\"_blank\" rel=\"noopener noreferrer\">It's A Mood</a>!</p>\n<p>Intro DoerJam: Heart Is Falling Out</p>\n<p>DoerfelVerse Producers: bustedcanoe7, queenmother, Adam Curry, meremortalspodcast, ChadF, salty_crayon, duhlaurien, thebearsnare.com, sirtruckdriver, saintsandsats, latosh, Mike Neaumann</p>\n<p>Here are some great music podcasts if you can only handle so much Doerfels at once. These are great for discovering other V4V artists!</p>\n<p><a href=\"https://podverse.fm/episode/CQBInu03P\">Boostagram Ball</a>, <a href=\"https://podverse.fm/episode/nszMzcyIY\" target=\"_blank\" rel=\"noopener\">It's A Mood</a>, <a href=\"https://podverse.fm/episode/effvEDBYK\" target=\"_blank\" rel=\"noopener\">Homegrown Hits</a>, <a href=\"https://podverse.fm/episode/zxnTmGXrf\" target=\"_blank\" rel=\"noopener\">Mutton, Mead & Music</a>, <a href=\"https://podverse.fm/episode/QuPnPImFL\" target=\"_blank\" rel=\"noopener\">Rolling On Show</a>, <a href=\"https://podverse.fm/episode/zMHv6nbcV\">UpBEATs</a></p>\n<p>You can find all the known Music Show Podcasts by clicking on radio over at <a href=\"https://lnbeats.com/\" target=\"_blank\" rel=\"noopener\">LNBeats.com</a></p>\n<p>Featured DoerJam Song: <a href=\"https://lnbeats.com/album/08604071-83cc-5810-bec2-bea0f0cd0033\" target=\"_blank\" rel=\"noopener\">Pulls Me Up</a></p>\n<p>Song Of The Week is.......? Let us know what song you want to hear more of!</p>\n<p>This is a value for value podcast, so if you find any value let us know, we love to hear from yall!</p>\n<p>Try a modern podcast app today, some we reccomend are: <a href=\"https://podverse.fm/podcast/RdiHfSiIo7\" target=\"_blank\" rel=\"noopener\">Podverse</a>, <a href=\"https://podcastguru.io/\" target=\"_blank\" rel=\"noopener\">Podcast Guru</a>, <a href=\"https://www.fountain.fm/\" target=\"_blank\" rel=\"noopener\">Fountain</a>, <a href=\"https://curiocaster.com/\" target=\"_blank\" rel=\"noopener\">CurioCaster</a></p>\n<p><a href=\"https://www.doerfelverse.com\">www.doerfelverse.com</a></p>\n<p>Music From The DoerfelVerse feed on <a href=\"https://lnbeats.com/album/2b62ef49-fcff-523c-b81a-0a7dde2b0609\" target=\"_blank\" rel=\"noopener\">www.LNbeats.com</a></p>",
               "image": "https://www.doerfelverse.com/art/itdvspacelogo.png",
-              "explicit": false,
-              "keywords": [
-                "doerfelverse",
-                "doerfel-verse",
-                "doerfels",
-                "doerfel",
-                "epside12",
-                "12",
-                "doerjam",
-                "live",
-                "jam",
-                "music"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 11 - Doerfel Agents Meeting",
-              "duration": "46:52",
               "url": "https://www.doerfelverse.com/tracks/doerfelverse-ep11.mp3",
-              "trackNumber": 45,
-              "subtitle": "Episode 11 - Doerfel Agents Meeting",
-              "summary": "The self proclaimed \"agents\" of the band, Sir TJ The Wrathful and Cousin Mike, let the rest of the boys have a Sunday off from the show and reflect on the podcast so far. They also choose a new song to release.\nListen to all the music released here at LNBeats.com\nCheck out Adam Curry's Boostagram Ball\nThanking our producers!\ngt, kurtisdrums, chadf, Oystein Berge, toph4471, fatherdorf, steveweb\nOur website is functioning, check it out at https://www.doerfelverse.com",
+              "duration": 2812,
+              "trackNumber": 46,
+              "pubDate": "Mon, 06 Nov 2023 07:56:23 +0000",
+              "guid": {
+                "#text": "bfb8ba87-9c3b-41f4-9e55-2ff55beb6b81",
+                "@_isPermaLink": false
+              },
+              "description": "<p>The self proclaimed \"agents\" of the band, Sir TJ The Wrathful and Cousin Mike, let the rest of the boys have a Sunday off from the show and reflect on the podcast so far. They also choose a new song to release.</p>\n<p>Listen to all the music released here at <a href=\"https://lnbeats.com/album/2b62ef49-fcff-523c-b81a-0a7dde2b0609\" target=\"_blank\" rel=\"noopener\">LNBeats.com</a></p>\n<p>Check out Adam Curry's <a href=\"https://www.boostagramball.com/\" target=\"_blank\" rel=\"noopener\">Boostagram Ball</a></p>\n<p>Thanking our producers!</p>\n<p>gt, kurtisdrums, chadf, Oystein Berge, toph4471, fatherdorf, steveweb</p>\n<p>Our website is functioning, check it out at <a href=\"https://www.doerfelverse.com\" target=\"_blank\" rel=\"noopener\">https://www.doerfelverse.com</a></p>\n<p>&nbsp;</p>",
               "image": "https://www.doerfelverse.com/art/itdvspacelogo.png",
-              "explicit": false,
-              "keywords": [
-                "into",
-                "the",
-                "doerfel",
-                "verse",
-                "doerfels",
-                "doerfelverse",
-                "music",
-                "episode",
-                "11",
-                "doorful",
-                "doerful",
-                "doerfel-verse"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 10 - Feat. Middle Season & Live Jam",
-              "duration": "82:58",
               "url": "https://www.doerfelverse.com/tracks/doerfelverse-ep10.mp3",
-              "trackNumber": 46,
-              "subtitle": "Episode 10 - Feat. Middle Season & Live Jam",
-              "summary": "Episode 10 with Middle Season.\nOn this episode Joey Ramon(Middle Season) joins us and we play a song of his and chat about his musical/life journey.\nCheck out his song on LN Beats HERE\nsend him a Boostagram if you want to hear more of his music!\nAnd you can listen to his worship song HERE.\nThen we pick a song to release.\nThanks for listening!",
+              "duration": 4978,
+              "trackNumber": 47,
+              "pubDate": "Sat, 28 Oct 2023 19:33:07 +0000",
+              "guid": {
+                "#text": "252b72bd-9cb7-4364-9f96-c8cf4bd9d83d",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Episode 10 with Middle Season.</p>\n<p>On this episode Joey Ramon(Middle Season) joins us and we play a song of his and chat about his musical/life journey.</p>\n<p>Check out his song on <a href=\"https://lnbeats.com/album/3074902b-b2dc-5877-bfc3-30f5df0fbe6a\" target=\"_blank\" rel=\"noopener\">LN Beats HERE</a></p>\n<p>send him a Boostagram if you want to hear more of his music!</p>\n<p>And you can listen to his worship song <a href=\"https://music.youtube.com/watch?v=pJf3sUAquk4&si=_VF9aAQJxJxT6WdK\" target=\"_blank\" rel=\"noopener\">HERE</a>.</p>\n<p>Then we pick a song to release.</p>\n<p>Thanks for listening!</p>\n<p>&nbsp;</p>",
               "image": "https://www.doerfelverse.com/art/doerfelverse-ep10-art.jpeg",
-              "explicit": false,
-              "keywords": [
-                "doerfelverse",
-                "doerfel-verse",
-                "doerfels",
-                "doerfel",
-                "middle",
-                "season",
-                "middleseason",
-                "live",
-                "jam"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 9 - Daddy D",
-              "duration": "0:00",
               "url": "https:/www.doerfelverse.com/tracks/dvep9.mp3",
-              "trackNumber": 47,
-              "subtitle": "Episode 9 - Daddy D",
-              "summary": "Our father Daddy D(Tom), visits from FL to help Sir TJ The Wrathful roof his house. We of course had to take this oppertunity to have him on the Podcast! Dad played bass, booked the gigs, drove and fixed the bus, and tried to keep us all in line!\n\nListen to music from the Doerfel-Verse here for free. And if you recieve any value, please consider sending us some back with time, talent, or treasure.\nTime: listening and sending us any thoughts or questions to tj@sirtjthewrathful.com.\nTalent: sending us something from whatever you talents may be.\nTreasure: Right now this would need to be in the form of a boost/boostagram using a modern podcast app like Podverse, Fountain, Podcast Guru, just to name a few.\nThank you for listening and we hope you recieved some kind of value from our crazy family.\n\nhttps://www.doerfelverse.com",
+              "duration": 0,
+              "trackNumber": 48,
+              "pubDate": "Fri, 20 Oct 2023 11:55:27 +0000",
+              "guid": {
+                "#text": "7085847b-c957-48dd-b23f-1b05fb797f28",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Our father Daddy D(Tom), visits from FL to help Sir TJ The Wrathful roof his house. We of course had to take this oppertunity to have him on the Podcast! Dad played bass, booked the gigs, drove and fixed the bus, and tried to keep us all in line!</p>\n<p><img src=\"https://www.doerfelverse.com/art/tj-dad-roof.jpg\" alt=\"TJ and Dad roofing TJ's house\" width=\"300\" height=\"450\" /><img src=\"https://www.doerfelverse.com/art/dad-mom-bass-guitar.jpeg\" alt=\"\" width=\"300\" height=\"389\" /></p>\n<p>Listen to music from the <a href=\"https://lnbeats.com/album/2b62ef49-fcff-523c-b81a-0a7dde2b0609\" target=\"_blank\" rel=\"noopener\">Doerfel-Verse here</a> for free. And if you recieve any value, please consider sending us some back with time, talent, or treasure.</p>\n<p>Time: listening and sending us any thoughts or questions to tj@sirtjthewrathful.com.</p>\n<p>Talent: sending us something from whatever you talents may be.</p>\n<p>Treasure: Right now this would need to be in the form of a boost/boostagram using a modern podcast app like <a href=\"https://podverse.fm/podcast/yK1ScNbZTc\" target=\"_blank\" rel=\"noopener\">Podverse</a>, <a href=\"https://www.fountain.fm/show/RgrxW3Hu1M8q0D87dIKE\" target=\"_blank\" rel=\"noopener\">Fountain</a>, <a href=\"https://podcastguru.io/\" target=\"_blank\" rel=\"noopener\">Podcast Guru</a>, just to name a few.</p>\n<p>Thank you for listening and we hope you recieved some kind of value from our crazy family.</p>\n<p><img src=\"https://www.doerfelverse.com/art/hockey-family-roof.jpeg\" alt=\"\" width=\"333\" height=\"250\" /></p>\n<p>https://www.doerfelverse.com</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>",
               "image": "https://www.doerfelverse.com/art/doerfelverse-ep9-art.jpg",
-              "explicit": false,
-              "keywords": [
-                "doerfel",
-                "doerfels",
-                "doerfelverse",
-                "doerfel-verse",
-                "intothedoerfelverse",
-                "into",
-                "the",
-                "episode",
-                "9",
-                "daddy",
-                "d",
-                "daddyd"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 8 - Our Favorite Sister",
-              "duration": "77:46",
               "url": "https://www.doerfelverse.com/tracks/doerfelverse-ep8.mp3",
-              "trackNumber": 48,
-              "subtitle": "Episode 8 - Our Favorite Sister",
-              "summary": "We have our favorite(only) sister Kim join us. \nKim is the 2nd oldest of the Doerfel siblings. Singing and playing fiddle, she now lives in FL with her husband Doug and their two children Stevie and Reed.\nKim is now A worship leader at Keys Vineyard Church\nHere's a link to the worhip music previewed in epsiode.\nThanks for listening, if you found any value please let us know!\nYou can send us a boostagram and be involved in the show by using a podcasting 2.0 app. If you know someone who might enjoy our music/podcast, try to pull them into the Doerfel-Verse!\nPodcast Guru, Podverse, Fountain are some of our favorite apps. And for music only definitly go to LNBeats.com\nWe now have A new music only feed called, \"Music From The Doerfel-verse\". Subscribe there to enjoy all our music in an album/playlist format.\nYou can also send us an email with any topics, questions, comments you'd like to share at tj@sirtjthewrathful.com\nhttps://www.doerfelverse.com",
+              "duration": 4666,
+              "trackNumber": 49,
+              "pubDate": "Wed, 11 Oct 2023 03:20:45 +0000",
+              "guid": {
+                "#text": "6b7b9f7d-fef4-46ee-8fa5-704e2f82145a",
+                "@_isPermaLink": false
+              },
+              "description": "<p>We have our favorite(only) sister Kim join us.&nbsp;</p>\n<p>Kim is the 2nd oldest of the Doerfel siblings. Singing and playing fiddle, she now lives in FL with her husband Doug and their two children Stevie and Reed.</p>\n<p>Kim is now A worship leader at <a href=\"https://keysvineyardchurch.snappages.site/\" target=\"_blank\" rel=\"noopener\">Keys Vi</a><a href=\"https://keysvineyardchurch.snappages.site/\" target=\"_blank\" rel=\"noopener\">neyard Church</a></p>\n<p>Here's a <a href=\"https://www.youtube.com/live/efAin4uGQwA?si=-VOJzAGQwzRpM35v&t=980\" target=\"_blank\" rel=\"noopener\">link</a> to the worhip music previewed in epsiode.</p>\n<p>Thanks for listening, if you found any value please let us know!</p>\n<p>You can send us a boostagram and be involved in the show by using a <a href=\"https://podcastindex.org/apps?appTypes=app%2Cpodcast+player\" target=\"_blank\" rel=\"noopener\">podcasting 2.0 app.</a> If you know someone who might enjoy our music/podcast, try to pull them into the Doerfel-Verse!</p>\n<p><a href=\"https://podcastguru.io/\" target=\"_blank\" rel=\"noopener\">Podcast Guru</a>, <a href=\"https://podverse.fm/\" target=\"_blank\" rel=\"noopener\">Podverse</a>, <a href=\"https://www.fountain.fm/\" target=\"_blank\" rel=\"noopener\">Fountain</a> are some of our favorite apps. And for music only definitly go to <a href=\"https://lnbeats.com/album/2b62ef49-fcff-523c-b81a-0a7dde2b0609\" target=\"_blank\" rel=\"noopener\">LNBeats.com</a></p>\n<p>We now have A new music only feed called, \"<a href=\"https://podverse.fm/podcast/RdiHfSiIo7\" target=\"_blank\" rel=\"noopener\">Music From The Doerfel-verse</a>\". Subscribe there to enjoy all our music in an album/playlist format.</p>\n<p>You can also send us an email with any topics, questions, comments you'd like to share at tj@sirtjthewrathful.com</p>\n<p>https://www.doerfelverse.com</p>",
               "image": "https://www.doerfelverse.com/art/doerfelverse-ep8-art.jpeg",
-              "explicit": false,
-              "keywords": [
-                "intothedoerfelverse",
-                "into",
-                "the",
-                "doerfelverse",
-                "doerfel-verse",
-                "doerfels",
-                "doerfel",
-                "ep8",
-                "episode8",
-                "kim",
-                "kimdoerfel"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 7 - With Jdog & callieNOTwallie",
-              "duration": "78:51",
               "url": "https://www.doerfelverse.com/tracks/doerfelverse-ep7.mp3",
-              "trackNumber": 49,
-              "subtitle": "Episode 7 - With Jdog & callieNOTwallie",
-              "summary": "Join us as we chat & jam with Sir TJ The Wrathful's eldest children, Jdog & CallieNotWallie!\nListen to Jdogs album here!\nhttps://www.doerfelverse.com",
+              "duration": 4731,
+              "trackNumber": 50,
+              "pubDate": "Mon, 02 Oct 2023 21:24:06 +0000",
+              "guid": {
+                "#text": "01ba08d0-60f4-404a-8391-4efcd44d6d4c",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Join us as we chat & jam with Sir TJ The Wrathful's eldest children, Jdog & CallieNotWallie!</p>\n<p>Listen to Jdogs album <a href=\"https://lnbeats.com/album/a599fabe-6b73-58f3-88b8-a7b78a2976b5\" target=\"_blank\" rel=\"noopener\">here</a>!</p>\n<p>https://www.doerfelverse.com</p>",
               "image": "https://www.doerfelverse.com/art/doerfelverse-ep7-art.jpeg",
-              "explicit": false,
-              "keywords": [
-                "doerfelverse",
-                "doerfel-verse",
-                "episode7",
-                "7",
-                "doerfels",
-                "doerfel",
-                "intothedoerfelverse",
-                "into"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 6 - Live Jam 1",
-              "duration": "64:50",
               "url": "https://www.doerfelverse.com/tracks/doerfelverse-ep6.mp3",
-              "trackNumber": 50,
-              "subtitle": "Episode 6 - Live Jam 1",
-              "summary": "We welcome Joey to the show for the first time!Warning- this episode contains Joe's feet, band life stories, and live jamming!\nDon't Take My Time written by Doug Yeomans.\nText Me Or Something written by Miles Fonda\nLet us know in a Boost or email what you'd like to hear and any questions you might have!\nhttps://www.doerfelverse.com/\nWe recommend Music Side Project for artists who would like to get their music on v4v made by the great StevenBA great way to discover other value for value artists are these shows(podcasts)Boostagram Ball It's A MoodHomegrown HitsBefore the Sch3m3sPhantom Power Music Hour\nIf you found any value in our music please cosider sending some value back in the form of time, talent, or treasure!\nThanking all boosters/streamers last week!\nDave Jonesadam287geatbritianDame JeniferGeneBeanSam SethispamproofKolomonagtMitch DAdam CurryDave Smithjohnsbrtboolysteeddale jrericppbeavenourtodd from northern VAMike NeumannAChrisYouKnowshelleycTheCzarChadFcolemccormick1rawbtcKyrinsirseanreisernicksiKRShowBoosterharvhatbryan goodwinbmasigilliganFranco\nTry out a Podcasting 2.0 app today. Here are a few of our favorites:\nPodverse, Podcast Guru, Fountain, LNBeats",
+              "duration": 3890,
+              "trackNumber": 51,
+              "pubDate": "Fri, 29 Sep 2023 05:15:15 +0000",
+              "guid": {
+                "#text": "fc4045b5-b51c-4aad-990b-c7bbb8c7471e",
+                "@_isPermaLink": false
+              },
+              "description": "<p>We welcome Joey to the show for the first time!<br />Warning- this episode contains Joe's feet, band life stories, and live jamming!</p>\n<p>Don't Take My Time written by Doug Yeomans.</p>\n<p>Text Me Or Something written by Miles Fonda</p>\n<p>Let us know in a Boost or email what you'd like to hear and any questions you might have!</p>\n<p><a href=\"https://www.doerfelverse.com/\" target=\"_blank\" rel=\"noopener\">https://www.doerfelverse.com/</a></p>\n<p>We recommend <a href=\"https://musicsideproject.com/\">Music Side Project</a> for artists who would like to get their music on v4v made by the great <a href=\"https://noagendasocial.com/@StevenB@podcastindex.social\" target=\"_blank\" rel=\"noopener\">StevenB</a><br /><br />A great way to discover other value for value artists are these shows(podcasts)<br /><a href=\"https://www.boostagramball.com\" target=\"_blank\" rel=\"noopener\">Boostagram Ball</a>&nbsp;<br /><a href=\"https://www.fountain.fm/show/pcdHkHIWgtcE4ksKubo1\" target=\"_blank\" rel=\"noopener\">It's A Mood</a><br /><a href=\"https://www.fountain.fm/show/aqJxt5Pt6jLIvQX7OI7P\" target=\"_blank\" rel=\"noopener\">Homegrown Hits</a><br /><a href=\"https://www.fountain.fm/show/hMMD95oKL0wDQQ4u0VYM\" target=\"_blank\" rel=\"noopener\">Before the Sch3m3s</a><br /><a href=\"https://www.fountain.fm/show/Vf0SEN6GqyywRBKdLIw3\" target=\"_blank\" rel=\"noopener\">Phantom Power Music Hour</a></p>\n<p>If you found any value in our music please cosider sending some value back in the form of time, talent, or treasure!</p>\n<p>Thanking all boosters/streamers last week!</p>\n<p>Dave Jones<br />adam287<br />geatbritian<br />Dame Jenifer<br />GeneBean<br />Sam Sethi<br />spamproof<br />Kolomona<br />gt<br />Mitch D<br />Adam Curry<br />Dave Smith<br />johnsbrt<br />boolysteed<br />dale jr<br />ericpp<br />beavenour<br />todd from northern VA<br />Mike Neumann<br />AChrisYouKnow<br />shelleyc<br />TheCzar<br />ChadF<br />colemccormick1<br />rawbtc<br />Kyrin<br />sirseanreiser<br />nick<br />si<br />KR<br />ShowBooster<br />harvhat<br />bryan goodwin<br />bmasi<br />gilligan<br />Franco</p>\n<p>Try out a Podcasting 2.0 app today. Here are a few of our favorites:</p>\n<p><a href=\"https://podverse.fm/podcast/yK1ScNbZTc\" target=\"_blank\" rel=\"noopener\">Podverse</a>, <a href=\"https://podcastguru.io/\" target=\"_blank\" rel=\"noopener\">Podcast Guru</a>, <a href=\"https://www.fountain.fm/show/RgrxW3Hu1M8q0D87dIKE\" target=\"_blank\" rel=\"noopener\">Fountain</a>, <a href=\"https://lnbeats.com/\" target=\"_blank\" rel=\"noopener\">LNBeats</a></p>",
               "image": "https://www.doerfelverse.com/art/dvspaceart.jpeg",
-              "explicit": false,
-              "keywords": [
-                "intothedoerfelverse",
-                "intothedoerfel-verse",
-                "doerfel",
-                "verse",
-                "into",
-                "the",
-                "doerfels",
-                "episode",
-                "6",
-                "live",
-                "jam",
-                "livejam1",
-                "episode6",
-                "joey",
-                "sirtjthewrathful"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 5 - Berries and Cream",
-              "duration": "65:04",
               "url": "https://www.doerfelverse.com/tracks/doerfelverse-ep5.mp3",
-              "trackNumber": 51,
-              "subtitle": "Episode 5 - Berries and Cream",
-              "summary": "Episode 5 - Berries and Cream\nTJ shares new end of show mix he made for the best podcast in the univeerse, No Agenda!\nBen's worship music here: https://lnbeats.com/album/08604071-83cc-5810-bec2-bea0f0cd0033\nListen to Jdogs songs here!\nAdam! it's only Ben and Kurtisdrums who complain about your compression, talk about sound snobs! 😂 \nThis is a value for value podcast, if you find any value in our content please return some value even if its just a quick email message. We love hearing from you.\nTry A new podcast app! Podverse, Podcast Guru, Fountain are some of our favs right now!\nWe would also like to let people know we endourse Steven Bells tools, Music Side Project and Sovereign Feeds. If you are interested in self hosting your own music check them out or send TJ an email if you'd like more information. tj@sirtjthewrathful.com\nThanking boosters from last week: greatbrittain94, adam287, Adam Curry, John Siebert, Dreb Scott, trailchicken, bearsnare, gt\nAlso A big shout out to those who streamed us sats, so generous!\nWe go through some of Ben and Kurts crazy songs and pull up some oldies!",
+              "duration": 3904,
+              "trackNumber": 52,
+              "pubDate": "Wed, 20 Sep 2023 01:47:49 +0000",
+              "guid": {
+                "#text": "4fe5085b-6725-4c1f-8ca6-288f464840b0",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Episode 5 - Berries and Cream</p>\n<p>TJ shares new <a href=\"https://podverse.fm/clip/O2eTcTgSB\" target=\"_blank\" rel=\"noopener\">end of show</a> mix he made for the best podcast in the univeerse, <a href=\"https://www.noagendashow.net/\">No Agenda!</a></p>\n<p>Ben's worship music here: <a href=\"https://lnbeats.com/album/08604071-83cc-5810-bec2-bea0f0cd0033\" target=\"_blank\" rel=\"noopener\">https://lnbeats.com/album/08604071-83cc-5810-bec2-bea0f0cd0033</a></p>\n<p>Listen to Jdogs songs <a href=\"https://lnbeats.com/album/a599fabe-6b73-58f3-88b8-a7b78a2976b5\" target=\"_blank\" rel=\"noopener\">here!</a></p>\n<p>Adam! it's only Ben and Kurtisdrums who complain about your compression, talk about sound snobs! 😂&nbsp;</p>\n<p>This is a value for value podcast, if you find any value in our content please return some value even if its just a quick email message. We love hearing from you.</p>\n<p>Try A <a href=\"https://podcastindex.org/apps\" target=\"_blank\" rel=\"noopener\">new podcast app</a>! <a href=\"https://podverse.fm/\" target=\"_blank\" rel=\"noopener\">Podverse</a>, Podcast Guru, Fountain are some of our favs right now!</p>\n<p>We would also like to let people know we endourse <a href=\"https://noagendasocial.com/@StevenB@podcastindex.social\" target=\"_blank\" rel=\"noopener\">Steven Bell</a>s tools, <a href=\"https://studio.musicsideproject.com/\" target=\"_blank\" rel=\"noopener\">Music Side Project</a> and <a href=\"https://sovereignfeeds.com/\" target=\"_blank\" rel=\"noopener\">Sovereign Feeds. </a>If you are interested in self hosting your own music check them out or send TJ an email if you'd like more information. tj@sirtjthewrathful.com</p>\n<p>Thanking boosters from last week: greatbrittain94, adam287, Adam Curry, John Siebert, Dreb Scott, trailchicken, bearsnare, gt</p>\n<p>Also A big shout out to those who streamed us sats, so generous!</p>\n<p>We go through some of Ben and Kurts crazy songs and pull up some oldies!</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>",
               "image": "https://www.doerfelverse.com/art/dvspaceart.jpeg",
-              "explicit": false,
-              "keywords": [
-                "doerfels",
-                "doerfel",
-                "doerfelverse",
-                "doerfel-verse",
-                "verse",
-                "doerfelpodcast",
-                "doerfelsmusic",
-                "podcast",
-                "into",
-                "the",
-                "intothedoerfelverse",
-                "episode",
-                "5"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 4 - Superjells",
-              "duration": "79:56",
               "url": "https://www.doerfelverse.com/tracks/ep4doerfelverse-superjells.mp3",
-              "trackNumber": 52,
-              "subtitle": "Episode 4 - Superjells",
-              "summary": "Episode 4 - Superjells\nAnother brother, a key member of the band, Ben finally joins us on the podcast!\nBand life/timeline, stories, touring, making money, play some OLD bluegrass tracks.\nSongwritting and tastes.\nThis is a value 4 value podcast. If you found any value please let us know even if it's just with an email!\nOutro music by Ryan & Seth Fonda",
+              "duration": 4796,
+              "trackNumber": 53,
+              "pubDate": "Wed, 13 Sep 2023 19:26:31 +0000",
+              "guid": {
+                "#text": "6570c0b1-fa57-4cad-9466-b0f2fab083cb",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Episode 4 - Superjells</p>\n<p>Another brother, a key member of the band, Ben finally joins us on the podcast!</p>\n<p>Band life/timeline, stories, touring, making money, play some OLD bluegrass tracks.</p>\n<p>Songwritting and tastes.</p>\n<p>This is a value 4 value podcast. If you found any value please let us know even if it's just with an email!</p>\n<p>Outro music by Ryan & Seth Fonda</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>",
               "image": "https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/cropped-cropped-doerfel-verse-idea-9.png",
-              "explicit": false,
-              "keywords": [
-                "doerfelverse",
-                "doerfel",
-                "doerfels",
-                "doerfel-verse",
-                "episode",
-                "4",
-                "thedoerfels",
-                "ep4",
-                "episode4",
-                "sirtjthewrathful"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 3 - Keep it Low Key ft. Ryan Fonda",
-              "duration": "75:13",
               "url": "https://www.sirtjthewrathful.com/media/ep3-ryan-fonda.mp3",
-              "trackNumber": 53,
-              "subtitle": "Episode 3 - Keep it Low Key ft. Ryan Fonda",
-              "summary": "Brand New intro :)\nMore talk about \"The Doerfels\" as a band name. Link to video we discussed HERE\nSpecial Guest Ryan Fonda! Check him out on WavLake\nTalk of Ryan's older brother Miles Fonda(April 15, 1988 - January 21, 2023) who gave TJ his No Agenda Knight name. Listen to Miles' song HERE.\nChatting with Ryan about what he's working on and then what Doerfels song to pick next, hmm.\nTo connect with us through boosting get a new podcasting app, some great ones are Fountain, Podverse, and Podcast Guru, if you have any thoughts or questions please email us, tj@sirtjthewrathful.com",
+              "duration": 4513,
+              "trackNumber": 54,
+              "pubDate": "Wed, 06 Sep 2023 10:15:06 +0000",
+              "guid": {
+                "#text": "92207c60-da47-4e03-af62-3c47503b7c01",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Brand New intro :)</p>\n<p>More talk about \"The Doerfels\" as a band name. Link to video we discussed <a href=\"https://youtu.be/IU4h2byQug4?si=7uGVcSqJRhjTnfy0\" target=\"_blank\" rel=\"noopener\">HERE</a></p>\n<p>Special Guest Ryan Fonda! Check him out on <a href=\"https://www.wavlake.com/ryan-fonda\" target=\"_blank\" rel=\"noopener\">WavLake</a></p>\n<p>Talk of Ryan's older brother Miles Fonda(April 15, 1988 - January 21, 2023) who gave TJ his No Agenda Knight name. Listen to Miles' song <a href=\"https://podcastindex.org/podcast/6599273\" target=\"_blank\" rel=\"noopener\">HERE</a>.</p>\n<p>Chatting with Ryan about what he's working on and then what Doerfels song to pick next, hmm.</p>\n<p>To connect with us through boosting get a new podcasting app, some great ones are <a href=\"https://www.fountain.fm/\" target=\"_blank\" rel=\"noopener\">Fountain</a>, <a href=\"https://podverse.fm/podcast/yK1ScNbZTc\" target=\"_blank\" rel=\"noopener\">Podverse</a>, and <a href=\"https://podcastguru.io/\" target=\"_blank\" rel=\"noopener\">Podcast Guru</a>, if you have any thoughts or questions please email us, tj@sirtjthewrathful.com</p>\n<p>&nbsp;</p>",
               "image": "https://www.sirtjthewrathful.com/art/ep3art.jpg",
-              "explicit": false,
-              "keywords": [
-                "doerfelverse",
-                "doerfels",
-                "doerfel",
-                "doerfel-verse",
-                "verse"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 2 - DragonBoyz",
-              "duration": "54:38",
               "url": "https://www.sirtjthewrathful.com/media/ep2-taste-the-dragon.mp3",
-              "trackNumber": 54,
-              "subtitle": "Episode 2 - DragonBoyz",
-              "summary": "Episode 2 is here! We dive deep into some more tracks.\nSpecial thanks to boosts we got this week from: Adam Curry, Dave Jones, ChadF, Fletcher, Dame DuhLaurien, Sir Spencer Wolf of KS\nMake sure you check out the track we chose to release after this episode!\nListen to our music on LNbeats.com by searching, \"doerfels\".\nThis is a value for value podcast, if you find any value then let us know by sending any kind of value back. One way to do that is by sending us a boostagram, or simply send us an email, we want to hear from you, Thanks!\nSir TJ The Wrathful, Shredward, Kurtisdrums, Cousin Mike",
+              "duration": 3278,
+              "trackNumber": 55,
+              "pubDate": "Fri, 01 Sep 2023 02:52:39 +0000",
+              "guid": {
+                "#text": "a0830159-5dda-4415-949b-fb7615961e87",
+                "@_isPermaLink": false
+              },
+              "description": "<p>Episode 2 is here! We dive deep into some more tracks.</p>\n<p>Special thanks to boosts we got this week from: Adam Curry, Dave Jones, ChadF, Fletcher, Dame DuhLaurien, Sir Spencer Wolf of KS</p>\n<p>Make sure you check out the track we chose to release after this episode!</p>\n<p>Listen to our music on LNbeats.com by searching, \"doerfels\".</p>\n<p>This is a value for value podcast, if you find any value then let us know by sending any kind of value back. One way to do that is by sending us a boostagram, or simply send us an email, we want to hear from you, Thanks!</p>\n<p>Sir TJ The Wrathful, Shredward, Kurtisdrums, Cousin Mike</p>",
               "image": "https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/cropped-cropped-doerfel-verse-idea-9.png",
-              "explicit": false,
-              "keywords": [
-                "doerfel-verse",
-                "doerfelverse",
-                "ep2",
-                "doerfels"
-              ]
+              "link": ""
             },
             {
               "title": "Episode 1 - So Friggin' Fine",
-              "duration": "44:14",
               "url": "https://www.sirtjthewrathful.com/media/doerfel-verse-1-So-Friggin-Fine-08-13-23.mp3",
-              "trackNumber": 55,
-              "subtitle": "Episode 1 - So Friggin' Fine",
-              "summary": "We discuss our reasons for making a podcast.\nShort history of the band.\nThanks to Adam Curry for featuring us on the first episode of his brand new music podcast Boostagram Ball, check it out!\nValue for Value model.\nWhat is a Doerfel?\nSpotify, and major streaming services screwing artists?\nWhat song we releasing next? listen to us figure it out, then check the following episode for the full track!\nFor better listening get a Podcasting 2.0 app. We love podcast guru and podverse. For music we recomend searching \"the doerfels\" at LNbeats.com\nSpecial thanks to Steven Bell and Sir Spencer Wolf of KC\nIn this feed we will be making episodes followed by a song. We also plan on sharing other artists music who are following the v4v model.\nBoost us your feedback or email us at tj@sirtjthewrathful.com or find us on No Agenda Social",
+              "duration": 2654,
+              "trackNumber": 56,
+              "pubDate": "Fri, 25 Aug 2023 21:22:32 +0000",
+              "guid": {
+                "#text": "f81fdd33-3fa4-4227-b9ee-4dd1b5e96b2d",
+                "@_isPermaLink": false
+              },
+              "description": "<p>We discuss our reasons for making a podcast.</p>\n<p>Short history of the band.</p>\n<p>Thanks to Adam Curry for featuring us on the first episode of his brand new music podcast <a href=\"https://www.boostagramball.com/\" target=\"_blank\" rel=\"noopener\">Boostagram Ball</a>, check it out!</p>\n<p><a href=\"https://value4value.info/\">Value for Value</a> model.</p>\n<p>What is a Doerfel?</p>\n<p>Spotify, and major streaming services screwing artists?</p>\n<p>What song we releasing next? listen to us figure it out, then check the following episode for the full track!</p>\n<p>For better listening get a <a href=\"https://podcastindex.org/apps\" target=\"_blank\" rel=\"noopener\">Podcasting 2.0 app</a>. We love podcast guru and podverse. For music we recomend searching \"the doerfels\" at <a href=\"https://lnbeats.com/\" target=\"_blank\" rel=\"noopener\">LNbeats.com</a></p>\n<p>Special thanks to Steven Bell and Sir Spencer Wolf of KC</p>\n<p>In this feed we will be making episodes followed by a song. We also plan on sharing other artists music who are following the v4v model.</p>\n<p>Boost us your feedback or email us at tj@sirtjthewrathful.com or find us on No Agenda Social</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>",
               "image": "https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/doerfel-verse-idea-9.png",
-              "explicit": false,
-              "keywords": [
-                "doerfels",
-                "thedoerfels",
-                "the",
-                "doerfel-verse",
-                "dorfel",
-                "doerfuls",
-                "verse",
-                "into",
-                "intothedoerfelverse"
-              ]
+              "link": ""
             }
           ],
           "releaseDate": "Sat, 26 Jul 2025 06:18:38 +0000",
@@ -11053,7 +10559,7 @@
       "addedAt": "2025-01-27T00:00:00.000Z",
       "lastUpdated": "2025-01-27T00:00:00.000Z",
       "parseStatus": "success",
-      "lastParsed": "2025-07-28T23:53:35.038Z",
+      "lastParsed": "2025-07-30T10:54:08.070Z",
       "parsedData": {
         "album": {
           "title": "bitpunk.fm",
@@ -11062,100 +10568,147 @@
           "coverArt": "https://files.bitpunk.fm/cover_feed.png",
           "tracks": [
             {
-              "title": "Second God",
-              "duration": "39:58",
-              "url": "https://files.bitpunk.fm/bitpunk_fm_2_6.mp3",
+              "title": "Cosmic Cassette",
+              "url": "https://files.bitpunk.fm/bitpunk_fm_2_7.mp3",
+              "duration": 2512,
               "trackNumber": 1,
+              "pubDate": "Wed, 30 Jul 2025 00:10:31 -0600",
+              "guid": "d6a1646c-6d07-11f0-9acc-00155d265bcc",
+              "description": "See <a href=\"https://zine.bitpunk.fm/tapes/2-7/\">https://zine.bitpunk.fm/tapes/2-7/</a>",
+              "image": "https://files.bitpunk.fm/bitpunk_fm_2_7_podcast_cover.jpeg",
+              "link": "https://zine.bitpunk.fm/tapes/2-7/"
+            },
+            {
+              "title": "Second God",
+              "url": "https://files.bitpunk.fm/bitpunk_fm_2_6.mp3",
+              "duration": 2398,
+              "trackNumber": 2,
+              "pubDate": "Mon, 30 Jun 2025 11:31:44 -0600",
+              "guid": "25f58318-55d9-11f0-aeb6-00155d0cfbe1",
+              "description": "<h1>Side A</h1><ul><li>Baia Silko (Single) by Øystein Berge</li><li>Poor Richard by bitpunk.fm</li><li>An Angel without a body (Tony Schwartz and Marshall McLuhan)</li><li>Brackish Dreams by Nick Chapman-Jones</li><li>The Media are Everywhere and Nowhere aired 7 June 2025 on WAIF by bitpunk.fm</li><li>Cursed Tomahawks by bitpunk.fm</li></ul><h1>Side B</h1><ul><li>Mr. Videoman by Prosperous Soul</li><li>You can learn about crime in New York (Tony Schwartz)</li><li>Chrip data-over-audio</li><li>the animals had no names by bridalcreeper</li></ul><footer><p>Call 1-877-BIT-LOFI and leave crazy messages on a real cassette!</p><p>How to get a physical tape:</p><pre><code>Mail a postcard with your return address to\n\t</code></pre><p>P.O. Box 273029\n    Fort Collins, CO 80525</p><pre><code>I will mail you the tape for free when the issue is out.\n    You return the value with your time, talent, or treasure.\n    I thank you by adding your name/nym to the jcard (if you provide it).\n    </code></pre></footer>",
               "image": "https://files.bitpunk.fm/bitpunk_fm_2_6_cover.jpeg",
-              "explicit": true
+              "link": "https://zine.bitpunk.fm/tapes/2-6/"
             },
             {
               "title": "Cassette Countdown",
-              "duration": "60:00",
               "url": "https://files.bitpunk.fm/bitpunk_fm_2_5.mp3",
-              "trackNumber": 2,
+              "duration": 3600,
+              "trackNumber": 3,
+              "pubDate": "Thu, 29 May 2025 06:29:24 +0000",
+              "guid": "https://www.bitpunk.fm/@bitpunkfm/episodes/cassette-countdown",
+              "description": "<h1>Side A</h1><ul><li>Stay Awhile by Able and the Wolf</li><li>Luv Song 4 U by HeyCitizen</li><li>Long Distance Dedication</li><li>Light and Shade by Delta OG</li><li>Long Distance Dedication</li><li>Womp Womp Womp Womp by Kurtisdrums</li><li>THE BANJO by Sir TJ the Wrathful</li><li>Don’t Feel Bad by Survival Guide</li></ul><h1>Side B</h1><ul><li>1 year of Bitpunk.fm</li><li>Issue by issue review</li><li>The future</li></ul><footer><p>Call 1-877-BIT-LOFI and leave crazy messages on a real cassette!</p><p>How to get a physical tape:</p><pre><code>Mail a postcard with your return address to\n                         </code></pre><p>P.O. Box 273029\n                         Fort Collins, CO 80525</p><pre><code>I will mail you the tape for free when the issue is out.\n                         You return the value with your time, talent, or treasure.\n                         I thank you by adding your name/nym to the jcard (if you provide it).\n                         </code></pre></footer>",
               "image": "https://files.bitpunk.fm/bitpunk_fm_2_5_cover.png",
-              "explicit": true
+              "link": "https://zine.bitpunk.fm/tapes/2-5/"
             },
             {
               "title": "Now in HD",
-              "duration": "40:09",
               "url": "https://files.bitpunk.fm/bitpunk_fm_2_4.mp3",
-              "trackNumber": 3,
+              "duration": 2409,
+              "trackNumber": 4,
+              "pubDate": "Tue, 22 Apr 2025 14:12:20 +0000",
+              "guid": "https://www.bitpunk.fm/@bitpunkfm/episodes/now-in-hd",
+              "description": "<h2>Side A</h2><ul><li>Copying is not theft by Nina Paley</li><li>Calibrating Broadcast and Radio Brigade by Mellow Cassette</li><li>HD Radio is not High Definition by Bitpunk.fm</li><li>Crop Circles by Mellow Cassette</li></ul><h2>Side B</h2><ul><li>Madame Psychosis meets Marshall McLuhan. An experimental mashup of radio media.</li></ul><footer><p>Call 1-877-BIT-LOFI and leave crazy messages on a real cassette!</p><p>How to get a physical tape:</p><pre><code>Mail a postcard with your return address to\n                         </code></pre><p>P.O. Box 273029\n                         Fort Collins, CO 80525</p><pre><code>I will mail you the tape for free when the issue is out.\n                         You return the value with your time, talent, or treasure.\n                         I thank you by adding your name/nym to the jcard (if you provide it).\n                         </code></pre></footer>",
               "image": "https://files.bitpunk.fm/bitpunk_fm_2_4_cover.png",
-              "explicit": true
+              "link": "https://zine.bitpunk.fm/tapes/2-4/"
             },
             {
               "title": "Touch Tones",
-              "duration": "40:16",
               "url": "https://files.bitpunk.fm/bitpunk_fm_2_3.mp3",
-              "trackNumber": 4,
+              "duration": 2416,
+              "trackNumber": 5,
+              "pubDate": "Sat, 15 Mar 2025 15:41:27 +0000",
+              "guid": "https://www.bitpunk.fm/@bitpunkfm/episodes/touch-tones",
+              "description": "<h1>Side A</h1><ul><li>1-877-BIT-LOFI</li><li>914-737-9938</li><li>609-528-2500</li><li>Blood Perfume by Survivial Guide</li><li>206-737-0945</li><li>415-903-4595</li><li>719-838-4002</li><li>707-873-7862</li><li>864-631-2806</li><li>808-973-4380</li></ul><h1>Side B</h1><ul><li>304-867-5309</li><li>On the Doc by And Now Miguel</li><li>336-226-1488</li><li>202-452-3206</li><li>720-856-8500</li><li>917-994-8949</li><li>Witness through Glass by Bitpunk.fm</li><li>630-847-5241</li><li>970-879-7300</li><li>202-762-1401</li><li>DTMF Tones</li></ul><footer><p>Call 1-877-BIT-LOFI and leave crazy messages on a real cassette!</p><p>How to get a physical tape:</p><pre><code>Mail a postcard with your return address to\n                 </code></pre><p>P.O. Box 273029\n                 Fort Collins, CO 80525</p><pre><code>I will mail you the tape for free when the issue is out.\n                 You return the value with your time, talent, or treasure.\n                 I thank you by adding your name/nym to the jcard (if you provide it).\n                 </code></pre></footer>",
               "image": "https://files.bitpunk.fm/bitpunk_fm_2_3_cover.png",
-              "explicit": true
+              "link": "https://zine.bitpunk.fm/tapes/2-3/"
             },
             {
               "title": "Tick Tock",
-              "duration": "40:09",
               "url": "https://files.bitpunk.fm/bitpunk_fm_2_2.mp3",
-              "trackNumber": 5,
+              "duration": 2409,
+              "trackNumber": 6,
+              "pubDate": "Mon, 17 Feb 2025 03:42:58 +0000",
+              "guid": "https://www.bitpunk.fm/@bitpunkfm/episodes/tick-tock",
+              "description": "<h1>Side A</h1><ul><li>Solar Weather Forecast</li><li>A Busy Day by Øystein Berge</li><li>Mind Controller by Miter</li><li>Being Born by Jeffrey Salem</li><li>Kerouac by White Triangles</li></ul><h1>Side B</h1><ul><li>Mountains of the Living Dead by bitpunk.fm</li><li>Let’s talk about time by bitpunk.fm</li><li>Get Your Don’t by Survival Guide</li><li>Outro</li></ul><footer><p>Call 1-877-BIT-LOFI and leave crazy messages on a real cassette!</p><p>How to get a physical tape:</p><pre><code>Mail a postcard with your return address to\n                 </code></pre><p>P.O. Box 273029\n                 Fort Collins, CO 80525</p><pre><code>I will mail you the tape for free when the issue is out.\n                 You return the value with your time, talent, or treasure.\n                 I thank you by adding your name/nym to the jcard (if you provide it).\n                 </code></pre></footer>",
               "image": "https://files.bitpunk.fm/bitpunk_fm_2_2_cover.png",
-              "explicit": true
+              "link": "https://zine.bitpunk.fm/tapes/2-2/"
             },
             {
               "title": "Make Poetry Punk Again",
-              "duration": "40:00",
               "url": "https://files.bitpunk.fm/bitpunk_fm_2_1.mp3",
-              "trackNumber": 6,
+              "duration": 2400,
+              "trackNumber": 7,
+              "pubDate": "Sat, 18 Jan 2025 04:47:52 +0000",
+              "guid": "https://www.bitpunk.fm/@bitpunkfm/episodes/make-poetry-punk-again",
+              "description": "<h1>Side A</h1><ul><li>Turn On, Tune In, Opt Out</li><li>Poetry When Read</li><li>Hear the barn owl screech</li><li>Intermission</li><li>The Teeth Mother Nake at Last</li><li>Thank You Cards</li><li>With Love, Goodbye</li><li>Lovely Spinning Decks</li><li>Tune In, Drop Out</li><li>The Leaves Below</li><li>The Morality of Taxes</li><li>Scattered Photographs</li><li>Leaded Ink</li></ul><h1>Side B</h1><ul><li>No one writes poems for the ants</li><li>She Who Stirs The Abyss</li><li>Speed Altar</li><li>Poem Code</li><li>Outro</li></ul><h1>Cover Photo</h1><p>By Colin Czerwinkski (<a href=\"https://colinczerwinski.format.com/\">https://colinczerwinski.format.com/</a>).</p><footer><p>Call 1-877-BIT-LOFI and leave crazy messages on a real cassette!</p><p>How to get a physical tape:</p><pre><code>Mail a postcard with your return address to\n                 </code></pre><p>P.O. Box 273029\n                 Fort Collins, CO 80525</p><pre><code>I will mail you the tape for free when the issue is out.\n                 You return the value with your time, talent, or treasure.\n                 I thank you by adding your name/nym to the jcard (if you provide it).\n                 </code></pre></footer>",
               "image": "https://files.bitpunk.fm/bitpunk_fm_2_1_cover.png",
-              "explicit": true
+              "link": "https://zine.bitpunk.fm/tapes/2-1/"
             },
             {
               "title": "KBIT-FM 97.5",
-              "duration": "40:04",
               "url": "https://files.bitpunk.fm/bitpunk_fm_0_5.mp3",
-              "trackNumber": 7,
+              "duration": 2404,
+              "trackNumber": 8,
+              "pubDate": "Tue, 17 Dec 2024 03:28:07 +0000",
+              "guid": "https://www.bitpunk.fm/@bitpunkfm/episodes/kbit-fm-975",
+              "description": "<h1>Track List</h1><h2>Side A</h2><ul><li>No one writes poems for the ants. Poem by Bitpunk.fm.</li><li>The Platform, LoFi Version from HeyCitizen’s Lo-Fi Hip-Hop Beats to Study and Relax to</li><li>Gonzo book review by Dr. Josh S. Thompson of The Radio Phonics Laboratory, by Justin Patrick Moore.</li></ul><h2>Side B</h2><ul><li>It’s Christmastime Again by HeyCitizen from The Heycitizen Experience</li><li>The Joy of Soldering by Bob Josh</li><li>Outro an annoucements</li></ul><h2>Notes</h2><ul><li>This episode was digitized from the cassette. There is tape hiss in the audio on purpose.</li><li>Watch bitpunk.fm live on a satellite skirmish January 12th, 2025. <a href=\"https://podverse.fm/podcast/L6Gw3BUtI\">https://podverse.fm/podcast/L6Gw3BUtI</a></li><li>Call 1-877-BIT-LOFI and leave a crazy voicemail</li><li>Send cash, cassettes, and cards to Bitpunk.fm, P.O. Box 273029Fort Collins, CO 80525</li></ul><footer><p>Call 1-877-BIT-LOFI and leave crazy messages on a real cassette!</p><p>How to get a physical tape:</p><pre><code>Mail a postcard with your return address to\n                 </code></pre><p>P.O. Box 273029\n                 Fort Collins, CO 80525</p><pre><code>I will mail you the tape for free when the issue is out.\n                 You return the value with your time, talent, or treasure.\n                 I thank you by adding your name/nym to the jcard (if you provide it).\n                 </code></pre></footer>",
               "image": "https://files.bitpunk.fm/bitpunk_fm_0_5_cover.png",
-              "explicit": true
+              "link": "https://zine.bitpunk.fm/tapes/0-5/"
             },
             {
               "title": "Turn On, Tune In, Opt Out",
-              "duration": "40:00",
               "url": "https://files.bitpunk.fm/bitpunk_fm_0_4.mp3",
-              "trackNumber": 8,
+              "duration": 2400,
+              "trackNumber": 9,
+              "pubDate": "Tue, 05 Nov 2024 23:46:19 +0000",
+              "guid": "https://www.bitpunk.fm/@bitpunkfm/episodes/turn-on-tune-in-opt-out",
+              "description": "<p><strong>Track List</strong></p><p>Side A</p><ul><li>Intro</li><li>Cocktail Party</li><li>Brainwave Resonance by The Ohm</li><li>Untitled by Scrotus</li><li>Forward to Applied Cryptography read by Average Gary\n                 Side B</li><li>The news by Bugle.news</li><li>It’s a mod, mod, world of radio by bitpunk.fm</li><li>Owen’s Loop</li><li>Outro</li></ul><p><strong>Notes</strong>\n                 Episode heavily inspired by the show Laugh-In. Audio samples from Laugh-In, the Medium is the Massage by Marshall McLuhan, The Grass Menagerie by Henry Gibson, and various Armed Forces Vietnam Network Public Service Announcements. Quotes taken from various 1960s “influencers.” The point of included such clips is to show perhaps not much has changed from the 1960s, but you be the judge. HERE COMES THE JUDGE.</p><p>Follow the artists on nostr:\n                 The Ohm:\n                 npub1senhgukc4mj4tnhkmsvpvl5veg6t6nz5l0gnv3j6fcznhulm9dhs6vwdtx</p><p>Owen: npub1am50jqjytzdtepftqfzf8grh2gs4wpt7d4t90zxc6z288wqazj5skdks29</p><p>average_gary:\n                 npub160t5zfxalddaccdc7xx30sentwa5lrr3rq4rtm38x99ynf8t0vwsvzyjc9</p><p>bugle.news:\n                 npub1563z6kxmvuy7s8zhzan8m0hzmkavyfzg2aw6h7f0fvcvdms398csaxc9n6</p><p>scrotus:\n                 npub1t04cvx3d0a3le22rgnekk20wvr3l4jpg93vkledsyakas96puqaqwm53m9</p><footer><p>Call 1-877-BIT-LOFI and leave crazy messages on a real cassette!</p><p>How to get a physical tape:</p><pre><code>Mail a postcard with your return address to\n                 </code></pre><p>P.O. Box 273029\n                 Fort Collins, CO 80525</p><pre><code>I will mail you the tape for free when the issue is out.\n                 You return the value with your time, talent, or treasure.\n                 I thank you by adding your name/nym to the jcard (if you provide it).\n                 </code></pre></footer>",
               "image": "https://files.bitpunk.fm/bitpunk_fm_0_4_cover.png",
-              "explicit": true
+              "link": "https://zine.bitpunk.fm/tapes/0-4/"
             },
             {
               "title": "Rewinding the Future HCPP24",
-              "duration": "55:57",
               "url": "https://files.bitpunk.fm/bitpunk_fm_0_3.mp3",
-              "trackNumber": 9,
+              "duration": 3357,
+              "trackNumber": 10,
+              "pubDate": "Thu, 10 Oct 2024 18:32:35 +0000",
+              "guid": "https://www.bitpunk.fm/@bitpunkfm/episodes/rewinding-the-future-hcpp24-talk",
+              "description": "<p>Talk presented at Hacker’s Congress Paralelní Polis on 5.10.24.</p><h2>Rewinding the Future: The Cultural Anarchism of Cassettes</h2><h2>Abstract</h2><p>Cypherpunks rejoice! We finally have a private, anonymous, and censorship resistant media: the compact cassette. Historically, cassettes have toppled governments, sparked moral panics, and spread subversive messages. But are they still relevant today besides hipster nostalgia? Join me as I recount the transformative history of cassettes, uncovering the parallel societies they have built and explore their modern applications.</p><p>In today’s age of pervasive surveillance, the portable, offline, and analog nature of cassettes offers a renewed sense of relevance and freedom. I’ll cover cypherpunk applications of cassettes including innovative uses in backups, ecash, steganography, and analog and digital encryption. And just for fun, you will learn how to make tape loops and DIY sound on sound recording as well. So, get ready to press record and learn how analog recording can aid us in the fight for self-sovereignty and freedom.</p><footer><p>Call 1-877-BIT-LOFI and leave crazy messages on a real cassette!</p><p>How to get a physical tape:</p><pre><code>Mail a postcard with your return address to\n                 </code></pre><p>P.O. Box 273029\n                 Fort Collins, CO 80525</p><pre><code>I will mail you the tape for free when the issue is out.\n                 You return the value with your time, talent, or treasure.\n                 I thank you by adding your name/nym to the jcard (if you provide it).\n                 </code></pre></footer>",
               "image": "https://files.bitpunk.fm/bitpunk_fm_0_3_cover.jpg",
-              "explicit": true
+              "link": "https://zine.bitpunk.fm/tapes/0-3/"
             },
             {
               "title": "Sponsorship = Censorship",
-              "duration": "40:00",
               "url": "https://files.bitpunk.fm/bitpunk_fm_0_2.mp3",
-              "trackNumber": 10,
+              "duration": 2400,
+              "trackNumber": 11,
+              "pubDate": "Thu, 29 Aug 2024 17:06:29 +0000",
+              "guid": "https://www.bitpunk.fm/@bitpunkfm/episodes/sponsorship-censorship",
+              "description": "<h1>Side A</h1><ul><li>ZPI: The Mysterious Tape Episode 1 by bitpunk.fm</li><li>The Simulation is Glitching – The Ohm, Reality Fold</li><li>Cassette Revolution – AI generated by Suno – prompt by bitpunk.fm</li><li>In the Desert – Stephen Crane, 1895. Trumpet, Synth by bitpunk.fm</li><li>Bitcoin Veterans SSTV image – HR4BTC</li><li>The Box by Ash Overseer</li></ul><h1>Side B</h1><ul><li>Wale Watu (Those People) by Billiv</li><li>Superintelligence is a Bitcoiner, by the Ohm, Reality Fold</li><li>OTP is for you and me, bitpunk.fm</li></ul><footer><p>Call 1-877-BIT-LOFI and leave crazy messages on a real cassette!</p><p>How to get a physical tape:</p><pre><code>Mail a postcard with your return address to\n                 </code></pre><p>P.O. Box 273029\n                 Fort Collins, CO 80525</p><pre><code>I will mail you the tape for free when the issue is out.\n                 You return the value with your time, talent, or treasure.\n                 I thank you by adding your name/nym to the jcard (if you provide it).\n                 </code></pre></footer>",
               "image": "https://files.bitpunk.fm/bitpunk_fm_0_2_cover.png",
-              "explicit": true
+              "link": "https://zine.bitpunk.fm/tapes/0-2/"
             },
             {
               "title": "Your Results May Vary",
-              "duration": "38:51",
               "url": "https://files.bitpunk.fm/bitpunk_fm_0_1.mp3",
-              "trackNumber": 11,
+              "duration": 2331,
+              "trackNumber": 12,
+              "pubDate": "Mon, 22 Jul 2024 04:42:36 +0000",
+              "guid": "https://www.bitpunk.fm/@bitpunkfm/episodes/your-results-may-vary",
+              "description": "<h1>Track List</h1><h2>Side A</h2><ol><li>Intro</li><li>Music, Untitled by Camillo</li><li>Analog Encryption\n                 <a href=\"https://www.cryptomuseum.com/crypto/usa/sigsaly/\">SIGSALY</a> article. <a href=\"https://github.com/windytan/deinvert\">deinvert</a>.</li><li>Ode Bossa Nova\n                 <a href=\"https://www.poetryfoundation.org/poems/54933/ode-\">Poem</a> by Arthur O’Shaughnessy. Jeff Lewis Trumpet <a href=\"https://www.youtube.com/watch?v=ZOLmXas_vXc\">Arrangement</a>.</li></ol><h2>Side B</h2><ol start=\"5\"><li><p>Statism\n                 <a href=\"https://www.loc.gov/item/mbrs01964101/\">Original</a> remixed from: United States Department Of The Army, and United State<br />\n                 s Office Of Education. Communism. 1950. Video.</p></li><li><p>Zklamana, by Bäretta</p></li><li><p>Cashu over QR over Audio over Cassette\n                 <a href=\"https://f-droid.org/en/packages/xdsopl.robot36/\">Robot36 app</a>. Signal made with <a href=\"https://ckegel.github.io/Web-SSTV/\">web SSTV</a>.</p></li></ol><h2>Ads</h2><p>80s ad inserted as a reference to cassette culture at the time.</p><h1>Contributors</h1><ul><li><a href=\"https://primal.net/p/npub1f49twdlzlw667r74jz6t06xxlemd8gp2j7g77l76easpl8jsltvqvlzpez\">bitpunk.fm</a></li><li><a href=\"https://primal.net/p/npub1l3e2uj7dzs226s7q9utf9ghml8f3mcv7252hd69nhg2z62updklqv8zq2r\">Bäretta</a></li><li><a href=\"https://primal.net/p/npub1nrup3eerfzmqgpm6upy6swx8uehaq83w8a5vtcp0zyjc5fcyluzq2wumjy\">Camillo</a></li></ul><footer><p>Call 1-877-BIT-LOFI and leave crazy messages on a real cassette!</p><p>How to get a physical tape:</p><pre><code>Mail a postcard with your return address to\n                 </code></pre><p>P.O. Box 273029\n                 Fort Collins, CO 80525</p><pre><code>I will mail you the tape for free when the issue is out.\n                 You return the value with your time, talent, or treasure.\n                 I thank you by adding your name/nym to the jcard (if you provide it).\n                 </code></pre></footer>",
               "image": "https://files.bitpunk.fm/bitpunk_fm_0_1_cover.png",
-              "explicit": true
+              "link": "https://zine.bitpunk.fm/tapes/0-1/"
             },
             {
               "title": "Make BTC Punk again",
-              "duration": "40:00",
               "url": "https://files.bitpunk.fm/bitpunk_fm_0_0.mp3",
-              "trackNumber": 12,
+              "duration": 2400,
+              "trackNumber": 13,
+              "pubDate": "Mon, 10 Jun 2024 13:05:59 +0000",
+              "guid": "https://www.bitpunk.fm/@bitpunkfm/episodes/make-btc-punk-again",
+              "description": "<p>Debut at BTC Prague &amp; Cypherpunk Meetup. This episode we introduce the audiozine, feature music by Deepologic, and have two articles. The articles are: Consider the Cassette, which is a overview of how magnetic recording works and modern applications. The second is Data-over-Audio where we discuss how to send, well, data over audio.</p><p>Links:\n                 GGWave: <a href=\"https://github.com/ggerganov/ggwave\">https://github.com/ggerganov/ggwave</a></p><p>Track list:\n                 Side A (20 minutes)</p><ul><li>Intro by Josh Datko</li><li>Music by Deepologic</li><li>Consider the Cassette, article by Josh Datko</li></ul><p>Side B (20 minutes)</p><ul><li>Music by Deepologic</li><li>Data-over-Audio, article by Josh Datko</li><li>Music by Deepologic</li></ul><footer><p>Call 1-877-BIT-LOFI and leave crazy messages on a real cassette!</p><p>How to get a physical tape:</p><pre><code>Mail a postcard with your return address to\n                 </code></pre><p>P.O. Box 273029\n                 Fort Collins, CO 80525</p><pre><code>I will mail you the tape for free when the issue is out.\n                 You return the value with your time, talent, or treasure.\n                 I thank you by adding your name/nym to the jcard (if you provide it).\n                 </code></pre></footer>",
               "image": "https://files.bitpunk.fm/bitpunk_fm_0_0_cover.png",
-              "explicit": true
+              "link": "https://zine.bitpunk.fm/tapes/0-0/"
             }
           ],
           "releaseDate": "Mon, 30 Jun 2025 11:31:44 -0600",
