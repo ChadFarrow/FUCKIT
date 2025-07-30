@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import AlbumCard from '@/components/AlbumCard';
 import CDNImage from '@/components/CDNImage';
@@ -43,7 +42,6 @@ devLog('🔧 Environment check:', { NODE_ENV: process.env.NODE_ENV });
 devLog('🚀 Feeds will be loaded dynamically from /api/feeds endpoint');
 
 export default function HomePage() {
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [albums, setAlbums] = useState<RSSAlbum[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -382,11 +380,6 @@ export default function HomePage() {
         break;
       case 'singles':
         filtered = baseAlbums.filter(album => album.tracks.length === 1);
-        break;
-      case 'playlist':
-        // Redirect to playlist page
-        router.push('/playlist');
-        filtered = baseAlbums; // Return albums while redirecting
         break;
       default: // 'all'
         filtered = baseAlbums; // Show all non-explicit albums

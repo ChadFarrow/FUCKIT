@@ -502,11 +502,32 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     const handleTimeUpdate = () => {
       const currentElement = isVideoMode ? video : audio;
       setCurrentTime(currentElement.currentTime);
+      
+      // Check if current track has end time and we've reached it
+      if (currentPlayingAlbum && currentPlayingAlbum.tracks[currentTrackIndex]) {
+        const track = currentPlayingAlbum.tracks[currentTrackIndex];
+        if (track.endTime && typeof track.endTime === 'number') {
+          if (currentElement.currentTime >= track.endTime) {
+            console.log(`🎵 Reached end time: ${track.endTime}s for track: ${track.title}`);
+            // Trigger the ended event to play next track
+            currentElement.dispatchEvent(new Event('ended'));
+          }
+        }
+      }
     };
 
     const handleLoadedMetadata = () => {
       const currentElement = isVideoMode ? video : audio;
       setDuration(currentElement.duration);
+      
+      // Check if current track has time segment information and seek to start time
+      if (currentPlayingAlbum && currentPlayingAlbum.tracks[currentTrackIndex]) {
+        const track = currentPlayingAlbum.tracks[currentTrackIndex];
+        if (track.startTime && typeof track.startTime === 'number') {
+          console.log(`🎵 Seeking to start time: ${track.startTime}s for track: ${track.title}`);
+          currentElement.currentTime = track.startTime;
+        }
+      }
     };
 
     const handleError = (event: Event) => {

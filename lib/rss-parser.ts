@@ -10,6 +10,8 @@ export interface RSSTrack {
   image?: string;
   explicit?: boolean;
   keywords?: string[];
+  startTime?: number; // Add time segment support
+  endTime?: number;   // Add time segment support
 }
 
 export interface RSSFunding {

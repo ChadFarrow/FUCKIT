@@ -1,4 +1,4 @@
-// File: /Users/chad-mini/Vibe/apps/FUCKIT/app/api/parsed-feeds/route.ts
+// File: /Users/chad-mini/Vibe/apps/FUCKIT/deploy-20250729-201807/app/api/parsed-feeds/route.ts
 import * as entry from '../../../../../app/api/parsed-feeds/route.js'
 import type { NextRequest } from 'next/server.js'
 

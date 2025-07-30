@@ -44,10 +44,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   const [isClient, setIsClient] = useState(false);
   const [backgroundLoaded, setBackgroundLoaded] = useState(false);
   const [albumArtLoaded, setAlbumArtLoaded] = useState(false);
-  const [lastProcessedCoverArt, setLastProcessedCoverArt] = useState<string | null>(null);
   const [isDesktop, setIsDesktop] = useState(false);
   const preloadAttemptedRef = useRef(false);
-  const backgroundUpdateAttemptedRef = useRef(false);
   
 
   // Detect desktop for background loading optimization
@@ -275,125 +273,28 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   }, []);
 
 
-  // Update background when album data changes (only for mobile or when early loading fails)
+  // Update background when album data changes - simplified version
   useEffect(() => {
     // Don't run background effect while loading or if album is null
-    if (isLoading || !album || backgroundUpdateAttemptedRef.current) {
+    if (isLoading || !album?.coverArt) {
       return;
     }
-    
-    // On desktop, skip this if we already have a background image from early loading
-    if (isDesktop && backgroundImage) {
-      return;
-    }
-    
-    // Prevent infinite loops by checking if we've already processed this cover art
-    if (album?.coverArt === lastProcessedCoverArt) {
-      return;
-    }
-    
-    backgroundUpdateAttemptedRef.current = true;
-    
-    console.log('🎨 Background update triggered:', { 
-      albumTitle: album?.title, 
-      coverArt: album?.coverArt,
-      hasCoverArt: !!album?.coverArt,
-      isDesktop
-    });
-    
-    // Mark this cover art as processed
-    setLastProcessedCoverArt(album?.coverArt || null);
     
     // Reset loading states when album changes
     setBackgroundLoaded(false);
     setAlbumArtLoaded(false);
     
+    // Simple background image loading without complex fallbacks
     if (album?.coverArt) {
       console.log('🖼️ Loading background image:', album?.coverArt);
-      
-      // Add cache-busting parameter to prevent stale cache issues
-      const cacheBuster = Date.now();
-      const imageUrlWithCacheBuster = (typeof album?.coverArt === 'string' && album?.coverArt.includes('?')) 
-        ? `${album?.coverArt}&cb=${cacheBuster}`
-        : `${album?.coverArt}?cb=${cacheBuster}`;
-      
-      // Preload the image to ensure it's available for background
-      const img = new window.Image();
-      img.onload = () => {
-        console.log('✅ Background image loaded successfully:', album?.coverArt);
-        setBackgroundImage(imageUrlWithCacheBuster);
-        setBackgroundLoaded(true); // Mark background as loaded
-      };
-      img.onerror = (error) => {
-        console.error('❌ Background image failed to load:', album?.coverArt, error);
-        
-        // Try image proxy for external URLs
-        if (album?.coverArt && typeof album?.coverArt === 'string' && !album?.coverArt.includes('re.podtards.com')) {
-          const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(album?.coverArt)}`;
-          console.log('🔄 Trying image proxy for background:', proxyUrl);
-          
-          const proxyImg = new window.Image();
-          proxyImg.onload = () => {
-            console.log('✅ Background image loaded with proxy:', proxyUrl);
-            setBackgroundImage(proxyUrl);
-            setBackgroundLoaded(true);
-          };
-          proxyImg.onerror = (proxyError) => {
-            console.error('❌ Background image proxy also failed:', proxyUrl, proxyError);
-            // Final fallback - try original URL without cache buster
-            const fallbackImg = new window.Image();
-            fallbackImg.onload = () => {
-              console.log('✅ Background image loaded with fallback URL:', album?.coverArt);
-              setBackgroundImage(album?.coverArt || null);
-              setBackgroundLoaded(true);
-            };
-            fallbackImg.onerror = (fallbackError) => {
-              console.error('❌ Background image fallback also failed:', album?.coverArt, fallbackError);
-              // Fallback to gradient if image fails to load
-              setBackgroundImage(null);
-              setBackgroundLoaded(true); // Mark background as loaded even if image fails
-            };
-            fallbackImg.decoding = 'async';
-            fallbackImg.src = album?.coverArt || '';
-          };
-          proxyImg.decoding = 'async';
-          proxyImg.src = proxyUrl;
-        } else {
-          // For internal URLs, try without cache buster as fallback
-          const fallbackImg = new window.Image();
-          fallbackImg.onload = () => {
-            console.log('✅ Background image loaded with fallback URL:', album?.coverArt);
-            setBackgroundImage(album?.coverArt || null);
-            setBackgroundLoaded(true);
-          };
-          fallbackImg.onerror = (fallbackError) => {
-            console.error('❌ Background image fallback also failed:', album?.coverArt, fallbackError);
-            // Fallback to gradient if image fails to load
-            setBackgroundImage(null);
-            setBackgroundLoaded(true); // Mark background as loaded even if image fails
-          };
-          fallbackImg.decoding = 'async';
-          fallbackImg.src = album?.coverArt || '';
-        }
-      };
-      
-      // Set priority loading for background image
-      img.decoding = 'async';
-      img.src = imageUrlWithCacheBuster;
+      setBackgroundImage(album.coverArt);
+      setBackgroundLoaded(true);
     } else {
       console.log('🚫 No cover art available, using gradient background');
       setBackgroundImage(null);
-      setBackgroundLoaded(true); // Mark background as loaded even if no image
-    }
-    
-    // Ensure background is marked as loaded after a short delay to prevent blocking
-    const timeoutId = setTimeout(() => {
-      console.log('⏰ Background loading timeout - marking as loaded');
       setBackgroundLoaded(true);
-    }, 3000); // Increased to 3 second timeout for better reliability
-    
-    return () => clearTimeout(timeoutId);
-  }, [album?.coverArt, lastProcessedCoverArt, isLoading, album, isDesktop]); // Removed backgroundImage from dependencies to prevent infinite loop
+    }
+  }, [album?.coverArt, isLoading]); // Simplified dependencies to prevent infinite loop
 
   // Optimized background style calculation - memoized to prevent repeated logs
   const backgroundStyle = useMemo(() => {
@@ -997,10 +898,10 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               >
                 <div className="flex items-center gap-3 min-w-0 flex-1">
                   <div className="relative w-10 h-10 md:w-12 md:h-12 flex-shrink-0 overflow-hidden rounded">
-                    {/* Always use album artwork for tracks */}
+                    {/* Use track-specific artwork if available, fallback to album artwork */}
                     <CDNImage 
-                      src={album?.coverArt || ''} 
-                      alt={album.title}
+                      src={track.image || album?.coverArt || ''} 
+                      alt={track.title}
                       width={48}
                       height={48}
                       className="w-full h-full object-cover"

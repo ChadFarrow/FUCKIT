@@ -1,4 +1,4 @@
-// File: /Users/chad-mini/Vibe/apps/FUCKIT/app/publisher/[id]/page.tsx
+// File: /Users/chad-mini/Vibe/apps/FUCKIT/deploy-20250729-201807/app/publisher/[id]/page.tsx
 import * as entry from '../../../../../app/publisher/[id]/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

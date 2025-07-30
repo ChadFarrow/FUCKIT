@@ -1,162 +1,58 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Rate limiting for audio requests
-const audioRateLimit = new Map<string, { count: number; resetTime: number }>();
-const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
-const MAX_AUDIO_REQUESTS_PER_MINUTE = 30;
-
-/**
- * Check if we're rate limited for audio requests
- */
-function isAudioRateLimited(url: string): boolean {
-  try {
-    const domain = new URL(url).hostname;
-    const now = Date.now();
-    const limit = audioRateLimit.get(domain);
-    
-    if (!limit) {
-      audioRateLimit.set(domain, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
-      return false;
-    }
-    
-    if (now > limit.resetTime) {
-      audioRateLimit.set(domain, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
-      return false;
-    }
-    
-    if (limit.count >= MAX_AUDIO_REQUESTS_PER_MINUTE) {
-      return true;
-    }
-    
-    limit.count++;
-    return false;
-  } catch {
-    return false;
-  }
-}
-
-
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const audioUrl = searchParams.get('url');
-
-  if (!audioUrl) {
-    return NextResponse.json({ error: 'Audio URL parameter required' }, { status: 400 });
+  const url = searchParams.get('url');
+  
+  if (!url) {
+    return NextResponse.json({ error: 'URL parameter is required' }, { status: 400 });
   }
 
   try {
-    // Validate URL
-    const url = new URL(audioUrl);
-    
-    // Only allow certain domains for security
-    const allowedDomains = [
-      'www.doerfelverse.com',
-      'doerfelverse.com',
-      'music.behindthesch3m3s.com',
-      'thisisjdog.com',
-      'www.thisisjdog.com',
-      'wavlake.com',
-      'ableandthewolf.com',
-      'static.staticsave.com',
-      'op3.dev',
-      'd12wklypp119aj.cloudfront.net',
-      'files.heycitizen.xyz',
-      'rocknrollbreakheart.com',
-      'annipowellmusic.com',
-      'whiterabbitrecords.org',
-      'feed.falsefinish.club',
-      'f4.bcbits.com',
-      'static.wixstatic.com',
-      'noagendaassets.com',
-      'media.rssblue.com',
-      'customer-dlnbepb8zpz7h846.cloudflarestream.com'
-    ];
-    
-    if (!allowedDomains.includes(url.hostname)) {
-      return NextResponse.json({ error: 'Domain not allowed' }, { status: 403 });
-    }
-
-    // Note: Removed in-memory caching to enable streaming
-    // Browser and CDN caching will handle performance optimization
-
-    // Check rate limiting
-    if (isAudioRateLimited(audioUrl)) {
-      return NextResponse.json({ error: 'Rate limited' }, { status: 429 });
-    }
-
-    console.log(`🎵 Proxying audio: ${audioUrl}`);
-
     // Fetch the audio file
-    const response = await fetch(audioUrl, {
+    const response = await fetch(url, {
       headers: {
-        'User-Agent': 'DoerfelVerse/1.0 (Music Audio Proxy)',
-        'Range': request.headers.get('Range') || 'bytes=0-', // Support range requests
+        'User-Agent': 'Mozilla/5.0 (compatible; AudioProxy/1.0)',
+        'Range': request.headers.get('range') || 'bytes=0-',
       },
-      signal: AbortSignal.timeout(30000), // 30 second timeout for audio
     });
 
     if (!response.ok) {
-      console.error(`❌ Audio fetch failed: ${response.status} ${response.statusText}`);
-      return NextResponse.json({ 
-        error: 'Failed to fetch audio file',
-        status: response.status 
-      }, { status: response.status });
+      return NextResponse.json({ error: 'Failed to fetch audio file' }, { status: response.status });
     }
 
-    // Stream the response instead of buffering everything
-    let contentType = response.headers.get('Content-Type') || 'audio/mpeg';
+    // Get the response headers
+    const headers = new Headers();
+    headers.set('Content-Type', response.headers.get('content-type') || 'audio/mpeg');
+    headers.set('Content-Length', response.headers.get('content-length') || '');
+    headers.set('Accept-Ranges', 'bytes');
+    headers.set('Access-Control-Allow-Origin', '*');
+    headers.set('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
+    headers.set('Access-Control-Allow-Headers', 'Range');
     
-    // Handle HLS manifest files
-    if (audioUrl.includes('.m3u8')) {
-      contentType = 'application/vnd.apple.mpegurl';
+    // Copy range headers if present
+    if (response.headers.get('content-range')) {
+      headers.set('Content-Range', response.headers.get('content-range') || '');
     }
-    
-    const contentLength = response.headers.get('Content-Length');
-    
-    // Create response with proper headers for streaming
-    const proxyResponse = new NextResponse(response.body, {
+
+    // Return the audio file with proper headers
+    return new NextResponse(response.body, {
       status: response.status,
-      headers: {
-        'Content-Type': contentType,
-        'Cache-Control': 'public, max-age=600', // 10 minutes
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, HEAD',
-        'Access-Control-Allow-Headers': 'Range',
-        'Accept-Ranges': 'bytes',
-      },
+      headers,
     });
-
-    // Copy relevant headers from original response
-    if (contentLength) {
-      proxyResponse.headers.set('Content-Length', contentLength);
-    }
-    
-    const contentRange = response.headers.get('Content-Range');
-    if (contentRange) {
-      proxyResponse.headers.set('Content-Range', contentRange);
-    }
-
-    console.log(`✅ Audio streamed successfully: ${audioUrl} (${contentLength || 'unknown'} bytes)`);
-    return proxyResponse;
-
   } catch (error) {
-    console.error('❌ Audio proxy error:', error);
-    return NextResponse.json({ 
-      error: 'Failed to proxy audio file',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    console.error('Error proxying audio:', error);
+    return NextResponse.json({ error: 'Failed to proxy audio file' }, { status: 500 });
   }
 }
 
-// Handle OPTIONS requests for CORS preflight
 export async function OPTIONS(request: NextRequest) {
   return new NextResponse(null, {
     status: 200,
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, HEAD, OPTIONS',
-      'Access-Control-Allow-Headers': 'Range, Content-Type',
-      'Access-Control-Max-Age': '86400', // 24 hours
+      'Access-Control-Allow-Headers': 'Range',
     },
   });
 } 

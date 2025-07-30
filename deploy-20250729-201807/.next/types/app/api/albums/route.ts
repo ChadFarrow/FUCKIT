@@ -1,4 +1,4 @@
-// File: /Users/chad-mini/Vibe/apps/FUCKIT/app/api/albums/route.ts
+// File: /Users/chad-mini/Vibe/apps/FUCKIT/deploy-20250729-201807/app/api/albums/route.ts
 import * as entry from '../../../../../app/api/albums/route.js'
 import type { NextRequest } from 'next/server.js'
 

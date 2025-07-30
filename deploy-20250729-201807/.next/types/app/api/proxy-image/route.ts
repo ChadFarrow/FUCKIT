@@ -1,4 +1,4 @@
-// File: /Users/chad-mini/Vibe/apps/FUCKIT/app/api/proxy-image/route.ts
+// File: /Users/chad-mini/Vibe/apps/FUCKIT/deploy-20250729-201807/app/api/proxy-image/route.ts
 import * as entry from '../../../../../app/api/proxy-image/route.js'
 import type { NextRequest } from 'next/server.js'
 
