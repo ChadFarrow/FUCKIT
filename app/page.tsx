@@ -563,20 +563,20 @@ export default function HomePage() {
         <div className={`fixed top-0 left-0 h-full w-80 bg-gray-900/95 backdrop-blur-sm transform transition-transform duration-300 z-30 border-r border-gray-700 ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}>
-          <div className="p-6 pt-20">
-            <h2 className="text-xl font-bold mb-6">Menu</h2>
+          <div className="p-4 pt-16 flex flex-col h-full">
+            <h2 className="text-lg font-bold mb-4">Menu</h2>
             
             {/* Navigation Links */}
-            <div className="mb-8 space-y-2">
+            <div className="mb-4 space-y-1">
               <Link 
                 href="/about" 
-                className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800/50 transition-colors"
+                className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800/50 transition-colors"
                 onClick={() => setIsSidebarOpen(false)}
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span>About & Support</span>
+                <span className="text-sm">About & Support</span>
               </Link>
             </div>
             
@@ -616,24 +616,24 @@ export default function HomePage() {
 
               // Always show the section, even if empty, to indicate it exists
               return (
-                <div className="mb-8">
-                  <h3 className="text-lg font-semibold mb-3 text-white">
+                <div className="mb-4">
+                  <h3 className="text-sm font-semibold mb-2 text-white">
                     Publisher Feeds
                   </h3>
-                  <div className="space-y-1 max-h-48 overflow-y-auto">
+                  <div className="space-y-1 max-h-32 overflow-y-auto">
                     {artists.length > 0 ? (
                       artists.map((artist) => (
                         <Link
                           key={artist.feedGuid}
                           href={`/publisher/${generatePublisherSlug({ title: artist.name, feedGuid: artist.feedGuid })}`}
-                          className="flex items-center justify-between bg-gray-800/30 hover:bg-gray-800/50 rounded p-2 transition-colors group"
+                          className="flex items-center justify-between bg-gray-800/30 hover:bg-gray-800/50 rounded p-1.5 transition-colors group"
                           onClick={() => setIsSidebarOpen(false)}
                         >
-                          <span className="text-sm text-gray-300 group-hover:text-white truncate flex-1">
+                          <span className="text-xs text-gray-300 group-hover:text-white truncate flex-1">
                             {artist.name}
                           </span>
-                          <span className="text-xs text-gray-500 group-hover:text-gray-400 ml-2">
-                            {artist.albumCount} releases
+                          <span className="text-xs text-gray-500 group-hover:text-gray-400 ml-1">
+                            {artist.albumCount}
                           </span>
                         </Link>
                       ))
@@ -650,48 +650,48 @@ export default function HomePage() {
 
             
             {/* Music Show Playlist */}
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold mb-3 text-white">
+            <div className="mb-4">
+              <h3 className="text-sm font-semibold mb-2 text-white">
                 Music Show Playlist
               </h3>
-              <div className="space-y-2">
+              <div className="space-y-1">
                 {/* In-App Playlists */}
                 <Link
                   href="/playlist"
-                  className="flex items-center gap-3 p-3 rounded-lg bg-purple-600/20 hover:bg-purple-600/30 transition-colors group"
+                  className="flex items-center gap-2 p-2 rounded-lg bg-purple-600/20 hover:bg-purple-600/30 transition-colors group"
                   onClick={() => setIsSidebarOpen(false)}
                 >
-                  <svg className="w-5 h-5 text-purple-400 group-hover:text-purple-300" fill="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-purple-400 group-hover:text-purple-300" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
                   </svg>
-                  <span className="text-sm text-gray-300 group-hover:text-white">Play All Songs</span>
+                  <span className="text-xs text-gray-300 group-hover:text-white">Play All Songs</span>
                 </Link>
                 
                 <Link
                   href="/playlist?feedId=intothedoerfelverse"
-                  className="flex items-center gap-3 p-3 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 transition-colors group"
+                  className="flex items-center gap-2 p-2 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 transition-colors group"
                   onClick={() => setIsSidebarOpen(false)}
                 >
-                  <svg className="w-5 h-5 text-blue-400 group-hover:text-blue-300" fill="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-blue-400 group-hover:text-blue-300" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
                   </svg>
-                  <span className="text-sm text-gray-300 group-hover:text-white">Into The Doerfel-Verse (Music Segments)</span>
+                  <span className="text-xs text-gray-300 group-hover:text-white">Into The Doerfel-Verse</span>
                 </Link>
                 
-                <div className="border-t border-gray-700 mt-3 mb-3"></div>
+                <div className="border-t border-gray-700 mt-2 mb-2"></div>
                 
                 {/* RSS Feeds */}
                 <a
                   href="/api/playlist"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-3 rounded-lg bg-orange-600/20 hover:bg-orange-600/30 transition-colors group"
+                  className="flex items-center gap-2 p-2 rounded-lg bg-orange-600/20 hover:bg-orange-600/30 transition-colors group"
                   onClick={() => setIsSidebarOpen(false)}
                 >
-                  <svg className="w-5 h-5 text-orange-400 group-hover:text-orange-300" fill="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-orange-400 group-hover:text-orange-300" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
                   </svg>
-                  <span className="text-sm text-gray-300 group-hover:text-white">All Songs RSS Feed</span>
+                  <span className="text-xs text-gray-300 group-hover:text-white">All Songs RSS</span>
                 </a>
                 <button
                   onClick={() => {
@@ -700,34 +700,34 @@ export default function HomePage() {
                     toast.success('Playlist feed URL copied to clipboard!');
                     setIsSidebarOpen(false);
                   }}
-                  className="w-full flex items-center gap-3 p-3 rounded-lg bg-gray-800/30 hover:bg-gray-800/50 transition-colors group text-left"
+                  className="w-full flex items-center gap-2 p-2 rounded-lg bg-gray-800/30 hover:bg-gray-800/50 transition-colors group text-left"
                 >
-                  <svg className="w-5 h-5 text-gray-400 group-hover:text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-gray-400 group-hover:text-gray-300" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
                   </svg>
-                  <span className="text-sm text-gray-300 group-hover:text-white">Copy RSS URL</span>
+                  <span className="text-xs text-gray-300 group-hover:text-white">Copy RSS URL</span>
                 </button>
                 
                 <a
                   href="/api/playlist?feedId=intothedoerfelverse"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-3 rounded-lg bg-gray-800/30 hover:bg-gray-800/50 transition-colors group"
+                  className="flex items-center gap-2 p-2 rounded-lg bg-gray-800/30 hover:bg-gray-800/50 transition-colors group"
                   onClick={() => setIsSidebarOpen(false)}
                 >
-                  <svg className="w-5 h-5 text-gray-400 group-hover:text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-gray-400 group-hover:text-gray-300" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
                   </svg>
-                  <span className="text-sm text-gray-300 group-hover:text-white">Doerfel-Verse Music RSS</span>
+                  <span className="text-xs text-gray-300 group-hover:text-white">Doerfel-Verse RSS</span>
                 </a>
               </div>
-              <p className="text-xs text-gray-500 mt-2 px-3">
+              <p className="text-xs text-gray-500 mt-1 px-2">
                 Podcasting 2.0 musicL playlist
               </p>
             </div>
             
-            {/* Version Display */}
-            <div className="mt-6 pt-4 border-t border-gray-700">
+            {/* Version Display - Moved to top for better visibility */}
+            <div className="mt-auto pt-2 border-t border-gray-700">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-gray-500">Version</span>
                 <span className="text-xs text-gray-400 font-mono">{getVersionString()}</span>
