@@ -87,19 +87,27 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
       if (initialData.publisherItems.length > 0) {
         // Try to match by publisher items first
         for (const item of initialData.publisherItems) {
-          // Try to find matching album by feedGuid (through publisher property)
-          const matchingAlbum = allAlbums.find((album: RSSAlbum) => 
-            album.publisher?.feedGuid === item.feedGuid || 
-            album.publisher?.feedUrl === item.feedUrl ||
-            album.link === item.feedUrl ||
-            (album as any).feedUrl === item.feedUrl
-          );
-          
-          if (matchingAlbum) {
-            console.log(`✅ Found matching album: ${matchingAlbum.title}`);
-            matchedAlbums.push(matchingAlbum);
-          } else {
-            console.log(`❌ No matching album found for feedGuid: ${item.feedGuid}, feedUrl: ${item.feedUrl}`);
+          // For remoteItems, we need to find the corresponding feed
+          try {
+            const parsedFeedsResponse = await fetch('/api/parsed-feeds');
+            if (parsedFeedsResponse.ok) {
+              const parsedFeedsData = await parsedFeedsResponse.json();
+              const matchingFeed = parsedFeedsData.feeds.find((feed: any) => 
+                (feed.originalUrl === item.feedUrl || feed.originalUrl === item.link) && 
+                feed.parseStatus === 'success' && 
+                feed.parsedData?.album
+              );
+              
+              if (matchingFeed) {
+                const album = matchingFeed.parsedData.album;
+                console.log(`✅ Found matching album: ${album.title}`);
+                matchedAlbums.push(album);
+              } else {
+                console.log(`❌ No matching album found for feedUrl: ${item.feedUrl}`);
+              }
+            }
+          } catch (error) {
+            console.error('Error fetching parsed feeds:', error);
           }
         }
       } else if (initialData.publisherInfo?.artist) {

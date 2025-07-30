@@ -19,6 +19,9 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 }
 
 async function loadPublisherData(publisherId: string) {
+  // First, try to resolve human-readable slug to actual feedGuid
+  const publisherInfo = getPublisherInfo(publisherId);
+  const actualFeedGuid = publisherInfo?.feedGuid || publisherId;
   try {
     const parsedFeedsPath = path.join(process.cwd(), 'data', 'parsed-feeds.json');
     
@@ -30,24 +33,29 @@ async function loadPublisherData(publisherId: string) {
     const fileContent = fs.readFileSync(parsedFeedsPath, 'utf-8');
     const parsedFeedsData = JSON.parse(fileContent);
     
-    // Find the publisher feed by ID or feedGuid
+    // Find the publisher feed by ID or feedGuid  
     const publisherFeed = parsedFeedsData.feeds.find((feed: any) => 
       feed.type === 'publisher' && 
       feed.parseStatus === 'success' &&
       feed.parsedData &&
       (feed.id === `${publisherId}-publisher` || 
-       (typeof feed.id === 'string' && feed.id.includes(publisherId)) ||
-       (typeof feed.parsedData.publisherInfo?.feedGuid === 'string' && feed.parsedData.publisherInfo.feedGuid.includes(publisherId)) ||
+       feed.id === `${actualFeedGuid}-publisher` ||
+       (typeof feed.id === 'string' && (feed.id.includes(publisherId) || feed.id.includes(actualFeedGuid))) ||
+       (typeof feed.parsedData.publisherInfo?.feedGuid === 'string' && 
+        (feed.parsedData.publisherInfo.feedGuid.includes(publisherId) || 
+         feed.parsedData.publisherInfo.feedGuid.includes(actualFeedGuid))) ||
        feed.parsedData.publisherItems?.some((item: any) => 
-         item.feedGuid && typeof item.feedGuid === 'string' && item.feedGuid.includes(publisherId)
+         item.feedGuid && typeof item.feedGuid === 'string' && 
+         (item.feedGuid.includes(publisherId) || item.feedGuid.includes(actualFeedGuid))
        ) ||
        feed.parsedData.remoteItems?.some((item: any) => 
-         item.feedGuid && typeof item.feedGuid === 'string' && item.feedGuid.includes(publisherId)
+         item.feedGuid && typeof item.feedGuid === 'string' && 
+         (item.feedGuid.includes(publisherId) || item.feedGuid.includes(actualFeedGuid))
        ))
     );
     
     if (!publisherFeed) {
-      console.log(`Publisher feed not found: ${publisherId}`);
+      console.log(`Publisher feed not found: ${publisherId} (resolved to: ${actualFeedGuid})`);
       return null;
     }
     

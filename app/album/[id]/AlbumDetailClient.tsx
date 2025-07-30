@@ -884,7 +884,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
                 <span>More from this artist:</span>
                 <Link
-                  href={`/publisher/${generatePublisherSlug({ feedGuid: album.publisher.feedGuid })}`}
+                  href={`/publisher/${generatePublisherSlug({ artist: album.artist, feedGuid: album.publisher.feedGuid })}`}
                   className="text-blue-400 hover:text-blue-300 transition-colors"
                 >
                   View Discography
