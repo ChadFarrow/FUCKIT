@@ -239,10 +239,12 @@ export class MusicTrackParser {
       for (const chapter of chaptersData.chapters) {
         // Check if this chapter represents a music track
         if (this.isMusicChapter(chapter)) {
+          const { artist, title } = this.extractArtistAndTitle(chapter.title);
+          
           const track: MusicTrack = {
             id: this.generateId(),
-            title: chapter.title,
-            artist: context.channelTitle,
+            title: title,
+            artist: artist,
             episodeId: context.episodeId,
             episodeTitle: context.episodeTitle,
             episodeDate: context.episodeDate,
@@ -352,12 +354,14 @@ export class MusicTrackParser {
     for (const pattern of musicPatterns) {
       let match;
       while ((match = pattern.exec(description)) !== null) {
-        const trackTitle = match[1].trim();
-        if (trackTitle.length > 3) { // Filter out very short matches
+        const trackString = match[1].trim();
+        if (trackString.length > 3) { // Filter out very short matches
+          const { artist, title } = this.extractArtistAndTitle(trackString);
+          
           const track: MusicTrack = {
             id: this.generateId(),
-            title: trackTitle,
-            artist: context.channelTitle,
+            title: title,
+            artist: artist,
             episodeId: context.episodeId,
             episodeTitle: context.episodeTitle,
             episodeDate: context.episodeDate,
@@ -368,7 +372,7 @@ export class MusicTrackParser {
             source: 'description',
             feedUrl: context.feedUrl,
             discoveredAt: new Date(),
-            description: `Extracted from episode description: "${trackTitle}"`
+            description: `Extracted from episode description: "${trackString}"`
           };
           
           tracks.push(track);
@@ -467,6 +471,65 @@ export class MusicTrackParser {
     ];
     
     return musicKeywords.some(keyword => title.includes(keyword));
+  }
+
+  /**
+   * Extract artist and title from a track string
+   * Common patterns: "Artist - Title", "Artist: Title", "Artist \"Title\"", etc.
+   */
+  private static extractArtistAndTitle(trackString: string): { artist: string; title: string } {
+    const trimmed = trackString.trim();
+    
+    // Pattern 1: "Artist - Title"
+    const dashMatch = trimmed.match(/^(.+?)\s*-\s*(.+)$/);
+    if (dashMatch) {
+      return {
+        artist: dashMatch[1].trim(),
+        title: dashMatch[2].trim()
+      };
+    }
+    
+    // Pattern 2: "Artist: Title"
+    const colonMatch = trimmed.match(/^(.+?):\s*(.+)$/);
+    if (colonMatch) {
+      return {
+        artist: colonMatch[1].trim(),
+        title: colonMatch[2].trim()
+      };
+    }
+    
+    // Pattern 3: "Artist \"Title\""
+    const quoteMatch = trimmed.match(/^(.+?)\s*"([^"]+)"$/);
+    if (quoteMatch) {
+      return {
+        artist: quoteMatch[1].trim(),
+        title: quoteMatch[2].trim()
+      };
+    }
+    
+    // Pattern 4: "Artist 'Title'"
+    const singleQuoteMatch = trimmed.match(/^(.+?)\s*'([^']+)'$/);
+    if (singleQuoteMatch) {
+      return {
+        artist: singleQuoteMatch[1].trim(),
+        title: singleQuoteMatch[2].trim()
+      };
+    }
+    
+    // Pattern 5: "Artist (Title)"
+    const parenMatch = trimmed.match(/^(.+?)\s*\(([^)]+)\)$/);
+    if (parenMatch) {
+      return {
+        artist: parenMatch[1].trim(),
+        title: parenMatch[2].trim()
+      };
+    }
+    
+    // If no pattern matches, assume the whole string is the title
+    return {
+      artist: 'Unknown Artist',
+      title: trimmed
+    };
   }
 
   /**
