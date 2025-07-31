@@ -13,10 +13,7 @@
   
   /* Background image fallback */
   .bg-bloodshot-lies {
-    background-image: url('/bloodshot-lies-bg.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    background: url('/bloodshot-lies-bg.jpg') center/cover fixed;
     background-attachment: fixed;
   }
   
