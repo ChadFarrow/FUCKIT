@@ -743,15 +743,40 @@ export class MusicTrackParser {
     
     return {
       tracks,
-      relatedFeeds: [],
+      relatedFeeds,
       extractionStats: {
         totalTracks: tracks.length,
         tracksFromChapters: 0,
         tracksFromValueSplits: 0,
         tracksFromDescription: 0,
-        relatedFeedsFound: 0,
+        relatedFeedsFound: relatedFeeds.length,
         extractionTime
       }
     };
+  }
+
+  /**
+   * Resolve a remote track by fetching data from the referenced feed
+   * This is a placeholder for future enhancement - would require a feed lookup service
+   */
+  private static async resolveRemoteTrack(
+    feedGuid: string, 
+    itemGuid: string, 
+    playlistTitle: string, 
+    playlistFeedUrl: string
+  ): Promise<MusicTrack | null> {
+    try {
+      // TODO: In a full implementation, this would:
+      // 1. Use a feed lookup service (like Podcast Index) to find the feed URL from the GUID
+      // 2. Fetch the specific item from that feed
+      // 3. Extract the actual track metadata
+      
+      // For now, return null to use the fallback placeholder
+      this.logger.info('Remote track resolution not yet implemented', { feedGuid, itemGuid });
+      return null;
+    } catch (error) {
+      this.logger.error('Error resolving remote track', { feedGuid, itemGuid, error });
+      return null;
+    }
   }
 } 
