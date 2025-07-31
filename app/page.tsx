@@ -15,18 +15,6 @@ import { toast } from '@/components/Toast';
 import dynamic from 'next/dynamic';
 
 // Dynamic imports for heavy components
-const MusicTracksSection = dynamic(() => import('@/components/MusicTracksSection'), {
-  loading: () => (
-    <div className="mb-12">
-      <h2 className="text-2xl font-bold mb-6">Music Tracks</h2>
-      <div className="flex items-center justify-center py-8">
-        <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-        <span className="ml-3 text-gray-400">Loading music tracks...</span>
-      </div>
-    </div>
-  ),
-  ssr: false
-});
 const AlbumCard = dynamic(() => import('@/components/AlbumCardLazy'), {
   loading: () => (
     <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 animate-pulse">
@@ -242,8 +230,15 @@ export default function HomePage() {
       const data = await response.json();
       const albums = data.albums || [];
       
+      // Load music tracks from RSS feeds and convert them to album format
+      const musicTracks = await loadMusicTracksFromRSS();
+      const musicTrackAlbums = convertMusicTracksToAlbums(musicTracks);
+      
+      // Combine albums and music track albums
+      const allAlbums = [...albums, ...musicTrackAlbums];
+      
       // Filter albums based on load tier if needed
-      let filteredAlbums = albums;
+      let filteredAlbums = allAlbums;
       
       if (loadTier !== 'all') {
         // Get feeds configuration to filter by priority
@@ -329,6 +324,107 @@ export default function HomePage() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const loadMusicTracksFromRSS = async () => {
+    try {
+      // Load music tracks from the RSS feed
+      const response = await fetch('/api/music-tracks?feedUrl=https://www.doerfelverse.com/feeds/intothedoerfelverse.xml');
+      if (!response.ok) {
+        console.warn('Failed to load music tracks from RSS');
+        return [];
+      }
+      
+      const data = await response.json();
+      return data.tracks || [];
+    } catch (error) {
+      console.warn('Error loading music tracks from RSS:', error);
+      return [];
+    }
+  };
+
+  const convertMusicTracksToAlbums = (tracks: any[]) => {
+    // Filter out low-quality tracks (HTML fragments, very short titles, etc.)
+    const qualityTracks = tracks.filter((track: any) => {
+      // Skip tracks with HTML-like content
+      if (track.title.includes('<') || track.title.includes('>') || track.title.includes('&')) {
+        return false;
+      }
+      
+      // Skip tracks with very short titles (likely fragments)
+      if (track.title.length < 3) {
+        return false;
+      }
+      
+      // Skip tracks with generic titles
+      const genericTitles = ['Unknown Artist', 'Unknown', 'Unknown Track', 'Track', 'Music'];
+      if (genericTitles.includes(track.title) || genericTitles.includes(track.artist)) {
+        return false;
+      }
+      
+      // Prefer tracks from chapters over description extraction
+      if (track.source === 'chapter') {
+        return true;
+      }
+      
+      // For description tracks, be more selective
+      if (track.source === 'description') {
+        // Only include if it looks like a real song title
+        const hasArtist = track.artist && track.artist.length > 2 && !track.artist.includes('Unknown');
+        const hasGoodTitle = track.title.length > 5 && !track.title.includes('http');
+        return hasArtist && hasGoodTitle;
+      }
+      
+      return false;
+    });
+    
+    // Group tracks by episode to create "albums"
+    const episodeGroups = qualityTracks.reduce((groups: any, track: any) => {
+      const episodeKey = `${track.episodeId}-${track.episodeTitle}`;
+      if (!groups[episodeKey]) {
+        groups[episodeKey] = {
+          episodeId: track.episodeId,
+          episodeTitle: track.episodeTitle,
+          episodeDate: track.episodeDate,
+          tracks: []
+        };
+      }
+      groups[episodeKey].tracks.push(track);
+      return groups;
+    }, {});
+
+    // Convert episode groups to album format
+    return Object.values(episodeGroups).map((episode: any, index: number) => ({
+      id: `music-episode-${episode.episodeId}`,
+      title: episode.episodeTitle,
+      artist: 'From RSS Feed',
+      description: `Music tracks from ${episode.episodeTitle}`,
+      coverArt: '', // Will use placeholder
+      releaseDate: episode.episodeDate,
+      feedId: 'music-rss',
+      tracks: episode.tracks.map((track: any, trackIndex: number) => ({
+        title: track.title,
+        artist: track.artist,
+        duration: track.duration,
+        url: track.audioUrl || '',
+        trackNumber: trackIndex + 1,
+        subtitle: track.episodeTitle,
+        summary: track.description || '',
+        image: track.image || '',
+        explicit: false,
+        keywords: [],
+        // Add music track specific fields
+        musicTrack: true,
+        episodeId: track.episodeId,
+        episodeDate: track.episodeDate,
+        source: track.source,
+        startTime: track.startTime,
+        endTime: track.endTime
+      })),
+      // Mark as music track album
+      isMusicTrackAlbum: true,
+      source: 'rss-feed'
+    }));
   };
 
   const playMusicTrack = async (track: any) => {
@@ -949,8 +1045,7 @@ export default function HomePage() {
                     );
                   })()}
                   
-                  {/* Music Tracks Section */}
-                  <MusicTracksSection onPlayTrack={playMusicTrack} />
+
                 </>
               ) : (
                 // Unified layout for specific filters (Albums, EPs, Singles)

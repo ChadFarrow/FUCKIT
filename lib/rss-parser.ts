@@ -12,6 +12,12 @@ export interface RSSTrack {
   keywords?: string[];
   startTime?: number; // Add time segment support
   endTime?: number;   // Add time segment support
+  // Music track specific fields
+  musicTrack?: boolean;
+  episodeId?: string;
+  episodeDate?: Date;
+  source?: string;
+  artist?: string;
 }
 
 export interface RSSFunding {
@@ -61,6 +67,11 @@ export interface RSSAlbum {
   };
   podroll?: RSSPodRoll[];
   publisher?: RSSPublisher;
+  // Music track specific fields
+  isMusicTrackAlbum?: boolean;
+  source?: string;
+  id?: string;
+  feedId?: string;
 }
 
 // Development logging utility
