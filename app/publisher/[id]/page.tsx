@@ -61,7 +61,7 @@ async function loadPublisherData(publisherId: string) {
     
     return {
       publisherInfo: publisherFeed.parsedData?.publisherInfo || null,
-      publisherItems: publisherFeed.parsedData?.publisherItems || publisherFeed.parsedData?.remoteItems || [],
+      publisherItems: publisherFeed.parsedData?.publisherItems || publisherFeed.parsedData?.publisherInfo?.remoteItems || [],
       feedId: publisherFeed.id
     };
   } catch (error) {

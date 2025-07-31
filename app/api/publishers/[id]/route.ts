@@ -104,8 +104,8 @@ export async function GET(
       parseStatus: publisherFeed.parseStatus,
       lastParsed: publisherFeed.lastParsed,
       publisherInfo: publisherFeed.parsedData?.publisherInfo || null,
-      publisherItems: publisherFeed.parsedData?.publisherItems || [],
-      itemCount: publisherFeed.parsedData?.publisherItems?.length || 0,
+      publisherItems: publisherFeed.parsedData?.publisherItems || publisherFeed.parsedData?.publisherInfo?.remoteItems || [],
+      itemCount: (publisherFeed.parsedData?.publisherItems || publisherFeed.parsedData?.publisherInfo?.remoteItems || []).length,
       timestamp: new Date().toISOString()
     };
 

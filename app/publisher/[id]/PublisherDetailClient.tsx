@@ -101,53 +101,65 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
   useEffect(() => {
     console.log('🎯 PublisherDetailClient useEffect triggered');
     
-    // If we have initial data, use it and convert publisher items to albums
-    if (initialData) {
-      console.log('📋 Using initial data for publisher');
-      
-      // Convert publisher items to album format for display
-      if (initialData.publisherItems && initialData.publisherItems.length > 0) {
-        // Filter out items with empty or missing titles, as they won't render properly
-        const validItems = initialData.publisherItems.filter((item: any) => 
-          item.title && item.title.trim() !== ''
-        );
+          // If we have initial data, use it and convert publisher items to albums
+      if (initialData) {
+        console.log('📋 Using initial data for publisher');
         
-        if (validItems.length > 0) {
-          const albumsFromItems = validItems.map((item: any) => ({
-            id: item.id || `album-${Math.random()}`,
-            title: item.title,
-            artist: item.artist,
-            description: item.description,
-            coverArt: item.coverArt,
-            tracks: Array(item.trackCount).fill(null).map((_, i) => ({
-              id: `track-${i}`,
-              title: `${item.title} - Track ${i + 1}`,
-              duration: '0:00',
-              url: item.link
-            })),
-            releaseDate: item.releaseDate,
-            link: item.link,
-            feedUrl: item.link
-          }));
+        // Convert publisher items to album format for display
+        if (initialData.publisherItems && initialData.publisherItems.length > 0) {
+          // Check if these are remoteItems (which only have feedGuid/feedUrl) or regular publisherItems
+          const isRemoteItems = initialData.publisherItems.every((item: any) => 
+            item.feedGuid && item.feedUrl && !item.title
+          );
           
-          console.log(`🏢 Setting ${albumsFromItems.length} albums from initial data (filtered from ${initialData.publisherItems.length} items)`);
-          setAlbums(albumsFromItems);
+          if (isRemoteItems) {
+            console.log('📋 Detected remoteItems - need to fetch actual album data');
+            // For remoteItems, we need to fetch the actual album data using the feedGuids
+            setAlbumsLoading(true);
+            fetchPublisherAlbums();
+          } else {
+            // Filter out items with empty or missing titles, as they won't render properly
+            const validItems = initialData.publisherItems.filter((item: any) => 
+              item.title && item.title.trim() !== ''
+            );
+            
+            if (validItems.length > 0) {
+              const albumsFromItems = validItems.map((item: any) => ({
+                id: item.id || `album-${Math.random()}`,
+                title: item.title,
+                artist: item.artist,
+                description: item.description,
+                coverArt: item.coverArt,
+                tracks: Array(item.trackCount).fill(null).map((_, i) => ({
+                  id: `track-${i}`,
+                  title: `${item.title} - Track ${i + 1}`,
+                  duration: '0:00',
+                  url: item.link
+                })),
+                releaseDate: item.releaseDate,
+                link: item.link,
+                feedUrl: item.link
+              }));
+              
+              console.log(`🏢 Setting ${albumsFromItems.length} albums from initial data (filtered from ${initialData.publisherItems.length} items)`);
+              setAlbums(albumsFromItems);
+            } else {
+              console.log(`⚠️ No valid albums found - all ${initialData.publisherItems.length} items have empty titles`);
+              // For publishers with empty titles, we need to fetch the actual album data
+              setAlbumsLoading(true);
+              fetchPublisherAlbums();
+            }
+          }
         } else {
-          console.log(`⚠️ No valid albums found - all ${initialData.publisherItems.length} items have empty titles`);
-          // For publishers with empty titles, we need to fetch the actual album data
+          console.log('⚠️ No publisher items found');
           setAlbumsLoading(true);
           fetchPublisherAlbums();
         }
-      } else {
-        console.log('⚠️ No publisher items found');
-        setAlbumsLoading(true);
-        fetchPublisherAlbums();
+        
+        // Set loading to false since we have data
+        setIsLoading(false);
+        return;
       }
-      
-      // Set loading to false since we have data
-      setIsLoading(false);
-      return;
-    }
     
     const loadPublisher = async () => {
       try {
@@ -248,27 +260,66 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
               const items = publisherFeed.parsedData.publisherItems || publisherFeed.parsedData.remoteItems;
               console.log(`🏢 Found ${items.length} publisher items`);
               
-              // Convert publisher items to album format for display
-              const albumsFromItems = items.map((item: any) => ({
-                id: item.id || `album-${Math.random()}`,
-                title: item.title || item.feedUrl?.split('/').pop()?.replace('.xml', '') || 'Unknown Album',
-                artist: item.artist || publisherInfo.name || 'Unknown Artist',
-                description: item.description || 'Album from publisher',
-                coverArt: item.coverArt,
-                tracks: Array(item.trackCount || 1).fill(null).map((_, i) => ({
-                  id: `track-${i}`,
-                  title: `${item.title || 'Track'} - Track ${i + 1}`,
-                  duration: '0:00',
-                  url: item.link || item.feedUrl
-                })),
-                releaseDate: item.releaseDate || new Date().toISOString(),
-                link: item.link || item.feedUrl,
-                feedUrl: item.link || item.feedUrl
-              }));
-              
-              console.log(`🏢 Setting ${albumsFromItems.length} albums from publisher items`);
-              setAlbums(albumsFromItems);
-              setPublisherItems(items);
+              // For remoteItems, we need to find the actual album data using feedGuid
+              if (publisherFeed.parsedData.remoteItems) {
+                console.log(`🏢 Processing remoteItems to find actual album data`);
+                
+                // Find all feeds that match the remoteItems feedGuids
+                const matchingFeeds = feeds.filter((feed: any) => {
+                  if (feed.type !== 'album' || feed.parseStatus !== 'success') return false;
+                  
+                  return items.some((remoteItem: any) => {
+                    const urlMatch = feed.originalUrl === remoteItem.feedUrl;
+                    const guidMatch = feed.parsedData?.album?.feedGuid === remoteItem.feedGuid;
+                    return urlMatch || guidMatch;
+                  });
+                });
+                
+                console.log(`🏢 Found ${matchingFeeds.length} matching album feeds for remoteItems`);
+                
+                // Convert matching feeds to album format
+                const albumsFromFeeds = matchingFeeds.map((feed: any) => {
+                  const albumData = feed.parsedData.album;
+                  return {
+                    id: feed.id,
+                    title: albumData.title || feed.title || 'Unknown Album',
+                    artist: albumData.artist || publisherInfo.name || 'Unknown Artist',
+                    description: albumData.description || albumData.summary || 'Album from publisher',
+                    coverArt: albumData.coverArt,
+                    tracks: albumData.tracks || [],
+                    releaseDate: albumData.releaseDate || albumData.pubDate || new Date().toISOString(),
+                    link: albumData.link || feed.originalUrl,
+                    feedUrl: feed.originalUrl,
+                    explicit: albumData.explicit || false
+                  };
+                });
+                
+                console.log(`🏢 Setting ${albumsFromFeeds.length} albums from matching feeds`);
+                setAlbums(albumsFromFeeds);
+                setPublisherItems(items);
+              } else {
+                // For regular publisherItems, convert directly to album format
+                const albumsFromItems = items.map((item: any) => ({
+                  id: item.id || `album-${Math.random()}`,
+                  title: item.title || item.feedUrl?.split('/').pop()?.replace('.xml', '') || 'Unknown Album',
+                  artist: item.artist || publisherInfo.name || 'Unknown Artist',
+                  description: item.description || 'Album from publisher',
+                  coverArt: item.coverArt,
+                  tracks: Array(item.trackCount || 1).fill(null).map((_, i) => ({
+                    id: `track-${i}`,
+                    title: `${item.title || 'Track'} - Track ${i + 1}`,
+                    duration: '0:00',
+                    url: item.link || item.feedUrl
+                  })),
+                  releaseDate: item.releaseDate || new Date().toISOString(),
+                  link: item.link || item.feedUrl,
+                  feedUrl: item.link || item.feedUrl
+                }));
+                
+                console.log(`🏢 Setting ${albumsFromItems.length} albums from publisher items`);
+                setAlbums(albumsFromItems);
+                setPublisherItems(items);
+              }
             }
           }
         } catch (feedError) {

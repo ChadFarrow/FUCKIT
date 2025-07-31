@@ -550,6 +550,17 @@
         "dependencies": [],
         "priority": "high",
         "subtasks": []
+      },
+      {
+        "id": 54,
+        "title": "Add Bloodshot Lies Album Art Background",
+        "description": "Implemented Bloodshot Lies album art as the main page background with proper styling and positioning",
+        "details": "- Added bloodshot-lies-big.jpg to public directory\n- Updated app/layout.tsx to use center/contain positioning for full image display\n- Set background opacity to 15% for subtle effect\n- Updated app/globals.css with supporting styles\n- Used center/contain instead of center/cover to show complete album art without cropping\n- Background displays full stylized head with neural pathways, \"DV\" logo, \"Bloodshot Lies\" text, and \"THE DOERFELS\" text",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
       }
     ],
     "metadata": {
@@ -557,7 +568,7 @@
       "description": "Main task list for FUCKIT podcast/music streaming application",
       "created": "2025-01-27T00:00:00.000Z",
       "lastModified": "2025-01-27T00:00:00.000Z",
-      "updated": "2025-07-30T23:15:48.269Z"
+      "updated": "2025-07-31T01:24:50.158Z"
     }
   },
   "v1-5": {

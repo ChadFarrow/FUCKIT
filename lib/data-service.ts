@@ -47,21 +47,43 @@ class DataService {
     }
 
     try {
-      const response = await fetch('/api/parsed-feeds');
-      const data = await response.json();
-      
-      // Monitor API response
-      monitorApiResponse('/api/parsed-feeds', response, data);
-      
-      if (!response.ok) {
-        throw new Error(`Failed to fetch feeds: ${response.status}`);
-      }
+      // Check if we're running on the server side
+      if (typeof window === 'undefined') {
+        // Server-side: read directly from file
+        const fs = require('fs');
+        const path = require('path');
+        const parsedFeedsPath = path.join(process.cwd(), 'data', 'parsed-feeds.json');
+        
+        if (!fs.existsSync(parsedFeedsPath)) {
+          throw new Error('Parsed feeds data not found');
+        }
 
-      this.feedsCache = data.feeds || [];
-      this.cacheExpiry = Date.now() + this.CACHE_DURATION;
-      
-      monitoring.info('data-service', `Loaded ${this.feedsCache?.length || 0} feeds from API`);
-      return this.feedsCache || [];
+        const fileContent = fs.readFileSync(parsedFeedsPath, 'utf-8');
+        const data = JSON.parse(fileContent);
+        
+        this.feedsCache = data.feeds || [];
+        this.cacheExpiry = Date.now() + this.CACHE_DURATION;
+        
+        monitoring.info('data-service', `Loaded ${this.feedsCache?.length || 0} feeds from file system`);
+        return this.feedsCache || [];
+      } else {
+        // Client-side: fetch from API
+        const response = await fetch('/api/parsed-feeds');
+        const data = await response.json();
+        
+        // Monitor API response
+        monitorApiResponse('/api/parsed-feeds', response, data);
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch feeds: ${response.status}`);
+        }
+
+        this.feedsCache = data.feeds || [];
+        this.cacheExpiry = Date.now() + this.CACHE_DURATION;
+        
+        monitoring.info('data-service', `Loaded ${this.feedsCache?.length || 0} feeds from API`);
+        return this.feedsCache || [];
+      }
     } catch (error) {
       monitoring.error('data-service', 'Failed to fetch feeds', { error: (error as Error).message });
       return this.feedsCache || [];
@@ -131,6 +153,39 @@ class DataService {
         matchedAlbums.push(partialMatch.parsedData.album);
         monitoring.info('data-service', `Partial match found: ${partialMatch.parsedData.album.title}`);
         continue;
+      }
+
+      // If no match found by feedGuid, try to find the corresponding feed by URL
+      // This is needed for publisher feeds where remoteItems have feedGuid but feeds have different IDs
+      const publisherFeeds = feeds.filter(feed => 
+        feed.type === 'publisher' && 
+        feed.parseStatus === 'success' &&
+        (feed.parsedData?.remoteItems || feed.parsedData?.publisherInfo?.remoteItems)
+      );
+
+      for (const publisherFeed of publisherFeeds) {
+        // Get remoteItems from either location
+        const remoteItems = publisherFeed.parsedData?.remoteItems || publisherFeed.parsedData?.publisherInfo?.remoteItems || [];
+        
+        // Find the remoteItem that matches this feedGuid
+        const remoteItem = remoteItems.find((item: any) => 
+          item.feedGuid === feedGuid
+        );
+
+        if (remoteItem?.feedUrl) {
+          // Find the feed that matches this URL
+          const urlMatch = feeds.find(feed => 
+            feed.originalUrl === remoteItem.feedUrl &&
+            feed.parseStatus === 'success' && 
+            feed.parsedData?.album
+          );
+
+          if (urlMatch?.parsedData?.album) {
+            matchedAlbums.push(urlMatch.parsedData.album);
+            monitoring.info('data-service', `URL match found: ${urlMatch.parsedData.album.title}`);
+            break; // Found a match, no need to check other publisher feeds
+          }
+        }
       }
 
       monitoring.warn('data-service', `No match found for feedGuid: ${feedGuid}`);
