@@ -582,8 +582,8 @@ export default function HomePage() {
       {/* Static Background - Bloodshot Lies Album Art */}
       <div className="fixed inset-0 z-0">
         <CDNImage
-          src="https://www.doerfelverse.com/art/bloodshot-lies-the-album-hires.png"
-          alt="Bloodshot Lies Album Art"
+          src="/bloodshot-lies-new.png"
+          alt="Bloodshot Lies Album Art - Vibrant Edition"
           width={1920}
           height={1080}
           className="object-cover w-full h-full"

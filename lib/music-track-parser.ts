@@ -581,6 +581,9 @@ export class MusicTrackParser {
     const title = this.getTextContent(channel, 'title') || '';
     const description = this.getTextContent(channel, 'description') || '';
     
+    // Check for Podcasting 2.0 musicL medium type
+    const isMusicLFeed = channel['podcast:medium'] === 'musicL';
+    
     // Check for playlist indicators in title or description
     const playlistKeywords = ['playlist', 'songs', 'tracks', 'music', 'lightning thrashes'];
     const hasPlaylistKeywords = playlistKeywords.some(keyword => 
@@ -605,10 +608,10 @@ export class MusicTrackParser {
       
       const looksLikeSongTitle = songTitlePatterns.some(pattern => pattern.test(itemTitle));
       
-      return hasPlaylistKeywords || looksLikeSongTitle || hasRemoteItems;
+      return isMusicLFeed || hasPlaylistKeywords || looksLikeSongTitle || hasRemoteItems;
     }
     
-    return hasPlaylistKeywords || hasRemoteItems;
+    return isMusicLFeed || hasPlaylistKeywords || hasRemoteItems;
   }
 
   /**
@@ -621,39 +624,58 @@ export class MusicTrackParser {
   ): Promise<MusicTrackExtractionResult> {
     const tracks: MusicTrack[] = [];
     const channelTitle = this.getTextContent(channel, 'title') || 'Unknown Playlist';
+    const isMusicLFeed = channel['podcast:medium'] === 'musicL';
     
     // Handle podcast:remoteItem elements (Podcasting 2.0 playlist feature)
     const remoteItems = channel['podcast:remoteItem'] || [];
     const remoteItemArray = Array.isArray(remoteItems) ? remoteItems : [remoteItems];
+    
+    // Track related feeds for future enhancement
+    const relatedFeeds: MusicFeed[] = [];
+    const feedGuids = new Set<string>();
     
     for (const remoteItem of remoteItemArray) {
       if (remoteItem && remoteItem.$) {
         const feedGuid = remoteItem.$.feedGuid;
         const itemGuid = remoteItem.$.itemGuid;
         
-        // Create a placeholder track for the remote item
-        // In a full implementation, we would fetch the actual track data from the referenced feed
-        const track: MusicTrack = {
-          id: this.generateId(),
-          title: `Track from ${feedGuid}`,
-          artist: 'Various Artists',
-          episodeId: itemGuid,
-          episodeTitle: channelTitle,
-          episodeDate: new Date(),
-          startTime: 0,
-          endTime: 0,
-          duration: 0,
-          source: 'external-feed',
-          feedUrl,
-          discoveredAt: new Date(),
-          description: `Remote track from feed ${feedGuid}`
-        };
+        // Track unique feed GUIDs
+        feedGuids.add(feedGuid);
         
-        tracks.push(track);
+        // Try to resolve the actual track data from the referenced feed
+        const resolvedTrack = await this.resolveRemoteTrack(feedGuid, itemGuid, channelTitle, feedUrl);
+        
+        if (resolvedTrack) {
+          tracks.push(resolvedTrack);
+        } else {
+          // Fallback to placeholder if resolution fails
+          const trackTitle = isMusicLFeed 
+            ? `Music Track (${feedGuid.substring(0, 8)}...)`
+            : `Track from ${feedGuid}`;
+          const artist = isMusicLFeed ? 'From MusicL Feed' : 'Various Artists';
+          
+          const track: MusicTrack = {
+            id: this.generateId(),
+            title: trackTitle,
+            artist,
+            episodeId: itemGuid,
+            episodeTitle: channelTitle,
+            episodeDate: new Date(),
+            startTime: 0,
+            endTime: 0,
+            duration: 0,
+            source: 'external-feed',
+            feedUrl,
+            discoveredAt: new Date(),
+            description: `Podcasting 2.0 musicL track from feed ${feedGuid}`
+          };
+          
+          tracks.push(track);
+        }
       }
     }
     
-    // Handle regular items if they exist
+    // Handle regular items if they exist (for non-remoteItem musicL feeds)
     const items = channel.item || [];
     const itemArray = Array.isArray(items) ? items : [items];
     
@@ -673,6 +695,28 @@ export class MusicTrackParser {
         audioUrl = enclosure.$.url;
       }
       
+      // For musicL feeds, also check for podcast:value elements (Value for Value)
+      let valueForValue;
+      if (isMusicLFeed && item['podcast:value']) {
+        const valueElement = item['podcast:value'];
+        if (valueElement && valueElement['podcast:valueRecipient']) {
+          const recipients = Array.isArray(valueElement['podcast:valueRecipient']) 
+            ? valueElement['podcast:valueRecipient'] 
+            : [valueElement['podcast:valueRecipient']];
+          
+          // Find the first recipient (usually the artist)
+          const firstRecipient = recipients[0];
+          if (firstRecipient && firstRecipient.$) {
+            valueForValue = {
+              lightningAddress: firstRecipient.$.name || '',
+              suggestedAmount: parseFloat(valueElement.$.suggested || '0'),
+              customKey: firstRecipient.$.customKey,
+              customValue: firstRecipient.$.customValue
+            };
+          }
+        }
+      }
+      
       // Create a music track from this playlist item
       const track: MusicTrack = {
         id: this.generateId(),
@@ -685,7 +729,8 @@ export class MusicTrackParser {
         endTime: 0,
         duration: 0,
         audioUrl,
-        source: 'external-feed',
+        valueForValue,
+        source: isMusicLFeed ? 'external-feed' : 'external-feed',
         feedUrl,
         discoveredAt: new Date(),
         description: itemDescription
