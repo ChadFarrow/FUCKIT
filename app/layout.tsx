@@ -105,7 +105,7 @@ export default function RootLayout({
                 <div 
                   className="fixed inset-0 z-0"
                   style={{
-                    background: 'url(/bloodshot-lies-bg.jpg) center/cover fixed',
+                    background: 'url(/bloodshot-lies-bg.jpg) center/contain fixed',
                     backgroundAttachment: 'fixed',
                     opacity: 0.15
                   }}
