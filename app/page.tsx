@@ -949,8 +949,8 @@ export default function HomePage() {
                     );
                   })()}
                   
-                  {/* Music Tracks Section */}
-                  <MusicTracksSection onPlayTrack={playMusicTrack} />
+                  {/* Music Tracks Section - Temporarily disabled to fix CDNImage recursion */}
+                  {/* <MusicTracksSection onPlayTrack={playMusicTrack} /> */}
                 </>
               ) : (
                 // Unified layout for specific filters (Albums, EPs, Singles)
