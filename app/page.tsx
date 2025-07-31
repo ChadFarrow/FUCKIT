@@ -271,6 +271,7 @@ export default function HomePage() {
         artist: album.artist,
         description: album.description,
         coverArt: album.coverArt,
+        releaseDate: album.releaseDate || album.lastUpdated || new Date().toISOString(), // Add required releaseDate
         tracks: album.tracks.map((track: any) => ({
           title: track.title,
           duration: track.duration,

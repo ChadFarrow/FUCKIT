@@ -85,7 +85,7 @@ export class MusicTrackParser {
       // Fetch and parse the RSS feed
       const response = await fetch(feedUrl);
       if (!response.ok) {
-        throw new AppError(`Failed to fetch RSS feed: ${response.statusText}`, ErrorCodes.FETCH_ERROR);
+        throw new AppError(`Failed to fetch RSS feed: ${response.statusText}`, ErrorCodes.RSS_FETCH_ERROR);
       }
       
       const xmlText = await response.text();
@@ -95,7 +95,7 @@ export class MusicTrackParser {
       const result = await parser.parseStringPromise(xmlText);
       
       if (!result.rss || !result.rss.channel) {
-        throw new AppError('Invalid RSS feed structure', ErrorCodes.PARSE_ERROR);
+        throw new AppError('Invalid RSS feed structure', ErrorCodes.RSS_PARSE_ERROR);
       }
       
       // Check if this is a playlist-style feed (each item is a song)
@@ -167,7 +167,13 @@ export class MusicTrackParser {
     const episodeTitle = this.getTextContent(item, 'title') || 'Unknown Episode';
     const episodeGuid = this.getTextContent(item, 'guid') || this.generateId();
     const episodeDescription = this.getTextContent(item, 'description') || '';
-    const audioUrl = this.getAttributeValue(item, 'enclosure', 'url');
+    
+    // Get audio URL from enclosure element
+    let audioUrl: string | undefined;
+    const enclosure = item.enclosure;
+    if (enclosure && enclosure.$ && enclosure.$.url) {
+      audioUrl = enclosure.$.url;
+    }
     
     // Extract episode publication date
     const pubDateStr = this.getTextContent(item, 'pubDate');
