@@ -15,6 +15,18 @@ import { toast } from '@/components/Toast';
 import dynamic from 'next/dynamic';
 
 // Dynamic imports for heavy components
+const MusicTracksSection = dynamic(() => import('@/components/MusicTracksSection'), {
+  loading: () => (
+    <div className="mb-12">
+      <h2 className="text-2xl font-bold mb-6">Music Tracks</h2>
+      <div className="flex items-center justify-center py-8">
+        <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+        <span className="ml-3 text-gray-400">Loading music tracks...</span>
+      </div>
+    </div>
+  ),
+  ssr: false
+});
 const AlbumCard = dynamic(() => import('@/components/AlbumCardLazy'), {
   loading: () => (
     <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 animate-pulse">
@@ -317,6 +329,12 @@ export default function HomePage() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const playMusicTrack = async (track: any) => {
+    // TODO: Implement music track playback
+    console.log('Playing music track:', track);
+    toast.success(`Playing ${track.title} by ${track.artist}`);
   };
 
   const playAlbum = async (album: RSSAlbum, e: React.MouseEvent | React.TouchEvent) => {
@@ -930,6 +948,9 @@ export default function HomePage() {
                       </div>
                     );
                   })()}
+                  
+                  {/* Music Tracks Section */}
+                  <MusicTracksSection onPlayTrack={playMusicTrack} />
                 </>
               ) : (
                 // Unified layout for specific filters (Albums, EPs, Singles)
