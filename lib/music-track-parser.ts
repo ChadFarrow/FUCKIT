@@ -350,36 +350,71 @@ export class MusicTrackParser {
   ): MusicTrack[] {
     const tracks: MusicTrack[] = [];
     
-    // Simple pattern matching for music track mentions
-    // This is a basic implementation - could be enhanced with NLP
+    // Enhanced patterns for extracting songs from episode descriptions
+    // Specifically designed for playlist-style feeds like Mike's Mix Tape
     const musicPatterns = [
+      // Pattern: "Artist - Song" (most common in playlists)
+      /([A-Z][A-Za-z\s&'.-]+)\s*-\s*([A-Z][A-Za-z\s\d\-'",.!?()]+)/g,
+      // Pattern: "Artist: Song"
+      /([A-Z][A-Za-z\s&'.-]+)\s*:\s*([A-Z][A-Za-z\s\d\-'",.!?()]+)/g,
+      // Pattern: "Song by Artist"
+      /([A-Z][A-Za-z\s\d\-'",.!?()]+)\s+by\s+([A-Z][A-Za-z\s&'.-]+)/g,
+      // Pattern: "Artist 'Song'" or "Artist "Song""
+      /([A-Z][A-Za-z\s&'.-]+)\s*['"]([A-Za-z\s\d\-'",.!?()]+)['"]/g,
+      // Pattern: "Artist | Song" (common in playlists)
+      /([A-Z][A-Za-z\s&'.-]+)\s*\|\s*([A-Z][A-Za-z\s\d\-'",.!?()]+)/g,
+      // Legacy patterns for backward compatibility
       /(?:song|track|music|tune):\s*["']([^"']+)["']/gi,
       /["']([^"']+(?:song|track|music|tune)[^"']*)["']/gi,
       /(?:plays?|features?|includes?)\s+["']([^"']+)["']/gi
     ];
     
-    for (const pattern of musicPatterns) {
+    // Also look for bullet-point style lists
+    const bulletPatterns = [
+      /^[\s]*[-•*]\s*([A-Z][A-Za-z\s&'.-]+)\s*[-:]\s*([A-Z][A-Za-z\s\d\-'",.!?()]+)/gm,
+      /^[\s]*[-•*]\s*([A-Z][A-Za-z\s&'.-]+)\s*\|\s*([A-Z][A-Za-z\s\d\-'",.!?()]+)/gm
+    ];
+    
+    // Combine all patterns
+    const allPatterns = [...musicPatterns, ...bulletPatterns];
+    
+    for (const pattern of allPatterns) {
       let match;
       while ((match = pattern.exec(description)) !== null) {
-        const trackString = match[1].trim();
-        if (trackString.length > 3) { // Filter out very short matches
-          const { artist, title } = this.extractArtistAndTitle(trackString);
+        const artist = match[1]?.trim();
+        const title = match[2]?.trim();
+        
+        if (artist && title && artist.length > 2 && title.length > 2) {
+          // Skip if it looks like HTML or generic text
+          if (artist.includes('<') || title.includes('<') || 
+              artist.includes('http') || title.includes('http') ||
+              artist.toLowerCase().includes('unknown') ||
+              title.toLowerCase().includes('unknown') ||
+              artist.toLowerCase().includes('volume') ||
+              title.toLowerCase().includes('volume')) {
+            continue;
+          }
+          
+          // Skip very short or generic titles
+          if (title.length < 3 || artist.length < 3) {
+            continue;
+          }
           
           const track: MusicTrack = {
             id: this.generateId(),
-            title: title,
-            artist: artist,
+            title,
+            artist,
             episodeId: context.episodeId,
             episodeTitle: context.episodeTitle,
             episodeDate: context.episodeDate,
-            startTime: 0, // Unknown timestamp
+            startTime: 0,
             endTime: 0,
             duration: 0,
             audioUrl: context.audioUrl,
             source: 'description',
             feedUrl: context.feedUrl,
             discoveredAt: new Date(),
-            description: `Extracted from episode description: "${trackString}"`
+            description: `Extracted from episode description`
           };
           
           tracks.push(track);
@@ -584,34 +619,12 @@ export class MusicTrackParser {
     // Check for Podcasting 2.0 musicL medium type
     const isMusicLFeed = channel['podcast:medium'] === 'musicL';
     
-    // Check for playlist indicators in title or description
-    const playlistKeywords = ['playlist', 'songs', 'tracks', 'music', 'lightning thrashes'];
-    const hasPlaylistKeywords = playlistKeywords.some(keyword => 
-      title.toLowerCase().includes(keyword) || description.toLowerCase().includes(keyword)
-    );
-    
     // Check for podcast:remoteItem elements (Podcasting 2.0 playlist feature)
     const hasRemoteItems = channel['podcast:remoteItem'] && channel['podcast:remoteItem'].length > 0;
     
-    // Check if items have music-related titles
-    const items = channel.item || [];
-    if (items.length > 0) {
-      const firstItem = Array.isArray(items) ? items[0] : items;
-      const itemTitle = this.getTextContent(firstItem, 'title') || '';
-      
-      // If item titles look like song titles (not episode titles), it's likely a playlist
-      const songTitlePatterns = [
-        /^[A-Z][a-z]+ [A-Z][a-z]+/, // "Artist Song" pattern
-        /^[A-Z][a-z]+ - [A-Z][a-z]+/, // "Artist - Song" pattern
-        /^[A-Z][a-z]+: [A-Z][a-z]+/, // "Artist: Song" pattern
-      ];
-      
-      const looksLikeSongTitle = songTitlePatterns.some(pattern => pattern.test(itemTitle));
-      
-      return isMusicLFeed || hasPlaylistKeywords || looksLikeSongTitle || hasRemoteItems;
-    }
-    
-    return isMusicLFeed || hasPlaylistKeywords || hasRemoteItems;
+    // Only treat as playlist if it's explicitly musicL or has remote items
+    // Regular music podcasts should use normal episode processing
+    return isMusicLFeed || hasRemoteItems;
   }
 
   /**
