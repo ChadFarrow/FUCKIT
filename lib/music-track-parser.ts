@@ -98,6 +98,13 @@ export class MusicTrackParser {
         throw new AppError('Invalid RSS feed structure', ErrorCodes.PARSE_ERROR);
       }
       
+      // Check if this is a playlist-style feed (each item is a song)
+      const isPlaylistFeed = this.isPlaylistStyleFeed(result.rss.channel);
+      
+      if (isPlaylistFeed) {
+        return this.extractTracksFromPlaylistFeed(result.rss.channel, feedUrl, startTime);
+      }
+      
       const tracks: MusicTrack[] = [];
       const relatedFeeds: MusicFeed[] = [];
       
@@ -565,5 +572,141 @@ export class MusicTrackParser {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = Math.floor(seconds % 60);
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  }
+
+  /**
+   * Detect if this is a playlist-style feed where each item is a song
+   */
+  private static isPlaylistStyleFeed(channel: any): boolean {
+    const title = this.getTextContent(channel, 'title') || '';
+    const description = this.getTextContent(channel, 'description') || '';
+    
+    // Check for playlist indicators in title or description
+    const playlistKeywords = ['playlist', 'songs', 'tracks', 'music', 'lightning thrashes'];
+    const hasPlaylistKeywords = playlistKeywords.some(keyword => 
+      title.toLowerCase().includes(keyword) || description.toLowerCase().includes(keyword)
+    );
+    
+    // Check for podcast:remoteItem elements (Podcasting 2.0 playlist feature)
+    const hasRemoteItems = channel['podcast:remoteItem'] && channel['podcast:remoteItem'].length > 0;
+    
+    // Check if items have music-related titles
+    const items = channel.item || [];
+    if (items.length > 0) {
+      const firstItem = Array.isArray(items) ? items[0] : items;
+      const itemTitle = this.getTextContent(firstItem, 'title') || '';
+      
+      // If item titles look like song titles (not episode titles), it's likely a playlist
+      const songTitlePatterns = [
+        /^[A-Z][a-z]+ [A-Z][a-z]+/, // "Artist Song" pattern
+        /^[A-Z][a-z]+ - [A-Z][a-z]+/, // "Artist - Song" pattern
+        /^[A-Z][a-z]+: [A-Z][a-z]+/, // "Artist: Song" pattern
+      ];
+      
+      const looksLikeSongTitle = songTitlePatterns.some(pattern => pattern.test(itemTitle));
+      
+      return hasPlaylistKeywords || looksLikeSongTitle || hasRemoteItems;
+    }
+    
+    return hasPlaylistKeywords || hasRemoteItems;
+  }
+
+  /**
+   * Extract tracks from a playlist-style feed where each item is a song
+   */
+  private static async extractTracksFromPlaylistFeed(
+    channel: any, 
+    feedUrl: string, 
+    startTime: number
+  ): Promise<MusicTrackExtractionResult> {
+    const tracks: MusicTrack[] = [];
+    const channelTitle = this.getTextContent(channel, 'title') || 'Unknown Playlist';
+    
+    // Handle podcast:remoteItem elements (Podcasting 2.0 playlist feature)
+    const remoteItems = channel['podcast:remoteItem'] || [];
+    const remoteItemArray = Array.isArray(remoteItems) ? remoteItems : [remoteItems];
+    
+    for (const remoteItem of remoteItemArray) {
+      if (remoteItem && remoteItem.$) {
+        const feedGuid = remoteItem.$.feedGuid;
+        const itemGuid = remoteItem.$.itemGuid;
+        
+        // Create a placeholder track for the remote item
+        // In a full implementation, we would fetch the actual track data from the referenced feed
+        const track: MusicTrack = {
+          id: this.generateId(),
+          title: `Track from ${feedGuid}`,
+          artist: 'Various Artists',
+          episodeId: itemGuid,
+          episodeTitle: channelTitle,
+          episodeDate: new Date(),
+          startTime: 0,
+          endTime: 0,
+          duration: 0,
+          source: 'external-feed',
+          feedUrl,
+          discoveredAt: new Date(),
+          description: `Remote track from feed ${feedGuid}`
+        };
+        
+        tracks.push(track);
+      }
+    }
+    
+    // Handle regular items if they exist
+    const items = channel.item || [];
+    const itemArray = Array.isArray(items) ? items : [items];
+    
+    for (const item of itemArray) {
+      const itemTitle = this.getTextContent(item, 'title') || '';
+      const itemDescription = this.getTextContent(item, 'description') || '';
+      const pubDate = this.getTextContent(item, 'pubDate');
+      const guid = this.getTextContent(item, 'guid') || this.generateId();
+      
+      // Extract artist and title from the item title
+      const { artist, title } = this.extractArtistAndTitle(itemTitle);
+      
+      // Get audio URL from enclosure
+      const enclosure = item.enclosure;
+      let audioUrl: string | undefined;
+      if (enclosure && enclosure.$ && enclosure.$.url) {
+        audioUrl = enclosure.$.url;
+      }
+      
+      // Create a music track from this playlist item
+      const track: MusicTrack = {
+        id: this.generateId(),
+        title: title || itemTitle,
+        artist: artist || channelTitle,
+        episodeId: guid,
+        episodeTitle: channelTitle,
+        episodeDate: pubDate ? new Date(pubDate) : new Date(),
+        startTime: 0,
+        endTime: 0,
+        duration: 0,
+        audioUrl,
+        source: 'external-feed',
+        feedUrl,
+        discoveredAt: new Date(),
+        description: itemDescription
+      };
+      
+      tracks.push(track);
+    }
+    
+    const extractionTime = Date.now() - startTime;
+    
+    return {
+      tracks,
+      relatedFeeds: [],
+      extractionStats: {
+        totalTracks: tracks.length,
+        tracksFromChapters: 0,
+        tracksFromValueSplits: 0,
+        tracksFromDescription: 0,
+        relatedFeedsFound: 0,
+        extractionTime
+      }
+    };
   }
 } 
