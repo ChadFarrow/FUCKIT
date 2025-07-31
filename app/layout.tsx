@@ -100,8 +100,22 @@ export default function RootLayout({
         <ClientErrorBoundary>
           <ErrorBoundary>
             <AudioProvider>
-              <div className="min-h-screen bg-gray-50">
-                {children}
+              <div className="min-h-screen bg-gray-50 relative">
+                {/* Background Image */}
+                <div 
+                  className="fixed inset-0 z-0"
+                  style={{
+                    backgroundImage: 'url(/bloodshot-lies-bg.jpg)',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
+                    opacity: 0.15
+                  }}
+                />
+                {/* Content overlay */}
+                <div className="relative z-10">
+                  {children}
+                </div>
               </div>
               <GlobalNowPlayingBar />
               <ToastContainer />

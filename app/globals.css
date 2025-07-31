@@ -10,6 +10,21 @@
   body {
     @apply bg-gray-50 text-gray-900;
   }
+  
+  /* Background image fallback */
+  .bg-bloodshot-lies {
+    background-image: url('/bloodshot-lies-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+  
+  /* Ensure content is readable over background */
+  .content-overlay {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+  }
 }
 
 @layer components {
