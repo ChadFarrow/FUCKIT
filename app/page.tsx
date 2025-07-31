@@ -286,9 +286,7 @@ export default function HomePage() {
         publisher: album.publisher,
         podroll: album.podroll,
         funding: album.funding,
-        feedId: album.feedId,
-        feedUrl: album.feedUrl,
-        lastUpdated: album.lastUpdated
+        feedId: album.feedId
       }));
       
       // Deduplicate albums
