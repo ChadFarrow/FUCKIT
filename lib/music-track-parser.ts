@@ -7,6 +7,7 @@ export interface MusicTrack {
   artist: string;
   episodeId: string;
   episodeTitle: string;
+  episodeDate: Date; // Publication date of the episode
   startTime: number; // seconds
   endTime: number; // seconds
   duration: number; // seconds
@@ -161,10 +162,15 @@ export class MusicTrackParser {
     const episodeDescription = this.getTextContent(item, 'description') || '';
     const audioUrl = this.getAttributeValue(item, 'enclosure', 'url');
     
+    // Extract episode publication date
+    const pubDateStr = this.getTextContent(item, 'pubDate');
+    const episodeDate = pubDateStr ? new Date(pubDateStr) : new Date();
+    
     // 1. Extract tracks from chapter data
     const chapterTracks = await this.extractTracksFromChapters(item, {
       episodeId: episodeGuid,
       episodeTitle,
+      episodeDate,
       channelTitle,
       feedUrl,
       audioUrl
@@ -175,6 +181,7 @@ export class MusicTrackParser {
     const valueSplitTracks = this.extractTracksFromValueSplits(item, {
       episodeId: episodeGuid,
       episodeTitle,
+      episodeDate,
       channelTitle,
       feedUrl,
       audioUrl
@@ -185,6 +192,7 @@ export class MusicTrackParser {
     const descriptionTracks = this.extractTracksFromDescription(episodeDescription, {
       episodeId: episodeGuid,
       episodeTitle,
+      episodeDate,
       channelTitle,
       feedUrl,
       audioUrl
@@ -202,6 +210,7 @@ export class MusicTrackParser {
     context: {
       episodeId: string;
       episodeTitle: string;
+      episodeDate: Date;
       channelTitle: string;
       feedUrl: string;
       audioUrl?: string;
@@ -236,6 +245,7 @@ export class MusicTrackParser {
             artist: context.channelTitle,
             episodeId: context.episodeId,
             episodeTitle: context.episodeTitle,
+            episodeDate: context.episodeDate,
             startTime: chapter.startTime,
             endTime: chapter.endTime || chapter.startTime + 300, // Default 5 minutes if no end time
             duration: (chapter.endTime || chapter.startTime + 300) - chapter.startTime,
@@ -265,6 +275,7 @@ export class MusicTrackParser {
     context: {
       episodeId: string;
       episodeTitle: string;
+      episodeDate: Date;
       channelTitle: string;
       feedUrl: string;
       audioUrl?: string;
@@ -291,6 +302,7 @@ export class MusicTrackParser {
           artist: context.channelTitle,
           episodeId: context.episodeId,
           episodeTitle: context.episodeTitle,
+          episodeDate: context.episodeDate,
           startTime,
           endTime: startTime + duration,
           duration,
@@ -321,6 +333,7 @@ export class MusicTrackParser {
     context: {
       episodeId: string;
       episodeTitle: string;
+      episodeDate: Date;
       channelTitle: string;
       feedUrl: string;
       audioUrl?: string;
@@ -347,6 +360,7 @@ export class MusicTrackParser {
             artist: context.channelTitle,
             episodeId: context.episodeId,
             episodeTitle: context.episodeTitle,
+            episodeDate: context.episodeDate,
             startTime: 0, // Unknown timestamp
             endTime: 0,
             duration: 0,

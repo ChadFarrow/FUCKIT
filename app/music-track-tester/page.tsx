@@ -154,6 +154,13 @@ export default function MusicTrackTester() {
                           </div>
                           <p className="text-gray-600 mb-2">Artist: {track.artist}</p>
                           <p className="text-gray-600 mb-2">Episode: {track.episodeTitle}</p>
+                          <p className="text-gray-600 mb-2">
+                            Date: {track.episodeDate ? new Date(track.episodeDate).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric'
+                            }) : 'Unknown'}
+                          </p>
                           
                           {track.startTime > 0 && (
                             <p className="text-gray-600 mb-2">
