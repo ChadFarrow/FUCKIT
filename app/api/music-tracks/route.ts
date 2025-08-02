@@ -13,7 +13,36 @@ export async function GET(request: NextRequest) {
       );
     }
     
-    // Validate URL
+    // Handle local database request
+    if (feedUrl === 'local://database') {
+      console.log('🎵 Loading tracks from local database');
+      try {
+        const fs = require('fs').promises;
+        const path = require('path');
+        
+        const dataPath = path.join(process.cwd(), 'data', 'music-tracks.json');
+        const data = await fs.readFile(dataPath, 'utf8');
+        const musicData = JSON.parse(data);
+        
+        return NextResponse.json({
+          success: true,
+          data: {
+            tracks: musicData.musicTracks || [],
+            relatedFeeds: [],
+            metadata: musicData.metadata || {}
+          },
+          message: `Successfully loaded ${musicData.musicTracks?.length || 0} tracks from local database`
+        });
+      } catch (error) {
+        console.error('Failed to load local database:', error);
+        return NextResponse.json(
+          { error: 'Failed to load local database' },
+          { status: 500 }
+        );
+      }
+    }
+    
+    // Validate URL for external feeds
     try {
       new URL(feedUrl);
     } catch {

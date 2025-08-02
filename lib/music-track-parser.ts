@@ -1,5 +1,6 @@
 import { AppError, ErrorCodes, withRetry, createErrorLogger } from './error-utils';
 import * as xml2js from 'xml2js';
+import { RSSParser, RSSValueTimeSplit, RSSValueRecipient } from './rss-parser';
 
 export interface MusicTrack {
   id: string;
@@ -64,6 +65,7 @@ export interface MusicTrackExtractionResult {
     totalTracks: number;
     tracksFromChapters: number;
     tracksFromValueSplits: number;
+    tracksFromV4VData: number;
     tracksFromDescription: number;
     relatedFeedsFound: number;
     extractionTime: number;
@@ -132,6 +134,7 @@ export class MusicTrackParser {
         totalTracks: tracks.length,
         tracksFromChapters: tracks.filter(t => t.source === 'chapter').length,
         tracksFromValueSplits: tracks.filter(t => t.source === 'value-split').length,
+        tracksFromV4VData: tracks.filter(t => t.source === 'value-split' && t.valueForValue?.lightningAddress).length,
         tracksFromDescription: tracks.filter(t => t.source === 'description').length,
         relatedFeedsFound: relatedFeeds.length,
         extractionTime
@@ -190,7 +193,7 @@ export class MusicTrackParser {
     });
     tracks.push(...chapterTracks);
     
-    // 2. Extract tracks from value time splits
+    // 2. Extract tracks from value time splits (legacy method)
     const valueSplitTracks = this.extractTracksFromValueSplits(item, {
       episodeId: episodeGuid,
       episodeTitle,
@@ -201,7 +204,43 @@ export class MusicTrackParser {
     });
     tracks.push(...valueSplitTracks);
     
-    // 3. Extract tracks from episode description
+    // 3. Extract tracks from V4V data (enhanced method)
+    // First, try to parse the item using RSSParser to get V4V data
+    try {
+      // Create a mock RSS feed structure for the single item
+      const mockRssXml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:podcast="https://github.com/Podcastindex-org/podcast-namespace/blob/main/docs/1.0.md">
+  <channel>
+    <title>${channelTitle}</title>
+    <item>
+      ${this.itemToXmlString(item)}
+    </item>
+  </channel>
+</rss>`;
+      
+      // Use RSSParser to parse the V4V data
+      const tempFeedUrl = `data:text/xml;base64,${Buffer.from(mockRssXml).toString('base64')}`;
+      const parsedAlbum = await RSSParser.parseAlbumFeed(tempFeedUrl);
+      
+      if (parsedAlbum && parsedAlbum.value4Value) {
+        const v4vTracks = this.extractTracksFromV4VData(parsedAlbum.value4Value, {
+          episodeId: episodeGuid,
+          episodeTitle,
+          episodeDate,
+          channelTitle,
+          feedUrl,
+          audioUrl
+        });
+        tracks.push(...v4vTracks);
+      }
+    } catch (error) {
+      this.logger.warn('Failed to extract V4V data from episode', { 
+        episodeId: episodeGuid, 
+        error: error instanceof Error ? error.message : String(error) 
+      });
+    }
+    
+    // 4. Extract tracks from episode description
     const descriptionTracks = this.extractTracksFromDescription(episodeDescription, {
       episodeId: episodeGuid,
       episodeTitle,
@@ -298,6 +337,7 @@ export class MusicTrackParser {
   ): MusicTrack[] {
     const tracks: MusicTrack[] = [];
     
+    // Use the enhanced V4V parsing from RSSParser
     // Look for podcast:valueTimeSplit elements
     const valueSplits = item['podcast:valueTimeSplit'] || item.valueTimeSplit || [];
     const splitsArray = Array.isArray(valueSplits) ? valueSplits : [valueSplits];
@@ -306,14 +346,47 @@ export class MusicTrackParser {
       if (!split) continue;
       
       const startTime = parseFloat(this.getAttributeValue(split, 'startTime') || '0');
-      const duration = parseFloat(this.getAttributeValue(split, 'duration') || '0');
-      const remotePercentage = parseFloat(this.getAttributeValue(split, 'remotePercentage') || '0');
+      const endTime = parseFloat(this.getAttributeValue(split, 'endTime') || '0');
+      const duration = endTime > startTime ? endTime - startTime : parseFloat(this.getAttributeValue(split, 'duration') || '0');
       
-      if (startTime > 0 && duration > 0 && remotePercentage > 0) {
+      // Check if this split has remote recipients (indicating music sharing)
+      const recipients = split['podcast:valueRecipient'] || split.valueRecipient || [];
+      const recipientsArray = Array.isArray(recipients) ? recipients : [recipients];
+      
+      const hasRemoteRecipients = recipientsArray.some((recipient: any) => {
+        if (!recipient) return false;
+        const type = this.getAttributeValue(recipient, 'type') || 'remote';
+        return type === 'remote' && parseFloat(this.getAttributeValue(recipient, 'percentage') || '0') > 0;
+      });
+      
+      if (startTime > 0 && duration > 0 && hasRemoteRecipients) {
+        // Extract recipient information for V4V data
+        const primaryRecipient = recipientsArray.find((recipient: any) => {
+          if (!recipient) return false;
+          const type = this.getAttributeValue(recipient, 'type') || 'remote';
+          return type === 'remote';
+        });
+        
+        const lightningAddress = primaryRecipient ? 
+          (this.getAttributeValue(primaryRecipient, 'address') || this.getAttributeValue(primaryRecipient, 'lightning') || '') : '';
+        
+        const suggestedAmount = primaryRecipient ? 
+          parseFloat(this.getAttributeValue(primaryRecipient, 'amount') || '0') : 0;
+        
+        // Try to extract track title from recipient name or custom fields
+        let trackTitle = `Music Track at ${this.formatTime(startTime)}`;
+        if (primaryRecipient) {
+          const recipientName = this.getTextContent(primaryRecipient, 'name') || 
+                               this.getAttributeValue(primaryRecipient, 'name') || '';
+          if (recipientName && !recipientName.includes('@')) {
+            trackTitle = recipientName;
+          }
+        }
+        
         // This is likely a music track shared via value-for-value
         const track: MusicTrack = {
           id: this.generateId(),
-          title: `Music Track at ${this.formatTime(startTime)}`,
+          title: trackTitle,
           artist: context.channelTitle,
           episodeId: context.episodeId,
           episodeTitle: context.episodeTitle,
@@ -326,14 +399,84 @@ export class MusicTrackParser {
           feedUrl: context.feedUrl,
           discoveredAt: new Date(),
           valueForValue: {
-            lightningAddress: '', // Would need to extract from value recipients
-            suggestedAmount: 0,
+            lightningAddress,
+            suggestedAmount,
             customKey: this.getAttributeValue(split, 'customKey'),
             customValue: this.getAttributeValue(split, 'customValue')
           }
         };
         
         tracks.push(track);
+      }
+    }
+    
+    return tracks;
+  }
+
+  /**
+   * Extract music tracks from V4V data parsed by RSSParser
+   */
+  private static extractTracksFromV4VData(
+    value4Value: any,
+    context: {
+      episodeId: string;
+      episodeTitle: string;
+      episodeDate: Date;
+      channelTitle: string;
+      feedUrl: string;
+      audioUrl?: string;
+    }
+  ): MusicTrack[] {
+    const tracks: MusicTrack[] = [];
+    
+    if (!value4Value || !value4Value.timeSplits) {
+      return tracks;
+    }
+    
+    for (const timeSplit of value4Value.timeSplits) {
+      // Check if this time split has remote recipients (indicating music sharing)
+      const hasRemoteRecipients = timeSplit.recipients && 
+        timeSplit.recipients.some((recipient: RSSValueRecipient) => 
+          recipient.type === 'remote' && recipient.percentage > 0
+        );
+      
+      if (hasRemoteRecipients && timeSplit.startTime > 0 && timeSplit.endTime > timeSplit.startTime) {
+        // Find the primary remote recipient
+        const primaryRecipient = timeSplit.recipients.find((recipient: RSSValueRecipient) => 
+          recipient.type === 'remote'
+        );
+        
+        if (primaryRecipient) {
+          // Try to extract track title from recipient name
+          let trackTitle = `Music Track at ${this.formatTime(timeSplit.startTime)}`;
+          if (primaryRecipient.name && !primaryRecipient.name.includes('@')) {
+            trackTitle = primaryRecipient.name;
+          }
+          
+          const track: MusicTrack = {
+            id: this.generateId(),
+            title: trackTitle,
+            artist: context.channelTitle,
+            episodeId: context.episodeId,
+            episodeTitle: context.episodeTitle,
+            episodeDate: context.episodeDate,
+            startTime: timeSplit.startTime,
+            endTime: timeSplit.endTime,
+            duration: timeSplit.endTime - timeSplit.startTime,
+            audioUrl: context.audioUrl,
+            source: 'value-split',
+            feedUrl: context.feedUrl,
+            discoveredAt: new Date(),
+            valueForValue: {
+              lightningAddress: primaryRecipient.address || '',
+              suggestedAmount: primaryRecipient.amount || 0,
+              customKey: primaryRecipient.customKey,
+              customValue: primaryRecipient.customValue
+            }
+          };
+          
+          tracks.push(track);
+        }
       }
     }
     
@@ -613,6 +756,66 @@ export class MusicTrackParser {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = Math.floor(seconds % 60);
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  }
+
+  /**
+   * Convert an RSS item object back to XML string for V4V parsing
+   */
+  private static itemToXmlString(item: any): string {
+    let xml = '';
+    
+    // Add basic item elements
+    if (item.title) {
+      xml += `<title><![CDATA[${item.title}]]></title>`;
+    }
+    if (item.description) {
+      xml += `<description><![CDATA[${item.description}]]></description>`;
+    }
+    if (item.guid) {
+      xml += `<guid>${item.guid}</guid>`;
+    }
+    if (item.pubDate) {
+      xml += `<pubDate>${item.pubDate}</pubDate>`;
+    }
+    
+    // Add V4V elements
+    if (item['podcast:valueTimeSplit']) {
+      const splits = Array.isArray(item['podcast:valueTimeSplit']) ? 
+        item['podcast:valueTimeSplit'] : [item['podcast:valueTimeSplit']];
+      
+      splits.forEach((split: any) => {
+        if (split && split.$) {
+          xml += `<podcast:valueTimeSplit`;
+          Object.entries(split.$).forEach(([key, value]) => {
+            xml += ` ${key}="${value}"`;
+          });
+          xml += '>';
+          
+          if (split['podcast:valueRecipient']) {
+            const recipients = Array.isArray(split['podcast:valueRecipient']) ? 
+              split['podcast:valueRecipient'] : [split['podcast:valueRecipient']];
+            
+            recipients.forEach((recipient: any) => {
+              if (recipient && recipient.$) {
+                xml += `<podcast:valueRecipient`;
+                Object.entries(recipient.$).forEach(([key, value]) => {
+                  xml += ` ${key}="${value}"`;
+                });
+                xml += '>';
+                if (recipient._) {
+                  xml += recipient._;
+                }
+                xml += '</podcast:valueRecipient>';
+              }
+            });
+          }
+          
+          xml += '</podcast:valueTimeSplit>';
+        }
+      });
+    }
+    
+    return xml;
   }
 
   /**

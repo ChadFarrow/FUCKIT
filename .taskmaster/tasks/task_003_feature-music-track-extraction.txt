@@ -1,0 +1,11 @@
+# Task ID: 3
+# Title: Extract Value Time Splits for Music Sharing
+# Status: done
+# Dependencies: 1
+# Priority: medium
+# Description: Parse value-for-value time splits to identify music segments with Lightning Network payment information
+# Details:
+Implement parsing of podcast:valueTimeSplit elements to identify music segments that are shared via value-for-value. Extract payment addresses, suggested amounts, and custom keys/values.
+
+# Test Strategy:
+Test with feeds containing value time splits to ensure proper extraction of Lightning Network payment details

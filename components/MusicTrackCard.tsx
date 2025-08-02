@@ -1,17 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import { MusicTrack } from '@/lib/music-track-parser';
-import { getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { formatTime, formatDate } from '@/lib/utils';
 
 interface MusicTrackCardProps {
   track: MusicTrack;
   onPlay?: (track: MusicTrack) => void;
+  onViewDetails?: (track: MusicTrack) => void;
 }
 
-export default function MusicTrackCard({ track, onPlay }: MusicTrackCardProps) {
+export default function MusicTrackCard({ track, onPlay, onViewDetails }: MusicTrackCardProps) {
   const [imageError, setImageError] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -20,6 +19,12 @@ export default function MusicTrackCard({ track, onPlay }: MusicTrackCardProps) {
     e.stopPropagation();
     if (onPlay) {
       onPlay(track);
+    }
+  };
+
+  const handleCardClick = () => {
+    if (onViewDetails) {
+      onViewDetails(track);
     }
   };
 
@@ -45,17 +50,15 @@ export default function MusicTrackCard({ track, onPlay }: MusicTrackCardProps) {
       className="group bg-white/5 backdrop-blur-sm rounded-xl p-4 hover:bg-white/10 transition-all duration-200 border border-white/10 hover:border-white/20 cursor-pointer"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={handlePlay}
+      onClick={handleCardClick}
     >
       <div className="flex items-start gap-4">
         {/* Track Image */}
         <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 relative">
           {track.image && !imageError ? (
-            <Image
+            <img
               src={track.image}
               alt={track.title}
-              width={64}
-              height={64}
               className="w-full h-full object-cover"
               onError={() => setImageError(true)}
             />
@@ -70,9 +73,15 @@ export default function MusicTrackCard({ track, onPlay }: MusicTrackCardProps) {
           {/* Play overlay */}
           {isHovered && (
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-lg">
-              <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M8 5v14l11-7z" />
-              </svg>
+              <button
+                onClick={handlePlay}
+                className="p-2 bg-blue-600 hover:bg-blue-700 rounded-full transition-colors"
+                title="Play track"
+              >
+                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </button>
             </div>
           )}
         </div>

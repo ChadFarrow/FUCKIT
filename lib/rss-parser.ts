@@ -25,6 +25,40 @@ export interface RSSFunding {
   message?: string;
 }
 
+// V4V (Value4Value) interfaces
+export interface RSSValueTimeSplit {
+  startTime: number; // Start time in seconds
+  endTime: number;   // End time in seconds
+  recipients: RSSValueRecipient[];
+  totalAmount?: number;
+  currency?: string;
+}
+
+export interface RSSValueRecipient {
+  name: string;
+  address?: string; // Lightning address or payment address
+  percentage: number;
+  amount?: number;
+  type: 'remote' | 'local' | 'fee';
+  customKey?: string;
+  customValue?: string;
+}
+
+export interface RSSValue4Value {
+  timeSplits?: RSSValueTimeSplit[];
+  funding?: RSSFunding[];
+  boostagrams?: RSSBoostagram[];
+}
+
+export interface RSSBoostagram {
+  senderName?: string;
+  message?: string;
+  amount: number;
+  currency?: string;
+  timestamp?: string;
+  episodeGuid?: string;
+}
+
 export interface RSSPodRoll {
   url: string;
   title?: string;
@@ -72,6 +106,8 @@ export interface RSSAlbum {
   source?: string;
   id?: string;
   feedId?: string;
+  // V4V (Value4Value) fields
+  value4Value?: RSSValue4Value;
 }
 
 // Development logging utility
@@ -612,6 +648,9 @@ export class RSSParser {
         }
       }
       
+      // Extract V4V (Value4Value) information
+      const value4Value = this.parseValue4ValueData(channel, items);
+      
       const album = {
         title,
         artist,
@@ -630,7 +669,8 @@ export class RSSParser {
         copyright,
         owner: owner && (owner.name || owner.email) ? owner : undefined,
         podroll: podroll.length > 0 ? podroll : undefined,
-        publisher: publisher
+        publisher: publisher,
+        value4Value: value4Value
       };
       
       verboseLog('[RSSParser] Successfully parsed RSS feed', { feedUrl, trackCount: tracks.length });
@@ -1069,5 +1109,295 @@ export class RSSParser {
     
     devLog(`🎶 Loaded ${allAlbums.length} albums from publisher feed`);
     return allAlbums;
+  }
+
+  /**
+   * Parse Value4Value (V4V) data from RSS feed
+   */
+  private static parseValue4ValueData(channel: Element, items: HTMLCollectionOf<Element>): RSSValue4Value | undefined {
+    const value4Value: RSSValue4Value = {};
+    
+    // Parse Value Time Splits from items
+    const timeSplits = this.parseValueTimeSplits(items);
+    if (timeSplits.length > 0) {
+      value4Value.timeSplits = timeSplits;
+    }
+    
+    // Parse general podcast:value elements from items
+    const generalValues = this.parseGeneralValues(items);
+    if (generalValues.length > 0) {
+      // Add general values to timeSplits if they have time information
+      value4Value.timeSplits = [...(value4Value.timeSplits || []), ...generalValues];
+    }
+    
+    // Parse Boostagrams from items
+    const boostagrams = this.parseBoostagrams(items);
+    if (boostagrams.length > 0) {
+      value4Value.boostagrams = boostagrams;
+    }
+    
+    // Return undefined if no V4V data found
+    if (!value4Value.timeSplits && !value4Value.boostagrams) {
+      return undefined;
+    }
+    
+    return value4Value;
+  }
+
+  /**
+   * Parse Value Time Splits from RSS items
+   */
+  private static parseValueTimeSplits(items: HTMLCollectionOf<Element>): RSSValueTimeSplit[] {
+    const timeSplits: RSSValueTimeSplit[] = [];
+    
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      
+      // Look for Podcast Index value time splits in item
+      const valueTimeSplitElements = Array.from(item.getElementsByTagName('podcast:valueTimeSplit'));
+      
+      valueTimeSplitElements.forEach((valueTimeSplitElement) => {
+        try {
+          const timeSplit = this.parseValueTimeSplit(valueTimeSplitElement);
+          if (timeSplit) {
+            timeSplits.push(timeSplit);
+          }
+        } catch (error) {
+          verboseLog(`⚠️ Error parsing value time split: ${error}`);
+        }
+      });
+    }
+    
+    return timeSplits;
+  }
+
+  /**
+   * Parse a single Value Time Split element
+   */
+  private static parseValueTimeSplit(valueTimeSplitElement: Element): RSSValueTimeSplit | null {
+    // Parse time range
+    const startTimeStr = valueTimeSplitElement.getAttribute('startTime') || valueTimeSplitElement.getAttribute('start');
+    const endTimeStr = valueTimeSplitElement.getAttribute('endTime') || valueTimeSplitElement.getAttribute('end');
+    
+    if (!startTimeStr || !endTimeStr) {
+      return null;
+    }
+    
+    const startTime = this.parseTimeToSeconds(startTimeStr);
+    const endTime = this.parseTimeToSeconds(endTimeStr);
+    
+    if (startTime === null || endTime === null) {
+      return null;
+    }
+    
+    // Parse recipients
+    const recipients: RSSValueRecipient[] = [];
+    const recipientElements = Array.from(valueTimeSplitElement.getElementsByTagName('podcast:valueRecipient'));
+    
+    recipientElements.forEach((recipientElement) => {
+      const recipient = this.parseValueRecipient(recipientElement);
+      if (recipient) {
+        recipients.push(recipient);
+      }
+    });
+    
+    if (recipients.length === 0) {
+      return null;
+    }
+    
+    // Parse total amount and currency
+    const totalAmountStr = valueTimeSplitElement.getAttribute('totalAmount') || valueTimeSplitElement.getAttribute('amount');
+    const totalAmount = totalAmountStr ? parseFloat(totalAmountStr) : undefined;
+    const currency = valueTimeSplitElement.getAttribute('currency') || 'sats';
+    
+    return {
+      startTime,
+      endTime,
+      recipients,
+      totalAmount,
+      currency
+    };
+  }
+
+  /**
+   * Parse a single Value Recipient element
+   */
+  private static parseValueRecipient(recipientElement: Element): RSSValueRecipient | null {
+    const name = recipientElement.getAttribute('name') || recipientElement.textContent?.trim();
+    if (!name) {
+      return null;
+    }
+    
+    const address = recipientElement.getAttribute('address') || recipientElement.getAttribute('lightning');
+    const percentageStr = recipientElement.getAttribute('percentage') || recipientElement.getAttribute('split');
+    const percentage = percentageStr ? parseFloat(percentageStr) : 0;
+    const amountStr = recipientElement.getAttribute('amount');
+    const amount = amountStr ? parseFloat(amountStr) : undefined;
+    const type = (recipientElement.getAttribute('type') || 'remote') as 'remote' | 'local' | 'fee';
+    
+    // Extract custom key-value pairs for additional metadata
+    const customKey = recipientElement.getAttribute('customKey');
+    const customValue = recipientElement.getAttribute('customValue');
+    
+    return {
+      name,
+      address,
+      percentage,
+      amount,
+      type,
+      customKey,
+      customValue
+    };
+  }
+
+  /**
+   * Parse general podcast:value elements from RSS items
+   */
+  private static parseGeneralValues(items: HTMLCollectionOf<Element>): RSSValueTimeSplit[] {
+    const generalValues: RSSValueTimeSplit[] = [];
+    
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      
+      // Look for general podcast:value elements (not time splits)
+      const valueElements = Array.from(item.getElementsByTagName('podcast:value'));
+      
+      valueElements.forEach((valueElement) => {
+        try {
+          // Skip if this is already a time split element
+          if (valueElement.getAttribute('startTime') || valueElement.getAttribute('endTime')) {
+            return;
+          }
+          
+          const generalValue = this.parseGeneralValue(valueElement);
+          if (generalValue) {
+            generalValues.push(generalValue);
+          }
+        } catch (error) {
+          verboseLog(`⚠️ Error parsing general value: ${error}`);
+        }
+      });
+    }
+    
+    return generalValues;
+  }
+
+  /**
+   * Parse a general podcast:value element
+   */
+  private static parseGeneralValue(valueElement: Element): RSSValueTimeSplit | null {
+    // Parse recipients
+    const recipients: RSSValueRecipient[] = [];
+    const recipientElements = Array.from(valueElement.getElementsByTagName('podcast:valueRecipient'));
+    
+    recipientElements.forEach((recipientElement) => {
+      const recipient = this.parseValueRecipient(recipientElement);
+      if (recipient) {
+        recipients.push(recipient);
+      }
+    });
+    
+    if (recipients.length === 0) {
+      return null;
+    }
+    
+    // Parse total amount and currency
+    const totalAmountStr = valueElement.getAttribute('totalAmount') || valueElement.getAttribute('amount');
+    const totalAmount = totalAmountStr ? parseFloat(totalAmountStr) : undefined;
+    const currency = valueElement.getAttribute('currency') || 'sats';
+    
+    // For general values without time splits, use episode duration or default
+    const startTime = 0; // Start from beginning of episode
+    const endTime = -1; // -1 indicates full episode duration
+    
+    return {
+      startTime,
+      endTime,
+      recipients,
+      totalAmount,
+      currency
+    };
+  }
+
+  /**
+   * Parse Boostagrams from RSS items
+   */
+  private static parseBoostagrams(items: HTMLCollectionOf<Element>): RSSBoostagram[] {
+    const boostagrams: RSSBoostagram[] = [];
+    
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      
+      // Look for boostagram elements
+      const boostagramElements = Array.from(item.getElementsByTagName('boostagram'));
+      
+      boostagramElements.forEach((boostagramElement) => {
+        try {
+          const boostagram = this.parseBoostagram(boostagramElement);
+          if (boostagram) {
+            boostagrams.push(boostagram);
+          }
+        } catch (error) {
+          verboseLog(`⚠️ Error parsing boostagram: ${error}`);
+        }
+      });
+    }
+    
+    return boostagrams;
+  }
+
+  /**
+   * Parse a single Boostagram element
+   */
+  private static parseBoostagram(boostagramElement: Element): RSSBoostagram | null {
+    const senderName = boostagramElement.getAttribute('senderName') || boostagramElement.getAttribute('sender');
+    const message = boostagramElement.getAttribute('message') || boostagramElement.textContent?.trim();
+    const amountStr = boostagramElement.getAttribute('amount');
+    const currency = boostagramElement.getAttribute('currency') || 'sats';
+    const timestamp = boostagramElement.getAttribute('timestamp');
+    const episodeGuid = boostagramElement.getAttribute('episodeGuid') || boostagramElement.getAttribute('guid');
+    
+    if (!amountStr) {
+      return null;
+    }
+    
+    const amount = parseFloat(amountStr);
+    if (isNaN(amount)) {
+      return null;
+    }
+    
+    return {
+      senderName,
+      message,
+      amount,
+      currency,
+      timestamp,
+      episodeGuid
+    };
+  }
+
+  /**
+   * Parse time string to seconds
+   */
+  private static parseTimeToSeconds(timeStr: string): number | null {
+    if (!timeStr) return null;
+    
+    // Handle HH:MM:SS format
+    if (timeStr.includes(':')) {
+      const parts = timeStr.split(':').map(part => parseInt(part.trim()));
+      if (parts.length === 3 && parts.every(part => !isNaN(part))) {
+        return parts[0] * 3600 + parts[1] * 60 + parts[2];
+      } else if (parts.length === 2 && parts.every(part => !isNaN(part))) {
+        return parts[0] * 60 + parts[1];
+      }
+    }
+    
+    // Handle seconds only
+    const seconds = parseInt(timeStr);
+    if (!isNaN(seconds)) {
+      return seconds;
+    }
+    
+    return null;
   }
 }

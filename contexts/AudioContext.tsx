@@ -22,6 +22,7 @@ interface AudioContextType {
   
   // Audio controls
   playAlbum: (album: RSSAlbum, trackIndex?: number) => Promise<boolean>;
+  playTrack: (audioUrl: string, startTime?: number, endTime?: number) => Promise<boolean>;
   playShuffledTrack: (index: number) => Promise<boolean>;
   shuffleAllTracks: () => Promise<boolean>;
   pause: () => void;
@@ -85,12 +86,30 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       if (savedState) {
         try {
           const state = JSON.parse(savedState);
-          // Note: We can't restore the full album object from localStorage
-          // So we'll just restore the track index and timing info
+          
+          // Restore shuffle state
+          if (state.isShuffleMode !== undefined) {
+            setIsShuffleMode(state.isShuffleMode);
+          }
+          if (state.currentShuffleIndex !== undefined) {
+            setCurrentShuffleIndex(state.currentShuffleIndex);
+          }
+          
+          // Restore track index and timing info
           setCurrentTrackIndex(state.currentTrackIndex || 0);
           setCurrentTime(state.currentTime || 0);
           setDuration(state.duration || 0);
+          
           // Note: isPlaying is not restored to prevent autoplay issues
+          // Note: currentPlayingAlbum will be restored when needed by playNextTrack
+          
+          if (process.env.NODE_ENV === 'development') {
+            console.log('🔄 Restored audio state from localStorage:', {
+              trackIndex: state.currentTrackIndex,
+              shuffleMode: state.isShuffleMode,
+              hasAlbumData: !!state.currentPlayingAlbum
+            });
+          }
         } catch (error) {
           console.warn('Failed to restore audio state:', error);
         }
@@ -116,10 +135,25 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     if (typeof window !== 'undefined' && currentPlayingAlbum) {
       const timeoutId = setTimeout(() => {
         const state = {
-          currentPlayingAlbumTitle: currentPlayingAlbum.title,
+          currentPlayingAlbum: {
+            title: currentPlayingAlbum.title,
+            tracks: currentPlayingAlbum.tracks?.map(track => ({
+              title: track.title,
+              audioUrl: track.audioUrl,
+              startTime: track.startTime,
+              endTime: track.endTime
+            }))
+          },
           currentTrackIndex,
           currentTime,
           duration,
+          isShuffleMode,
+          shuffledPlaylist: shuffledPlaylist.map(item => ({
+            albumTitle: item.album.title,
+            trackIndex: item.trackIndex,
+            trackTitle: item.track.title
+          })),
+          currentShuffleIndex,
           timestamp: Date.now()
         };
         localStorage.setItem('audioPlayerState', JSON.stringify(state));
@@ -127,7 +161,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       
       return () => clearTimeout(timeoutId);
     }
-  }, [currentPlayingAlbum?.title, currentTrackIndex, currentTime, duration]); // Use specific properties instead of entire objects
+  }, [currentPlayingAlbum, currentTrackIndex, currentTime, duration, isShuffleMode, shuffledPlaylist, currentShuffleIndex]);
 
   // Load albums data for playback - only once
   useEffect(() => {
@@ -383,6 +417,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
 
   // Helper function to attempt media playback with fallback URLs
   const attemptAudioPlayback = async (originalUrl: string, context = 'playback'): Promise<boolean> => {
+    console.log('🎵 Attempting audio playback:', { originalUrl, context });
     const isVideo = isVideoUrl(originalUrl);
     const isHls = isHlsUrl(originalUrl);
     const mediaElement = isVideo ? videoRef.current : audioRef.current;
@@ -532,12 +567,19 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       }
       
       try {
+        // Add a small delay to ensure state is stable
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
         // Use the ref to get the latest playNextTrack function
         if (playNextTrackRef.current) {
           await playNextTrackRef.current();
+        } else {
+          console.warn('⚠️ playNextTrackRef.current is null');
         }
       } catch (error) {
         console.error('❌ Error in auto-play:', error);
+        // Don't let errors in auto-play crash the application
+        setIsPlaying(false);
       }
     };
 
@@ -566,8 +608,13 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       if (currentPlayingAlbum && currentPlayingAlbum.tracks[currentTrackIndex]) {
         const track = currentPlayingAlbum.tracks[currentTrackIndex];
         if (track.startTime && typeof track.startTime === 'number') {
-          console.log(`🎵 Seeking to start time: ${track.startTime}s for track: ${track.title}`);
-          currentElement.currentTime = track.startTime;
+          // Validate start time against duration
+          if (track.startTime < currentElement.duration) {
+            console.log(`🎵 Seeking to start time: ${track.startTime}s for track: ${track.title}`);
+            currentElement.currentTime = track.startTime;
+          } else {
+            console.warn(`⚠️ Start time ${track.startTime}s is beyond track duration ${currentElement.duration}s for track: ${track.title}`);
+          }
         }
       }
     };
@@ -784,13 +831,62 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   const seek = (time: number) => {
     const currentElement = isVideoMode ? videoRef.current : audioRef.current;
     if (currentElement && duration) {
-      currentElement.currentTime = Math.max(0, Math.min(time, duration));
+      // Validate time value
+      const validTime = Math.max(0, Math.min(time, duration));
+      
+      // Check if the time is reasonable (not too large)
+      if (time > duration * 2) {
+        console.warn(`⚠️ Seek time ${time}s is much larger than duration ${duration}s, clamping to duration`);
+      }
+      
+      currentElement.currentTime = validTime;
       setCurrentTime(currentElement.currentTime);
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`🎵 Seeking to time: ${validTime}s (requested: ${time}s, duration: ${duration}s)`);
+      }
+    } else {
+      console.warn('⚠️ Cannot seek: no media element or duration not available');
     }
   };
 
   // Play next track
   const playNextTrack = async () => {
+    // Add state validation and recovery logic
+    if (!currentPlayingAlbum || !currentPlayingAlbum.tracks || currentPlayingAlbum.tracks.length === 0) {
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('⚠️ Cannot play next track: missing album or tracks');
+        console.log('🔍 Current state:', {
+          hasAlbum: !!currentPlayingAlbum,
+          hasTracks: !!(currentPlayingAlbum?.tracks),
+          trackCount: currentPlayingAlbum?.tracks?.length || 0,
+          currentIndex: currentTrackIndex
+        });
+      }
+      
+      // Try to recover from localStorage if available
+      if (typeof window !== 'undefined') {
+        try {
+          const savedState = localStorage.getItem('audioPlayerState');
+          if (savedState) {
+            const parsedState = JSON.parse(savedState);
+            if (parsedState.currentPlayingAlbum && parsedState.currentPlayingAlbum.tracks) {
+              console.log('🔄 Attempting to recover from saved state');
+              setCurrentPlayingAlbum(parsedState.currentPlayingAlbum);
+              setCurrentTrackIndex(parsedState.currentTrackIndex || 0);
+              // Retry after state recovery
+              setTimeout(() => playNextTrack(), 100);
+              return;
+            }
+          }
+        } catch (error) {
+          console.error('❌ Error recovering from localStorage:', error);
+        }
+      }
+      
+      return;
+    }
+
     if (isShuffleMode && shuffledPlaylist.length > 0) {
       // In shuffle mode, play next track from shuffled playlist
       const nextShuffleIndex = currentShuffleIndex + 1;
@@ -809,13 +905,6 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     }
 
     // Normal mode - play next track in current album
-    if (!currentPlayingAlbum || !currentPlayingAlbum.tracks) {
-      if (process.env.NODE_ENV === 'development') {
-        console.warn('⚠️ Cannot play next track: missing album or tracks');
-      }
-      return;
-    }
-
     const nextIndex = currentTrackIndex + 1;
 
     if (nextIndex < currentPlayingAlbum.tracks.length) {
@@ -869,6 +958,31 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     }
   };
 
+  // Play individual track function
+  const playTrack = async (audioUrl: string, startTime: number = 0, endTime?: number): Promise<boolean> => {
+    console.log('🎵 Playing individual track:', { audioUrl, startTime, endTime });
+    
+    // Stop any current playback
+    stop();
+    
+    // Set user interaction flag
+    setHasUserInteracted(true);
+    
+    // Attempt to play the track
+    const success = await attemptAudioPlayback(audioUrl, 'individual track');
+    
+    if (success && startTime > 0) {
+      // Seek to start time after a short delay to ensure media is loaded
+      setTimeout(() => {
+        console.log('🎵 Seeking to start time:', startTime);
+        seek(startTime);
+      }, 500);
+    }
+    
+    console.log('🎵 Track playback result:', success);
+    return success;
+  };
+
   // Stop function
   const stop = () => {
     // Stop both audio and video elements
@@ -914,6 +1028,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     isVideoMode,
     isShuffleMode,
     playAlbum,
+    playTrack,
     playShuffledTrack,
     shuffleAllTracks,
     pause,

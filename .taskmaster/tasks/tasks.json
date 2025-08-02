@@ -21,7 +21,9 @@
           "description": "Implement parsing of podcast chapter JSON files to extract music track timestamps and metadata",
           "status": "pending",
           "priority": "high",
-          "dependencies": [1],
+          "dependencies": [
+            1
+          ],
           "details": "Create a chapter parser that can fetch and parse JSON chapter files referenced in RSS feeds. Extract track titles, start/end times, and any additional metadata from the chapter data.",
           "testStrategy": "Test with chapter files from the Doerfel-Verse feed to verify accurate timestamp and track information extraction",
           "subtasks": []
@@ -32,7 +34,9 @@
           "description": "Parse value-for-value time splits to identify music segments with Lightning Network payment information",
           "status": "pending",
           "priority": "medium",
-          "dependencies": [1],
+          "dependencies": [
+            1
+          ],
           "details": "Implement parsing of podcast:valueTimeSplit elements to identify music segments that are shared via value-for-value. Extract payment addresses, suggested amounts, and custom keys/values.",
           "testStrategy": "Test with feeds containing value time splits to ensure proper extraction of Lightning Network payment details",
           "subtasks": []
@@ -54,7 +58,9 @@
           "description": "Parse podcast roll elements to discover related music feeds and build feed relationships",
           "status": "pending",
           "priority": "medium",
-          "dependencies": [1],
+          "dependencies": [
+            1
+          ],
           "details": "Create a parser for podcast:podroll elements to identify related music feeds. Track feed relationships and hierarchies to enable music content aggregation across multiple feeds.",
           "testStrategy": "Test with feeds containing podcast roll elements to verify proper feed discovery and relationship tracking",
           "subtasks": []
@@ -65,7 +71,9 @@
           "description": "Create REST API endpoints for music track extraction, search, and feed analysis",
           "status": "pending",
           "priority": "high",
-          "dependencies": [4],
+          "dependencies": [
+            4
+          ],
           "details": "Implement API endpoints including GET /api/music-tracks, GET /api/music-feeds, and POST /api/music-tracks/analyze. Include proper error handling, rate limiting, and response formatting.",
           "testStrategy": "Create API tests to verify endpoint functionality and response formats",
           "subtasks": []
@@ -76,7 +84,9 @@
           "description": "Build a React component to display discovered music tracks in a searchable, filterable interface",
           "status": "pending",
           "priority": "medium",
-          "dependencies": [6],
+          "dependencies": [
+            6
+          ],
           "details": "Create a music track list view component with filtering by artist, episode, feed, or source. Include sorting options and search functionality. Design with responsive layout for mobile and desktop.",
           "testStrategy": "Test component with sample music track data to verify filtering, sorting, and search functionality",
           "subtasks": []
@@ -87,7 +97,9 @@
           "description": "Create a detailed view component for individual music tracks with metadata and value-for-value integration",
           "status": "pending",
           "priority": "medium",
-          "dependencies": [7],
+          "dependencies": [
+            7
+          ],
           "details": "Build a track detail view that displays full metadata, audio player integration, value-for-value payment interface, and related tracks. Include proper error handling for missing data.",
           "testStrategy": "Test with various track data scenarios including missing metadata and value-for-value information",
           "subtasks": []
@@ -98,7 +110,9 @@
           "description": "Create a dashboard to display music content statistics and feed relationship visualization",
           "status": "pending",
           "priority": "low",
-          "dependencies": [6],
+          "dependencies": [
+            6
+          ],
           "details": "Build a dashboard component showing music content statistics, feed relationship visualization, discovery timeline, and export functionality. Include charts and analytics for user engagement.",
           "testStrategy": "Test dashboard with sample data to verify statistics calculation and visualization accuracy",
           "subtasks": []
@@ -109,7 +123,9 @@
           "description": "Add audio player functionality to play music tracks directly from the interface",
           "status": "pending",
           "priority": "medium",
-          "dependencies": [8],
+          "dependencies": [
+            8
+          ],
           "details": "Integrate an audio player component that can play music tracks from their audio URLs. Include play/pause controls, progress tracking, and volume control. Handle various audio formats.",
           "testStrategy": "Test audio player with different audio formats and URLs to ensure proper playback functionality",
           "subtasks": []
@@ -120,7 +136,9 @@
           "description": "Implement export functionality and analytics tracking for music discovery features",
           "status": "pending",
           "priority": "low",
-          "dependencies": [9],
+          "dependencies": [
+            9
+          ],
           "details": "Add export functionality for music track data in various formats (JSON, CSV). Implement analytics tracking for user engagement with music discovery features. Include performance monitoring.",
           "testStrategy": "Test export functionality with sample data and verify analytics tracking accuracy",
           "subtasks": []
@@ -131,7 +149,9 @@
           "description": "Optimize performance and conduct comprehensive testing of the music track extraction feature",
           "status": "pending",
           "priority": "high",
-          "dependencies": [11],
+          "dependencies": [
+            11
+          ],
           "details": "Implement caching for parsed feed data, optimize API response times, and add comprehensive error handling. Conduct end-to-end testing with various RSS feeds and edge cases.",
           "testStrategy": "Run performance benchmarks and conduct user acceptance testing with real RSS feeds",
           "subtasks": []
@@ -139,5 +159,240 @@
       ]
     }
   },
-  "currentTag": "feature-new-feature"
+  "currentTag": "feature-new-feature",
+  "feature-music-track-extraction": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Implement RSS Feed Music Track Detection Parser",
+        "description": "Create a parser to identify music tracks within podcast episodes by analyzing episode descriptions, chapter data, and value time splits",
+        "status": "done",
+        "priority": "high",
+        "dependencies": [],
+        "details": "Build a core parser that can analyze RSS feed episodes and extract music track information from various sources including episode descriptions, chapter JSON files, and value time splits. This will be the foundation for the music track extraction feature.",
+        "testStrategy": "Test with the Doerfel-Verse RSS feed to ensure it can identify music tracks from episode descriptions and chapter data",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Parse Chapter JSON Files for Track Information",
+        "description": "Implement parsing of podcast chapter JSON files to extract music track timestamps and metadata",
+        "status": "done",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "details": "Create a chapter parser that can fetch and parse JSON chapter files referenced in RSS feeds. Extract track titles, start/end times, and any additional metadata from the chapter data.",
+        "testStrategy": "Test with chapter files from the Doerfel-Verse feed to verify accurate timestamp and track information extraction",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Extract Value Time Splits for Music Sharing",
+        "description": "Parse value-for-value time splits to identify music segments with Lightning Network payment information",
+        "status": "done",
+        "priority": "medium",
+        "dependencies": [
+          1
+        ],
+        "details": "Implement parsing of podcast:valueTimeSplit elements to identify music segments that are shared via value-for-value. Extract payment addresses, suggested amounts, and custom keys/values.",
+        "testStrategy": "Test with feeds containing value time splits to ensure proper extraction of Lightning Network payment details",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Create Music Track Data Models",
+        "description": "Define TypeScript interfaces and data structures for music tracks and related metadata",
+        "status": "done",
+        "priority": "high",
+        "dependencies": [],
+        "details": "Create comprehensive TypeScript interfaces for MusicTrack and MusicFeed data structures. Include all necessary fields for track metadata, value-for-value information, and feed relationships.",
+        "testStrategy": "Create unit tests to validate data model structure and type safety",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Implement Podcast Roll Parsing",
+        "description": "Parse podcast roll elements to discover related music feeds and build feed relationships",
+        "status": "done",
+        "priority": "medium",
+        "dependencies": [
+          1
+        ],
+        "details": "Create a parser for podcast:podroll elements to identify related music feeds. Track feed relationships and hierarchies to enable music content aggregation across multiple feeds.",
+        "testStrategy": "Test with feeds containing podcast roll elements to verify proper feed discovery and relationship tracking",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Build Music Track API Endpoints",
+        "description": "Create REST API endpoints for music track extraction, search, and feed analysis",
+        "status": "done",
+        "priority": "high",
+        "dependencies": [
+          4
+        ],
+        "details": "Implement API endpoints including GET /api/music-tracks, GET /api/music-feeds, and POST /api/music-tracks/analyze. Include proper error handling, rate limiting, and response formatting.",
+        "testStrategy": "Create API tests to verify endpoint functionality and response formats",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Create Music Track List Component",
+        "description": "Build a React component to display discovered music tracks in a searchable, filterable interface",
+        "status": "done",
+        "priority": "medium",
+        "dependencies": [
+          6
+        ],
+        "details": "Create a music track list view component with filtering by artist, episode, feed, or source. Include sorting options and search functionality. Design with responsive layout for mobile and desktop.",
+        "testStrategy": "Test component with sample music track data to verify filtering, sorting, and search functionality",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Implement Music Track Detail View",
+        "description": "Create a detailed view component for individual music tracks with metadata and value-for-value integration",
+        "status": "done",
+        "priority": "medium",
+        "dependencies": [
+          7
+        ],
+        "details": "Build a track detail view that displays full metadata, audio player integration, value-for-value payment interface, and related tracks. Include proper error handling for missing data.",
+        "testStrategy": "Test with various track data scenarios including missing metadata and value-for-value information",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Add Feed Analysis Dashboard",
+        "description": "Create a dashboard to display music content statistics and feed relationship visualization",
+        "status": "pending",
+        "priority": "low",
+        "dependencies": [
+          6
+        ],
+        "details": "Build a dashboard component showing music content statistics, feed relationship visualization, discovery timeline, and export functionality. Include charts and analytics for user engagement.",
+        "testStrategy": "Test dashboard with sample data to verify statistics calculation and visualization accuracy",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Implement Audio Player Integration",
+        "description": "Add audio player functionality to play music tracks directly from the interface",
+        "status": "pending",
+        "priority": "medium",
+        "dependencies": [
+          8
+        ],
+        "details": "Integrate an audio player component that can play music tracks from their audio URLs. Include play/pause controls, progress tracking, and volume control. Handle various audio formats.",
+        "testStrategy": "Test audio player with different audio formats and URLs to ensure proper playback functionality",
+        "subtasks": []
+      },
+      {
+        "id": 11,
+        "title": "Add Export and Analytics Features",
+        "description": "Implement export functionality and analytics tracking for music discovery features",
+        "status": "pending",
+        "priority": "low",
+        "dependencies": [
+          9
+        ],
+        "details": "Add export functionality for music track data in various formats (JSON, CSV). Implement analytics tracking for user engagement with music discovery features. Include performance monitoring.",
+        "testStrategy": "Test export functionality with sample data and verify analytics tracking accuracy",
+        "subtasks": []
+      },
+      {
+        "id": 12,
+        "title": "Performance Optimization and Testing",
+        "description": "Optimize performance and conduct comprehensive testing of the music track extraction feature",
+        "status": "pending",
+        "priority": "high",
+        "dependencies": [
+          11
+        ],
+        "details": "Implement caching for parsed feed data, optimize API response times, and add comprehensive error handling. Conduct end-to-end testing with various RSS feeds and edge cases.",
+        "testStrategy": "Run performance benchmarks and conduct user acceptance testing with real RSS feeds",
+        "subtasks": []
+      },
+      {
+        "id": 13,
+        "title": "Implement V4V Music Track Extraction",
+        "description": "Extract Value4Value (V4V) data from music podcast RSS feeds including Value Time Splits, music tracks, and payment distribution information",
+        "details": "",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Analyze V4V RSS Feed Structure",
+            "description": "Study the Doerfel-Verse RSS feed structure to understand Value4Value elements, Value Time Splits format, and music track metadata patterns",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 13
+          },
+          {
+            "id": 2,
+            "title": "Implement Value Time Splits Parser",
+            "description": "Create parser to extract Value Time Splits data from RSS feeds, including recipient information, percentages, and time ranges for music tracks",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 13
+          },
+          {
+            "id": 3,
+            "title": "Extract Music Track Information",
+            "description": "Identify and extract individual music tracks from podcast episodes, including track metadata, timestamps, and associated V4V data",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 13
+          },
+          {
+            "id": 4,
+            "title": "Integrate with Podcast Index API",
+            "description": "Connect to Podcast Index API to fetch additional V4V metadata, Value Time Splits, and music track information not available in RSS feeds",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 13
+          },
+          {
+            "id": 5,
+            "title": "Create Music Track Database Schema",
+            "description": "Design database schema to store extracted music tracks, V4V data, Value Time Splits, and relationships between tracks and episodes",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 13
+          },
+          {
+            "id": 6,
+            "title": "Build Music Track Display UI",
+            "description": "Create user interface components to display extracted music tracks with V4V information, Value Time Splits, and payment distribution details",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 13
+          }
+        ]
+      }
+    ],
+    "metadata": {
+      "created": "2025-08-01T21:46:44.417Z",
+      "updated": "2025-08-01T22:22:51.044Z",
+      "description": "Music track extraction feature development"
+    }
+  },
+  "audio-playback-fixes": {
+    "tasks": [],
+    "metadata": {
+      "created": "2025-08-01T22:54:10.108Z",
+      "updated": "2025-08-01T22:54:10.108Z",
+      "description": "Audio playback and resource preloading fixes for the FUCKIT music application"
+    }
+  }
 }
