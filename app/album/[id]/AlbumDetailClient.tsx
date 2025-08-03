@@ -22,6 +22,9 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   const [error, setError] = useState<string | null>(null);
   const [podrollAlbums, setPodrollAlbums] = useState<RSSAlbum[]>([]);
   const [loadingStarted, setLoadingStarted] = useState(false);
+  const [doerfelsPublisherInfo, setDoerfelsPublisherInfo] = useState<any>(null);
+  const [relatedDoerfelsAlbums, setRelatedDoerfelsAlbums] = useState<any[]>([]);
+  const [isDoerfelsAlbum, setIsDoerfelsAlbum] = useState(false);
   
   // Global audio context
   const { 
@@ -646,6 +649,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               
               
               setAlbum(processedAlbum);
+              // Load Doerfels publisher data for all albums
+              loadDoerfelsPublisherData();
               // Load PodRoll albums if they exist
               if (foundAlbum.podroll && foundAlbum.podroll.length > 0) {
                 loadPodrollAlbums(foundAlbum.podroll);
@@ -667,6 +672,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
 
       loadAlbum();
     } else if (initialAlbum) {
+      // Load Doerfels publisher data for all albums
+      loadDoerfelsPublisherData();
       // Load PodRoll albums if they exist
       if (initialAlbum.podroll && initialAlbum.podroll.length > 0) {
         loadPodrollAlbums(initialAlbum.podroll);
@@ -751,6 +758,60 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
       });
     } catch (err) {
       console.error('Error loading Publisher albums:', err);
+    }
+  };
+
+  // Load Doerfels publisher feed data
+  const loadDoerfelsPublisherData = async () => {
+    try {
+      console.log('🎵 Loading Doerfels publisher feed data...');
+      const response = await fetch('/api/feeds/doerfels-pubfeed');
+      if (response.ok) {
+        const feedText = await response.text();
+        
+        // Parse the XML to extract publisher info and album list
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(feedText, 'text/xml');
+        
+        // Extract publisher information
+        const channel = xmlDoc.querySelector('channel');
+        if (channel) {
+          const title = channel.querySelector('title')?.textContent || 'The Doerfels';
+          const description = channel.querySelector('description')?.textContent || '';
+          const link = channel.querySelector('link')?.textContent || 'https://www.doerfelverse.com/';
+          const image = channel.querySelector('itunes\\:image')?.getAttribute('href') || '';
+          
+          setDoerfelsPublisherInfo({
+            title,
+            description,
+            link,
+            image
+          });
+        }
+        
+        // Extract remote items (albums)
+        const remoteItems = xmlDoc.querySelectorAll('podcast\\:remoteItem');
+        const albums = Array.from(remoteItems).map(item => ({
+          feedGuid: item.getAttribute('feedGuid') || '',
+          feedUrl: item.getAttribute('feedUrl') || '',
+          title: item.getAttribute('title') || ''
+        }));
+        
+        setRelatedDoerfelsAlbums(albums);
+        
+        // Check if current album is a Doerfels album
+        if (album) {
+          const isDoerfels = albums.some(doerfelsAlbum => 
+            doerfelsAlbum.title.toLowerCase() === album.title.toLowerCase() ||
+            doerfelsAlbum.feedUrl.includes(album.title.toLowerCase().replace(/\s+/g, '-'))
+          );
+          setIsDoerfelsAlbum(isDoerfels);
+        }
+        
+        console.log('✅ Loaded Doerfels publisher data:', { albums: albums.length, isDoerfelsAlbum: isDoerfelsAlbum });
+      }
+    } catch (error) {
+      console.warn('Failed to load Doerfels publisher feed:', error);
     }
   };
 
@@ -914,6 +975,60 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             )}
           </div>
         </div>
+
+        {/* Doerfels Publisher Information */}
+        {isDoerfelsAlbum && doerfelsPublisherInfo && (
+          <div className="bg-gradient-to-r from-blue-900/40 to-purple-900/40 backdrop-blur-sm rounded-lg p-6 mb-8 border border-blue-500/30">
+            <div className="flex items-center gap-4 mb-4">
+              {doerfelsPublisherInfo.image && (
+                <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                  <CDNImage
+                    src={doerfelsPublisherInfo.image}
+                    alt="The Doerfels"
+                    width={64}
+                    height={64}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              <div>
+                <h3 className="text-xl font-bold text-blue-300">The Doerfels</h3>
+                <p className="text-gray-300 text-sm">
+                  Family band from Buffalo, NY creating original music across multiple genres
+                </p>
+                <a 
+                  href={doerfelsPublisherInfo.link} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:text-blue-300 text-sm transition-colors"
+                >
+                  Visit DoerfelVerse →
+                </a>
+              </div>
+            </div>
+            
+            {/* Related Doerfels Albums */}
+            {relatedDoerfelsAlbums.length > 0 && (
+              <div>
+                <h4 className="text-lg font-semibold mb-3 text-white">More from The Doerfels</h4>
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                  {relatedDoerfelsAlbums.slice(0, 6).map((doerfelsAlbum, index) => (
+                    <div key={index} className="bg-white/5 hover:bg-white/10 rounded-lg p-3 transition-all duration-200">
+                      <div className="aspect-square bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-md mb-2 flex items-center justify-center">
+                        <span className="text-blue-300 text-xs text-center font-medium">
+                          {doerfelsAlbum.title}
+                        </span>
+                      </div>
+                      <p className="text-gray-400 text-xs truncate">
+                        {doerfelsAlbum.title}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Track List */}
         <div className="bg-black/40 backdrop-blur-sm rounded-lg p-4 md:p-6">
