@@ -40,58 +40,48 @@ export default function ITDVPlaylistPage() {
 
   const loadTracks = async () => {
     try {
-      console.log('🎵 Starting to load tracks...');
+      console.log('🎵 Starting to load tracks from local database...');
       
-      // Try to get fresh extraction with V4V resolution
-      const extractResponse = await fetch('/api/music-tracks?feedUrl=https://www.doerfelverse.com/feeds/intothedoerfelverse.xml&resolveV4V=true');
-      console.log('📡 Extract response status:', extractResponse.status);
+      // Load from local database instead of live extraction
+      const response = await fetch('/api/music-tracks?feedUrl=local://database');
+      console.log('📡 Database response status:', response.status);
       
-      if (!extractResponse.ok) {
-        throw new Error(`HTTP error! status: ${extractResponse.status}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      const extractData = await extractResponse.json();
-      console.log('📊 Extract data received:', extractData.success, extractData.data?.tracks?.length, 'tracks');
+      const data = await response.json();
+      console.log('📊 Database data received:', data.success, data.data?.tracks?.length, 'tracks');
       
-      if (extractData.success && extractData.data.tracks) {
-        // First, let's see all available tracks and filter more loosely
-        const musicTracks = extractData.data.tracks.filter((track: any) => {
+      if (data.success && data.data.tracks) {
+        // Filter for tracks from the ITDV feed and V4V tracks
+        const musicTracks = data.data.tracks.filter((track: any) => {
           const title = track.title.toLowerCase();
           
-          // Exclude obvious non-music
-          if (title.includes('verse!') || title === 'verse' || track.duration === 0) {
-            return false;
-          }
-          
-          // Include anything that might be music
+          // Include tracks from ITDV feed or V4V tracks
           return (
-            track.source === 'value-split' || // V4V value splits (the real music!)
-            track.duration > 0 || // Has some duration
-            track.artist !== 'Unknown Artist' || // Has a real artist
-            title.includes('song') ||
-            title.includes('music') ||
-            title.includes('remix') ||
-            title.includes('feat') ||
-            title.includes('live') ||
-            title.includes('mix')
+            track.feedUrl?.includes('intothedoerfelverse.xml') ||
+            track.source === 'playlist' ||
+            track.source === 'value-split' ||
+            (track.feedGuid && track.itemGuid) // V4V tracks
           );
         });
         
-        // Convert to our Track interface, using resolved V4V data if available
+        // Convert to our Track interface
         const formattedTracks = musicTracks.map((track: any) => {
           const v4v = track.valueForValue;
-          const isResolved = v4v?.resolved && v4v?.resolvedTitle;
+          const isResolved = track.artist !== 'Unknown Artist' && !track.title.includes('Featured Track');
           
           return {
             id: track.id,
-            title: isResolved ? v4v.resolvedTitle : track.title,
-            artist: isResolved ? v4v.resolvedArtist : (track.artist || 'Unknown Artist'),
+            title: track.title,
+            artist: track.artist,
             episodeTitle: track.episodeTitle,
-            audioUrl: isResolved ? v4v.resolvedAudioUrl : (track.url || track.audioUrl),
+            audioUrl: track.audioUrl,
             startTime: track.startTime || 0,
             endTime: track.endTime || track.startTime + track.duration,
-            duration: isResolved ? v4v.resolvedDuration : track.duration,
-            image: isResolved ? v4v.resolvedImage : track.image,
+            duration: track.duration,
+            image: track.image,
             feedGuid: v4v?.feedGuid,
             itemGuid: v4v?.itemGuid,
             resolved: isResolved,
@@ -108,52 +98,10 @@ export default function ITDVPlaylistPage() {
         
         console.log('✅ Setting tracks in state:', sortedTracks.length);
         console.log('📝 V4V tracks count:', sortedTracks.filter((t: Track) => t.feedGuid && t.itemGuid).length);
-        console.log('🎯 Pre-resolved V4V tracks:', sortedTracks.filter((t: Track) => t.resolved).length);
+        console.log('🎯 Resolved tracks:', sortedTracks.filter((t: Track) => t.resolved).length);
         setTracks(sortedTracks);
-        
-        // No need to resolve individual tracks anymore - they're pre-resolved!
       } else {
-        // Fallback to database
-        const response = await fetch('/api/music-tracks/database?feedId=https://www.doerfelverse.com/feeds/intothedoerfelverse.xml&pageSize=100');
-        const data = await response.json();
-        
-        if (data.success) {
-          const realMusicTracks = data.data.tracks.filter((track: any) => {
-            const title = track.title.toLowerCase();
-            return (
-              track.duration > 0 && 
-              !title.includes('verse!') &&
-              title !== 'verse' &&
-              (track.artist !== 'Unknown Artist' || 
-               title.includes('song') || 
-               title.includes('music') || 
-               title.includes('remix') || 
-               title.includes('feat') || 
-               title.includes('live'))
-            );
-          });
-          
-          // Convert to Track interface
-          const formattedTracks: Track[] = realMusicTracks.map((track: any) => ({
-            id: track.id,
-            title: track.title,
-            artist: track.artist || 'Unknown Artist',
-            episodeTitle: track.episodeTitle,
-            audioUrl: track.url || track.audioUrl,
-            startTime: track.startTime || 0,
-            endTime: track.endTime || track.startTime + track.duration,
-            duration: track.duration
-          }));
-          
-          // Sort by episode number (1 to latest)
-          const sortedTracks = formattedTracks.sort((a: Track, b: Track) => {
-            const aEpisode = extractEpisodeNumber(a.episodeTitle);
-            const bEpisode = extractEpisodeNumber(b.episodeTitle);
-            return aEpisode - bEpisode;
-          });
-          
-          setTracks(sortedTracks);
-        }
+        throw new Error('Failed to load tracks from database');
       }
     } catch (error) {
       console.error('Failed to load tracks:', error);
