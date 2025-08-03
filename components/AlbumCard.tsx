@@ -194,6 +194,13 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
             {album.tracks.length} {album.tracks.length !== 1 ? 'tracks' : 'track'}
           </div>
         )}
+        
+        {/* Music track source badge */}
+        {(album as any).isMusicTrackAlbum && (
+          <div className="absolute top-1 left-1 sm:top-2 sm:left-2 bg-blue-500/80 backdrop-blur-sm rounded-full px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs text-white">
+            RSS
+          </div>
+        )}
       </div>
 
       {/* Album Info */}
@@ -205,10 +212,13 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
           {album.artist}
         </p>
         
-        {/* Release date */}
-        {album.releaseDate && (
+        {/* Release date or episode date */}
+        {(album.releaseDate || (album as any).isMusicTrackAlbum) && (
           <p className="text-gray-500 text-[10px] sm:text-xs mt-0.5 sm:mt-1">
-            {new Date(album.releaseDate).getFullYear()}
+            {(album as any).isMusicTrackAlbum 
+              ? new Date(album.releaseDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+              : new Date(album.releaseDate).getFullYear()
+            }
           </p>
         )}
       </div>

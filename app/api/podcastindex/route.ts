@@ -10,21 +10,26 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const feedUrl = searchParams.get('feedUrl');
     const endpoint = searchParams.get('endpoint') || 'episodes/byfeedurl';
+    const guid = searchParams.get('guid'); // For episode-specific requests
     
-    if (!feedUrl) {
-      return NextResponse.json({ error: 'Feed URL is required' }, { status: 400 });
+    if (!feedUrl && !guid) {
+      return NextResponse.json({ error: 'Feed URL or GUID is required' }, { status: 400 });
     }
 
     if (!PODCAST_INDEX_API_KEY || !PODCAST_INDEX_API_SECRET) {
       console.error('PodcastIndex API credentials not configured');
       // Fallback to direct RSS feed fetch
-      const response = await fetch(`${request.nextUrl.origin}/api/fetch-rss?url=${encodeURIComponent(feedUrl)}`);
-      return new NextResponse(await response.text(), {
-        headers: {
-          'Content-Type': 'application/xml',
-          'Cache-Control': 'public, max-age=3600',
-        },
-      });
+      if (feedUrl) {
+        const response = await fetch(`${request.nextUrl.origin}/api/fetch-rss?url=${encodeURIComponent(feedUrl)}`);
+        return new NextResponse(await response.text(), {
+          headers: {
+            'Content-Type': 'application/xml',
+            'Cache-Control': 'public, max-age=3600',
+          },
+        });
+      } else {
+        return NextResponse.json({ error: 'Cannot fetch by GUID without Podcast Index API' }, { status: 400 });
+      }
     }
 
     // Generate auth headers for PodcastIndex
@@ -33,8 +38,15 @@ export async function GET(request: NextRequest) {
     hash.update(PODCAST_INDEX_API_KEY + PODCAST_INDEX_API_SECRET + apiHeaderTime);
     const hashString = hash.digest('hex');
 
-    // Build API URL
-    const apiUrl = `${PODCAST_INDEX_BASE_URL}/${endpoint}?url=${encodeURIComponent(feedUrl)}&max=1000`;
+    // Build API URL based on request type
+    let apiUrl: string;
+    if (guid) {
+      // Fetch specific episode by GUID
+      apiUrl = `${PODCAST_INDEX_BASE_URL}/episodes/byguid?guid=${encodeURIComponent(guid)}`;
+    } else {
+      // Fetch episodes by feed URL
+      apiUrl = `${PODCAST_INDEX_BASE_URL}/${endpoint}?url=${encodeURIComponent(feedUrl!)}&max=1000`;
+    }
 
     // Fetch from PodcastIndex
     const response = await fetch(apiUrl, {
@@ -49,38 +61,58 @@ export async function GET(request: NextRequest) {
     if (!response.ok) {
       console.error(`PodcastIndex API error: ${response.status} ${response.statusText}`);
       // Fallback to direct RSS feed fetch
-      const fallbackResponse = await fetch(`${request.nextUrl.origin}/api/fetch-rss?url=${encodeURIComponent(feedUrl)}`);
-      return new NextResponse(await fallbackResponse.text(), {
-        headers: {
-          'Content-Type': 'application/xml',
-          'Cache-Control': 'public, max-age=3600',
-        },
-      });
+      if (feedUrl) {
+        const fallbackResponse = await fetch(`${request.nextUrl.origin}/api/fetch-rss?url=${encodeURIComponent(feedUrl)}`);
+        return new NextResponse(await fallbackResponse.text(), {
+          headers: {
+            'Content-Type': 'application/xml',
+            'Cache-Control': 'public, max-age=3600',
+          },
+        });
+      } else {
+        return NextResponse.json({ error: 'Podcast Index API failed and no fallback available' }, { status: 500 });
+      }
     }
 
     const data = await response.json();
 
-    // Check if we have valid feed data from PodcastIndex
-    if (data.items && data.items.length > 0 && data.feed && data.feed.title) {
-      // Convert to RSS XML format that our parser expects
-      const rssXml = convertPodcastIndexToRSS(data);
-      return new NextResponse(rssXml, {
-        headers: {
-          'Content-Type': 'application/xml',
-          'Cache-Control': 'public, max-age=3600',
-        },
-      });
+    // Check if we have valid data from PodcastIndex
+    if (guid) {
+      // Single episode response
+      if (data.episode) {
+        const rssXml = convertPodcastIndexEpisodeToRSS(data.episode, data.feed);
+        return new NextResponse(rssXml, {
+          headers: {
+            'Content-Type': 'application/xml',
+            'Cache-Control': 'public, max-age=3600',
+          },
+        });
+      }
     } else {
-      // PodcastIndex doesn't have this feed or has incomplete data - fallback to direct RSS
-      console.log(`PodcastIndex missing feed data for ${feedUrl}, falling back to direct RSS`);
-      const fallbackResponse = await fetch(`${request.nextUrl.origin}/api/fetch-rss?url=${encodeURIComponent(feedUrl)}`);
-      return new NextResponse(await fallbackResponse.text(), {
-        headers: {
-          'Content-Type': 'application/xml',
-          'Cache-Control': 'public, max-age=3600',
-        },
-      });
+      // Feed episodes response
+      if (data.items && data.items.length > 0 && data.feed && data.feed.title) {
+        // Convert to RSS XML format that our parser expects
+        const rssXml = convertPodcastIndexToRSS(data);
+        return new NextResponse(rssXml, {
+          headers: {
+            'Content-Type': 'application/xml',
+            'Cache-Control': 'public, max-age=3600',
+          },
+        });
+      } else {
+        // PodcastIndex doesn't have this feed or has incomplete data - fallback to direct RSS
+        console.log(`PodcastIndex missing feed data for ${feedUrl}, falling back to direct RSS`);
+        const fallbackResponse = await fetch(`${request.nextUrl.origin}/api/fetch-rss?url=${encodeURIComponent(feedUrl!)}`);
+        return new NextResponse(await fallbackResponse.text(), {
+          headers: {
+            'Content-Type': 'application/xml',
+            'Cache-Control': 'public, max-age=3600',
+          },
+        });
+      }
     }
+
+    return NextResponse.json({ error: 'No valid data found' }, { status: 404 });
   } catch (error) {
     console.error('PodcastIndex route error:', error);
     return NextResponse.json(
@@ -94,28 +126,105 @@ function convertPodcastIndexToRSS(data: any): string {
   const feed = data.feed || {};
   const items = data.items || [];
 
-  // Build RSS XML from PodcastIndex data
+  // Build RSS XML from PodcastIndex data with V4V support
   const rssXml = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:podcast="https://github.com/Podcastindex-org/podcast-namespace/blob/main/docs/1.0.md">
   <channel>
     <title>${escapeXml(feed.title || 'Unknown Title')}</title>
     <description>${escapeXml(feed.description || '')}</description>
     <link>${escapeXml(feed.link || '')}</link>
     <itunes:author>${escapeXml(feed.author || feed.ownerName || '')}</itunes:author>
     <itunes:image href="${escapeXml(feed.image || feed.artwork || '')}" />
-    ${items.map((item: any) => `
+    ${items.map((item: any) => convertPodcastIndexItemToRSS(item)).join('')}
+  </channel>
+</rss>`;
+
+  return rssXml;
+}
+
+function convertPodcastIndexEpisodeToRSS(episode: any, feed: any): string {
+  // Create a minimal RSS feed with just the requested episode
+  const rssXml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:podcast="https://github.com/Podcastindex-org/podcast-namespace/blob/main/docs/1.0.md">
+  <channel>
+    <title>${escapeXml(feed?.title || 'Episode')}</title>
+    <description>${escapeXml(feed?.description || '')}</description>
+    <link>${escapeXml(feed?.link || '')}</link>
+    <itunes:author>${escapeXml(feed?.author || feed?.ownerName || '')}</itunes:author>
+    <itunes:image href="${escapeXml(feed?.image || feed?.artwork || '')}" />
+    ${convertPodcastIndexItemToRSS(episode)}
+  </channel>
+</rss>`;
+
+  return rssXml;
+}
+
+function convertPodcastIndexItemToRSS(item: any): string {
+  // Convert Podcast Index episode to RSS item with V4V support
+  let itemXml = `
     <item>
       <title>${escapeXml(item.title || '')}</title>
       <description>${escapeXml(item.description || '')}</description>
       <enclosure url="${escapeXml(item.enclosureUrl || '')}" type="${escapeXml(item.enclosureType || 'audio/mpeg')}" length="${item.enclosureLength || 0}" />
       <pubDate>${new Date(item.datePublished * 1000).toUTCString()}</pubDate>
       <itunes:duration>${item.duration || 0}</itunes:duration>
-      <itunes:image href="${escapeXml(item.image || feed.image || '')}" />
-    </item>`).join('')}
-  </channel>
-</rss>`;
+      <itunes:image href="${escapeXml(item.image || '')}" />
+      <guid>${escapeXml(item.guid || '')}</guid>`;
 
-  return rssXml;
+  // Add V4V data if available
+  if (item.value) {
+    itemXml += convertPodcastIndexValueToRSS(item.value);
+  }
+
+  // Add chapters if available
+  if (item.chaptersUrl) {
+    itemXml += `
+      <podcast:chapters url="${escapeXml(item.chaptersUrl)}" type="application/json" />`;
+  }
+
+  // Add transcript if available
+  if (item.transcriptUrl) {
+    itemXml += `
+      <podcast:transcript url="${escapeXml(item.transcriptUrl)}" type="application/json" />`;
+  }
+
+  itemXml += `
+    </item>`;
+
+  return itemXml;
+}
+
+function convertPodcastIndexValueToRSS(value: any): string {
+  let valueXml = `
+      <podcast:value type="lightning" method="keysend" suggested="0.00000005000" />`;
+
+  // Add value time splits if available
+  if (value.timeSplits && Array.isArray(value.timeSplits)) {
+    value.timeSplits.forEach((timeSplit: any) => {
+      valueXml += `
+      <podcast:valueTimeSplit startTime="${timeSplit.startTime || 0}" endTime="${timeSplit.endTime || 0}" totalAmount="${timeSplit.totalAmount || 0}" currency="${escapeXml(timeSplit.currency || 'sats')}">`;
+      
+      if (timeSplit.recipients && Array.isArray(timeSplit.recipients)) {
+        timeSplit.recipients.forEach((recipient: any) => {
+          valueXml += `
+        <podcast:valueRecipient name="${escapeXml(recipient.name || '')}" type="${escapeXml(recipient.type || 'remote')}" address="${escapeXml(recipient.address || '')}" split="${recipient.split || 0}" />`;
+        });
+      }
+      
+      valueXml += `
+      </podcast:valueTimeSplit>`;
+    });
+  }
+
+  // Add boostagrams if available
+  if (value.boostagrams && Array.isArray(value.boostagrams)) {
+    value.boostagrams.forEach((boostagram: any) => {
+      valueXml += `
+      <boostagram senderName="${escapeXml(boostagram.senderName || '')}" message="${escapeXml(boostagram.message || '')}" amount="${boostagram.amount || 0}" currency="${escapeXml(boostagram.currency || 'sats')}" />`;
+    });
+  }
+
+  return valueXml;
 }
 
 function escapeXml(str: string): string {

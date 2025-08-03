@@ -13,7 +13,8 @@ import PerformanceMonitor from '@/components/PerformanceMonitor'
 
 const inter = Inter({ 
   subsets: ['latin'],
-  display: 'swap'
+  display: 'swap',
+  preload: false // Disable automatic preloading to prevent warnings
 })
 
 export const metadata: Metadata = {
@@ -75,7 +76,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://www.doerfelverse.com" />
         <link rel="dns-prefetch" href="https://www.doerfelverse.com" />
         <link rel="preload" href="/api/albums" as="fetch" crossOrigin="anonymous" />
-        <link rel="preload" href="/logo.webp" as="image" />
+        {/* Removed logo.webp preload as it's not immediately needed */}
         
         {/* Global Error Handler Script */}
         <script

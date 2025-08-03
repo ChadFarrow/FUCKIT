@@ -1329,8 +1329,18 @@
       "status": "active",
       "addedAt": "2025-07-29T22:30:00.000Z",
       "lastUpdated": "2025-07-29T22:30:00.000Z"
+    },
+    {
+      "id": "doerfels-publisher-direct",
+      "originalUrl": "https://www.doerfelverse.com/feeds/doerfels-pubfeed.xml",
+      "type": "publisher",
+      "title": "The Doerfels (Direct)",
+      "priority": "core",
+      "status": "active",
+      "addedAt": "2025-08-03T16:30:00.000Z",
+      "lastUpdated": "2025-08-03T16:30:00.000Z"
     }
   ],
-  "lastUpdated": "2025-07-28T00:00:00.000Z",
+  "lastUpdated": "2025-08-03T16:30:00.000Z",
   "version": 2
 }

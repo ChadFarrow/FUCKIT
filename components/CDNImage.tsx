@@ -220,7 +220,7 @@ export default function CDNImage({
 
   const handleError = () => {
     // Prevent recursion by checking if component is unmounted or src changed
-    if (!src) return;
+    if (!src || hasError) return;
     
     // Minimal error handling for performance
     setIsLoading(false);
@@ -270,7 +270,7 @@ export default function CDNImage({
     
     // All retry attempts have failed - only now call onError and show placeholder
     setHasError(true);
-    onError?.(); // Only call onError after all retries have failed
+    // Don't call onError to prevent recursion - just show placeholder
   };
 
   const handleLoad = () => {
@@ -334,16 +334,24 @@ export default function CDNImage({
     let timeout: NodeJS.Timeout;
     if (retryCount === 0) {
       // Initial load timeout
-      timeout = setTimeout(() => handleError(), isGif ? 12000 : 15000);
+      timeout = setTimeout(() => {
+        if (!hasError) handleError();
+      }, isGif ? 12000 : 15000);
     } else if (retryCount === 1) {
       // Fallback/proxy timeout
-      timeout = setTimeout(() => handleError(), isGif ? 8000 : 10000);
+      timeout = setTimeout(() => {
+        if (!hasError) handleError();
+      }, isGif ? 8000 : 10000);
     } else if (retryCount === 2) {
       // Proxy timeout
-      timeout = setTimeout(() => handleError(), isGif ? 10000 : 12000);
+      timeout = setTimeout(() => {
+        if (!hasError) handleError();
+      }, isGif ? 10000 : 12000);
     } else if (retryCount === 3) {
       // Original URL timeout
-      timeout = setTimeout(() => handleError(), isGif ? 12000 : 15000);
+      timeout = setTimeout(() => {
+        if (!hasError) handleError();
+      }, isGif ? 12000 : 15000);
     } else {
       // No more retries
       return;

@@ -230,8 +230,15 @@ export default function HomePage() {
       const data = await response.json();
       const albums = data.albums || [];
       
+      // Load music tracks from RSS feeds and convert them to album format
+      const musicTracks = await loadMusicTracksFromRSS();
+      const musicTrackAlbums = convertMusicTracksToAlbums(musicTracks);
+      
+      // Combine albums and music track albums
+      const allAlbums = [...albums, ...musicTrackAlbums];
+      
       // Filter albums based on load tier if needed
-      let filteredAlbums = albums;
+      let filteredAlbums = allAlbums;
       
       if (loadTier !== 'all') {
         // Get feeds configuration to filter by priority
@@ -259,11 +266,12 @@ export default function HomePage() {
       setLoadingProgress(75);
       
       // Convert to RSSAlbum format for compatibility
-      const rssAlbums: RSSAlbum[] = filteredAlbums.map((album: any) => ({
+      const rssAlbums: RSSAlbum[] = filteredAlbums.map((album: any): RSSAlbum => ({
         title: album.title,
         artist: album.artist,
         description: album.description,
         coverArt: album.coverArt,
+        releaseDate: album.releaseDate || album.lastUpdated || new Date().toISOString(),
         tracks: album.tracks.map((track: any) => ({
           title: track.title,
           duration: track.duration,
@@ -275,12 +283,10 @@ export default function HomePage() {
           explicit: track.explicit,
           keywords: track.keywords
         })),
-        publisher: album.publisher, // Preserve publisher information
+        publisher: album.publisher,
         podroll: album.podroll,
         funding: album.funding,
-        feedId: album.feedId,
-        feedUrl: album.feedUrl,
-        lastUpdated: album.lastUpdated
+        feedId: album.feedId
       }));
       
       // Deduplicate albums
@@ -317,6 +323,113 @@ export default function HomePage() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const loadMusicTracksFromRSS = async () => {
+    try {
+      // Load music tracks from the RSS feed
+      const response = await fetch('/api/music-tracks?feedUrl=https://www.doerfelverse.com/feeds/intothedoerfelverse.xml');
+      if (!response.ok) {
+        console.warn('Failed to load music tracks from RSS');
+        return [];
+      }
+      
+      const data = await response.json();
+      return data.tracks || [];
+    } catch (error) {
+      console.warn('Error loading music tracks from RSS:', error);
+      return [];
+    }
+  };
+
+  const convertMusicTracksToAlbums = (tracks: any[]) => {
+    // Filter out low-quality tracks (HTML fragments, very short titles, etc.)
+    const qualityTracks = tracks.filter((track: any) => {
+      // Skip tracks with HTML-like content
+      if (track.title.includes('<') || track.title.includes('>') || track.title.includes('&')) {
+        return false;
+      }
+      
+      // Skip tracks with very short titles (likely fragments)
+      if (track.title.length < 3) {
+        return false;
+      }
+      
+      // Skip tracks with generic titles
+      const genericTitles = ['Unknown Artist', 'Unknown', 'Unknown Track', 'Track', 'Music'];
+      if (genericTitles.includes(track.title) || genericTitles.includes(track.artist)) {
+        return false;
+      }
+      
+      // Prefer tracks from chapters over description extraction
+      if (track.source === 'chapter') {
+        return true;
+      }
+      
+      // For description tracks, be more selective
+      if (track.source === 'description') {
+        // Only include if it looks like a real song title
+        const hasArtist = track.artist && track.artist.length > 2 && !track.artist.includes('Unknown');
+        const hasGoodTitle = track.title.length > 5 && !track.title.includes('http');
+        return hasArtist && hasGoodTitle;
+      }
+      
+      return false;
+    });
+    
+    // Group tracks by episode to create "albums"
+    const episodeGroups = qualityTracks.reduce((groups: any, track: any) => {
+      const episodeKey = `${track.episodeId}-${track.episodeTitle}`;
+      if (!groups[episodeKey]) {
+        groups[episodeKey] = {
+          episodeId: track.episodeId,
+          episodeTitle: track.episodeTitle,
+          episodeDate: track.episodeDate,
+          tracks: []
+        };
+      }
+      groups[episodeKey].tracks.push(track);
+      return groups;
+    }, {});
+
+    // Convert episode groups to album format
+    return Object.values(episodeGroups).map((episode: any, index: number) => ({
+      id: `music-episode-${episode.episodeId}`,
+      title: episode.episodeTitle,
+      artist: 'From RSS Feed',
+      description: `Music tracks from ${episode.episodeTitle}`,
+      coverArt: '', // Will use placeholder
+      releaseDate: episode.episodeDate,
+      feedId: 'music-rss',
+      tracks: episode.tracks.map((track: any, trackIndex: number) => ({
+        title: track.title,
+        artist: track.artist,
+        duration: track.duration,
+        url: track.audioUrl || '',
+        trackNumber: trackIndex + 1,
+        subtitle: track.episodeTitle,
+        summary: track.description || '',
+        image: track.image || '',
+        explicit: false,
+        keywords: [],
+        // Add music track specific fields
+        musicTrack: true,
+        episodeId: track.episodeId,
+        episodeDate: track.episodeDate,
+        source: track.source,
+        startTime: track.startTime,
+        endTime: track.endTime
+      })),
+      // Mark as music track album
+      isMusicTrackAlbum: true,
+      source: 'rss-feed'
+    }));
+  };
+
+  const playMusicTrack = async (track: any) => {
+    // TODO: Implement music track playback
+    console.log('Playing music track:', track);
+    toast.success(`Playing ${track.title} by ${track.artist}`);
   };
 
   const playAlbum = async (album: RSSAlbum, e: React.MouseEvent | React.TouchEvent) => {
@@ -468,8 +581,8 @@ export default function HomePage() {
       {/* Static Background - Bloodshot Lies Album Art */}
       <div className="fixed inset-0 z-0">
         <CDNImage
-          src="https://www.doerfelverse.com/art/bloodshot-lies-the-album.png?v=1"
-          alt="Bloodshot Lies Album Art"
+          src="/bloodshot-lies-new.png"
+          alt="Bloodshot Lies Album Art - Vibrant Edition"
           width={1920}
           height={1080}
           className="object-cover w-full h-full"
@@ -522,7 +635,6 @@ export default function HomePage() {
                       width={40} 
                       height={40}
                       className="object-cover"
-                      priority
                     />
                   </div>
                 </div>
@@ -930,6 +1042,8 @@ export default function HomePage() {
                       </div>
                     );
                   })()}
+                  
+
                 </>
               ) : (
                 // Unified layout for specific filters (Albums, EPs, Singles)
