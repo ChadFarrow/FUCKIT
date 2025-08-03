@@ -99,6 +99,29 @@ export default function HomePage() {
   const { playAlbum: globalPlayAlbum, shuffleAllTracks } = useAudio();
   const hasLoadedRef = useRef(false);
   
+  // Performance optimization: Load critical albums first
+  const loadCriticalAlbums = async () => {
+    try {
+      const criticalAlbums = await loadAlbumsData('core');
+      setCriticalAlbums(criticalAlbums);
+      setIsCriticalLoaded(true);
+      setLoadingProgress(50);
+    } catch (error) {
+      console.warn('Failed to load critical albums:', error);
+    }
+  };
+  
+  const loadEnhancedAlbums = async () => {
+    try {
+      const enhancedAlbums = await loadAlbumsData('extended');
+      setEnhancedAlbums(enhancedAlbums);
+      setIsEnhancedLoaded(true);
+      setLoadingProgress(75);
+    } catch (error) {
+      console.warn('Failed to load enhanced albums:', error);
+    }
+  };
+  
   // Static background state - Bloodshot Lies album art
   const [backgroundImageLoaded, setBackgroundImageLoaded] = useState(false);
 
@@ -230,7 +253,7 @@ export default function HomePage() {
       const data = await response.json();
       const albums = data.albums || [];
       
-      // Load music tracks from RSS feeds and convert them to album format
+      // Load music tracks from RSS feeds with pagination for performance
       const musicTracks = await loadMusicTracksFromRSS();
       const musicTrackAlbums = convertMusicTracksToAlbums(musicTracks);
       
@@ -301,7 +324,7 @@ export default function HomePage() {
       
       const uniqueAlbums = Array.from(albumMap.values());
       
-      // Cache the results
+      // Cache the results with shorter TTL for fresher data
       if (typeof window !== 'undefined') {
         try {
           localStorage.setItem('cachedAlbums', JSON.stringify(uniqueAlbums));
@@ -327,15 +350,15 @@ export default function HomePage() {
 
   const loadMusicTracksFromRSS = async () => {
     try {
-      // Load music tracks from the RSS feed
-      const response = await fetch('/api/music-tracks?feedUrl=https://www.doerfelverse.com/feeds/intothedoerfelverse.xml');
+      // Load music tracks from the RSS feed with pagination for performance
+      const response = await fetch('/api/music-tracks?feedUrl=local://database&limit=50&offset=0');
       if (!response.ok) {
         console.warn('Failed to load music tracks from RSS');
         return [];
       }
       
       const data = await response.json();
-      return data.tracks || [];
+      return data.data?.tracks || [];
     } catch (error) {
       console.warn('Error loading music tracks from RSS:', error);
       return [];

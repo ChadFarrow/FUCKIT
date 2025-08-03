@@ -5,6 +5,8 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const feedUrl = searchParams.get('feedUrl');
+    const limit = parseInt(searchParams.get('limit') || '100');
+    const offset = parseInt(searchParams.get('offset') || '0');
     
     if (!feedUrl) {
       return NextResponse.json(
@@ -24,14 +26,24 @@ export async function GET(request: NextRequest) {
         const data = await fs.readFile(dataPath, 'utf8');
         const musicData = JSON.parse(data);
         
+        // Apply pagination
+        const allTracks = musicData.musicTracks || [];
+        const paginatedTracks = allTracks.slice(offset, offset + limit);
+        
         return NextResponse.json({
           success: true,
           data: {
-            tracks: musicData.musicTracks || [],
+            tracks: paginatedTracks,
             relatedFeeds: [],
-            metadata: musicData.metadata || {}
+            metadata: {
+              ...musicData.metadata,
+              totalTracks: allTracks.length,
+              returnedTracks: paginatedTracks.length,
+              offset,
+              limit
+            }
           },
-          message: `Successfully loaded ${musicData.musicTracks?.length || 0} tracks from local database`
+          message: `Successfully loaded ${paginatedTracks.length} tracks from local database (${offset + 1}-${offset + paginatedTracks.length} of ${allTracks.length})`
         });
       } catch (error) {
         console.error('Failed to load local database:', error);
