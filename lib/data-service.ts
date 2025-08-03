@@ -129,34 +129,10 @@ class DataService {
     monitoring.info('data-service', `Finding albums for ${feedGuids.length} feedGuids`);
 
     for (const feedGuid of feedGuids) {
-      // Try exact matches first
-      const exactMatch = feeds.find(feed => 
-        feed.id === feedGuid && 
-        feed.parseStatus === 'success' && 
-        feed.parsedData?.album
-      );
-
-      if (exactMatch?.parsedData?.album) {
-        matchedAlbums.push(exactMatch.parsedData.album);
-        monitoring.info('data-service', `Exact match found: ${exactMatch.parsedData.album.title}`);
-        continue;
-      }
-
-      // Try partial matches
-      const partialMatch = feeds.find(feed => 
-        (feed.id.includes(feedGuid) || feedGuid.includes(feed.id)) &&
-        feed.parseStatus === 'success' && 
-        feed.parsedData?.album
-      );
-
-      if (partialMatch?.parsedData?.album) {
-        matchedAlbums.push(partialMatch.parsedData.album);
-        monitoring.info('data-service', `Partial match found: ${partialMatch.parsedData.album.title}`);
-        continue;
-      }
-
-      // If no match found by feedGuid, try to find the corresponding feed by URL
-      // This is needed for publisher feeds where remoteItems have feedGuid but feeds have different IDs
+      // First, try to find the remoteItem that contains this feedGuid to get the feedUrl
+      let targetFeedUrl: string | null = null;
+      
+      // Search through all publisher feeds to find the remoteItem with this feedGuid
       const publisherFeeds = feeds.filter(feed => 
         feed.type === 'publisher' && 
         feed.parseStatus === 'success' &&
@@ -173,19 +149,51 @@ class DataService {
         );
 
         if (remoteItem?.feedUrl) {
-          // Find the feed that matches this URL
-          const urlMatch = feeds.find(feed => 
-            feed.originalUrl === remoteItem.feedUrl &&
-            feed.parseStatus === 'success' && 
-            feed.parsedData?.album
-          );
-
-          if (urlMatch?.parsedData?.album) {
-            matchedAlbums.push(urlMatch.parsedData.album);
-            monitoring.info('data-service', `URL match found: ${urlMatch.parsedData.album.title}`);
-            break; // Found a match, no need to check other publisher feeds
-          }
+          targetFeedUrl = remoteItem.feedUrl;
+          monitoring.info('data-service', `Found feedUrl for feedGuid ${feedGuid}: ${targetFeedUrl}`);
+          break;
         }
+      }
+
+      if (targetFeedUrl) {
+        // Now find the album feed that matches this URL
+        const urlMatch = feeds.find(feed => 
+          feed.originalUrl === targetFeedUrl &&
+          feed.parseStatus === 'success' && 
+          feed.parsedData?.album
+        );
+
+        if (urlMatch?.parsedData?.album) {
+          matchedAlbums.push(urlMatch.parsedData.album);
+          monitoring.info('data-service', `URL match found: ${urlMatch.parsedData.album.title}`);
+          continue;
+        }
+      }
+
+      // Fallback: Try exact matches by feed ID (in case feedGuid is actually a feed ID)
+      const exactMatch = feeds.find(feed => 
+        feed.id === feedGuid && 
+        feed.parseStatus === 'success' && 
+        feed.parsedData?.album
+      );
+
+      if (exactMatch?.parsedData?.album) {
+        matchedAlbums.push(exactMatch.parsedData.album);
+        monitoring.info('data-service', `Exact match found: ${exactMatch.parsedData.album.title}`);
+        continue;
+      }
+
+      // Fallback: Try partial matches
+      const partialMatch = feeds.find(feed => 
+        (feed.id.includes(feedGuid) || feedGuid.includes(feed.id)) &&
+        feed.parseStatus === 'success' && 
+        feed.parsedData?.album
+      );
+
+      if (partialMatch?.parsedData?.album) {
+        matchedAlbums.push(partialMatch.parsedData.album);
+        monitoring.info('data-service', `Partial match found: ${partialMatch.parsedData.album.title}`);
+        continue;
       }
 
       monitoring.warn('data-service', `No match found for feedGuid: ${feedGuid}`);
