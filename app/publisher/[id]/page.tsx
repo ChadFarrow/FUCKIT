@@ -33,25 +33,12 @@ async function loadPublisherData(publisherId: string) {
     const fileContent = fs.readFileSync(parsedFeedsPath, 'utf-8');
     const parsedFeedsData = JSON.parse(fileContent);
     
-    // Find the publisher feed by ID or feedGuid  
+    // Find the publisher feed by ID
     const publisherFeed = parsedFeedsData.feeds.find((feed: any) => 
       feed.type === 'publisher' && 
       feed.parseStatus === 'success' &&
       feed.parsedData &&
-      (feed.id === `${publisherId}-publisher` || 
-       feed.id === `${actualFeedGuid}-publisher` ||
-       (typeof feed.id === 'string' && (feed.id.includes(publisherId) || feed.id.includes(actualFeedGuid))) ||
-       (typeof feed.parsedData.publisherInfo?.feedGuid === 'string' && 
-        (feed.parsedData.publisherInfo.feedGuid.includes(publisherId) || 
-         feed.parsedData.publisherInfo.feedGuid.includes(actualFeedGuid))) ||
-       feed.parsedData.publisherItems?.some((item: any) => 
-         item.feedGuid && typeof item.feedGuid === 'string' && 
-         (item.feedGuid.includes(publisherId) || item.feedGuid.includes(actualFeedGuid))
-       ) ||
-       feed.parsedData.remoteItems?.some((item: any) => 
-         item.feedGuid && typeof item.feedGuid === 'string' && 
-         (item.feedGuid.includes(publisherId) || item.feedGuid.includes(actualFeedGuid))
-       ))
+      feed.id === `${publisherId}-publisher`
     );
     
     if (!publisherFeed) {
