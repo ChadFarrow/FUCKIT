@@ -12775,8 +12775,180 @@
           }
         ]
       }
+    },
+    {
+      "id": "playlist-track-1",
+      "originalUrl": "https://www.doerfelverse.com/feeds/playlist-track-1.xml",
+      "type": "album",
+      "title": "Featured Track (11:06-14:27)",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-08-01T23:34:29.639Z",
+      "lastUpdated": "2025-08-01T23:34:29.639Z",
+      "parseStatus": "success",
+      "lastParsed": "2025-08-01T23:34:29.639Z",
+      "parsedData": {
+        "album": {
+          "title": "Featured Track (11:06-14:27)",
+          "artist": "Unknown Artist",
+          "description": "Featured track from playlist - 3 minutes 21 seconds duration. Track GUID: bba99401-378c-5540-bf95-c456b3d4de26",
+          "coverArt": "https://www.doerfelverse.com/art/playlist-track-placeholder.png",
+          "tracks": [
+            {
+              "title": "Featured Track (11:06-14:27)",
+              "duration": "3:21",
+              "url": "https://www.doerfelverse.com/tracks/playlist-track-1.mp3",
+              "trackNumber": 1,
+              "explicit": false
+            }
+          ],
+          "releaseDate": "2025-08-01T23:34:29.639Z",
+          "link": "https://www.doerfelverse.com/",
+          "summary": "Featured track from playlist - 3 minutes 21 seconds duration",
+          "explicit": false,
+          "owner": {
+            "name": "The Doerfels",
+            "email": "contact@doerfelverse.com"
+          },
+          "publisher": {
+            "feedGuid": "5526a0ee-069d-4c76-8bd4-7fd2022034bc",
+            "feedUrl": "https://re.podtards.com/api/feeds/doerfels-pubfeed",
+            "medium": "publisher"
+          }
+        }
+      },
+      "trackCount": 1
+    },
+    {
+      "id": "playlist-track-2",
+      "originalUrl": "https://www.doerfelverse.com/feeds/playlist-track-2.xml",
+      "type": "album",
+      "title": "Featured Track (19:02-23:33)",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-08-01T23:34:29.639Z",
+      "lastUpdated": "2025-08-01T23:34:29.639Z",
+      "parseStatus": "success",
+      "lastParsed": "2025-08-01T23:34:29.639Z",
+      "parsedData": {
+        "album": {
+          "title": "Featured Track (19:02-23:33)",
+          "artist": "Unknown Artist",
+          "description": "Featured track from playlist - 4 minutes 31 seconds duration. Track GUID: 69c634ad-afea-5826-ad9a-8e1f06d6470b",
+          "coverArt": "https://www.doerfelverse.com/art/playlist-track-placeholder.png",
+          "tracks": [
+            {
+              "title": "Featured Track (19:02-23:33)",
+              "duration": "4:31",
+              "url": "https://www.doerfelverse.com/tracks/playlist-track-2.mp3",
+              "trackNumber": 1,
+              "explicit": false
+            }
+          ],
+          "releaseDate": "2025-08-01T23:34:29.639Z",
+          "link": "https://www.doerfelverse.com/",
+          "summary": "Featured track from playlist - 4 minutes 31 seconds duration",
+          "explicit": false,
+          "owner": {
+            "name": "The Doerfels",
+            "email": "contact@doerfelverse.com"
+          },
+          "publisher": {
+            "feedGuid": "5526a0ee-069d-4c76-8bd4-7fd2022034bc",
+            "feedUrl": "https://re.podtards.com/api/feeds/doerfels-pubfeed",
+            "medium": "publisher"
+          }
+        }
+      },
+      "trackCount": 1
+    },
+    {
+      "id": "playlist-track-3",
+      "originalUrl": "https://www.doerfelverse.com/feeds/playlist-track-3.xml",
+      "type": "album",
+      "title": "Featured Track (55:44-59:30)",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-08-01T23:34:29.639Z",
+      "lastUpdated": "2025-08-01T23:34:29.639Z",
+      "parseStatus": "success",
+      "lastParsed": "2025-08-01T23:34:29.639Z",
+      "parsedData": {
+        "album": {
+          "title": "Featured Track (55:44-59:30)",
+          "artist": "Unknown Artist",
+          "description": "Featured track from playlist - 3 minutes 46 seconds duration. Track GUID: 1e7ed1fa-0456-5860-9b34-825d1335d8f8",
+          "coverArt": "https://www.doerfelverse.com/art/playlist-track-placeholder.png",
+          "tracks": [
+            {
+              "title": "Featured Track (55:44-59:30)",
+              "duration": "3:46",
+              "url": "https://www.doerfelverse.com/tracks/playlist-track-3.mp3",
+              "trackNumber": 1,
+              "explicit": false
+            }
+          ],
+          "releaseDate": "2025-08-01T23:34:29.639Z",
+          "link": "https://www.doerfelverse.com/",
+          "summary": "Featured track from playlist - 3 minutes 46 seconds duration",
+          "explicit": false,
+          "owner": {
+            "name": "The Doerfels",
+            "email": "contact@doerfelverse.com"
+          },
+          "publisher": {
+            "feedGuid": "5526a0ee-069d-4c76-8bd4-7fd2022034bc",
+            "feedUrl": "https://re.podtards.com/api/feeds/doerfels-pubfeed",
+            "medium": "publisher"
+          }
+        }
+      },
+      "trackCount": 1
+    },
+    {
+      "id": "playlist-track-4",
+      "originalUrl": "https://www.doerfelverse.com/feeds/playlist-track-4.xml",
+      "type": "album",
+      "title": "Featured Track (1:04:00-1:07:12)",
+      "priority": "extended",
+      "status": "active",
+      "addedAt": "2025-08-01T23:34:29.639Z",
+      "lastUpdated": "2025-08-01T23:34:29.639Z",
+      "parseStatus": "success",
+      "lastParsed": "2025-08-01T23:34:29.639Z",
+      "parsedData": {
+        "album": {
+          "title": "Featured Track (1:04:00-1:07:12)",
+          "artist": "Unknown Artist",
+          "description": "Featured track from playlist - 3 minutes 12 seconds duration. Track GUID: c76ef0a6-0181-5b9b-a4bc-dd85d4ed178b",
+          "coverArt": "https://www.doerfelverse.com/art/playlist-track-placeholder.png",
+          "tracks": [
+            {
+              "title": "Featured Track (1:04:00-1:07:12)",
+              "duration": "3:12",
+              "url": "https://www.doerfelverse.com/tracks/playlist-track-4.mp3",
+              "trackNumber": 1,
+              "explicit": false
+            }
+          ],
+          "releaseDate": "2025-08-01T23:34:29.639Z",
+          "link": "https://www.doerfelverse.com/",
+          "summary": "Featured track from playlist - 3 minutes 12 seconds duration",
+          "explicit": false,
+          "owner": {
+            "name": "The Doerfels",
+            "email": "contact@doerfelverse.com"
+          },
+          "publisher": {
+            "feedGuid": "5526a0ee-069d-4c76-8bd4-7fd2022034bc",
+            "feedUrl": "https://re.podtards.com/api/feeds/doerfels-pubfeed",
+            "medium": "publisher"
+          }
+        }
+      },
+      "trackCount": 1
     }
   ],
-  "lastUpdated": "2025-07-31T01:27:42.965Z",
+  "lastUpdated": "2025-08-01T23:34:29.639Z",
   "version": 1
 }

@@ -2,7 +2,7 @@
   "metadata": {
     "version": "1.0.0",
     "lastUpdated": "2025-08-01T23:34:29.639Z",
-    "totalTracks": 2640,
+    "totalTracks": 2644,
     "totalEpisodes": 0,
     "totalFeeds": 0,
     "totalExtractions": 39
@@ -47527,6 +47527,106 @@
       "id": "track-mdtgnhto-oqyah8",
       "discoveredAt": "2025-08-01T23:34:29.628Z",
       "lastUpdated": "2025-08-01T23:34:29.628Z"
+    },
+    {
+      "title": "Featured Track (11:06-14:27)",
+      "artist": "Unknown Artist",
+      "episodeId": "playlist-track-1",
+      "episodeTitle": "Featured Track (11:06-14:27)",
+      "episodeDate": "2025-08-01T23:34:29.639Z",
+      "startTime": 666,
+      "endTime": 867,
+      "duration": 201,
+      "audioUrl": "https://www.doerfelverse.com/tracks/playlist-track-1.mp3",
+      "source": "playlist",
+      "feedUrl": "https://www.doerfelverse.com/feeds/playlist-track-1.xml",
+      "feedId": "playlist-track-1",
+      "extractionMethod": "manual-addition",
+      "id": "track-playlist-1-1106-1427",
+      "discoveredAt": "2025-08-01T23:34:29.639Z",
+      "lastUpdated": "2025-08-01T23:34:29.639Z",
+      "feedGuid": "bba99401-378c-5540-bf95-c456b3d4de26",
+      "itemGuid": "playlist-track-1",
+      "valueForValue": {
+        "lightningAddress": "unknown@unknown.com",
+        "suggestedAmount": 100,
+        "remotePercentage": 95
+      }
+    },
+    {
+      "title": "Featured Track (19:02-23:33)",
+      "artist": "Unknown Artist",
+      "episodeId": "playlist-track-2",
+      "episodeTitle": "Featured Track (19:02-23:33)",
+      "episodeDate": "2025-08-01T23:34:29.639Z",
+      "startTime": 1142,
+      "endTime": 1413,
+      "duration": 271,
+      "audioUrl": "https://www.doerfelverse.com/tracks/playlist-track-2.mp3",
+      "source": "playlist",
+      "feedUrl": "https://www.doerfelverse.com/feeds/playlist-track-2.xml",
+      "feedId": "playlist-track-2",
+      "extractionMethod": "manual-addition",
+      "id": "track-playlist-2-1902-2333",
+      "discoveredAt": "2025-08-01T23:34:29.639Z",
+      "lastUpdated": "2025-08-01T23:34:29.639Z",
+      "feedGuid": "69c634ad-afea-5826-ad9a-8e1f06d6470b",
+      "itemGuid": "playlist-track-2",
+      "valueForValue": {
+        "lightningAddress": "unknown@unknown.com",
+        "suggestedAmount": 100,
+        "remotePercentage": 95
+      }
+    },
+    {
+      "title": "Featured Track (55:44-59:30)",
+      "artist": "Unknown Artist",
+      "episodeId": "playlist-track-3",
+      "episodeTitle": "Featured Track (55:44-59:30)",
+      "episodeDate": "2025-08-01T23:34:29.639Z",
+      "startTime": 3344,
+      "endTime": 3570,
+      "duration": 226,
+      "audioUrl": "https://www.doerfelverse.com/tracks/playlist-track-3.mp3",
+      "source": "playlist",
+      "feedUrl": "https://www.doerfelverse.com/feeds/playlist-track-3.xml",
+      "feedId": "playlist-track-3",
+      "extractionMethod": "manual-addition",
+      "id": "track-playlist-3-5544-5930",
+      "discoveredAt": "2025-08-01T23:34:29.639Z",
+      "lastUpdated": "2025-08-01T23:34:29.639Z",
+      "feedGuid": "1e7ed1fa-0456-5860-9b34-825d1335d8f8",
+      "itemGuid": "playlist-track-3",
+      "valueForValue": {
+        "lightningAddress": "unknown@unknown.com",
+        "suggestedAmount": 100,
+        "remotePercentage": 95
+      }
+    },
+    {
+      "title": "Featured Track (1:04:00-1:07:12)",
+      "artist": "Unknown Artist",
+      "episodeId": "playlist-track-4",
+      "episodeTitle": "Featured Track (1:04:00-1:07:12)",
+      "episodeDate": "2025-08-01T23:34:29.639Z",
+      "startTime": 3840,
+      "endTime": 4032,
+      "duration": 192,
+      "audioUrl": "https://www.doerfelverse.com/tracks/playlist-track-4.mp3",
+      "source": "playlist",
+      "feedUrl": "https://www.doerfelverse.com/feeds/playlist-track-4.xml",
+      "feedId": "playlist-track-4",
+      "extractionMethod": "manual-addition",
+      "id": "track-playlist-4-10400-10712",
+      "discoveredAt": "2025-08-01T23:34:29.639Z",
+      "lastUpdated": "2025-08-01T23:34:29.639Z",
+      "feedGuid": "c76ef0a6-0181-5b9b-a4bc-dd85d4ed178b",
+      "itemGuid": "playlist-track-4",
+      "valueForValue": {
+        "lightningAddress": "unknown@unknown.com",
+        "suggestedAmount": 100,
+        "remotePercentage": 95
+      }
     }
   ],
   "episodes": [],
@@ -48380,5 +48480,6 @@
       "extractedAt": "2025-08-01T23:34:29.639Z"
     }
   ],
+
   "analytics": []
 }
