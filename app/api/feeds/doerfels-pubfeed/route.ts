@@ -36,8 +36,8 @@ const doerfelsAlbums = [
   
   // Additional albums found in V4V time splits that need to be added
   { feedGuid: 'bba99401-378c-5540-bf95-c456b3d4de26', feedUrl: 'https://www.doerfelverse.com/feeds/playlist-track-1.xml', title: 'Featured Track (11:06-14:27) - 3m 21s' }, // Track at 11:06-14:27
-  { feedGuid: '69c634ad-afea-5826-ad9a-8e1f06d6470b', feedUrl: 'https://www.doerfelverse.com/feeds/playlist-track-2.xml', title: 'Featured Track (19:02-23:33) - 4m 31s' }, // Track at 19:02-23:33
-  { feedGuid: '1e7ed1fa-0456-5860-9b34-825d1335d8f8', feedUrl: 'https://www.doerfelverse.com/feeds/playlist-track-3.xml', title: 'Featured Track (55:44-59:30) - 3m 46s' }, // Track at 55:44-59:30
+          { feedGuid: '69c634ad-afea-5826-ad9a-8e1f06d6470b', feedUrl: 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml', title: 'Worthy Lofi - Kurtisdrums (19:02-23:33) - 4m 31s' }, // Track at 19:02-23:33
+          { feedGuid: '1e7ed1fa-0456-5860-9b34-825d1335d8f8', feedUrl: 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml', title: 'SWEATS - CityBeach (55:44-59:30) - 3m 46s' }, // Track at 55:44-59:30
   { feedGuid: 'c76ef0a6-0181-5b9b-a4bc-dd85d4ed178b', feedUrl: 'https://www.doerfelverse.com/feeds/playlist-track-4.xml', title: 'Featured Track (1:04:00-1:07:12) - 3m 12s' }, // Track at 1:04:00-1:07:12
 ];
 

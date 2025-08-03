@@ -23,7 +23,7 @@ async function lookupMissingAlbums() {
       console.log(`Looking up GUID: ${guid} (Time: ${timeRange})`);
       
       // Use your existing Podcast Index API endpoint
-      const response = await fetch(`http://localhost:3001/api/podcastindex?guid=${guid}`);
+                   const response = await fetch(`http://localhost:3000/api/podcastindex?guid=${guid}`);
       
       if (response.ok) {
         const data = await response.json();

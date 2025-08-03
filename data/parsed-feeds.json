@@ -12832,15 +12832,15 @@
       "lastParsed": "2025-08-01T23:34:29.639Z",
       "parsedData": {
         "album": {
-          "title": "Featured Track (19:02-23:33)",
-          "artist": "Unknown Artist",
-          "description": "Featured track from playlist - 4 minutes 31 seconds duration. Track GUID: 69c634ad-afea-5826-ad9a-8e1f06d6470b",
-          "coverArt": "https://www.doerfelverse.com/art/playlist-track-placeholder.png",
+          "title": "Worthy Lofi",
+          "artist": "Kurtisdrums",
+          "description": "Worthy Lofi by Kurtisdrums - 4 minutes 31 seconds duration. Track GUID: 3e3d88cd-d20e-4999-9239-70a8c762749b",
+          "coverArt": "https://www.doerfelverse.com/art/kurtisdrums.png",
           "tracks": [
             {
-              "title": "Featured Track (19:02-23:33)",
+              "title": "Worthy Lofi",
               "duration": "4:31",
-              "url": "https://www.doerfelverse.com/tracks/playlist-track-2.mp3",
+              "url": "https://www.doerfelverse.com/tracks/worthy-lofi.mp3",
               "trackNumber": 1,
               "explicit": false
             }
@@ -12875,15 +12875,15 @@
       "lastParsed": "2025-08-01T23:34:29.639Z",
       "parsedData": {
         "album": {
-          "title": "Featured Track (55:44-59:30)",
-          "artist": "Unknown Artist",
-          "description": "Featured track from playlist - 3 minutes 46 seconds duration. Track GUID: 1e7ed1fa-0456-5860-9b34-825d1335d8f8",
-          "coverArt": "https://www.doerfelverse.com/art/playlist-track-placeholder.png",
+          "title": "SWEATS",
+          "artist": "CityBeach",
+          "description": "SWEATS by CityBeach - 3 minutes 46 seconds duration. Track GUID: 5334a806-1c60-481e-a978-7577ce988b56",
+          "coverArt": "https://www.doerfelverse.com/art/nostalgic.png",
           "tracks": [
             {
-              "title": "Featured Track (55:44-59:30)",
+              "title": "SWEATS",
               "duration": "3:46",
-              "url": "https://www.doerfelverse.com/tracks/playlist-track-3.mp3",
+              "url": "https://www.doerfelverse.com/tracks/sweats.mp3",
               "trackNumber": 1,
               "explicit": false
             }

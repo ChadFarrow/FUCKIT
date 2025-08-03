@@ -326,18 +326,19 @@ export class RSSParser {
       
       // Method 1: Channel-level itunes:image (most reliable)
       let imageElement: Element | null = channel.getElementsByTagName('itunes:image')[0] || null;
-      if (!imageElement) {
-        imageElement = channel.querySelector('itunes\\:image');
-      }
       if (imageElement) {
         coverArt = imageElement.getAttribute('href') || null;
       }
       
       // Method 2: Channel-level image url (RSS standard)
       if (!coverArt) {
-        const imageUrl = channel.querySelector('image url');
-        if (imageUrl) {
-          coverArt = imageUrl.textContent?.trim() || null;
+        const imageElements = channel.getElementsByTagName('image');
+        if (imageElements.length > 0) {
+          const imageElement = imageElements[0];
+          const urlElements = imageElement.getElementsByTagName('url');
+          if (urlElements.length > 0) {
+            coverArt = urlElements[0].textContent?.trim() || null;
+          }
         }
       }
       
