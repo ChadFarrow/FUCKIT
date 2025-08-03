@@ -436,11 +436,44 @@
             "parentTaskId": 14
           }
         ]
+      },
+      {
+        "id": 15,
+        "title": "Fix playlist page filtering and V4V track display",
+        "description": "The playlist page at /playlist/itdv was showing 0 tracks due to overly restrictive filtering logic. Need to fix the filtering to properly show V4V tracks from Episode 31 and resolve the JavaScript errors causing 500 Internal Server Error. Also need to ensure the playlist shows the real track information (artist names, titles) instead of placeholder data.",
+        "details": "",
+        "testStrategy": "",
+        "status": "in-progress",
+        "dependencies": [
+          13,
+          14
+        ],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Fix JavaScript errors in playlist page",
+            "description": "Fixed 'Cannot read properties of undefined' errors by adding null checks for track properties and fallback empty strings before calling toLowerCase(). This resolved the 500 Internal Server Error that was preventing the playlist page from loading.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 15
+          },
+          {
+            "id": 2,
+            "title": "Add debugging to playlist filtering logic",
+            "description": "Added detailed console logging to show which tracks are being included or filtered out. This will help identify why the filtering is too restrictive and why we're getting 0 tracks after filtering. Shows raw tracks before filtering and logs for each track that gets included or filtered out.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 15
+          }
+        ]
       }
     ],
     "metadata": {
       "created": "2025-08-01T21:46:44.417Z",
-      "updated": "2025-08-03T17:09:17.038Z",
+      "updated": "2025-08-03T22:17:06.837Z",
       "description": "Music track extraction feature development"
     }
   },

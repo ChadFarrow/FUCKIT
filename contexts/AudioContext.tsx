@@ -174,7 +174,6 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       albumsLoadedRef.current = true;
       
       try {
-        console.log('🎵 Loading albums for audio context...');
         const response = await fetch('/api/albums', {
           method: 'GET',
           headers: {
@@ -194,7 +193,10 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
           const data = await response.json();
           if (data && Array.isArray(data.albums)) {
             setAlbums(data.albums);
-            console.log(`✅ Loaded ${data.albums.length} albums for audio context`);
+            // Only log in development mode
+            if (process.env.NODE_ENV === 'development') {
+              console.log(`✅ Loaded ${data.albums.length} albums for audio context`);
+            }
           } else {
             console.warn('⚠️ Albums API returned invalid data structure:', data);
           }
