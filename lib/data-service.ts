@@ -129,27 +129,25 @@ class DataService {
     monitoring.info('data-service', `Finding albums for ${feedGuids.length} feedGuids`);
 
     for (const feedGuid of feedGuids) {
-      // First, try to find the remoteItem that contains this feedGuid to get the feedUrl
+      // Ignore medium attribute for now: match any publisherItem with this feedGuid
       let targetFeedUrl: string | null = null;
-      
-      // Search through all publisher feeds to find the remoteItem with this feedGuid
+
+      // Search through all publisher feeds to find the publisherItem with this feedGuid
       const publisherFeeds = feeds.filter(feed => 
         feed.type === 'publisher' && 
         feed.parseStatus === 'success' &&
-        (feed.parsedData?.remoteItems || feed.parsedData?.publisherInfo?.remoteItems)
+        (feed.parsedData?.publisherItems || feed.parsedData?.publisherInfo?.publisherItems)
       );
 
       for (const publisherFeed of publisherFeeds) {
-        // Get remoteItems from either location
-        const remoteItems = publisherFeed.parsedData?.remoteItems || publisherFeed.parsedData?.publisherInfo?.remoteItems || [];
-        
-        // Find the remoteItem that matches this feedGuid
-        const remoteItem = remoteItems.find((item: any) => 
+        // Get publisherItems from either location
+        const publisherItems = publisherFeed.parsedData?.publisherItems || publisherFeed.parsedData?.publisherInfo?.publisherItems || [];
+        // Ignore medium: match by feedGuid only
+        const publisherItem = publisherItems.find((item: any) => 
           item.feedGuid === feedGuid
         );
-
-        if (remoteItem?.feedUrl) {
-          targetFeedUrl = remoteItem.feedUrl;
+        if (publisherItem?.feedUrl) {
+          targetFeedUrl = publisherItem.feedUrl;
           monitoring.info('data-service', `Found feedUrl for feedGuid ${feedGuid}: ${targetFeedUrl}`);
           break;
         }

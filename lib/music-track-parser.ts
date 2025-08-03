@@ -349,7 +349,18 @@ export class MusicTrackParser {
       const endTime = parseFloat(this.getAttributeValue(split, 'endTime') || '0');
       const duration = endTime > startTime ? endTime - startTime : parseFloat(this.getAttributeValue(split, 'duration') || '0');
       
-      // Check if this split has remote recipients (indicating music sharing)
+      // Check for remoteItem elements (V4V music sharing)
+      const remoteItems = split['podcast:remoteItem'] || split.remoteItem || [];
+      const remoteItemsArray = Array.isArray(remoteItems) ? remoteItems : [remoteItems];
+      
+      const hasRemoteItems = remoteItemsArray.some((item: any) => {
+        if (!item) return false;
+        const feedGuid = this.getAttributeValue(item, 'feedGuid');
+        const itemGuid = this.getAttributeValue(item, 'itemGuid');
+        return feedGuid && itemGuid;
+      });
+      
+      // Also check for remote recipients (fallback)
       const recipients = split['podcast:valueRecipient'] || split.valueRecipient || [];
       const recipientsArray = Array.isArray(recipients) ? recipients : [recipients];
       
@@ -359,7 +370,7 @@ export class MusicTrackParser {
         return type === 'remote' && parseFloat(this.getAttributeValue(recipient, 'percentage') || '0') > 0;
       });
       
-      if (startTime > 0 && duration > 0 && hasRemoteRecipients) {
+      if (startTime > 0 && duration > 0 && (hasRemoteItems || hasRemoteRecipients)) {
         // Extract recipient information for V4V data
         const primaryRecipient = recipientsArray.find((recipient: any) => {
           if (!recipient) return false;
@@ -373,9 +384,20 @@ export class MusicTrackParser {
         const suggestedAmount = primaryRecipient ? 
           parseFloat(this.getAttributeValue(primaryRecipient, 'amount') || '0') : 0;
         
-        // Try to extract track title from recipient name or custom fields
+        // Try to extract track title from recipient name, remoteItem, or custom fields
         let trackTitle = `Music Track at ${this.formatTime(startTime)}`;
-        if (primaryRecipient) {
+        let remotePercentage = 0;
+        let feedGuid = '';
+        let itemGuid = '';
+        
+        if (hasRemoteItems && remoteItemsArray.length > 0) {
+          const primaryRemoteItem = remoteItemsArray[0];
+          feedGuid = this.getAttributeValue(primaryRemoteItem, 'feedGuid') || '';
+          itemGuid = this.getAttributeValue(primaryRemoteItem, 'itemGuid') || '';
+          // Try to get percentage from the split itself
+          remotePercentage = parseFloat(this.getAttributeValue(split, 'remotePercentage') || '0');
+          trackTitle = `External Music Track at ${this.formatTime(startTime)}`;
+        } else if (primaryRecipient) {
           const recipientName = this.getTextContent(primaryRecipient, 'name') || 
                                this.getAttributeValue(primaryRecipient, 'name') || '';
           if (recipientName && !recipientName.includes('@')) {
@@ -402,7 +424,10 @@ export class MusicTrackParser {
             lightningAddress,
             suggestedAmount,
             customKey: this.getAttributeValue(split, 'customKey'),
-            customValue: this.getAttributeValue(split, 'customValue')
+            customValue: this.getAttributeValue(split, 'customValue'),
+            remotePercentage,
+            feedGuid,
+            itemGuid
           }
         };
         
