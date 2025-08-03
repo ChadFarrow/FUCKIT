@@ -1,6 +1,6 @@
 const withPWA = require('next-pwa')({
   dest: 'public',
-  register: true,
+  register: false, // Completely disable service worker registration
   skipWaiting: true,
   disable: true, // Disable Service Worker for performance
   // Exclude RSC payloads and critical Next.js files from service worker caching
@@ -21,76 +21,7 @@ const withPWA = require('next-pwa')({
     /\?_rsc=/, // Exclude RSC payloads from service worker
     /album\/.*\?_rsc=/, // Exclude album RSC payloads
   ],
-  runtimeCaching: [
-    {
-      urlPattern: /^https:\/\/.*\.(?:png|jpg|jpeg|svg|gif|webp)$/,
-      handler: 'NetworkFirst', // Changed from CacheFirst to NetworkFirst for mobile
-      options: {
-        cacheName: 'images',
-        expiration: {
-          maxEntries: 1000,
-          maxAgeSeconds: 60 * 60 * 24 * 1, // Reduced to 1 day for fresher content
-        },
-        networkTimeoutSeconds: 3, // Reduced timeout to 3 seconds for faster fallback
-        cacheableResponse: {
-          statuses: [0, 200], // Cache successful responses and opaque responses
-        },
-      },
-    },
-    // Network first for RSS feeds to prevent 503 errors
-    {
-      urlPattern: /^https:\/\/.*\.xml$/,
-      handler: 'NetworkFirst', // Changed from StaleWhileRevalidate to NetworkFirst
-      options: {
-        cacheName: 'rss-feeds',
-        expiration: {
-          maxEntries: 100,
-          maxAgeSeconds: 60 * 60, // 1 hour
-        },
-        networkTimeoutSeconds: 15, // Add timeout
-      },
-    },
-    // Network first for RSC payloads and critical Next.js files
-    {
-      urlPattern: /_next\/static\/.*\/.*\.js$/,
-      handler: 'NetworkFirst',
-      options: {
-        cacheName: 'next-js-files',
-        expiration: {
-          maxEntries: 50,
-          maxAgeSeconds: 60 * 60, // 1 hour
-        },
-        networkTimeoutSeconds: 3,
-      },
-    },
-    // Network first for audio files to prevent caching issues
-    {
-      urlPattern: /^https:\/\/.*\.(?:mp3|wav|ogg|m4a)$/,
-      handler: 'NetworkFirst',
-      options: {
-        cacheName: 'audio-files',
-        expiration: {
-          maxEntries: 100,
-          maxAgeSeconds: 60 * 60 * 24, // 24 hours
-        },
-        networkTimeoutSeconds: 10,
-      },
-    },
-    // Network first for proxy audio to prevent CORS issues
-    {
-      urlPattern: /\/api\/proxy-audio/,
-      handler: 'NetworkFirst',
-      options: {
-        cacheName: 'proxy-audio',
-        expiration: {
-          maxEntries: 50,
-          maxAgeSeconds: 60 * 30, // 30 minutes
-        },
-        networkTimeoutSeconds: 15,
-      },
-    },
-
-  ],
+  runtimeCaching: [], // Disable all runtime caching
 });
 
 /** @type {import('next').NextConfig} */
@@ -113,8 +44,8 @@ const nextConfig = {
   
   // Image optimization configuration
   images: {
-    // Performance optimizations
-    unoptimized: true, // Disable optimization for better performance
+    // Performance optimizations - enable optimization but with better error handling
+    unoptimized: false, // Re-enable optimization but with better configuration
     formats: ['image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
@@ -123,9 +54,23 @@ const nextConfig = {
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self' data:; script-src 'none'; img-src 'self' data: https:; sandbox;",
-    // Reduce retry attempts to prevent excessive HTTP 400 errors
+    // Use default loader with better error handling
     loader: 'default',
     loaderFile: undefined,
+    // Add better error handling for image optimization
+    disableStaticImages: false,
+    // Configure domains for external images
+    domains: [
+      're.podtards.com',
+      'www.doerfelverse.com',
+      'www.thisisjdog.com',
+      'www.sirtjthewrathful.com',
+      'wavlake.com',
+      'www.wavlake.com',
+      'd12wklypp119aj.cloudfront.net',
+      'ableandthewolf.com',
+      'music.behindthesch3m3s.com'
+    ],
     remotePatterns: [
       {
         protocol: 'https',
@@ -288,18 +233,6 @@ const nextConfig = {
         pathname: '/**',
       },
     ],
-    unoptimized: process.env.NODE_ENV === 'development', // Optimize in production
-    formats: ['image/webp', 'image/avif'],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
-    // Improved loading state configuration
-    dangerouslyAllowSVG: true,
-    contentDispositionType: 'attachment',
-    contentSecurityPolicy: "default-src 'self' data:; script-src 'none'; img-src 'self' data: https:; sandbox;",
-    // Reduce retry attempts to prevent excessive HTTP 400 errors
-    loader: 'default',
-    loaderFile: undefined,
   },
 
   // Performance and caching

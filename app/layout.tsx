@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration'
+// import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration' // Disabled to fix API issues
 import ErrorBoundary from '@/components/ErrorBoundary'
 import ClientErrorBoundary from '@/components/ClientErrorBoundary'
 import { ToastContainer } from '@/components/Toast'
@@ -120,7 +120,6 @@ export default function RootLayout({
               <ToastContainer />
             </AudioProvider>
           </ErrorBoundary>
-          <ServiceWorkerRegistration />
           <PerformanceMonitor />
         </ClientErrorBoundary>
       </body>

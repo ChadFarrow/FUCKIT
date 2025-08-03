@@ -7,8 +7,36 @@ export default function ServiceWorkerRegistration() {
   const [newVersion, setNewVersion] = useState('');
 
   useEffect(() => {
-    // Temporarily disable Service Worker registration to fix API issues
-    console.log('🚫 Service Worker registration temporarily disabled to fix API issues');
+    // Completely disable Service Worker registration to fix API issues
+    console.log('🚫 Service Worker registration completely disabled to fix API issues');
+    
+    // Clear any existing service worker caches to prevent decoding issues
+    if (typeof window !== 'undefined' && 'caches' in window) {
+      caches.keys().then(cacheNames => {
+        cacheNames.forEach(cacheName => {
+          if (cacheName.includes('next-js-files') || 
+              cacheName.includes('start-url') || 
+              cacheName.includes('api-') ||
+              cacheName.includes('sw-') ||
+              cacheName.includes('service-worker')) {
+            caches.delete(cacheName).then(() => {
+              console.log(`🗑️ Cleared service worker cache: ${cacheName}`);
+            });
+          }
+        });
+      });
+    }
+
+    // Unregister any existing service workers
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(registrations => {
+        registrations.forEach(registration => {
+          registration.unregister().then(() => {
+            console.log('🗑️ Unregistered existing service worker');
+          });
+        });
+      });
+    }
     
     // TODO: Re-enable service worker when API issues are resolved
     /*
@@ -98,104 +126,15 @@ export default function ServiceWorkerRegistration() {
       window.addEventListener('unhandledrejection', (event) => {
         const message = event.reason?.message || '';
         if (message.includes('Decoding failed') || 
-            message.includes('ServiceWorker intercepted')) {
-          console.warn('🔄 Unhandled promise rejection related to Service Worker:', event.reason);
+            message.includes('ServiceWorker intercepted') ||
+            message.includes('Failed to fetch RSC payload')) {
           handleFetchFailure();
         }
       });
-
-      // Check for waiting service worker on load
-      navigator.serviceWorker.ready.then((registration) => {
-        if (registration.waiting) {
-          console.log('🔄 Update available on page load');
-        }
-
-        // Listen for waiting service worker
-        registration.addEventListener('updatefound', () => {
-          const newWorker = registration.installing;
-          if (newWorker) {
-            console.log('🔄 New service worker found');
-            
-            newWorker.addEventListener('statechange', () => {
-              if (newWorker.state === 'installed') {
-                if (navigator.serviceWorker.controller) {
-                  // New content is available
-                  console.log('🆕 New content available - update ready');
-                  setUpdateReady(true);
-                } else {
-                  // First time installation
-                  console.log('🎉 App installed for offline use');
-                }
-              }
-            });
-          }
-        });
-      });
     }
     */
-  }, []); // Remove updateReady from dependencies to prevent infinite loop
+  }, []);
 
-  const handleUpdate = () => {
-    if (updateReady) {
-      // Tell the service worker to skip waiting and take control
-      navigator.serviceWorker.getRegistration().then((reg) => {
-        if (reg && reg.waiting) {
-          reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-        }
-      });
-      
-      // Reload will happen automatically via controllerchange event
-    }
-  };
-
-  const dismissUpdate = () => {
-    setUpdateReady(false);
-  };
-
-  // Show update notification
-  if (updateReady && newVersion) {
-    return (
-      <div className="fixed top-4 right-4 z-50 max-w-sm bg-blue-600 text-white rounded-lg shadow-lg p-4 transform transition-all duration-300 ease-in-out">
-        <div className="flex items-start">
-          <div className="flex-shrink-0">
-            <svg className="w-6 h-6 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-          </div>
-          <div className="ml-3 flex-1">
-            <h3 className="text-sm font-medium">App Updated!</h3>
-            <p className="text-xs text-blue-100 mt-1">
-              Version {newVersion} is ready. Reload to get the latest features.
-            </p>
-            <div className="mt-3 flex space-x-2">
-              <button
-                onClick={handleUpdate}
-                className="bg-blue-500 hover:bg-blue-400 text-white text-xs px-3 py-1 rounded transition-colors"
-              >
-                Reload Now
-              </button>
-              <button
-                onClick={dismissUpdate}
-                className="bg-transparent hover:bg-blue-500 text-blue-200 hover:text-white text-xs px-3 py-1 rounded border border-blue-400 transition-colors"
-              >
-                Later
-              </button>
-            </div>
-          </div>
-          <button
-            onClick={dismissUpdate}
-            className="flex-shrink-0 ml-2 text-blue-200 hover:text-white"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // Update available notification removed - task 13
-
-  return null; // This component doesn't render anything when no updates
+  // Don't render anything since service worker is disabled
+  return null;
 }
