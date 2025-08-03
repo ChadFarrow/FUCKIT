@@ -8,11 +8,41 @@ export async function GET() {
     const parsedFeedsPath = path.join(process.cwd(), 'data', 'parsed-feeds.json');
     
     if (!fs.existsSync(parsedFeedsPath)) {
-      return NextResponse.json({ error: 'Parsed feeds data not found' }, { status: 404 });
+      console.warn('Parsed feeds data not found at:', parsedFeedsPath);
+      return NextResponse.json({ 
+        albums: [], 
+        totalCount: 0, 
+        lastUpdated: new Date().toISOString(),
+        error: 'Parsed feeds data not found' 
+      }, { status: 404 });
     }
 
     const fileContent = fs.readFileSync(parsedFeedsPath, 'utf-8');
-    const parsedData = JSON.parse(fileContent);
+    
+    // Validate JSON before parsing
+    let parsedData;
+    try {
+      parsedData = JSON.parse(fileContent);
+    } catch (parseError) {
+      console.error('Failed to parse parsed-feeds.json:', parseError);
+      return NextResponse.json({ 
+        albums: [], 
+        totalCount: 0, 
+        lastUpdated: new Date().toISOString(),
+        error: 'Invalid JSON in parsed feeds data' 
+      }, { status: 500 });
+    }
+    
+    // Validate data structure
+    if (!parsedData || !Array.isArray(parsedData.feeds)) {
+      console.warn('Invalid parsed feeds data structure:', parsedData);
+      return NextResponse.json({ 
+        albums: [], 
+        totalCount: 0, 
+        lastUpdated: new Date().toISOString(),
+        error: 'Invalid data structure' 
+      }, { status: 500 });
+    }
     
     // Extract albums from parsed feeds with proper type checking
     const albums = parsedData.feeds
@@ -52,6 +82,8 @@ export async function GET() {
         };
       });
 
+    console.log(`✅ Albums API: Returning ${albums.length} albums`);
+    
     return NextResponse.json({
       albums,
       totalCount: albums.length,
@@ -64,14 +96,19 @@ export async function GET() {
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
         'X-Content-Type-Options': 'nosniff',
-        'X-Frame-Options': 'DENY',
-        'Content-Encoding': 'gzip'
+        'X-Frame-Options': 'DENY'
+        // Removed Content-Encoding: gzip to prevent decoding issues
       },
     });
   } catch (error) {
     console.error('Error loading parsed albums:', error);
     return NextResponse.json(
-      { error: 'Failed to load album data' },
+      { 
+        albums: [], 
+        totalCount: 0, 
+        lastUpdated: new Date().toISOString(),
+        error: 'Failed to load album data' 
+      },
       { status: 500 }
     );
   }

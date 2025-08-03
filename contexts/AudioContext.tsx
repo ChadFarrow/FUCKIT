@@ -174,13 +174,36 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       albumsLoadedRef.current = true;
       
       try {
-        const response = await fetch('/api/albums');
+        console.log('🎵 Loading albums for audio context...');
+        const response = await fetch('/api/albums', {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Cache-Control': 'no-cache'
+          }
+        });
+        
         if (response.ok) {
+          // Check if response is valid JSON
+          const contentType = response.headers.get('content-type');
+          if (!contentType || !contentType.includes('application/json')) {
+            console.warn('⚠️ Albums API returned non-JSON response:', contentType);
+            return;
+          }
+          
           const data = await response.json();
-          setAlbums(data.albums || []);
+          if (data && Array.isArray(data.albums)) {
+            setAlbums(data.albums);
+            console.log(`✅ Loaded ${data.albums.length} albums for audio context`);
+          } else {
+            console.warn('⚠️ Albums API returned invalid data structure:', data);
+          }
+        } else {
+          console.warn(`⚠️ Albums API returned ${response.status}: ${response.statusText}`);
         }
       } catch (error) {
         console.warn('Failed to load albums for audio context:', error);
+        // Don't throw - allow the app to continue without albums
       }
     };
     
