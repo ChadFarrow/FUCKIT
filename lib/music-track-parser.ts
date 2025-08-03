@@ -970,6 +970,7 @@ export class MusicTrackParser {
         totalTracks: tracks.length,
         tracksFromChapters: 0,
         tracksFromValueSplits: 0,
+        tracksFromV4VData: 0,
         tracksFromDescription: 0,
         relatedFeedsFound: relatedFeeds.length,
         extractionTime

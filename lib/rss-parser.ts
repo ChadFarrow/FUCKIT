@@ -1248,7 +1248,6 @@ export class RSSParser {
       startTime,
       endTime,
       recipients,
-      remoteItems,
       totalAmount,
       currency
     };

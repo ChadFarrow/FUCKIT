@@ -179,7 +179,7 @@ export default function MusicSegmentsPage() {
         <div className="mt-6 p-4 bg-white/5 rounded-lg">
           <h4 className="font-semibold mb-2 text-yellow-300">Getting Started</h4>
           <p className="text-sm text-gray-300 mb-3">
-            To start supporting artists, you'll need a Lightning wallet. Popular options include:
+            To start supporting artists, you&apos;ll need a Lightning wallet. Popular options include:
           </p>
           <div className="flex flex-wrap gap-2">
             <a

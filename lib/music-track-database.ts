@@ -71,9 +71,9 @@ export class MusicTrackDatabaseService {
         this.database = this.deserializeDates(this.database);
         
         console.log('Database loaded from file:', { 
-          totalTracks: this.database.musicTracks.length,
-          totalEpisodes: this.database.episodes.length,
-          totalFeeds: this.database.feeds.length
+          totalTracks: this.database?.musicTracks.length || 0,
+          totalEpisodes: this.database?.episodes.length || 0,
+          totalFeeds: this.database?.feeds.length || 0
         });
       } else {
         this.database = createEmptyDatabase();
@@ -82,7 +82,7 @@ export class MusicTrackDatabaseService {
       }
 
       this.lastLoadTime = now;
-      return this.database;
+      return this.database!;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       console.error('Failed to load database:', errorMessage);
@@ -209,13 +209,13 @@ export class MusicTrackDatabaseService {
     }
 
     if (validation.warnings.length > 0) {
-      this.logger.warn('Music track validation warnings', { warnings: validation.warnings });
+      MusicTrackDatabaseService.logger.warn('Music track validation warnings', { warnings: validation.warnings });
     }
 
     db.musicTracks.push(newTrack);
     await this.saveDatabase();
 
-    this.logger.info('Music track added', { trackId: newTrack.id, title: newTrack.title });
+          MusicTrackDatabaseService.logger.info('Music track added', { trackId: newTrack.id, title: newTrack.title });
     return newTrack;
   }
 
@@ -253,7 +253,7 @@ export class MusicTrackDatabaseService {
     db.musicTracks[trackIndex] = updatedTrack;
     await this.saveDatabase();
 
-    this.logger.info('Music track updated', { trackId: id, title: updatedTrack.title });
+          MusicTrackDatabaseService.logger.info('Music track updated', { trackId: id, title: updatedTrack.title });
     return updatedTrack;
   }
 
@@ -271,7 +271,7 @@ export class MusicTrackDatabaseService {
     const deletedTrack = db.musicTracks.splice(trackIndex, 1)[0];
     await this.saveDatabase();
 
-    this.logger.info('Music track deleted', { trackId: id, title: deletedTrack.title });
+          MusicTrackDatabaseService.logger.info('Music track deleted', { trackId: id, title: deletedTrack.title });
     return true;
   }
 
@@ -387,7 +387,7 @@ export class MusicTrackDatabaseService {
     db.episodes.push(newEpisode);
     await this.saveDatabase();
 
-    this.logger.info('Episode added', { episodeId: newEpisode.id, title: newEpisode.title });
+          MusicTrackDatabaseService.logger.info('Episode added', { episodeId: newEpisode.id, title: newEpisode.title });
     return newEpisode;
   }
 
@@ -427,7 +427,7 @@ export class MusicTrackDatabaseService {
     db.feeds.push(newFeed);
     await this.saveDatabase();
 
-    this.logger.info('Music feed added', { feedId: newFeed.id, title: newFeed.title });
+          MusicTrackDatabaseService.logger.info('Music feed added', { feedId: newFeed.id, title: newFeed.title });
     return newFeed;
   }
 
@@ -459,7 +459,7 @@ export class MusicTrackDatabaseService {
     db.valueTimeSplits.push(newSplit);
     await this.saveDatabase();
 
-    this.logger.info('Value time split added', { splitId: newSplit.id, episodeId: newSplit.episodeId });
+          MusicTrackDatabaseService.logger.info('Value time split added', { splitId: newSplit.id, episodeId: newSplit.episodeId });
     return newSplit;
   }
 
@@ -479,7 +479,7 @@ export class MusicTrackDatabaseService {
     db.valueRecipients.push(newRecipient);
     await this.saveDatabase();
 
-    this.logger.info('Value recipient added', { recipientId: newRecipient.id, name: newRecipient.name });
+          MusicTrackDatabaseService.logger.info('Value recipient added', { recipientId: newRecipient.id, name: newRecipient.name });
     return newRecipient;
   }
 
@@ -499,7 +499,7 @@ export class MusicTrackDatabaseService {
     db.boostagrams.push(newBoostagram);
     await this.saveDatabase();
 
-    this.logger.info('Boostagram added', { boostagramId: newBoostagram.id, amount: newBoostagram.amount });
+          MusicTrackDatabaseService.logger.info('Boostagram added', { boostagramId: newBoostagram.id, amount: newBoostagram.amount });
     return newBoostagram;
   }
 
@@ -522,7 +522,7 @@ export class MusicTrackDatabaseService {
     db.extractions.push(newExtraction);
     await this.saveDatabase();
 
-    this.logger.info('Extraction result saved', { 
+          MusicTrackDatabaseService.logger.info('Extraction result saved', { 
       extractionId: newExtraction.id, 
       feedUrl: newExtraction.feedUrl,
       totalTracks: newExtraction.musicTracks.length
@@ -584,7 +584,7 @@ export class MusicTrackDatabaseService {
   clearCache(): void {
     this.database = null;
     this.lastLoadTime = 0;
-    this.logger.info('Database cache cleared');
+          MusicTrackDatabaseService.logger.info('Database cache cleared');
   }
 
   /**
@@ -600,7 +600,7 @@ export class MusicTrackDatabaseService {
   async importDatabase(data: MusicTrackDatabase): Promise<void> {
     this.database = this.deserializeDates(data);
     await this.saveDatabase();
-    this.logger.info('Database imported successfully');
+          MusicTrackDatabaseService.logger.info('Database imported successfully');
   }
 }
 

@@ -37,7 +37,6 @@ export async function GET(request: NextRequest) {
               episodeId: track.episodeId,
               episodeTitle: track.episodeTitle,
               episodeDate: track.episodeDate,
-              episodeGuid: track.episodeGuid,
               startTime: track.startTime,
               endTime: track.endTime,
               duration: track.duration,
@@ -47,7 +46,7 @@ export async function GET(request: NextRequest) {
               valueForValue: track.valueForValue,
               source: track.source,
               feedUrl: track.feedUrl,
-              feedId: track.feedId || 'unknown',
+              feedId: 'unknown',
               extractionMethod: 'api-extraction'
             });
             storedTracks.push(storedTrack);
@@ -194,7 +193,6 @@ export async function POST(request: NextRequest) {
                   episodeId: track.episodeId,
                   episodeTitle: track.episodeTitle,
                   episodeDate: track.episodeDate,
-                  episodeGuid: track.episodeGuid,
                   startTime: track.startTime,
                   endTime: track.endTime,
                   duration: track.duration,
@@ -204,7 +202,7 @@ export async function POST(request: NextRequest) {
                   valueForValue: track.valueForValue,
                   source: track.source,
                   feedUrl: track.feedUrl,
-                  feedId: track.feedId || 'unknown',
+                  feedId: 'unknown',
                   extractionMethod: 'bulk-extraction'
                 });
                 storedTracks.push(storedTrack);

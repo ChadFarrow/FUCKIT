@@ -139,7 +139,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
             title: currentPlayingAlbum.title,
             tracks: currentPlayingAlbum.tracks?.map(track => ({
               title: track.title,
-              audioUrl: track.audioUrl,
+              audioUrl: track.url,
               startTime: track.startTime,
               endTime: track.endTime
             }))
