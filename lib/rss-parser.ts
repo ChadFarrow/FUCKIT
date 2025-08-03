@@ -30,6 +30,10 @@ export interface RSSValueTimeSplit {
   startTime: number; // Start time in seconds
   endTime: number;   // End time in seconds
   recipients: RSSValueRecipient[];
+  remoteItems?: Array<{
+    feedGuid: string;
+    itemGuid: string;
+  }>;
   totalAmount?: number;
   currency?: string;
 }

@@ -18,6 +18,9 @@ export interface MusicTrack {
     suggestedAmount: number;
     customKey?: string;
     customValue?: string;
+    remotePercentage?: number;
+    feedGuid?: string;
+    itemGuid?: string;
   };
   source: 'chapter' | 'value-split' | 'description' | 'external-feed';
   feedUrl: string;
@@ -338,8 +341,11 @@ export class MusicTrackParser {
     const tracks: MusicTrack[] = [];
     
     // Use the enhanced V4V parsing from RSSParser
-    // Look for podcast:valueTimeSplit elements
-    const valueSplits = item['podcast:valueTimeSplit'] || item.valueTimeSplit || [];
+    // Look for podcast:valueTimeSplit elements inside podcast:value
+    const valueElement = item['podcast:value'] || item.value;
+    if (!valueElement) return tracks;
+    
+    const valueSplits = valueElement['podcast:valueTimeSplit'] || valueElement.valueTimeSplit || [];
     const splitsArray = Array.isArray(valueSplits) ? valueSplits : [valueSplits];
     
     for (const split of splitsArray) {
