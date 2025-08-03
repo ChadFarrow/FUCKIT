@@ -99,28 +99,7 @@ export default function HomePage() {
   const { playAlbum: globalPlayAlbum, shuffleAllTracks } = useAudio();
   const hasLoadedRef = useRef(false);
   
-  // Performance optimization: Load critical albums first
-  const loadCriticalAlbums = async () => {
-    try {
-      const criticalAlbums = await loadAlbumsData('core');
-      setCriticalAlbums(criticalAlbums);
-      setIsCriticalLoaded(true);
-      setLoadingProgress(50);
-    } catch (error) {
-      console.warn('Failed to load critical albums:', error);
-    }
-  };
-  
-  const loadEnhancedAlbums = async () => {
-    try {
-      const enhancedAlbums = await loadAlbumsData('extended');
-      setEnhancedAlbums(enhancedAlbums);
-      setIsEnhancedLoaded(true);
-      setLoadingProgress(75);
-    } catch (error) {
-      console.warn('Failed to load enhanced albums:', error);
-    }
-  };
+
   
   // Static background state - Bloodshot Lies album art
   const [backgroundImageLoaded, setBackgroundImageLoaded] = useState(false);
