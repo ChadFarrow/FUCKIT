@@ -583,7 +583,7 @@ export default function HomePage() {
       {/* Static Background - Bloodshot Lies Album Art */}
       <div className="fixed inset-0 z-0">
         <CDNImage
-          src="/bloodshot-lies-new.png"
+          src="/bloodshot-lies-big.png"
           alt="Bloodshot Lies Album Art - Vibrant Edition"
           width={1920}
           height={1080}
