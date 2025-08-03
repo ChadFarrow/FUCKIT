@@ -89,8 +89,14 @@ export default function ITDVPlaylistPage() {
           };
         });
         
+        // Remove duplicates based on title, artist, and start time
+        const uniqueTracks = formattedTracks.filter((track, index, self) => {
+          const key = `${track.title}-${track.artist}-${track.startTime}`;
+          return index === self.findIndex(t => `${t.title}-${t.artist}-${t.startTime}` === key);
+        });
+        
         // Sort by episode number (1 to latest)
-        const sortedTracks = formattedTracks.sort((a: Track, b: Track) => {
+        const sortedTracks = uniqueTracks.sort((a: Track, b: Track) => {
           const aEpisode = extractEpisodeNumber(a.episodeTitle);
           const bEpisode = extractEpisodeNumber(b.episodeTitle);
           return aEpisode - bEpisode;
@@ -99,6 +105,7 @@ export default function ITDVPlaylistPage() {
         console.log('✅ Setting tracks in state:', sortedTracks.length);
         console.log('📝 V4V tracks count:', sortedTracks.filter((t: Track) => t.feedGuid && t.itemGuid).length);
         console.log('🎯 Resolved tracks:', sortedTracks.filter((t: Track) => t.resolved).length);
+        console.log('🔄 Removed duplicates:', formattedTracks.length - uniqueTracks.length);
         setTracks(sortedTracks);
       } else {
         throw new Error('Failed to load tracks from database');
