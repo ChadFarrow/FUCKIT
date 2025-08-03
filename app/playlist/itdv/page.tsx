@@ -12,6 +12,11 @@ interface Track {
   startTime: number;
   endTime: number;
   duration?: number;
+  image?: string;
+  feedGuid?: string;
+  itemGuid?: string;
+  resolved?: boolean;
+  loading?: boolean;
 }
 
 export default function ITDVPlaylistPage() {
@@ -28,6 +33,78 @@ export default function ITDVPlaylistPage() {
   const extractEpisodeNumber = (episodeTitle: string): number => {
     const match = episodeTitle.match(/Episode (\d+)/i);
     return match ? parseInt(match[1], 10) : 999; // Put unknown episodes at the end
+  };
+
+  const resolveTrackInfo = async (tracksToResolve: Track[]) => {
+    // Only resolve tracks that have feedGuid and itemGuid
+    const tracksThatNeedResolving = tracksToResolve.filter(track => 
+      track.feedGuid && track.itemGuid && !track.resolved
+    );
+
+    console.log(`Resolving ${tracksThatNeedResolving.length} tracks with V4V metadata...`);
+
+    // Process tracks in batches to avoid overwhelming the API
+    const batchSize = 3;
+    for (let i = 0; i < tracksThatNeedResolving.length; i += batchSize) {
+      const batch = tracksThatNeedResolving.slice(i, i + batchSize);
+      
+      await Promise.all(batch.map(track => resolveIndividualTrack(track)));
+      
+      // Small delay between batches
+      if (i + batchSize < tracksThatNeedResolving.length) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    }
+  };
+
+  const resolveIndividualTrack = async (track: Track) => {
+    if (!track.feedGuid || !track.itemGuid) return;
+
+    // Mark as loading
+    setTracks(prev => prev.map(t => 
+      t.id === track.id ? { ...t, loading: true } : t
+    ));
+
+    try {
+      const response = await fetch(
+        `/api/resolve-music-track?feedGuid=${track.feedGuid}&itemGuid=${track.itemGuid}`
+      );
+      const data = await response.json();
+
+      if (data.success && data.track) {
+        setTracks(prev => prev.map(t => 
+          t.id === track.id 
+            ? {
+                ...t,
+                title: data.track.title || t.title,
+                artist: data.track.artist || t.artist,
+                image: data.track.image || t.image,
+                resolved: true,
+                loading: false
+              }
+            : t
+        ));
+        console.log(`✅ Resolved: ${data.track.title} by ${data.track.artist}`);
+      } else {
+        // Mark as failed to resolve but not loading, update title to be more descriptive
+        setTracks(prev => prev.map(t => 
+          t.id === track.id 
+            ? { 
+                ...t, 
+                loading: false,
+                title: t.title.replace('External Music Track at', 'Music Track at'),
+                artist: 'V4V Reference (not in Podcast Index)'
+              } 
+            : t
+        ));
+        console.log(`❌ V4V track not in Podcast Index: ${track.title} (feedGuid: ${track.feedGuid})`);
+      }
+    } catch (error) {
+      console.error(`Error resolving track ${track.id}:`, error);
+      setTracks(prev => prev.map(t => 
+        t.id === track.id ? { ...t, loading: false } : t
+      ));
+    }
   };
 
   const loadTracks = async () => {
@@ -68,7 +145,12 @@ export default function ITDVPlaylistPage() {
           episodeTitle: track.episodeTitle,
           audioUrl: track.url || track.audioUrl,
           startTime: track.startTime || 0,
-          endTime: track.endTime || track.startTime + track.duration
+          endTime: track.endTime || track.startTime + track.duration,
+          duration: track.duration,
+          feedGuid: track.valueForValue?.feedGuid,
+          itemGuid: track.valueForValue?.itemGuid,
+          resolved: false,
+          loading: false
         }));
         
         // Sort by episode number (1 to latest)
@@ -79,6 +161,9 @@ export default function ITDVPlaylistPage() {
         });
         
         setTracks(sortedTracks);
+        
+        // Start resolving tracks with feedGuid/itemGuid
+        resolveTrackInfo(sortedTracks);
       } else {
         // Fallback to database
         const response = await fetch('/api/music-tracks/database?feedId=https://www.doerfelverse.com/feeds/intothedoerfelverse.xml&pageSize=100');
@@ -156,47 +241,138 @@ export default function ITDVPlaylistPage() {
     }
   };
 
+  const formatDuration = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-white">Loading playlist...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-6">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex items-center gap-3 mb-8">
-          <Music className="w-8 h-8 text-green-400" />
-          <h1 className="text-3xl font-bold">Into The Doerfel Verse - Music Playlist</h1>
+    <div className="min-h-screen bg-black text-white">
+      {/* Header */}
+      <div className="bg-gradient-to-b from-gray-800 to-black p-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center gap-6">
+            <div className="w-24 h-24 bg-gradient-to-br from-green-500 to-blue-600 rounded-lg flex items-center justify-center">
+              <Music className="w-12 h-12 text-white" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-400 mb-2">PLAYLIST</p>
+              <h1 className="text-4xl font-bold mb-2">Into The Doerfel Verse</h1>
+              <p className="text-gray-400">
+                The Doerfels • {tracks.length} songs • 
+                {Math.round(tracks.reduce((sum, track) => sum + (track.duration || (track.endTime - track.startTime)), 0) / 60)} min
+              </p>
+            </div>
+          </div>
         </div>
-        
-        <p className="text-gray-400 mb-6">
-          {tracks.length} music tracks from ITDV episodes
-        </p>
+      </div>
 
-        <div className="space-y-2">
-          {tracks.map((track) => (
-            <div key={track.id} className="bg-gray-800 rounded-lg p-4 flex items-center justify-between hover:bg-gray-700 transition-colors">
-              <div className="flex-1">
-                <h3 className="font-semibold">{track.title}</h3>
-                <p className="text-gray-400 text-sm">{track.artist}</p>
-                <p className="text-gray-500 text-xs">{track.episodeTitle}</p>
-              </div>
-              
-              <button
-                onClick={() => currentTrack === track.id ? stopTrack() : playTrack(track)}
-                className="p-2 bg-green-600 hover:bg-green-700 rounded-full transition-colors"
-              >
-                {currentTrack === track.id ? (
-                  <Pause className="w-5 h-5" />
-                ) : (
-                  <Play className="w-5 h-5" />
-                )}
+      {/* Controls */}
+      <div className="bg-black/20 backdrop-blur-sm border-b border-gray-800">
+        <div className="max-w-6xl mx-auto px-8 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <button className="w-12 h-12 bg-green-500 hover:bg-green-400 rounded-full flex items-center justify-center transition-colors">
+                <Play className="w-6 h-6 text-black ml-1" />
               </button>
             </div>
-          ))}
+            <div className="flex items-center gap-4">
+              <select className="bg-gray-800 border border-gray-700 rounded px-3 py-1 text-sm">
+                <option>Sort by Name</option>
+                <option>Sort by Episode</option>
+                <option>Sort by Duration</option>
+              </select>
+              <span className="text-sm text-gray-400">{tracks.length} tracks</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Track List */}
+      <div className="max-w-6xl mx-auto px-8">
+        <div className="py-4">
+          <h2 className="text-xl font-semibold mb-4">Tracks</h2>
+          
+          <div className="space-y-1">
+            {tracks.map((track, index) => (
+              <div 
+                key={track.id} 
+                className="group hover:bg-gray-800/50 p-2 rounded-lg transition-colors cursor-pointer"
+                onClick={() => currentTrack === track.id ? stopTrack() : playTrack(track)}
+              >
+                <div className="flex items-center gap-4">
+                  {/* Track Number / Play Button */}
+                  <div className="w-10 text-center">
+                    {currentTrack === track.id ? (
+                      <Pause className="w-4 h-4 text-green-400 mx-auto" />
+                    ) : (
+                      <div className="group-hover:hidden text-gray-400 text-sm">
+                        {index + 1}
+                      </div>
+                    )}
+                    {currentTrack !== track.id && (
+                      <Play className="w-4 h-4 text-white mx-auto hidden group-hover:block" />
+                    )}
+                  </div>
+
+                  {/* Album Art */}
+                  <div className="w-12 h-12 bg-gray-700 rounded flex items-center justify-center flex-shrink-0">
+                    {track.image ? (
+                      <img 
+                        src={track.image} 
+                        alt={track.title}
+                        className="w-full h-full object-cover rounded"
+                      />
+                    ) : (
+                      <Music className="w-6 h-6 text-gray-500" />
+                    )}
+                  </div>
+
+                  {/* Track Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h3 className={`font-medium truncate ${currentTrack === track.id ? 'text-green-400' : 'text-white'}`}>
+                        {track.loading ? 'Loading track info...' : track.title}
+                      </h3>
+                      {(track.feedGuid && track.itemGuid) && (
+                        <span className={`text-xs px-2 py-0.5 rounded ${
+                          track.resolved 
+                            ? 'bg-green-500/20 text-green-400' 
+                            : 'bg-blue-500/20 text-blue-400'
+                        }`}>
+                          {track.resolved ? 'V4V ✓' : 'V4V'}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-gray-400 text-sm truncate">
+                      {track.loading ? 'Resolving artist...' : track.artist}
+                    </p>
+                  </div>
+
+                  {/* Episode Info */}
+                  <div className="flex-1 min-w-0 hidden md:block">
+                    <p className="text-gray-400 text-sm truncate">{track.episodeTitle}</p>
+                  </div>
+
+                  {/* Duration */}
+                  <div className="w-16 text-right">
+                    <span className="text-gray-400 text-sm">
+                      {formatDuration(track.duration || (track.endTime - track.startTime))}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
