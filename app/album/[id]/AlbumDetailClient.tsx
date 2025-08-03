@@ -393,6 +393,16 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             'you-feel-like-homesingle': 'https://www.doerfelverse.com/feeds/you-feel-like-home.xml',
             'kurtisdrums': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml',
             
+            // Playlist tracks from V4V time splits (need to be looked up)
+            'playlist-track-1': 'https://www.doerfelverse.com/feeds/playlist-track-1.xml',
+            'playlist-track-1-1106-1427': 'https://www.doerfelverse.com/feeds/playlist-track-1.xml',
+            'playlist-track-2': 'https://www.doerfelverse.com/feeds/playlist-track-2.xml',
+            'playlist-track-2-1902-2333': 'https://www.doerfelverse.com/feeds/playlist-track-2.xml',
+            'playlist-track-3': 'https://www.doerfelverse.com/feeds/playlist-track-3.xml',
+            'playlist-track-3-5544-5930': 'https://www.doerfelverse.com/feeds/playlist-track-3.xml',
+            'playlist-track-4': 'https://www.doerfelverse.com/feeds/playlist-track-4.xml',
+            'playlist-track-4-10400-10712': 'https://www.doerfelverse.com/feeds/playlist-track-4.xml',
+            
             // External artists
             'deathdreams': 'https://static.staticsave.com/mspfiles/deathdreams.xml',
             'way-to-go': 'https://static.staticsave.com/mspfiles/waytogo.xml',

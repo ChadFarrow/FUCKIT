@@ -33,6 +33,12 @@ const doerfelsAlbums = [
   { feedGuid: '3679b281-4f40-5463-aa5a-6ea91b8a4957', feedUrl: 'https://www.doerfelverse.com/feeds/you-are-my-world.xml', title: 'You Are My World' },
   { feedGuid: '141b86d8-76bc-581a-adf1-2f836a4dde91', feedUrl: 'https://www.doerfelverse.com/feeds/you-feel-like-home.xml', title: 'You Feel Like Home' },
   { feedGuid: '4ab3741a-4a10-5631-a026-a9d0eb62fe11', feedUrl: 'https://www.doerfelverse.com/feeds/your-chance.xml', title: 'Your Chance' },
+  
+  // Additional albums found in V4V time splits that need to be added
+  { feedGuid: 'bba99401-378c-5540-bf95-c456b3d4de26', feedUrl: 'https://www.doerfelverse.com/feeds/playlist-track-1.xml', title: 'Playlist Track 1 (11:06-14:27)' }, // Track at 11:06-14:27
+  { feedGuid: '69c634ad-afea-5826-ad9a-8e1f06d6470b', feedUrl: 'https://www.doerfelverse.com/feeds/playlist-track-2.xml', title: 'Playlist Track 2 (19:02-23:33)' }, // Track at 19:02-23:33
+  { feedGuid: '1e7ed1fa-0456-5860-9b34-825d1335d8f8', feedUrl: 'https://www.doerfelverse.com/feeds/playlist-track-3.xml', title: 'Playlist Track 3 (55:44-59:30)' }, // Track at 55:44-59:30
+  { feedGuid: 'c76ef0a6-0181-5b9b-a4bc-dd85d4ed178b', feedUrl: 'https://www.doerfelverse.com/feeds/playlist-track-4.xml', title: 'Playlist Track 4 (1:04:00-1:07:12)' }, // Track at 1:04:00-1:07:12
 ];
 
 export async function GET() {

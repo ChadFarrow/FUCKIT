@@ -35,83 +35,23 @@ export default function ITDVPlaylistPage() {
     return match ? parseInt(match[1], 10) : 999; // Put unknown episodes at the end
   };
 
-  const resolveTrackInfo = async (tracksToResolve: Track[]) => {
-    // Only resolve tracks that have feedGuid and itemGuid
-    const tracksThatNeedResolving = tracksToResolve.filter(track => 
-      track.feedGuid && track.itemGuid && !track.resolved
-    );
-
-    console.log(`Resolving ${tracksThatNeedResolving.length} tracks with V4V metadata...`);
-
-    // Process tracks in batches to avoid overwhelming the API
-    const batchSize = 3;
-    for (let i = 0; i < tracksThatNeedResolving.length; i += batchSize) {
-      const batch = tracksThatNeedResolving.slice(i, i + batchSize);
-      
-      await Promise.all(batch.map(track => resolveIndividualTrack(track)));
-      
-      // Small delay between batches
-      if (i + batchSize < tracksThatNeedResolving.length) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-      }
-    }
-  };
-
-  const resolveIndividualTrack = async (track: Track) => {
-    if (!track.feedGuid || !track.itemGuid) return;
-
-    // Mark as loading
-    setTracks(prev => prev.map(t => 
-      t.id === track.id ? { ...t, loading: true } : t
-    ));
-
-    try {
-      const response = await fetch(
-        `/api/resolve-music-track?feedGuid=${track.feedGuid}&itemGuid=${track.itemGuid}`
-      );
-      const data = await response.json();
-
-      if (data.success && data.track) {
-        setTracks(prev => prev.map(t => 
-          t.id === track.id 
-            ? {
-                ...t,
-                title: data.track.title || t.title,
-                artist: data.track.artist || t.artist,
-                image: data.track.image || t.image,
-                resolved: true,
-                loading: false
-              }
-            : t
-        ));
-        console.log(`✅ Resolved: ${data.track.title} by ${data.track.artist}`);
-      } else {
-        // Mark as failed to resolve but not loading, update title to be more descriptive
-        setTracks(prev => prev.map(t => 
-          t.id === track.id 
-            ? { 
-                ...t, 
-                loading: false,
-                title: t.title.replace('External Music Track at', 'Music Track at'),
-                artist: 'V4V Reference (not in Podcast Index)'
-              } 
-            : t
-        ));
-        console.log(`❌ V4V track not in Podcast Index: ${track.title} (feedGuid: ${track.feedGuid})`);
-      }
-    } catch (error) {
-      console.error(`Error resolving track ${track.id}:`, error);
-      setTracks(prev => prev.map(t => 
-        t.id === track.id ? { ...t, loading: false } : t
-      ));
-    }
-  };
+  // OLD RESOLUTION CODE REMOVED - Now using cached pre-resolved data
+  // Individual track resolution is no longer needed since we batch resolve during API call
 
   const loadTracks = async () => {
     try {
-      // Try to get fresh extraction first to capture V4V value splits
-      const extractResponse = await fetch('/api/music-tracks?feedUrl=https://www.doerfelverse.com/feeds/intothedoerfelverse.xml');
+      console.log('🎵 Starting to load tracks...');
+      
+      // Try to get fresh extraction with V4V resolution
+      const extractResponse = await fetch('/api/music-tracks?feedUrl=https://www.doerfelverse.com/feeds/intothedoerfelverse.xml&resolveV4V=true');
+      console.log('📡 Extract response status:', extractResponse.status);
+      
+      if (!extractResponse.ok) {
+        throw new Error(`HTTP error! status: ${extractResponse.status}`);
+      }
+      
       const extractData = await extractResponse.json();
+      console.log('📊 Extract data received:', extractData.success, extractData.data?.tracks?.length, 'tracks');
       
       if (extractData.success && extractData.data.tracks) {
         // First, let's see all available tracks and filter more loosely
@@ -137,21 +77,27 @@ export default function ITDVPlaylistPage() {
           );
         });
         
-        // Convert to our Track interface
-        const formattedTracks = musicTracks.map((track: any) => ({
-          id: track.id,
-          title: track.title,
-          artist: track.artist || 'Unknown Artist',
-          episodeTitle: track.episodeTitle,
-          audioUrl: track.url || track.audioUrl,
-          startTime: track.startTime || 0,
-          endTime: track.endTime || track.startTime + track.duration,
-          duration: track.duration,
-          feedGuid: track.valueForValue?.feedGuid,
-          itemGuid: track.valueForValue?.itemGuid,
-          resolved: false,
-          loading: false
-        }));
+        // Convert to our Track interface, using resolved V4V data if available
+        const formattedTracks = musicTracks.map((track: any) => {
+          const v4v = track.valueForValue;
+          const isResolved = v4v?.resolved && v4v?.resolvedTitle;
+          
+          return {
+            id: track.id,
+            title: isResolved ? v4v.resolvedTitle : track.title,
+            artist: isResolved ? v4v.resolvedArtist : (track.artist || 'Unknown Artist'),
+            episodeTitle: track.episodeTitle,
+            audioUrl: isResolved ? v4v.resolvedAudioUrl : (track.url || track.audioUrl),
+            startTime: track.startTime || 0,
+            endTime: track.endTime || track.startTime + track.duration,
+            duration: isResolved ? v4v.resolvedDuration : track.duration,
+            image: isResolved ? v4v.resolvedImage : track.image,
+            feedGuid: v4v?.feedGuid,
+            itemGuid: v4v?.itemGuid,
+            resolved: isResolved,
+            loading: false
+          };
+        });
         
         // Sort by episode number (1 to latest)
         const sortedTracks = formattedTracks.sort((a: Track, b: Track) => {
@@ -160,10 +106,12 @@ export default function ITDVPlaylistPage() {
           return aEpisode - bEpisode;
         });
         
+        console.log('✅ Setting tracks in state:', sortedTracks.length);
+        console.log('📝 V4V tracks count:', sortedTracks.filter((t: Track) => t.feedGuid && t.itemGuid).length);
+        console.log('🎯 Pre-resolved V4V tracks:', sortedTracks.filter((t: Track) => t.resolved).length);
         setTracks(sortedTracks);
         
-        // Start resolving tracks with feedGuid/itemGuid
-        resolveTrackInfo(sortedTracks);
+        // No need to resolve individual tracks anymore - they're pre-resolved!
       } else {
         // Fallback to database
         const response = await fetch('/api/music-tracks/database?feedId=https://www.doerfelverse.com/feeds/intothedoerfelverse.xml&pageSize=100');
@@ -219,15 +167,32 @@ export default function ITDVPlaylistPage() {
       audio.pause();
     }
 
-    const newAudio = new Audio(track.audioUrl);
-    newAudio.currentTime = track.startTime;
+    // Use the resolved audio URL if available (actual song file), otherwise fallback to episode segment
+    const audioUrl = track.resolved && track.audioUrl ? 
+      track.audioUrl : // Direct song file for V4V tracks
+      track.audioUrl;  // Episode segment for other tracks
+
+    console.log(`🎵 Playing ${track.resolved ? 'direct song file' : 'episode segment'}: ${track.title}`);
+    console.log(`🔗 Audio URL: ${audioUrl}`);
+
+    const newAudio = new Audio(audioUrl);
     
-    newAudio.addEventListener('timeupdate', () => {
-      if (newAudio.currentTime >= track.endTime) {
-        newAudio.pause();
+    // For resolved V4V tracks, play the entire song. For episode segments, use time bounds.
+    if (!track.resolved) {
+      newAudio.currentTime = track.startTime;
+      
+      newAudio.addEventListener('timeupdate', () => {
+        if (newAudio.currentTime >= track.endTime) {
+          newAudio.pause();
+          setCurrentTrack(null);
+        }
+      });
+    } else {
+      // For direct song files, play the entire track
+      newAudio.addEventListener('ended', () => {
         setCurrentTrack(null);
-      }
-    });
+      });
+    }
 
     newAudio.play();
     setAudio(newAudio);
@@ -300,7 +265,20 @@ export default function ITDVPlaylistPage() {
       {/* Track List */}
       <div className="max-w-6xl mx-auto px-8">
         <div className="py-4">
-          <h2 className="text-xl font-semibold mb-4">Tracks</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold">Tracks</h2>
+            <div className="flex items-center gap-4 text-sm">
+              <span className="text-gray-400">
+                V4V Tracks: {tracks.filter(t => t.feedGuid && t.itemGuid).length}
+              </span>
+              <span className="text-green-400">
+                Resolved: {tracks.filter(t => t.resolved).length}
+              </span>
+              <span className="text-blue-400">
+                References: {tracks.filter(t => t.feedGuid && t.itemGuid && !t.resolved && !t.loading).length}
+              </span>
+            </div>
+          </div>
           
           <div className="space-y-1">
             {tracks.map((track, index) => (
@@ -341,7 +319,7 @@ export default function ITDVPlaylistPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <h3 className={`font-medium truncate ${currentTrack === track.id ? 'text-green-400' : 'text-white'}`}>
-                        {track.loading ? 'Loading track info...' : track.title}
+                        {track.title}
                       </h3>
                       {(track.feedGuid && track.itemGuid) && (
                         <span className={`text-xs px-2 py-0.5 rounded ${
@@ -354,7 +332,7 @@ export default function ITDVPlaylistPage() {
                       )}
                     </div>
                     <p className="text-gray-400 text-sm truncate">
-                      {track.loading ? 'Resolving artist...' : track.artist}
+                      {track.artist}
                     </p>
                   </div>
 

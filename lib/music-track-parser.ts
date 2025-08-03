@@ -21,6 +21,13 @@ export interface MusicTrack {
     remotePercentage?: number;
     feedGuid?: string;
     itemGuid?: string;
+    resolvedTitle?: string;
+    resolvedArtist?: string;
+    resolvedImage?: string;
+    resolvedAudioUrl?: string;
+    resolvedDuration?: number;
+    resolved?: boolean;
+    lastResolved?: Date;
   };
   source: 'chapter' | 'value-split' | 'description' | 'external-feed';
   feedUrl: string;

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { MusicTrackParser } from '@/lib/music-track-parser';
+import { V4VResolver } from '@/lib/v4v-resolver';
 
 export async function GET(request: NextRequest) {
   try {
@@ -68,6 +69,55 @@ export async function GET(request: NextRequest) {
     
     // Extract music tracks from the feed
     const result = await MusicTrackParser.extractMusicTracks(feedUrl);
+    
+    // Check if we should resolve V4V tracks
+    const resolveV4V = searchParams.get('resolveV4V') === 'true';
+    
+    if (resolveV4V) {
+      console.log('🔍 Resolving V4V tracks...');
+      
+      // Find all V4V tracks that need resolution
+      const v4vTracks = result.tracks.filter(track => 
+        track.valueForValue?.feedGuid && 
+        track.valueForValue?.itemGuid && 
+        !track.valueForValue?.resolved
+      );
+      
+      if (v4vTracks.length > 0) {
+        console.log(`📡 Resolving ${v4vTracks.length} V4V tracks...`);
+        
+        // Prepare batch resolution
+        const tracksToResolve = v4vTracks.map(track => ({
+          feedGuid: track.valueForValue!.feedGuid!,
+          itemGuid: track.valueForValue!.itemGuid!
+        }));
+        
+        // Resolve in batch
+        const resolutionResults = await V4VResolver.resolveBatch(tracksToResolve);
+        
+        // Apply resolved data to tracks
+        let resolvedCount = 0;
+        result.tracks.forEach(track => {
+          if (track.valueForValue?.feedGuid && track.valueForValue?.itemGuid) {
+            const key = `${track.valueForValue.feedGuid}:${track.valueForValue.itemGuid}`;
+            const resolution = resolutionResults.get(key);
+            
+            if (resolution?.success) {
+              track.valueForValue.resolvedTitle = resolution.title;
+              track.valueForValue.resolvedArtist = resolution.artist;
+              track.valueForValue.resolvedImage = resolution.image;
+              track.valueForValue.resolvedAudioUrl = resolution.audioUrl;
+              track.valueForValue.resolvedDuration = resolution.duration;
+              track.valueForValue.resolved = true;
+              track.valueForValue.lastResolved = new Date();
+              resolvedCount++;
+            }
+          }
+        });
+        
+        console.log(`✅ Successfully resolved ${resolvedCount} V4V tracks`);
+      }
+    }
     
     return NextResponse.json({
       success: true,
