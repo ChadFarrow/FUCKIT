@@ -1031,7 +1031,7 @@ export class RSSParser {
       
       const publisherItems: RSSPublisherItem[] = [];
       
-      // Look for podcast:remoteItem elements with medium="music"
+      // Look for podcast:remoteItem elements
       const remoteItems = Array.from(channel.getElementsByTagName('podcast:remoteItem'));
       
       remoteItems.forEach((item: unknown) => {
@@ -1041,11 +1041,12 @@ export class RSSParser {
         const feedUrl = element.getAttribute('feedUrl');
         const title = element.getAttribute('title') || element.textContent?.trim();
         
-        if (medium === 'music' && feedGuid && feedUrl) {
+        // Accept items with medium="music" OR items without medium (assuming they're music in a publisher feed)
+        if (feedGuid && feedUrl && (medium === 'music' || !medium)) {
           publisherItems.push({
             feedGuid,
             feedUrl,
-            medium,
+            medium: medium || 'music', // Default to 'music' if not specified
             title
           });
         }
@@ -1175,18 +1176,34 @@ export class RSSParser {
    * Parse a single Value Time Split element
    */
   private static parseValueTimeSplit(valueTimeSplitElement: Element): RSSValueTimeSplit | null {
-    // Parse time range
+    // Parse time range - handle both endTime and duration formats
     const startTimeStr = valueTimeSplitElement.getAttribute('startTime') || valueTimeSplitElement.getAttribute('start');
     const endTimeStr = valueTimeSplitElement.getAttribute('endTime') || valueTimeSplitElement.getAttribute('end');
+    const durationStr = valueTimeSplitElement.getAttribute('duration');
     
-    if (!startTimeStr || !endTimeStr) {
+    if (!startTimeStr) {
       return null;
     }
     
     const startTime = this.parseTimeToSeconds(startTimeStr);
-    const endTime = this.parseTimeToSeconds(endTimeStr);
+    if (startTime === null) {
+      return null;
+    }
     
-    if (startTime === null || endTime === null) {
+    let endTime: number;
+    if (endTimeStr) {
+      const parsedEndTime = this.parseTimeToSeconds(endTimeStr);
+      if (parsedEndTime === null) {
+        return null;
+      }
+      endTime = parsedEndTime;
+    } else if (durationStr) {
+      const duration = parseFloat(durationStr);
+      if (isNaN(duration)) {
+        return null;
+      }
+      endTime = startTime + duration;
+    } else {
       return null;
     }
     
@@ -1201,7 +1218,24 @@ export class RSSParser {
       }
     });
     
-    if (recipients.length === 0) {
+    // Parse remoteItem elements (for external music track references)
+    const remoteItems: any[] = [];
+    const remoteItemElements = Array.from(valueTimeSplitElement.getElementsByTagName('podcast:remoteItem'));
+    
+    remoteItemElements.forEach((remoteItemElement) => {
+      const feedGuid = remoteItemElement.getAttribute('feedGuid');
+      const itemGuid = remoteItemElement.getAttribute('itemGuid');
+      
+      if (feedGuid && itemGuid) {
+        remoteItems.push({
+          feedGuid,
+          itemGuid
+        });
+      }
+    });
+    
+    // Accept if we have either recipients OR remoteItems (for music tracks)
+    if (recipients.length === 0 && remoteItems.length === 0) {
       return null;
     }
     
@@ -1214,6 +1248,7 @@ export class RSSParser {
       startTime,
       endTime,
       recipients,
+      remoteItems,
       totalAmount,
       currency
     };
@@ -1241,12 +1276,12 @@ export class RSSParser {
     
     return {
       name,
-      address,
+      address: address || undefined,
       percentage,
       amount,
       type,
-      customKey,
-      customValue
+      customKey: customKey || undefined,
+      customValue: customValue || undefined
     };
   }
 
@@ -1367,12 +1402,12 @@ export class RSSParser {
     }
     
     return {
-      senderName,
-      message,
+      senderName: senderName || undefined,
+      message: message || undefined,
       amount,
-      currency,
-      timestamp,
-      episodeGuid
+      currency: currency || undefined,
+      timestamp: timestamp || undefined,
+      episodeGuid: episodeGuid || undefined
     };
   }
 
