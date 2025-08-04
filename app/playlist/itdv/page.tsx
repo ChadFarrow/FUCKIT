@@ -177,10 +177,8 @@ export default function ITDVPlaylistPage() {
   const loadMainFeedTracks = async () => {
     console.log('🎵 Loading tracks from persistent storage...');
     
-    // Always load from local database with high limit to get all tracks and V4V resolution
-    // Add cache-busting parameter to ensure fresh data
-    const cacheBuster = Date.now();
-    const response = await fetch(`/api/music-tracks?feedUrl=local://database&limit=1000&resolveV4V=true&_cb=${cacheBuster}`);
+    // Always load from local database with high limit to get all tracks (V4V data already resolved and cached)
+    const response = await fetch('/api/music-tracks?feedUrl=local://database&limit=1000');
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
