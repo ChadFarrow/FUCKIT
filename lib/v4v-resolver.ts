@@ -54,9 +54,9 @@ export class V4VResolver {
       // If not in known feeds, try to look it up via Podcast Index API
       if (!feedUrl) {
         console.log(`🔍 Unknown feedGuid ${feedGuid}, looking up via Podcast Index API...`);
-        feedUrl = await this.lookupFeedGuid(feedGuid);
+        const discoveredFeedUrl = await this.lookupFeedGuid(feedGuid);
         
-        if (!feedUrl) {
+        if (!discoveredFeedUrl) {
           console.log(`❌ FeedGuid ${feedGuid} not found in Podcast Index API`);
           return {
             success: false,
@@ -65,6 +65,7 @@ export class V4VResolver {
         }
         
         // Cache the discovered feed URL for future use (in memory only)
+        feedUrl = discoveredFeedUrl;
         this.knownFeeds[feedGuid] = feedUrl;
         console.log(`✅ Discovered and cached feed: ${feedUrl}`);
       }
