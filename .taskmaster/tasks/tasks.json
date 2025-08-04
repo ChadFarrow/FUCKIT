@@ -443,7 +443,7 @@
         "description": "The playlist page at /playlist/itdv was showing 0 tracks due to overly restrictive filtering logic. Need to fix the filtering to properly show V4V tracks from Episode 31 and resolve the JavaScript errors causing 500 Internal Server Error. Also need to ensure the playlist shows the real track information (artist names, titles) instead of placeholder data.",
         "details": "",
         "testStrategy": "",
-        "status": "in-progress",
+        "status": "done",
         "dependencies": [
           13,
           14
@@ -467,13 +467,90 @@
             "status": "done",
             "dependencies": [],
             "parentTaskId": 15
+          },
+          {
+            "id": 3,
+            "title": "Implement comprehensive UI/UX improvements for ITDV playlist page",
+            "description": "Added major enhancements to the ITDV playlist page including search, filtering, track details modal, improved audio playback, and better error handling.",
+            "details": "**Major Enhancements Added:**\n1. **Search & Filtering System**: Added real-time search across track titles, artists, and episodes with advanced filtering by source type and episode\n2. **Improved Error Handling**: Added proper error states with retry functionality and better null checks for track properties\n3. **Enhanced Audio Playback**: Added loading states for audio playback, better error handling, and improved user feedback\n4. **Track Details Modal**: Added a detailed modal showing track information including time ranges, V4V references, and source details\n5. **Better UI/UX**: Added info panel explaining track sources, improved navigation with link to V4V Music Library, and better visual feedback\n6. **Debugging & Logging**: Added comprehensive console logging to track data flow and identify issues\n7. **Responsive Design**: Improved mobile responsiveness and accessibility\n\n**Technical Improvements:**\n- Fixed null reference errors with proper fallbacks\n- Added async/await pattern for audio playback\n- Implemented proper loading states and error boundaries\n- Added comprehensive filtering and sorting options\n- Improved data validation and error recovery\n\nThe page now loads 283 tracks successfully and provides a much better user experience with search, filtering, and detailed track information.",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 15
           }
         ]
+      },
+      {
+        "id": 16,
+        "title": "Build persistent playlist system",
+        "description": "Create a complete playlist system that extracts music from the Doerfel-Verse RSS feed, saves it persistently, and provides playback functionality",
+        "details": "Need to: 1) Extract all music tracks from https://www.doerfelverse.com/feeds/intothedoerfelverse.xml, 2) Save tracks to persistent storage (database or JSON), 3) Create playlist player with queue management, 4) Add continuous playback features, 5) Prepare for Podcasting 2.0 music playlist export format",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Review and document existing implementation",
+            "description": "Analyze current /app/playlist/itdv/page.tsx and /data/music-tracks.json to understand what's already built",
+            "details": "Document: existing data structure (2915 tracks), current playback functionality, caching mechanisms, and identify what needs enhancement vs what's working",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 16
+          },
+          {
+            "id": 2,
+            "title": "Fix data loading to use persistent storage",
+            "description": "Ensure the playlist page always loads from /data/music-tracks.json instead of fetching RSS feed repeatedly",
+            "details": "Modify loadMainFeedTracks() to properly use local://database endpoint, remove redundant feed fetching, ensure cache works with local data",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 16
+          },
+          {
+            "id": 3,
+            "title": "Implement continuous playback queue",
+            "description": "Add queue management for continuous track playback with play next, add to queue, and auto-advance features",
+            "details": "Add: playQueue state management, queue controls UI, auto-advance to next track on completion, queue persistence in localStorage, shuffle and repeat modes",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 16
+          },
+          {
+            "id": 4,
+            "title": "Add Podcasting 2.0 playlist export",
+            "description": "Create export functionality to generate Podcasting 2.0 compliant music playlist format",
+            "details": "Implement: export to XML/JSON format per Podcasting 2.0 spec, include all track metadata (title, artist, duration, audioUrl, startTime, endTime), add download button for playlist file",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 16
+          },
+          {
+            "id": 5,
+            "title": "Add data refresh mechanism",
+            "description": "Create a way to update the persistent storage with new tracks from the RSS feed when needed",
+            "details": "Add: manual refresh button, check for new episodes, merge new tracks without duplicates, update /data/music-tracks.json, show last updated timestamp",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 16
+          }
+        ]
+      },
+      {
+        "id": 17,
+        "title": "Fix playlist parsing issues",
+        "description": "Investigate why playlist only starts at Episode 52, all tracks are 5 minutes titled 'Verse', and implement proper episode-by-episode parsing starting from Episode 56",
+        "details": "Issues: 1) Only shows Episode 52 onwards, 2) All tracks are exactly 5 minutes, 3) All titled 'Verse' instead of real track names, 4) Need episode-by-episode parsing from Episode 56 backwards",
+        "testStrategy": "",
+        "status": "in-progress",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
       }
     ],
     "metadata": {
       "created": "2025-08-01T21:46:44.417Z",
-      "updated": "2025-08-03T22:17:06.837Z",
+      "updated": "2025-08-04T00:19:21.588Z",
       "description": "Music track extraction feature development"
     }
   },

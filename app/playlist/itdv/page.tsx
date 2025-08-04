@@ -124,7 +124,7 @@ export default function ITDVPlaylistPage() {
       // Force fetch from RSS feed and update database
       const feedUrl = 'https://www.doerfelverse.com/feeds/intothedoerfelverse.xml';
       const encodedFeedUrl = encodeURIComponent(feedUrl);
-      const response = await fetch(`/api/music-tracks?feedUrl=${encodedFeedUrl}&forceRefresh=true&saveToDatabase=true`);
+      const response = await fetch(`/api/music-tracks?feedUrl=${encodedFeedUrl}&forceRefresh=true&saveToDatabase=true&resolveV4V=true&clearV4VCache=true&limit=1000`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -174,8 +174,8 @@ export default function ITDVPlaylistPage() {
   const loadMainFeedTracks = async () => {
     console.log('🎵 Loading tracks from persistent storage...');
     
-    // Always load from local database
-    const response = await fetch('/api/music-tracks?feedUrl=local://database');
+    // Always load from local database with high limit to get all tracks and V4V resolution
+    const response = await fetch('/api/music-tracks?feedUrl=local://database&limit=1000&resolveV4V=true');
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -385,12 +385,18 @@ export default function ITDVPlaylistPage() {
     if (track.valueForValue?.resolved && track.valueForValue?.resolvedArtist) {
       const resolvedArtist = track.valueForValue.resolvedArtist;
       
-      // Map known album names to actual artists for Episode 56 tracks
+      // Map known album names to actual artists for V4V tracks
       const albumToArtistMap: { [key: string]: string } = {
+        // Episode 56 tracks
         'Bell of Hope': 'John Depew Trio',
         'Birdfeeder (EP)': 'Big Awesome',
         'Smokestacks': 'Herbivore',
-        'Live From the Other Side': 'Theo Katzman'
+        'Live From the Other Side': 'Theo Katzman',
+        // Episode 54 tracks
+        'Lost Summer': 'Ollie',
+        'Abyss / Quiet day': 'Lara J',  
+        'it can be erased': 'Nate Johnivan',
+        'HeyCitizen\'s Lo-Fi Hip-Hop Beats to Study and Relax to': 'HeyCitizen'
       };
       
       // Check if this is an album name that should be mapped to an artist

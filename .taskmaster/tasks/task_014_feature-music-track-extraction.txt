@@ -1,0 +1,43 @@
+# Task ID: 14
+# Title: Fix re.podtards.com publisher feed display issue
+# Status: done
+# Dependencies: None
+# Priority: high
+# Description: The Doerfels page shows 'No Albums Found' despite having 35 music albums in the parsed publisher feed. The issue appears to be that re.podtards.com is looking for a podcast:remoteItem with medium='publisher' that points to the doerfels publisher feed, but this entry may be missing from the main feed index.
+# Details:
+Investigate why re.podtards.com is not displaying The Doerfels' publisher feed items. The parsed feeds show 35 music albums are available, but the page shows 'No Albums Found'. Need to check the feed discovery mechanism and ensure the publisher feed is properly indexed.
+
+# Test Strategy:
+
+
+# Subtasks:
+## 1. Investigate re.podtards.com feed discovery mechanism [done]
+### Dependencies: None
+### Description: Understand how re.podtards.com discovers and indexes publisher feeds. Check if there's a main feed index or directory that needs to include the doerfels publisher feed.
+### Details:
+Research the feed discovery process used by re.podtards.com. Look for any main feed indexes, directories, or API endpoints that list available publisher feeds. Check if the doerfels publisher feed needs to be registered in a central location.
+
+## 2. Check doerfels publisher feed parsing status [done]
+### Dependencies: None
+### Description: Verify that the doerfels publisher feed is being parsed correctly and contains the expected 35 music albums.
+### Details:
+Examine the parsed feeds data to confirm the doerfels-publisher feed has parseStatus 'success' and contains all 35 music albums. Check if there are any parsing errors or missing data.
+
+## 3. Test re.podtards.com API endpoints [done]
+### Dependencies: None
+### Description: Test the re.podtards.com API endpoints to understand how publisher feeds are retrieved and displayed.
+### Details:
+Investigate the re.podtards.com API structure. Check if there are endpoints for retrieving publisher feeds, and test how the doerfels publisher feed is being accessed. Look for any API errors or missing data.
+
+## 4. Implement feed discovery fix [done]
+### Dependencies: None
+### Description: Based on investigation findings, implement the necessary fix to ensure the doerfels publisher feed is properly discovered and displayed on re.podtards.com.
+### Details:
+Apply the fix identified in the investigation. This may involve updating feed indexes, API endpoints, or data structures to ensure the doerfels publisher feed is properly registered and accessible.
+
+## 5. Test and verify the fix [done]
+### Dependencies: None
+### Description: Test the implemented fix to ensure the doerfels publisher feed now displays correctly on re.podtards.com with all 35 music albums visible.
+### Details:
+Verify that the fix works by checking the re.podtards.com page for The Doerfels. Confirm that all 35 music albums are now displayed instead of 'No Albums Found'. Test the API endpoints to ensure they return the correct data.
+

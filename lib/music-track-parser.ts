@@ -261,7 +261,24 @@ export class MusicTrackParser {
     });
     tracks.push(...descriptionTracks);
     
-    return tracks;
+    // 5. Extract V4V tracks by cross-referencing with chapters data
+    const v4vTracks = await this.extractV4VTracksFromChapters(item, {
+      episodeId: episodeGuid,
+      episodeTitle,
+      episodeDate,
+      channelTitle,
+      feedUrl,
+      audioUrl
+    });
+    tracks.push(...v4vTracks);
+    
+    // 6. Enhance V4V tracks with chapters data to get actual track titles
+    const enhancedTracks = await this.enhanceV4VTracksWithChapters(tracks, item);
+    
+    // 7. Deduplicate tracks based on start time and V4V references
+    const deduplicatedTracks = this.deduplicateTracks(enhancedTracks);
+    
+    return deduplicatedTracks;
   }
 
   /**
@@ -522,6 +539,66 @@ export class MusicTrackParser {
   }
 
   /**
+   * Enhance V4V tracks with chapters data to get actual track titles
+   */
+  private static async enhanceV4VTracksWithChapters(
+    tracks: MusicTrack[],
+    item: any
+  ): Promise<MusicTrack[]> {
+    // Look for podcast:chapters element
+    const chaptersElement = item['podcast:chapters'] || item.chapters;
+    if (!chaptersElement) return tracks;
+    
+    const chaptersUrl = this.getAttributeValue(chaptersElement, 'url');
+    if (!chaptersUrl) return tracks;
+    
+    try {
+      // Fetch and parse the chapters JSON file
+      const response = await fetch(chaptersUrl);
+      if (!response.ok) {
+        this.logger.warn('Failed to fetch chapters file for V4V enhancement', { url: chaptersUrl });
+        return tracks;
+      }
+      
+      const chaptersData: ChapterData = await response.json();
+      
+      // Create a map of start times to chapter titles
+      const chapterMap = new Map<number, { title: string; image?: string; url?: string }>();
+      for (const chapter of chaptersData.chapters) {
+        chapterMap.set(chapter.startTime, {
+          title: chapter.title,
+          image: chapter.image,
+          url: chapter.url
+        });
+      }
+      
+      // Enhance V4V tracks with chapter data
+      return tracks.map(track => {
+        if (track.source === 'value-split' && track.valueForValue?.feedGuid) {
+          // Find matching chapter by start time
+          const chapter = chapterMap.get(track.startTime);
+          if (chapter && !chapter.title.includes('Into The Doerfel-Verse')) {
+            // Use the actual track title from chapters
+            return {
+              ...track,
+              title: chapter.title,
+              artist: 'Unknown Artist', // We don't have artist info in chapters
+              image: chapter.image || track.image,
+              description: chapter.url ? `Album: ${chapter.url}` : track.description
+            };
+          }
+        }
+        return track;
+      });
+      
+    } catch (error) {
+      this.logger.warn('Failed to enhance V4V tracks with chapters data', { url: chaptersUrl, error });
+    }
+    
+    return tracks;
+  }
+
+  /**
    * Extract music tracks from episode description
    */
   private static extractTracksFromDescription(
@@ -578,7 +655,13 @@ export class MusicTrackParser {
               artist.toLowerCase().includes('unknown') ||
               title.toLowerCase().includes('unknown') ||
               artist.toLowerCase().includes('volume') ||
-              title.toLowerCase().includes('volume')) {
+              title.toLowerCase().includes('volume') ||
+              artist.toLowerCase().includes('verse') ||
+              title.toLowerCase().includes('verse') ||
+              title.toLowerCase().includes('doerfel') ||
+              title.toLowerCase().includes('traveling') ||
+              title.toLowerCase().includes('thanks') ||
+              title.toLowerCase().includes('episode')) {
             continue;
           }
           
@@ -692,11 +775,16 @@ export class MusicTrackParser {
   private static isMusicChapter(chapter: { title: string; startTime: number }): boolean {
     const title = chapter.title.toLowerCase();
     
+    // Exclude podcast intro/outro chapters
+    if (title.includes('into the doerfel-verse') || title.includes('verse')) {
+      return false;
+    }
+    
     // Keywords that suggest music content
     const musicKeywords = [
       'song', 'track', 'music', 'tune', 'melody', 'jam', 'riff',
       'instrumental', 'acoustic', 'electric', 'guitar', 'piano',
-      'drums', 'bass', 'vocal', 'chorus', 'verse', 'bridge'
+      'drums', 'bass', 'vocal', 'chorus', 'bridge'
     ];
     
     return musicKeywords.some(keyword => title.includes(keyword));
@@ -1039,5 +1127,158 @@ export class MusicTrackParser {
       this.logger.error('Error resolving remote track', { feedGuid, itemGuid, error });
       return null;
     }
+  }
+
+  /**
+   * Extract V4V tracks by cross-referencing V4V time splits with chapters data
+   */
+  private static async extractV4VTracksFromChapters(
+    item: any,
+    context: {
+      episodeId: string;
+      episodeTitle: string;
+      episodeDate: Date;
+      channelTitle: string;
+      feedUrl: string;
+      audioUrl?: string;
+    }
+  ): Promise<MusicTrack[]> {
+    const tracks: MusicTrack[] = [];
+    
+    // Look for V4V time splits
+    const valueElement = item['podcast:value'] || item.value;
+    if (!valueElement) return tracks;
+    
+    const valueSplits = valueElement['podcast:valueTimeSplit'] || valueElement.valueTimeSplit || [];
+    const splitsArray = Array.isArray(valueSplits) ? valueSplits : [valueSplits];
+    
+    // Look for chapters data
+    const chaptersElement = item['podcast:chapters'] || item.chapters;
+    if (!chaptersElement) return tracks;
+    
+    const chaptersUrl = this.getAttributeValue(chaptersElement, 'url');
+    if (!chaptersUrl) return tracks;
+    
+    try {
+      // Fetch and parse the chapters JSON file
+      const response = await fetch(chaptersUrl);
+      if (!response.ok) {
+        this.logger.warn('Failed to fetch chapters file for V4V extraction', { url: chaptersUrl });
+        return tracks;
+      }
+      
+      const chaptersData: ChapterData = await response.json();
+      
+      // Create a map of start times to chapter data
+      const chapterMap = new Map<number, { title: string; image?: string; url?: string }>();
+      for (const chapter of chaptersData.chapters) {
+        chapterMap.set(chapter.startTime, {
+          title: chapter.title,
+          image: chapter.image,
+          url: chapter.url
+        });
+      }
+      
+      // Process each V4V time split
+      for (const split of splitsArray) {
+        if (!split) continue;
+        
+        const startTime = parseFloat(this.getAttributeValue(split, 'startTime') || '0');
+        const duration = parseFloat(this.getAttributeValue(split, 'duration') || '0');
+        const remotePercentage = parseFloat(this.getAttributeValue(split, 'remotePercentage') || '0');
+        
+        // Check for remoteItem elements (V4V music sharing)
+        const remoteItems = split['podcast:remoteItem'] || split.remoteItem || [];
+        const remoteItemsArray = Array.isArray(remoteItems) ? remoteItems : [remoteItems];
+        
+        const hasRemoteItems = remoteItemsArray.some((item: any) => {
+          if (!item) return false;
+          const feedGuid = this.getAttributeValue(item, 'feedGuid');
+          const itemGuid = this.getAttributeValue(item, 'itemGuid');
+          return feedGuid && itemGuid;
+        });
+        
+        if (startTime > 0 && duration > 0 && hasRemoteItems) {
+          // Find matching chapter by start time
+          const chapter = chapterMap.get(startTime);
+          if (chapter && !chapter.title.includes('Into The Doerfel-Verse')) {
+            // Extract V4V data
+            const primaryRemoteItem = remoteItemsArray[0];
+            const feedGuid = this.getAttributeValue(primaryRemoteItem, 'feedGuid') || '';
+            const itemGuid = this.getAttributeValue(primaryRemoteItem, 'itemGuid') || '';
+            
+            const track: MusicTrack = {
+              id: this.generateId(),
+              title: chapter.title,
+              artist: 'Unknown Artist', // We don't have artist info in chapters
+              episodeId: context.episodeId,
+              episodeTitle: context.episodeTitle,
+              episodeDate: context.episodeDate,
+              startTime,
+              endTime: startTime + duration,
+              duration,
+              audioUrl: context.audioUrl,
+              source: 'value-split',
+              feedUrl: context.feedUrl,
+              discoveredAt: new Date(),
+              image: chapter.image,
+              description: chapter.url ? `Album: ${chapter.url}` : undefined,
+              valueForValue: {
+                lightningAddress: '',
+                suggestedAmount: 0,
+                remotePercentage,
+                feedGuid,
+                itemGuid,
+                resolved: false
+              }
+            };
+            
+            tracks.push(track);
+          }
+        }
+      }
+      
+    } catch (error) {
+      this.logger.warn('Failed to extract V4V tracks from chapters', { url: chaptersUrl, error });
+    }
+    
+    return tracks;
+  }
+
+  /**
+   * Deduplicate tracks based on start time and V4V references
+   */
+  private static deduplicateTracks(tracks: MusicTrack[]): MusicTrack[] {
+    const seen = new Set<string>();
+    const deduplicatedTracks: MusicTrack[] = [];
+    
+    for (const track of tracks) {
+      // Create a unique key based on episode, start time, and V4V reference
+      let key = `${track.episodeId}-${track.startTime}`;
+      
+      // If it's a V4V track, include the feedGuid/itemGuid in the key
+      if (track.valueForValue?.feedGuid && track.valueForValue?.itemGuid) {
+        key += `-${track.valueForValue.feedGuid}-${track.valueForValue.itemGuid}`;
+      }
+      
+      if (!seen.has(key)) {
+        seen.add(key);
+        deduplicatedTracks.push(track);
+      } else {
+        this.logger.warn('Duplicate track removed', { 
+          title: track.title, 
+          startTime: track.startTime,
+          source: track.source 
+        });
+      }
+    }
+    
+    this.logger.info('Deduplication completed', { 
+      originalCount: tracks.length, 
+      deduplicatedCount: deduplicatedTracks.length,
+      duplicatesRemoved: tracks.length - deduplicatedTracks.length
+    });
+    
+    return deduplicatedTracks;
   }
 } 

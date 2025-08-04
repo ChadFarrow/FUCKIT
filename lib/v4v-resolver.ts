@@ -25,7 +25,12 @@ export class V4VResolver {
     '3ae285ab-434c-59d8-aa2f-59c6129afb92': 'https://wavlake.com/feed/music/99ed143c-c461-4f1a-9d0d-bee6f70d8b7e', // Bell of Hope - John Depew Trio
     '6fc2ad98-d4a8-5d70-9c68-62e9efc1209c': 'https://wavlake.com/feed/music/5a07b3f1-8249-45a1-b40a-630797dc4941', // Birdfeeder (EP) - Big Awesome
     'dea01a9d-a024-5b13-84aa-b157304cd3bc': 'https://wavlake.com/feed/music/328f61b9-20b1-4338-9e2a-b437abc39f7b', // Smokestacks - Herbivore
-    '95e5f7a9-d88e-5e51-b2ae-f4b1865d19c4': 'https://wavlake.com/feed/music/8aaf0d1e-7ac3-4f7d-993b-6f59f936d780'  // Live From the Other Side - Theo Katzman
+    '95e5f7a9-d88e-5e51-b2ae-f4b1865d19c4': 'https://wavlake.com/feed/music/8aaf0d1e-7ac3-4f7d-993b-6f59f936d780', // Live From the Other Side - Theo Katzman
+    // Episode 54 feeds
+    '3058af0c-1807-5732-9a08-9114675ef7d6': 'https://wavlake.com/feed/music/883ea557-39c0-4bec-9618-c75978bc63b5', // Lost Summer - Ollie
+    '011c3a82-d716-54f7-9738-3d5fcacf65be': 'https://wavlake.com/feed/music/79f5f4f0-a774-40ed-abdf-90ada1980a71', // Abyss / Quiet day - Lara J
+    '0ab5bc9d-c9fb-52f4-8b8c-64be5edf322f': 'https://wavlake.com/feed/music/d7a1d7bc-ae06-4b3b-a3fa-4e203d68dbaf', // it can be erased - Nate Johnivan
+    '187f22db-79cb-5ac4-aa60-54e424e3915e': 'https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/lofi.xml' // HeyCitizen's Lo-Fi Hip-Hop Beats - HeyCitizen
   };
 
   private static feedCache = new Map<string, string>();
@@ -40,12 +45,23 @@ export class V4VResolver {
       console.log(`🔍 Resolving V4V track: feedGuid=${feedGuid}, itemGuid=${itemGuid}`);
 
       // Check if this is a known Doerfel-Verse feed
-      const feedUrl = this.knownFeeds[feedGuid];
+      let feedUrl = this.knownFeeds[feedGuid];
+      
+      // If not in known feeds, try to look it up via Podcast Index API
       if (!feedUrl) {
-        return {
-          success: false,
-          error: 'Unknown feed GUID - not in known Doerfel-Verse feeds'
-        };
+        console.log(`🔍 Unknown feedGuid ${feedGuid}, looking up via Podcast Index API...`);
+        feedUrl = await this.lookupFeedGuid(feedGuid);
+        
+        if (!feedUrl) {
+          return {
+            success: false,
+            error: 'Unknown feed GUID - not found in Podcast Index'
+          };
+        }
+        
+        // Cache the discovered feed URL for future use
+        this.knownFeeds[feedGuid] = feedUrl;
+        console.log(`✅ Discovered and cached feed: ${feedUrl}`);
       }
 
       console.log(`✅ Found known feed: ${feedUrl}`);
@@ -234,6 +250,48 @@ export class V4VResolver {
         success: false,
         error: 'XML parsing error'
       };
+    }
+  }
+
+  /**
+   * Look up a feedGuid via Podcast Index API
+   */
+  private static async lookupFeedGuid(feedGuid: string): Promise<string | null> {
+    try {
+      // Use environment variables for API credentials
+      const apiKey = process.env.PODCAST_INDEX_API_KEY || 'PHT7NRJC6JWBWRFQGUXS';
+      const apiSecret = process.env.PODCAST_INDEX_API_SECRET || '#7g8zk3fB#dPSaj$LcYYa9#2jHXu$6gmYSKJkJDL';
+      
+      // Create authorization header
+      const crypto = require('crypto');
+      const apiHeaderTime = Math.floor(Date.now() / 1000);
+      const hash = crypto.createHash('sha1');
+      hash.update(apiKey + apiSecret + apiHeaderTime);
+      const hashString = hash.digest('hex');
+
+      const headers = {
+        'X-Auth-Key': apiKey,
+        'X-Auth-Date': apiHeaderTime.toString(),
+        'Authorization': hashString,
+        'User-Agent': 're.podtards.com'
+      };
+
+      const url = `https://api.podcastindex.org/api/1.0/podcasts/byguid?guid=${feedGuid}`;
+      
+      console.log(`📡 Looking up feedGuid ${feedGuid} via Podcast Index API...`);
+      const response = await fetch(url, { headers });
+      const data = await response.json();
+      
+      if (data.status === 'true' && data.feed && data.feed.url) {
+        console.log(`✅ Found feed: ${data.feed.title} by ${data.feed.author} at ${data.feed.url}`);
+        return data.feed.url;
+      } else {
+        console.log(`❌ Feed not found for GUID ${feedGuid}`);
+        return null;
+      }
+    } catch (error) {
+      console.error(`❌ Error looking up feedGuid ${feedGuid}:`, error);
+      return null;
     }
   }
 
