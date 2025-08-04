@@ -523,9 +523,18 @@ export default function ITDVPlaylistPage() {
     if (continuousPlay && playQueue.length > 0) {
       playNextInQueue();
     } else {
-      setCurrentTrack(null);
-      setAudio(null);
-      setAudioLoading(null);
+      // Auto-play next track in the filtered list
+      const currentTrackIndex = filteredAndSortedTracks.findIndex(t => t.id === currentTrack);
+      if (currentTrackIndex !== -1 && currentTrackIndex < filteredAndSortedTracks.length - 1) {
+        const nextTrack = filteredAndSortedTracks[currentTrackIndex + 1];
+        console.log('🎵 Auto-playing next track:', nextTrack.title);
+        playTrack(nextTrack);
+      } else {
+        console.log('🎵 Reached end of playlist');
+        setCurrentTrack(null);
+        setAudio(null);
+        setAudioLoading(null);
+      }
     }
   };
 
