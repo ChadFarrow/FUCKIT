@@ -30,7 +30,11 @@ export class V4VResolver {
     '3058af0c-1807-5732-9a08-9114675ef7d6': 'https://wavlake.com/feed/music/883ea557-39c0-4bec-9618-c75978bc63b5', // Lost Summer - Ollie
     '011c3a82-d716-54f7-9738-3d5fcacf65be': 'https://wavlake.com/feed/music/79f5f4f0-a774-40ed-abdf-90ada1980a71', // Abyss / Quiet day - Lara J
     '0ab5bc9d-c9fb-52f4-8b8c-64be5edf322f': 'https://wavlake.com/feed/music/d7a1d7bc-ae06-4b3b-a3fa-4e203d68dbaf', // it can be erased - Nate Johnivan
-    '187f22db-79cb-5ac4-aa60-54e424e3915e': 'https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/lofi.xml' // HeyCitizen's Lo-Fi Hip-Hop Beats - HeyCitizen
+    '187f22db-79cb-5ac4-aa60-54e424e3915e': 'https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/lofi.xml', // HeyCitizen's Lo-Fi Hip-Hop Beats - HeyCitizen
+    // Note: V4V resolver now automatically looks up unknown feedGuids via Podcast Index API
+    // Only commonly used feeds are pre-cached here for performance
+    // Episode 44 feeds
+    'a2d2e313-9cbd-5169-b89c-ab07b33ecc33': 'https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/the heycitizen experience.xml' // The Heycitizen Experience - HeyCitizen
   };
 
   private static feedCache = new Map<string, string>();
@@ -53,13 +57,14 @@ export class V4VResolver {
         feedUrl = await this.lookupFeedGuid(feedGuid);
         
         if (!feedUrl) {
+          console.log(`❌ FeedGuid ${feedGuid} not found in Podcast Index API`);
           return {
             success: false,
             error: 'Unknown feed GUID - not found in Podcast Index'
           };
         }
         
-        // Cache the discovered feed URL for future use
+        // Cache the discovered feed URL for future use (in memory only)
         this.knownFeeds[feedGuid] = feedUrl;
         console.log(`✅ Discovered and cached feed: ${feedUrl}`);
       }

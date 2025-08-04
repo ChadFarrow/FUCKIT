@@ -1,15 +1,7 @@
 {
-  "metadata": {
-    "version": "1.0.0",
-    "lastUpdated": "2025-08-04T01:39:57.999Z",
-    "totalTracks": 141,
-    "totalEpisodes": 0,
-    "totalFeeds": 0,
-    "totalExtractions": 1
-  },
   "musicTracks": [
     {
-      "id": "track-1754268844824-lh7a1d",
+      "id": "track-1754273008192-0d9p3t",
       "title": "Neon Hawk",
       "artist": "Unknown Artist",
       "episodeId": "545d1c9e-e1f7-49de-af8c-b469ed503245",
@@ -21,7 +13,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep56.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.824Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -33,14 +25,14 @@
         "resolvedImage": "https://d12wklypp119aj.cloudfront.net/image/99ed143c-c461-4f1a-9d0d-bee6f70d8b7e.jpg",
         "resolvedAudioUrl": "https://op3.dev/e,pg=3ae285ab-434c-59d8-aa2f-59c6129afb92/https://d12wklypp119aj.cloudfront.net/track/1cf98a44-120f-4304-b351-ba3f59dbe617.mp3",
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.wavlake.com/album/99ed143c-c461-4f1a-9d0d-bee6f70d8b7e",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.824Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844824-j85cba",
+      "id": "track-1754273008192-zqpz2c",
       "title": "Grey's Birthday",
       "artist": "Unknown Artist",
       "episodeId": "545d1c9e-e1f7-49de-af8c-b469ed503245",
@@ -52,7 +44,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep56.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.824Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -64,14 +56,14 @@
         "resolvedImage": "https://d12wklypp119aj.cloudfront.net/image/5a07b3f1-8249-45a1-b40a-630797dc4941.jpg",
         "resolvedAudioUrl": "https://op3.dev/e,pg=6fc2ad98-d4a8-5d70-9c68-62e9efc1209c/https://d12wklypp119aj.cloudfront.net/track/aad6e3b1-6589-4e22-b8ca-521f3d888263.mp3",
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.wavlake.com/album/5a07b3f1-8249-45a1-b40a-630797dc4941",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-l9u45f",
+      "id": "track-1754273008192-5dpxqk",
       "title": "Smokestacks",
       "artist": "Unknown Artist",
       "episodeId": "545d1c9e-e1f7-49de-af8c-b469ed503245",
@@ -83,7 +75,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep56.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -95,14 +87,14 @@
         "resolvedImage": "https://d12wklypp119aj.cloudfront.net/image/328f61b9-20b1-4338-9e2a-b437abc39f7b.jpg",
         "resolvedAudioUrl": "https://op3.dev/e,pg=dea01a9d-a024-5b13-84aa-b157304cd3bc/https://d12wklypp119aj.cloudfront.net/track/52007112-2772-42f9-957a-a93eaeedb222.mp3",
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.wavlake.com/album/328f61b9-20b1-4338-9e2a-b437abc39f7b",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-pk8egp",
+      "id": "track-1754273008192-uls1wi",
       "title": "Hit the Target [Live in Amsterdam]",
       "artist": "Unknown Artist",
       "episodeId": "545d1c9e-e1f7-49de-af8c-b469ed503245",
@@ -114,7 +106,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep56.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -126,14 +118,14 @@
         "resolvedImage": "https://d12wklypp119aj.cloudfront.net/image/8aaf0d1e-7ac3-4f7d-993b-6f59f936d780.jpg",
         "resolvedAudioUrl": "https://op3.dev/e,pg=95e5f7a9-d88e-5e51-b2ae-f4b1865d19c4/https://d12wklypp119aj.cloudfront.net/track/d79f242f-0651-4b12-be79-c2bac234cfde.mp3",
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.wavlake.com/album/8aaf0d1e-7ac3-4f7d-993b-6f59f936d780",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-e5pawg",
+      "id": "track-1754273008192-nu4e0b",
       "title": "Lost Summer",
       "artist": "Unknown Artist",
       "episodeId": "de2b4ba2-17cb-43b3-915d-e5d684f721a8",
@@ -145,7 +137,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep54.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -157,14 +149,14 @@
         "resolvedImage": "https://d12wklypp119aj.cloudfront.net/image/883ea557-39c0-4bec-9618-c75978bc63b5.jpg",
         "resolvedAudioUrl": "https://op3.dev/e,pg=3058af0c-1807-5732-9a08-9114675ef7d6/https://d12wklypp119aj.cloudfront.net/track/c51ecaa4-f237-4707-9c62-2de611820e4b.mp3",
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.wavlake.com/album/883ea557-39c0-4bec-9618-c75978bc63b5",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-kjpbp4",
+      "id": "track-1754273008192-vqt6e4",
       "title": "Quiet Day",
       "artist": "Unknown Artist",
       "episodeId": "de2b4ba2-17cb-43b3-915d-e5d684f721a8",
@@ -176,7 +168,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep54.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -188,14 +180,14 @@
         "resolvedImage": "https://d12wklypp119aj.cloudfront.net/image/79f5f4f0-a774-40ed-abdf-90ada1980a71.jpg",
         "resolvedAudioUrl": "https://op3.dev/e,pg=011c3a82-d716-54f7-9738-3d5fcacf65be/https://d12wklypp119aj.cloudfront.net/track/e5349dd3-ea9e-48bd-a6c2-e41976950b5f.mp3",
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.wavlake.com/album/79f5f4f0-a774-40ed-abdf-90ada1980a71",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-m3znt0",
+      "id": "track-1754273008192-eawd2t",
       "title": "it can be erased",
       "artist": "Unknown Artist",
       "episodeId": "de2b4ba2-17cb-43b3-915d-e5d684f721a8",
@@ -207,7 +199,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep54.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -219,14 +211,14 @@
         "resolvedImage": "https://d12wklypp119aj.cloudfront.net/image/d7a1d7bc-ae06-4b3b-a3fa-4e203d68dbaf.jpg",
         "resolvedAudioUrl": "https://op3.dev/e,pg=0ab5bc9d-c9fb-52f4-8b8c-64be5edf322f/https://d12wklypp119aj.cloudfront.net/track/7bc23b30-5d37-4e03-8256-543b7bf17ba8.mp3",
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.wavlake.com/album/d7a1d7bc-ae06-4b3b-a3fa-4e203d68dbaf",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-9eq3du",
+      "id": "track-1754273008192-ftcjmg",
       "title": "It's Christmastime Again! (lofi beats mix)",
       "artist": "Unknown Artist",
       "episodeId": "de2b4ba2-17cb-43b3-915d-e5d684f721a8",
@@ -238,7 +230,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep54.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -250,14 +242,14 @@
         "resolvedImage": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/lofi-montreal.png",
         "resolvedAudioUrl": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/lofi-milves.mp3",
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://lnbeats.com/album/187f22db-79cb-5ac4-aa60-54e424e3915e",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-g7sp35",
+      "id": "track-1754273008192-txybmj",
       "title": "External Music Track at 78:38",
       "artist": "Into The Doerfel-Verse",
       "episodeId": "de2b4ba2-17cb-43b3-915d-e5d684f721a8",
@@ -269,7 +261,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep54.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -278,10 +270,10 @@
         "itemGuid": "fe6b1845-6b98-425d-aa07-9531474939de"
       },
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-hfqhfq",
+      "id": "track-1754273008192-p2ec2u",
       "title": "External Music Track at 89:26",
       "artist": "Into The Doerfel-Verse",
       "episodeId": "de2b4ba2-17cb-43b3-915d-e5d684f721a8",
@@ -293,7 +285,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep54.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -302,10 +294,10 @@
         "itemGuid": "7c823adf-1e53-4df1-98c0-979da81ec916"
       },
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-kjwh98",
+      "id": "track-1754273008192-vk2n4w",
       "title": "Audiobook",
       "artist": "Post-Christian",
       "episodeId": "4af754e0-1bf0-4cc5-b8e0-12e5868545b6",
@@ -317,13 +309,13 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep53.mp3",
       "source": "description",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "description": "Extracted from episode description",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-7y21at",
+      "id": "track-1754273008192-qa36i7",
       "title": "Hyssop Branches",
       "artist": "Unknown Artist",
       "episodeId": "e97a1ec0-c547-473b-afa8-b1112e3b6097",
@@ -335,7 +327,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep52.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -345,10 +337,10 @@
       },
       "description": "Album: https://www.doerfelverse.com",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-d4ddo7",
+      "id": "track-1754273008192-hqi75e",
       "title": "Bipolar",
       "artist": "Unknown Artist",
       "episodeId": "e97a1ec0-c547-473b-afa8-b1112e3b6097",
@@ -360,7 +352,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep52.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -370,10 +362,10 @@
       },
       "description": "Album: https://www.doerfelverse.com",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-k1fzc7",
+      "id": "track-1754273008192-1alf2i",
       "title": "C.R.V.P.",
       "artist": "Unknown Artist",
       "episodeId": "e97a1ec0-c547-473b-afa8-b1112e3b6097",
@@ -385,7 +377,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep52.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -395,10 +387,10 @@
       },
       "description": "Album: https://www.doerfelverse.com",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-ddnfyb",
+      "id": "track-1754273008192-dsi3d9",
       "title": "Breathe",
       "artist": "Unknown Artist",
       "episodeId": "9810c397-6762-4b88-9de7-489572e05b8e",
@@ -410,7 +402,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep51.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -420,10 +412,10 @@
       },
       "description": "Album: https://www.wavlake.com/album/169e65e4-c3fa-471f-a473-b75f3890848b",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-6lvepl",
+      "id": "track-1754273008192-omxd76",
       "title": "Going Gold",
       "artist": "Unknown Artist",
       "episodeId": "9810c397-6762-4b88-9de7-489572e05b8e",
@@ -435,7 +427,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep51.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -445,10 +437,10 @@
       },
       "description": "Album: https://www.wavlake.com/album/87c4f77c-f400-4548-bb7d-78f1ec8a7fa9",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-ycr5y4",
+      "id": "track-1754273008192-y4420l",
       "title": "Heartbreak (album version)",
       "artist": "Unknown Artist",
       "episodeId": "9810c397-6762-4b88-9de7-489572e05b8e",
@@ -460,7 +452,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep51.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -470,10 +462,10 @@
       },
       "description": "Album: https://www.doerfelverse.com",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-6thstv",
+      "id": "track-1754273008192-toob83",
       "title": "Kid Yourself EP",
       "artist": "Unknown Artist",
       "episodeId": "9810c397-6762-4b88-9de7-489572e05b8e",
@@ -485,7 +477,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep51.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -495,10 +487,10 @@
       },
       "description": "Album: https://www.wavlake.com/album/169e65e4-c3fa-471f-a473-b75f3890848b",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-50xqv1",
+      "id": "track-1754273008192-sap41h",
       "title": "Movie (album version)",
       "artist": "Unknown Artist",
       "episodeId": "9810c397-6762-4b88-9de7-489572e05b8e",
@@ -510,7 +502,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep51.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -520,52 +512,10 @@
       },
       "description": "Album: https://www.doerfelverse.com",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-7t6910",
-      "title": "Going Gold",
-      "artist": "Unknown Artist",
-      "episodeId": "9810c397-6762-4b88-9de7-489572e05b8e",
-      "episodeTitle": "Episode 51 - The Greensands",
-      "episodeDate": "2025-06-17T22:15:15.000Z",
-      "startTime": 4244.717,
-      "endTime": 4427.736,
-      "duration": 183.019,
-      "audioUrl": "https://www.doerfelverse.com/tracks/dvep51.mp3",
-      "source": "value-split",
-      "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
-      "valueForValue": {
-        "lightningAddress": "",
-        "suggestedAmount": 0,
-        "remotePercentage": 90,
-        "feedGuid": "377602c1-b049-5c14-bddf-eb4e349bee5c",
-        "itemGuid": "3634469f-61ad-4e42-97f2-f1335c6ad267"
-      },
-      "description": "Album: https://www.wavlake.com/album/87c4f77c-f400-4548-bb7d-78f1ec8a7fa9",
-      "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
-    },
-    {
-      "id": "track-1754268844825-b2hm5j",
-      "title": "Luv Song 4 U",
-      "artist": "Unknown Artist",
-      "episodeId": "eab0299d-ba9a-4952-8cee-a1c013776b2f",
-      "episodeTitle": "Episode 50 - Valueverse Jams",
-      "episodeDate": "2025-06-08T03:55:34.000Z",
-      "startTime": 719.898805,
-      "endTime": 1019.898805,
-      "duration": 300,
-      "audioUrl": "https://www.doerfelverse.com/tracks/dvep50.mp3",
-      "source": "chapter",
-      "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
-      "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
-    },
-    {
-      "id": "track-1754268844825-a5vhnb",
+      "id": "track-1754273008192-9ru7yu",
       "title": "Endless Deja Vu",
       "artist": "Unknown Artist",
       "episodeId": "eab0299d-ba9a-4952-8cee-a1c013776b2f",
@@ -577,7 +527,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep50.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -587,10 +537,10 @@
       },
       "description": "Album: https://www.wavlake.com/album/2b5b26a9-3b7a-4f78-9db2-424d94b182d8",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-jygbw4",
+      "id": "track-1754273008192-m8fmfj",
       "title": "Kid Yourself",
       "artist": "Unknown Artist",
       "episodeId": "eab0299d-ba9a-4952-8cee-a1c013776b2f",
@@ -602,7 +552,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep50.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -612,10 +562,10 @@
       },
       "description": "Album: https://www.wavlake.com/album/ec5905f8-0f48-4ce8-ab8e-9a4a959a2104",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-ai00ug",
+      "id": "track-1754273008192-imcbqd",
       "title": "Luv Song 4 U",
       "artist": "Unknown Artist",
       "episodeId": "eab0299d-ba9a-4952-8cee-a1c013776b2f",
@@ -627,20 +577,26 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep50.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
         "remotePercentage": 90,
         "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
-        "itemGuid": "9ff8f18b-cc79-474c-a3e9-2948113b8bf5"
+        "itemGuid": "9ff8f18b-cc79-474c-a3e9-2948113b8bf5",
+        "resolvedTitle": "It's Christmastime Again!",
+        "resolvedArtist": "HeyCitizen",
+        "resolvedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/MoeFactz.jpg",
+        "resolvedAudioUrl": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/MoeFactz.mp3",
+        "resolved": true,
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://lnbeats.com/album/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-ea4k8o",
+      "id": "track-1754273008192-he3th1",
       "title": "Through The Mic",
       "artist": "Unknown Artist",
       "episodeId": "eab0299d-ba9a-4952-8cee-a1c013776b2f",
@@ -652,7 +608,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep50.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -662,10 +618,10 @@
       },
       "description": "Album: https://linktr.ee/elijahlied",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-2r34hh",
+      "id": "track-1754273008192-ktknyh",
       "title": "Hiding vs. Bad News",
       "artist": "Unknown Artist",
       "episodeId": "eab0299d-ba9a-4952-8cee-a1c013776b2f",
@@ -677,7 +633,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep50.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -687,10 +643,10 @@
       },
       "description": "Album: https://www.wavlake.com/album/0ed13237-aca9-446f-9a03-de1a2d9331a3",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-sxz289",
+      "id": "track-1754273008192-t9m6jt",
       "title": "Better Days",
       "artist": "Unknown Artist",
       "episodeId": "eab0299d-ba9a-4952-8cee-a1c013776b2f",
@@ -702,7 +658,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep50.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -712,10 +668,10 @@
       },
       "description": "Album: https://www.wavlake.com/album/6bece1b8-5385-4a33-9224-09e7f3ee6965",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-x0b789",
+      "id": "track-1754273008192-ixp47i",
       "title": "All We Know",
       "artist": "Unknown Artist",
       "episodeId": "eab0299d-ba9a-4952-8cee-a1c013776b2f",
@@ -727,7 +683,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep50.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -737,10 +693,10 @@
       },
       "description": "Album: https://www.wavlake.com/album/2663f4e8-aa52-4398-89e7-d26381b65545",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-jf2ds3",
+      "id": "track-1754273008192-1yjosi",
       "title": "Night Shift",
       "artist": "Unknown Artist",
       "episodeId": "eab0299d-ba9a-4952-8cee-a1c013776b2f",
@@ -752,7 +708,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep50.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -765,14 +721,14 @@
         "resolvedAudioUrl": "https://www.doerfelverse.com/tracks/emma-rose.mp3",
         "resolvedDuration": 203,
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.doerfelverse.com/",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-3mkjjx",
+      "id": "track-1754273008192-qz6dfr",
       "title": "Smell the Roses",
       "artist": "Unknown Artist",
       "episodeId": "eab0299d-ba9a-4952-8cee-a1c013776b2f",
@@ -784,7 +740,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep50.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -794,10 +750,10 @@
       },
       "description": "Album: https://www.wavlake.com/album/9e673dbf-0c6e-49f1-85fa-5b3bdd9b9f08",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-dqj221",
+      "id": "track-1754273008192-m4ksf0",
       "title": "What Did You Mean (When You Said Love) [Live in London and Amsterdam]",
       "artist": "Unknown Artist",
       "episodeId": "eab0299d-ba9a-4952-8cee-a1c013776b2f",
@@ -809,7 +765,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep50.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -821,14 +777,14 @@
         "resolvedImage": "https://d12wklypp119aj.cloudfront.net/image/8aaf0d1e-7ac3-4f7d-993b-6f59f936d780.jpg",
         "resolvedAudioUrl": "https://op3.dev/e,pg=95e5f7a9-d88e-5e51-b2ae-f4b1865d19c4/https://d12wklypp119aj.cloudfront.net/track/d79f242f-0651-4b12-be79-c2bac234cfde.mp3",
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.wavlake.com/album/8aaf0d1e-7ac3-4f7d-993b-6f59f936d780",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-ir705c",
+      "id": "track-1754273008192-sv4awb",
       "title": "Inside Out",
       "artist": "Unknown Artist",
       "episodeId": "cd4b88ff-84d1-4dcf-b675-06c2f839ec1f",
@@ -840,7 +796,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep49.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -850,10 +806,10 @@
       },
       "description": "Album: https://www.facebook.com/middleseasonmusic",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-6tgf5m",
+      "id": "track-1754273008192-lmen6d",
       "title": "Going Gold",
       "artist": "Unknown Artist",
       "episodeId": "cd4b88ff-84d1-4dcf-b675-06c2f839ec1f",
@@ -865,7 +821,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep49.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -875,10 +831,10 @@
       },
       "description": "Album: https://www.wavlake.com/album/87c4f77c-f400-4548-bb7d-78f1ec8a7fa9",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-nfmvzc",
+      "id": "track-1754273008192-0lnmx3",
       "title": "Autumn",
       "artist": "Unknown Artist",
       "episodeId": "cd4b88ff-84d1-4dcf-b675-06c2f839ec1f",
@@ -890,7 +846,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep49.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -900,27 +856,10 @@
       },
       "description": "Album: https://www.instagram.com/citybeachmusic/",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-at56lc",
-      "title": "Love Song 4 U",
-      "artist": "The HeyCitizen Experience",
-      "episodeId": "1e81d901-78fe-43e0-8a68-263accfc2e9f",
-      "episodeTitle": "Episode 48  -  Boo-bury",
-      "episodeDate": "2025-04-27T00:45:29.000Z",
-      "startTime": 2092.200506,
-      "endTime": 2392.200506,
-      "duration": 300,
-      "audioUrl": "https://www.doerfelverse.com/tracks/dvep48.mp3",
-      "source": "chapter",
-      "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
-      "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
-    },
-    {
-      "id": "track-1754268844825-s55bkn",
+      "id": "track-1754273008192-1cx20r",
       "title": "As Long As It's Rock",
       "artist": "Unknown Artist",
       "episodeId": "1e81d901-78fe-43e0-8a68-263accfc2e9f",
@@ -932,7 +871,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep48.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -942,10 +881,10 @@
       },
       "description": "Album: https://podcastindex.org/podcast/6544134",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-02eceq",
+      "id": "track-1754273008192-37sf9v",
       "title": "The HeyCitizen Experience - Love Song 4 U",
       "artist": "Unknown Artist",
       "episodeId": "1e81d901-78fe-43e0-8a68-263accfc2e9f",
@@ -957,7 +896,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep48.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -967,10 +906,10 @@
       },
       "description": "Album: http://satskirmish.com/",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-w5ft3h",
+      "id": "track-1754273008192-cze61z",
       "title": "The Lightning",
       "artist": "Unknown Artist",
       "episodeId": "1e81d901-78fe-43e0-8a68-263accfc2e9f",
@@ -982,7 +921,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep48.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -992,10 +931,10 @@
       },
       "description": "Album: https://www.thetrusted.co.uk/",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-chaiw2",
+      "id": "track-1754273008192-w0rwkq",
       "title": "Trailer",
       "artist": "Unknown Artist",
       "episodeId": "1e81d901-78fe-43e0-8a68-263accfc2e9f",
@@ -1007,7 +946,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep48.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1017,10 +956,10 @@
       },
       "description": "Album: https://liveislit.com/",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-uqwu32",
+      "id": "track-1754273008192-pulkhm",
       "title": "Animosity",
       "artist": "Unknown Artist",
       "episodeId": "1e81d901-78fe-43e0-8a68-263accfc2e9f",
@@ -1032,7 +971,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep48.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1045,14 +984,14 @@
         "resolvedAudioUrl": "https://www.doerfelverse.com/tracks/animosity.mp3",
         "resolvedDuration": 331,
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.doerfelverse.com",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-gbkrgw",
+      "id": "track-1754273008192-1njnpq",
       "title": "West Coast Drive",
       "artist": "Unknown Artist",
       "episodeId": "7d029f86-20aa-4880-bc2e-d5fc9ad9b809",
@@ -1064,7 +1003,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep47.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1074,10 +1013,10 @@
       },
       "description": "Album: https://www.wavlake.com/album/ed3d6bdf-011b-4416-ab87-591672c07145",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-f0g2je",
+      "id": "track-1754273008192-codf2m",
       "title": "Chasing Waterfalls",
       "artist": "Unknown Artist",
       "episodeId": "7d029f86-20aa-4880-bc2e-d5fc9ad9b809",
@@ -1089,7 +1028,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep47.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1099,10 +1038,10 @@
       },
       "description": "Album: https://www.wavlake.com/album/ef800a88-9a1c-4f8e-a7c5-f83d7d9b1c87",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-umg4mv",
+      "id": "track-1754273008192-z4hpob",
       "title": "Call Me Medley",
       "artist": "Unknown Artist",
       "episodeId": "7d029f86-20aa-4880-bc2e-d5fc9ad9b809",
@@ -1114,7 +1053,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep47.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1127,14 +1066,14 @@
         "resolvedAudioUrl": "https://www.doerfelverse.com/tracks/feeling-bout-you.mp3",
         "resolvedDuration": 89,
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.doerfelverse.com/",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-6gyt99",
+      "id": "track-1754273008192-xyf7pp",
       "title": "Empath Eyes - Apathy",
       "artist": "Unknown Artist",
       "episodeId": "7d029f86-20aa-4880-bc2e-d5fc9ad9b809",
@@ -1146,7 +1085,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep47.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1156,10 +1095,10 @@
       },
       "description": "Album: http://satskirmish.com/",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-v0n5v2",
+      "id": "track-1754273008192-wx34g9",
       "title": "Bullet Train",
       "artist": "Unknown Artist",
       "episodeId": "7d029f86-20aa-4880-bc2e-d5fc9ad9b809",
@@ -1171,7 +1110,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep47.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1181,10 +1120,10 @@
       },
       "description": "Album: https://www.wavlake.com/album/b6d8f17c-f448-4085-8ce2-8b247eb26e63",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-5k868s",
+      "id": "track-1754273008192-hykgzi",
       "title": "Mrs Valentine",
       "artist": "Unknown Artist",
       "episodeId": "7d029f86-20aa-4880-bc2e-d5fc9ad9b809",
@@ -1196,7 +1135,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep47.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1206,10 +1145,10 @@
       },
       "description": "Album: https://www.wavlake.com/album/3d8c7279-6aa6-41e7-be1c-2680e57af6c8",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-80qf7a",
+      "id": "track-1754273008192-sgafb3",
       "title": "My Friend Jimi",
       "artist": "Today we were joined",
       "episodeId": "7d029f86-20aa-4880-bc2e-d5fc9ad9b809",
@@ -1221,13 +1160,13 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep47.mp3",
       "source": "description",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "description": "Extracted from episode description",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-e4g5ic",
+      "id": "track-1754273008192-6p1b1t",
       "title": "Once Had A Girl",
       "artist": "Unknown Artist",
       "episodeId": "e04d22c0-ae48-4217-8c54-6add4058e989",
@@ -1239,7 +1178,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep45.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1251,14 +1190,14 @@
         "resolvedImage": "https://www.thisisjdog.com/media/ring-that-bell.jpg",
         "resolvedAudioUrl": "https://www.thisisjdog.com/media/ring-that-bell.mp3",
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.youtube.com/@thisisjdog81",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-1yih4t",
+      "id": "track-1754273008192-ji7s4w",
       "title": "Porkchops Fried",
       "artist": "Unknown Artist",
       "episodeId": "b82645fd-18b0-47a2-8620-e82b147320ee",
@@ -1270,20 +1209,26 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep44.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
         "remotePercentage": 90,
         "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
-        "itemGuid": "ae81976d-a05e-4ff9-9adf-cdb11a33fff9"
+        "itemGuid": "ae81976d-a05e-4ff9-9adf-cdb11a33fff9",
+        "resolvedTitle": "It's Christmastime Again!",
+        "resolvedArtist": "HeyCitizen",
+        "resolvedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/MoeFactz.jpg",
+        "resolvedAudioUrl": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/MoeFactz.mp3",
+        "resolved": true,
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://lnbeats.com/album/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-rk50kk",
+      "id": "track-1754273008192-zz483v",
       "title": "Not To Worry",
       "artist": "Unknown Artist",
       "episodeId": "b82645fd-18b0-47a2-8620-e82b147320ee",
@@ -1295,20 +1240,26 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep44.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
         "remotePercentage": 90,
         "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
-        "itemGuid": "7cececef-67c0-4e13-9192-943826d3eddd"
+        "itemGuid": "7cececef-67c0-4e13-9192-943826d3eddd",
+        "resolvedTitle": "It's Christmastime Again!",
+        "resolvedArtist": "HeyCitizen",
+        "resolvedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/MoeFactz.jpg",
+        "resolvedAudioUrl": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/MoeFactz.mp3",
+        "resolved": true,
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://lnbeats.com/album/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-cdqmgt",
+      "id": "track-1754273008192-xusrdk",
       "title": "The Platform (lofi beats mix)",
       "artist": "Unknown Artist",
       "episodeId": "b82645fd-18b0-47a2-8620-e82b147320ee",
@@ -1320,7 +1271,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep44.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1332,14 +1283,14 @@
         "resolvedImage": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/Lofi-Experience.png",
         "resolvedAudioUrl": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/lofi-milves.mp3",
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://lnbeats.com/album/187f22db-79cb-5ac4-aa60-54e424e3915e",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-5oosxu",
+      "id": "track-1754273008192-qbb5nf",
       "title": "The Platform",
       "artist": "Unknown Artist",
       "episodeId": "b82645fd-18b0-47a2-8620-e82b147320ee",
@@ -1351,20 +1302,26 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep44.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
         "remotePercentage": 90,
         "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
-        "itemGuid": "d2346732-acc5-4256-afe5-0a0f3e670e6b"
+        "itemGuid": "d2346732-acc5-4256-afe5-0a0f3e670e6b",
+        "resolvedTitle": "MoeFactz",
+        "resolvedArtist": "HeyCitizen",
+        "resolvedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/MoeFactz.jpg",
+        "resolvedAudioUrl": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/MoeFactz.mp3",
+        "resolved": true,
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://lnbeats.com/album/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-v1uuxs",
+      "id": "track-1754273008192-sgp3qa",
       "title": "I Want Love",
       "artist": "Unknown Artist",
       "episodeId": "cd7da484-5911-4180-b93a-d6c440281b0a",
@@ -1376,7 +1333,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep43.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1386,10 +1343,10 @@
       },
       "description": "Album: https://jimmyv4v.com",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-40fmi6",
+      "id": "track-1754273008192-paofx0",
       "title": "Ring That Bell",
       "artist": "Unknown Artist",
       "episodeId": "cd7da484-5911-4180-b93a-d6c440281b0a",
@@ -1401,7 +1358,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep43.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1413,14 +1370,14 @@
         "resolvedImage": "https://www.thisisjdog.com/media/ring-that-bell.jpg",
         "resolvedAudioUrl": "https://www.thisisjdog.com/media/ring-that-bell.mp3",
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.youtube.com/@thisisjdog81",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-3f42q6",
+      "id": "track-1754273008192-5f69d5",
       "title": "Pour Me Some Water",
       "artist": "Unknown Artist",
       "episodeId": "cd7da484-5911-4180-b93a-d6c440281b0a",
@@ -1432,7 +1389,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep43.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1442,10 +1399,10 @@
       },
       "description": "Album: https://jimmyv4v.com",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-vexe2w",
+      "id": "track-1754273008192-q7856d",
       "title": "Give it Up",
       "artist": "Unknown Artist",
       "episodeId": "cd7da484-5911-4180-b93a-d6c440281b0a",
@@ -1457,7 +1414,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep43.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1467,10 +1424,10 @@
       },
       "description": "Album: https://jimmyv4v.com",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-4641le",
+      "id": "track-1754273008192-rfjyes",
       "title": "Long As You're Loving Me",
       "artist": "Unknown Artist",
       "episodeId": "cd7da484-5911-4180-b93a-d6c440281b0a",
@@ -1482,7 +1439,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep43.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1495,14 +1452,14 @@
         "resolvedAudioUrl": "https://www.doerfelverse.com/tracks/long-as-youre-loving-me.mp3",
         "resolvedDuration": 219,
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.doerfelverse.com/",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-zo9jwa",
+      "id": "track-1754273008192-erc430",
       "title": "I Believe",
       "artist": "Unknown Artist",
       "episodeId": "cd7da484-5911-4180-b93a-d6c440281b0a",
@@ -1514,7 +1471,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep43.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1524,10 +1481,10 @@
       },
       "description": "Album: https://jimmyv4v.com",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-69phhe",
+      "id": "track-1754273008192-nnbb6y",
       "title": "Stay Awhile (reprise)",
       "artist": "Unknown Artist",
       "episodeId": "65562379-6827-4e32-a6d8-d139502750bf",
@@ -1539,7 +1496,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep42.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1549,10 +1506,10 @@
       },
       "description": "Album: https://ableandthewolf.com",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-s0ster",
+      "id": "track-1754273008192-mwlnmb",
       "title": "Hard Work [Live in Amsterdam]",
       "artist": "Unknown Artist",
       "episodeId": "65562379-6827-4e32-a6d8-d139502750bf",
@@ -1564,7 +1521,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep42.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1576,14 +1533,14 @@
         "resolvedImage": "https://d12wklypp119aj.cloudfront.net/image/8aaf0d1e-7ac3-4f7d-993b-6f59f936d780.jpg",
         "resolvedAudioUrl": "https://op3.dev/e,pg=95e5f7a9-d88e-5e51-b2ae-f4b1865d19c4/https://d12wklypp119aj.cloudfront.net/track/d79f242f-0651-4b12-be79-c2bac234cfde.mp3",
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.wavlake.com/album/8aaf0d1e-7ac3-4f7d-993b-6f59f936d780",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-39s35r",
+      "id": "track-1754273008192-36k3h3",
       "title": "This Pain I've Grown",
       "artist": "Unknown Artist",
       "episodeId": "65562379-6827-4e32-a6d8-d139502750bf",
@@ -1595,7 +1552,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep42.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1605,10 +1562,10 @@
       },
       "description": "Album: https://podcastindex.org/podcast/6571305",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-ggk031",
+      "id": "track-1754273008192-v39vk2",
       "title": "A Sight To See Remix",
       "artist": "Unknown Artist",
       "episodeId": "65562379-6827-4e32-a6d8-d139502750bf",
@@ -1620,7 +1577,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep42.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1630,27 +1587,10 @@
       },
       "description": "Album: https://www.wavlake.com/album/0934bb2d-210c-4988-8055-9cd54c9817f7",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-n1fey7",
-      "title": "EP track",
-      "artist": "All Apology",
-      "episodeId": "e0fa9a1b-8763-4285-9bd3-d7b3fd46d5eb",
-      "episodeTitle": "Episode 41- Mike Neumann",
-      "episodeDate": "2025-02-23T05:04:34.000Z",
-      "startTime": 802.558541,
-      "endTime": 1102.5585409999999,
-      "duration": 299.9999999999999,
-      "audioUrl": "https://www.doerfelverse.com/tracks/dvep41.mp3",
-      "source": "chapter",
-      "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
-      "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
-    },
-    {
-      "id": "track-1754268844825-v8hwil",
+      "id": "track-1754273008192-vlt8em",
       "title": "External Music Track at 8:10",
       "artist": "Into The Doerfel-Verse",
       "episodeId": "e0fa9a1b-8763-4285-9bd3-d7b3fd46d5eb",
@@ -1662,7 +1602,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep41.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1675,13 +1615,13 @@
         "resolvedAudioUrl": "https://www.doerfelverse.com/tracks/emma-rose.mp3",
         "resolvedDuration": 203,
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-myhyhn",
+      "id": "track-1754273008192-185zsu",
       "title": "External Music Track at 13:22",
       "artist": "Into The Doerfel-Verse",
       "episodeId": "e0fa9a1b-8763-4285-9bd3-d7b3fd46d5eb",
@@ -1693,7 +1633,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep41.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1702,10 +1642,10 @@
         "itemGuid": "b9471140-0674-4884-bbb5-39ce9c4a000f"
       },
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-z66oq4",
+      "id": "track-1754273008192-j0g55x",
       "title": "External Music Track at 18:38",
       "artist": "Into The Doerfel-Verse",
       "episodeId": "e0fa9a1b-8763-4285-9bd3-d7b3fd46d5eb",
@@ -1717,7 +1657,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep41.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1726,10 +1666,10 @@
         "itemGuid": "13468078-1a54-4b0e-92bc-2faea2999ae7"
       },
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-tz38n9",
+      "id": "track-1754273008192-nsgkqq",
       "title": "External Music Track at 27:53",
       "artist": "Into The Doerfel-Verse",
       "episodeId": "e0fa9a1b-8763-4285-9bd3-d7b3fd46d5eb",
@@ -1741,7 +1681,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep41.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1750,10 +1690,10 @@
         "itemGuid": "17249ca4-fc26-45bb-afa3-d86212c9b2f8"
       },
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-pxbez2",
+      "id": "track-1754273008192-9r0ts8",
       "title": "External Music Track at 32:42",
       "artist": "Into The Doerfel-Verse",
       "episodeId": "e0fa9a1b-8763-4285-9bd3-d7b3fd46d5eb",
@@ -1765,7 +1705,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep41.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1774,10 +1714,10 @@
         "itemGuid": "c59c7ffe-3847-4d55-ac27-5a1c1fbe6140"
       },
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-2yr3xr",
+      "id": "track-1754273008192-ifno69",
       "title": "External Music Track at 41:29",
       "artist": "Into The Doerfel-Verse",
       "episodeId": "e0fa9a1b-8763-4285-9bd3-d7b3fd46d5eb",
@@ -1789,7 +1729,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep41.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1798,10 +1738,10 @@
         "itemGuid": "469fb1ea-6b9e-4df4-96d3-0b61e9b1b5ca"
       },
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-o1lyw5",
+      "id": "track-1754273008192-j1rafy",
       "title": "External Music Track at 42:02",
       "artist": "Into The Doerfel-Verse",
       "episodeId": "e0fa9a1b-8763-4285-9bd3-d7b3fd46d5eb",
@@ -1813,7 +1753,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep41.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1822,10 +1762,10 @@
         "itemGuid": "c5071214-ba27-4327-ae0b-4769fc9cac06"
       },
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-8gbdxi",
+      "id": "track-1754273008192-vhiqvc",
       "title": "External Music Track at 65:16",
       "artist": "Into The Doerfel-Verse",
       "episodeId": "e0fa9a1b-8763-4285-9bd3-d7b3fd46d5eb",
@@ -1837,7 +1777,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep41.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1846,10 +1786,10 @@
         "itemGuid": "e92721f0-4291-4b50-a621-f658d875e640"
       },
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-sddynz",
+      "id": "track-1754273008192-ixug1o",
       "title": "External Music Track at 72:36",
       "artist": "Into The Doerfel-Verse",
       "episodeId": "e0fa9a1b-8763-4285-9bd3-d7b3fd46d5eb",
@@ -1861,7 +1801,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep41.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1870,10 +1810,10 @@
         "itemGuid": "8ed4bcfe-a4f9-42a7-9529-d30c3d634656"
       },
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-lrh4wz",
+      "id": "track-1754273008192-d93vlv",
       "title": "External Music Track at 79:35",
       "artist": "Into The Doerfel-Verse",
       "episodeId": "e0fa9a1b-8763-4285-9bd3-d7b3fd46d5eb",
@@ -1885,7 +1825,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep41.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1898,13 +1838,13 @@
         "resolvedAudioUrl": "https://www.doerfelverse.com/tracks/emma-rose.mp3",
         "resolvedDuration": 203,
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-51b2id",
+      "id": "track-1754273008192-sxwt0a",
       "title": "They Don't Know",
       "artist": "Unknown Artist",
       "episodeId": "e0fa9a1b-8763-4285-9bd3-d7b3fd46d5eb",
@@ -1916,7 +1856,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep41.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1929,14 +1869,31 @@
         "resolvedAudioUrl": "https://www.doerfelverse.com/tracks/long-as-youre-loving-me.mp3",
         "resolvedDuration": 219,
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.doerfelverse.com/",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-003vwh",
+      "id": "track-1754273008192-gfgbq3",
+      "title": "EP track",
+      "artist": "All Apology",
+      "episodeId": "e0fa9a1b-8763-4285-9bd3-d7b3fd46d5eb",
+      "episodeTitle": "Episode 41- Mike Neumann",
+      "episodeDate": "2025-02-23T05:04:34.000Z",
+      "startTime": 802.558541,
+      "endTime": 1102.5585409999999,
+      "duration": 299.9999999999999,
+      "audioUrl": "https://www.doerfelverse.com/tracks/dvep41.mp3",
+      "source": "chapter",
+      "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
+      "extractionMethod": "api-extraction",
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
+    },
+    {
+      "id": "track-1754273008192-jxjehk",
       "title": "Possible",
       "artist": "Unknown Artist",
       "episodeId": "3f9acfcf-a39e-4b33-9335-b09e96ada95b",
@@ -1948,7 +1905,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep40.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1961,14 +1918,14 @@
         "resolvedAudioUrl": "https://www.doerfelverse.com/tracks/long-as-youre-loving-me.mp3",
         "resolvedDuration": 219,
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.doerfelverse.com/",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-4dvj0o",
+      "id": "track-1754273008192-zkldon",
       "title": "What Love Is",
       "artist": "Unknown Artist",
       "episodeId": "3f9acfcf-a39e-4b33-9335-b09e96ada95b",
@@ -1980,7 +1937,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep40.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -1993,14 +1950,14 @@
         "resolvedAudioUrl": "https://www.doerfelverse.com/tracks/long-as-youre-loving-me.mp3",
         "resolvedDuration": 219,
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.doerfelverse.com/",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-ov681c",
+      "id": "track-1754273008192-41do6w",
       "title": "Bad People",
       "artist": "Unknown Artist",
       "episodeId": "3f9acfcf-a39e-4b33-9335-b09e96ada95b",
@@ -2012,7 +1969,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep40.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2022,10 +1979,10 @@
       },
       "description": "Album: https://www.wavlake.com/album/d677db67-0310-4813-970e-e65927c689f1",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-j0j7u1",
+      "id": "track-1754273008192-3c0z8o",
       "title": "External Music Track at 7:01",
       "artist": "Into The Doerfel-Verse",
       "episodeId": "5023f51a-fea9-4112-9dcd-59961686c7ec",
@@ -2037,7 +1994,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep39.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2046,10 +2003,10 @@
         "itemGuid": "7470d39e-6a8a-4356-9349-b9887d0970be"
       },
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-d90wyp",
+      "id": "track-1754273008192-k54y22",
       "title": "External Music Track at 28:48",
       "artist": "Into The Doerfel-Verse",
       "episodeId": "5023f51a-fea9-4112-9dcd-59961686c7ec",
@@ -2061,7 +2018,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep39.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2070,10 +2027,10 @@
         "itemGuid": "https://justcast.com/shows/44721/audioposts/1246165"
       },
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-qa505l",
+      "id": "track-1754273008192-9r65ou",
       "title": "External Music Track at 38:51",
       "artist": "Into The Doerfel-Verse",
       "episodeId": "5023f51a-fea9-4112-9dcd-59961686c7ec",
@@ -2085,7 +2042,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep39.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2094,10 +2051,10 @@
         "itemGuid": "https://justcast.com/shows/44808/audioposts/1248738"
       },
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-4swqxf",
+      "id": "track-1754273008192-q7tl3j",
       "title": "External Music Track at 71:31",
       "artist": "Into The Doerfel-Verse",
       "episodeId": "5023f51a-fea9-4112-9dcd-59961686c7ec",
@@ -2109,7 +2066,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep39.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2118,10 +2075,10 @@
         "itemGuid": "ba10024a-d040-4b31-b61d-ea1fca19387d"
       },
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-vz4lj6",
+      "id": "track-1754273008192-b5p8wz",
       "title": "External Music Track at 89:24",
       "artist": "Into The Doerfel-Verse",
       "episodeId": "5023f51a-fea9-4112-9dcd-59961686c7ec",
@@ -2133,7 +2090,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep39.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2142,27 +2099,10 @@
         "itemGuid": "c2747138-3458-4a7d-b5be-7d2c637295bc"
       },
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-ymane0",
-      "title": "Railroad Tracks",
-      "artist": "Unknown Artist",
-      "episodeId": "3d70b7ee-02a2-4025-aec0-cd883269dc54",
-      "episodeTitle": "Episode 38 - Musical Chairs with Salty Crayon",
-      "episodeDate": "2025-01-19T18:08:20.000Z",
-      "startTime": 3917.947,
-      "endTime": 4217.947,
-      "duration": 300,
-      "audioUrl": "https://www.doerfelverse.com/tracks/dvep38.mp3",
-      "source": "chapter",
-      "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
-      "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
-    },
-    {
-      "id": "track-1754268844825-vbqz80",
+      "id": "track-1754273008192-47wkfd",
       "title": "So Far Away",
       "artist": "Unknown Artist",
       "episodeId": "3d70b7ee-02a2-4025-aec0-cd883269dc54",
@@ -2174,7 +2114,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep38.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2187,14 +2127,14 @@
         "resolvedAudioUrl": "https://www.doerfelverse.com/tracks/long-as-youre-loving-me.mp3",
         "resolvedDuration": 219,
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.doerfelverse.com/",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-gvgstp",
+      "id": "track-1754273008192-nzatwo",
       "title": "I Do It Cuz It's Bad",
       "artist": "Unknown Artist",
       "episodeId": "3d70b7ee-02a2-4025-aec0-cd883269dc54",
@@ -2206,7 +2146,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep38.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2216,10 +2156,10 @@
       },
       "description": "Album: https://www.wavlake.com/album/82700713-4ecc-4fc1-94d9-2c0b765504eb",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-gvs1rr",
+      "id": "track-1754273008192-zlwh90",
       "title": "Beer Run",
       "artist": "Unknown Artist",
       "episodeId": "3d70b7ee-02a2-4025-aec0-cd883269dc54",
@@ -2231,7 +2171,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep38.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2241,10 +2181,10 @@
       },
       "description": "Album: https://www.wavlake.com/album/b337bd2b-46c5-4bd0-a57f-f93bca81ebea",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-dywhsi",
+      "id": "track-1754273008192-bl01y4",
       "title": "Girls at Kroger",
       "artist": "Unknown Artist",
       "episodeId": "3d70b7ee-02a2-4025-aec0-cd883269dc54",
@@ -2256,7 +2196,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep38.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2266,10 +2206,10 @@
       },
       "description": "Album: https://www.lukejenisonmusic.com",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-713adt",
+      "id": "track-1754273008192-9sg4yt",
       "title": "Midnight Comin'",
       "artist": "Unknown Artist",
       "episodeId": "3d70b7ee-02a2-4025-aec0-cd883269dc54",
@@ -2281,7 +2221,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep38.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2291,10 +2231,10 @@
       },
       "description": "Album: https://www.wavlake.com/album/733fe358-6754-4135-a640-d75bc704c85d",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-mxo5w9",
+      "id": "track-1754273008192-renpzs",
       "title": "If I Promise(Demo)",
       "artist": "Unknown Artist",
       "episodeId": "3d70b7ee-02a2-4025-aec0-cd883269dc54",
@@ -2306,7 +2246,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep38.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2319,14 +2259,14 @@
         "resolvedAudioUrl": "https://www.doerfelverse.com/tracks/long-as-youre-loving-me.mp3",
         "resolvedDuration": 219,
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.doerfelverse.com/",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-c6s5j7",
+      "id": "track-1754273008192-sgzxj1",
       "title": "Phatty The Grasshopper",
       "artist": "Unknown Artist",
       "episodeId": "3d70b7ee-02a2-4025-aec0-cd883269dc54",
@@ -2338,7 +2278,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep38.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2348,10 +2288,10 @@
       },
       "description": "Album: https://www.doerfelverse.com/",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-3m4weo",
+      "id": "track-1754273008192-dfj6nt",
       "title": "Railroad Tracks",
       "artist": "Unknown Artist",
       "episodeId": "3d70b7ee-02a2-4025-aec0-cd883269dc54",
@@ -2363,7 +2303,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep38.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2373,10 +2313,10 @@
       },
       "description": "Album: https://www.wavlake.com/album/05b4cf50-f79b-4296-9f04-02c9223182c5",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-mrly8e",
+      "id": "track-1754273008192-lk0fj1",
       "title": "Wonder Woman",
       "artist": "Unknown Artist",
       "episodeId": "3d70b7ee-02a2-4025-aec0-cd883269dc54",
@@ -2388,7 +2328,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep38.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2398,10 +2338,10 @@
       },
       "description": "Album: https://www.wavlake.com/album/7c295d64-8b85-4b4f-be2c-72f3954fdcaa",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-qcgmzv",
+      "id": "track-1754273008192-xpnya4",
       "title": "Now I Know",
       "artist": "Unknown Artist",
       "episodeId": "3d70b7ee-02a2-4025-aec0-cd883269dc54",
@@ -2413,7 +2353,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep38.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2426,14 +2366,14 @@
         "resolvedAudioUrl": "https://www.doerfelverse.com/tracks/long-as-youre-loving-me.mp3",
         "resolvedDuration": 219,
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.doerfelverse.com/",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-t3lvom",
+      "id": "track-1754273008192-7lc3zu",
       "title": "What's Your New Love Like",
       "artist": "Unknown Artist",
       "episodeId": "3d70b7ee-02a2-4025-aec0-cd883269dc54",
@@ -2445,7 +2385,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep38.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2455,10 +2395,10 @@
       },
       "description": "Album: https://www.wavlake.com/album/26a5d908-afa5-418d-a076-dac457bd7fa3",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-mlrvhe",
+      "id": "track-1754273008192-wccl0g",
       "title": "Pay The Bills",
       "artist": "Unknown Artist",
       "episodeId": "3d70b7ee-02a2-4025-aec0-cd883269dc54",
@@ -2470,20 +2410,26 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep38.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
         "remotePercentage": 90,
         "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
-        "itemGuid": "c2264e2b-a564-43d2-bf7e-5be6298e2ea2"
+        "itemGuid": "c2264e2b-a564-43d2-bf7e-5be6298e2ea2",
+        "resolvedTitle": "It's Christmastime Again!",
+        "resolvedArtist": "HeyCitizen",
+        "resolvedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/MoeFactz.jpg",
+        "resolvedAudioUrl": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/MoeFactz.mp3",
+        "resolved": true,
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://lnbeats.com/album/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-x1gpz7",
+      "id": "track-1754273008192-v58iyc",
       "title": "Feeling Bout You",
       "artist": "Unknown Artist",
       "episodeId": "a8781ede-9927-454c-8f94-af16b9490ff3",
@@ -2495,7 +2441,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep37.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2508,14 +2454,14 @@
         "resolvedAudioUrl": "https://www.doerfelverse.com/tracks/feeling-bout-you.mp3",
         "resolvedDuration": 89,
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.doerfelverse.com/",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-xp20vz",
+      "id": "track-1754273008192-0y3i38",
       "title": "Playing God",
       "artist": "Unknown Artist",
       "episodeId": "a8781ede-9927-454c-8f94-af16b9490ff3",
@@ -2527,7 +2473,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep37.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2537,10 +2483,10 @@
       },
       "description": "Album: https://www.doerfelverse.com/artists/opus/opus/opus.png",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-z3pfzr",
+      "id": "track-1754273008192-facbzt",
       "title": "That's the Life",
       "artist": "Unknown Artist",
       "episodeId": "a8781ede-9927-454c-8f94-af16b9490ff3",
@@ -2552,7 +2498,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep37.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2562,10 +2508,10 @@
       },
       "description": "Album: https://www.wavlake.com/album/6f724ceb-0688-40d5-a93f-4d0b6ec1c797",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-hquqif",
+      "id": "track-1754273008192-7dertx",
       "title": "Grow",
       "artist": "Unknown Artist",
       "episodeId": "a8781ede-9927-454c-8f94-af16b9490ff3",
@@ -2577,7 +2523,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep37.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2587,10 +2533,10 @@
       },
       "description": "Album: https://www.doerfelverse.com",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-2kju01",
+      "id": "track-1754273008192-5xf6ur",
       "title": "Let You Down",
       "artist": "Unknown Artist",
       "episodeId": "a8781ede-9927-454c-8f94-af16b9490ff3",
@@ -2602,7 +2548,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep37.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2612,10 +2558,10 @@
       },
       "description": "Album: https://www.wavlake.com/album/9e673dbf-0c6e-49f1-85fa-5b3bdd9b9f08",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-0z2ryf",
+      "id": "track-1754273008192-pyc02l",
       "title": "External Music Track at 78:56",
       "artist": "Into The Doerfel-Verse",
       "episodeId": "a8781ede-9927-454c-8f94-af16b9490ff3",
@@ -2627,7 +2573,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep37.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2640,13 +2586,13 @@
         "resolvedAudioUrl": "https://www.doerfelverse.com/tracks/long-as-youre-loving-me.mp3",
         "resolvedDuration": 219,
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-gto67d",
+      "id": "track-1754273008192-j1ddue",
       "title": "Kurtisdrums",
       "artist": "Feeling Bout You",
       "episodeId": "a8781ede-9927-454c-8f94-af16b9490ff3",
@@ -2658,13 +2604,13 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep37.mp3",
       "source": "description",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "description": "Extracted from episode description",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-nuevjb",
+      "id": "track-1754273008192-2x3fur",
       "title": "Porkchops Fried",
       "artist": "Unknown Artist",
       "episodeId": "1a251fbc-8cf5-45c5-a3f1-36e8a797aade",
@@ -2676,20 +2622,26 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep36.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
         "remotePercentage": 90,
         "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
-        "itemGuid": "ae81976d-a05e-4ff9-9adf-cdb11a33fff9"
+        "itemGuid": "ae81976d-a05e-4ff9-9adf-cdb11a33fff9",
+        "resolvedTitle": "It's Christmastime Again!",
+        "resolvedArtist": "HeyCitizen",
+        "resolvedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/MoeFactz.jpg",
+        "resolvedAudioUrl": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/MoeFactz.mp3",
+        "resolved": true,
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://podcastindex.org/podcast/6650997",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-7x0psv",
+      "id": "track-1754273008192-1qxybw",
       "title": "Change Your Mind",
       "artist": "Unknown Artist",
       "episodeId": "1a251fbc-8cf5-45c5-a3f1-36e8a797aade",
@@ -2701,7 +2653,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep36.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2711,10 +2663,10 @@
       },
       "description": "Album: https://www.wavlake.com/album/2cc8ce94-6b15-4426-8a6d-ed974d3258e5",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-ji0f66",
+      "id": "track-1754273008192-dhmziz",
       "title": "That Duck",
       "artist": "Unknown Artist",
       "episodeId": "1a251fbc-8cf5-45c5-a3f1-36e8a797aade",
@@ -2726,7 +2678,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep36.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2736,10 +2688,10 @@
       },
       "description": "Album: https://soundcloud.com/themtwshow/that-duck",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-8u5kyr",
+      "id": "track-1754273008192-kgrxin",
       "title": "Big Sciota",
       "artist": "Unknown Artist",
       "episodeId": "1a251fbc-8cf5-45c5-a3f1-36e8a797aade",
@@ -2751,7 +2703,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep36.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2761,10 +2713,10 @@
       },
       "description": "Album: https://dougyeomansmusic.com/",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-c5vnu5",
+      "id": "track-1754273008192-4mx1dh",
       "title": "Sensitive Guy",
       "artist": "Unknown Artist",
       "episodeId": "1a251fbc-8cf5-45c5-a3f1-36e8a797aade",
@@ -2776,7 +2728,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep36.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2786,10 +2738,10 @@
       },
       "description": "Album: https://everloved.com/life-of/miles-fonda/obituary/",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-mcs0k5",
+      "id": "track-1754273008192-7sk80c",
       "title": "Once Had A Girl",
       "artist": "Unknown Artist",
       "episodeId": "1a251fbc-8cf5-45c5-a3f1-36e8a797aade",
@@ -2801,7 +2753,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep36.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2813,14 +2765,14 @@
         "resolvedImage": "https://www.thisisjdog.com/media/ring-that-bell.jpg",
         "resolvedAudioUrl": "https://www.thisisjdog.com/media/ring-that-bell.mp3",
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.youtube.com/@thisisjdog81",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-bzwx2c",
+      "id": "track-1754273008192-lmheuc",
       "title": "Secrets",
       "artist": "Unknown Artist",
       "episodeId": "1a251fbc-8cf5-45c5-a3f1-36e8a797aade",
@@ -2832,7 +2784,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep36.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2842,10 +2794,10 @@
       },
       "description": "Album: https://podcastindex.org/podcast/7080422",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-g1aezg",
+      "id": "track-1754273008192-ga80gy",
       "title": "Let Go (What's holding you back)",
       "artist": "Unknown Artist",
       "episodeId": "1a251fbc-8cf5-45c5-a3f1-36e8a797aade",
@@ -2857,7 +2809,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep36.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2867,10 +2819,10 @@
       },
       "description": "Album: https://instagram.com/middleseasonmusic",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-ql8k54",
+      "id": "track-1754273008192-3cc3hv",
       "title": "HeyCitizen",
       "artist": "PorkChops Fried",
       "episodeId": "1a251fbc-8cf5-45c5-a3f1-36e8a797aade",
@@ -2882,13 +2834,13 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep36.mp3",
       "source": "description",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "description": "Extracted from episode description",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-p548j8",
+      "id": "track-1754273008192-6vt6p5",
       "title": "Worth Fighting For",
       "artist": "Unknown Artist",
       "episodeId": "5afc6897-f24c-41c4-8ce6-dd3255c4412f",
@@ -2900,7 +2852,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep35.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2913,14 +2865,14 @@
         "resolvedAudioUrl": "https://www.doerfelverse.com/tracks/long-as-youre-loving-me.mp3",
         "resolvedDuration": 219,
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.doerfelverse.com/",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-7vmntz",
+      "id": "track-1754273008192-ydqzma",
       "title": "Animosity",
       "artist": "Unknown Artist",
       "episodeId": "5afc6897-f24c-41c4-8ce6-dd3255c4412f",
@@ -2932,7 +2884,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep35.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2945,14 +2897,14 @@
         "resolvedAudioUrl": "https://www.doerfelverse.com/tracks/animosity.mp3",
         "resolvedDuration": 331,
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://noagendasocial.com/@shredward",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-qhyanu",
+      "id": "track-1754273008192-cs9iwl",
       "title": "You",
       "artist": "Unknown Artist",
       "episodeId": "5afc6897-f24c-41c4-8ce6-dd3255c4412f",
@@ -2964,7 +2916,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep35.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -2977,14 +2929,14 @@
         "resolvedAudioUrl": "https://www.doerfelverse.com/tracks/animosity.mp3",
         "resolvedDuration": 331,
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://noagendasocial.com/@shredward",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-fsoz9l",
+      "id": "track-1754273008192-wzhbao",
       "title": "Safe",
       "artist": "Unknown Artist",
       "episodeId": "5afc6897-f24c-41c4-8ce6-dd3255c4412f",
@@ -2996,7 +2948,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep35.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -3009,14 +2961,14 @@
         "resolvedAudioUrl": "https://www.doerfelverse.com/tracks/animosity.mp3",
         "resolvedDuration": 331,
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://noagendasocial.com/@shredward",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-t7s681",
+      "id": "track-1754273008192-57cwqf",
       "title": "Hallucinations",
       "artist": "Unknown Artist",
       "episodeId": "5afc6897-f24c-41c4-8ce6-dd3255c4412f",
@@ -3028,7 +2980,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep35.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -3038,10 +2990,10 @@
       },
       "description": "Album: https://www.wavlake.com/album/24449797-c9b7-4151-a31a-8b9a74b1dd86",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-haggm8",
+      "id": "track-1754273008192-2z6qnd",
       "title": "Ordinary",
       "artist": "Unknown Artist",
       "episodeId": "5afc6897-f24c-41c4-8ce6-dd3255c4412f",
@@ -3053,7 +3005,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep35.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -3063,10 +3015,10 @@
       },
       "description": "Album: https://jimmyv4v.com",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-kczyoa",
+      "id": "track-1754273008192-zustk7",
       "title": "Maybe It's You",
       "artist": "Unknown Artist",
       "episodeId": "5afc6897-f24c-41c4-8ce6-dd3255c4412f",
@@ -3078,7 +3030,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep35.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -3091,14 +3043,14 @@
         "resolvedAudioUrl": "https://www.doerfelverse.com/tracks/long-as-youre-loving-me.mp3",
         "resolvedDuration": 219,
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.doerfelverse.com/",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-8h2o3p",
+      "id": "track-1754273008192-6ntxpz",
       "title": "External Music Track at 56:44",
       "artist": "Into The Doerfel-Verse",
       "episodeId": "5afc6897-f24c-41c4-8ce6-dd3255c4412f",
@@ -3110,7 +3062,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep35.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -3119,10 +3071,10 @@
         "itemGuid": "17249ca4-fc26-45bb-afa3-d86212c9b2f8"
       },
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-mo3tc3",
+      "id": "track-1754273008192-8b3wlj",
       "title": "Make It",
       "artist": "Unknown Artist",
       "episodeId": "5afc6897-f24c-41c4-8ce6-dd3255c4412f",
@@ -3134,7 +3086,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep35.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -3147,14 +3099,14 @@
         "resolvedAudioUrl": "https://www.doerfelverse.com/tracks/long-as-youre-loving-me.mp3",
         "resolvedDuration": 219,
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.doerfelverse.com/",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-mix5le",
+      "id": "track-1754273008192-z8iclp",
       "title": "Salty Crayon",
       "artist": "LIVE boosters",
       "episodeId": "5afc6897-f24c-41c4-8ce6-dd3255c4412f",
@@ -3166,13 +3118,13 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep35.mp3",
       "source": "description",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "description": "Extracted from episode description",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-od4m22",
+      "id": "track-1754273008192-m8dx0t",
       "title": "Sing For You",
       "artist": "Unknown Artist",
       "episodeId": "bcfc7a81-5dc1-4291-ad6a-2beab7da2f14",
@@ -3184,7 +3136,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep31.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -3197,14 +3149,14 @@
         "resolvedAudioUrl": "https://www.doerfelverse.com/tracks/long-as-youre-loving-me.mp3",
         "resolvedDuration": 219,
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.doerfelverse.com/",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-6du36k",
+      "id": "track-1754273008192-v3odt4",
       "title": "Pour Over",
       "artist": "Unknown Artist",
       "episodeId": "bcfc7a81-5dc1-4291-ad6a-2beab7da2f14",
@@ -3216,7 +3168,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep31.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -3226,10 +3178,10 @@
       },
       "description": "Album: https://www.doerfelverse.com/",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-0i3350",
+      "id": "track-1754273008192-lszglq",
       "title": "So Far Away",
       "artist": "Unknown Artist",
       "episodeId": "bcfc7a81-5dc1-4291-ad6a-2beab7da2f14",
@@ -3241,7 +3193,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep31.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -3251,10 +3203,10 @@
       },
       "description": "Album: https://www.doerfelverse.com",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-iiqxjf",
+      "id": "track-1754273008192-4idwn7",
       "title": "Worthy Lofi",
       "artist": "Unknown Artist",
       "episodeId": "bcfc7a81-5dc1-4291-ad6a-2beab7da2f14",
@@ -3266,7 +3218,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep31.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -3279,14 +3231,14 @@
         "resolvedAudioUrl": "https://www.doerfelverse.com/tracks/feeling-bout-you.mp3",
         "resolvedDuration": 89,
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.doerfelverse.com/",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-49qsgf",
+      "id": "track-1754273008192-g0c1ei",
       "title": "Breakaway (demo)",
       "artist": "Unknown Artist",
       "episodeId": "bcfc7a81-5dc1-4291-ad6a-2beab7da2f14",
@@ -3298,7 +3250,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep31.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -3311,14 +3263,14 @@
         "resolvedAudioUrl": "https://www.doerfelverse.com/tracks/long-as-youre-loving-me.mp3",
         "resolvedDuration": 219,
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.doerfelverse.com/",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-1zsqny",
+      "id": "track-1754273008192-z9pwio",
       "title": "Thought It Was Real",
       "artist": "Unknown Artist",
       "episodeId": "bcfc7a81-5dc1-4291-ad6a-2beab7da2f14",
@@ -3330,7 +3282,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep31.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -3343,14 +3295,14 @@
         "resolvedAudioUrl": "https://www.doerfelverse.com/tracks/long-as-youre-loving-me.mp3",
         "resolvedDuration": 219,
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.doerfelverse.com/",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-hv6611",
+      "id": "track-1754273008192-zca2ex",
       "title": "Morning Love",
       "artist": "Unknown Artist",
       "episodeId": "bcfc7a81-5dc1-4291-ad6a-2beab7da2f14",
@@ -3362,7 +3314,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep31.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -3375,14 +3327,14 @@
         "resolvedAudioUrl": "https://www.doerfelverse.com/tracks/long-as-youre-loving-me.mp3",
         "resolvedDuration": 219,
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://www.doerfelverse.com/",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-rbifrn",
+      "id": "track-1754273008192-t38exl",
       "title": "SWEATS",
       "artist": "Unknown Artist",
       "episodeId": "bcfc7a81-5dc1-4291-ad6a-2beab7da2f14",
@@ -3394,7 +3346,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep31.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -3407,14 +3359,14 @@
         "resolvedAudioUrl": "https://www.doerfelverse.com/tracks/go.mp3",
         "resolvedDuration": 253,
         "resolved": true,
-        "lastResolved": "2025-08-04T01:39:57.998Z"
+        "lastResolved": "2025-08-04T02:05:06.214Z"
       },
       "description": "Album: https://noagendasocial.com/@shredward",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-rp7b4v",
+      "id": "track-1754273008192-pq6aio",
       "title": "A Sight To See Remix",
       "artist": "Unknown Artist",
       "episodeId": "bcfc7a81-5dc1-4291-ad6a-2beab7da2f14",
@@ -3426,7 +3378,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep31.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -3436,10 +3388,10 @@
       },
       "description": "Album: https://www.wavlake.com/album/0934bb2d-210c-4988-8055-9cd54c9817f7",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-n6713d",
+      "id": "track-1754273008192-5blwjw",
       "title": "Possible",
       "artist": "Unknown Artist",
       "episodeId": "bcfc7a81-5dc1-4291-ad6a-2beab7da2f14",
@@ -3451,7 +3403,7 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep31.mp3",
       "source": "value-split",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "valueForValue": {
         "lightningAddress": "",
         "suggestedAmount": 0,
@@ -3461,10 +3413,10 @@
       },
       "description": "Album: https://www.doerfelverse.com",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-jsfb5n",
+      "id": "track-1754273008192-75shch",
       "title": "Alandace's dad and have a blast jamming on some tunes",
       "artist": "This episode we are joined",
       "episodeId": "aea897a5-73ab-405a-a2c0-ce15a228bef0",
@@ -3476,13 +3428,13 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep29.mp3",
       "source": "description",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "description": "Extracted from episode description",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-7xhyxn",
+      "id": "track-1754273008192-huvu06",
       "title": "We chat with our mom Cheryl, or as we like to call her, Queen Mother! oh yeah, and dad too",
       "artist": "SPECIAL GUEST",
       "episodeId": "83b4ce3e-84ba-4df2-9e6b-99164f3a83ff",
@@ -3494,13 +3446,13 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep21.mp3",
       "source": "description",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "description": "Extracted from episode description",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-o3r78x",
+      "id": "track-1754273008192-2bwyj8",
       "title": "Sir Libra",
       "artist": "Kolomona",
       "episodeId": "2b07b11b-feaa-4b53-8172-e40d209642c8",
@@ -3512,13 +3464,13 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/dvep19.mp3",
       "source": "description",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "description": "Extracted from episode description",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-weaahg",
+      "id": "track-1754273008192-vgiu6h",
       "title": "Ben on Guitar -",
       "artist": "Sir TJ The Wrathful on Dobro - Shredward on Mandolin",
       "episodeId": "0f678a82-71ac-4d96-9c27-c7f6aada2f06",
@@ -3530,13 +3482,13 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/doerfelverse-ep12.mp3",
       "source": "description",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "description": "Extracted from episode description",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-1p3yrz",
+      "id": "track-1754273008192-jgzaao",
       "title": "agents",
       "artist": "The self proclaimed",
       "episodeId": "bfb8ba87-9c3b-41f4-9e55-2ff55beb6b81",
@@ -3548,13 +3500,13 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/doerfelverse-ep11.mp3",
       "source": "description",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "description": "Extracted from episode description",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-mqsxq7",
+      "id": "track-1754273008192-gxu81z",
       "title": "Right now this would need to be in the form of a boost",
       "artist": "Treasure",
       "episodeId": "7085847b-c957-48dd-b23f-1b05fb797f28",
@@ -3566,13 +3518,13 @@
       "audioUrl": "https:/www.doerfelverse.com/tracks/dvep9.mp3",
       "source": "description",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "description": "Extracted from episode description",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-1oifzd",
+      "id": "track-1754273008192-uq9iot",
       "title": "Doug Yeomans.",
       "artist": "Don't Take My Time written",
       "episodeId": "fc4045b5-b51c-4aad-990b-c7bbb8c7471e",
@@ -3584,13 +3536,13 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/doerfelverse-ep6.mp3",
       "source": "description",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "description": "Extracted from episode description",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.192Z"
     },
     {
-      "id": "track-1754268844825-icubej",
+      "id": "track-1754273008192-d20ou7",
       "title": "Ryan & Seth Fonda",
       "artist": "Outro music",
       "episodeId": "6570c0b1-fa57-4cad-9466-b0f2fab083cb",
@@ -3602,13 +3554,13 @@
       "audioUrl": "https://www.doerfelverse.com/tracks/ep4doerfelverse-superjells.mp3",
       "source": "description",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.192Z",
       "description": "Extracted from episode description",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.193Z"
     },
     {
-      "id": "track-1754268844825-pvgrsr",
+      "id": "track-1754273008193-4kjw27",
       "title": "s older brother Miles Fonda(April 15, 1988 - January 21, 2023) who gave TJ his No Agenda Knight name. Listen to Miles",
       "artist": "Talk of Ryan",
       "episodeId": "92207c60-da47-4e03-af62-3c47503b7c01",
@@ -3620,13 +3572,13 @@
       "audioUrl": "https://www.sirtjthewrathful.com/media/ep3-ryan-fonda.mp3",
       "source": "description",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.193Z",
       "description": "Extracted from episode description",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.193Z"
     },
     {
-      "id": "track-1754268844825-z69g3d",
+      "id": "track-1754273008193-whlmyk",
       "title": "Adam Curry, Dave Jones, ChadF, Fletcher, Dame DuhLaurien, Sir Spencer Wolf of KS",
       "artist": "Special thanks to boosts we got this week from",
       "episodeId": "a0830159-5dda-4415-949b-fb7615961e87",
@@ -3638,10 +3590,16 @@
       "audioUrl": "https://www.sirtjthewrathful.com/media/ep2-taste-the-dragon.mp3",
       "source": "description",
       "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
-      "discoveredAt": "2025-08-04T00:54:04.825Z",
+      "discoveredAt": "2025-08-04T02:03:28.193Z",
       "description": "Extracted from episode description",
       "extractionMethod": "api-extraction",
-      "lastUpdated": "2025-08-04T00:54:04.825Z"
+      "lastUpdated": "2025-08-04T02:03:28.193Z"
     }
-  ]
+  ],
+  "metadata": {
+    "totalTracks": 137,
+    "lastUpdated": "2025-08-04T02:05:06.214Z",
+    "totalExtractions": 1,
+    "version": "1.0"
+  }
 }
