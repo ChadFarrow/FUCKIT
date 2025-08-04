@@ -74,15 +74,24 @@ export default function ITDVPlaylistPage() {
           const data: CachedData = JSON.parse(cached);
           const now = Date.now();
           
-          // Check if cache is still valid
-          if (now - data.timestamp < CACHE_DURATION) {
-            console.log('📦 Loading tracks from cache');
+          // Check if cache has resolved V4V data
+          const hasResolvedData = data.tracks.some(track => 
+            track.valueForValue?.resolved === true && track.valueForValue?.resolvedArtist
+          );
+          
+          // Check if cache is still valid AND has resolved V4V data
+          if (now - data.timestamp < CACHE_DURATION && hasResolvedData) {
+            console.log('📦 Loading tracks from cache with resolved V4V data');
             setTracks(data.tracks);
             setLoading(false);
             setCacheStatus('cached');
             return true; // Cache was used
           } else {
-            console.log('⏰ Cache expired, will fetch fresh data');
+            if (!hasResolvedData) {
+              console.log('🔄 Cache missing V4V resolved data, will fetch fresh data');
+            } else {
+              console.log('⏰ Cache expired, will fetch fresh data');
+            }
             localStorage.removeItem(CACHE_KEY);
           }
         }
