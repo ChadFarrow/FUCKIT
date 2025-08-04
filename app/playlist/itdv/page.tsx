@@ -121,7 +121,7 @@ export default function ITDVPlaylistPage() {
     setCacheStatus(null);
     
     try {
-      // Force fetch from RSS feed and update database
+      // Force fetch from RSS feed and update database with V4V resolution
       const feedUrl = 'https://www.doerfelverse.com/feeds/intothedoerfelverse.xml';
       const encodedFeedUrl = encodeURIComponent(feedUrl);
       const response = await fetch(`/api/music-tracks?feedUrl=${encodedFeedUrl}&forceRefresh=true&saveToDatabase=true&resolveV4V=true&clearV4VCache=true&limit=1000`);
@@ -135,7 +135,10 @@ export default function ITDVPlaylistPage() {
       if (data.success && data.data.tracks) {
         console.log(`🔄 Refreshed with ${data.data.tracks.length} tracks from RSS feed`);
         
-        // Now reload from the updated database
+        // Wait a moment for database to update
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Now reload from the updated database with fresh V4V resolution
         await loadMainFeedTracks();
       } else {
         throw new Error('Failed to refresh data from RSS feed');
@@ -382,9 +385,17 @@ export default function ITDVPlaylistPage() {
 
   // Helper function to get display artist
   const getDisplayArtist = (track: Track): string => {
-    if (track.valueForValue?.resolved && track.valueForValue?.resolvedArtist) {
+    // Debug logging to understand the data structure
+    if (track.valueForValue?.resolvedArtist) {
+      console.log(`🎤 Track "${track.title}" - Resolved artist: "${track.valueForValue.resolvedArtist}", Original: "${track.artist}", Resolved flag: ${track.valueForValue.resolved}`);
+    }
+    
+    // Try multiple possible locations for resolved artist data
+    if (track.valueForValue?.resolvedArtist) {
       return track.valueForValue.resolvedArtist;
     }
+    
+    // Fallback to original artist
     return track.artist;
   };
 
@@ -905,10 +916,10 @@ ${generateRemoteItems(filteredAndSortedTracks)}
             onClick={refreshData}
             disabled={loading}
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 rounded-lg text-sm transition-colors"
-            title="Refresh data from server"
+            title="Force refresh with V4V artist resolution"
           >
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ExternalLink className="w-4 h-4" />}
-            Refresh
+            Fix Artists
           </button>
         </div>
 
