@@ -573,12 +573,35 @@ export default function ITDVPlaylistPage() {
       // Auto-play next track in the filtered list
       const currentTrackIndex = filteredAndSortedTracks.findIndex(t => t.id === currentTrack);
       console.log('🎵 Current track index:', currentTrackIndex, 'out of', filteredAndSortedTracks.length);
+      console.log('🎵 Current track ID:', currentTrack);
+      console.log('🎵 Track IDs in filtered list:', filteredAndSortedTracks.map(t => t.id).slice(0, 10)); // First 10 IDs
       
       if (currentTrackIndex !== -1 && currentTrackIndex < filteredAndSortedTracks.length - 1) {
         const nextTrack = filteredAndSortedTracks[currentTrackIndex + 1];
-        console.log('🎵 Auto-playing next track:', nextTrack.title);
+        console.log('🎵 Auto-playing next track:', nextTrack.title, 'at index', currentTrackIndex + 1);
         playTrack(nextTrack);
       } else {
+        // If current track not found in filtered list, try to find it in the full track list
+        // and play the next track in the original order
+        if (currentTrackIndex === -1) {
+          console.log('🎵 Current track not found in filtered list, searching full track list...');
+          const fullListIndex = tracks.findIndex(t => t.id === currentTrack);
+          console.log('🎵 Current track index in full list:', fullListIndex);
+          
+          if (fullListIndex !== -1 && fullListIndex < tracks.length - 1) {
+            // Find the next track that would be visible in the current filter
+            for (let i = fullListIndex + 1; i < tracks.length; i++) {
+              const candidateTrack = tracks[i];
+              const isVisible = filteredAndSortedTracks.some(ft => ft.id === candidateTrack.id);
+              if (isVisible) {
+                console.log('🎵 Found next visible track:', candidateTrack.title, 'at full index', i);
+                playTrack(candidateTrack);
+                return;
+              }
+            }
+          }
+        }
+        
         console.log('🎵 Reached end of playlist - currentTrackIndex:', currentTrackIndex, 'totalTracks:', filteredAndSortedTracks.length);
         setCurrentTrack(null);
         setAudio(null);
