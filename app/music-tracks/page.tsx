@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import V4VMusicTrackList from '@/components/V4VMusicTrackList';
+import ITDVPlaylistAlbum from '@/components/ITDVPlaylistAlbum';
 import { MusicTrackRecord } from '@/lib/music-track-schema';
 import { useAudio } from '@/contexts/AudioContext';
 import { 
@@ -137,13 +138,24 @@ export default function MusicSegmentsPage() {
         </div>
       </div>
 
-      {/* Unified Music Segment List */}
-      <V4VMusicTrackList 
+      {/* ITDV Playlist Album */}
+      <div className="mt-12 mb-12">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 bg-purple-500/20 rounded-lg">
+            <Music className="w-6 h-6 text-purple-400" />
+          </div>
+          <h2 className="text-2xl font-bold">Featured Playlist</h2>
+        </div>
+        <ITDVPlaylistAlbum />
+      </div>
+
+      {/* Unified Music Segment List - Temporarily disabled due to error */}
+      {/* <V4VMusicTrackList 
         initialFeedUrls={feedUrls}
         onPlayTrack={handlePlaySegment}
         showDatabaseStats={true}
         autoExtract={false}
-      />
+      /> */}
 
       {/* V4V Information Panel */}
       <div className="mt-12 bg-gradient-to-r from-green-500/10 to-blue-500/10 border border-green-500/20 rounded-xl p-6">

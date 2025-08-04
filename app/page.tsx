@@ -14,6 +14,16 @@ import { AppError, ErrorCodes, ErrorCode, getErrorMessage, createErrorLogger } f
 import { toast } from '@/components/Toast';
 import dynamic from 'next/dynamic';
 
+// Import ITDV Playlist component
+const ITDVPlaylistAlbum = dynamic(() => import('@/components/ITDVPlaylistAlbum'), {
+  loading: () => (
+    <div className="bg-gray-800 rounded-lg p-6">
+      <div className="text-white">Loading ITDV Playlist...</div>
+    </div>
+  ),
+  ssr: false
+});
+
 // Dynamic imports for heavy components
 const AlbumCard = dynamic(() => import('@/components/AlbumCardLazy'), {
   loading: () => (
@@ -871,6 +881,19 @@ export default function HomePage() {
         
         {/* Main Content */}
         <div className="container mx-auto px-3 sm:px-6 py-6 sm:py-8 pb-28">
+          {/* Featured ITDV Playlist */}
+          <div className="mb-12">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-purple-500/20 rounded-lg">
+                <svg className="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 18V5l12-2v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold">Featured Playlist</h2>
+            </div>
+            <ITDVPlaylistAlbum />
+          </div>
+
           {isLoading && !isCriticalLoaded ? (
             <div className="flex flex-col items-center justify-center py-12 gap-4">
               <LoadingSpinner 

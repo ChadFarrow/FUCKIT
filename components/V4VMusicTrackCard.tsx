@@ -94,6 +94,8 @@ export default function V4VMusicTrackCard({
         return 'bg-purple-500/20 text-purple-300 border-purple-500/30';
       case 'v4v-data':
         return 'bg-orange-500/20 text-orange-300 border-orange-500/30';
+      case 'rss-playlist':
+        return 'bg-purple-500/20 text-purple-300 border-purple-500/30';
       default:
         return 'bg-gray-500/20 text-gray-300 border-gray-500/30';
     }
@@ -119,7 +121,8 @@ export default function V4VMusicTrackCard({
   const hasV4VData = track.valueForValue && (
     track.valueForValue.lightningAddress || 
     track.valueForValue.suggestedAmount || 
-    track.valueForValue.customKey
+    track.valueForValue.customKey ||
+    track.valueForValue.percentage
   );
 
   return (
@@ -136,7 +139,7 @@ export default function V4VMusicTrackCard({
       <div className="flex items-start gap-3">
         {/* Track Image */}
         <div className={`${compact ? 'w-12 h-12' : 'w-16 h-16'} rounded-lg overflow-hidden flex-shrink-0 relative`}>
-          {track.image && track.image.trim() !== '' && !imageError ? (
+          {track.image && typeof track.image === 'string' && track.image.trim() !== '' && !imageError ? (
             <img
               src={track.image}
               alt={track.title}
@@ -178,12 +181,12 @@ export default function V4VMusicTrackCard({
             <h3 className={`font-semibold group-hover:text-blue-400 transition-colors truncate ${
               compact ? 'text-sm' : 'text-lg'
             }`}>
-              {track.title}
+              {track.title || 'Unknown Title'}
             </h3>
             <div className="flex items-center gap-1">
-              <span className={`px-2 py-1 text-xs font-medium rounded-full border flex items-center gap-1 ${getSourceColor(track.source)}`}>
-                {getSourceIcon(track.source)}
-                {track.source}
+              <span className={`px-2 py-1 text-xs font-medium rounded-full border flex items-center gap-1 ${getSourceColor(track.source || 'unknown')}`}>
+                {getSourceIcon(track.source || 'unknown')}
+                {track.source || 'unknown'}
               </span>
               {isFavorited && (
                 <Heart className="w-4 h-4 text-red-400 fill-current" />
@@ -191,15 +194,15 @@ export default function V4VMusicTrackCard({
             </div>
           </div>
           
-          <p className={`text-gray-400 mb-1 ${compact ? 'text-xs' : 'text-sm'}`}>{track.artist}</p>
-          <p className={`text-gray-500 mb-2 ${compact ? 'text-xs' : 'text-sm'}`}>From: {track.episodeTitle}</p>
+          <p className={`text-gray-400 mb-1 ${compact ? 'text-xs' : 'text-sm'}`}>{track.artist || 'Unknown Artist'}</p>
+          <p className={`text-gray-500 mb-2 ${compact ? 'text-xs' : 'text-sm'}`}>From: {track.episodeTitle || 'Unknown Episode'}</p>
           
           <div className={`flex items-center gap-3 ${compact ? 'text-xs' : 'text-sm'} text-gray-500`}>
             <span className="flex items-center gap-1">
               <Calendar className="w-3 h-3" />
-              {formatDate(track.episodeDate)}
+              {track.episodeDate ? formatDate(track.episodeDate) : 'Unknown Date'}
             </span>
-            {track.startTime > 0 && (
+            {track.startTime && track.startTime > 0 && (
               <span className="flex items-center gap-1">
                 <Clock className="w-3 h-3" />
                 {formatTime(track.startTime)}

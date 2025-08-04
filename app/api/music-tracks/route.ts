@@ -272,6 +272,90 @@ export async function GET(request: NextRequest) {
     if (databaseTracks && databaseTracks.length > 0) {
       console.log(`📖 Serving ${databaseTracks.length} tracks from database`);
       
+      // Handle V4V resolution for database tracks if requested
+      if (resolveV4V) {
+        console.log('🔍 Checking database tracks for V4V resolution...');
+        
+        // Clear V4V cache if requested
+        if (clearV4VCache) {
+          console.log('🗑️ Clearing V4V resolver cache...');
+          V4VResolver.clearCache();
+        }
+        
+        // Find tracks that need V4V resolution
+        const v4vTracks = databaseTracks.filter((track: any) => 
+          track.valueForValue?.feedGuid && 
+          track.valueForValue?.itemGuid && 
+          (!track.valueForValue?.resolved || clearV4VCache)
+        );
+        
+        if (v4vTracks.length > 0) {
+          console.log(`📡 Resolving ${v4vTracks.length} V4V tracks from database${clearV4VCache ? ' (forced re-resolution)' : ''}...`);
+          
+          // Prepare batch resolution
+          const tracksToResolve = v4vTracks.map((track: any) => ({
+            feedGuid: track.valueForValue.feedGuid,
+            itemGuid: track.valueForValue.itemGuid
+          }));
+          
+          // Resolve in batch
+          const resolutionResults = await V4VResolver.resolveBatch(tracksToResolve);
+          
+          // Apply resolved data to tracks
+          let resolvedCount = 0;
+          databaseTracks.forEach((track: any) => {
+            if (track.valueForValue?.feedGuid && track.valueForValue?.itemGuid) {
+              const key = `${track.valueForValue.feedGuid}:${track.valueForValue.itemGuid}`;
+              const resolution = resolutionResults.get(key);
+              
+              if (resolution?.success) {
+                track.valueForValue.resolvedTitle = resolution.title;
+                track.valueForValue.resolvedArtist = resolution.artist;
+                track.valueForValue.resolvedImage = resolution.image;
+                track.valueForValue.resolvedAudioUrl = resolution.audioUrl;
+                track.valueForValue.resolvedDuration = resolution.duration;
+                track.valueForValue.resolved = true;
+                track.valueForValue.lastResolved = new Date().toISOString();
+                resolvedCount++;
+              }
+            }
+          });
+          
+          console.log(`✅ Successfully resolved ${resolvedCount} V4V tracks`);
+          
+          // Save updated tracks back to database if any were resolved
+          if (resolvedCount > 0 && saveToDatabase) {
+            console.log('💾 Saving updated V4V resolutions to database...');
+            try {
+              const dataPath = path.join(process.cwd(), 'data', 'music-tracks.json');
+              const existingData = await fs.readFile(dataPath, 'utf8');
+              const musicData = JSON.parse(existingData);
+              
+              // Update tracks in the database
+              musicData.musicTracks.forEach((dbTrack: any) => {
+                const updatedTrack = databaseTracks.find((t: any) => 
+                  t.episodeTitle === dbTrack.episodeTitle && 
+                  t.startTime === dbTrack.startTime && 
+                  t.endTime === dbTrack.endTime && 
+                  t.title === dbTrack.title
+                );
+                if (updatedTrack) {
+                  dbTrack.valueForValue = updatedTrack.valueForValue;
+                }
+              });
+              
+              // Update metadata
+              musicData.metadata.lastUpdated = new Date().toISOString();
+              
+              await fs.writeFile(dataPath, JSON.stringify(musicData, null, 2));
+              console.log('✅ Database updated with V4V resolutions');
+            } catch (error) {
+              console.error('Failed to save V4V resolutions to database:', error);
+            }
+          }
+        }
+      }
+      
       // Apply pagination
       const paginatedTracks = databaseTracks.slice(offset, offset + limit);
       

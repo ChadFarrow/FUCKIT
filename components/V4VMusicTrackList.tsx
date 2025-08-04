@@ -97,10 +97,10 @@ export default function V4VMusicTrackList({
       const data = await response.json();
       
       if (data.success) {
-        setTracks(data.data.tracks);
-        setTotalPages(data.data.pagination.totalPages);
-        setTotalTracks(data.data.pagination.total);
-        setDatabaseStats(data.data.statistics);
+        setTracks(data.data?.tracks || []);
+        setTotalPages(data.data?.pagination?.totalPages || 1);
+        setTotalTracks(data.data?.pagination?.total || 0);
+        setDatabaseStats(data.data?.statistics || null);
       } else {
         throw new Error(data.error || 'Failed to load tracks');
       }
@@ -161,12 +161,12 @@ export default function V4VMusicTrackList({
 
   // Get unique episodes and feeds for filters
   const uniqueEpisodes = useMemo(() => {
-    const episodes = new Set(tracks.map(t => t.episodeTitle));
+    const episodes = new Set(tracks.filter(t => t && t.episodeTitle).map(t => t.episodeTitle));
     return Array.from(episodes).sort();
   }, [tracks]);
 
   const uniqueFeeds = useMemo(() => {
-    const feeds = new Set(tracks.map(t => t.feedId));
+    const feeds = new Set(tracks.filter(t => t && t.feedId).map(t => t.feedId));
     return Array.from(feeds).sort();
   }, [tracks]);
 
@@ -383,7 +383,7 @@ export default function V4VMusicTrackList({
               V4V Only
             </span>
           )}
-          {databaseStats && (
+          {databaseStats && databaseStats.segmentsWithV4V !== undefined && (
             <span className="flex items-center gap-1">
               <Database className="w-4 h-4" />
               {databaseStats.segmentsWithV4V} V4V segments
@@ -437,7 +437,7 @@ export default function V4VMusicTrackList({
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {tracks.map((track) => (
+              {tracks.filter(track => track && track.id).map((track) => (
                 <V4VMusicTrackCard
                   key={track.id}
                   track={track}

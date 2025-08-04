@@ -45,3 +45,9 @@
 
 The page now loads 283 tracks successfully and provides a much better user experience with search, filtering, and detailed track information.
 
+## 4. Update HGH playlist page UI to match ITDV dark theme design [done]
+### Dependencies: None
+### Description: Successfully updated the Homegrown Hits (HGH) playlist page to match the ITDV page's dark theme UI/layout while preserving all HGH-specific functionality. Copied dark theme styling, updated header/stats/filters/track list, added info panel, maintained HGH data loading and V4V resolution, and deployed to production (v1.567).
+### Details:
+
+

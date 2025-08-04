@@ -37,6 +37,8 @@ export class V4VResolver {
     'a2d2e313-9cbd-5169-b89c-ab07b33ecc33': 'https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/the heycitizen experience.xml', // The Heycitizen Experience - HeyCitizen
     // Episode 51 feeds
     'de032037-63e0-5c6b-820d-13d4319a2b19': 'https://wavlake.com/feed/music/169e65e4-c3fa-471f-a473-b75f3890848b' // Breathe EP - The Greensands
+    // Note: HGH feed GUIDs need to be discovered via Podcast Index API or manual lookup
+    // The feed GUIDs are different from the music IDs used in Wavlake URLs
   };
 
   private static feedCache = new Map<string, string>();
@@ -60,6 +62,28 @@ export class V4VResolver {
         
         if (!discoveredFeedUrl) {
           console.log(`❌ FeedGuid ${feedGuid} not found in Podcast Index API`);
+          
+          // Check if this is a known HGH feed GUID that needs manual discovery
+          const hghFeedGuids = [
+            '0653114c-dd08-5f36-863d-009d56bccb8d', // Sun Ray
+            'fd10aec5-b4c4-5255-991e-3dae7095f96a', // Lore and Legend
+            '749c442d-5d43-50b0-9f7a-0f5cbf0a218a', // Pickle Popsicle
+            'ab7db89d-9602-5b8d-bba8-42855b20c13c', // The Big I am (Live)
+            'd6b85f98-6d7a-5eca-b288-dafae4381a1d', // Pickle It Up!
+            '227754a0-691f-5b2d-a685-aac2df167fdc',
+            '262a48c2-502d-5c09-add4-76a86056876d',
+            '38edc858-5731-5221-86bf-86db9f886e2b',
+            '5c87b91a-2141-590b-ab19-93e8a6f2d885',
+            '63fb0d8e-793f-5033-bbb4-39a836e3da76'
+          ];
+          
+          if (hghFeedGuids.includes(feedGuid)) {
+            return {
+              success: false,
+              error: `HGH feed GUID ${feedGuid} needs manual discovery. This is likely a Wavlake feed that needs to be added to the knownFeeds list.`
+            };
+          }
+          
           return {
             success: false,
             error: 'Unknown feed GUID - not found in Podcast Index'

@@ -1,0 +1,11 @@
+# Task ID: 18
+# Title: Fix V4V Artist Resolution Display Issue
+# Status: done
+# Dependencies: None
+# Priority: high
+# Description: Fixed the ITDV playlist to display resolved V4V artist names instead of 'Unknown Artist'
+# Details:
+The getDisplayArtist() function was not properly checking for resolved V4V artist data. Updated to prioritize valueForValue.resolvedArtist when available and resolved=true.
+
+# Test Strategy:
+

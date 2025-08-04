@@ -1,6 +1,7 @@
 import { AppError, ErrorCodes, withRetry, createErrorLogger } from './error-utils';
 import * as xml2js from 'xml2js';
 import { RSSParser, RSSValueTimeSplit, RSSValueRecipient } from './rss-parser';
+import crypto from 'crypto';
 
 export interface MusicTrack {
   id: string;
@@ -204,7 +205,7 @@ export class MusicTrackParser {
     tracks.push(...chapterTracks);
     
     // 2. Extract tracks from value time splits (legacy method)
-    const valueSplitTracks = this.extractTracksFromValueSplits(item, {
+    const valueSplitTracks = await this.extractTracksFromValueSplits(item, {
       episodeId: episodeGuid,
       episodeTitle,
       episodeDate,
@@ -351,7 +352,7 @@ export class MusicTrackParser {
   /**
    * Extract music tracks from value time splits
    */
-  private static extractTracksFromValueSplits(
+  private static async extractTracksFromValueSplits(
     item: any,
     context: {
       episodeId: string;
@@ -361,7 +362,7 @@ export class MusicTrackParser {
       feedUrl: string;
       audioUrl?: string;
     }
-  ): MusicTrack[] {
+  ): Promise<MusicTrack[]> {
     const tracks: MusicTrack[] = [];
     
     // Use the enhanced V4V parsing from RSSParser
@@ -435,18 +436,60 @@ export class MusicTrackParser {
           }
         }
         
+        // Try to resolve V4V track information using Podcast Index API
+        let resolvedTitle = trackTitle;
+        let resolvedArtist = context.channelTitle;
+        let resolvedImage: string | undefined;
+        let resolvedAudioUrl: string | undefined;
+        let resolvedDuration: number | undefined;
+        let isResolved = false;
+        
+        if (feedGuid && itemGuid) {
+          try {
+            this.logger.info('Attempting to resolve V4V track with Podcast Index', { feedGuid, itemGuid });
+            
+            const resolution = await this.resolveV4VTrackWithPodcastIndex(feedGuid, itemGuid);
+            
+            if (resolution.resolved) {
+              resolvedTitle = resolution.title || trackTitle;
+              resolvedArtist = resolution.artist || context.channelTitle;
+              resolvedImage = resolution.image;
+              resolvedAudioUrl = resolution.audioUrl;
+              resolvedDuration = resolution.duration;
+              isResolved = true;
+              
+              this.logger.info('Successfully resolved V4V track', { 
+                feedGuid, 
+                itemGuid, 
+                originalTitle: trackTitle,
+                resolvedTitle,
+                resolvedArtist 
+              });
+            } else {
+              this.logger.warn('Failed to resolve V4V track with Podcast Index', { feedGuid, itemGuid });
+            }
+          } catch (error) {
+            this.logger.error('Error during V4V track resolution', { 
+              feedGuid, 
+              itemGuid, 
+              error: error instanceof Error ? error.message : String(error) 
+            });
+          }
+        }
+        
         // This is likely a music track shared via value-for-value
         const track: MusicTrack = {
           id: this.generateId(),
-          title: trackTitle,
-          artist: context.channelTitle,
+          title: resolvedTitle,
+          artist: resolvedArtist,
           episodeId: context.episodeId,
           episodeTitle: context.episodeTitle,
           episodeDate: context.episodeDate,
           startTime,
           endTime: startTime + duration,
-          duration,
-          audioUrl: context.audioUrl,
+          duration: resolvedDuration || duration,
+          audioUrl: resolvedAudioUrl || context.audioUrl,
+          image: resolvedImage,
           source: 'value-split',
           feedUrl: context.feedUrl,
           discoveredAt: new Date(),
@@ -457,7 +500,14 @@ export class MusicTrackParser {
             customValue: this.getAttributeValue(split, 'customValue'),
             remotePercentage,
             feedGuid,
-            itemGuid
+            itemGuid,
+            resolvedTitle,
+            resolvedArtist,
+            resolvedImage,
+            resolvedAudioUrl,
+            resolvedDuration,
+            resolved: isResolved,
+            lastResolved: isResolved ? new Date() : undefined
           }
         };
         
@@ -775,19 +825,44 @@ export class MusicTrackParser {
   private static isMusicChapter(chapter: { title: string; startTime: number }): boolean {
     const title = chapter.title.toLowerCase();
     
-    // Exclude podcast intro/outro chapters
-    if (title.includes('into the doerfel-verse') || title.includes('verse')) {
+    // Exclude podcast intro/outro chapters and generic content
+    const excludePatterns = [
+      'into the doerfel-verse', 'verse', 'tiddicate', 'indicate',
+      'intro', 'outro', 'introductory', 'conclusion', 'ending',
+      'welcome', 'goodbye', 'thanks', 'thank you', 'shout out',
+      'call the hitter', 'special thanks', 'producers', 'boost',
+      'boostagram', 'value4value', 'lightning', 'bitcoin'
+    ];
+    
+    if (excludePatterns.some(pattern => title.includes(pattern))) {
       return false;
     }
     
-    // Keywords that suggest music content
+    // Exclude very short or generic titles
+    if (title.length < 3 || title.length > 100) {
+      return false;
+    }
+    
+    // Exclude titles that are just numbers or timestamps
+    if (/^\d+$/.test(title) || /^\d+:\d+$/.test(title)) {
+      return false;
+    }
+    
+    // Keywords that strongly suggest music content
     const musicKeywords = [
       'song', 'track', 'music', 'tune', 'melody', 'jam', 'riff',
       'instrumental', 'acoustic', 'electric', 'guitar', 'piano',
-      'drums', 'bass', 'vocal', 'chorus', 'bridge'
+      'drums', 'bass', 'vocal', 'chorus', 'bridge', 'album',
+      'single', 'ep', 'remix', 'cover', 'live', 'studio'
     ];
     
-    return musicKeywords.some(keyword => title.includes(keyword));
+    // Must contain at least one music keyword
+    const hasMusicKeyword = musicKeywords.some(keyword => title.includes(keyword));
+    
+    // Additional check: if it looks like "Artist - Title" or "Artist: Title" format
+    const hasArtistTitleFormat = /^[^-:]+[-:]\s*[^-:]+$/.test(chapter.title.trim());
+    
+    return hasMusicKeyword || hasArtistTitleFormat;
   }
 
   /**
@@ -1126,6 +1201,97 @@ export class MusicTrackParser {
     } catch (error) {
       this.logger.error('Error resolving remote track', { feedGuid, itemGuid, error });
       return null;
+    }
+  }
+
+  /**
+   * Resolve V4V track information using Podcast Index API
+   * This attempts to get actual artist and title information for V4V tracks
+   */
+  private static async resolveV4VTrackWithPodcastIndex(
+    feedGuid: string,
+    itemGuid: string
+  ): Promise<{
+    title?: string;
+    artist?: string;
+    image?: string;
+    audioUrl?: string;
+    duration?: number;
+    resolved: boolean;
+  }> {
+    try {
+      // Check if we have Podcast Index API credentials
+      const apiKey = process.env.PODCAST_INDEX_API_KEY;
+      const apiSecret = process.env.PODCAST_INDEX_API_SECRET;
+      
+      if (!apiKey || !apiSecret) {
+        this.logger.warn('Podcast Index API credentials not configured for V4V resolution');
+        return { resolved: false };
+      }
+
+      // Generate authentication headers for Podcast Index API
+      const timestamp = Math.floor(Date.now() / 1000);
+      const authString = apiKey + apiSecret + timestamp;
+      const authHash = crypto.createHash('sha1').update(authString).digest('hex');
+      
+      const headers = {
+        'User-Agent': 're.podtards.com',
+        'X-Auth-Key': apiKey,
+        'X-Auth-Date': timestamp.toString(),
+        'Authorization': authHash
+      };
+
+      // Try to get feed information from Podcast Index API
+      const feedUrl = `https://api.podcastindex.org/api/1.0/podcasts/byguid?guid=${feedGuid}`;
+      const feedResponse = await fetch(feedUrl, { headers });
+      
+      if (feedResponse.ok) {
+        const feedData = await feedResponse.json();
+        if (feedData.status === 'true' && feedData.feed) {
+          const feed = feedData.feed;
+          
+          // Now try to get the specific episode
+          const episodeUrl = `https://api.podcastindex.org/api/1.0/episodes/byguid?guid=${itemGuid}&feedid=${feed.id}`;
+          const episodeResponse = await fetch(episodeUrl, { headers });
+          
+          if (episodeResponse.ok) {
+            const episodeData = await episodeResponse.json();
+            if (episodeData.status === 'true' && episodeData.episode) {
+              const episode = episodeData.episode;
+              
+              return {
+                resolved: true,
+                title: episode.title || feed.title,
+                artist: feed.author || feed.title,
+                image: episode.image || feed.image || feed.artwork,
+                audioUrl: episode.enclosureUrl,
+                duration: episode.duration,
+              };
+            }
+          }
+          
+          // If episode lookup fails, return feed-level information
+          return {
+            resolved: true,
+            title: feed.title,
+            artist: feed.author || feed.title,
+            image: feed.image || feed.artwork,
+            audioUrl: undefined,
+            duration: undefined,
+          };
+        }
+      }
+
+      this.logger.warn('Failed to resolve V4V track with Podcast Index', { feedGuid, itemGuid });
+      return { resolved: false };
+
+    } catch (error) {
+      this.logger.error('Error resolving V4V track with Podcast Index', { 
+        feedGuid, 
+        itemGuid, 
+        error: error instanceof Error ? error.message : String(error) 
+      });
+      return { resolved: false };
     }
   }
 

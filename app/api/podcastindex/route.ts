@@ -11,13 +11,16 @@ export async function GET(request: NextRequest) {
     const feedUrl = searchParams.get('feedUrl');
     const endpoint = searchParams.get('endpoint') || 'episodes/byfeedurl';
     const guid = searchParams.get('guid'); // For episode-specific requests
+    const feedId = searchParams.get('feedId'); // For feed-specific requests
     
-    if (!feedUrl && !guid) {
-      return NextResponse.json({ error: 'Feed URL or GUID is required' }, { status: 400 });
+    if (!feedUrl && !guid && !feedId) {
+      return NextResponse.json({ error: 'Feed URL, GUID, or Feed ID is required' }, { status: 400 });
     }
 
     if (!PODCAST_INDEX_API_KEY || !PODCAST_INDEX_API_SECRET) {
       console.error('PodcastIndex API credentials not configured');
+      console.error('API Key:', PODCAST_INDEX_API_KEY ? 'Present' : 'Missing');
+      console.error('API Secret:', PODCAST_INDEX_API_SECRET ? 'Present' : 'Missing');
       // Fallback to direct RSS feed fetch
       if (feedUrl) {
         const response = await fetch(`${request.nextUrl.origin}/api/fetch-rss?url=${encodeURIComponent(feedUrl)}`);
@@ -28,7 +31,7 @@ export async function GET(request: NextRequest) {
           },
         });
       } else {
-        return NextResponse.json({ error: 'Cannot fetch by GUID without Podcast Index API' }, { status: 400 });
+        return NextResponse.json({ error: 'Cannot fetch by GUID or Feed ID without Podcast Index API' }, { status: 400 });
       }
     }
 
@@ -43,6 +46,9 @@ export async function GET(request: NextRequest) {
     if (guid) {
       // Fetch specific episode by GUID
       apiUrl = `${PODCAST_INDEX_BASE_URL}/episodes/byguid?guid=${encodeURIComponent(guid)}`;
+    } else if (feedId) {
+      // Fetch feed by ID (GUID)
+      apiUrl = `${PODCAST_INDEX_BASE_URL}/podcasts/byguid?guid=${encodeURIComponent(feedId)}`;
     } else {
       // Fetch episodes by feed URL
       apiUrl = `${PODCAST_INDEX_BASE_URL}/${endpoint}?url=${encodeURIComponent(feedUrl!)}&max=1000`;
@@ -84,6 +90,17 @@ export async function GET(request: NextRequest) {
         return new NextResponse(rssXml, {
           headers: {
             'Content-Type': 'application/xml',
+            'Cache-Control': 'public, max-age=3600',
+          },
+        });
+      }
+    } else if (feedId) {
+      // Feed lookup response
+      if (data.feed) {
+        // Return the feed data directly for now
+        return NextResponse.json(data.feed, {
+          headers: {
+            'Content-Type': 'application/json',
             'Cache-Control': 'public, max-age=3600',
           },
         });

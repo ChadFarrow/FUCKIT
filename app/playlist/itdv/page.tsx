@@ -186,8 +186,8 @@ export default function ITDVPlaylistPage() {
   const loadMainFeedTracks = async () => {
     console.log('🎵 Loading tracks from persistent storage...');
     
-    // Always load from local database with high limit to get all tracks (V4V data already resolved and cached)
-    const response = await fetch('/api/music-tracks?feedUrl=local://database&limit=1000');
+    // Always load from local database with high limit to get all tracks, ensuring V4V data is resolved
+    const response = await fetch('/api/music-tracks?feedUrl=local://database&limit=1000&resolveV4V=true');
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -388,42 +388,81 @@ export default function ITDVPlaylistPage() {
   });
 
   // Helper function to get the correct audio URL
-  const getAudioUrl = (track: Track): string => {
-    // Use resolved audio URL if available and track is resolved
+  const getAudioUrl = (track: Track): string | null => {
+    console.log('🔍 getAudioUrl called with track:', {
+      title: track.title,
+      hasValueForValue: !!track.valueForValue,
+      resolved: track.valueForValue?.resolved,
+      resolvedAudioUrl: track.valueForValue?.resolvedAudioUrl,
+      feedGuid: track.valueForValue?.feedGuid,
+      itemGuid: track.valueForValue?.itemGuid
+    });
+    
     if (track.valueForValue?.resolved && track.valueForValue?.resolvedAudioUrl) {
+      console.log('✅ Returning resolved V4V audio URL');
       return track.valueForValue.resolvedAudioUrl;
     }
-    // Fallback to original audio URL
-    return track.audioUrl;
+    
+    // If we have V4V data but it's not resolved, return null (no fallback)
+    if (track.valueForValue?.feedGuid && track.valueForValue?.itemGuid) {
+      console.log('❌ V4V data not resolved, no fallback allowed');
+      console.warn(`Track "${track.title}" - V4V not resolved. Feed: ${track.valueForValue.feedGuid}, Item: ${track.valueForValue.itemGuid}. No episode audio fallback allowed.`);
+      return null; // No fallback - only real MP3s allowed
+    }
+    
+    // If no V4V data at all, return null
+    console.log('❌ No V4V data available, no fallback allowed');
+    return null;
   };
 
   // Helper function to get display title
   const getDisplayTitle = (track: Track): string => {
+    // First try resolved V4V title
     if (track.valueForValue?.resolved && track.valueForValue?.resolvedTitle) {
       return track.valueForValue.resolvedTitle;
     }
-    return track.title;
+    
+    // If V4V not resolved, clean up the title by removing artist information
+    const title = track.title;
+    
+    // Remove "by Artist Name" from end
+    const cleanTitle = title.replace(/\s+by\s+.+$/i, '');
+    
+    // Remove "Artist Name - " or "Artist Name: " from beginning
+    const finalTitle = cleanTitle.replace(/^.+?\s*[-:]\s*/, '');
+    
+    return finalTitle;
   };
 
   // Helper function to get display artist
   const getDisplayArtist = (track: Track): string => {
-    // Debug log for first few calls
-    if (Math.random() < 0.05) { // Log 5% of calls to avoid spam
-      console.log(`🎤 getDisplayArtist debug for "${track.title}":`, {
-        hasValueForValue: !!track.valueForValue,
-        resolved: track.valueForValue?.resolved,
-        resolvedArtist: track.valueForValue?.resolvedArtist,
-        fallbackArtist: track.artist,
-        willUseResolved: !!(track.valueForValue?.resolved && track.valueForValue?.resolvedArtist)
-      });
-    }
-    
-    // Check for resolved artist first (V4V resolution)
+    // First try resolved V4V artist
     if (track.valueForValue?.resolved && track.valueForValue?.resolvedArtist) {
       return track.valueForValue.resolvedArtist;
     }
     
-    // Fallback to original artist
+    // If V4V not resolved, try to extract artist from track title
+    const title = track.title;
+    
+    // Pattern: "Song Title by Artist Name"
+    const byMatch = title.match(/by\s+(.+)$/i);
+    if (byMatch) {
+      return byMatch[1].trim();
+    }
+    
+    // Pattern: "Artist Name - Song Title" or "Artist Name: Song Title"
+    const dashMatch = title.match(/^(.+?)\s*[-:]\s*(.+)$/);
+    if (dashMatch) {
+      return dashMatch[1].trim();
+    }
+    
+    // Pattern: "Song Title (Live) by Artist Name"
+    const liveByMatch = title.match(/\(Live\)\s+by\s+(.+)$/i);
+    if (liveByMatch) {
+      return liveByMatch[1].trim();
+    }
+    
+    // If no pattern matches, return the original artist (likely "Unknown Artist")
     return track.artist;
   };
 
@@ -469,14 +508,21 @@ export default function ITDVPlaylistPage() {
     setAudioLoading(track.id);
     
     try {
+      const audioUrl = getAudioUrl(track);
       console.log('🎵 Getting audio URL...');
       console.log('🎵 getAudioUrl check:', {
         hasValueForValue: !!track.valueForValue,
         resolved: track.valueForValue?.resolved,
-        resolvedAudioUrl: track.valueForValue?.resolvedAudioUrl,
-        fallbackAudioUrl: track.audioUrl
+        resolvedAudioUrl: track.valueForValue?.resolvedAudioUrl
       });
-      const audioUrl = getAudioUrl(track);
+      
+      if (!audioUrl) {
+        console.log('❌ No valid audio URL available - V4V not resolved');
+        setAudioLoading(null);
+        setError(`Cannot play "${track.title}" - V4V data not resolved. Only real MP3 files are allowed, no episode audio fallback.`);
+        return;
+      }
+      
       console.log('🎵 Final audio URL:', audioUrl);
       
       console.log('🎵 Creating new Audio element...');
@@ -508,29 +554,18 @@ export default function ITDVPlaylistPage() {
         handleTrackEnd();
       });
       
-      // Only set currentTime for episode audio, not individual resolved tracks
+      // For resolved V4V tracks, always start from beginning and play full duration
       if (track.valueForValue?.resolved && track.valueForValue?.resolvedAudioUrl) {
         console.log('🎵 Using resolved track - starting from beginning (0 seconds)');
         newAudio.currentTime = 0;
-      } else {
-        console.log('🎵 Using episode audio - setting current time to:', track.startTime);
-        newAudio.currentTime = track.startTime;
-      }
-      
-      // Set up timer to stop at endTime (only for episode audio, not individual tracks)
-      if (track.valueForValue?.resolved && track.valueForValue?.resolvedAudioUrl) {
         console.log('🎵 Individual track - will play until natural end');
         // Let the track play until its natural end (audio 'ended' event will handle it)
       } else {
-        const duration = track.endTime - track.startTime;
-        console.log('🎵 Episode audio - setting timer for duration:', duration, 'seconds');
-        setTimeout(() => {
-          if (newAudio && !newAudio.paused) {
-            console.log('🎵 Episode segment duration reached, stopping playback');
-            newAudio.pause();
-            handleTrackEnd();
-          }
-        }, duration * 1000);
+        // This should never happen now since we require V4V resolution
+        console.error('🎵 Attempting to play non-resolved track - this should not happen');
+        setAudioLoading(null);
+        setError('Cannot play track: V4V data not resolved');
+        return;
       }
       
       console.log('🎵 Attempting to play audio...');

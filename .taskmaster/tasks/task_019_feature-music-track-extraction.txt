@@ -1,0 +1,11 @@
+# Task ID: 19
+# Title: Fix tracks playing from episode feed instead of resolved V4V URLs
+# Status: pending
+# Dependencies: 18
+# Priority: high
+# Description: Some V4V-resolved tracks are still playing audio from the Doerfelverse episode feed instead of using the resolved audio URLs from the actual music feeds
+# Details:
+When V4V resolution is successful, tracks have resolvedAudioUrl pointing to the actual music file (e.g., from Wavlake), but the player might still be using the episode's audio URL with start/end timestamps. Need to ensure the audio player uses resolvedAudioUrl when available for proper music playback.
+
+# Test Strategy:
+

@@ -476,6 +476,15 @@
             "status": "done",
             "dependencies": [],
             "parentTaskId": 15
+          },
+          {
+            "id": 4,
+            "title": "Update HGH playlist page UI to match ITDV dark theme design",
+            "description": "Successfully updated the Homegrown Hits (HGH) playlist page to match the ITDV page's dark theme UI/layout while preserving all HGH-specific functionality. Copied dark theme styling, updated header/stats/filters/track list, added info panel, maintained HGH data loading and V4V resolution, and deployed to production (v1.567).",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 15
           }
         ]
       },
@@ -542,15 +551,52 @@
         "description": "Investigate why playlist only starts at Episode 52, all tracks are 5 minutes titled 'Verse', and implement proper episode-by-episode parsing starting from Episode 56",
         "details": "Issues: 1) Only shows Episode 52 onwards, 2) All tracks are exactly 5 minutes, 3) All titled 'Verse' instead of real track names, 4) Need episode-by-episode parsing from Episode 56 backwards",
         "testStrategy": "",
-        "status": "in-progress",
+        "status": "done",
         "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 18,
+        "title": "Fix V4V Artist Resolution Display Issue",
+        "description": "Fixed the ITDV playlist to display resolved V4V artist names instead of 'Unknown Artist'",
+        "details": "The getDisplayArtist() function was not properly checking for resolved V4V artist data. Updated to prioritize valueForValue.resolvedArtist when available and resolved=true.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 19,
+        "title": "Fix tracks playing from episode feed instead of resolved V4V URLs",
+        "description": "Some V4V-resolved tracks are still playing audio from the Doerfelverse episode feed instead of using the resolved audio URLs from the actual music feeds",
+        "details": "When V4V resolution is successful, tracks have resolvedAudioUrl pointing to the actual music file (e.g., from Wavlake), but the player might still be using the episode's audio URL with start/end timestamps. Need to ensure the audio player uses resolvedAudioUrl when available for proper music playback.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          18
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 20,
+        "title": "Fix persistent \"Unknown Artist\" display issue",
+        "description": "Artists are still showing as \"Unknown Artist\" in the ITDV playlist despite V4V resolution returning correct artist names",
+        "details": "The API returns correct V4V resolved data with artist names like \"John Depew Trio\" and \"Big Awesome\", and the getDisplayArtist() function was updated to check valueForValue.resolvedArtist, but the UI still displays \"Unknown Artist\". This may be a caching issue, data transformation problem, or React rendering issue where the component isn't properly updating with the resolved data.",
+        "testStrategy": "",
+        "status": "in-progress",
+        "dependencies": [
+          18
+        ],
         "priority": "high",
         "subtasks": []
       }
     ],
     "metadata": {
       "created": "2025-08-01T21:46:44.417Z",
-      "updated": "2025-08-04T00:19:21.588Z",
+      "updated": "2025-08-04T21:55:40.173Z",
       "description": "Music track extraction feature development"
     }
   },

@@ -44255,20 +44255,10 @@
       "lastUpdated": "2025-08-04T04:29:57.176Z"
     }
   ],
-  "episodes": [],
-  "feeds": [],
-  "valueTimeSplits": [],
-  "valueRecipients": [],
-  "boostagrams": [],
-  "funding": [],
-  "extractions": [],
-  "analytics": [],
   "metadata": {
-    "version": "1.0.0",
-    "lastUpdated": "2025-08-04T22:06:35.471Z",
-    "totalTracks": 1750,
-    "totalEpisodes": 0,
-    "totalFeeds": 0,
-    "totalExtractions": 0
+    "totalTracks": 1628,
+    "lastUpdated": "2025-08-04T04:35:43.350Z",
+    "totalExtractions": 6,
+    "version": "1.0"
   }
 }

@@ -1,7 +1,8 @@
 const crypto = require('crypto');
 
-const PODCAST_INDEX_API_KEY = 'PHT7NRJC6JWBWRFQGUXS';
-const PODCAST_INDEX_API_SECRET = '#7g8zk3fB#dPSaj$LcYYa9#2jHXu$6gmYSKJkJDL';
+// Use environment variables for API credentials
+const PODCAST_INDEX_API_KEY = process.env.PODCAST_INDEX_API_KEY || 'MV5XQPRMUX3SCTXMGNVG';
+const PODCAST_INDEX_API_SECRET = process.env.PODCAST_INDEX_API_SECRET || 'eX9vbbV2SfgGctENDDjethfnKP2VAwMgYTDkQ9ce';
 
 // Missing feedGuid from Episode 44
 const missingFeedGuid = 'a2d2e313-9cbd-5169-b89c-ab07b33ecc33';
