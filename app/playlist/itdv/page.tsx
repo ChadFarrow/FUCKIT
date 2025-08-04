@@ -526,17 +526,27 @@ export default function ITDVPlaylistPage() {
   };
 
   const handleTrackEnd = () => {
+    console.log('🎵 handleTrackEnd called:', { 
+      currentTrack, 
+      continuousPlay, 
+      queueLength: playQueue.length,
+      totalTracks: filteredAndSortedTracks.length 
+    });
+    
     if (continuousPlay && playQueue.length > 0) {
+      console.log('🎵 Using queue playback');
       playNextInQueue();
     } else {
       // Auto-play next track in the filtered list
       const currentTrackIndex = filteredAndSortedTracks.findIndex(t => t.id === currentTrack);
+      console.log('🎵 Current track index:', currentTrackIndex, 'out of', filteredAndSortedTracks.length);
+      
       if (currentTrackIndex !== -1 && currentTrackIndex < filteredAndSortedTracks.length - 1) {
         const nextTrack = filteredAndSortedTracks[currentTrackIndex + 1];
         console.log('🎵 Auto-playing next track:', nextTrack.title);
         playTrack(nextTrack);
       } else {
-        console.log('🎵 Reached end of playlist');
+        console.log('🎵 Reached end of playlist - currentTrackIndex:', currentTrackIndex, 'totalTracks:', filteredAndSortedTracks.length);
         setCurrentTrack(null);
         setAudio(null);
         setAudioLoading(null);
