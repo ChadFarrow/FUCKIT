@@ -34,7 +34,9 @@ export class V4VResolver {
     // Note: V4V resolver now automatically looks up unknown feedGuids via Podcast Index API
     // Only commonly used feeds are pre-cached here for performance
     // Episode 44 feeds
-    'a2d2e313-9cbd-5169-b89c-ab07b33ecc33': 'https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/the heycitizen experience.xml' // The Heycitizen Experience - HeyCitizen
+    'a2d2e313-9cbd-5169-b89c-ab07b33ecc33': 'https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/the heycitizen experience.xml', // The Heycitizen Experience - HeyCitizen
+    // Episode 51 feeds
+    'de032037-63e0-5c6b-820d-13d4319a2b19': 'https://wavlake.com/feed/music/169e65e4-c3fa-471f-a473-b75f3890848b' // Breathe EP - The Greensands
   };
 
   private static feedCache = new Map<string, string>();
@@ -265,9 +267,14 @@ export class V4VResolver {
   private static async lookupFeedGuid(feedGuid: string): Promise<string | null> {
     try {
       // Use environment variables for API credentials
-      const apiKey = process.env.PODCAST_INDEX_API_KEY || 'PHT7NRJC6JWBWRFQGUXS';
-      const apiSecret = process.env.PODCAST_INDEX_API_SECRET || '#7g8zk3fB#dPSaj$LcYYa9#2jHXu$6gmYSKJkJDL';
+      const apiKey = process.env.PODCAST_INDEX_API_KEY;
+      const apiSecret = process.env.PODCAST_INDEX_API_SECRET;
       
+      if (!apiKey || !apiSecret) {
+        console.error('PODCAST_INDEX_API_KEY or PODCAST_INDEX_API_SECRET not set in environment variables.');
+        return null;
+      }
+
       // Create authorization header
       const crypto = require('crypto');
       const apiHeaderTime = Math.floor(Date.now() / 1000);
