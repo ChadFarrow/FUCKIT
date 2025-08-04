@@ -45,7 +45,11 @@ export default function ITDVRSSPlaylistPage() {
       });
   }, []);
 
-  const rssUrl = `${window.location.origin}/api/playlist/itdv-rss`;
+  const [rssUrl, setRssUrl] = useState<string>('');
+
+  useEffect(() => {
+    setRssUrl(`${window.location.origin}/api/playlist/itdv-rss`);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">

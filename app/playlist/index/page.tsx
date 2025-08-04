@@ -121,7 +121,7 @@ export default function PlaylistIndexPage() {
               <h3 className="font-semibold text-gray-300 mb-2">What are RSS Feeds?</h3>
               <p className="text-sm text-gray-400 mb-4">
                 RSS feeds allow you to subscribe to music playlists in your favorite podcast apps. 
-                They're compatible with Podcasting 2.0 apps and support Value4Value payments.
+                They&apos;re compatible with Podcasting 2.0 apps and support Value4Value payments.
               </p>
               <h3 className="font-semibold text-gray-300 mb-2">Compatible Apps:</h3>
               <ul className="text-sm text-gray-400 space-y-1">

@@ -55,7 +55,7 @@ export default function ITDVPlaylistAlbum() {
       setTracks(data.data?.tracks || []);
     } catch (error) {
       console.error('❌ Error loading ITDV tracks:', error);
-      if (error.name === 'AbortError') {
+      if (error instanceof Error && error.name === 'AbortError') {
         console.error('Request timed out');
       }
     } finally {
