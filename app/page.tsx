@@ -561,8 +561,8 @@ export default function HomePage() {
         filtered = baseAlbums.filter(album => album.tracks.length === 1);
         break;
       case 'playlist':
-        // Redirect to playlist page
-        router.push('/playlist');
+        // Redirect to ITDV playlist page
+        router.push('/playlist/itdv');
         filtered = baseAlbums; // Return albums while redirecting
         break;
       default: // 'all'
