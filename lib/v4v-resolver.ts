@@ -20,7 +20,12 @@ export class V4VResolver {
     '1e7ed1fa-0456-5860-9b34-825d1335d8f8': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml',
     '5bb8f186-2460-54dc-911d-54f642e8adf6': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/CityBeach.xml',
     '4a483a4b-867c-50d5-a61a-e99fe03ea57e': 'https://www.doerfelverse.com/feeds/wrath-of-banjo.xml',
-    'a599fabe-6b73-58f3-88b8-a7b78a2976b5': 'https://www.thisisjdog.com/media/ring-that-bell.xml'
+    'a599fabe-6b73-58f3-88b8-a7b78a2976b5': 'https://www.thisisjdog.com/media/ring-that-bell.xml',
+    // Episode 56 Wavlake feeds
+    '3ae285ab-434c-59d8-aa2f-59c6129afb92': 'https://wavlake.com/feed/music/99ed143c-c461-4f1a-9d0d-bee6f70d8b7e', // Bell of Hope - John Depew Trio
+    '6fc2ad98-d4a8-5d70-9c68-62e9efc1209c': 'https://wavlake.com/feed/music/5a07b3f1-8249-45a1-b40a-630797dc4941', // Birdfeeder (EP) - Big Awesome
+    'dea01a9d-a024-5b13-84aa-b157304cd3bc': 'https://wavlake.com/feed/music/328f61b9-20b1-4338-9e2a-b437abc39f7b', // Smokestacks - Herbivore
+    '95e5f7a9-d88e-5e51-b2ae-f4b1865d19c4': 'https://wavlake.com/feed/music/8aaf0d1e-7ac3-4f7d-993b-6f59f936d780'  // Live From the Other Side - Theo Katzman
   };
 
   private static feedCache = new Map<string, string>();
@@ -203,6 +208,7 @@ export class V4VResolver {
       
       // Get feed-level info for fallbacks
       const feedTitleMatch = feedXml.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/i) || feedXml.match(/<title>(.*?)<\/title>/i);
+      const feedAuthorMatch = feedXml.match(/<author><!\[CDATA\[(.*?)\]\]><\/author>/i) || feedXml.match(/<author>(.*?)<\/author>/i) || feedXml.match(/<itunes:author>(.*?)<\/itunes:author>/i);
       const feedImageMatch = feedXml.match(/<itunes:image[^>]+href="([^"]+)"/i);
       
       if (!titleMatch) {
@@ -215,7 +221,7 @@ export class V4VResolver {
       return {
         success: true,
         title: titleMatch[1],
-        artist: authorMatch ? authorMatch[1] : feedTitleMatch ? feedTitleMatch[1] : 'The Doerfels',
+        artist: authorMatch ? authorMatch[1] : feedAuthorMatch ? feedAuthorMatch[1] : feedTitleMatch ? feedTitleMatch[1] : 'The Doerfels',
         audioUrl: enclosureMatch ? enclosureMatch[1] : undefined,
         duration: durationMatch ? parseInt(durationMatch[1]) : undefined,
         image: imageMatch ? imageMatch[1] : feedImageMatch ? feedImageMatch[1] : undefined,
