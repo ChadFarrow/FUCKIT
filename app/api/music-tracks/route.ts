@@ -140,7 +140,7 @@ export async function GET(request: NextRequest) {
           }
           
           // Find tracks that need V4V resolution
-          const v4vTracks = allTracks.filter(track => 
+          const v4vTracks = allTracks.filter((track: any) => 
             track.valueForValue?.feedGuid && 
             track.valueForValue?.itemGuid && 
             (!track.valueForValue?.resolved || clearV4VCache)
@@ -150,7 +150,7 @@ export async function GET(request: NextRequest) {
             console.log(`📡 Resolving ${v4vTracks.length} V4V tracks from database${clearV4VCache ? ' (forced re-resolution)' : ''}...`);
             
             // Prepare batch resolution
-            const tracksToResolve = v4vTracks.map(track => ({
+            const tracksToResolve = v4vTracks.map((track: any) => ({
               feedGuid: track.valueForValue.feedGuid,
               itemGuid: track.valueForValue.itemGuid
             }));
@@ -160,7 +160,7 @@ export async function GET(request: NextRequest) {
             
             // Apply resolved data to tracks
             let resolvedCount = 0;
-            allTracks.forEach(track => {
+            allTracks.forEach((track: any) => {
               if (track.valueForValue?.feedGuid && track.valueForValue?.itemGuid) {
                 const key = `${track.valueForValue.feedGuid}:${track.valueForValue.itemGuid}`;
                 const resolution = resolutionResults.get(key);
