@@ -14,25 +14,7 @@ import { AppError, ErrorCodes, ErrorCode, getErrorMessage, createErrorLogger } f
 import { toast } from '@/components/Toast';
 import dynamic from 'next/dynamic';
 
-// Import ITDV Playlist component
-const ITDVPlaylistAlbum = dynamic(() => import('@/components/ITDVPlaylistAlbum'), {
-  loading: () => (
-    <div className="bg-gray-800 rounded-lg p-6">
-      <div className="text-white">Loading ITDV Playlist...</div>
-    </div>
-  ),
-  ssr: false
-});
 
-// Import Lightning Thrashes Playlist component
-const LightningThrashesPlaylistAlbum = dynamic(() => import('@/components/LightningThrashesPlaylistAlbum'), {
-  loading: () => (
-    <div className="bg-gray-800 rounded-lg p-6">
-      <div className="text-white">Loading Lightning Thrashes Playlist...</div>
-    </div>
-  ),
-  ssr: false
-});
 
 // Dynamic imports for heavy components
 const AlbumCard = dynamic(() => import('@/components/AlbumCardLazy'), {
@@ -796,6 +778,34 @@ export default function HomePage() {
                 <span className="text-sm">Doerfel-Verse Music Catalog</span>
               </Link>
             </div>
+
+            {/* Featured Playlists */}
+            <div className="mb-4">
+              <h3 className="text-sm font-semibold mb-2 text-white">Featured Playlists</h3>
+              <div className="space-y-1">
+                <Link 
+                  href="/playlist/itdv-rss" 
+                  className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800/50 transition-colors"
+                  onClick={() => setIsSidebarOpen(false)}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 18V5l12-2v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                  </svg>
+                  <span className="text-sm">Into The Doerfel-Verse</span>
+                </Link>
+                
+                <Link 
+                  href="/playlist/lightning-thrashes-rss" 
+                  className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800/50 transition-colors"
+                  onClick={() => setIsSidebarOpen(false)}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 18V5l12-2v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                  </svg>
+                  <span className="text-sm">Lightning Thrashes</span>
+                </Link>
+              </div>
+            </div>
             
 
 
@@ -891,29 +901,6 @@ export default function HomePage() {
         
         {/* Main Content */}
         <div className="container mx-auto px-3 sm:px-6 py-6 sm:py-8 pb-28">
-          {/* Featured Playlists */}
-          <div className="mb-12">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-purple-500/20 rounded-lg">
-                <svg className="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 18V5l12-2v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold">Featured Playlists</h2>
-            </div>
-            
-            {/* ITDV Playlist */}
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold text-white mb-4">Into The Doerfel-Verse</h3>
-              <ITDVPlaylistAlbum />
-            </div>
-            
-            {/* Lightning Thrashes Playlist */}
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold text-white mb-4">Lightning Thrashes</h3>
-              <LightningThrashesPlaylistAlbum />
-            </div>
-          </div>
 
           {isLoading && !isCriticalLoaded ? (
             <div className="flex flex-col items-center justify-center py-12 gap-4">
