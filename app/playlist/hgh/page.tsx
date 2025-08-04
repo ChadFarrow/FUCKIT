@@ -179,10 +179,14 @@ export default function HGHPlaylistPage() {
       }
     } catch (error) {
       console.error('Error refreshing tracks:', error);
-      if (error.name === 'AbortError') {
-        setError('Refresh timed out. The Homegrown Hits feed is very large and may take a while to process.');
+      if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          setError('Refresh timed out. The Homegrown Hits feed is very large and may take a while to process.');
+        } else {
+          setError(`Failed to refresh tracks: ${error.message}`);
+        }
       } else {
-        setError(`Failed to refresh tracks: ${error.message}`);
+        setError('Failed to refresh tracks: Unknown error');
       }
     } finally {
       setLoading(false);
@@ -254,10 +258,14 @@ export default function HGHPlaylistPage() {
       }
     } catch (error) {
       console.error('Error loading main feed tracks:', error);
-      if (error.name === 'AbortError') {
-        setError('Request timed out. The Homegrown Hits feed is very large and may take a while to process.');
+      if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          setError('Request timed out. The Homegrown Hits feed is very large and may take a while to process.');
+        } else {
+          setError(`Failed to load tracks from Homegrown Hits feed: ${error.message}`);
+        }
       } else {
-        setError(`Failed to load tracks from Homegrown Hits feed: ${error.message}`);
+        setError('Failed to load tracks from Homegrown Hits feed: Unknown error');
       }
     } finally {
       console.log('🏁 Setting loading to false');
@@ -420,7 +428,7 @@ export default function HGHPlaylistPage() {
       if (!audioUrl) {
         console.log('❌ No valid audio URL available - V4V not resolved');
         setError(`Cannot play "${track.title}" - V4V data not resolved. Only real MP3 files are allowed, no episode audio fallback.`);
-        setAudioLoading(false);
+        setAudioLoading(null);
         return;
       }
       
