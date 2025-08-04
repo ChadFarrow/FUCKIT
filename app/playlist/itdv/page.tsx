@@ -178,7 +178,9 @@ export default function ITDVPlaylistPage() {
     console.log('🎵 Loading tracks from persistent storage...');
     
     // Always load from local database with high limit to get all tracks and V4V resolution
-    const response = await fetch('/api/music-tracks?feedUrl=local://database&limit=1000&resolveV4V=true');
+    // Add cache-busting parameter to ensure fresh data
+    const cacheBuster = Date.now();
+    const response = await fetch(`/api/music-tracks?feedUrl=local://database&limit=1000&resolveV4V=true&_cb=${cacheBuster}`);
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -196,23 +198,36 @@ export default function ITDVPlaylistPage() {
       
       console.log(`📊 Filtered to ${mainFeedTracks.length} tracks from main feed`);
       
-      const formattedTracks = mainFeedTracks.map((track: any) => ({
-        id: track.id,
-        title: track.title || 'Unknown Track',
-        artist: track.artist || 'Unknown Artist',
-        episodeTitle: track.episodeTitle || 'Unknown Episode',
-        audioUrl: track.audioUrl,
-        startTime: track.startTime || 0,
-        endTime: track.endTime || (track.startTime + (track.duration || 0)),
-        duration: track.duration || 0,
-        image: track.image,
-        feedGuid: track.feedGuid,
-        itemGuid: track.itemGuid,
-        resolved: track.artist !== 'Unknown Artist' && !track.title.includes('Featured Track'),
-        loading: false,
-        source: track.source || 'unknown',
-        valueForValue: track.valueForValue // Add the missing V4V data!
-      }));
+      const formattedTracks = mainFeedTracks.map((track: any, index: number) => {
+        // Debug log first few tracks to see V4V data
+        if (index < 3) {
+          console.log(`🎤 Track ${index + 1} V4V data:`, {
+            title: track.title,
+            artist: track.artist,
+            hasValueForValue: !!track.valueForValue,
+            resolved: track.valueForValue?.resolved,
+            resolvedArtist: track.valueForValue?.resolvedArtist
+          });
+        }
+        
+        return {
+          id: track.id,
+          title: track.title || 'Unknown Track',
+          artist: track.artist || 'Unknown Artist',
+          episodeTitle: track.episodeTitle || 'Unknown Episode',
+          audioUrl: track.audioUrl,
+          startTime: track.startTime || 0,
+          endTime: track.endTime || (track.startTime + (track.duration || 0)),
+          duration: track.duration || 0,
+          image: track.image,
+          feedGuid: track.feedGuid,
+          itemGuid: track.itemGuid,
+          resolved: track.artist !== 'Unknown Artist' && !track.title.includes('Featured Track'),
+          loading: false,
+          source: track.source || 'unknown',
+          valueForValue: track.valueForValue // Add the missing V4V data!
+        };
+      });
 
       // Sort by episode (newest first) then by start time
       const sortedTracks = formattedTracks.sort((a: Track, b: Track) => {
@@ -385,6 +400,17 @@ export default function ITDVPlaylistPage() {
 
   // Helper function to get display artist
   const getDisplayArtist = (track: Track): string => {
+    // Debug log for first few calls
+    if (Math.random() < 0.05) { // Log 5% of calls to avoid spam
+      console.log(`🎤 getDisplayArtist debug for "${track.title}":`, {
+        hasValueForValue: !!track.valueForValue,
+        resolved: track.valueForValue?.resolved,
+        resolvedArtist: track.valueForValue?.resolvedArtist,
+        fallbackArtist: track.artist,
+        willUseResolved: !!(track.valueForValue?.resolved && track.valueForValue?.resolvedArtist)
+      });
+    }
+    
     // Check for resolved artist first (V4V resolution)
     if (track.valueForValue?.resolved && track.valueForValue?.resolvedArtist) {
       return track.valueForValue.resolvedArtist;
