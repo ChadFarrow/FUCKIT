@@ -385,13 +385,8 @@ export default function ITDVPlaylistPage() {
 
   // Helper function to get display artist
   const getDisplayArtist = (track: Track): string => {
-    // Debug logging to understand the data structure
-    if (track.valueForValue?.resolvedArtist) {
-      console.log(`🎤 Track "${track.title}" - Resolved artist: "${track.valueForValue.resolvedArtist}", Original: "${track.artist}", Resolved flag: ${track.valueForValue.resolved}`);
-    }
-    
-    // Try multiple possible locations for resolved artist data
-    if (track.valueForValue?.resolvedArtist) {
+    // Check for resolved artist first (V4V resolution)
+    if (track.valueForValue?.resolved && track.valueForValue?.resolvedArtist) {
       return track.valueForValue.resolvedArtist;
     }
     
@@ -1013,6 +1008,7 @@ ${generateRemoteItems(filteredAndSortedTracks)}
             )}
           </div>
         </div>
+
 
         {/* Track List */}
         <div className="space-y-2">
