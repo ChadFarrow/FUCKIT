@@ -24,6 +24,7 @@ interface LightningThrashesTrack {
 
 export default function LightningThrashesPlaylistAlbum() {
   const [tracks, setTracks] = useState<LightningThrashesTrack[]>([]);
+  const [totalTracks, setTotalTracks] = useState(383);
   const [isLoading, setIsLoading] = useState(true);
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number | null>(null);
   const [isClient, setIsClient] = useState(false);
@@ -40,7 +41,8 @@ export default function LightningThrashesPlaylistAlbum() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-      const response = await fetch('/api/music-tracks/database?source=rss-playlist&pageSize=20', { signal: controller.signal });
+      // Fetch more tracks to ensure we get Lightning Thrashes tracks
+      const response = await fetch('/api/music-tracks/database?source=rss-playlist&pageSize=500', { signal: controller.signal });
       clearTimeout(timeoutId);
 
       if (!response.ok) throw new Error('Failed to load tracks');
@@ -48,14 +50,22 @@ export default function LightningThrashesPlaylistAlbum() {
       const data = await response.json();
       const allTracks = data.data?.tracks || [];
       
-      // Filter for Lightning Thrashes tracks
-      const lightningThrashesTracks = allTracks.filter((track: any) => 
-        track.feedUrl?.includes('lightning-thrashes') || 
-        track.playlistInfo?.source?.includes('Lightning Thrashes')
-      );
+      console.log('📊 Total tracks fetched:', allTracks.length);
       
-      console.log('📊 Lightning Thrashes tracks loaded:', lightningThrashesTracks.length);
-      setTracks(lightningThrashesTracks.slice(0, 20)); // Show first 20 tracks
+      // Filter for Lightning Thrashes tracks with more specific criteria
+      const lightningThrashesTracks = allTracks.filter((track: any) => {
+        const hasLightningThrashesInFeed = track.feedUrl?.includes('lightning-thrashes');
+        const hasLightningThrashesInSource = track.playlistInfo?.source?.includes('Lightning Thrashes');
+        const hasLightningThrashesInArtist = track.artist?.includes('Lightning Thrashes');
+        
+        return hasLightningThrashesInFeed || hasLightningThrashesInSource || hasLightningThrashesInArtist;
+      });
+      
+      console.log('📊 Lightning Thrashes tracks found:', lightningThrashesTracks.length);
+      console.log('First few Lightning Thrashes tracks:', lightningThrashesTracks.slice(0, 3));
+      
+      setTotalTracks(lightningThrashesTracks.length);
+      setTracks(lightningThrashesTracks.slice(0, 50)); // Show first 50 tracks
     } catch (error) {
       console.error('❌ Error loading Lightning Thrashes tracks:', error);
       if (error instanceof Error && error.name === 'AbortError') {
@@ -108,107 +118,75 @@ export default function LightningThrashesPlaylistAlbum() {
   }
 
   return (
-    <div className="bg-gray-800 rounded-lg p-6">
-      {/* Album Header */}
-      <div className="flex items-start gap-4 mb-6">
-        <div className="w-20 h-20 flex-shrink-0">
-          <img
-            src="https://cdn.kolomona.com/podcasts/lightning-thrashes/060/060-Lightning-Thrashes-1000.jpg"
-            alt="Lightning Thrashes"
-            className="w-full h-full object-cover rounded-lg"
-          />
-        </div>
-        <div className="flex-1">
-          <h3 className="text-xl font-bold text-white mb-2">Lightning Thrashes Playlist</h3>
-          <p className="text-gray-300 mb-2">Episodes 1-60 • 383 tracks</p>
-          <p className="text-gray-400 text-sm mb-4">
-            Every song played on Lightning Thrashes from episode 1 to episode 60
-          </p>
-          <div className="flex gap-2">
-            <a
-              href="/api/playlist/lightning-thrashes-rss"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md transition-colors"
-            >
-              <ExternalLink className="w-4 h-4" />
-              RSS Feed
-            </a>
-            <a
-              href="/api/playlist/lightning-thrashes-rss"
-              download="lightning-thrashes-playlist.xml"
-              className="inline-flex items-center gap-2 px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded-md transition-colors"
-            >
-              <Download className="w-4 h-4" />
-              Download
-            </a>
-          </div>
-        </div>
+    <div className="space-y-2">
+      <div className="text-sm text-gray-400 mb-3">
+        Showing {tracks.length} of {totalTracks} tracks
       </div>
-
-      {/* Track List */}
-      <div className="space-y-2">
-        <div className="text-sm text-gray-400 mb-3">
-          Showing {tracks.length} of 383 tracks
-        </div>
-        {tracks.filter(track => track && track.id && track.title).map((track, index) => {
-          const isCurrentTrack = currentTrackIndex === index;
-          const displayTitle = track.valueForValue?.resolved && track.valueForValue?.resolvedTitle
-            ? track.valueForValue.resolvedTitle
-            : track.title;
-          const displayArtist = track.valueForValue?.resolved && track.valueForValue?.resolvedArtist
-            ? track.valueForValue.resolvedArtist
-            : track.artist;
-          const displayImage = track.valueForValue?.resolved && track.valueForValue?.resolvedImage
-            ? track.valueForValue.resolvedImage
-            : "https://cdn.kolomona.com/podcasts/lightning-thrashes/060/060-Lightning-Thrashes-1000.jpg";
-          
-          return (
-            <div key={track.id} className={`flex items-center gap-4 p-3 rounded-lg transition-colors ${isCurrentTrack ? 'bg-blue-700' : 'hover:bg-gray-700'}`}>
-              {/* Track Image */}
-              <div className="w-10 h-10 flex-shrink-0">
-                <img
+      {tracks.filter(track => track && track.id && track.title).map((track, index) => {
+        const isCurrentTrack = currentTrackIndex === index;
+        const displayTitle = track.valueForValue?.resolved && track.valueForValue?.resolvedTitle
+          ? track.valueForValue.resolvedTitle
+          : track.title;
+        const displayArtist = track.valueForValue?.resolved && track.valueForValue?.resolvedArtist
+          ? track.valueForValue.resolvedArtist
+          : track.artist;
+        const displayImage = track.valueForValue?.resolved && track.valueForValue?.resolvedImage
+          ? track.valueForValue.resolvedImage
+          : "https://cdn.kolomona.com/podcasts/lightning-thrashes/060/060-Lightning-Thrashes-1000.jpg";
+        
+        return (
+          <div 
+            key={track.id} 
+            className={`flex items-center justify-between p-4 hover:bg-white/10 rounded-lg transition-colors group cursor-pointer ${
+              isCurrentTrack ? 'bg-white/20' : ''
+            }`}
+            onClick={() => handlePlayTrack(track, index)}
+          >
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              <div className="relative w-10 h-10 md:w-12 md:h-12 flex-shrink-0 overflow-hidden rounded">
+                <img 
                   src={displayImage}
                   alt={displayTitle}
-                  className="w-full h-full object-cover rounded"
+                  className="w-full h-full object-cover"
                 />
+                {/* Play Button Overlay */}
+                <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity duration-200">
+                  <button 
+                    className="bg-white text-black rounded-full p-1 transform hover:scale-110 transition-all duration-200 shadow-lg"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handlePlayTrack(track, index);
+                    }}
+                  >
+                    {isCurrentTrack && isPlaying ? (
+                      <Pause className="h-3 w-3" />
+                    ) : (
+                      <Play className="h-3 w-3" />
+                    )}
+                  </button>
+                </div>
               </div>
-              
-              {/* Track Info */}
-              <div className="flex-1 min-w-0">
-                <h4 className="text-white font-medium truncate">{displayTitle}</h4>
-                <p className="text-sm text-gray-400 truncate">
-                  {displayArtist} • {track.episodeTitle || 'Unknown Episode'}
+              <div className="min-w-0 flex-1">
+                <p className="font-medium truncate text-sm md:text-base text-white">{displayTitle}</p>
+                <p className="text-xs md:text-sm text-gray-400 truncate">
+                  {displayArtist} • {track.episodeTitle || 'Lightning Thrashes'}
                 </p>
               </div>
-              
-              {/* Duration */}
-              <div className="text-sm text-gray-400 flex-shrink-0">
-                {formatDuration(track.duration)}
-              </div>
-              
-              {/* Play Button */}
-              <button
-                onClick={() => handlePlayTrack(track, index)}
-                className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full transition-colors flex-shrink-0"
-                title="Play track"
-              >
-                {isCurrentTrack && isPlaying ? (
-                  <Pause className="w-4 h-4" />
-                ) : (
-                  <Play className="w-4 h-4" />
-                )}
-              </button>
             </div>
-          );
-        })}
-      </div>
+            <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
+              <span className="text-xs md:text-sm text-gray-400">
+                {formatDuration(track.duration)}
+              </span>
+            </div>
+          </div>
+        );
+      })}
       
       {/* Footer */}
       <div className="mt-6 pt-4 border-t border-gray-700">
         <p className="text-sm text-gray-400">
           Lightning Thrashes playlist with Value for Value support. 
-          <a href="https://lightninthrashes.com" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 ml-1">
+          <a href="https://lightningthrashes.com" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 ml-1">
             Visit Lightning Thrashes
           </a>
         </p>
