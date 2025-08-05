@@ -41,8 +41,15 @@ export default function LightningThrashesPlaylistAlbum() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-      // Try both API and static data to see which has Lightning Thrashes tracks
-      const response = await fetch('/data/music-tracks.json', { signal: controller.signal });
+      // First try the API, then fall back to static data if needed
+      let response = await fetch('/api/music-tracks/database?source=rss-playlist&pageSize=1000', { signal: controller.signal });
+      let isApiData = true;
+      
+      if (!response.ok) {
+        console.log('API failed, trying static data...');
+        response = await fetch('/data/music-tracks.json', { signal: controller.signal });
+        isApiData = false;
+      }
       clearTimeout(timeoutId);
 
       if (!response.ok) {
@@ -50,7 +57,10 @@ export default function LightningThrashesPlaylistAlbum() {
       }
       
       const data = await response.json();
-      const allTracks = data.musicTracks || [];
+      const allTracks = isApiData ? (data.data?.tracks || []) : (data.musicTracks || []);
+      
+      console.log('📊 Data source:', isApiData ? 'API' : 'Static file');
+      console.log('📊 Raw data structure:', Object.keys(data));
       
       console.log('📊 Total tracks fetched:', allTracks.length);
       console.log('🔍 Sample track for debugging:', allTracks[0]);
@@ -92,10 +102,21 @@ export default function LightningThrashesPlaylistAlbum() {
           feedUrl: t.feedUrl,
           source: t.playlistInfo?.source
         })));
+        
+        // For debugging, show some tracks anyway with a note
+        const debugTracks = allTracks.slice(0, 10).map((track: any, index: number) => ({
+          ...track,
+          title: `[DEBUG] ${track.title || 'Unknown Title'}`,
+          artist: `[DEBUG] ${track.artist || 'Unknown Artist'}`
+        }));
+        
+        setTotalTracks(debugTracks.length);
+        setTracks(debugTracks);
+        console.log('🔧 Showing debug tracks:', debugTracks.length);
+      } else {
+        setTotalTracks(lightningThrashesTracks.length);
+        setTracks(lightningThrashesTracks.slice(0, 50)); // Show first 50 tracks
       }
-      
-      setTotalTracks(lightningThrashesTracks.length);
-      setTracks(lightningThrashesTracks.slice(0, 50)); // Show first 50 tracks
     } catch (error) {
       console.error('❌ Error loading Lightning Thrashes tracks:', error);
       if (error instanceof Error && error.name === 'AbortError') {
