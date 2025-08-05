@@ -10,6 +10,7 @@
     "start": "next start",
     "lint": "next lint",
     "dev-setup": "node scripts/dev-setup.js",
+    "check-env": "node scripts/check-env.js",
     "test-feeds": "node scripts/test-rss-feeds.js",
     "test-removed": "node scripts/test-removed-feeds.js",
     "update-version": "node scripts/auto-version-update.js",
