@@ -65,6 +65,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* Favicon */}
+        <link rel="icon" type="image/png" href="/stablekraft-rocket.png" />
+        <link rel="shortcut icon" type="image/png" href="/stablekraft-rocket.png" />
+        
         {/* Resource hints for performance */}
         <link rel="preconnect" href="https://www.doerfelverse.com" />
         <link rel="dns-prefetch" href="https://www.doerfelverse.com" />

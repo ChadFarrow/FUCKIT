@@ -8,12 +8,12 @@
   }
   
   body {
-    @apply bg-gray-50 text-gray-900;
+    @apply text-gray-900;
   }
   
   /* Background image fallback */
-  .bg-bloodshot-lies {
-    background: url('/background.png') center/contain fixed;
+  .bg-stablekraft-rocket {
+    background: url('/stablekraft-rocket.png') center/contain fixed;
     background-attachment: fixed;
   }
   
