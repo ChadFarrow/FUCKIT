@@ -16,14 +16,27 @@ const LightningThrashesPlaylistAlbum = dynamic(() => import('@/components/Lightn
 
 export default function LightningThrashesPlaylistPage() {
   return (
-    <div 
-      className="min-h-screen text-white relative"
-      style={{
-                    background: 'url(/stablekraft-rocket.png) center/contain fixed',
-                  backgroundAttachment: 'fixed',
-          opacity: 0.6
-      }}
-    >
+    <div className="min-h-screen text-white relative">
+      {/* Background Image Layer */}
+      <div 
+        className="fixed inset-0 z-0"
+        style={{
+          background: 'url(/stablekraft-rocket.png) center/contain no-repeat fixed',
+          backgroundAttachment: 'fixed',
+          opacity: 0.3
+        }}
+      />
+      
+      {/* Dark Overlay */}
+      <div 
+        className="fixed inset-0 z-10"
+        style={{
+          background: 'linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8))'
+        }}
+      />
+      
+      {/* Content Layer */}
+      <div className="relative z-20">
       <div className="container mx-auto px-6 py-8 pb-40">
         {/* Back button */}
         <Link 
@@ -121,6 +134,7 @@ export default function LightningThrashesPlaylistPage() {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
