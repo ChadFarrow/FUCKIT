@@ -85,7 +85,7 @@ export default function LightningThrashesPlaylistAlbum() {
       
       if (lightningThrashesTracks.length === 0) {
         console.warn('⚠️ No Lightning Thrashes tracks found. Showing sample of all tracks:');
-        console.log('Sample tracks:', allTracks.slice(0, 5).map(t => ({
+        console.log('Sample tracks:', allTracks.slice(0, 5).map((t: any) => ({
           id: t.id,
           title: t.title, 
           artist: t.artist,
