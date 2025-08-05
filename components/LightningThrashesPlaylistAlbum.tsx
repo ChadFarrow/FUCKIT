@@ -45,24 +45,54 @@ export default function LightningThrashesPlaylistAlbum() {
       const response = await fetch('/api/music-tracks/database?source=rss-playlist&pageSize=500', { signal: controller.signal });
       clearTimeout(timeoutId);
 
-      if (!response.ok) throw new Error('Failed to load tracks');
+      if (!response.ok) {
+        throw new Error(`Failed to load tracks: ${response.status} ${response.statusText}`);
+      }
       
       const data = await response.json();
       const allTracks = data.data?.tracks || [];
       
       console.log('📊 Total tracks fetched:', allTracks.length);
+      console.log('🔍 Sample track for debugging:', allTracks[0]);
       
-      // Filter for Lightning Thrashes tracks with more specific criteria
+      // More comprehensive filtering for Lightning Thrashes tracks
       const lightningThrashesTracks = allTracks.filter((track: any) => {
-        const hasLightningThrashesInFeed = track.feedUrl?.includes('lightning-thrashes');
-        const hasLightningThrashesInSource = track.playlistInfo?.source?.includes('Lightning Thrashes');
-        const hasLightningThrashesInArtist = track.artist?.includes('Lightning Thrashes');
+        const hasLightningThrashesInFeed = track.feedUrl?.toLowerCase().includes('lightning-thrashes');
+        const hasLightningThrashesInSource = track.playlistInfo?.source?.toLowerCase().includes('lightning thrashes');
+        const hasLightningThrashesInArtist = track.artist?.toLowerCase().includes('lightning thrashes');
+        const hasLightningThrashesInTitle = track.title?.toLowerCase().includes('lightning thrashes');
+        const hasLightningThrashesInEpisode = track.episodeTitle?.toLowerCase().includes('lightning thrashes');
         
-        return hasLightningThrashesInFeed || hasLightningThrashesInSource || hasLightningThrashesInArtist;
+        const isLightningThrashes = hasLightningThrashesInFeed || hasLightningThrashesInSource || 
+                                  hasLightningThrashesInArtist || hasLightningThrashesInTitle || 
+                                  hasLightningThrashesInEpisode;
+        
+        if (isLightningThrashes) {
+          console.log('✅ Found Lightning Thrashes track:', {
+            id: track.id,
+            title: track.title,
+            artist: track.artist,
+            feedUrl: track.feedUrl,
+            source: track.playlistInfo?.source
+          });
+        }
+        
+        return isLightningThrashes;
       });
       
       console.log('📊 Lightning Thrashes tracks found:', lightningThrashesTracks.length);
-      console.log('First few Lightning Thrashes tracks:', lightningThrashesTracks.slice(0, 3));
+      console.log('🎵 First few Lightning Thrashes tracks:', lightningThrashesTracks.slice(0, 3));
+      
+      if (lightningThrashesTracks.length === 0) {
+        console.warn('⚠️ No Lightning Thrashes tracks found. Showing sample of all tracks:');
+        console.log('Sample tracks:', allTracks.slice(0, 5).map(t => ({
+          id: t.id,
+          title: t.title, 
+          artist: t.artist,
+          feedUrl: t.feedUrl,
+          source: t.playlistInfo?.source
+        })));
+      }
       
       setTotalTracks(lightningThrashesTracks.length);
       setTracks(lightningThrashesTracks.slice(0, 50)); // Show first 50 tracks
@@ -71,6 +101,9 @@ export default function LightningThrashesPlaylistAlbum() {
       if (error instanceof Error && error.name === 'AbortError') {
         console.error('Request timed out');
       }
+      // Set some fallback data so the page doesn't look completely broken
+      setTotalTracks(0);
+      setTracks([]);
     } finally {
       setIsLoading(false);
     }
@@ -103,16 +136,39 @@ export default function LightningThrashesPlaylistAlbum() {
 
   if (isLoading) {
     return (
-      <div className="bg-gray-800 rounded-lg p-6">
-        <div className="text-white">Loading Lightning Thrashes Playlist...</div>
+      <div className="space-y-4 animate-pulse">
+        <div className="text-sm text-gray-400">Loading Lightning Thrashes tracks...</div>
+        {[...Array(5)].map((_, i) => (
+          <div key={i} className="flex items-center gap-3 p-4 bg-white/5 rounded-lg">
+            <div className="w-12 h-12 bg-gray-700 rounded"></div>
+            <div className="flex-1 space-y-2">
+              <div className="h-4 bg-gray-700 rounded w-3/4"></div>
+              <div className="h-3 bg-gray-700 rounded w-1/2"></div>
+            </div>
+          </div>
+        ))}
       </div>
     );
   }
 
   if (tracks.length === 0) {
     return (
-      <div className="bg-gray-800 rounded-lg p-6">
-        <div className="text-white">No Lightning Thrashes tracks found. Please try refreshing the page.</div>
+      <div className="text-center py-8 space-y-4">
+        <div className="text-lg text-gray-300">⚠️ No Lightning Thrashes tracks found</div>
+        <div className="text-sm text-gray-400">
+          The Lightning Thrashes playlist tracks may be loading or temporarily unavailable.
+        </div>
+        <div className="text-xs text-gray-500">
+          Check the browser console for more details or try refreshing the page.
+        </div>
+      </div>
+    );
+  }
+
+  if (!isClient) {
+    return (
+      <div className="text-center py-8">
+        <div className="text-sm text-gray-400">Initializing...</div>
       </div>
     );
   }
