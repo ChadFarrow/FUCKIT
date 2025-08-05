@@ -21,7 +21,7 @@ export default function ITDVPlaylistPage() {
       <div 
         className="fixed inset-0 z-0"
         style={{
-                      background: 'url(/background.png) center/contain fixed',
+                      background: 'url(/stablekraft-rocket.png) center/contain fixed',
           backgroundAttachment: 'fixed',
                       opacity: 0.4
         }}

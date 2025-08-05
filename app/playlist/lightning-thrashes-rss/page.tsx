@@ -19,7 +19,7 @@ export default function LightningThrashesPlaylistPage() {
     <div 
       className="min-h-screen text-white relative"
       style={{
-        background: 'linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url(https://cdn.kolomona.com/podcasts/lightning-thrashes/060/060-Lightning-Thrashes-1000.jpg) center/cover fixed',
+                    background: 'url(/stablekraft-rocket.png) center/contain fixed',
         backgroundAttachment: 'fixed'
       }}
     >

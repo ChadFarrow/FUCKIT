@@ -4,6 +4,28 @@
 const fs = require('fs');
 const path = require('path');
 
+// Load environment variables from .env.local
+function loadEnvLocal() {
+  try {
+    const envPath = path.join(__dirname, '.env.local');
+    const envContent = fs.readFileSync(envPath, 'utf8');
+    
+    envContent.split('\n').forEach(line => {
+      const [key, value] = line.split('=');
+      if (key && value) {
+        process.env[key.trim()] = value.trim();
+      }
+    });
+    
+    console.log('✅ Loaded .env.local');
+  } catch (error) {
+    console.log('⚠️ Could not load .env.local:', error.message);
+  }
+}
+
+// Load environment variables
+loadEnvLocal();
+
 // Simple V4V resolver for Lightning Thrashes
 async function resolveLightningThrashesTrack(feedGuid, itemGuid) {
   try {

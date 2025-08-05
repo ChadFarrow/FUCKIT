@@ -634,8 +634,8 @@ export default function HomePage() {
                   {/* Logo */}
                   <div className="w-10 h-10 relative border border-gray-700 rounded-lg overflow-hidden">
                     <Image 
-                      src="/logo.webp" 
-                      alt="VALUE Logo" 
+                      src="/stablekraft-rocket.png" 
+                      alt="STABLEKRAFT Rocket" 
                       width={40} 
                       height={40}
                       className="object-cover"
@@ -684,8 +684,8 @@ export default function HomePage() {
                   {/* Logo */}
                   <div className="w-10 h-10 relative border border-gray-700 rounded-lg overflow-hidden">
                     <Image 
-                      src="/logo.webp" 
-                      alt="VALUE Logo" 
+                      src="/stablekraft-rocket.png" 
+                      alt="STABLEKRAFT Rocket" 
                       width={40} 
                       height={40}
                       className="object-cover"
