@@ -41,13 +41,33 @@ export default function LightningThrashesPlaylistAlbum() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-      // First try the API, then fall back to static data if needed
-      let response = await fetch('/api/music-tracks/database?source=rss-playlist&pageSize=1000', { signal: controller.signal });
+      // Try different API endpoints to find tracks
+      let response;
       let isApiData = true;
+      let dataSource = '';
       
-      if (!response.ok) {
-        console.log('API failed, trying static data...');
+      // Try the main API without filters first
+      try {
+        response = await fetch('/api/music-tracks/database?pageSize=1000', { signal: controller.signal });
+        dataSource = 'API (no filter)';
+        
+        if (!response.ok || (await response.clone().json()).data?.tracks?.length === 0) {
+          // Try with different source filter
+          response = await fetch('/api/music-tracks/database?pageSize=1000&feedUrl=lightning-thrashes', { signal: controller.signal });
+          dataSource = 'API (feedUrl filter)';
+          
+          if (!response.ok || (await response.clone().json()).data?.tracks?.length === 0) {
+            // Fall back to static file
+            console.log('API endpoints returned no data, trying static file...');
+            response = await fetch('/data/music-tracks.json', { signal: controller.signal });
+            dataSource = 'Static file';
+            isApiData = false;
+          }
+        }
+      } catch (error) {
+        console.log('API failed, trying static data...', error);
         response = await fetch('/data/music-tracks.json', { signal: controller.signal });
+        dataSource = 'Static file (fallback)';
         isApiData = false;
       }
       clearTimeout(timeoutId);
@@ -59,7 +79,7 @@ export default function LightningThrashesPlaylistAlbum() {
       const data = await response.json();
       const allTracks = isApiData ? (data.data?.tracks || []) : (data.musicTracks || []);
       
-      console.log('📊 Data source:', isApiData ? 'API' : 'Static file');
+      console.log('📊 Data source:', dataSource);
       console.log('📊 Raw data structure:', Object.keys(data));
       
       console.log('📊 Total tracks fetched:', allTracks.length);
