@@ -59,14 +59,14 @@ export default function LightningThrashesPlaylistAlbum() {
           if (!response.ok || (await response.clone().json()).data?.tracks?.length === 0) {
             // Fall back to static file
             console.log('API endpoints returned no data, trying static file...');
-            response = await fetch('/data/music-tracks.json', { signal: controller.signal });
+            response = await fetch('/music-tracks.json', { signal: controller.signal });
             dataSource = 'Static file';
             isApiData = false;
           }
         }
       } catch (error) {
         console.log('API failed, trying static data...', error);
-        response = await fetch('/data/music-tracks.json', { signal: controller.signal });
+        response = await fetch('/music-tracks.json', { signal: controller.signal });
         dataSource = 'Static file (fallback)';
         isApiData = false;
       }
