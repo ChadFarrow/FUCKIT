@@ -5,7 +5,7 @@ const path = require('path');
 const { DOMParser } = require('xmldom');
 
 const RSS_FILE_PATH = path.join(__dirname, '../public/lightning-thrashes-playlist.xml');
-const MUSIC_TRACKS_PATH = path.join(__dirname, '../data/music-tracks.json');
+const MUSIC_TRACKS_PATH = path.join(__dirname, '../public/music-tracks.json');
 
 function parseRSSPlaylist() {
   try {

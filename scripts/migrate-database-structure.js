@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const DATABASE_FILE = path.join(__dirname, '../data/music-tracks.json');
+const DATABASE_FILE = path.join(__dirname, '../public/music-tracks.json');
 const BACKUP_FILE = path.join(__dirname, '../data/music-tracks-backup.json');
 
 function migrateDatabase() {

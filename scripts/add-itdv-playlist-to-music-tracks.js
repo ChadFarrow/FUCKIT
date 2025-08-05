@@ -6,7 +6,7 @@ const { DOMParser } = require('xmldom');
 
 // Paths
 const RSS_FILE_PATH = path.join(__dirname, '../public/ITDV-playlist.xml');
-const MUSIC_TRACKS_PATH = path.join(__dirname, '../data/music-tracks.json');
+const MUSIC_TRACKS_PATH = path.join(__dirname, '../public/music-tracks.json');
 
 function parseRSSPlaylist() {
   try {
