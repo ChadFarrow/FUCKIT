@@ -252,6 +252,54 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const calculateTotalDuration = (tracks: any[]): string => {
+    if (!tracks || !Array.isArray(tracks) || tracks.length === 0) {
+      return '0';
+    }
+
+    let totalSeconds = 0;
+    
+    for (const track of tracks) {
+      if (!track.duration) continue;
+      
+      const duration = track.duration.toString().trim();
+      
+      // Skip invalid durations
+      if (duration === 'NaN' || duration === 'undefined' || duration === 'null' || duration === '') {
+        continue;
+      }
+      
+      // Handle MM:SS or HH:MM:SS format
+      if (duration.includes(':')) {
+        const parts = duration.split(':');
+        if (parts.length === 2) {
+          const mins = parseInt(parts[0]);
+          const secs = parseInt(parts[1]);
+          if (!isNaN(mins) && !isNaN(secs)) {
+            totalSeconds += (mins * 60) + secs;
+          }
+        } else if (parts.length === 3) {
+          const hours = parseInt(parts[0]);
+          const mins = parseInt(parts[1]);
+          const secs = parseInt(parts[2]);
+          if (!isNaN(hours) && !isNaN(mins) && !isNaN(secs)) {
+            totalSeconds += (hours * 3600) + (mins * 60) + secs;
+          }
+        }
+      } else {
+        // Handle seconds format
+        const seconds = parseInt(duration);
+        if (!isNaN(seconds) && seconds > 0) {
+          totalSeconds += seconds;
+        }
+      }
+    }
+    
+    // Convert total seconds to minutes (rounded)
+    const totalMinutes = Math.round(totalSeconds / 60);
+    return totalMinutes.toString();
+  };
+
   // Audio player functions
   const togglePlay = async () => {
     if (globalIsPlaying && currentPlayingAlbum?.title === album?.title) {
@@ -1037,6 +1085,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             <div className="flex items-center justify-center gap-6 text-sm text-gray-400">
               <span>{new Date(album.releaseDate).getFullYear()}</span>
               <span>{Array.isArray(album.tracks) ? album.tracks.length : 0} tracks</span>
+              <span>{calculateTotalDuration(album.tracks)} min</span>
               {album.explicit && <span className="bg-red-600 text-white px-2 py-1 rounded text-xs">EXPLICIT</span>}
             </div>
             
