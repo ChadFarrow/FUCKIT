@@ -106,9 +106,9 @@ export default function RootLayout({
                 <div 
                   className="fixed inset-0 z-0"
                   style={{
-                    background: 'url(/stablekraft-rocket.png) center/contain fixed',
+                    background: 'url(/background.png) center/contain fixed',
                     backgroundAttachment: 'fixed',
-                    opacity: 0.25
+                    opacity: 0.4
                   }}
                 />
                 {/* Content overlay */}

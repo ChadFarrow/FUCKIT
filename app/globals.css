@@ -13,7 +13,7 @@
   
   /* Background image fallback */
   .bg-bloodshot-lies {
-    background: url('/stablekraft-rocket.png') center/contain fixed;
+    background: url('/background.png') center/contain fixed;
     background-attachment: fixed;
   }
   
