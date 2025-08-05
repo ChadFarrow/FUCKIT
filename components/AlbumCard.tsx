@@ -81,7 +81,7 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
   return (
     <Link 
       href={albumUrl}
-      className={`group relative bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 overflow-hidden transition-all duration-300 hover:bg-white/10 hover:border-white/20 hover:scale-[1.02] active:scale-[0.98] block ${className}`}
+      className={`group relative bg-black/70 backdrop-blur-md rounded-xl border border-white/20 overflow-hidden transition-all duration-300 hover:bg-black/80 hover:border-white/30 hover:scale-[1.02] active:scale-[0.98] block ${className}`}
       onClick={(e) => {
         console.log(`🔗 Navigating to album: "${album.title}" -> ${albumUrl}`);
       }}
@@ -204,17 +204,17 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
       </div>
 
       {/* Album Info */}
-      <div className="p-2 sm:p-3">
-        <h3 className="font-semibold text-white text-xs sm:text-sm leading-tight line-clamp-2 group-hover:text-blue-300 transition-colors duration-200">
+      <div className="p-2 sm:p-3 bg-black/60 backdrop-blur-sm">
+        <h3 className="font-bold text-white text-xs sm:text-sm leading-tight line-clamp-2 group-hover:text-blue-300 transition-colors duration-200 drop-shadow-lg">
           {album.title}
         </h3>
-        <p className="text-gray-400 text-[10px] sm:text-xs mt-0.5 sm:mt-1 line-clamp-1">
+        <p className="text-gray-200 text-[10px] sm:text-xs mt-0.5 sm:mt-1 line-clamp-1 font-medium drop-shadow-lg">
           {album.artist}
         </p>
         
         {/* Release date or episode date */}
         {(album.releaseDate || (album as any).isMusicTrackAlbum) && (
-          <p className="text-gray-500 text-[10px] sm:text-xs mt-0.5 sm:mt-1">
+          <p className="text-gray-300 text-[10px] sm:text-xs mt-0.5 sm:mt-1 font-medium drop-shadow-lg">
             {(album as any).isMusicTrackAlbum 
               ? new Date(album.releaseDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
               : new Date(album.releaseDate).getFullYear()

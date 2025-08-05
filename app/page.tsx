@@ -597,7 +597,7 @@ export default function HomePage() {
           onError={() => setBackgroundImageLoaded(true)}
         />
         {/* Gradient overlay for better readability */}
-        <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/40 to-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/70 to-black/80" />
       </div>
       
       {/* Fallback gradient background - only for very slow connections */}
@@ -612,7 +612,7 @@ export default function HomePage() {
         
         {/* Header */}
         <header 
-          className="border-b backdrop-blur-sm bg-black/30 pt-safe-plus pt-6"
+          className="border-b backdrop-blur-sm bg-black/60 pt-safe-plus pt-6"
           style={{
             borderColor: 'rgba(255, 255, 255, 0.1)'
           }}
