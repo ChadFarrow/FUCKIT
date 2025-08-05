@@ -595,7 +595,7 @@ export default function HomePage() {
           onError={() => setBackgroundImageLoaded(true)} // Mark as loaded even on error to show fallback
         />
         {/* Gradient overlay for better readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/70 to-black/90"></div>
+        
       </div>
       
       {/* Fallback gradient background - show when not loaded or on error */}
