@@ -1,6 +1,6 @@
 # Task ID: 17
 # Title: Fix playlist parsing issues
-# Status: in-progress
+# Status: done
 # Dependencies: None
 # Priority: high
 # Description: Investigate why playlist only starts at Episode 52, all tracks are 5 minutes titled 'Verse', and implement proper episode-by-episode parsing starting from Episode 56

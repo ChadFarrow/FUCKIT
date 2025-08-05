@@ -1,0 +1,61 @@
+# Task ID: 21
+# Title: Clean up dead code throughout the project
+# Status: pending
+# Dependencies: None
+# Priority: medium
+# Description: Remove unused variables, commented-out code blocks, debug-only components, temporary investigation scripts, and unused imports to improve maintainability and reduce bundle size.
+# Details:
+
+
+# Test Strategy:
+
+
+# Subtasks:
+## 1. Remove unused variables and functions from app/page.tsx [pending]
+### Dependencies: None
+### Description: Remove the unused variables isDev, isVerbose, devLog, and verboseLog that are defined but never used. These were disabled for performance but are still taking up space in the code.
+### Details:
+
+
+## 2. Remove debug console.log statements from LightningThrashesPlaylistAlbum.tsx [pending]
+### Dependencies: None
+### Description: Remove all the debug console.log statements and debug fallback code that creates fake tracks. This includes the debugTracks mapping and all console.log calls that were added for debugging purposes.
+### Details:
+
+
+## 3. Remove MobileImageDebug component and test page [pending]
+### Dependencies: None
+### Description: Delete the MobileImageDebug.tsx component and the /app/test-mobile-images/page.tsx file. This is a debug-only component that's only used in a test page and should be removed from production code.
+### Details:
+
+
+## 4. Delete temporary Lightning Thrashes investigation scripts [pending]
+### Dependencies: None
+### Description: Remove the 6 temporary scripts created during Lightning Thrashes investigation: fetch-lightning-thrashes-durations.js, fetch-lightning-thrashes-durations-simple.js, analyze-lightning-thrashes-playlist.js, fetch-podcastindex-episodes.js, fetch-lightning-thrashes-actual.js, and fetch-lightning-thrashes-music-tracks.js.
+### Details:
+
+
+## 5. Remove unused imports from app/page.tsx [pending]
+### Dependencies: None
+### Description: Remove the unused import createErrorLogger from @/lib/error-utils since it's commented out and not used anywhere in the file.
+### Details:
+
+
+## 6. Clean up commented service worker code in ServiceWorkerRegistration.tsx [pending]
+### Dependencies: None
+### Description: Either remove the large commented-out service worker registration code block (80+ lines) or document why it's being kept. This code is disabled due to API issues but takes up significant space.
+### Details:
+
+
+## 7. Review and clean up TODO comments [pending]
+### Dependencies: None
+### Description: Review all TODO comments in the codebase and either implement the features or remove the comments. Focus on TODO comments in lib/feed-cache.ts, components/V4VMusicTrackCard.tsx, components/V4VMusicTrackList.tsx, and components/GlobalNowPlayingBar.tsx.
+### Details:
+
+
+## 8. Remove debug comments and unused JSX comments [pending]
+### Dependencies: None
+### Description: Remove debug comments like "Debug info removed for performance" and unused JSX comments throughout the codebase. These comments add no value and clutter the code.
+### Details:
+
+

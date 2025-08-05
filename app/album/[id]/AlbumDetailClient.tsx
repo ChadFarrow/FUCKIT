@@ -79,11 +79,22 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
           const data = await response.json();
           const albums = data.albums || [];
           
-          // Find album by title (case-insensitive)
+          // Find album by title with comprehensive matching
           const decodedAlbumTitle = decodeURIComponent(albumTitle);
-          const foundAlbum = albums.find((album: any) => 
-            album.title.toLowerCase() === decodedAlbumTitle.toLowerCase()
-          );
+          const foundAlbum = albums.find((album: any) => {
+            const albumTitleLower = album.title.toLowerCase();
+            const searchTitleLower = decodedAlbumTitle.toLowerCase();
+            
+            // Try exact case-insensitive match first
+            if (albumTitleLower === searchTitleLower) {
+              return true;
+            }
+            
+            // Try aggressive normalization (remove all spaces and special chars)
+            const fullyNormalizedAlbum = albumTitleLower.replace(/[^a-z0-9]/g, '');
+            const fullyNormalizedSearch = searchTitleLower.replace(/[^a-z0-9]/g, '');
+            return fullyNormalizedAlbum === fullyNormalizedSearch;
+          });
           
           if (foundAlbum?.coverArt) {
             console.log('🎨 Preloading background image for desktop:', foundAlbum.coverArt);
@@ -329,10 +340,22 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
 
   // Optimized background style calculation - memoized to prevent repeated logs
   const backgroundStyle = useMemo(() => {
+    // Create a fixed background that overrides the global layout background
+    const baseStyle = {
+      position: 'fixed' as const,
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: 1  // Override global background (which is z-0)
+    };
+    
     const style = backgroundImage && isClient ? {
+      ...baseStyle,
       background: `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url('${backgroundImage}') center/cover fixed`,
       backgroundAttachment: 'fixed'
     } : {
+      ...baseStyle,
       background: 'linear-gradient(to bottom right, rgb(17, 24, 39), rgb(31, 41, 55), rgb(17, 24, 39))'
     };
 
@@ -533,6 +556,13 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               const normalizedAlbum = albumTitleLower.replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
               const normalizedSearch = searchTitleLower.replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
               if (normalizedAlbum === normalizedSearch) {
+                return true;
+              }
+              
+              // Try more aggressive normalization (remove all spaces and special chars)
+              const fullyNormalizedAlbum = albumTitleLower.replace(/[^a-z0-9]/g, '');
+              const fullyNormalizedSearch = searchTitleLower.replace(/[^a-z0-9]/g, '');
+              if (fullyNormalizedAlbum === fullyNormalizedSearch) {
                 return true;
               }
               
@@ -892,22 +922,21 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
 
   if (isLoading) {
     return (
-      <div 
-        className="min-h-screen text-white"
-        style={isDesktop && backgroundImage ? backgroundStyle : {
-          background: 'linear-gradient(to bottom right, rgb(17, 24, 39), rgb(31, 41, 55), rgb(17, 24, 39))'
-        }}
-      >
-        <div className="container mx-auto px-6 py-8">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-            <h1 className="text-2xl font-bold">Loading Album...</h1>
-            {isDesktop && backgroundImage && (
-              <p className="text-gray-400 mt-2">Background loaded, content loading...</p>
-            )}
+      <>
+        {/* Background layer */}
+        <div style={backgroundStyle} />
+        <div className="min-h-screen text-white relative z-10">
+          <div className="container mx-auto px-6 py-8">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+              <h1 className="text-2xl font-bold">Loading Album...</h1>
+              {isDesktop && backgroundImage && (
+                <p className="text-gray-400 mt-2">Background loaded, content loading...</p>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
@@ -935,13 +964,13 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   }
 
   return (
-    <div 
-      className="min-h-screen text-white relative"
-      style={backgroundStyle}
-    >
-
-
-      <div className="container mx-auto px-6 py-8 pb-40">
+    <>
+      {/* Background layer - fixed positioned to override global layout background */}
+      <div style={backgroundStyle} />
+      
+      {/* Content layer - relative positioned above background */}
+      <div className="min-h-screen text-white relative z-10">
+        <div className="container mx-auto px-6 py-8 pb-40">
         {/* Back button */}
         <Link 
           href="/" 
@@ -1228,9 +1257,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             </div>
           </div>
         )}
+        </div>
       </div>
-
-
-    </div>
+    </>
   );
 } 
