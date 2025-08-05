@@ -143,6 +143,19 @@ export default function LightningThrashesPlaylistAlbum() {
   };
 
   const handlePlayTrack = async (track: LightningThrashesTrack, index: number) => {
+    // If this is the current track and it's playing, pause it
+    if (currentTrackIndex === index && isPlaying) {
+      pause();
+      return;
+    }
+    
+    // If this is the current track and it's paused, resume it
+    if (currentTrackIndex === index && !isPlaying) {
+      resume();
+      return;
+    }
+    
+    // Otherwise, play this track
     setCurrentTrackIndex(index);
     if (track.valueForValue?.resolved && track.valueForValue?.resolvedAudioUrl) {
       await playTrack(track.valueForValue.resolvedAudioUrl);
