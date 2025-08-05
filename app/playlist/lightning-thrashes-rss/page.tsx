@@ -15,28 +15,17 @@ const LightningThrashesPlaylistAlbum = dynamic(() => import('@/components/Lightn
 });
 
 export default function LightningThrashesPlaylistPage() {
+  // Use the same background style as album pages
+  const backgroundStyle = {
+    background: 'linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url(https://cdn.kolomona.com/podcasts/lightning-thrashes/060/060-Lightning-Thrashes-1000.jpg) center/cover fixed',
+    backgroundAttachment: 'fixed'
+  };
+
   return (
-    <div className="min-h-screen text-white relative">
-      {/* Background Image Layer */}
-      <div 
-        className="fixed inset-0 z-0"
-        style={{
-          background: 'url(/stablekraft-rocket.webp) center/contain no-repeat fixed',
-          backgroundAttachment: 'fixed',
-          opacity: 0.3
-        }}
-      />
-      
-      {/* Dark Overlay */}
-      <div 
-        className="fixed inset-0 z-10"
-        style={{
-          background: 'linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8))'
-        }}
-      />
-      
-      {/* Content Layer */}
-      <div className="relative z-20">
+    <div 
+      className="min-h-screen text-white relative"
+      style={backgroundStyle}
+    >
       <div className="container mx-auto px-6 py-8 pb-40">
         {/* Back button */}
         <Link 
@@ -134,7 +123,6 @@ export default function LightningThrashesPlaylistPage() {
             </div>
           </div>
         </div>
-      </div>
       </div>
     </div>
   );
