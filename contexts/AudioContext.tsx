@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useRef, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useRef, useState, useEffect, useCallback, ReactNode } from 'react';
 import { RSSAlbum } from '@/lib/rss-parser';
 import { toast } from '@/components/Toast';
 import Hls from 'hls.js';
@@ -163,35 +163,6 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       return () => clearTimeout(timeoutId);
     }
   }, [currentPlayingAlbum, currentTrackIndex, currentTime, duration, isShuffleMode, shuffledPlaylist, currentShuffleIndex]);
-
-  // Set up auto-play next track functionality
-  useEffect(() => {
-    const audioElement = audioRef.current;
-    const videoElement = videoRef.current;
-    
-    const handleEnded = () => {
-      console.log('🎵 Track ended, auto-playing next track...');
-      playNextTrack();
-    };
-    
-    // Add event listeners to both audio and video elements
-    if (audioElement) {
-      audioElement.addEventListener('ended', handleEnded);
-    }
-    if (videoElement) {
-      videoElement.addEventListener('ended', handleEnded);
-    }
-    
-    // Cleanup
-    return () => {
-      if (audioElement) {
-        audioElement.removeEventListener('ended', handleEnded);
-      }
-      if (videoElement) {
-        videoElement.removeEventListener('ended', handleEnded);
-      }
-    };
-  }, [playNextTrack]);
 
   // Load albums data for playback - only once
   useEffect(() => {
@@ -905,8 +876,8 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     }
   };
 
-  // Play next track
-  const playNextTrack = async () => {
+  // Play next track - moved before useEffect hooks that depend on it
+  const playNextTrack = useCallback(async () => {
     // Add state validation and recovery logic
     if (!currentPlayingAlbum || !currentPlayingAlbum.tracks || currentPlayingAlbum.tracks.length === 0) {
       if (process.env.NODE_ENV === 'development') {
@@ -975,12 +946,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       }
       await playAlbum(currentPlayingAlbum, 0);
     }
-  };
-
-  // Update the ref whenever playNextTrack changes
-  useEffect(() => {
-    playNextTrackRef.current = playNextTrack;
-  }, [playNextTrack]);
+  }, [currentPlayingAlbum, currentTrackIndex, isShuffleMode, shuffledPlaylist, currentShuffleIndex, playShuffledTrack, playAlbum]);
 
   // Play previous track
   const playPreviousTrack = async () => {
@@ -1074,9 +1040,12 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     }
   };
 
+  // Toggle shuffle mode
   const toggleShuffle = () => {
     setIsShuffleMode(prev => !prev);
-    console.log(`🔀 Shuffle ${!isShuffleMode ? 'enabled' : 'disabled'}`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🎲 Shuffle mode toggled:', !isShuffleMode);
+    }
   };
 
   const value: AudioContextType = {

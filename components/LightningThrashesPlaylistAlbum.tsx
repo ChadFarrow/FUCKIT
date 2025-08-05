@@ -28,7 +28,7 @@ export default function LightningThrashesPlaylistAlbum() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number | null>(null);
   const [isClient, setIsClient] = useState(false);
-  const { playTrack, isPlaying, pause, resume } = useAudio();
+  const { playTrack, isPlaying, pause, resume, playAlbum } = useAudio();
 
   useEffect(() => {
     setIsClient(true);
@@ -88,7 +88,8 @@ export default function LightningThrashesPlaylistAlbum() {
       // More comprehensive filtering for Lightning Thrashes tracks
       const lightningThrashesTracks = allTracks.filter((track: any) => {
         const hasLightningThrashesInFeed = track.feedUrl?.toLowerCase().includes('lightning-thrashes');
-        const hasLightningThrashesInSource = track.playlistInfo?.source?.toLowerCase().includes('lightning thrashes');
+        const hasLightningThrashesInSource = track.playlistInfo?.source?.toLowerCase().includes('lightning thrashes') ||
+                                           track.playlistInfo?.source === 'Lightning Thrashes RSS Playlist';
         const hasLightningThrashesInArtist = track.artist?.toLowerCase().includes('lightning thrashes');
         const hasLightningThrashesInTitle = track.title?.toLowerCase().includes('lightning thrashes');
         const hasLightningThrashesInEpisode = track.episodeTitle?.toLowerCase().includes('lightning thrashes');
@@ -155,17 +156,31 @@ export default function LightningThrashesPlaylistAlbum() {
       return;
     }
     
-    // Otherwise, play this track
+    // Otherwise, play this track and set up the playlist
     setCurrentTrackIndex(index);
-    if (track.valueForValue?.resolved && track.valueForValue?.resolvedAudioUrl) {
-      await playTrack(track.valueForValue.resolvedAudioUrl);
-    } else {
-      await playTrack(track.audioUrl || '', track.startTime || 0, track.endTime || 300);
-    }
+    
+    // Create album object for the audio context
+    const playlistAlbum = {
+      title: 'Lightning Thrashes Playlist',
+      artist: 'Lightning Thrashes',
+      description: 'Music playlist from Lightning Thrashes podcast',
+      coverArt: "https://cdn.kolomona.com/podcasts/lightning-thrashes/060/060-Lightning-Thrashes-1000.jpg",
+      releaseDate: new Date().toISOString(),
+      tracks: tracks.map(t => ({
+        title: t.valueForValue?.resolved && t.valueForValue?.resolvedTitle ? t.valueForValue.resolvedTitle : t.title,
+        url: t.valueForValue?.resolved && t.valueForValue?.resolvedAudioUrl ? t.valueForValue.resolvedAudioUrl : t.audioUrl || '',
+        startTime: t.startTime || 0,
+        duration: t.duration ? t.duration.toString() : '300'
+      }))
+    };
+    
+    // Play the album starting from the selected track
+    await playAlbum(playlistAlbum, index);
   };
 
   const formatDuration = (seconds: number) => {
-    if (!seconds || isNaN(seconds)) return '0:00';
+    if (isNaN(seconds) || seconds < 0) return '0:00';
+    
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, '0')}`;

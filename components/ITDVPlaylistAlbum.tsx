@@ -24,40 +24,99 @@ interface ITDVTrack {
 
 export default function ITDVPlaylistAlbum() {
   const [tracks, setTracks] = useState<ITDVTrack[]>([]);
+  const [totalTracks, setTotalTracks] = useState(122);
   const [isLoading, setIsLoading] = useState(true);
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number | null>(null);
   const [isClient, setIsClient] = useState(false);
-  const { playTrack, isPlaying, pause, resume } = useAudio();
+  const { playTrack, isPlaying, pause, resume, playAlbum } = useAudio();
 
   useEffect(() => {
-    // Set client flag and load tracks
     setIsClient(true);
     loadITDVTracks();
   }, []);
 
   const loadITDVTracks = async () => {
     try {
-      console.log('🔄 Loading ITDV tracks...');
-      // Use the main database API now that it's fixed
+      console.log('🔄 Loading Into The Doerfel-Verse tracks...');
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+      // Try different data sources to find ITDV tracks
+      let response;
+      let isApiData = true;
+      let dataSource = '';
       
-      const response = await fetch('/api/music-tracks/database?source=rss-playlist&pageSize=20', {
-        signal: controller.signal
-      });
-      
+      // Try the main API without filters first
+      try {
+        response = await fetch('/api/music-tracks/database?pageSize=1000', { signal: controller.signal });
+        dataSource = 'API (no filter)';
+        
+        if (!response.ok || (await response.clone().json()).data?.tracks?.length === 0) {
+          // Try with different source filter
+          response = await fetch('/api/music-tracks/database?pageSize=1000&source=rss-playlist', { signal: controller.signal });
+          dataSource = 'API (source filter)';
+          
+          if (!response.ok || (await response.clone().json()).data?.tracks?.length === 0) {
+            // Fall back to static file
+            console.log('API endpoints returned no data, trying static file...');
+            response = await fetch('/music-tracks.json', { signal: controller.signal });
+            dataSource = 'Static file';
+            isApiData = false;
+          }
+        }
+      } catch (error) {
+        console.log('API failed, trying static data...', error);
+        response = await fetch('/music-tracks.json', { signal: controller.signal });
+        dataSource = 'Static file (fallback)';
+        isApiData = false;
+      }
       clearTimeout(timeoutId);
-      
-      if (!response.ok) throw new Error('Failed to load tracks');
+
+      if (!response.ok) {
+        throw new Error(`Failed to load tracks: ${response.status} ${response.statusText}`);
+      }
       
       const data = await response.json();
-      console.log('📊 ITDV tracks loaded:', data.data?.tracks?.length || 0);
-      setTracks(data.data?.tracks || []);
+      const allTracks = isApiData ? (data.data?.tracks || []) : (data.musicTracks || []);
+      
+      console.log('📊 Data source:', dataSource);
+      console.log('📊 Total tracks fetched:', allTracks.length);
+      
+      // Filter for ITDV tracks
+      const itdvTracks = allTracks.filter((track: any) => {
+        const hasITDVInFeed = track.feedUrl?.toLowerCase().includes('intothedoerfelverse') || 
+                            track.feedUrl?.toLowerCase().includes('doerfelverse');
+        const hasITDVInSource = track.playlistInfo?.source?.toLowerCase().includes('itdv') ||
+                              track.playlistInfo?.source === 'ITDV RSS Playlist' ||
+                              track.source === 'rss-playlist';
+        const hasITDVInArtist = track.artist?.toLowerCase().includes('doerfel');
+        
+        return hasITDVInFeed || hasITDVInSource || hasITDVInArtist;
+      });
+      
+      console.log('📊 ITDV tracks found:', itdvTracks.length);
+      console.log('🎵 First few ITDV tracks:', itdvTracks.slice(0, 3));
+      
+      if (itdvTracks.length === 0) {
+        console.warn('⚠️ No ITDV tracks found. Showing sample of all tracks:');
+        console.log('Sample tracks:', allTracks.slice(0, 5).map((t: any) => ({
+          id: t.id,
+          title: t.title, 
+          artist: t.artist,
+          feedUrl: t.feedUrl,
+          source: t.playlistInfo?.source || t.source
+        })));
+      }
+      
+      setTotalTracks(itdvTracks.length || 122);
+      setTracks(itdvTracks);
     } catch (error) {
       console.error('❌ Error loading ITDV tracks:', error);
       if (error instanceof Error && error.name === 'AbortError') {
         console.error('Request timed out');
       }
+      setTotalTracks(0);
+      setTracks([]);
     } finally {
       setIsLoading(false);
     }
@@ -76,26 +135,31 @@ export default function ITDVPlaylistAlbum() {
       return;
     }
     
-    // Otherwise, play this track
+    // Otherwise, play this track and set up the playlist
     setCurrentTrackIndex(index);
     
-    if (track.valueForValue?.resolved && track.valueForValue?.resolvedAudioUrl) {
-      // Play resolved audio URL
-      await playTrack(track.valueForValue.resolvedAudioUrl);
-    } else {
-      // Play from episode with timestamps
-      await playTrack(track.audioUrl || '', track.startTime || 0, track.endTime || 300);
-    }
-  };
-
-  const handlePlayAll = async () => {
-    if (tracks.length > 0) {
-      await handlePlayTrack(tracks[0], 0);
-    }
+    // Create album object for the audio context
+    const playlistAlbum = {
+      title: 'Into The Doerfel-Verse Playlist',
+      artist: 'Into The Doerfel-Verse',
+      description: 'Music playlist from Into The Doerfel-Verse podcast',
+      coverArt: "https://www.doerfelverse.com/art/itdvchadf.png",
+      releaseDate: new Date().toISOString(),
+      tracks: tracks.map(t => ({
+        title: t.valueForValue?.resolved && t.valueForValue?.resolvedTitle ? t.valueForValue.resolvedTitle : t.title,
+        url: t.valueForValue?.resolved && t.valueForValue?.resolvedAudioUrl ? t.valueForValue.resolvedAudioUrl : t.audioUrl || '',
+        startTime: t.startTime || 0,
+        duration: t.duration ? t.duration.toString() : '300'
+      }))
+    };
+    
+    // Play the album starting from the selected track
+    await playAlbum(playlistAlbum, index);
   };
 
   const formatDuration = (seconds: number) => {
-    if (!seconds || isNaN(seconds)) return '0:00';
+    if (isNaN(seconds) || seconds < 0) return '0:00';
+    
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, '0')}`;
@@ -105,152 +169,116 @@ export default function ITDVPlaylistAlbum() {
   if (!isClient) {
     return (
       <div className="bg-gray-800 rounded-lg p-6">
-        <div className="text-white">Loading ITDV Playlist...</div>
+        <div className="text-white">Loading Into The Doerfel-Verse Playlist...</div>
       </div>
     );
   }
 
   if (isLoading) {
     return (
-      <div className="bg-gray-800 rounded-lg p-6">
-        <div className="text-white">Loading ITDV Playlist...</div>
+      <div className="space-y-4 animate-pulse">
+        <div className="text-sm text-gray-400">Loading Into The Doerfel-Verse tracks...</div>
+        {[...Array(5)].map((_, i) => (
+          <div key={i} className="flex items-center gap-3 p-4 bg-white/5 rounded-lg">
+            <div className="w-12 h-12 bg-gray-700 rounded"></div>
+            <div className="flex-1 space-y-2">
+              <div className="h-4 bg-gray-700 rounded w-3/4"></div>
+              <div className="h-3 bg-gray-700 rounded w-1/2"></div>
+            </div>
+          </div>
+        ))}
       </div>
     );
   }
 
   if (tracks.length === 0) {
     return (
-      <div className="bg-gray-800 rounded-lg p-6">
-        <div className="text-white">No ITDV tracks found. Please try refreshing the page.</div>
+      <div className="text-center py-8 space-y-4">
+        <div className="text-lg text-gray-300">⚠️ No Into The Doerfel-Verse tracks found</div>
+        <div className="text-sm text-gray-400">
+          The ITDV playlist tracks may be loading or temporarily unavailable.
+        </div>
+        <div className="text-xs text-gray-500">
+          Check the browser console for more details or try refreshing the page.
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-      {/* Album Header */}
-      <div className="flex items-start gap-4 mb-6">
-        <div className="w-24 h-24 flex-shrink-0">
-          <img
-            src="https://www.doerfelverse.com/art/itdvchadf.png"
-            alt="Into The Doerfel-Verse"
-            className="w-full h-full object-cover rounded-lg"
-          />
-        </div>
-        
-        <div className="flex-1">
-          <h2 className="text-2xl font-bold text-white mb-2">
-            Into The Doerfel-Verse Music Playlist
-          </h2>
-          <p className="text-gray-300 mb-2">Various Artists</p>
-          <p className="text-sm text-gray-400 mb-4">
-            Music from Episodes 31-56 • {tracks.length} tracks
-          </p>
-          
-          <div className="flex gap-3">
-            <button
-              onClick={handlePlayAll}
-              className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
-            >
-              <Play className="w-4 h-4" />
-              Play All
-            </button>
-            
-            <a
-              href="/api/playlist/itdv-rss"
-              download="ITDV-playlist.xml"
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
-            >
-              <Download className="w-4 h-4" />
-              Download RSS
-            </a>
-            
-            <a
-              href="/playlist/itdv-rss"
-              className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors"
-            >
-              <ExternalLink className="w-4 h-4" />
-              View Details
-            </a>
-          </div>
-        </div>
+    <div className="space-y-2">
+      <div className="text-sm text-gray-400 mb-3">
+        Showing {tracks.length} of {totalTracks} tracks
       </div>
-
-      {/* Track List */}
-      <div className="space-y-2">
-        <h3 className="text-lg font-semibold text-white mb-3">Tracks</h3>
+      {tracks.filter(track => track && track.id && track.title).map((track, index) => {
+        const isCurrentTrack = currentTrackIndex === index;
+        const displayTitle = track.valueForValue?.resolved && track.valueForValue?.resolvedTitle
+          ? track.valueForValue.resolvedTitle
+          : track.title;
+        const displayArtist = track.valueForValue?.resolved && track.valueForValue?.resolvedArtist
+          ? track.valueForValue.resolvedArtist
+          : track.artist;
+        const displayImage = track.valueForValue?.resolved && track.valueForValue?.resolvedImage
+          ? track.valueForValue.resolvedImage
+          : "https://www.doerfelverse.com/art/itdvchadf.png";
         
-        {tracks.filter(track => track && track.id && track.title).map((track, index) => {
-          
-          const isCurrentTrack = currentTrackIndex === index;
-          const displayTitle = track.valueForValue?.resolved && track.valueForValue?.resolvedTitle
-            ? track.valueForValue.resolvedTitle 
-            : (track.title || 'Unknown Title');
-          const displayArtist = track.valueForValue?.resolved && track.valueForValue?.resolvedArtist
-            ? track.valueForValue.resolvedArtist 
-            : (track.artist || 'Unknown Artist');
-          const displayImage = track.valueForValue?.resolved && track.valueForValue?.resolvedImage
-            ? track.valueForValue.resolvedImage 
-            : "https://www.doerfelverse.com/art/itdvchadf.png";
-
-          return (
-            <div
-              key={track.id}
-              className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
-                isCurrentTrack 
-                  ? 'bg-purple-900/30 border border-purple-500/30' 
-                  : 'hover:bg-gray-700/50'
-              }`}
-              onClick={() => handlePlayTrack(track, index)}
-            >
-              {/* Track Image */}
-              <div className="w-10 h-10 flex-shrink-0">
-                <img
+        return (
+          <div 
+            key={track.id} 
+            className={`flex items-center justify-between p-4 hover:bg-white/10 rounded-lg transition-colors group cursor-pointer ${
+              isCurrentTrack ? 'bg-white/20' : ''
+            }`}
+            onClick={() => handlePlayTrack(track, index)}
+          >
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              <div className="relative w-10 h-10 md:w-12 md:h-12 flex-shrink-0 overflow-hidden rounded">
+                <img 
                   src={displayImage}
                   alt={displayTitle}
-                  className="w-full h-full object-cover rounded"
+                  className="w-full h-full object-cover"
                 />
+                {/* Play Button Overlay */}
+                <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity duration-200">
+                  <button 
+                    className="bg-white text-black rounded-full p-1 transform hover:scale-110 transition-all duration-200 shadow-lg"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handlePlayTrack(track, index);
+                    }}
+                  >
+                    {isCurrentTrack && isPlaying ? (
+                      <Pause className="h-3 w-3" />
+                    ) : (
+                      <Play className="h-3 w-3" />
+                    )}
+                  </button>
+                </div>
               </div>
-
-              {/* Track Info */}
-              <div className="flex-1 min-w-0">
-                <h4 className={`font-medium truncate ${
-                  isCurrentTrack ? 'text-purple-300' : 'text-white'
-                }`}>
-                  {displayTitle}
-                </h4>
-                <p className="text-sm text-gray-400 truncate">
-                  {displayArtist} • {track.episodeTitle || 'Unknown Episode'}
+              <div className="min-w-0 flex-1">
+                <p className="font-medium truncate text-sm md:text-base text-white">{displayTitle}</p>
+                <p className="text-xs md:text-sm text-gray-400 truncate">
+                  {displayArtist} • {track.episodeTitle || 'Into The Doerfel-Verse'}
                 </p>
               </div>
-
-              {/* Duration */}
-              <div className="text-sm text-gray-400">
-                {formatDuration(track.duration)}
-              </div>
-
-              {/* Play/Pause Icon */}
-              <div className="w-8 h-8 flex items-center justify-center">
-                {isCurrentTrack && isPlaying ? (
-                  <Pause className="w-5 h-5 text-purple-400" />
-                ) : (
-                  <Play className="w-5 h-5 text-gray-400" />
-                )}
-              </div>
             </div>
-          );
-        })}
-      </div>
-
+            <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
+              <span className="text-xs md:text-sm text-gray-400">
+                {formatDuration(track.duration)}
+              </span>
+            </div>
+          </div>
+        );
+      })}
+      
       {/* Footer */}
       <div className="mt-6 pt-4 border-t border-gray-700">
-        <p className="text-sm text-gray-400 text-center">
-          Podcasting 2.0 compliant • Value4Value enabled • 
-          <a href="/playlist/itdv-rss" className="text-blue-400 hover:text-blue-300 ml-1">
-            View full playlist →
+        <p className="text-sm text-gray-400">
+          Into The Doerfel-Verse playlist with Value for Value support. 
+          <a href="https://www.doerfelverse.com" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 ml-1">
+            Visit Doerfel-Verse
           </a>
         </p>
       </div>
     </div>
   );
-} 
+}

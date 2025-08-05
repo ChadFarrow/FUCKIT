@@ -430,10 +430,15 @@ export class RSSParser {
         } else {
           // Convert seconds to MM:SS format if needed
           const durationStr = duration.trim();
-          if (/^\d+$/.test(durationStr)) {
+          
+          // Handle edge cases first
+          if (durationStr === 'NaN' || durationStr === 'undefined' || durationStr === 'null') {
+            duration = '0:00';
+            verboseLog(`⚠️ Invalid duration value "${durationStr}" for track "${trackTitle}", using default`);
+          } else if (/^\d+$/.test(durationStr)) {
             // It's just seconds, convert to MM:SS
             const seconds = parseInt(durationStr);
-            if (!isNaN(seconds) && seconds > 0) {
+            if (!isNaN(seconds) && seconds > 0 && seconds < 86400) { // Max 24 hours
               const mins = Math.floor(seconds / 60);
               const secs = seconds % 60;
               duration = `${mins}:${secs.toString().padStart(2, '0')}`;
@@ -448,7 +453,7 @@ export class RSSParser {
               // MM:SS format
               const mins = parseInt(parts[0]);
               const secs = parseInt(parts[1]);
-              if (!isNaN(mins) && !isNaN(secs) && mins >= 0 && secs >= 0 && secs < 60) {
+              if (!isNaN(mins) && !isNaN(secs) && mins >= 0 && mins < 1440 && secs >= 0 && secs < 60) {
                 duration = `${mins}:${secs.toString().padStart(2, '0')}`;
               } else {
                 // Invalid MM:SS format, use default
@@ -461,7 +466,7 @@ export class RSSParser {
               const mins = parseInt(parts[1]);
               const secs = parseInt(parts[2]);
               if (!isNaN(hours) && !isNaN(mins) && !isNaN(secs) && 
-                  hours >= 0 && mins >= 0 && mins < 60 && secs >= 0 && secs < 60) {
+                  hours >= 0 && hours < 24 && mins >= 0 && mins < 60 && secs >= 0 && secs < 60) {
                 const totalMinutes = hours * 60 + mins;
                 const originalDuration = duration;
                 duration = `${totalMinutes}:${secs.toString().padStart(2, '0')}`;
@@ -485,10 +490,10 @@ export class RSSParser {
           }
         }
         
-        // Final validation - check for NaN values
-        if (typeof duration === 'string' && duration.includes('NaN')) {
+        // Final validation - check for NaN values and other edge cases
+        if (typeof duration === 'string' && (duration.includes('NaN') || duration.includes('undefined') || duration.includes('null'))) {
           duration = '0:00';
-          verboseLog(`⚠️ Duration contained NaN for track "${trackTitle}", using default`);
+          verboseLog(`⚠️ Duration contained invalid value for track "${trackTitle}", using default`);
         }
         // Try multiple ways to get the track URL
         let url: string | undefined = undefined;
@@ -540,7 +545,8 @@ export class RSSParser {
         const trackKeywordsEl = item.getElementsByTagName('itunes:keywords')[0];
         const trackKeywords = trackKeywordsEl?.textContent?.trim().split(',').map((k: string) => k.trim()).filter((k: string) => k) || [];
         
-        tracks.push({
+        // Validate track data before adding
+        const track = {
           title: trackTitle,
           duration: duration,
           url: url,
@@ -550,7 +556,20 @@ export class RSSParser {
           image: trackImage || undefined,
           explicit: trackExplicit,
           keywords: trackKeywords.length > 0 ? trackKeywords : undefined
-        });
+        };
+        
+        // Final validation - ensure no NaN values in track data
+        if (track.title === 'NaN' || track.duration === 'NaN' || 
+            (track.subtitle && track.subtitle.includes('NaN')) ||
+            (track.summary && track.summary.includes('NaN'))) {
+          verboseLog(`⚠️ Track data contains NaN values, using defaults for track "${trackTitle}"`);
+          track.title = trackTitle || 'Unknown Track';
+          track.duration = '0:00';
+          track.subtitle = track.subtitle?.replace(/NaN/g, '') || undefined;
+          track.summary = track.summary?.replace(/NaN/g, '') || undefined;
+        }
+        
+        tracks.push(track);
         
         // Reduced verbosity - only log missing URLs as warnings in dev
         if (!url) {

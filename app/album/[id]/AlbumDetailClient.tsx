@@ -190,24 +190,52 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   };
 
   const formatDuration = (duration: string): string => {
-    if (!duration) return '0:00';
+    if (!duration || duration.trim() === '') return '0:00';
     
-    // If already formatted with colon, return as is
-    if (duration.includes(':')) return duration;
+    const durationStr = duration.trim();
+    
+    // Handle edge cases first
+    if (durationStr === 'NaN' || durationStr === 'undefined' || durationStr === 'null') {
+      return '0:00';
+    }
+    
+    // If already formatted with colon, validate and return
+    if (durationStr.includes(':')) {
+      const parts = durationStr.split(':');
+      if (parts.length === 2) {
+        const mins = parseInt(parts[0]);
+        const secs = parseInt(parts[1]);
+        if (!isNaN(mins) && !isNaN(secs) && mins >= 0 && mins < 1440 && secs >= 0 && secs < 60) {
+          return durationStr;
+        }
+      } else if (parts.length === 3) {
+        const hours = parseInt(parts[0]);
+        const mins = parseInt(parts[1]);
+        const secs = parseInt(parts[2]);
+        if (!isNaN(hours) && !isNaN(mins) && !isNaN(secs) && 
+            hours >= 0 && hours < 24 && mins >= 0 && mins < 60 && secs >= 0 && secs < 60) {
+          const totalMinutes = hours * 60 + mins;
+          return `${totalMinutes}:${secs.toString().padStart(2, '0')}`;
+        }
+      }
+      // Invalid colon format, fall through to seconds parsing
+    }
     
     // If it's just seconds, convert to MM:SS format
-    const seconds = parseInt(duration);
-    if (!isNaN(seconds)) {
+    const seconds = parseInt(durationStr);
+    if (!isNaN(seconds) && seconds >= 0 && seconds < 86400) { // Max 24 hours
       const mins = Math.floor(seconds / 60);
       const secs = seconds % 60;
       return `${mins}:${secs.toString().padStart(2, '0')}`;
     }
     
-    // Try to parse other formats and ensure colon format
-    return duration;
+    // If all else fails, return default
+    return '0:00';
   };
 
   const formatTime = (time: number): string => {
+    if (isNaN(time) || time < 0) return '0:00';
+    
     const mins = Math.floor(time / 60);
     const secs = Math.floor(time % 60);
     return `${mins}:${secs.toString().padStart(2, '0')}`;
@@ -667,6 +695,15 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               
               
               setAlbum(processedAlbum);
+              
+              // Validate album data structure
+              if (!Array.isArray(processedAlbum.tracks)) {
+                console.warn('⚠️ Album tracks is not an array:', processedAlbum.tracks);
+                // Ensure tracks is always an array
+                processedAlbum.tracks = [];
+              }
+              
+              setAlbum(processedAlbum);
               // Load Doerfels publisher data for all albums
               loadDoerfelsPublisherData();
               // Load PodRoll albums if they exist
@@ -690,6 +727,19 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
 
       loadAlbum();
     } else if (initialAlbum) {
+      // Validate initial album data structure
+      if (!Array.isArray(initialAlbum.tracks)) {
+        console.warn('⚠️ Initial album tracks is not an array:', initialAlbum.tracks);
+        // Create a copy with proper tracks array
+        const validatedAlbum = {
+          ...initialAlbum,
+          tracks: []
+        };
+        setAlbum(validatedAlbum);
+      } else {
+        setAlbum(initialAlbum);
+      }
+      
       // Load Doerfels publisher data for all albums
       loadDoerfelsPublisherData();
       // Load PodRoll albums if they exist
@@ -757,8 +807,15 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
                album.publisher.feedUrl === publisherFeedUrl;
       });
       
-      // Add publisher albums to podroll albums (they're displayed in the same section)
+      // Only add publisher albums to recommendations if there are already podroll albums
+      // (This prevents "You Might Also Like" from appearing for albums without podrolls)
       setPodrollAlbums(prevAlbums => {
+        // Only show publisher albums if there are existing podroll recommendations
+        if (prevAlbums.length === 0) {
+          console.log(`🎶 No podroll albums found, not showing publisher recommendations for this album`);
+          return prevAlbums;
+        }
+        
         // Combine and deduplicate based on title+artist
         const combined = [...prevAlbums];
         const existingKeys = new Set(prevAlbums.map(album => `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`));
@@ -771,7 +828,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
           }
         });
         
-        console.log(`🎶 Added ${publisherAlbumsData.length} albums from publisher, total recommendations: ${combined.length}`);
+        console.log(`🎶 Added ${publisherAlbumsData.length} albums from publisher to existing podroll, total recommendations: ${combined.length}`);
         return combined;
       });
     } catch (err) {
@@ -950,7 +1007,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             
             <div className="flex items-center justify-center gap-6 text-sm text-gray-400">
               <span>{new Date(album.releaseDate).getFullYear()}</span>
-              <span>{album.tracks.length} tracks</span>
+              <span>{Array.isArray(album.tracks) ? album.tracks.length : 0} tracks</span>
               {album.explicit && <span className="bg-red-600 text-white px-2 py-1 rounded text-xs">EXPLICIT</span>}
             </div>
             

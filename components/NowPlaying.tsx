@@ -45,7 +45,8 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
   const [hoverPosition, setHoverPosition] = useState<number | null>(null);
 
   const formatTime = (seconds: number): string => {
-    if (!seconds || isNaN(seconds)) return '0:00';
+    if (isNaN(seconds) || seconds < 0) return '0:00';
+    
     const hours = Math.floor(seconds / 3600);
     const mins = Math.floor((seconds % 3600) / 60);
     const secs = Math.floor(seconds % 60);

@@ -232,15 +232,30 @@ export async function GET(request: NextRequest) {
     feedsToProcess.forEach((feed: any) => {
       if (feed.parsedData?.album?.tracks) {
         feed.parsedData.album.tracks.forEach((track: any) => {
+          // Skip tracks with invalid duration
+          if (!track.duration || track.duration === 'NaN' || track.duration === 'undefined' || track.duration === 'null') {
+            console.log(`⚠️ Skipping track "${track.title}" with invalid duration: ${track.duration}`)
+            return
+          }
+          
           // Filter out podcast episodes - songs should be under 15 minutes typically
           // Convert duration to seconds for comparison
           const durationParts = track.duration.split(':').map((p: string) => parseInt(p))
           let durationSeconds = 0
           
+          // Validate duration parts
+          if (durationParts.some(part => isNaN(part))) {
+            console.log(`⚠️ Skipping track "${track.title}" with invalid duration format: ${track.duration}`)
+            return
+          }
+          
           if (durationParts.length === 2) {
             durationSeconds = durationParts[0] * 60 + durationParts[1]
           } else if (durationParts.length === 3) {
             durationSeconds = durationParts[0] * 3600 + durationParts[1] * 60 + durationParts[2]
+          } else {
+            console.log(`⚠️ Skipping track "${track.title}" with unknown duration format: ${track.duration}`)
+            return
           }
           
           // Skip tracks longer than 15 minutes (900 seconds) - likely podcast episodes
@@ -276,7 +291,7 @@ export async function GET(request: NextRequest) {
           ? `All songs from ${feedsToProcess[0]?.title || 'the selected feed'}`
           : 'A complete playlist of all songs from Project StableKraft',
         tracks: allTracks,
-        totalTracks: allTracks.length,
+        totalTracks: Array.isArray(allTracks) ? allTracks.length : 0,
         feedId: feedId || null
       })
     }
