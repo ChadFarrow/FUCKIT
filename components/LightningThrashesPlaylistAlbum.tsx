@@ -169,7 +169,7 @@ export default function LightningThrashesPlaylistAlbum() {
       tracks: tracks.map(t => ({
         title: t.valueForValue?.resolved && t.valueForValue?.resolvedTitle ? t.valueForValue.resolvedTitle : t.title,
         url: t.valueForValue?.resolved && t.valueForValue?.resolvedAudioUrl ? t.valueForValue.resolvedAudioUrl : t.audioUrl || '',
-        startTime: t.startTime || 0,
+        startTime: t.valueForValue?.resolved ? 0 : (t.startTime || 0), // No startTime for resolved V4V tracks
         duration: t.duration ? t.duration.toString() : '300'
       }))
     };
