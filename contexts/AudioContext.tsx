@@ -948,6 +948,11 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     }
   }, [currentPlayingAlbum, currentTrackIndex, isShuffleMode, shuffledPlaylist, currentShuffleIndex, playShuffledTrack, playAlbum]);
 
+  // Update the ref whenever playNextTrack changes
+  useEffect(() => {
+    playNextTrackRef.current = playNextTrack;
+  }, [playNextTrack]);
+
   // Play previous track
   const playPreviousTrack = async () => {
     if (isShuffleMode && shuffledPlaylist.length > 0) {
