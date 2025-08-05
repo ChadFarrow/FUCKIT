@@ -21,7 +21,7 @@ export default function LightningThrashesPlaylistPage() {
       <div 
         className="fixed inset-0 z-0"
         style={{
-          background: 'url(/stablekraft-rocket.png) center/contain no-repeat fixed',
+          background: 'url(/stablekraft-rocket.webp) center/contain no-repeat fixed',
           backgroundAttachment: 'fixed',
           opacity: 0.3
         }}

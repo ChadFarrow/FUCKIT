@@ -583,25 +583,32 @@ export default function HomePage() {
   return (
     <div className="min-h-screen text-white relative overflow-hidden">
       {/* Static Background - STABLEKRAFT Rocket */}
-      <div className="fixed inset-0 z-0">
-        <CDNImage
-          src="/stablekraft-rocket.png"
-          alt="STABLEKRAFT Rocket"
-          width={1920}
-          height={1080}
-          className="object-contain w-full h-full"
-          priority
+      <div 
+        className="fixed inset-0 z-0"
+        style={{
+          backgroundImage: 'url(/stablekraft-rocket.webp)',
+          backgroundSize: 'contain',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        {/* Hidden image to trigger onLoad for backgroundImageLoaded state */}
+        <img 
+          src="/stablekraft-rocket.webp" 
+          alt=""
+          className="hidden"
           onLoad={() => setBackgroundImageLoaded(true)}
-          onError={() => setBackgroundImageLoaded(true)} // Mark as loaded even on error to show fallback
+          onError={() => setBackgroundImageLoaded(true)}
         />
         {/* Gradient overlay for better readability */}
         <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/40 to-black/60" />
       </div>
       
-      {/* Fallback gradient background - show when not loaded or on error */}
-      {!backgroundImageLoaded && (
-        <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 z-0" />
-      )}
+      {/* Fallback gradient background - only for very slow connections */}
+      <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 z-0" style={{
+        opacity: backgroundImageLoaded ? 0 : 1,
+        transition: 'opacity 0.3s ease-in-out'
+      }} />
 
       {/* Content overlay */}
       <div className="relative z-10">
