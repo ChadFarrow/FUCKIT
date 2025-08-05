@@ -582,14 +582,14 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen text-white relative overflow-hidden">
-      {/* Static Background - Bloodshot Lies Album Art */}
+      {/* Static Background - STABLEKRAFT Rocket */}
       <div className="fixed inset-0 z-0">
         <CDNImage
-          src="/bloodshot-lies-big.png"
-          alt="Bloodshot Lies Album Art - Vibrant Edition"
+          src="/stablekraft-rocket.png"
+          alt="STABLEKRAFT Rocket"
           width={1920}
           height={1080}
-          className="object-cover w-full h-full"
+          className="object-contain w-full h-full"
           priority
           onLoad={() => setBackgroundImageLoaded(true)}
           onError={() => setBackgroundImageLoaded(true)} // Mark as loaded even on error to show fallback
