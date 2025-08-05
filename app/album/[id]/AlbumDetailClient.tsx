@@ -300,6 +300,22 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
     return totalMinutes.toString();
   };
 
+  const getAlbumYear = (releaseDate: string): string => {
+    if (!releaseDate) {
+      return new Date().getFullYear().toString();
+    }
+    
+    const date = new Date(releaseDate);
+    const year = date.getFullYear();
+    
+    // Check if the year is valid (not NaN and within reasonable range)
+    if (isNaN(year) || year < 1900 || year > new Date().getFullYear() + 1) {
+      return new Date().getFullYear().toString();
+    }
+    
+    return year.toString();
+  };
+
   // Audio player functions
   const togglePlay = async () => {
     if (globalIsPlaying && currentPlayingAlbum?.title === album?.title) {
@@ -1083,7 +1099,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             )}
             
             <div className="flex items-center justify-center gap-6 text-sm text-gray-400">
-              <span>{new Date(album.releaseDate).getFullYear()}</span>
+              <span>{getAlbumYear(album.releaseDate)}</span>
               <span>{Array.isArray(album.tracks) ? album.tracks.length : 0} tracks</span>
               <span>{calculateTotalDuration(album.tracks)} min</span>
               {album.explicit && <span className="bg-red-600 text-white px-2 py-1 rounded text-xs">EXPLICIT</span>}
