@@ -41,8 +41,8 @@ export default function LightningThrashesPlaylistAlbum() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-      // Fetch more tracks to ensure we get Lightning Thrashes tracks
-      const response = await fetch('/api/music-tracks/database?source=rss-playlist&pageSize=500', { signal: controller.signal });
+      // Try both API and static data to see which has Lightning Thrashes tracks
+      const response = await fetch('/data/music-tracks.json', { signal: controller.signal });
       clearTimeout(timeoutId);
 
       if (!response.ok) {
@@ -50,7 +50,7 @@ export default function LightningThrashesPlaylistAlbum() {
       }
       
       const data = await response.json();
-      const allTracks = data.data?.tracks || [];
+      const allTracks = data.musicTracks || [];
       
       console.log('📊 Total tracks fetched:', allTracks.length);
       console.log('🔍 Sample track for debugging:', allTracks[0]);
