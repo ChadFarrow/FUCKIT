@@ -25,6 +25,7 @@ interface AudioContextType {
   playTrack: (audioUrl: string, startTime?: number, endTime?: number) => Promise<boolean>;
   playShuffledTrack: (index: number) => Promise<boolean>;
   shuffleAllTracks: () => Promise<boolean>;
+  toggleShuffle: () => void;
   pause: () => void;
   resume: () => void;
   seek: (time: number) => void;
@@ -162,6 +163,35 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       return () => clearTimeout(timeoutId);
     }
   }, [currentPlayingAlbum, currentTrackIndex, currentTime, duration, isShuffleMode, shuffledPlaylist, currentShuffleIndex]);
+
+  // Set up auto-play next track functionality
+  useEffect(() => {
+    const audioElement = audioRef.current;
+    const videoElement = videoRef.current;
+    
+    const handleEnded = () => {
+      console.log('🎵 Track ended, auto-playing next track...');
+      playNextTrack();
+    };
+    
+    // Add event listeners to both audio and video elements
+    if (audioElement) {
+      audioElement.addEventListener('ended', handleEnded);
+    }
+    if (videoElement) {
+      videoElement.addEventListener('ended', handleEnded);
+    }
+    
+    // Cleanup
+    return () => {
+      if (audioElement) {
+        audioElement.removeEventListener('ended', handleEnded);
+      }
+      if (videoElement) {
+        videoElement.removeEventListener('ended', handleEnded);
+      }
+    };
+  }, [playNextTrack]);
 
   // Load albums data for playback - only once
   useEffect(() => {
@@ -1044,6 +1074,11 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     }
   };
 
+  const toggleShuffle = () => {
+    setIsShuffleMode(prev => !prev);
+    console.log(`🔀 Shuffle ${!isShuffleMode ? 'enabled' : 'disabled'}`);
+  };
+
   const value: AudioContextType = {
     currentPlayingAlbum,
     isPlaying,
@@ -1056,6 +1091,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     playTrack,
     playShuffledTrack,
     shuffleAllTracks,
+    toggleShuffle,
     pause,
     resume,
     seek,

@@ -11,12 +11,14 @@ const GlobalNowPlayingBar: React.FC = () => {
     currentTrackIndex,
     currentTime,
     duration,
+    isShuffleMode,
     pause,
     resume,
     seek,
     playNextTrack,
     playPreviousTrack,
-    stop
+    stop,
+    toggleShuffle
   } = useAudio();
 
   const [volume, setVolume] = useState(0.6);
@@ -85,12 +87,14 @@ const GlobalNowPlayingBar: React.FC = () => {
         isPlaying={isPlaying}
         currentTime={currentTime}
         volume={volume}
+        isShuffleMode={isShuffleMode}
         onPlayPause={handlePlayPause}
         onPrevious={playPreviousTrack}
         onNext={playNextTrack}
         onSeek={handleSeek}
         onVolumeChange={handleVolumeChange}
         onClose={handleClose}
+        onToggleShuffle={toggleShuffle}
       />
     </div>
   );

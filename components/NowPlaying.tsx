@@ -18,12 +18,14 @@ interface NowPlayingProps {
   isPlaying: boolean;
   currentTime: number;
   volume: number;
+  isShuffleMode?: boolean;
   onPlayPause: () => void;
   onPrevious: () => void;
   onNext: () => void;
   onSeek: (time: number) => void;
   onVolumeChange: (volume: number) => void;
   onClose: () => void;
+  onToggleShuffle?: () => void;
 }
 
 const NowPlaying: React.FC<NowPlayingProps> = ({
@@ -31,12 +33,14 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
   isPlaying,
   currentTime,
   volume,
+  isShuffleMode = false,
   onPlayPause,
   onPrevious,
   onNext,
   onSeek,
   onVolumeChange,
-  onClose
+  onClose,
+  onToggleShuffle
 }) => {
   const [hoverPosition, setHoverPosition] = useState<number | null>(null);
 
@@ -105,6 +109,23 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
       
       {/* Playback Controls - Perfectly Centered */}
       <div className="flex items-center justify-center gap-3 flex-1">
+        {/* Shuffle Button */}
+        {onToggleShuffle && (
+          <button
+            onClick={onToggleShuffle}
+            className={`rounded-full p-2 transition-colors ${
+              isShuffleMode 
+                ? 'bg-orange-500 hover:bg-orange-600 text-white' 
+                : 'bg-gray-600 hover:bg-gray-500 text-white'
+            }`}
+            title={isShuffleMode ? 'Disable shuffle' : 'Enable shuffle'}
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/>
+            </svg>
+          </button>
+        )}
+        
         <button
           onClick={onPrevious}
           className="bg-gray-600 hover:bg-gray-500 text-white rounded-full p-2 transition-colors"
