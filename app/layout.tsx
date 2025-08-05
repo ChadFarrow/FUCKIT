@@ -101,7 +101,7 @@ export default function RootLayout({
         <ClientErrorBoundary>
           <ErrorBoundary>
             <AudioProvider>
-              <div className="min-h-screen bg-gray-50 relative">
+              <div className="min-h-screen relative">
                 {/* Background Image */}
                 <div 
                   className="fixed inset-0 z-0"

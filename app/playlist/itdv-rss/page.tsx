@@ -16,7 +16,7 @@ const ITDVPlaylistAlbum = dynamic(() => import('@/components/ITDVPlaylistAlbum')
 
 export default function ITDVPlaylistPage() {
   return (
-    <div className="min-h-screen bg-gray-50 relative">
+    <div className="min-h-screen relative">
       {/* Background Image */}
       <div 
         className="fixed inset-0 z-0"
