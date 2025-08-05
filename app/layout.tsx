@@ -18,7 +18,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'DoerfelVerse - Music & Podcast Hub',
+  title: 'Project StableKraft - Music & Podcast Hub',
   description: 'Discover and listen to music and podcasts from the Doerfel family and friends',
   manifest: '/manifest.json',
   icons: {
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'DoerfelVerse',
+    title: 'Project StableKraft',
     startupImage: [
       {
         url: '/apple-touch-icon.png',
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
   other: {
     'apple-mobile-web-app-capable': 'yes',
     'apple-mobile-web-app-status-bar-style': 'black-translucent',
-    'apple-mobile-web-app-title': 'DoerfelVerse',
+    'apple-mobile-web-app-title': 'Project StableKraft',
     'mobile-web-app-capable': 'yes',
     'format-detection': 'telephone=no',
   },
