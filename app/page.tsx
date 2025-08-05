@@ -631,16 +631,7 @@ export default function HomePage() {
                     </svg>
                   </button>
                   
-                  {/* Logo */}
-                  <div className="w-10 h-10 relative border border-gray-700 rounded-lg overflow-hidden">
-                    <Image 
-                      src="/stablekraft-rocket.png" 
-                      alt="STABLEKRAFT Rocket" 
-                      width={40} 
-                      height={40}
-                      className="object-cover"
-                    />
-                  </div>
+
                 </div>
                 
                 {/* About Link */}
@@ -681,17 +672,7 @@ export default function HomePage() {
                     </svg>
                   </button>
                   
-                  {/* Logo */}
-                  <div className="w-10 h-10 relative border border-gray-700 rounded-lg overflow-hidden">
-                    <Image 
-                      src="/stablekraft-rocket.png" 
-                      alt="STABLEKRAFT Rocket" 
-                      width={40} 
-                      height={40}
-                      className="object-cover"
-                      priority
-                    />
-                  </div>
+
                 </div>
                 
                 {/* Center - Title */}
