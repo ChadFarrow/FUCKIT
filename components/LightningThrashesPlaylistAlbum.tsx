@@ -97,15 +97,7 @@ export default function LightningThrashesPlaylistAlbum() {
                                   hasLightningThrashesInArtist || hasLightningThrashesInTitle || 
                                   hasLightningThrashesInEpisode;
         
-        if (isLightningThrashes) {
-          console.log('✅ Found Lightning Thrashes track:', {
-            id: track.id,
-            title: track.title,
-            artist: track.artist,
-            feedUrl: track.feedUrl,
-            source: track.playlistInfo?.source
-          });
-        }
+        // Track found (removed verbose logging for performance)
         
         return isLightningThrashes;
       });
@@ -135,7 +127,7 @@ export default function LightningThrashesPlaylistAlbum() {
         console.log('🔧 Showing debug tracks:', debugTracks.length);
       } else {
         setTotalTracks(lightningThrashesTracks.length);
-        setTracks(lightningThrashesTracks.slice(0, 50)); // Show first 50 tracks
+        setTracks(lightningThrashesTracks); // Show all tracks
       }
     } catch (error) {
       console.error('❌ Error loading Lightning Thrashes tracks:', error);
