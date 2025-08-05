@@ -10017,15 +10017,15 @@
     },
     {
       "id": "lightning-thrashes-playlist-1754350795653-152",
-      "title": "Lightning Thrashes Track 153",
-      "artist": "Lightning Thrashes",
+      "title": "Race for the Crown of the Cosmos",
+      "artist": "Subterfuge",
       "episodeId": "8ebf86ed-c419-500c-a6ed-b6bffc6a4792-03a9a6cc-4fd9-4d80-b6d2-abce5f81021d",
       "episodeTitle": "Lightning Thrashes Track 153",
       "episodeDate": "2025-08-04T23:39:55.652Z",
       "startTime": 0,
       "endTime": 300,
       "duration": 300,
-      "audioUrl": "",
+      "audioUrl": "https://op3.dev/e,pg=8ebf86ed-c419-500c-a6ed-b6bffc6a4792/https://d12wklypp119aj.cloudfront.net/track/03a9a6cc-4fd9-4d80-b6d2-abce5f81021d.mp3",
       "source": "rss-playlist",
       "feedUrl": "https://cdn.kolomona.com/podcasts/lightning-thrashes/playlists/001-to-060-lightning-thrashes-playlist.xml",
       "discoveredAt": "2025-08-04T23:39:55.652Z",
@@ -10035,12 +10035,12 @@
         "remotePercentage": 90,
         "feedGuid": "8ebf86ed-c419-500c-a6ed-b6bffc6a4792",
         "itemGuid": "03a9a6cc-4fd9-4d80-b6d2-abce5f81021d",
-        "resolvedTitle": "Lightning Thrashes Track 153",
-        "resolvedArtist": "Lightning Thrashes",
-        "resolvedImage": "https://cdn.kolomona.com/podcasts/lightning-thrashes/060/060-Lightning-Thrashes-1000.jpg",
-        "resolvedAudioUrl": "",
-        "resolved": false,
-        "lastResolved": null
+        "resolvedTitle": "Race for the Crown of the Cosmos",
+        "resolvedArtist": "Subterfuge",
+        "resolvedImage": "https://d12wklypp119aj.cloudfront.net/image/3692ee33-dcdf-4032-adf8-8ea2c6a09072.jpg",
+        "resolvedAudioUrl": "https://op3.dev/e,pg=8ebf86ed-c419-500c-a6ed-b6bffc6a4792/https://d12wklypp119aj.cloudfront.net/track/03a9a6cc-4fd9-4d80-b6d2-abce5f81021d.mp3",
+        "resolved": true,
+        "lastResolved": "2025-08-05T01:38:39.147Z"
       },
       "description": "From Lightning Thrashes RSS Playlist - Remote track from Lightning Thrashes playlist",
       "extractionMethod": "rss-playlist-import",
@@ -10049,7 +10049,8 @@
         "source": "Lightning Thrashes RSS Playlist",
         "episodeNumber": 153,
         "trackNumber": 152
-      }
+      },
+      "image": "https://d12wklypp119aj.cloudfront.net/image/3692ee33-dcdf-4032-adf8-8ea2c6a09072.jpg"
     },
     {
       "id": "lightning-thrashes-playlist-1754350795653-153",
@@ -10090,15 +10091,15 @@
     },
     {
       "id": "lightning-thrashes-playlist-1754350795653-154",
-      "title": "Lightning Thrashes Track 155",
-      "artist": "Lightning Thrashes",
+      "title": "Ferguson, Misery",
+      "artist": "Dooberstank",
       "episodeId": "c6ad0193-f8d9-5ce8-9c8c-b87d87595e53-3c8c6215-d2e9-469d-862c-f760e416e5b4",
       "episodeTitle": "Lightning Thrashes Track 155",
       "episodeDate": "2025-08-04T23:39:55.652Z",
       "startTime": 0,
       "endTime": 300,
       "duration": 300,
-      "audioUrl": "",
+      "audioUrl": "https://op3.dev/e,pg=c6ad0193-f8d9-5ce8-9c8c-b87d87595e53/https://d12wklypp119aj.cloudfront.net/track/3c8c6215-d2e9-469d-862c-f760e416e5b4.mp3",
       "source": "rss-playlist",
       "feedUrl": "https://cdn.kolomona.com/podcasts/lightning-thrashes/playlists/001-to-060-lightning-thrashes-playlist.xml",
       "discoveredAt": "2025-08-04T23:39:55.652Z",
@@ -10108,12 +10109,12 @@
         "remotePercentage": 90,
         "feedGuid": "c6ad0193-f8d9-5ce8-9c8c-b87d87595e53",
         "itemGuid": "3c8c6215-d2e9-469d-862c-f760e416e5b4",
-        "resolvedTitle": "Lightning Thrashes Track 155",
-        "resolvedArtist": "Lightning Thrashes",
-        "resolvedImage": "https://cdn.kolomona.com/podcasts/lightning-thrashes/060/060-Lightning-Thrashes-1000.jpg",
-        "resolvedAudioUrl": "",
-        "resolved": false,
-        "lastResolved": null
+        "resolvedTitle": "Ferguson, Misery",
+        "resolvedArtist": "Dooberstank",
+        "resolvedImage": "https://d12wklypp119aj.cloudfront.net/image/5aa35e04-e9eb-4bc2-9bd5-ee6d9222c8ca.jpg",
+        "resolvedAudioUrl": "https://op3.dev/e,pg=c6ad0193-f8d9-5ce8-9c8c-b87d87595e53/https://d12wklypp119aj.cloudfront.net/track/3c8c6215-d2e9-469d-862c-f760e416e5b4.mp3",
+        "resolved": true,
+        "lastResolved": "2025-08-05T01:38:39.015Z"
       },
       "description": "From Lightning Thrashes RSS Playlist - Remote track from Lightning Thrashes playlist",
       "extractionMethod": "rss-playlist-import",
@@ -10122,7 +10123,8 @@
         "source": "Lightning Thrashes RSS Playlist",
         "episodeNumber": 155,
         "trackNumber": 154
-      }
+      },
+      "image": "https://d12wklypp119aj.cloudfront.net/image/5aa35e04-e9eb-4bc2-9bd5-ee6d9222c8ca.jpg"
     },
     {
       "id": "lightning-thrashes-playlist-1754350795653-155",
@@ -11494,15 +11496,15 @@
     },
     {
       "id": "lightning-thrashes-playlist-1754350795653-192",
-      "title": "Lightning Thrashes Track 193",
-      "artist": "Lightning Thrashes",
+      "title": "Blundermen - Objector",
+      "artist": "Rubber Factory Records",
       "episodeId": "1d35cd0f-61bc-5f92-a106-80e2db1ca280-f28b2c1d-66a6-4f9e-a5ee-ddcc1ac35a4d",
       "episodeTitle": "Lightning Thrashes Track 193",
       "episodeDate": "2025-08-04T23:39:55.652Z",
       "startTime": 0,
       "endTime": 300,
       "duration": 300,
-      "audioUrl": "",
+      "audioUrl": "https://op3.dev/e,pg=1d35cd0f-61bc-5f92-a106-80e2db1ca280/https://d12wklypp119aj.cloudfront.net/track/66c445f7-0c50-48d2-8f55-0734de9e0239.mp3",
       "source": "rss-playlist",
       "feedUrl": "https://cdn.kolomona.com/podcasts/lightning-thrashes/playlists/001-to-060-lightning-thrashes-playlist.xml",
       "discoveredAt": "2025-08-04T23:39:55.652Z",
@@ -11512,12 +11514,12 @@
         "remotePercentage": 90,
         "feedGuid": "1d35cd0f-61bc-5f92-a106-80e2db1ca280",
         "itemGuid": "f28b2c1d-66a6-4f9e-a5ee-ddcc1ac35a4d",
-        "resolvedTitle": "Lightning Thrashes Track 193",
-        "resolvedArtist": "Lightning Thrashes",
-        "resolvedImage": "https://cdn.kolomona.com/podcasts/lightning-thrashes/060/060-Lightning-Thrashes-1000.jpg",
-        "resolvedAudioUrl": "",
-        "resolved": false,
-        "lastResolved": null
+        "resolvedTitle": "Blundermen - Objector",
+        "resolvedArtist": "Rubber Factory Records",
+        "resolvedImage": "https://d12wklypp119aj.cloudfront.net/image/aa979224-3bb8-4475-9112-0e8d61e09624.jpg",
+        "resolvedAudioUrl": "https://op3.dev/e,pg=1d35cd0f-61bc-5f92-a106-80e2db1ca280/https://d12wklypp119aj.cloudfront.net/track/66c445f7-0c50-48d2-8f55-0734de9e0239.mp3",
+        "resolved": true,
+        "lastResolved": "2025-08-05T01:38:42.608Z"
       },
       "description": "From Lightning Thrashes RSS Playlist - Remote track from Lightning Thrashes playlist",
       "extractionMethod": "rss-playlist-import",
@@ -11526,19 +11528,20 @@
         "source": "Lightning Thrashes RSS Playlist",
         "episodeNumber": 193,
         "trackNumber": 192
-      }
+      },
+      "image": "https://d12wklypp119aj.cloudfront.net/image/aa979224-3bb8-4475-9112-0e8d61e09624.jpg"
     },
     {
       "id": "lightning-thrashes-playlist-1754350795653-193",
-      "title": "Lightning Thrashes Track 194",
-      "artist": "Lightning Thrashes",
+      "title": ".-.",
+      "artist": "IROH",
       "episodeId": "ad6bfff9-4d5e-54ef-b5d3-dcc6eaf26e3b-493a41c0-fd75-400d-9ca2-ec4bb4cb6a5b",
       "episodeTitle": "Lightning Thrashes Track 194",
       "episodeDate": "2025-08-04T23:39:55.652Z",
       "startTime": 0,
       "endTime": 300,
       "duration": 300,
-      "audioUrl": "",
+      "audioUrl": "https://op3.dev/e,pg=ad6bfff9-4d5e-54ef-b5d3-dcc6eaf26e3b/https://d12wklypp119aj.cloudfront.net/track/f03a0e04-d172-4926-b578-55cab8f879d2.mp3",
       "source": "rss-playlist",
       "feedUrl": "https://cdn.kolomona.com/podcasts/lightning-thrashes/playlists/001-to-060-lightning-thrashes-playlist.xml",
       "discoveredAt": "2025-08-04T23:39:55.652Z",
@@ -11548,12 +11551,12 @@
         "remotePercentage": 90,
         "feedGuid": "ad6bfff9-4d5e-54ef-b5d3-dcc6eaf26e3b",
         "itemGuid": "493a41c0-fd75-400d-9ca2-ec4bb4cb6a5b",
-        "resolvedTitle": "Lightning Thrashes Track 194",
-        "resolvedArtist": "Lightning Thrashes",
-        "resolvedImage": "https://cdn.kolomona.com/podcasts/lightning-thrashes/060/060-Lightning-Thrashes-1000.jpg",
-        "resolvedAudioUrl": "",
-        "resolved": false,
-        "lastResolved": null
+        "resolvedTitle": ".-.",
+        "resolvedArtist": "IROH",
+        "resolvedImage": "https://d12wklypp119aj.cloudfront.net/image/997060e3-9dc1-4cd8-b3c1-3ae06d54bb03.jpg",
+        "resolvedAudioUrl": "https://op3.dev/e,pg=ad6bfff9-4d5e-54ef-b5d3-dcc6eaf26e3b/https://d12wklypp119aj.cloudfront.net/track/f03a0e04-d172-4926-b578-55cab8f879d2.mp3",
+        "resolved": true,
+        "lastResolved": "2025-08-05T01:38:42.460Z"
       },
       "description": "From Lightning Thrashes RSS Playlist - Remote track from Lightning Thrashes playlist",
       "extractionMethod": "rss-playlist-import",
@@ -11562,7 +11565,8 @@
         "source": "Lightning Thrashes RSS Playlist",
         "episodeNumber": 194,
         "trackNumber": 193
-      }
+      },
+      "image": "https://d12wklypp119aj.cloudfront.net/image/997060e3-9dc1-4cd8-b3c1-3ae06d54bb03.jpg"
     },
     {
       "id": "lightning-thrashes-playlist-1754350795653-194",
@@ -14930,15 +14934,15 @@
     },
     {
       "id": "lightning-thrashes-playlist-1754350795653-285",
-      "title": "Lightning Thrashes Track 286",
-      "artist": "Lightning Thrashes",
+      "title": "All Hail",
+      "artist": "POLANSKI",
       "episodeId": "54d743de-5a01-5405-8c32-b792e99db350-28fdfa69-56bf-4220-88af-438030c0fd31",
       "episodeTitle": "Lightning Thrashes Track 286",
       "episodeDate": "2025-08-04T23:39:55.652Z",
       "startTime": 0,
       "endTime": 300,
       "duration": 300,
-      "audioUrl": "",
+      "audioUrl": "https://op3.dev/e,pg=54d743de-5a01-5405-8c32-b792e99db350/https://d12wklypp119aj.cloudfront.net/track/b1fddd49-a3b3-4cfa-af69-fab60f92724c.mp3",
       "source": "rss-playlist",
       "feedUrl": "https://cdn.kolomona.com/podcasts/lightning-thrashes/playlists/001-to-060-lightning-thrashes-playlist.xml",
       "discoveredAt": "2025-08-04T23:39:55.652Z",
@@ -14948,12 +14952,12 @@
         "remotePercentage": 90,
         "feedGuid": "54d743de-5a01-5405-8c32-b792e99db350",
         "itemGuid": "28fdfa69-56bf-4220-88af-438030c0fd31",
-        "resolvedTitle": "Lightning Thrashes Track 286",
-        "resolvedArtist": "Lightning Thrashes",
-        "resolvedImage": "https://cdn.kolomona.com/podcasts/lightning-thrashes/060/060-Lightning-Thrashes-1000.jpg",
-        "resolvedAudioUrl": "",
-        "resolved": false,
-        "lastResolved": null
+        "resolvedTitle": "All Hail",
+        "resolvedArtist": "POLANSKI",
+        "resolvedImage": "https://d12wklypp119aj.cloudfront.net/image/a3aaf7d2-c36d-4911-896f-d9f4b3ee5a37.jpg",
+        "resolvedAudioUrl": "https://op3.dev/e,pg=54d743de-5a01-5405-8c32-b792e99db350/https://d12wklypp119aj.cloudfront.net/track/b1fddd49-a3b3-4cfa-af69-fab60f92724c.mp3",
+        "resolved": true,
+        "lastResolved": "2025-08-05T01:38:49.609Z"
       },
       "description": "From Lightning Thrashes RSS Playlist - Remote track from Lightning Thrashes playlist",
       "extractionMethod": "rss-playlist-import",
@@ -14962,7 +14966,8 @@
         "source": "Lightning Thrashes RSS Playlist",
         "episodeNumber": 286,
         "trackNumber": 285
-      }
+      },
+      "image": "https://d12wklypp119aj.cloudfront.net/image/a3aaf7d2-c36d-4911-896f-d9f4b3ee5a37.jpg"
     },
     {
       "id": "lightning-thrashes-playlist-1754350795653-286",
