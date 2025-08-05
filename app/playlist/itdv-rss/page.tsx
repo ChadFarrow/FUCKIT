@@ -23,7 +23,7 @@ export default function ITDVPlaylistPage() {
         style={{
                       background: 'url(/stablekraft-rocket.png) center/contain fixed',
           backgroundAttachment: 'fixed',
-                      opacity: 0.4
+                      opacity: 0.6
         }}
       />
       

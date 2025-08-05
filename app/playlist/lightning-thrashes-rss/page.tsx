@@ -20,7 +20,8 @@ export default function LightningThrashesPlaylistPage() {
       className="min-h-screen text-white relative"
       style={{
                     background: 'url(/stablekraft-rocket.png) center/contain fixed',
-        backgroundAttachment: 'fixed'
+                  backgroundAttachment: 'fixed',
+          opacity: 0.6
       }}
     >
       <div className="container mx-auto px-6 py-8 pb-40">
