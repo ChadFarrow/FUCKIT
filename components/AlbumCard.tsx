@@ -204,7 +204,7 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
       </div>
 
       {/* Album Info */}
-      <div className="p-2 sm:p-3 bg-black/40 backdrop-blur-sm">
+      <div className="p-2 sm:p-3 bg-black/25 backdrop-blur-sm">
         <h3 className="font-bold text-white text-xs sm:text-sm leading-tight line-clamp-2 group-hover:text-blue-300 transition-colors duration-200 drop-shadow-lg">
           {album.title}
         </h3>
