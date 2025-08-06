@@ -29,7 +29,11 @@ export const metadata: Metadata = {
       { url: '/icon-512x512.png', sizes: '512x512', type: 'image/png' },
     ],
     apple: [
-      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+      { url: '/apple-touch-icon.png?v=2025', sizes: '180x180', type: 'image/png' },
+      { url: '/apple-touch-icon-152x152.png?v=2025', sizes: '152x152', type: 'image/png' },
+      { url: '/apple-touch-icon-144x144.png?v=2025', sizes: '144x144', type: 'image/png' },
+      { url: '/apple-touch-icon-120x120.png?v=2025', sizes: '120x120', type: 'image/png' },
+      { url: '/apple-touch-icon-76x76.png?v=2025', sizes: '76x76', type: 'image/png' },
     ],
   },
   appleWebApp: {
@@ -38,7 +42,7 @@ export const metadata: Metadata = {
     title: 'Project StableKraft',
     startupImage: [
       {
-        url: '/apple-touch-icon.png',
+        url: '/apple-touch-icon.png?v=2025',
         media: '(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)',
       },
     ],
