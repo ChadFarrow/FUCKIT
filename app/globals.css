@@ -17,12 +17,12 @@
   --stablekraft-light-teal: #7EDDD6;
   --stablekraft-dark-teal: #3CBCB3;
   
-  /* UI Colors */
-  --background-primary: rgba(26, 37, 47, 0.95);
-  --background-secondary: rgba(44, 62, 80, 0.9);
+  /* UI Colors - Light Theme */
+  --background-primary: rgba(255, 255, 255, 0.95);
+  --background-secondary: rgba(248, 250, 252, 0.9);
   --background-overlay: rgba(255, 215, 0, 0.1);
-  --text-primary: #FFFFFF;
-  --text-secondary: #B8C6DB;
+  --text-primary: #1A252F;
+  --text-secondary: #64748B;
   --accent-primary: var(--stablekraft-teal);
   --accent-secondary: var(--stablekraft-orange);
 }
@@ -33,7 +33,7 @@
   }
   
   body {
-    @apply text-white;
+    @apply text-gray-900;
     background-color: var(--background-primary);
   }
   
@@ -81,15 +81,12 @@
 
 @layer components {
   .podcast-card {
-    background-color: var(--background-secondary);
-    @apply rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden;
-    border: 1px solid var(--stablekraft-teal);
+    @apply bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden;
+    border: 1px solid rgba(78, 205, 196, 0.2);
   }
   
   .episode-card {
-    background-color: var(--background-secondary);
-    @apply rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 p-4;
-    border: 1px solid rgba(78, 205, 196, 0.3);
+    @apply bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 p-4 border border-gray-100;
   }
   
   .btn-primary {
@@ -102,15 +99,14 @@
   }
   
   .btn-secondary {
-    background-color: var(--background-secondary);
-    color: var(--text-secondary);
-    @apply font-medium py-2 px-4 rounded-lg transition-colors duration-200;
-    border: 1px solid var(--stablekraft-teal);
+    @apply bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+    border: 1px solid rgba(78, 205, 196, 0.3);
   }
   
   .btn-secondary:hover {
     background-color: var(--stablekraft-teal);
     color: white;
+    border-color: var(--stablekraft-teal);
   }
 
   /* Scrollbar utilities */
@@ -132,7 +128,7 @@
   }
 
   .slider::-webkit-slider-track {
-    background: var(--background-secondary);
+    background: #e5e7eb;
     height: 4px;
     border-radius: 2px;
   }
@@ -148,7 +144,7 @@
   }
 
   .slider::-moz-range-track {
-    background: var(--background-secondary);
+    background: #e5e7eb;
     height: 4px;
     border-radius: 2px;
     border: none;
