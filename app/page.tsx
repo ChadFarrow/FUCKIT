@@ -582,7 +582,7 @@ export default function HomePage() {
       <div 
         className="fixed inset-0 z-0"
         style={{
-          backgroundImage: 'url(/stablekraft-rocket.webp)',
+          backgroundImage: 'url(/stablekraft-rocket-new.png)',
           backgroundSize: 'contain',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
@@ -590,7 +590,7 @@ export default function HomePage() {
       >
         {/* Hidden image to trigger onLoad for backgroundImageLoaded state */}
         <img 
-          src="/stablekraft-rocket.webp" 
+          src="/stablekraft-rocket-new.png" 
           alt=""
           className="hidden"
           onLoad={() => setBackgroundImageLoaded(true)}

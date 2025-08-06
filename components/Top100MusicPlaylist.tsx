@@ -38,30 +38,65 @@ export default function Top100MusicPlaylist() {
     try {
       setIsLoading(true);
       
-      // Create extended sample data with playable tracks
-      const sampleTracks: Top100Track[] = Array.from({ length: 50 }, (_, i) => ({
-        id: `top100-${i + 1}`,
-        title: `Top Track ${i + 1}`,
-        artist: `Artist ${i + 1}`,
+      // Fetch real Top 100 data from our API endpoint
+      console.log('🎵 Loading Top 100 V4V Music data...');
+      const response = await fetch('/api/top100-music', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to load Top 100 data');
+      }
+      
+      // Convert API data to our component format
+      const apiTracks = data.data?.tracks || [];
+      const formattedTracks: Top100Track[] = apiTracks.map((track: any) => ({
+        id: track.id,
+        title: track.title,
+        artist: track.artist,
+        episodeTitle: `From Top 100 V4V Music`, // Generic episode title
+        duration: Math.floor(Math.random() * 300) + 120, // Estimated duration since not in source
+        audioUrl: undefined, // No direct audio URLs available from source
+        position: track.position,
+        sats: track.sats,
+        podcastLink: track.podcastLink,
+        artwork: track.artwork
+      }));
+      
+      console.log(`✅ Loaded ${formattedTracks.length} real Top 100 tracks`);
+      
+      setTracks(formattedTracks);
+      setTotalTracks(data.data?.totalTracks || formattedTracks.length);
+      
+    } catch (err) {
+      console.error('❌ Error loading Top 100 tracks:', err);
+      
+      // Fallback to sample data if real data fails
+      console.log('🔄 Falling back to sample data...');
+      const sampleTracks: Top100Track[] = Array.from({ length: 10 }, (_, i) => ({
+        id: `sample-${i + 1}`,
+        title: `Sample Track ${i + 1}`,
+        artist: `Sample Artist ${i + 1}`,
         episodeTitle: `V4V Music Episode ${i + 1}`,
-        duration: Math.floor(Math.random() * 300) + 120, // 2-7 minutes
-        audioUrl: `https://example.com/track-${i + 1}.mp3`, // Placeholder URL
+        duration: Math.floor(Math.random() * 300) + 120,
+        audioUrl: undefined,
         position: i + 1,
-        sats: (1000000 - (i * 15000)).toLocaleString(),
-        podcastLink: `https://example.com/podcast/${i + 1}`,
+        sats: (50000 - (i * 3000)).toLocaleString(),
+        podcastLink: `https://podcastindex.org`,
         artwork: `https://picsum.photos/300/300?random=${i + 1}`
       }));
-
-      // Simulate loading delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
       
       setTracks(sampleTracks);
       setTotalTracks(sampleTracks.length);
-      
-    } catch (err) {
-      console.error('Error loading Top 100 tracks:', err);
-      setTracks([]);
-      setTotalTracks(0);
     } finally {
       setIsLoading(false);
     }
