@@ -76,18 +76,18 @@ export default function Top100MusicPlaylist() {
   if (isLoading) {
     return (
       <div className="space-y-4">
-        <div className="text-sm text-gray-500 mb-4">Loading Top 100 music tracks...</div>
+        <div className="text-sm text-gray-400 mb-4">Loading Top 100 music tracks...</div>
         {[...Array(10)].map((_, i) => (
-          <div key={i} className="flex items-center gap-4 p-4 bg-gray-100 rounded-lg animate-pulse">
-            <div className="w-8 h-8 bg-gray-300 rounded text-center flex items-center justify-center">
-              <span className="text-sm font-bold text-gray-500">{i + 1}</span>
+          <div key={i} className="flex items-center gap-4 p-4 bg-white/5 rounded-lg animate-pulse">
+            <div className="w-8 h-8 bg-gray-700 rounded text-center flex items-center justify-center">
+              <span className="text-sm font-bold text-gray-400">{i + 1}</span>
             </div>
-            <div className="w-12 h-12 bg-gray-300 rounded"></div>
+            <div className="w-12 h-12 bg-gray-700 rounded"></div>
             <div className="flex-1 space-y-2">
-              <div className="h-4 bg-gray-300 rounded w-3/4"></div>
-              <div className="h-3 bg-gray-300 rounded w-1/2"></div>
+              <div className="h-4 bg-gray-700 rounded w-3/4"></div>
+              <div className="h-3 bg-gray-700 rounded w-1/2"></div>
             </div>
-            <div className="h-4 bg-gray-300 rounded w-20"></div>
+            <div className="h-4 bg-gray-700 rounded w-20"></div>
           </div>
         ))}
       </div>
@@ -97,13 +97,13 @@ export default function Top100MusicPlaylist() {
   if (error) {
     return (
       <div className="text-center py-8 space-y-4">
-        <div className="text-lg text-red-600">⚠️ Error Loading Top 100</div>
-        <div className="text-sm text-gray-600">
+        <div className="text-lg text-red-400">⚠️ Error Loading Top 100</div>
+        <div className="text-sm text-gray-300">
           {error}
         </div>
         <button 
           onClick={loadTop100Tracks}
-          className="px-4 py-2 bg-stablekraft-teal text-white rounded-lg hover:bg-stablekraft-orange transition-colors"
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
           Retry
         </button>
@@ -114,8 +114,8 @@ export default function Top100MusicPlaylist() {
   if (tracks.length === 0) {
     return (
       <div className="text-center py-8 space-y-4">
-        <div className="text-lg text-gray-600">📊 No Top 100 data available</div>
-        <div className="text-sm text-gray-500">
+        <div className="text-lg text-gray-300">📊 No Top 100 data available</div>
+        <div className="text-sm text-gray-400">
           The Top 100 music chart data is currently unavailable.
         </div>
       </div>
@@ -124,17 +124,17 @@ export default function Top100MusicPlaylist() {
 
   return (
     <div className="space-y-2">
-      <div className="text-sm text-gray-500 mb-4">
+      <div className="text-sm text-gray-400 mb-4">
         Showing top {tracks.length} tracks by sats received
       </div>
       
       {tracks.map((track) => (
         <div 
           key={track.position}
-          className="flex items-center gap-4 p-4 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors group"
+          className="flex items-center gap-4 p-4 bg-white/5 backdrop-blur-sm rounded-lg hover:bg-white/10 transition-colors group border border-white/10"
         >
           {/* Chart Position */}
-          <div className="w-8 h-8 bg-stablekraft-teal text-white rounded text-center flex items-center justify-center">
+          <div className="w-8 h-8 bg-yellow-500 text-black rounded text-center flex items-center justify-center">
             <span className="text-sm font-bold">{track.position}</span>
           </div>
           
@@ -153,10 +153,10 @@ export default function Top100MusicPlaylist() {
           
           {/* Track Info */}
           <div className="flex-1 min-w-0">
-            <h3 className="font-medium text-sm md:text-base text-gray-900 truncate group-hover:text-stablekraft-teal transition-colors">
+            <h3 className="font-medium text-sm md:text-base text-white truncate group-hover:text-yellow-300 transition-colors">
               {track.title}
             </h3>
-            <p className="text-xs md:text-sm text-gray-600 truncate">
+            <p className="text-xs md:text-sm text-gray-400 truncate">
               {track.artist}
             </p>
           </div>
@@ -164,10 +164,10 @@ export default function Top100MusicPlaylist() {
           {/* Sats Amount */}
           <div className="flex items-center gap-2 text-right">
             <div>
-              <div className="text-sm font-medium text-gray-900">
+              <div className="text-sm font-medium text-white">
                 {formatSats(track.sats)}
               </div>
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-gray-400">
                 earned
               </div>
             </div>
@@ -178,7 +178,7 @@ export default function Top100MusicPlaylist() {
             href={track.podcastLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="p-2 text-gray-400 hover:text-stablekraft-teal transition-colors"
+            className="p-2 text-gray-400 hover:text-white transition-colors"
             title="View source podcast"
           >
             <ExternalLink className="w-4 h-4" />
@@ -187,14 +187,14 @@ export default function Top100MusicPlaylist() {
       ))}
       
       {/* Footer */}
-      <div className="mt-6 pt-4 border-t border-gray-200">
-        <p className="text-sm text-gray-500 text-center">
+      <div className="mt-6 pt-4 border-t border-white/20">
+        <p className="text-sm text-gray-400 text-center">
           Data updated daily from the Podcast Index. 
           <a 
             href="https://github.com/Podcastindex-org/top100_music" 
             target="_blank" 
             rel="noopener noreferrer" 
-            className="text-stablekraft-teal hover:text-stablekraft-orange transition-colors ml-1"
+            className="text-blue-400 hover:text-blue-300 transition-colors ml-1"
           >
             Learn more about V4V music
           </a>
