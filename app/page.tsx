@@ -577,7 +577,7 @@ export default function HomePage() {
   const showProgressiveLoading = isCriticalLoaded && !isEnhancedLoaded && filteredAlbums.length > 0;
 
   return (
-    <div className="min-h-screen text-gray-900 relative overflow-hidden">
+    <div className="min-h-screen text-white relative overflow-hidden">
       {/* Static Background - STABLEKRAFT Rocket */}
       <div 
         className="fixed inset-0 z-0"
@@ -596,12 +596,12 @@ export default function HomePage() {
           onLoad={() => setBackgroundImageLoaded(true)}
           onError={() => setBackgroundImageLoaded(true)}
         />
-        {/* Light overlay for better readability */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white/50 via-white/40 to-white/50" />
+        {/* Dark overlay for better readability */}
+        <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-black/30 to-black/50" />
       </div>
       
       {/* Fallback gradient background - only for very slow connections */}
-      <div className="fixed inset-0 bg-gradient-to-br from-gray-50 via-white to-gray-100 z-0" style={{
+      <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 z-0" style={{
         opacity: backgroundImageLoaded ? 0 : 1,
         transition: 'opacity 0.3s ease-in-out'
       }} />
@@ -612,9 +612,9 @@ export default function HomePage() {
         
         {/* Header */}
         <header 
-          className="border-b backdrop-blur-sm bg-white/95 pt-safe-plus pt-6"
+          className="border-b backdrop-blur-sm bg-black/70 pt-safe-plus pt-6"
           style={{
-            borderColor: 'rgba(0, 0, 0, 0.15)'
+            borderColor: 'rgba(255, 255, 255, 0.1)'
           }}
         >
           <div className="container mx-auto px-6 py-2">
@@ -626,7 +626,7 @@ export default function HomePage() {
                   {/* Menu Button */}
                   <button
                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                    className="p-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition-colors text-gray-800 border border-gray-300"
+                    className="p-2 rounded-lg bg-gray-800/50 hover:bg-gray-700/50 transition-colors text-white"
                     aria-label="Toggle menu"
                   >
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -651,8 +651,8 @@ export default function HomePage() {
               
               {/* Bottom row - Title and Beta badge */}
               <div className="text-center">
-                <h1 className="text-xl font-bold mb-1 text-gray-900">Project StableKraft</h1>
-                <p className="text-xs text-gray-600 mb-2">- &quot;its was all this reimagined, its a different kind of speech, it was repition, it was what you wanted it to be&quot; - The Contortionist - Reimagined</p>
+                <h1 className="text-xl font-bold mb-1 text-white">Project StableKraft</h1>
+                <p className="text-xs text-gray-300 mb-2">- &quot;its was all this reimagined, its a different kind of speech, it was repition, it was what you wanted it to be&quot; - The Contortionist - Reimagined</p>
                                                   <div className="text-xs bg-stablekraft-yellow/20 text-stablekraft-yellow px-3 py-1 rounded-full border border-stablekraft-yellow/30">
                   Beta - if the page isn&apos;t loading try a hard refresh and wait a little for it to load
                 </div>
@@ -667,7 +667,7 @@ export default function HomePage() {
                   {/* Menu Button */}
                   <button
                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                    className="p-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition-colors text-gray-800 border border-gray-300"
+                    className="p-2 rounded-lg bg-gray-800/50 hover:bg-gray-700/50 transition-colors text-white"
                     aria-label="Toggle menu"
                   >
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -680,8 +680,8 @@ export default function HomePage() {
                 
                 {/* Center - Title */}
                 <div className="text-center">
-                  <h1 className="text-3xl font-bold mb-1 text-gray-900">Project StableKraft</h1>
-                  <p className="text-sm text-gray-600 mb-2">- &quot;its was all this reimagined, its a different kind of speech, it was repition, it was what you wanted it to be&quot; - The Contortionist - Reimagined</p>
+                  <h1 className="text-3xl font-bold mb-1 text-white">Project StableKraft</h1>
+                  <p className="text-sm text-gray-300 mb-2">- &quot;its was all this reimagined, its a different kind of speech, it was repition, it was what you wanted it to be&quot; - The Contortionist - Reimagined</p>
                   <div className="text-xs bg-stablekraft-yellow/20 text-stablekraft-yellow px-3 py-1 rounded-full border border-stablekraft-yellow/30 inline-block">
                     Beta - if the page isn&apos;t loading try a hard refresh and wait a little for it to load
                   </div>
@@ -732,72 +732,72 @@ export default function HomePage() {
         </header>
         
         {/* Sidebar */}
-        <div className={`fixed top-0 left-0 h-full w-80 bg-white/95 backdrop-blur-sm transform transition-transform duration-300 z-30 border-r border-gray-200 ${
+        <div className={`fixed top-0 left-0 h-full w-80 bg-gray-900/95 backdrop-blur-sm transform transition-transform duration-300 z-30 border-r border-gray-700 ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}>
           <div className="p-4 pt-16 flex flex-col h-full">
-            <h2 className="text-lg font-bold mb-4 text-gray-900">Menu</h2>
+            <h2 className="text-lg font-bold mb-4 text-white">Menu</h2>
             
             {/* Navigation Links */}
             <div className="mb-4 space-y-1">
               <Link 
                 href="/about" 
-                className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-700"
+                className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800/50 transition-colors text-gray-300"
                 onClick={() => setIsSidebarOpen(false)}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span className="text-sm text-gray-700">About & Support</span>
+                <span className="text-sm text-gray-300">About & Support</span>
               </Link>
               
               <Link 
                 href="/playlist/itdv" 
-                className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-700"
+                className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800/50 transition-colors text-gray-300"
                 onClick={() => setIsSidebarOpen(false)}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
                 </svg>
-                <span className="text-sm text-gray-700">Doerfel-Verse Music Catalog</span>
+                <span className="text-sm text-gray-300">Doerfel-Verse Music Catalog</span>
               </Link>
             </div>
 
             {/* Featured Playlists */}
             <div className="mb-4">
-              <h3 className="text-sm font-semibold mb-2 text-gray-900">Featured Playlists</h3>
+              <h3 className="text-sm font-semibold mb-2 text-white">Featured Playlists</h3>
               <div className="space-y-1">
                 <Link 
                   href="/playlist/itdv-rss" 
-                  className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-700"
+                  className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800/50 transition-colors text-gray-300"
                   onClick={() => setIsSidebarOpen(false)}
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 18V5l12-2v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
                   </svg>
-                  <span className="text-sm text-gray-700">Into The Doerfel-Verse</span>
+                  <span className="text-sm text-gray-300">Into The Doerfel-Verse</span>
                 </Link>
                 
                 <Link 
                   href="/playlist/lightning-thrashes-rss" 
-                  className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-700"
+                  className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800/50 transition-colors text-gray-300"
                   onClick={() => setIsSidebarOpen(false)}
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 18V5l12-2v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
                   </svg>
-                  <span className="text-sm text-gray-700">Lightning Thrashes</span>
+                  <span className="text-sm text-gray-300">Lightning Thrashes</span>
                 </Link>
                 
                 <Link 
                   href="/playlist/top100-music" 
-                  className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-700"
+                  className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800/50 transition-colors text-gray-300"
                   onClick={() => setIsSidebarOpen(false)}
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <span className="text-sm text-gray-700">Top 100 Music</span>
+                  <span className="text-sm text-gray-300">Top 100 Music</span>
                 </Link>
               </div>
             </div>
@@ -840,7 +840,7 @@ export default function HomePage() {
               // Always show the section, even if empty, to indicate it exists
               return (
                 <div className="mb-4">
-                  <h3 className="text-sm font-semibold mb-2 text-gray-900">
+                  <h3 className="text-sm font-semibold mb-2 text-white">
                     Publisher Feeds
                     {showProgressiveLoading && (
                       <span className="ml-2 text-xs text-stablekraft-teal">(Loading more...)</span>
@@ -852,13 +852,13 @@ export default function HomePage() {
                         <Link
                           key={artist.feedGuid}
                           href={`/publisher/${generatePublisherSlug({ title: artist.name, feedGuid: artist.feedGuid })}`}
-                          className="flex items-center justify-between bg-gray-50 hover:bg-gray-800/50 rounded p-1.5 transition-colors group"
+                          className="flex items-center justify-between bg-gray-800/30 hover:bg-gray-800/50 rounded p-1.5 transition-colors group"
                           onClick={() => setIsSidebarOpen(false)}
                         >
-                          <span className="text-xs text-gray-600 group-hover:text-gray-900 truncate flex-1">
+                          <span className="text-xs text-gray-300 group-hover:text-white truncate flex-1">
                             {artist.name}
                           </span>
-                          <span className="text-xs text-gray-400 group-hover:text-gray-600 ml-1">
+                          <span className="text-xs text-gray-500 group-hover:text-gray-400 ml-1">
                             {artist.albumCount}
                           </span>
                         </Link>
@@ -877,7 +877,7 @@ export default function HomePage() {
             
             
             {/* Version Display - Moved to top for better visibility */}
-            <div className="mt-auto pt-2 border-t border-gray-200">
+            <div className="mt-auto pt-2 border-t border-gray-700">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-gray-500">Version</span>
                 <span className="text-xs text-gray-400 font-mono">{getVersionString()}</span>
@@ -889,7 +889,7 @@ export default function HomePage() {
         {/* Overlay to close sidebar when clicking outside */}
         {isSidebarOpen && (
           <div 
-            className="fixed inset-0 bg-gray-900/30 z-20" 
+            className="fixed inset-0 bg-black/50 z-20" 
             onClick={() => setIsSidebarOpen(false)}
           />
         )}
@@ -908,7 +908,7 @@ export default function HomePage() {
           ) : error ? (
             <div className="text-center py-12">
               <h2 className="text-2xl font-semibold mb-4 text-red-600">Error Loading Albums</h2>
-              <p className="text-gray-600">{error}</p>
+              <p className="text-gray-400">{error}</p>
               <button 
                 onClick={() => loadCriticalAlbums()}
                 className="mt-4 px-4 py-2 bg-stablekraft-teal text-white rounded-lg hover:bg-stablekraft-orange transition-colors"
@@ -959,7 +959,7 @@ export default function HomePage() {
                     const albumsWithMultipleTracks = filteredAlbums.filter(album => album.tracks.length > 6);
                     return albumsWithMultipleTracks.length > 0 && (
                       <div className="mb-12">
-                        <h2 className="text-2xl font-bold mb-6 text-gray-900">Albums</h2>
+                        <h2 className="text-2xl font-bold mb-6 text-white">Albums</h2>
                         {viewType === 'grid' ? (
                           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                             {albumsWithMultipleTracks.map((album, index) => (
@@ -996,7 +996,7 @@ export default function HomePage() {
                                   <h3 className="font-semibold text-lg group-hover:text-stablekraft-teal transition-colors truncate">
                                     {album.title}
                                   </h3>
-                                  <p className="text-gray-600 text-sm truncate">{album.artist}</p>
+                                  <p className="text-gray-400 text-sm truncate">{album.artist}</p>
                                 </div>
                                 
                                 <div className="flex items-center gap-4 text-sm text-gray-500">
@@ -1022,7 +1022,7 @@ export default function HomePage() {
                     const epsAndSingles = filteredAlbums.filter(album => album.tracks.length <= 6);
                     return epsAndSingles.length > 0 && (
                       <div>
-                        <h2 className="text-2xl font-bold mb-6 text-gray-900">EPs and Singles</h2>
+                        <h2 className="text-2xl font-bold mb-6 text-white">EPs and Singles</h2>
                         {viewType === 'grid' ? (
                           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                             {epsAndSingles.map((album, index) => (
@@ -1059,7 +1059,7 @@ export default function HomePage() {
                                   <h3 className="font-semibold text-lg group-hover:text-stablekraft-teal transition-colors truncate">
                                     {album.title}
                                   </h3>
-                                  <p className="text-gray-600 text-sm truncate">{album.artist}</p>
+                                  <p className="text-gray-400 text-sm truncate">{album.artist}</p>
                                 </div>
                                 
                                 <div className="flex items-center gap-4 text-sm text-gray-500">
@@ -1123,7 +1123,7 @@ export default function HomePage() {
                           <h3 className="font-semibold text-lg group-hover:text-stablekraft-teal transition-colors truncate">
                             {album.title}
                           </h3>
-                          <p className="text-gray-600 text-sm truncate">{album.artist}</p>
+                          <p className="text-gray-400 text-sm truncate">{album.artist}</p>
                         </div>
                         
                         <div className="flex items-center gap-4 text-sm text-gray-500">
@@ -1148,8 +1148,8 @@ export default function HomePage() {
             </div>
           ) : (
             <div className="text-center py-12">
-              <h2 className="text-2xl font-semibold mb-4 text-gray-900">No Albums Found</h2>
-              <p className="text-gray-600">
+              <h2 className="text-2xl font-semibold mb-4 text-white">No Albums Found</h2>
+              <p className="text-gray-400">
                 {isCriticalLoaded ? 'Unable to load additional album information.' : 'Unable to load any album information from the RSS feeds.'}
               </p>
               {isCriticalLoaded && (
