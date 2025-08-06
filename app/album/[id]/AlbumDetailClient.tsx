@@ -8,6 +8,7 @@ import { RSSAlbum } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { generateAlbumUrl, generateAlbumSlug, generatePublisherSlug } from '@/lib/url-utils';
 import { useAudio } from '@/contexts/AudioContext';
+import { useScrollDetectionContext } from '@/components/ScrollDetectionProvider';
 import ControlsBar from '@/components/ControlsBar';
 import CDNImage from '@/components/CDNImage';
 
@@ -39,8 +40,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
     seek: globalSeek,
     shuffleAllTracks
   } = useAudio();
-  
-
+  const { shouldPreventClick } = useScrollDetectionContext();
 
   // Background state
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
@@ -328,6 +328,12 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
   };
 
   const playTrack = async (index: number) => {
+    // Prevent accidental clicks while scrolling
+    if (shouldPreventClick()) {
+      console.log('🚫 Prevented accidental track click while scrolling');
+      return;
+    }
+
     if (!album || !album.tracks[index] || !album.tracks[index].url) {
       console.error('❌ Missing album, track, or URL');
       return;

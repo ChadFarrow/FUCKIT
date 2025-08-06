@@ -8,6 +8,7 @@ import { ToastContainer } from '@/components/Toast'
 import { AudioProvider } from '@/contexts/AudioContext'
 import GlobalNowPlayingBar from '@/components/GlobalNowPlayingBar'
 import PerformanceMonitor from '@/components/PerformanceMonitor'
+import ScrollDetectionProvider from '@/components/ScrollDetectionProvider'
 
 
 
@@ -104,25 +105,27 @@ export default function RootLayout({
       <body className={inter.className}>
         <ClientErrorBoundary>
           <ErrorBoundary>
-            <AudioProvider>
-              <div className="min-h-screen relative">
-                {/* Background Image */}
-                <div 
-                  className="fixed inset-0 z-0"
-                  style={{
-                    background: 'url(/stablekraft-rocket.png) center/contain fixed',
-                    backgroundAttachment: 'fixed',
-                    opacity: 0.6
-                  }}
-                />
-                {/* Content overlay */}
-                <div className="relative z-10">
-                  {children}
+            <ScrollDetectionProvider>
+              <AudioProvider>
+                <div className="min-h-screen relative">
+                  {/* Background Image */}
+                  <div 
+                    className="fixed inset-0 z-0"
+                    style={{
+                      background: 'url(/stablekraft-rocket.png) center/contain fixed',
+                      backgroundAttachment: 'fixed',
+                      opacity: 0.6
+                    }}
+                  />
+                  {/* Content overlay */}
+                  <div className="relative z-10">
+                    {children}
+                  </div>
                 </div>
-              </div>
-              <GlobalNowPlayingBar />
-              <ToastContainer />
-            </AudioProvider>
+                <GlobalNowPlayingBar />
+                <ToastContainer />
+              </AudioProvider>
+            </ScrollDetectionProvider>
           </ErrorBoundary>
           <PerformanceMonitor />
         </ClientErrorBoundary>

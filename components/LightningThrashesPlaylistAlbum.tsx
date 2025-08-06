@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAudio } from '@/contexts/AudioContext';
+import { useScrollDetectionContext } from '@/components/ScrollDetectionProvider';
 import { Play, Pause, Music, ExternalLink, Download } from 'lucide-react';
 
 interface LightningThrashesTrack {
@@ -29,6 +30,7 @@ export default function LightningThrashesPlaylistAlbum() {
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number | null>(null);
   const [isClient, setIsClient] = useState(false);
   const { playTrack, isPlaying, pause, resume, playAlbum } = useAudio();
+  const { shouldPreventClick } = useScrollDetectionContext();
 
   useEffect(() => {
     setIsClient(true);
@@ -144,6 +146,12 @@ export default function LightningThrashesPlaylistAlbum() {
   };
 
   const handlePlayTrack = async (track: LightningThrashesTrack, index: number) => {
+    // Prevent accidental clicks while scrolling
+    if (shouldPreventClick()) {
+      console.log('🚫 Prevented accidental click while scrolling');
+      return;
+    }
+
     // If this is the current track and it's playing, pause it
     if (currentTrackIndex === index && isPlaying) {
       pause();
