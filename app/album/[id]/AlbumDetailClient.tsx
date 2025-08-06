@@ -1032,7 +1032,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
       
       {/* Content layer - relative positioned above background */}
       <div className="min-h-screen text-white relative z-10">
-        <div className="container mx-auto px-6 py-8 pb-40">
+        <div className="container mx-auto px-6 pt-16 md:pt-12 pb-40">
         {/* Back button */}
         <Link 
           href="/" 
