@@ -1,86 +1,142 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Play, Pause, ExternalLink } from 'lucide-react';
+import { useAudio } from '@/contexts/AudioContext';
+import { useScrollDetectionContext } from '@/components/ScrollDetectionProvider';
+import { Play, Pause, Music, ExternalLink, Download } from 'lucide-react';
 
 interface Top100Track {
-  position: number;
+  id: string;
   title: string;
   artist: string;
-  artwork: string;
-  podcastLink: string;
+  episodeTitle: string;
+  duration: number;
+  audioUrl?: string;
+  startTime?: number;
+  endTime?: number;
+  position: number;
   sats: string;
+  podcastLink: string;
+  artwork: string;
 }
 
 export default function Top100MusicPlaylist() {
   const [tracks, setTracks] = useState<Top100Track[]>([]);
+  const [totalTracks, setTotalTracks] = useState(100);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [currentTrackIndex, setCurrentTrackIndex] = useState<number | null>(null);
+  const [isClient, setIsClient] = useState(false);
+  const { playTrack, isPlaying, pause, resume, playAlbum } = useAudio();
+  const { shouldPreventClick } = useScrollDetectionContext();
 
   useEffect(() => {
+    setIsClient(true);
     loadTop100Tracks();
   }, []);
 
   const loadTop100Tracks = async () => {
     try {
       setIsLoading(true);
-      setError(null);
       
-      // For now, we'll create sample data since we need to proxy the HTML data
-      // In the future, this could fetch from an API that parses the GitHub data
-      const sampleTracks: Top100Track[] = [
-        {
-          position: 1,
-          title: "Sample Track 1",
-          artist: "Sample Artist 1",
-          artwork: "https://via.placeholder.com/150x150?text=1",
-          podcastLink: "#",
-          sats: "1,234,567"
-        },
-        {
-          position: 2,
-          title: "Sample Track 2", 
-          artist: "Sample Artist 2",
-          artwork: "https://via.placeholder.com/150x150?text=2",
-          podcastLink: "#",
-          sats: "987,654"
-        },
-        {
-          position: 3,
-          title: "Sample Track 3",
-          artist: "Sample Artist 3", 
-          artwork: "https://via.placeholder.com/150x150?text=3",
-          podcastLink: "#",
-          sats: "654,321"
-        }
-        // Add more sample data as needed...
-      ];
+      // Create extended sample data with playable tracks
+      const sampleTracks: Top100Track[] = Array.from({ length: 50 }, (_, i) => ({
+        id: `top100-${i + 1}`,
+        title: `Top Track ${i + 1}`,
+        artist: `Artist ${i + 1}`,
+        episodeTitle: `V4V Music Episode ${i + 1}`,
+        duration: Math.floor(Math.random() * 300) + 120, // 2-7 minutes
+        audioUrl: `https://example.com/track-${i + 1}.mp3`, // Placeholder URL
+        position: i + 1,
+        sats: (1000000 - (i * 15000)).toLocaleString(),
+        podcastLink: `https://example.com/podcast/${i + 1}`,
+        artwork: `https://picsum.photos/300/300?random=${i + 1}`
+      }));
 
       // Simulate loading delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       setTracks(sampleTracks);
+      setTotalTracks(sampleTracks.length);
       
     } catch (err) {
       console.error('Error loading Top 100 tracks:', err);
-      setError('Failed to load Top 100 music tracks');
+      setTracks([]);
+      setTotalTracks(0);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handlePlayTrack = async (track: Top100Track, index: number) => {
+    // Prevent accidental clicks while scrolling
+    if (shouldPreventClick()) {
+      console.log('🚫 Prevented accidental click while scrolling');
+      return;
+    }
+
+    // If this is the current track and it's playing, pause it
+    if (currentTrackIndex === index && isPlaying) {
+      pause();
+      return;
+    }
+    
+    // If this is the current track and it's paused, resume it
+    if (currentTrackIndex === index && !isPlaying) {
+      resume();
+      return;
+    }
+    
+    // Otherwise, play this track and set up the playlist
+    setCurrentTrackIndex(index);
+    
+    // Create album object for the audio context
+    const playlistAlbum = {
+      title: 'Top 100 V4V Music',
+      artist: 'Various Artists',
+      description: 'Top 100 Value for Value music tracks by sats received',
+      coverArt: "https://picsum.photos/400/400?random=top100",
+      releaseDate: new Date().toISOString(),
+      tracks: tracks.map(t => ({
+        title: t.title,
+        url: t.audioUrl || '',
+        startTime: t.startTime || 0,
+        duration: t.duration.toString()
+      }))
+    };
+    
+    // Play the album starting from the selected track
+    await playAlbum(playlistAlbum, index);
+  };
+
+  const formatDuration = (seconds: number) => {
+    if (isNaN(seconds) || seconds < 0) return '0:00';
+    
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   const formatSats = (sats: string) => {
     return `${sats} sats`;
   };
 
+  // Don't render anything until client-side hydration is complete
+  if (!isClient) {
+    return (
+      <div className="bg-black/40 backdrop-blur-sm rounded-lg p-6">
+        <div className="text-white">Loading Top 100 Music Playlist...</div>
+      </div>
+    );
+  }
+
   if (isLoading) {
     return (
-      <div className="space-y-4">
-        <div className="text-sm text-gray-400 mb-4">Loading Top 100 music tracks...</div>
+      <div className="space-y-4 animate-pulse">
+        <div className="text-sm text-gray-400">Loading Top 100 music tracks...</div>
         {[...Array(10)].map((_, i) => (
-          <div key={i} className="flex items-center gap-4 p-4 bg-white/5 rounded-lg animate-pulse">
-            <div className="w-8 h-8 bg-gray-700 rounded text-center flex items-center justify-center">
-              <span className="text-sm font-bold text-gray-400">{i + 1}</span>
+          <div key={i} className="flex items-center gap-3 p-4 bg-white/5 rounded-lg">
+            <div className="w-8 h-8 bg-yellow-500 rounded text-center flex items-center justify-center">
+              <span className="text-xs font-bold text-black">{i + 1}</span>
             </div>
             <div className="w-12 h-12 bg-gray-700 rounded"></div>
             <div className="flex-1 space-y-2">
@@ -94,29 +150,15 @@ export default function Top100MusicPlaylist() {
     );
   }
 
-  if (error) {
-    return (
-      <div className="text-center py-8 space-y-4">
-        <div className="text-lg text-red-400">⚠️ Error Loading Top 100</div>
-        <div className="text-sm text-gray-300">
-          {error}
-        </div>
-        <button 
-          onClick={loadTop100Tracks}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          Retry
-        </button>
-      </div>
-    );
-  }
-
   if (tracks.length === 0) {
     return (
       <div className="text-center py-8 space-y-4">
-        <div className="text-lg text-gray-300">📊 No Top 100 data available</div>
+        <div className="text-lg text-gray-300">⚠️ No Top 100 tracks found</div>
         <div className="text-sm text-gray-400">
-          The Top 100 music chart data is currently unavailable.
+          The Top 100 music playlist tracks may be loading or temporarily unavailable.
+        </div>
+        <div className="text-xs text-gray-500">
+          Check the browser console for more details or try refreshing the page.
         </div>
       </div>
     );
@@ -124,79 +166,92 @@ export default function Top100MusicPlaylist() {
 
   return (
     <div className="space-y-2">
-      <div className="text-sm text-gray-400 mb-4">
-        Showing top {tracks.length} tracks by sats received
+      <div className="text-sm text-gray-400 mb-3">
+        Showing {tracks.length} of {totalTracks} tracks
       </div>
-      
-      {tracks.map((track) => (
-        <div 
-          key={track.position}
-          className="flex items-center gap-4 p-4 bg-white/5 backdrop-blur-sm rounded-lg hover:bg-white/10 transition-colors group border border-white/10"
-        >
-          {/* Chart Position */}
-          <div className="w-8 h-8 bg-yellow-500 text-black rounded text-center flex items-center justify-center">
-            <span className="text-sm font-bold">{track.position}</span>
-          </div>
-          
-          {/* Track Artwork */}
-          <div className="relative w-12 h-12 flex-shrink-0 overflow-hidden rounded">
-            <img 
-              src={track.artwork}
-              alt={track.title}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = `https://via.placeholder.com/150x150/4ECDC4/FFFFFF?text=${track.position}`;
-              }}
-            />
-          </div>
-          
-          {/* Track Info */}
-          <div className="flex-1 min-w-0">
-            <h3 className="font-medium text-sm md:text-base text-white truncate group-hover:text-yellow-300 transition-colors">
-              {track.title}
-            </h3>
-            <p className="text-xs md:text-sm text-gray-400 truncate">
-              {track.artist}
-            </p>
-          </div>
-          
-          {/* Sats Amount */}
-          <div className="flex items-center gap-2 text-right">
-            <div>
-              <div className="text-sm font-medium text-white">
-                {formatSats(track.sats)}
+      {tracks.filter(track => track && track.id && track.title).map((track, index) => {
+        const isCurrentTrack = currentTrackIndex === index;
+        
+        return (
+          <div 
+            key={track.id} 
+            className={`flex items-center justify-between p-4 hover:bg-white/10 rounded-lg transition-colors group cursor-pointer ${
+              isCurrentTrack ? 'bg-white/20' : ''
+            }`}
+            onClick={() => handlePlayTrack(track, index)}
+          >
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              {/* Chart Position */}
+              <div className="w-8 h-8 bg-yellow-500 text-black rounded text-center flex items-center justify-center flex-shrink-0">
+                <span className="text-xs font-bold">{track.position}</span>
               </div>
-              <div className="text-xs text-gray-400">
-                earned
+              
+              {/* Track Artwork */}
+              <div className="relative w-10 h-10 md:w-12 md:h-12 flex-shrink-0 overflow-hidden rounded">
+                <img 
+                  src={track.artwork}
+                  alt={track.title}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = `https://picsum.photos/150/150?random=${track.position}`;
+                  }}
+                />
+                {/* Play Button Overlay */}
+                <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity duration-200">
+                  <button 
+                    className="bg-white text-black rounded-full p-1 transform hover:scale-110 transition-all duration-200 shadow-lg"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handlePlayTrack(track, index);
+                    }}
+                  >
+                    {isCurrentTrack && isPlaying ? (
+                      <Pause className="h-3 w-3" />
+                    ) : (
+                      <Play className="h-3 w-3" />
+                    )}
+                  </button>
+                </div>
+              </div>
+              
+              {/* Track Info */}
+              <div className="min-w-0 flex-1">
+                <p className="font-medium truncate text-sm md:text-base text-white">{track.title}</p>
+                <p className="text-xs md:text-sm text-gray-400 truncate">
+                  {track.artist} • {formatSats(track.sats)} earned
+                </p>
               </div>
             </div>
+            
+            <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
+              {/* Duration */}
+              <span className="text-xs md:text-sm text-gray-400">
+                {formatDuration(track.duration)}
+              </span>
+              
+              {/* External Link */}
+              <a 
+                href={track.podcastLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 text-gray-400 hover:text-white transition-colors"
+                title="View source podcast"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            </div>
           </div>
-          
-          {/* External Link */}
-          <a 
-            href={track.podcastLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-2 text-gray-400 hover:text-white transition-colors"
-            title="View source podcast"
-          >
-            <ExternalLink className="w-4 h-4" />
-          </a>
-        </div>
-      ))}
+        );
+      })}
       
       {/* Footer */}
-      <div className="mt-6 pt-4 border-t border-white/20">
-        <p className="text-sm text-gray-400 text-center">
-          Data updated daily from the Podcast Index. 
-          <a 
-            href="https://github.com/Podcastindex-org/top100_music" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="text-blue-400 hover:text-blue-300 transition-colors ml-1"
-          >
-            Learn more about V4V music
+      <div className="mt-6 pt-4 border-t border-gray-700">
+        <p className="text-sm text-gray-400">
+          Top 100 V4V music tracks by value received. 
+          <a href="https://github.com/Podcastindex-org/top100_music" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 ml-1">
+            Learn more about Value for Value
           </a>
         </p>
       </div>
