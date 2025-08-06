@@ -13,12 +13,13 @@ interface Top100Track {
 
 export async function GET(request: NextRequest) {
   try {
-    console.log('🎵 Fetching Top 100 V4V Music data from GitHub...');
+    console.log('🎵 Fetching Top 100 V4V Music data from Podcast Index Stats...');
     
-    // Fetch the HTML from the GitHub repository
-    const response = await fetch('https://raw.githubusercontent.com/Podcastindex-org/top100_music/main/daily_top100_example.html', {
+    // Fetch JSON data from the official Podcast Index V4V music stats
+    const response = await fetch('https://stats.podcastindex.org/v4vmusic.json', {
       headers: {
-        'User-Agent': 'FUCKIT-Music-App/1.0'
+        'User-Agent': 'FUCKIT-Music-App/1.0',
+        'Accept': 'application/json'
       }
     });
     
@@ -26,20 +27,21 @@ export async function GET(request: NextRequest) {
       throw new Error(`Failed to fetch Top 100 data: ${response.status}`);
     }
     
-    const htmlContent = await response.text();
+    const jsonData = await response.json();
     
-    // Parse the HTML to extract track data
-    const tracks = parseTop100Html(htmlContent);
+    // Parse the JSON to extract track data
+    const tracks = parseTop100Json(jsonData);
     
-    console.log(`✅ Successfully parsed ${tracks.length} Top 100 tracks`);
+    console.log(`✅ Successfully loaded ${tracks.length} Top 100 V4V tracks from Podcast Index`);
     
     return NextResponse.json({
       success: true,
       data: {
         tracks,
         totalTracks: tracks.length,
-        lastUpdated: new Date().toISOString(),
-        source: 'GitHub: Podcastindex-org/top100_music'
+        lastUpdated: jsonData.timestamp ? new Date(jsonData.timestamp * 1000).toISOString() : new Date().toISOString(),
+        source: 'Podcast Index V4V Music Stats (Official)',
+        description: jsonData.description || 'Top V4V music tracks boosted on podcasts'
       }
     });
     
@@ -57,55 +59,51 @@ export async function GET(request: NextRequest) {
   }
 }
 
-function parseTop100Html(html: string): Top100Track[] {
+function parseTop100Json(jsonData: any): Top100Track[] {
   const tracks: Top100Track[] = [];
   
   try {
-    // Use regex to parse the HTML structure
-    // Look for list items with the complete structure
-    const listItemRegex = /<li>\s*<img[^>]+src="([^"]+)"[^>]*>\s*<div class="details">\s*<a class="title" href="([^"]+)">([^<]+)<\/a>\s*<span class="artist">([^<]+)<\/span>\s*<div class="sats mobile">[\s\S]*?([0-9,]+)[\s\S]*?<\/div>/g;
+    const items = jsonData.items || [];
+    console.log(`📊 Processing ${items.length} items from Podcast Index V4V music JSON`);
     
-    let position = 1;
-    let match;
-    
-    while ((match = listItemRegex.exec(html)) !== null) {
-      const [, artwork, podcastLink, title, artist, satsString] = match;
+    for (const item of items) {
+      // Extract and clean the data from JSON structure
+      const rank = item.rank || 0;
+      const title = item.title?.trim() || '';
+      const artist = item.author?.trim() || '';
+      const boosts = item.boosts?.trim() || '0';
+      const artwork = item.image || '';
       
-      // Clean up the extracted data
-      const cleanTitle = title.trim();
-      const cleanArtist = artist.trim();
-      const cleanSats = satsString.trim();
-      const satsNumber = parseInt(cleanSats.replace(/,/g, ''), 10) || 0;
+      // Convert boost string to number for sorting
+      const boostNumber = parseInt(boosts.replace(/,/g, ''), 10) || 0;
+      
+      // Create podcast link from feedId if available
+      const podcastLink = item.feedId ? 
+        `https://podcastindex.org/podcast/${item.feedId}` : 
+        'https://podcastindex.org';
       
       // Only add tracks that have meaningful data
-      if (cleanTitle && cleanArtist && satsNumber > 0) {
+      if (title && artist && rank > 0) {
         tracks.push({
-          id: `top100-${position}`,
-          position,
-          title: cleanTitle,
-          artist: cleanArtist,
-          sats: cleanSats,
-          satsNumber,
-          artwork: artwork || `https://picsum.photos/300/300?random=${position}`,
-          podcastLink: podcastLink || 'https://podcastindex.org'
+          id: `v4v-${rank}`,
+          position: rank,
+          title: title,
+          artist: artist,
+          sats: boosts, // Using "boosts" as equivalent to sats
+          satsNumber: boostNumber,
+          artwork: artwork || `https://picsum.photos/300/300?random=${rank}`,
+          podcastLink: podcastLink
         });
-        position++;
       }
     }
     
-    console.log(`📊 Parsed ${tracks.length} tracks from Top 100 HTML`);
+    console.log(`📊 Successfully parsed ${tracks.length} V4V music tracks`);
     
-    // Sort by sats descending to ensure proper ranking
-    tracks.sort((a, b) => b.satsNumber - a.satsNumber);
-    
-    // Update positions after sorting
-    tracks.forEach((track, index) => {
-      track.position = index + 1;
-      track.id = `top100-${track.position}`;
-    });
+    // Sort by rank (should already be sorted, but ensure it)
+    tracks.sort((a, b) => a.position - b.position);
     
   } catch (error) {
-    console.error('Error parsing Top 100 HTML:', error);
+    console.error('❌ Error parsing Top 100 JSON:', error);
   }
   
   return tracks;
