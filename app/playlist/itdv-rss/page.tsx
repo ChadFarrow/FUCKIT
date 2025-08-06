@@ -26,7 +26,7 @@ export default function ITDVPlaylistPage() {
       className="min-h-screen text-white relative"
       style={backgroundStyle}
     >
-      <div className="container mx-auto px-6 py-8 pb-40">
+      <div className="container mx-auto px-4 sm:px-6 pt-16 md:pt-12 pb-40">
         {/* Back button */}
         <Link 
           href="/" 
@@ -41,7 +41,7 @@ export default function ITDVPlaylistPage() {
         {/* Playlist Header - Album Style */}
         <div className="flex flex-col gap-6 mb-8">
           {/* Playlist Art */}
-          <div className="relative group mx-auto w-[280px] h-[280px]">
+          <div className="relative group mx-auto w-[200px] h-[200px] sm:w-[240px] sm:h-[240px] md:w-[280px] md:h-[280px]">
             <img 
               src="https://www.doerfelverse.com/art/itdvchadf.png"
               alt="Into The Doerfel-Verse"
@@ -51,17 +51,17 @@ export default function ITDVPlaylistPage() {
           
           {/* Playlist Info */}
           <div className="text-center space-y-4">
-            <h1 className="text-3xl md:text-4xl font-bold leading-tight">Into The Doerfel-Verse</h1>
-            <p className="text-xl text-gray-300">Music Collection</p>
-            <p className="text-lg text-gray-300 italic">Episodes 31-56</p>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight">Into The Doerfel-Verse</h1>
+            <p className="text-lg sm:text-xl text-gray-300">Music Collection</p>
+            <p className="text-base sm:text-lg text-gray-300 italic">Episodes 31-56</p>
             
-            <div className="flex items-center justify-center gap-6 text-sm text-gray-400">
+            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-sm text-gray-400">
               <span>2024</span>
               <span>122 tracks</span>
               <span className="bg-purple-600 text-white px-2 py-1 rounded text-xs">PLAYLIST</span>
             </div>
             
-            <p className="text-gray-300 text-center max-w-lg mx-auto leading-relaxed">
+            <p className="text-gray-300 text-center max-w-xs sm:max-w-lg mx-auto leading-relaxed text-sm sm:text-base px-4">
               Every music track played on Into The Doerfel-Verse podcast from episodes 31-56. 
               This playlist features remote items that reference tracks from the original ITDV feed.
             </p>
@@ -88,18 +88,18 @@ export default function ITDVPlaylistPage() {
         </div>
 
         {/* RSS Feed Info */}
-        <div className="bg-black/40 backdrop-blur-sm rounded-lg p-6">
+        <div className="bg-black/40 backdrop-blur-sm rounded-lg p-4 md:p-6">
           <h3 className="text-lg font-semibold text-white mb-4">RSS Feed Information</h3>
           <div className="space-y-3 text-sm">
-            <div>
+            <div className="break-words">
               <span className="text-gray-400">Feed URL:</span>
-              <code className="ml-2 text-blue-300 bg-gray-800/50 px-2 py-1 rounded">
+              <code className="block sm:inline sm:ml-2 mt-1 sm:mt-0 text-blue-300 bg-gray-800/50 px-2 py-1 rounded text-xs sm:text-sm">
                 https://re.podtards.com/api/playlist/itdv-rss
               </code>
             </div>
-            <div>
+            <div className="break-words">
               <span className="text-gray-400">Original Source:</span>
-              <span className="ml-2 text-white">https://www.doerfelverse.com/feeds/intothedoerfelverse.xml</span>
+              <span className="block sm:inline sm:ml-2 mt-1 sm:mt-0 text-white text-xs sm:text-sm">https://www.doerfelverse.com/feeds/intothedoerfelverse.xml</span>
             </div>
             <div>
               <span className="text-gray-400">Format:</span>
