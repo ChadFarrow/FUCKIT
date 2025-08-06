@@ -640,7 +640,7 @@ export default function HomePage() {
                 {/* About Link */}
                 <Link 
                   href="/about" 
-                  className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
+                  className="inline-flex items-center gap-2 text-stablekraft-teal hover:text-stablekraft-orange transition-colors"
                 >
                   <span className="text-sm">About</span>
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -653,7 +653,7 @@ export default function HomePage() {
               <div className="text-center">
                 <h1 className="text-xl font-bold mb-1">Project StableKraft</h1>
                 <p className="text-xs text-gray-400 mb-2">- &quot;its was all this reimagined, its a different kind of speech, it was repition, it was what you wanted it to be&quot; - The Contortionist - Reimagined</p>
-                                                  <div className="text-xs bg-yellow-500/20 text-yellow-300 px-3 py-1 rounded-full border border-yellow-500/30">
+                                                  <div className="text-xs bg-stablekraft-yellow/20 text-stablekraft-yellow px-3 py-1 rounded-full border border-stablekraft-yellow/30">
                   Beta - if the page isn&apos;t loading try a hard refresh and wait a little for it to load
                 </div>
               </div>
@@ -682,7 +682,7 @@ export default function HomePage() {
                 <div className="text-center">
                   <h1 className="text-3xl font-bold mb-1">Project StableKraft</h1>
                   <p className="text-sm text-gray-400 mb-2">- &quot;its was all this reimagined, its a different kind of speech, it was repition, it was what you wanted it to be&quot; - The Contortionist - Reimagined</p>
-                  <div className="text-xs bg-yellow-500/20 text-yellow-300 px-3 py-1 rounded-full border border-yellow-500/30 inline-block">
+                  <div className="text-xs bg-stablekraft-yellow/20 text-stablekraft-yellow px-3 py-1 rounded-full border border-stablekraft-yellow/30 inline-block">
                     Beta - if the page isn&apos;t loading try a hard refresh and wait a little for it to load
                   </div>
                 </div>
@@ -691,7 +691,7 @@ export default function HomePage() {
                 <div className="absolute right-0">
                   <Link 
                     href="/about" 
-                    className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
+                    className="inline-flex items-center gap-2 text-stablekraft-teal hover:text-stablekraft-orange transition-colors"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -706,23 +706,23 @@ export default function HomePage() {
               <div className="flex items-center gap-2 text-sm">
                 {isLoading ? (
                   <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
-                    <span className="text-yellow-400">
+                    <span className="w-2 h-2 bg-stablekraft-teal rounded-full animate-pulse"></span>
+                    <span className="text-stablekraft-teal">
                       {isCriticalLoaded ? 'Loading more albums...' : 'Loading albums...'}
                       {loadingProgress > 0 && ` (${Math.round(loadingProgress)}%)`}
                     </span>
                   </div>
                 ) : showProgressiveLoading ? (
                   <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></span>
-                    <span className="text-blue-400">
+                    <span className="w-2 h-2 text-stablekraft-teal rounded-full animate-pulse"></span>
+                    <span className="text-stablekraft-teal">
                       Loading more albums... ({filteredAlbums.length} loaded)
                     </span>
                   </div>
                 ) : error ? (
                   <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 bg-red-400 rounded-full"></span>
-                    <span className="text-red-400">{error}</span>
+                    <span className="w-2 h-2 bg-stablekraft-orange rounded-full"></span>
+                    <span className="text-stablekraft-orange">{error}</span>
                   </div>
                 ) : null}
               </div>
@@ -832,7 +832,7 @@ export default function HomePage() {
                   <h3 className="text-sm font-semibold mb-2 text-white">
                     Publisher Feeds
                     {showProgressiveLoading && (
-                      <span className="ml-2 text-xs text-blue-400">(Loading more...)</span>
+                      <span className="ml-2 text-xs text-stablekraft-teal">(Loading more...)</span>
                     )}
                   </h3>
                   <div className="space-y-1 max-h-32 overflow-y-auto">
@@ -900,7 +900,7 @@ export default function HomePage() {
               <p className="text-gray-400">{error}</p>
               <button 
                 onClick={() => loadCriticalAlbums()}
-                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="mt-4 px-4 py-2 bg-stablekraft-teal text-white rounded-lg hover:bg-stablekraft-orange transition-colors"
               >
                 Retry
               </button>
@@ -929,10 +929,10 @@ export default function HomePage() {
 
               {/* Progressive Loading Indicator */}
               {showProgressiveLoading && (
-                <div className="mb-6 p-4 bg-blue-600/20 border border-blue-500/30 rounded-lg">
+                <div className="mb-6 p-4 bg-stablekraft-teal/20 border border-stablekraft-teal/30 rounded-lg">
                   <div className="flex items-center gap-3">
-                    <div className="w-4 h-4 bg-blue-400 rounded-full animate-pulse"></div>
-                    <span className="text-blue-300 text-sm">
+                    <div className="w-4 h-4 bg-stablekraft-teal rounded-full animate-pulse"></div>
+                    <span className="text-stablekraft-teal text-sm">
                       Loading more albums in the background... ({filteredAlbums.length} loaded so far)
                     </span>
                   </div>
@@ -982,7 +982,7 @@ export default function HomePage() {
                                 </div>
                                 
                                 <div className="flex-1 min-w-0">
-                                  <h3 className="font-semibold text-lg group-hover:text-blue-400 transition-colors truncate">
+                                  <h3 className="font-semibold text-lg group-hover:text-stablekraft-teal transition-colors truncate">
                                     {album.title}
                                   </h3>
                                   <p className="text-gray-400 text-sm truncate">{album.artist}</p>
@@ -1045,7 +1045,7 @@ export default function HomePage() {
                                 </div>
                                 
                                 <div className="flex-1 min-w-0">
-                                  <h3 className="font-semibold text-lg group-hover:text-blue-400 transition-colors truncate">
+                                  <h3 className="font-semibold text-lg group-hover:text-stablekraft-teal transition-colors truncate">
                                     {album.title}
                                   </h3>
                                   <p className="text-gray-400 text-sm truncate">{album.artist}</p>
@@ -1109,7 +1109,7 @@ export default function HomePage() {
                         </div>
                         
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-lg group-hover:text-blue-400 transition-colors truncate">
+                          <h3 className="font-semibold text-lg group-hover:text-stablekraft-teal transition-colors truncate">
                             {album.title}
                           </h3>
                           <p className="text-gray-400 text-sm truncate">{album.artist}</p>
@@ -1144,7 +1144,7 @@ export default function HomePage() {
               {isCriticalLoaded && (
                 <button 
                   onClick={() => loadEnhancedAlbums()}
-                  className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="mt-4 px-4 py-2 bg-stablekraft-teal text-white rounded-lg hover:bg-stablekraft-orange transition-colors"
                 >
                   Load More Albums
                 </button>
