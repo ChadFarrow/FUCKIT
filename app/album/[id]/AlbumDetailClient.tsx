@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { ArrowLeft, Play, Pause, SkipBack, SkipForward, Volume2 } from 'lucide-react';
 import { RSSAlbum } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
-import { generateAlbumUrl, generatePublisherSlug } from '@/lib/url-utils';
+import { generateAlbumUrl, generateAlbumSlug, generatePublisherSlug } from '@/lib/url-utils';
 import { useAudio } from '@/contexts/AudioContext';
 import ControlsBar from '@/components/ControlsBar';
 import CDNImage from '@/components/CDNImage';
@@ -638,10 +638,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
               }
               
               // Try reverse slug generation to match
-              const generateSlug = (title: string) => title.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-');
-              const albumSlug = generateSlug(a.title);
-              const searchSlug = generateSlug(searchTitleLower);
-              if (albumSlug === searchSlug) {
+              const albumSlug = generateAlbumSlug(a.title);
+              if (albumSlug === searchTitleLower) {
                 return true;
               }
               
