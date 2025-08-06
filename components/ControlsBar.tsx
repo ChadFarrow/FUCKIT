@@ -64,12 +64,12 @@ export default function ControlsBar({
   resultLabel = 'results',
 }: ControlsBarProps) {
   return (
-    <div className={`bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 ${className}`}>
+    <div className={`bg-white/90 backdrop-blur-sm rounded-xl border border-gray-200 shadow-lg ${className}`}>
       {/* Mobile Layout - Stacked */}
       <div className="block sm:hidden">
         {/* First Row - Filters */}
         {showFilters && (
-          <div className="p-3 border-b border-white/10">
+          <div className="p-3 border-b border-gray-200">
             <div className="flex gap-1 overflow-x-auto pb-1">
               {filterOptions.map((filter) => (
                 <button
@@ -77,8 +77,8 @@ export default function ControlsBar({
                   onClick={() => onFilterChange(filter.value)}
                   className={`px-2 py-1 rounded text-xs font-medium whitespace-nowrap transition-all touch-manipulation flex-shrink-0 ${
                     activeFilter === filter.value
-                      ? 'bg-white/20 text-white shadow-sm'
-                      : 'text-gray-400 hover:text-white hover:bg-white/10 active:bg-white/15'
+                      ? 'bg-stablekraft-teal text-white shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 active:bg-gray-200'
                   }`}
                 >
                   {filter.label}
@@ -95,10 +95,10 @@ export default function ControlsBar({
             <select 
               value={sortType} 
               onChange={(e) => onSortChange(e.target.value as SortType)}
-              className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all whitespace-nowrap touch-manipulation"
+              className="bg-gray-100 border border-gray-300 rounded-lg px-2 py-1 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-stablekraft-teal focus:border-stablekraft-teal transition-all whitespace-nowrap touch-manipulation"
             >
               {sortOptions.map((option) => (
-                <option key={option.value} value={option.value} className="bg-gray-900 text-white">
+                <option key={option.value} value={option.value} className="bg-white text-gray-900">
                   {option.label}
                 </option>
               ))}
@@ -106,8 +106,8 @@ export default function ControlsBar({
 
             {/* Result count */}
             {resultCount !== undefined && (
-              <div className="text-xs text-gray-400 whitespace-nowrap">
-                <span className="font-medium text-white">{resultCount}</span> {resultLabel}
+              <div className="text-xs text-gray-600 whitespace-nowrap">
+                <span className="font-medium text-gray-900">{resultCount}</span> {resultLabel}
               </div>
             )}
           </div>
@@ -118,7 +118,7 @@ export default function ControlsBar({
             {showShuffle && onShuffle && (
               <button
                 onClick={onShuffle}
-                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white p-1.5 rounded-lg transition-all touch-manipulation shadow-lg hover:shadow-xl active:scale-95"
+                className="bg-stablekraft-teal hover:bg-stablekraft-orange text-white p-1.5 rounded-lg transition-all touch-manipulation shadow-lg hover:shadow-xl active:scale-95"
                 title="Random Shuffle"
               >
                 <Shuffle className="w-4 h-4" />
@@ -127,13 +127,13 @@ export default function ControlsBar({
 
             {/* View Toggle */}
             {showViewToggle && (
-              <div className="flex items-center bg-white/10 rounded-lg p-1 border border-white/10">
+              <div className="flex items-center bg-gray-100 rounded-lg p-1 border border-gray-200">
                 <button
                   onClick={() => onViewChange('grid')}
                   className={`p-1 rounded transition-all touch-manipulation ${
                     viewType === 'grid' 
-                      ? 'bg-white/20 text-white shadow-sm' 
-                      : 'text-gray-400 hover:text-white active:bg-white/10'
+                      ? 'bg-stablekraft-teal text-white shadow-sm' 
+                      : 'text-gray-600 hover:text-gray-900 active:bg-gray-200'
                   }`}
                   title="Grid view"
                 >
@@ -143,8 +143,8 @@ export default function ControlsBar({
                   onClick={() => onViewChange('list')}
                   className={`p-1 rounded transition-all touch-manipulation ${
                     viewType === 'list' 
-                      ? 'bg-white/20 text-white shadow-sm' 
-                      : 'text-gray-400 hover:text-white active:bg-white/10'
+                      ? 'bg-stablekraft-teal text-white shadow-sm' 
+                      : 'text-gray-600 hover:text-gray-900 active:bg-gray-200'
                   }`}
                   title="List view"
                 >
@@ -171,8 +171,8 @@ export default function ControlsBar({
                     onClick={() => onFilterChange(filter.value)}
                     className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all touch-manipulation ${
                       activeFilter === filter.value
-                        ? 'bg-white/20 text-white shadow-sm'
-                        : 'text-gray-400 hover:text-white hover:bg-white/10 active:bg-white/15'
+                        ? 'bg-stablekraft-teal text-white shadow-sm'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 active:bg-gray-200'
                     }`}
                   >
                     {filter.label}
@@ -186,10 +186,10 @@ export default function ControlsBar({
           <select 
             value={sortType} 
             onChange={(e) => onSortChange(e.target.value as SortType)}
-            className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all whitespace-nowrap touch-manipulation"
+            className="bg-gray-100 border border-gray-300 rounded-lg px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-stablekraft-teal focus:border-stablekraft-teal transition-all whitespace-nowrap touch-manipulation"
           >
             {sortOptions.map((option) => (
-              <option key={option.value} value={option.value} className="bg-gray-900 text-white">
+              <option key={option.value} value={option.value} className="bg-white text-gray-900">
                 {option.label}
               </option>
             ))}
@@ -197,8 +197,8 @@ export default function ControlsBar({
 
           {/* Result count */}
           {resultCount !== undefined && (
-            <div className="text-sm text-gray-400 whitespace-nowrap">
-              <span className="font-medium text-white">{resultCount}</span> {resultLabel}
+            <div className="text-sm text-gray-600 whitespace-nowrap">
+              <span className="font-medium text-gray-900">{resultCount}</span> {resultLabel}
             </div>
           )}
         </div>
@@ -209,7 +209,7 @@ export default function ControlsBar({
           {showShuffle && onShuffle && (
             <button
             onClick={onShuffle}
-            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white p-1.5 rounded-lg transition-all touch-manipulation shadow-lg hover:shadow-xl active:scale-95"
+            className="bg-stablekraft-teal hover:bg-stablekraft-orange text-white p-1.5 rounded-lg transition-all touch-manipulation shadow-lg hover:shadow-xl active:scale-95"
             title="Random Shuffle"
           >
             <Shuffle className="w-4 h-4" />
@@ -218,13 +218,13 @@ export default function ControlsBar({
 
         {/* View Toggle */}
         {showViewToggle && (
-          <div className="flex items-center bg-white/10 rounded-lg p-1 border border-white/10">
+          <div className="flex items-center bg-gray-100 rounded-lg p-1 border border-gray-200">
             <button
               onClick={() => onViewChange('grid')}
               className={`p-1.5 rounded transition-all touch-manipulation ${
                 viewType === 'grid' 
-                  ? 'bg-white/20 text-white shadow-sm' 
-                  : 'text-gray-400 hover:text-white active:bg-white/10'
+                  ? 'bg-stablekraft-teal text-white shadow-sm' 
+                  : 'text-gray-600 hover:text-gray-900 active:bg-gray-200'
               }`}
               title="Grid view"
             >
@@ -234,8 +234,8 @@ export default function ControlsBar({
               onClick={() => onViewChange('list')}
               className={`p-1.5 rounded transition-all touch-manipulation ${
                 viewType === 'list' 
-                  ? 'bg-white/20 text-white shadow-sm' 
-                  : 'text-gray-400 hover:text-white active:bg-white/10'
+                  ? 'bg-stablekraft-teal text-white shadow-sm' 
+                  : 'text-gray-600 hover:text-gray-900 active:bg-gray-200'
               }`}
               title="List view"
             >
