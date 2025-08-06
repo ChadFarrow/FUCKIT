@@ -597,7 +597,7 @@ export default function HomePage() {
           onError={() => setBackgroundImageLoaded(true)}
         />
         {/* Light overlay for better readability */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white/90 via-white/85 to-white/90" />
+        <div className="absolute inset-0 bg-gradient-to-br from-white/50 via-white/40 to-white/50" />
       </div>
       
       {/* Fallback gradient background - only for very slow connections */}
@@ -612,9 +612,9 @@ export default function HomePage() {
         
         {/* Header */}
         <header 
-          className="border-b backdrop-blur-sm bg-white/90 pt-safe-plus pt-6"
+          className="border-b backdrop-blur-sm bg-white/95 pt-safe-plus pt-6"
           style={{
-            borderColor: 'rgba(0, 0, 0, 0.1)'
+            borderColor: 'rgba(0, 0, 0, 0.15)'
           }}
         >
           <div className="container mx-auto px-6 py-2">
@@ -626,7 +626,7 @@ export default function HomePage() {
                   {/* Menu Button */}
                   <button
                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                    className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors text-gray-700"
+                    className="p-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition-colors text-gray-800 border border-gray-300"
                     aria-label="Toggle menu"
                   >
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -667,7 +667,7 @@ export default function HomePage() {
                   {/* Menu Button */}
                   <button
                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                    className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors text-gray-700"
+                    className="p-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition-colors text-gray-800 border border-gray-300"
                     aria-label="Toggle menu"
                   >
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -787,6 +787,17 @@ export default function HomePage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 18V5l12-2v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
                   </svg>
                   <span className="text-sm text-gray-700">Lightning Thrashes</span>
+                </Link>
+                
+                <Link 
+                  href="/playlist/top100-music" 
+                  className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-700"
+                  onClick={() => setIsSidebarOpen(false)}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span className="text-sm text-gray-700">Top 100 Music</span>
                 </Link>
               </div>
             </div>

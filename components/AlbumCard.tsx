@@ -8,6 +8,7 @@ import { RSSAlbum } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { generateAlbumUrl } from '@/lib/url-utils';
 import CDNImage from './CDNImage';
+import { useScrollDetectionContext } from '@/components/ScrollDetectionProvider';
 
 interface AlbumCardProps {
   album: RSSAlbum;
@@ -21,6 +22,7 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
   const [imageError, setImageError] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const { shouldPreventClick } = useScrollDetectionContext();
 
   // Minimum swipe distance (in px)
   const minSwipeDistance = 50;
@@ -48,8 +50,12 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
       // Right swipe - play previous track (future enhancement)
       console.log('Right swipe detected - previous track');
     } else {
-      // Tap - play/pause
-      onPlay(album, e);
+      // Tap - play/pause, but check scroll detection first
+      if (!shouldPreventClick()) {
+        onPlay(album, e);
+      } else {
+        console.log('🚫 Prevented tap while scrolling');
+      }
     }
   };
 
@@ -81,7 +87,7 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
   return (
     <Link 
       href={albumUrl}
-      className={`group relative bg-black/70 backdrop-blur-md rounded-xl border border-white/20 overflow-hidden transition-all duration-300 hover:bg-black/80 hover:border-white/30 hover:scale-[1.02] active:scale-[0.98] block ${className}`}
+      className={`group relative bg-white/90 backdrop-blur-md rounded-xl border border-gray-200 overflow-hidden transition-all duration-300 hover:bg-white/95 hover:border-gray-300 hover:scale-[1.02] active:scale-[0.98] block shadow-lg hover:shadow-xl ${className}`}
       onClick={(e) => {
         console.log(`🔗 Navigating to album: "${album.title}" -> ${albumUrl}`);
       }}
@@ -89,7 +95,7 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
     >
       {/* Album Artwork */}
       <div 
-        className="relative aspect-square overflow-hidden"
+        className="relative w-full aspect-square overflow-hidden"
         onTouchStart={(e) => {
           // Only handle touch events on the artwork area, not on the play button
           if (!(e.target as HTMLElement).closest('button')) {
@@ -122,6 +128,7 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
           className={`w-full h-full object-cover transition-opacity duration-300 ${
             imageLoaded ? 'opacity-100' : 'opacity-0'
           }`}
+          style={{ aspectRatio: '1/1' }}
           onLoad={handleImageLoad}
           onError={handleImageError}
           priority={false}
@@ -150,10 +157,11 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
               e.preventDefault();
               e.stopPropagation();
               
-              // Only trigger play if not scrolling
-              const scrolling = document.body.classList.contains('is-scrolling');
-              if (!scrolling) {
+              // Use scroll detection context to prevent accidental clicks
+              if (!shouldPreventClick()) {
                 onPlay(album, e);
+              } else {
+                console.log('🚫 Prevented click while scrolling');
               }
             }}
             onTouchStart={(e) => {
@@ -170,11 +178,12 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
                 delete button.dataset.touched;
                 // Small delay to ensure it's a deliberate tap, not accidental during scroll
                 setTimeout(() => {
-                  const scrolling = document.body.classList.contains('is-scrolling');
-                  if (!scrolling) {
+                  if (!shouldPreventClick()) {
                     onPlay(album, e);
+                  } else {
+                    console.log('🚫 Prevented touch while scrolling');
                   }
-                }, 150);
+                }, 100);
               }
             }}
             className="w-16 h-16 md:w-12 md:h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 active:bg-white/40 transition-colors duration-200 touch-manipulation pointer-events-auto"
@@ -190,31 +199,31 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
 
         {/* Track count badge */}
         {album.tracks.length > 0 && (
-          <div className="absolute top-1 right-1 sm:top-2 sm:right-2 bg-black/50 backdrop-blur-sm rounded-full px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs text-white">
+          <div className="absolute top-1 right-1 sm:top-2 sm:right-2 bg-white/90 backdrop-blur-sm rounded-full px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs text-gray-800 border border-gray-200">
             {album.tracks.length} {album.tracks.length !== 1 ? 'tracks' : 'track'}
           </div>
         )}
         
         {/* Music track source badge */}
         {(album as any).isMusicTrackAlbum && (
-          <div className="absolute top-1 left-1 sm:top-2 sm:left-2 bg-blue-500/80 backdrop-blur-sm rounded-full px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs text-white">
+          <div className="absolute top-1 left-1 sm:top-2 sm:left-2 bg-stablekraft-teal backdrop-blur-sm rounded-full px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs text-white">
             RSS
           </div>
         )}
       </div>
 
       {/* Album Info */}
-      <div className="p-2 sm:p-3 bg-black/25 backdrop-blur-sm">
-        <h3 className="font-bold text-white text-xs sm:text-sm leading-tight line-clamp-2 group-hover:text-blue-300 transition-colors duration-200 drop-shadow-lg">
+      <div className="p-2 sm:p-3 bg-white/95 backdrop-blur-sm">
+        <h3 className="font-bold text-gray-900 text-xs sm:text-sm leading-tight line-clamp-2 group-hover:text-stablekraft-teal transition-colors duration-200">
           {album.title}
         </h3>
-        <p className="text-gray-200 text-[10px] sm:text-xs mt-0.5 sm:mt-1 line-clamp-1 font-medium drop-shadow-lg">
+        <p className="text-gray-600 text-[10px] sm:text-xs mt-0.5 sm:mt-1 line-clamp-1 font-medium">
           {album.artist}
         </p>
         
         {/* Release date or episode date */}
         {(album.releaseDate || (album as any).isMusicTrackAlbum) && (
-          <p className="text-gray-300 text-[10px] sm:text-xs mt-0.5 sm:mt-1 font-medium drop-shadow-lg">
+          <p className="text-gray-500 text-[10px] sm:text-xs mt-0.5 sm:mt-1 font-medium">
             {(album as any).isMusicTrackAlbum 
               ? new Date(album.releaseDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
               : new Date(album.releaseDate).getFullYear()
