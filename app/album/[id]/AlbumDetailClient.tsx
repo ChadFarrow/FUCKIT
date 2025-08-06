@@ -393,10 +393,15 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
     // Simple background image loading without complex fallbacks
     if (album?.coverArt) {
       console.log('🖼️ Loading background image:', album?.coverArt);
+      console.log('🖼️ Album found:', album.title);
       setBackgroundImage(album.coverArt);
       setBackgroundLoaded(true);
     } else {
       console.log('🚫 No cover art available, using gradient background');
+      console.log('🚫 Album data:', album ? 'Album exists but no coverArt' : 'No album found');
+      if (album) {
+        console.log('🚫 Album title:', album.title);
+      }
       setBackgroundImage(null);
       setBackgroundLoaded(true);
     }
