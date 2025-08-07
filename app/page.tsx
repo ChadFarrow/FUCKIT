@@ -583,7 +583,7 @@ export default function HomePage() {
         className="fixed inset-0 z-0"
         style={{
           backgroundImage: 'url(/stablekraft-rocket-new.png)',
-          backgroundSize: 'contain',
+          backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
         }}
