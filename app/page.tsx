@@ -582,8 +582,9 @@ export default function HomePage() {
       <div 
         className="fixed inset-0 z-0"
         style={{
+          backgroundColor: '#1a1a2e', // Dark blue background color matching the rocket art
           backgroundImage: 'url(/stablekraft-rocket-new.png)',
-          backgroundSize: 'cover',
+          backgroundSize: 'auto 100%', // Fit height, auto width
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
         }}
