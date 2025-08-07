@@ -573,7 +573,7 @@
         "description": "Some V4V-resolved tracks are still playing audio from the Doerfelverse episode feed instead of using the resolved audio URLs from the actual music feeds",
         "details": "When V4V resolution is successful, tracks have resolvedAudioUrl pointing to the actual music file (e.g., from Wavlake), but the player might still be using the episode's audio URL with start/end timestamps. Need to ensure the audio player uses resolvedAudioUrl when available for proper music playback.",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           18
         ],
@@ -680,7 +680,7 @@
     ],
     "metadata": {
       "created": "2025-08-01T21:46:44.417Z",
-      "updated": "2025-08-05T03:05:47.254Z",
+      "updated": "2025-08-05T03:16:39.096Z",
       "description": "Music track extraction feature development"
     }
   },
