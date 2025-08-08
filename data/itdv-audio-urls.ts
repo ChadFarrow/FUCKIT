@@ -110,5 +110,9 @@ export const ITDV_AUDIO_URL_MAP: ITDVAudioUrlMap = {
   "Breakaway (demo)": "https://www.doerfelverse.com/tracks/breakaway-demo.mp3",
   "Thought It Was Real": "https://www.doerfelverse.com/tracks/thought-it-was-real.mp3",
   "Morning Love": "https://www.doerfelverse.com/tracks/morning-love.mp3",
-  "SWEATS": "https://www.doerfelverse.com/tracks/sweats.mp3"
+  "SWEATS": "https://www.doerfelverse.com/tracks/sweats.mp3",
+  "Bloodshot Lies FUNK": "https://www.doerfelverse.com/tracks/bloodshot-lies-funk.mp3",
+  "Heartbreak (album version)": "https://www.doerfelverse.com/tracks/heartbreak-album-version.mp3", 
+  "Movie (album version)": "https://www.doerfelverse.com/tracks/movie-album-version.mp3",
+  "Calibrating Broadcast​.​.​.": "https://music.behindthesch3m3s.com/wp-content/uploads/Mellow%20Cassette/Radio_Brigade/01Mellow_Cassette_Calibrating%20Broadcast.mp3"
 };
