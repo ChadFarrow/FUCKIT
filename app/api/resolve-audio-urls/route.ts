@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
             audioUrlCache.set(cacheKey, {
               url: mediaData.audioUrl,
               artworkUrl: mediaData.artworkUrl,
-              duration: mediaData.duration,
+              duration: mediaData.duration || undefined,
               timestamp: Date.now()
             });
             
