@@ -332,13 +332,7 @@ export default function ITDVPlaylistPage() {
       </div>
 
       {/* Now Playing Bar */}
-      <GlobalNowPlayingBar
-        currentTrack={currentTrack}
-        onPlayPause={handlePlayPause}
-        onNext={handleNext}
-        onPrevious={handlePrevious}
-        onSeek={handleSeek}
-      />
+      <GlobalNowPlayingBar />
     </div>
   );
 }
