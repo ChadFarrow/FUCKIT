@@ -45,6 +45,7 @@ export default function CDNImage({
   const [isGif, setIsGif] = useState(false);
   const [showGif, setShowGif] = useState(false);
   const [gifLoaded, setGifLoaded] = useState(false);
+  const [imageKey, setImageKey] = useState(0);
   const imageRef = useRef<HTMLImageElement>(null);
 
   // Check if we're on mobile
@@ -313,6 +314,9 @@ export default function CDNImage({
     setRetryCount(0);
     setGifLoaded(false);
     
+    // Force image re-render when src changes
+    setImageKey(prev => prev + 1);
+    
     // Clear existing timeout
     if (timeoutId) {
       clearTimeout(timeoutId);
@@ -388,6 +392,7 @@ export default function CDNImage({
       {isClient && isMobile ? (
         // Enhanced mobile image handling
         <img
+          key={imageKey}
           src={showGif ? currentSrc : ''}
           alt={alt}
           width={dims.width}
@@ -410,6 +415,7 @@ export default function CDNImage({
       ) : (
         // Use Next.js Image for desktop with full optimization
         <Image
+          key={imageKey}
           src={showGif ? currentSrc : ''}
           alt={alt}
           width={dims.width}
@@ -430,4 +436,4 @@ export default function CDNImage({
       {/* Debug info removed for performance */}
     </div>
   );
-} 
+}
