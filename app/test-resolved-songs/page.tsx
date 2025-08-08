@@ -2,10 +2,21 @@
 
 import { useState, useEffect } from 'react';
 
+interface Song {
+  feedGuid: string;
+  itemGuid: string;
+  title: string;
+  artist: string;
+  feedUrl?: string;
+  feedTitle?: string;
+  episodeId?: number;
+  feedId?: number;
+}
+
 export default function TestResolvedSongs() {
-  const [songs, setSongs] = useState([]);
+  const [songs, setSongs] = useState<Song[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadSongs = async () => {
@@ -23,7 +34,7 @@ export default function TestResolvedSongs() {
         }
       } catch (err) {
         console.log('❌ Fetch Error:', err);
-        setError(`Fetch Error: ${err.message}`);
+        setError(`Fetch Error: ${err instanceof Error ? err.message : 'Unknown error'}`);
       } finally {
         setLoading(false);
       }
