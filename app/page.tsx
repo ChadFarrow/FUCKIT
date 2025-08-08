@@ -580,8 +580,8 @@ export default function HomePage() {
     <div className="min-h-screen text-white relative overflow-hidden">
       {/* Navy Background Base - Full Screen */}
       <div className="fixed inset-0 z-0" style={{
-        background: 'linear-gradient(to right, #0f172a, #1e293b, #0f172a)',
-        backgroundColor: '#0f172a'
+        background: 'linear-gradient(to right, #0a0f1a, #0f1419, #0a0f1a)',
+        backgroundColor: '#0a0f1a'
       }} />
       
       {/* Static Background - STABLEKRAFT Rocket */}
