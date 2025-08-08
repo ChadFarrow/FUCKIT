@@ -62,6 +62,7 @@
     "@types/xml2js": "^0.4.14",
     "eslint": "^8",
     "eslint-config-next": "^14.0.4",
+    "ignore-loader": "^0.1.2",
     "task-master-ai": "^0.22.0"
   },
   "buildTime": "2025-07-30T00:17:52.716Z"

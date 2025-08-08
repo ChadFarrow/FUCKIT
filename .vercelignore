@@ -21,6 +21,9 @@ scripts/*
 # Exclude cache files (now served from Bunny.net CDN)
 data/cache/
 
+# Exclude my-app directory (separate application)
+my-app/
+
 # Exclude any temporary files
 *.tmp
 *.temp 

@@ -1,4 +1,0 @@
-packages:
-  - 'server'
-  - 'database-server'
-  - 'ui' 
