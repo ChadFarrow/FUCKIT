@@ -2,17 +2,17 @@
   "musicTracks": [
     {
       "id": "itdv-playlist-1754351421835-0",
-      "title": "Music Track 1",
-      "artist": "Into The Doerfel-Verse",
+      "title": "Neon Hawk",
+      "artist": "John Depew Trio",
       "episodeId": "3ae285ab-434c-59d8-aa2f-59c6129afb92-d8145cb6-97d9-4358-895b-2bf055d169aa",
-      "episodeTitle": "Music Track 1",
+      "episodeTitle": "Bell of Hope",
       "episodeDate": "2025-08-04T23:48:19.000Z",
       "startTime": 0,
       "endTime": 300,
       "duration": 300,
       "audioUrl": "",
       "source": "rss-playlist",
-      "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
+      "feedUrl": "https://wavlake.com/feed/music/99ed143c-c461-4f1a-9d0d-bee6f70d8b7e",
       "discoveredAt": "2025-08-04T23:50:21.834Z",
       "valueForValue": {
         "lightningAddress": "",
@@ -20,35 +20,39 @@
         "remotePercentage": 90,
         "feedGuid": "3ae285ab-434c-59d8-aa2f-59c6129afb92",
         "itemGuid": "d8145cb6-97d9-4358-895b-2bf055d169aa",
-        "resolvedTitle": "Music Track 1",
-        "resolvedArtist": "Into The Doerfel-Verse",
+        "resolvedTitle": "Neon Hawk",
+        "resolvedArtist": "John Depew Trio",
         "resolvedImage": "https://www.doerfelverse.com/art/itdvchadf.png",
         "resolvedAudioUrl": "",
-        "resolved": false,
+        "resolved": true,
         "lastResolved": null
       },
       "description": "From ITDV RSS Playlist - Music reference from Doerfel-Verse podcast",
       "extractionMethod": "rss-playlist-import",
-      "lastUpdated": "2025-08-04T23:50:21.834Z",
+      "lastUpdated": "2025-08-08T14:37:23.405Z",
       "playlistInfo": {
         "source": "ITDV RSS Playlist",
         "episodeNumber": 1,
         "trackNumber": 0
+      },
+      "playlist": {
+        "name": "Into The Doerfel-Verse",
+        "description": "Music playlist from Into The Doerfel-Verse podcast"
       }
     },
     {
       "id": "itdv-playlist-1754351421835-1",
-      "title": "Music Track 2",
-      "artist": "Into The Doerfel-Verse",
+      "title": "Grey's Birthday",
+      "artist": "Big Awesome",
       "episodeId": "6fc2ad98-d4a8-5d70-9c68-62e9efc1209c-aad6e3b1-6589-4e22-b8ca-521f3d888263",
-      "episodeTitle": "Music Track 2",
+      "episodeTitle": "Birdfeeder (EP)",
       "episodeDate": "2025-08-04T23:48:19.000Z",
       "startTime": 0,
       "endTime": 300,
       "duration": 300,
       "audioUrl": "",
       "source": "rss-playlist",
-      "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
+      "feedUrl": "https://wavlake.com/feed/music/5a07b3f1-8249-45a1-b40a-630797dc4941",
       "discoveredAt": "2025-08-04T23:50:21.834Z",
       "valueForValue": {
         "lightningAddress": "",
@@ -56,35 +60,39 @@
         "remotePercentage": 90,
         "feedGuid": "6fc2ad98-d4a8-5d70-9c68-62e9efc1209c",
         "itemGuid": "aad6e3b1-6589-4e22-b8ca-521f3d888263",
-        "resolvedTitle": "Music Track 2",
-        "resolvedArtist": "Into The Doerfel-Verse",
+        "resolvedTitle": "Grey's Birthday",
+        "resolvedArtist": "Big Awesome",
         "resolvedImage": "https://www.doerfelverse.com/art/itdvchadf.png",
         "resolvedAudioUrl": "",
-        "resolved": false,
+        "resolved": true,
         "lastResolved": null
       },
       "description": "From ITDV RSS Playlist - Music reference from Doerfel-Verse podcast",
       "extractionMethod": "rss-playlist-import",
-      "lastUpdated": "2025-08-04T23:50:21.834Z",
+      "lastUpdated": "2025-08-08T14:37:23.406Z",
       "playlistInfo": {
         "source": "ITDV RSS Playlist",
         "episodeNumber": 2,
         "trackNumber": 1
+      },
+      "playlist": {
+        "name": "Into The Doerfel-Verse",
+        "description": "Music playlist from Into The Doerfel-Verse podcast"
       }
     },
     {
       "id": "itdv-playlist-1754351421835-2",
-      "title": "Music Track 3",
-      "artist": "Into The Doerfel-Verse",
+      "title": "Smokestacks",
+      "artist": "Herbivore",
       "episodeId": "dea01a9d-a024-5b13-84aa-b157304cd3bc-52007112-2772-42f9-957a-a93eaeedb222",
-      "episodeTitle": "Music Track 3",
+      "episodeTitle": "Smokestacks",
       "episodeDate": "2025-08-04T23:48:19.000Z",
       "startTime": 0,
       "endTime": 300,
       "duration": 300,
       "audioUrl": "",
       "source": "rss-playlist",
-      "feedUrl": "https://www.doerfelverse.com/feeds/intothedoerfelverse.xml",
+      "feedUrl": "https://wavlake.com/feed/music/328f61b9-20b1-4338-9e2a-b437abc39f7b",
       "discoveredAt": "2025-08-04T23:50:21.834Z",
       "valueForValue": {
         "lightningAddress": "",
@@ -92,20 +100,24 @@
         "remotePercentage": 90,
         "feedGuid": "dea01a9d-a024-5b13-84aa-b157304cd3bc",
         "itemGuid": "52007112-2772-42f9-957a-a93eaeedb222",
-        "resolvedTitle": "Music Track 3",
-        "resolvedArtist": "Into The Doerfel-Verse",
+        "resolvedTitle": "Smokestacks",
+        "resolvedArtist": "Herbivore",
         "resolvedImage": "https://www.doerfelverse.com/art/itdvchadf.png",
         "resolvedAudioUrl": "",
-        "resolved": false,
+        "resolved": true,
         "lastResolved": null
       },
       "description": "From ITDV RSS Playlist - Music reference from Doerfel-Verse podcast",
       "extractionMethod": "rss-playlist-import",
-      "lastUpdated": "2025-08-04T23:50:21.834Z",
+      "lastUpdated": "2025-08-08T14:37:23.406Z",
       "playlistInfo": {
         "source": "ITDV RSS Playlist",
         "episodeNumber": 3,
         "trackNumber": 2
+      },
+      "playlist": {
+        "name": "Into The Doerfel-Verse",
+        "description": "Music playlist from Into The Doerfel-Verse podcast"
       }
     },
     {
@@ -58413,5 +58425,9 @@
       "extractionMethod": "api-extraction",
       "lastUpdated": "2025-08-04T04:29:57.176Z"
     }
-  ]
+  ],
+  "metadata": {
+    "totalTracks": 2133,
+    "lastUpdated": "2025-08-08T14:37:23.406Z"
+  }
 }
