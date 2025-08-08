@@ -327,6 +327,10 @@ export default function PlaylistAlbum({ tracks: rawTracks, config, onTrackResolv
                   src={displayImage}
                   alt={displayTitle}
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    console.log(`Image failed to load: ${displayImage}`);
+                    e.currentTarget.src = config.coverArt;
+                  }}
                 />
                 <div className={`absolute top-0 right-0 w-3 h-3 rounded-full border border-gray-800 ${
                   hasAudio ? 'bg-green-500' : 'bg-gray-500'

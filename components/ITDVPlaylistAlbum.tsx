@@ -1293,11 +1293,10 @@ function getArtworkUrl(title: string): string {
   // Return custom artwork if available, otherwise use default ITDV cover
   const customArt = ARTWORK_URL_MAP[title];
   if (customArt) {
-    console.log(`Using custom artwork for "${title}": ${customArt}`);
     return customArt;
   }
   
-  console.log(`Using default ITDV artwork for "${title}"`);
+  // Use the main ITDV cover art
   return 'https://www.doerfelverse.com/art/itdvchadf.png';
 }
 
@@ -1338,11 +1337,23 @@ function generateRealisticDuration(song: any, index: number): number {
 
 export default function ITDVPlaylistAlbum() {
   // Add static audio URLs and artwork to tracks
-  const tracksWithAudio = RESOLVED_SONGS.map((song, index) => ({
-    ...song,
-    audioUrl: getStaticAudioUrl(song.title),
-    artworkUrl: getArtworkUrl(song.title)
-  }));
+  const tracksWithAudio = RESOLVED_SONGS.map((song, index) => {
+    const audioUrl = getStaticAudioUrl(song.title);
+    const artworkUrl = getArtworkUrl(song.title);
+    
+    // Debug the first few tracks
+    if (index < 5) {
+      console.log(`Track ${index + 1}: "${song.title}"`);
+      console.log(`  Audio: ${audioUrl ? 'YES' : 'NO'}`);
+      console.log(`  Artwork: ${artworkUrl}`);
+    }
+    
+    return {
+      ...song,
+      audioUrl,
+      artworkUrl
+    };
+  });
 
   const config: PlaylistConfig = {
     name: 'Into The Doerfel-Verse',
