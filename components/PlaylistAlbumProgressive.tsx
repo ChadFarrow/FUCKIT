@@ -193,33 +193,77 @@ export default function PlaylistAlbumProgressive({
         </div>
       )}
 
-      {/* Track List */}
-      <div className="space-y-1">
+      {/* Track List - Matching original PlaylistAlbum layout */}
+      <div className="space-y-2">
+        <div className="text-sm text-gray-400 mb-3">
+          Showing {displayedTracks.length} of {rawTracks.length} tracks
+          <span className="ml-2 text-green-400">
+            • {displayedTracks.length} resolved
+          </span>
+          <span className="ml-2 text-blue-400">
+            • {displayedTracks.filter(t => t.audioUrl).length} with audio
+          </span>
+        </div>
+        
         {displayedTracks.map((track, index) => {
           const isCurrentTrack = currentTrackIndex === index;
+          const displayTitle = track.valueForValue?.resolvedTitle || track.title;
+          const displayArtist = track.valueForValue?.resolvedArtist || track.artist;
+          const displayImage = track.artworkUrl || config.coverArt;
           const hasAudio = Boolean(track.audioUrl);
+          const hasArtwork = Boolean(track.valueForValue?.resolvedImage);
           
           return (
             <div 
-              key={track.id}
-              className={`group flex items-center gap-4 p-3 rounded-lg transition-all duration-200 animate-in fade-in slide-in-from-left-2
-                ${isCurrentTrack 
-                  ? 'bg-orange-500/20 border border-orange-500/30' 
-                  : 'hover:bg-gray-800/50 border border-transparent'
-                }
-                ${!hasAudio ? 'opacity-60' : ''}
-              `}
+              key={track.id} 
+              className={`flex items-center justify-between p-4 hover:bg-white/10 rounded-lg transition-all duration-200 group animate-in fade-in slide-in-from-left-2 ${
+                hasAudio ? 'cursor-pointer' : 'cursor-not-allowed opacity-70'
+              } ${
+                isCurrentTrack ? 'bg-white/20' : ''
+              } border-l-2 ${hasAudio ? 'border-green-500/50' : 'border-gray-500/30'}`}
+              onClick={() => hasAudio && handlePlayPause(index)}
             >
-              {/* Track Number / Play Button */}
-              <div className="w-8 h-8 flex items-center justify-center relative">
-                {hasAudio ? (
+              <div className="flex items-center gap-3 min-w-0 flex-1">
+                <div className="relative w-10 h-10 md:w-12 md:h-12 flex-shrink-0 overflow-hidden rounded">
+                  <img 
+                    src={displayImage}
+                    alt={displayTitle}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+                
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <h3 className={`font-medium truncate ${isCurrentTrack ? 'text-orange-400' : 'text-white'}`}>
+                      {displayTitle}
+                    </h3>
+                    {isCurrentTrack && isPlaying && (
+                      <div className="flex-shrink-0 text-orange-400">
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-sm text-gray-400 truncate">
+                    {displayArtist} • {formatTime(track.duration)}
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                {hasAudio && (
                   <button
-                    onClick={() => handlePlayPause(index)}
-                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200
-                      ${isCurrentTrack 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handlePlayPause(index);
+                    }}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
+                      isCurrentTrack 
                         ? 'bg-orange-500 text-white' 
-                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600 group-hover:scale-110'
-                      }`}
+                        : 'bg-gray-700 hover:bg-gray-600 text-white opacity-0 group-hover:opacity-100'
+                    }`}
                     disabled={shouldPreventClick()}
                   >
                     {isCurrentTrack && isPlaying ? (
@@ -228,39 +272,19 @@ export default function PlaylistAlbumProgressive({
                       <Play className="w-4 h-4 ml-0.5" />
                     )}
                   </button>
-                ) : (
-                  <span className="text-gray-500 text-sm font-medium">{index + 1}</span>
                 )}
-              </div>
-
-              {/* Track Info */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <h4 className={`font-medium truncate ${isCurrentTrack ? 'text-orange-400' : 'text-white'}`}>
-                    {track.title}
-                  </h4>
-                  {!hasAudio && (
-                    <span className="text-xs bg-gray-600 text-gray-300 px-2 py-0.5 rounded flex-shrink-0">
-                      No Audio
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-400">
-                  <span className="truncate">{track.artist}</span>
-                  <span>•</span>
-                  <span className="flex-shrink-0">{formatTime(track.duration)}</span>
+                
+                <div className="flex flex-col items-end text-xs text-gray-400">
+                  <div className="flex items-center gap-1">
+                    {hasAudio && (
+                      <span className="text-green-500">🎵</span>
+                    )}
+                    {hasArtwork && (
+                      <span className="text-blue-500">🖼️</span>
+                    )}
+                  </div>
                 </div>
               </div>
-
-              {/* Album Art Thumbnail */}
-              {track.artworkUrl && track.artworkUrl !== config.coverArt && (
-                <img
-                  src={track.artworkUrl}
-                  alt={track.title}
-                  className="w-10 h-10 rounded object-cover flex-shrink-0"
-                  loading="lazy"
-                />
-              )}
             </div>
           );
         })}
