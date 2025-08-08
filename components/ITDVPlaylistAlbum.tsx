@@ -94,25 +94,23 @@ export default function ITDVPlaylistAlbum() {
           console.log('✅ Successfully loaded ITDV RSS playlist as fallback');
           const xmlText = await response.text();
           
-          // Parse the XML to extract remoteItem references
+          // Parse the XML to extract podcast:remoteItem references from channel
           const parser = new DOMParser();
           const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
-          const items = xmlDoc.querySelectorAll('item');
           
-          console.log(`📊 Found ${items.length} items in ITDV RSS playlist`);
+          // Look for podcast:remoteItem elements in the channel (not in items)
+          const remoteItems = xmlDoc.querySelectorAll('channel > remoteItem, channel podcast\\:remoteItem');
           
-          const remoteItemTracks = Array.from(items).map((item, index) => {
-            const title = item.querySelector('title')?.textContent || `Music Track ${index + 1}`;
-            const guid = item.querySelector('guid')?.textContent || `track-${index}`;
-            const remoteItem = item.querySelector('remoteItem, [feedguid]');
-            
-            const feedGuid = remoteItem?.getAttribute('feedGuid') || remoteItem?.getAttribute('feedguid') || undefined;
-            const itemGuid = remoteItem?.getAttribute('itemGuid') || remoteItem?.getAttribute('itemguid') || undefined;
+          console.log(`📊 Found ${remoteItems.length} remoteItem elements in ITDV RSS playlist`);
+          
+          const remoteItemTracks = Array.from(remoteItems).map((remoteItem, index) => {
+            const feedGuid = remoteItem.getAttribute('feedGuid') || remoteItem.getAttribute('feedguid') || undefined;
+            const itemGuid = remoteItem.getAttribute('itemGuid') || remoteItem.getAttribute('itemguid') || undefined;
             
             return {
-              id: guid,
-              title: title,
-              artist: 'Unknown Artist', // Will be resolved via V4V if available
+              id: `remote-${index + 1}-${feedGuid?.substring(0, 8) || 'unknown'}`,
+              title: `Music Track ${index + 1}`,
+              artist: 'Unknown Artist', // Will be resolved via V4V
               episodeTitle: 'Into The Doerfel-Verse',
               duration: 180, // Default 3 minutes
               audioUrl: '', // Will be resolved via V4V
