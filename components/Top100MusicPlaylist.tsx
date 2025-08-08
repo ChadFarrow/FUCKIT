@@ -63,9 +63,9 @@ export default function Top100MusicPlaylist() {
         id: track.id,
         title: track.title,
         artist: track.artist,
-        episodeTitle: `From Top 100 V4V Music`, // Generic episode title
+        episodeTitle: `From Top 100 V4V Music`,
         duration: Math.floor(Math.random() * 300) + 120, // Estimated duration since not in source
-        audioUrl: undefined, // No direct audio URLs available from source
+        audioUrl: track.audioUrl || undefined, // Use resolved audio URL from API
         position: track.position,
         sats: track.sats,
         podcastLink: track.podcastLink,

@@ -9,6 +9,9 @@ interface Top100Track {
   satsNumber: number;
   artwork: string;
   podcastLink: string;
+  audioUrl?: string;
+  feedUrl?: string;
+  itemGuid?: string;
 }
 
 export async function GET(request: NextRequest) {
@@ -30,7 +33,7 @@ export async function GET(request: NextRequest) {
     const jsonData = await response.json();
     
     // Parse the JSON to extract track data
-    const tracks = parseTop100Json(jsonData);
+    const tracks = await parseTop100Json(jsonData);
     
     console.log(`✅ Successfully loaded ${tracks.length} Top 100 V4V tracks from Podcast Index`);
     
@@ -59,7 +62,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-function parseTop100Json(jsonData: any): Top100Track[] {
+async function parseTop100Json(jsonData: any): Promise<Top100Track[]> {
   const tracks: Top100Track[] = [];
   
   try {
@@ -71,28 +74,40 @@ function parseTop100Json(jsonData: any): Top100Track[] {
       const rank = item.rank || 0;
       const title = item.title?.trim() || '';
       const artist = item.author?.trim() || '';
-      const boosts = item.boosts?.trim() || '0';
+      const boosts = item.boosts || 0; // Keep as number instead of string
       const artwork = item.image || '';
-      
-      // Convert boost string to number for sorting
-      const boostNumber = parseInt(boosts.replace(/,/g, ''), 10) || 0;
+      const feedUrl = item.feedUrl || '';
+      const itemGuid = item.itemGuid || '';
       
       // Create podcast link from feedId if available
       const podcastLink = item.feedId ? 
         `https://podcastindex.org/podcast/${item.feedId}` : 
         'https://podcastindex.org';
       
-      // Only add tracks that have meaningful data
-      if (title && artist && rank > 0) {
+      // Resolve audio URL from feed if possible
+      let audioUrl = '';
+      if (feedUrl && title && artist) {
+        try {
+          audioUrl = await resolveAudioFromFeed(feedUrl, title, artist, itemGuid);
+        } catch (error) {
+          console.log(`⚠️ Could not resolve audio for "${title}" by ${artist}: ${error.message}`);
+        }
+      }
+      
+      // Add ALL tracks, even if some fields are missing (to get closer to 100)
+      if (title || artist) { // More permissive filter
         tracks.push({
-          id: `v4v-${rank}`,
-          position: rank,
-          title: title,
-          artist: artist,
-          sats: boosts, // Using "boosts" as equivalent to sats
-          satsNumber: boostNumber,
-          artwork: artwork || `https://picsum.photos/300/300?random=${rank}`,
-          podcastLink: podcastLink
+          id: `v4v-${rank || tracks.length + 1}`,
+          position: rank || tracks.length + 1,
+          title: title || `Unknown Track ${tracks.length + 1}`,
+          artist: artist || 'Unknown Artist',
+          sats: boosts.toLocaleString(), // Format for display
+          satsNumber: boosts,
+          artwork: artwork || `https://picsum.photos/300/300?random=${rank || tracks.length + 1}`,
+          podcastLink: podcastLink,
+          audioUrl: audioUrl,
+          feedUrl: feedUrl,
+          itemGuid: itemGuid
         });
       }
     }
@@ -107,6 +122,64 @@ function parseTop100Json(jsonData: any): Top100Track[] {
   }
   
   return tracks;
+}
+
+// Function to resolve audio URL from RSS feed
+async function resolveAudioFromFeed(feedUrl: string, title: string, artist: string, itemGuid?: string): Promise<string> {
+  try {
+    const response = await fetch(feedUrl, {
+      headers: {
+        'User-Agent': 'FUCKIT-Top100-Audio-Resolver/1.0'
+      },
+      // Short timeout to avoid blocking the main request
+      signal: AbortSignal.timeout(5000)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Feed request failed: ${response.status}`);
+    }
+
+    const xmlText = await response.text();
+    
+    // Look for the specific item by title, artist, or GUID
+    const items = xmlText.split('<item>');
+    
+    for (const item of items) {
+      const itemTitle = extractXmlValue(item, 'title');
+      const itemAuthor = extractXmlValue(item, 'itunes:author') || extractXmlValue(item, 'author');
+      const itemGuidValue = extractXmlValue(item, 'guid');
+      
+      // Match by GUID first (most reliable), then by title and artist
+      const isMatch = (itemGuid && itemGuidValue === itemGuid) || 
+                     (itemTitle?.toLowerCase().includes(title.toLowerCase()) && 
+                      itemAuthor?.toLowerCase().includes(artist.toLowerCase()));
+      
+      if (isMatch) {
+        // Extract enclosure URL (audio file)
+        const enclosureMatch = item.match(/<enclosure[^>]*url="([^"]+)"/i);
+        if (enclosureMatch) {
+          return enclosureMatch[1];
+        }
+        
+        // Fallback: look for media:content
+        const mediaMatch = item.match(/<media:content[^>]*url="([^"]+)"/i);
+        if (mediaMatch) {
+          return mediaMatch[1];
+        }
+      }
+    }
+    
+    throw new Error('Audio URL not found in feed');
+    
+  } catch (error) {
+    throw new Error(`Feed resolution failed: ${error.message}`);
+  }
+}
+
+// Helper function to extract XML values
+function extractXmlValue(xml: string, tag: string): string | null {
+  const match = xml.match(new RegExp(`<${tag}[^>]*>([^<]+)<\/${tag}>`, 'i'));
+  return match ? match[1].trim() : null;
 }
 
 export const dynamic = 'force-dynamic';
