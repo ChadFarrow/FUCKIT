@@ -52,15 +52,24 @@ export default function PlaylistAlbumStateless({ tracks, config, stats }: Playli
 
     setCurrentTrackIndex(trackIndex);
     
-    const audioTrack = {
-      title: track.title,
+    // Create RSSAlbum format expected by playAlbum
+    const albumForPlayer = {
+      title: config.name,
       artist: track.artist,
-      albumTitle: config.name,
-      duration: track.duration || 180,
-      albumArt: track.artworkUrl
+      description: config.description,
+      coverArt: config.coverArt,
+      releaseDate: new Date().toISOString(),
+      tracks: [{
+        title: track.title,
+        duration: track.duration?.toString() || '180',
+        url: track.audioUrl,
+        trackNumber: trackIndex + 1,
+        image: track.artworkUrl,
+        artist: track.artist
+      }]
     };
 
-    await playAlbum([audioTrack], 0);
+    await playAlbum(albumForPlayer, 0);
   };
 
   const handlePlayPause = async (trackIndex: number) => {

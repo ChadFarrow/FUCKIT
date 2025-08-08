@@ -92,7 +92,7 @@ function generatePlaylistRSS(tracksByEpisode: Record<string, any[]>, sourceFeedU
     <itunes:category text="Music"/>
     <itunes:image href="https://www.doerfelverse.com/images/podcast-cover.jpg"/>
     
-    <podcast:medium>music</podcast:medium>
+    <podcast:medium>musicL</podcast:medium>
     <podcast:guid>playlist-${generateGuid(sourceFeedUrl)}</podcast:guid>
     
     ${generateTrackItems(tracksByEpisode, baseUrl)}
@@ -103,64 +103,26 @@ function generatePlaylistRSS(tracksByEpisode: Record<string, any[]>, sourceFeedU
 }
 
 function generateTrackItems(tracksByEpisode: Record<string, any[]>, baseUrl: string): string {
-  const items: string[] = [];
-  let trackNumber = 1;
-  
-  // Sort episodes by episode number
+  const remoteItems: string[] = [];
+
+  // Sort episodes by episode number for stable ordering
   const sortedEpisodes = Object.entries(tracksByEpisode).sort((a, b) => {
     const aNum = extractEpisodeNumber(a[0]);
     const bNum = extractEpisodeNumber(b[0]);
     return aNum - bNum;
   });
-  
-  for (const [episodeTitle, tracks] of sortedEpisodes) {
+
+  for (const [, tracks] of sortedEpisodes) {
     for (const track of tracks) {
-      const duration = track.duration || (track.endTime - track.startTime);
-      const durationFormatted = formatDuration(duration);
-      
-      // Generate a unique GUID for this track
-      const trackGuid = `${track.valueForValue?.feedGuid || 'unknown'}-${track.valueForValue?.itemGuid || track.id}`;
-      
-      const item = `
-    <item>
-      <title>Track ${trackNumber}: ${escapeXml(track.title)}</title>
-      <description>
-        <![CDATA[
-          <p>From: ${escapeXml(episodeTitle)}</p>
-          <p>Artist: ${escapeXml(track.artist)}</p>
-          <p>Duration: ${durationFormatted}</p>
-          ${track.valueForValue?.feedGuid ? `<p>Music Feed: ${track.valueForValue.feedGuid}</p>` : ''}
-          ${track.valueForValue?.itemGuid ? `<p>Track ID: ${track.valueForValue.itemGuid}</p>` : ''}
-          <p>Time in episode: ${formatTime(track.startTime)} - ${formatTime(track.endTime)}</p>
-        ]]>
-      </description>
-      <guid isPermaLink="false">${trackGuid}</guid>
-      <pubDate>${track.episodeDate ? new Date(track.episodeDate).toUTCString() : new Date().toUTCString()}</pubDate>
-      <enclosure url="${escapeXml(track.audioUrl || '')}" type="audio/mpeg" length="${duration * 128000}"/>
-      <itunes:duration>${durationFormatted}</itunes:duration>
-      <itunes:episode>${trackNumber}</itunes:episode>
-      <itunes:author>${escapeXml(track.artist)}</itunes:author>
-      <itunes:explicit>no</itunes:explicit>
-      
-      ${track.valueForValue?.feedGuid ? `
-      <podcast:soundbite startTime="${track.startTime}" duration="${duration}">
-        <podcast:title>${escapeXml(track.title)}</podcast:title>
-      </podcast:soundbite>
-      
-      <podcast:valueTimeSplit startTime="${track.startTime}" duration="${duration}" remotePercentage="${track.valueForValue.remotePercentage || 90}">
-        <podcast:remoteItem feedGuid="${track.valueForValue.feedGuid}" itemGuid="${track.valueForValue.itemGuid}"/>
-      </podcast:valueTimeSplit>` : ''}
-      
-      <podcast:track>${trackNumber}</podcast:track>
-      <podcast:season>1</podcast:season>
-    </item>`;
-      
-      items.push(item);
-      trackNumber++;
+      const feedGuid = track?.valueForValue?.feedGuid;
+      const itemGuid = track?.valueForValue?.itemGuid;
+      if (!feedGuid || !itemGuid) continue;
+
+      remoteItems.push(`    <podcast:remoteItem feedGuid="${escapeXml(feedGuid)}" itemGuid="${escapeXml(itemGuid)}"/>`);
     }
   }
-  
-  return items.join('\n');
+
+  return remoteItems.join('\n');
 }
 
 function extractEpisodeNumber(episodeTitle: string): number {
