@@ -1,226 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import ITDVPlaylistAlbum from '../../../components/ITDVPlaylistAlbum';
-import GlobalNowPlayingBar from '../../../components/GlobalNowPlayingBar';
+import dynamic from 'next/dynamic';
 
-interface APISong {
-  feedGuid: string;
-  itemGuid: string;
-  title: string | null;
-  artist: string | null;
-  feedUrl: string | null;
-  feedTitle: string | null;
-  episodeId?: number;
-  feedId?: number;
-  albumArtwork?: string;
-  artwork?: string;
-}
-
-interface ComponentSong {
-  id: string;
-  title: string;
-  artist: string;
-  episodeId: string;
-  episodeTitle: string;
-  episodeDate: string;
-  startTime: number;
-  endTime: number;
-  duration: number;
-  audioUrl: string;
-  source: string;
-  feedUrl: string;
-  discoveredAt: string;
-  albumArtwork?: string;
-  artwork?: string;
-  valueForValue: {
-    lightningAddress: string;
-    suggestedAmount: number;
-    remotePercentage: number;
-    feedGuid: string;
-    itemGuid: string;
-    resolvedTitle: string;
-    resolvedArtist: string;
-    resolvedImage: string;
-    resolvedAudioUrl: string;
-    resolved: boolean;
-    lastResolved: string;
-  };
-  description: string;
-}
-
-interface NowPlayingTrack {
-  id: string;
-  title: string;
-  artist: string;
-  albumArtwork?: string;
-  artwork?: string;
-  duration: number;
-  currentTime: number;
-  isPlaying: boolean;
-}
+// Dynamically import the ITDVPlaylistAlbum component
+const ITDVPlaylistAlbum = dynamic(() => import('@/components/ITDVPlaylistAlbum'), {
+  loading: () => <div className="text-white">Loading Into The Doerfel-Verse Playlist...</div>,
+  ssr: false
+});
 
 export default function ITDVPlaylistPage() {
-  const [songs, setSongs] = useState<ComponentSong[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [currentTrack, setCurrentTrack] = useState<NowPlayingTrack | null>(null);
-  const [currentTrackIndex, setCurrentTrackIndex] = useState<number | null>(null);
-
-  useEffect(() => {
-    async function loadSongs() {
-      try {
-        const response = await fetch('/api/itdv-resolved-songs');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const apiSongs: APISong[] = await response.json();
-        
-        const transformedSongs: ComponentSong[] = apiSongs.map((apiSong, index) => ({
-          id: apiSong.itemGuid || `track-${index}`,
-          title: apiSong.title || 'Unknown Track',
-          artist: apiSong.artist || 'Unknown Artist',
-          episodeId: apiSong.episodeId?.toString() || '',
-          episodeTitle: apiSong.feedTitle || 'Into The Doerfel-Verse',
-          episodeDate: new Date().toISOString(),
-          startTime: 0,
-          endTime: 180,
-          duration: 180,
-          audioUrl: '',
-          source: 'ITDV RSS',
-          feedUrl: apiSong.feedUrl || '',
-          discoveredAt: new Date().toISOString(),
-          albumArtwork: apiSong.albumArtwork || apiSong.artwork || '',
-          artwork: apiSong.artwork || apiSong.albumArtwork || '',
-          valueForValue: {
-            lightningAddress: '',
-            suggestedAmount: 0,
-            remotePercentage: 0,
-            feedGuid: apiSong.feedGuid || '',
-            itemGuid: apiSong.itemGuid || '',
-            resolvedTitle: apiSong.title || '',
-            resolvedArtist: apiSong.artist || '',
-            resolvedImage: apiSong.albumArtwork || apiSong.artwork || '',
-            resolvedAudioUrl: '',
-            resolved: !!(apiSong.title && apiSong.artist),
-            lastResolved: new Date().toISOString()
-          },
-          description: `Track from ${apiSong.feedTitle || 'Into The Doerfel-Verse'}`
-        }));
-        
-        setSongs(transformedSongs);
-      } catch (err) {
-        console.error('Error loading songs:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load songs');
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadSongs();
-  }, []);
-
-  const resolvedSongs = songs.filter((song: ComponentSong) => song.valueForValue?.resolved);
-
-  // Handle play/pause
-  const handlePlayPause = () => {
-    if (currentTrack) {
-      setCurrentTrack((prev: NowPlayingTrack | null) => prev ? { ...prev, isPlaying: !prev.isPlaying } : null);
-    }
-  };
-
-  // Handle next track
-  const handleNext = () => {
-    if (currentTrackIndex !== null && currentTrackIndex < songs.length - 1) {
-      const nextIndex = currentTrackIndex + 1;
-      const nextSong = songs[nextIndex];
-      setCurrentTrackIndex(nextIndex);
-      setCurrentTrack({
-        id: nextSong.id,
-        title: nextSong.title,
-        artist: nextSong.artist,
-        albumArtwork: nextSong.albumArtwork || nextSong.artwork,
-        artwork: nextSong.artwork || nextSong.albumArtwork,
-        duration: nextSong.duration,
-        currentTime: 0,
-        isPlaying: true
-      });
-    }
-  };
-
-  // Handle previous track
-  const handlePrevious = () => {
-    if (currentTrackIndex !== null && currentTrackIndex > 0) {
-      const prevIndex = currentTrackIndex - 1;
-      const prevSong = songs[prevIndex];
-      setCurrentTrackIndex(prevIndex);
-      setCurrentTrack({
-        id: prevSong.id,
-        title: prevSong.title,
-        artist: prevSong.artist,
-        albumArtwork: prevSong.albumArtwork || prevSong.artwork,
-        artwork: prevSong.artwork || prevSong.albumArtwork,
-        duration: prevSong.duration,
-        currentTime: 0,
-        isPlaying: true
-      });
-    }
-  };
-
-  // Handle seek
-  const handleSeek = (time: number) => {
-    if (currentTrack) {
-      setCurrentTrack((prev: NowPlayingTrack | null) => prev ? { ...prev, currentTime: time } : null);
-    }
-  };
-
-  // Handle track selection
-  const handleTrackSelect = (song: ComponentSong, index: number) => {
-    setCurrentTrackIndex(index);
-    setCurrentTrack({
-      id: song.id,
-      title: song.title,
-      artist: song.artist,
-      albumArtwork: song.albumArtwork || song.artwork,
-      artwork: song.artwork || song.albumArtwork,
-      duration: song.duration,
-      currentTime: 0,
-      isPlaying: true
-    });
-  };
-
   // Use the same background style as album pages
   const backgroundStyle = {
     background: 'linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url(https://www.doerfelverse.com/art/itdvchadf.png) top center/cover fixed',
     backgroundAttachment: 'fixed'
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen text-white relative" style={backgroundStyle}>
-        <div className="container mx-auto px-4 sm:px-6 pt-16 md:pt-12 pb-40">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold mb-4">Loading Music Collection...</h1>
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen text-white relative" style={backgroundStyle}>
-        <div className="container mx-auto px-4 sm:px-6 pt-16 md:pt-12 pb-40">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold mb-4">Error Loading Music Collection</h1>
-            <p className="text-red-300">{error}</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen text-white relative" style={backgroundStyle}>
@@ -330,9 +124,6 @@ export default function ITDVPlaylistPage() {
           </div>
         </div>
       </div>
-
-      {/* Now Playing Bar */}
-      <GlobalNowPlayingBar />
     </div>
   );
 }
