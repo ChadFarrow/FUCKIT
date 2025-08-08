@@ -152,9 +152,9 @@ const QueueManager: React.FC<QueueManagerProps> = ({ isOpen, onClose }) => {
                           )}
                           {(track.startTime || track.endTime) && (
                             <p className="text-xs text-gray-500">
-                              {track.startTime && formatTime(track.startTime)} 
+                              {track.startTime && formatTime(typeof track.startTime === 'string' ? parseFloat(track.startTime) : track.startTime)} 
                               {track.startTime && track.endTime && ' - '}
-                              {track.endTime && formatTime(track.endTime)}
+                              {track.endTime && formatTime(typeof track.endTime === 'string' ? parseFloat(track.endTime) : track.endTime)}
                             </p>
                           )}
                         </div>
@@ -162,7 +162,7 @@ const QueueManager: React.FC<QueueManagerProps> = ({ isOpen, onClose }) => {
                         {/* Duration */}
                         {track.duration && (
                           <div className="text-sm text-gray-400 ml-4">
-                            {formatTime(track.duration)}
+                            {formatTime(typeof track.duration === 'string' ? parseFloat(track.duration) : track.duration)}
                           </div>
                         )}
                       </div>
@@ -214,9 +214,10 @@ const QueueManager: React.FC<QueueManagerProps> = ({ isOpen, onClose }) => {
             <span>
               {currentPlayingAlbum.tracks.length} tracks • Total duration: {
                 formatTime(
-                  currentPlayingAlbum.tracks.reduce((total, track) => 
-                    total + (track.duration || 0), 0
-                  )
+                  currentPlayingAlbum.tracks.reduce((total, track) => {
+                    const duration = track.duration || 0;
+                    return total + (typeof duration === 'string' ? parseFloat(duration) : duration);
+                  }, 0)
                 )
               }
             </span>
