@@ -1,4 +1,4 @@
-#\!/usr/bin/env node
+#!/usr/bin/env node
 
 const fs = require('fs');
 const path = require('path');
@@ -72,4 +72,3 @@ withoutArtwork.slice(0, 30).forEach((track, i) => {
 if (withoutArtwork.length > 30) {
   console.log(`   ... and ${withoutArtwork.length - 30} more`);
 }
-EOF < /dev/null
