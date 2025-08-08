@@ -234,7 +234,7 @@ const EnhancedNowPlaying: React.FC = () => {
   const albumArtworkUrl = getAlbumArtworkUrl(track.image || currentPlayingAlbum.coverArt || '', 'medium');
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 border-t border-gray-700 z-50 overflow-hidden">
+    <div className={`fixed ${isExpanded ? 'inset-0' : 'bottom-0 left-0 right-0'} border-t border-gray-700 z-50 overflow-hidden transition-all duration-300 ease-in-out`}>
       {/* Blurred Background */}
       {showBlurredBackground && albumArtworkUrl && (
         <div className="absolute inset-0">
@@ -251,9 +251,46 @@ const EnhancedNowPlaying: React.FC = () => {
         </div>
       )}
       
-      <div className="relative z-10 bg-gradient-to-r from-gray-900/80 to-black/80 backdrop-blur-sm p-4">
-        <div className="container mx-auto">
-        {/* Compact View */}
+      <div className={`relative z-10 bg-gradient-to-r from-gray-900/80 to-black/80 backdrop-blur-sm transition-all duration-300 ${isExpanded ? 'h-full' : 'p-4'}`}>
+        <div className="container mx-auto h-full">
+          
+          {isExpanded ? (
+            /* Expanded View */
+            <div className="flex flex-col h-full p-6">
+              {/* Header with close button */}
+              <div className="flex items-center justify-between mb-6">
+                <h1 className="text-xl font-bold text-white">Now Playing</h1>
+                <button
+                  onClick={() => setIsExpanded(false)}
+                  className="text-gray-400 hover:text-white transition-colors p-2 hover:bg-gray-700/50 rounded-full"
+                  title="Minimize player"
+                >
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                  </svg>
+                </button>
+              </div>
+
+              {/* Main content area - simplified for now */}
+              <div className="flex-1 flex items-center justify-center">
+                <div className="max-w-md w-full text-center">
+                  <CDNImage 
+                    src={getAlbumArtworkUrl(track.image || currentPlayingAlbum.coverArt || '', 'large')}
+                    alt={track.title}
+                    width={300}
+                    height={300}
+                    className="rounded-2xl object-cover w-72 h-72 shadow-2xl border border-gray-600/30 mx-auto mb-8"
+                    fallbackSrc={getPlaceholderImageUrl('large')}
+                  />
+                  <h2 className="text-3xl font-bold text-white mb-2">{track.title}</h2>
+                  <p className="text-xl text-gray-300 mb-4">{currentPlayingAlbum.title}</p>
+                  <p className="text-lg text-gray-400">{track.artist || currentPlayingAlbum.artist}</p>
+                </div>
+              </div>
+            </div>
+          ) : (
+        
+        /* Compact View */
         <div className="flex items-center gap-4">
           {/* Album Info - Left Side */}
           <Link
@@ -280,6 +317,17 @@ const EnhancedNowPlaying: React.FC = () => {
               )}
             </div>
           </Link>
+
+          {/* Expand button */}
+          <button
+            onClick={() => setIsExpanded(true)}
+            className="text-gray-400 hover:text-white transition-colors p-2 hover:bg-gray-700/50 rounded-full"
+            title="Expand player"
+          >
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+            </svg>
+          </button>
           
           {/* Playback Controls - Center */}
           <div className="flex items-center justify-center gap-3 flex-1">
@@ -471,6 +519,9 @@ const EnhancedNowPlaying: React.FC = () => {
             💡 Use keyboard shortcuts for quick control
           </p>
         </div>
+        
+        </div>
+        )}
         </div>
       </div>
 
