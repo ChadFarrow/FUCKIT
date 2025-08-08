@@ -6,7 +6,7 @@ import ErrorBoundary from '@/components/ErrorBoundary'
 import ClientErrorBoundary from '@/components/ClientErrorBoundary'
 import { ToastContainer } from '@/components/Toast'
 import { AudioProvider } from '@/contexts/AudioContext'
-import GlobalNowPlayingBar from '@/components/GlobalNowPlayingBar'
+import EnhancedNowPlaying from '@/components/EnhancedNowPlaying'
 import PerformanceMonitor from '@/components/PerformanceMonitor'
 import ScrollDetectionProvider from '@/components/ScrollDetectionProvider'
 
@@ -122,7 +122,7 @@ export default function RootLayout({
                     {children}
                   </div>
                 </div>
-                <GlobalNowPlayingBar />
+                <EnhancedNowPlaying />
                 <ToastContainer />
               </AudioProvider>
             </ScrollDetectionProvider>

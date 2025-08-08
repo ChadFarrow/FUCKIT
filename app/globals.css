@@ -49,6 +49,11 @@
     backdrop-filter: blur(10px);
   }
   
+  /* Glow effect for space theme */
+  .drop-shadow-glow {
+    filter: drop-shadow(0 0 8px currentColor);
+  }
+  
   /* StableKraft themed elements */
   .bg-stablekraft-primary {
     background-color: var(--background-primary);

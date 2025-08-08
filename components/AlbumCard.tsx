@@ -87,7 +87,7 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
   return (
     <Link 
       href={albumUrl}
-      className={`group relative bg-white/90 backdrop-blur-md rounded-xl border border-gray-200 overflow-hidden transition-all duration-300 hover:bg-white/95 hover:border-gray-300 hover:scale-[1.02] active:scale-[0.98] block shadow-lg hover:shadow-xl ${className}`}
+      className={`group relative bg-black/40 backdrop-blur-lg rounded-2xl border border-white/10 overflow-hidden transition-all duration-300 hover:bg-black/60 hover:border-cyan-400/30 hover:scale-[1.02] hover:shadow-cyan-400/20 active:scale-[0.98] block shadow-xl hover:shadow-2xl ${className}`}
       onClick={(e) => {
         console.log(`🔗 Navigating to album: "${album.title}" -> ${albumUrl}`);
       }}
@@ -151,7 +151,7 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
         )}
 
         {/* Play/Pause Overlay - Always visible on mobile, hover-based on desktop */}
-        <div className="absolute inset-0 bg-black/20 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center pointer-events-none">
           <button
             onClick={(e) => {
               e.preventDefault();
@@ -186,44 +186,44 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
                 }, 100);
               }
             }}
-            className="w-16 h-16 md:w-12 md:h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 active:bg-white/40 transition-colors duration-200 touch-manipulation pointer-events-auto"
+            className="w-16 h-16 md:w-12 md:h-12 bg-cyan-500/20 backdrop-blur-md border border-cyan-400/50 rounded-full flex items-center justify-center hover:bg-cyan-400/30 hover:border-cyan-400 active:bg-cyan-400/40 transition-all duration-200 touch-manipulation pointer-events-auto shadow-lg shadow-cyan-400/20"
             aria-label={isPlaying ? 'Pause' : 'Play'}
           >
             {isPlaying ? (
-              <Pause className="w-6 h-6 text-white" />
+              <Pause className="w-6 h-6 text-cyan-400 drop-shadow-glow" />
             ) : (
-              <Play className="w-6 h-6 text-white ml-1" />
+              <Play className="w-6 h-6 text-cyan-400 ml-1 drop-shadow-glow" />
             )}
           </button>
         </div>
 
         {/* Track count badge */}
         {album.tracks.length > 0 && (
-          <div className="absolute top-1 right-1 sm:top-2 sm:right-2 bg-white/90 backdrop-blur-sm rounded-full px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs text-gray-800 border border-gray-200">
+          <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-md rounded-full px-2 py-1 text-[10px] sm:text-xs text-cyan-400 border border-cyan-400/30 shadow-lg">
             {album.tracks.length} {album.tracks.length !== 1 ? 'tracks' : 'track'}
           </div>
         )}
         
         {/* Music track source badge */}
         {(album as any).isMusicTrackAlbum && (
-          <div className="absolute top-1 left-1 sm:top-2 sm:left-2 bg-stablekraft-teal backdrop-blur-sm rounded-full px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs text-white">
+          <div className="absolute top-2 left-2 bg-cyan-500/20 backdrop-blur-md rounded-full px-2 py-1 text-[10px] sm:text-xs text-cyan-400 border border-cyan-400/30 shadow-lg">
             RSS
           </div>
         )}
       </div>
 
       {/* Album Info */}
-      <div className="p-2 sm:p-3 bg-white/95 backdrop-blur-sm">
-        <h3 className="font-bold text-gray-900 text-xs sm:text-sm leading-tight line-clamp-2 group-hover:text-stablekraft-teal transition-colors duration-200">
+      <div className="p-3 sm:p-4 bg-gradient-to-b from-black/60 to-black/80 backdrop-blur-sm border-t border-white/10">
+        <h3 className="font-bold text-white text-sm sm:text-base leading-tight line-clamp-2 group-hover:text-cyan-400 transition-colors duration-200">
           {album.title}
         </h3>
-        <p className="text-gray-600 text-[10px] sm:text-xs mt-0.5 sm:mt-1 line-clamp-1 font-medium">
+        <p className="text-gray-300 text-xs sm:text-sm mt-1 line-clamp-1 font-medium">
           {album.artist}
         </p>
         
         {/* Release date or episode date */}
         {(album.releaseDate || (album as any).isMusicTrackAlbum) && (
-          <p className="text-gray-500 text-[10px] sm:text-xs mt-0.5 sm:mt-1 font-medium">
+          <p className="text-gray-400 text-[10px] sm:text-xs mt-1 font-medium">
             {(album as any).isMusicTrackAlbum 
               ? new Date(album.releaseDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
               : new Date(album.releaseDate).getFullYear()
@@ -234,7 +234,7 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
 
       {/* Mobile touch feedback */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-white/5 opacity-0 group-active:opacity-100 transition-opacity duration-150" />
+        <div className="absolute inset-0 bg-cyan-400/10 opacity-0 group-active:opacity-100 transition-opacity duration-150 rounded-2xl" />
       </div>
     </Link>
   );

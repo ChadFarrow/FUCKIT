@@ -13,12 +13,15 @@ interface AudioContextType {
   currentTrackIndex: number;
   currentTime: number;
   duration: number;
+  volume: number;
+  isMuted: boolean;
   
   // Media type state
   isVideoMode: boolean;
   
-  // Shuffle state
+  // Playback modes
   isShuffleMode: boolean;
+  repeatMode: 'off' | 'all' | 'one';
   
   // Audio controls
   playAlbum: (album: RSSAlbum, trackIndex?: number) => Promise<boolean>;
@@ -26,9 +29,12 @@ interface AudioContextType {
   playShuffledTrack: (index: number) => Promise<boolean>;
   shuffleAllTracks: () => Promise<boolean>;
   toggleShuffle: () => void;
+  toggleRepeat: () => void;
   pause: () => void;
   resume: () => void;
   seek: (time: number) => void;
+  setVolume: (volume: number) => void;
+  toggleMute: () => void;
   playNextTrack: () => void;
   playPreviousTrack: () => void;
   stop: () => void;
@@ -58,14 +64,17 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [volume, setVolumeState] = useState(0.8);
+  const [isMuted, setIsMuted] = useState(false);
   const [albums, setAlbums] = useState<RSSAlbum[]>([]);
   const [hasUserInteracted, setHasUserInteracted] = useState(false);
   
   // Video mode state
   const [isVideoMode, setIsVideoMode] = useState(false);
   
-  // Shuffle state
+  // Playback modes
   const [isShuffleMode, setIsShuffleMode] = useState(false);
+  const [repeatMode, setRepeatMode] = useState<'off' | 'all' | 'one'>('off');
   const [shuffledPlaylist, setShuffledPlaylist] = useState<Array<{
     album: RSSAlbum;
     trackIndex: number;
@@ -94,6 +103,17 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
           }
           if (state.currentShuffleIndex !== undefined) {
             setCurrentShuffleIndex(state.currentShuffleIndex);
+          }
+          
+          // Restore volume and repeat state
+          if (state.volume !== undefined) {
+            setVolumeState(state.volume);
+          }
+          if (state.isMuted !== undefined) {
+            setIsMuted(state.isMuted);
+          }
+          if (state.repeatMode !== undefined) {
+            setRepeatMode(state.repeatMode);
           }
           
           // Restore track index and timing info
@@ -148,7 +168,10 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
           currentTrackIndex,
           currentTime,
           duration,
+          volume,
+          isMuted,
           isShuffleMode,
+          repeatMode,
           shuffledPlaylist: shuffledPlaylist.map(item => ({
             albumTitle: item.album.title,
             trackIndex: item.trackIndex,
@@ -162,7 +185,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       
       return () => clearTimeout(timeoutId);
     }
-  }, [currentPlayingAlbum, currentTrackIndex, currentTime, duration, isShuffleMode, shuffledPlaylist, currentShuffleIndex]);
+  }, [currentPlayingAlbum, currentTrackIndex, currentTime, duration, volume, isMuted, isShuffleMode, repeatMode, shuffledPlaylist, currentShuffleIndex]);
 
   // Load albums data for playback - only once
   useEffect(() => {
@@ -499,7 +522,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
         
         // Set volume for audio, videos typically control their own volume
         if (!isVideo) {
-          (currentMediaElement as HTMLAudioElement).volume = 0.8;
+          (currentMediaElement as HTMLAudioElement).volume = isMuted ? 0 : volume;
         }
         
         // Wait a bit for the media to load before attempting to play
@@ -508,7 +531,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
         // Ensure media is not muted for playback
         currentMediaElement.muted = false;
         if (!isVideo) {
-          (currentMediaElement as HTMLAudioElement).volume = 0.8;
+          (currentMediaElement as HTMLAudioElement).volume = isMuted ? 0 : volume;
         }
         
         const playPromise = currentMediaElement.play();
@@ -930,6 +953,16 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       return;
     }
 
+    // Normal mode - handle repeat logic
+    if (repeatMode === 'one') {
+      // Repeat current track
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔁 Repeating current track:', currentPlayingAlbum.tracks[currentTrackIndex].title);
+      }
+      await playAlbum(currentPlayingAlbum, currentTrackIndex);
+      return;
+    }
+
     // Normal mode - play next track in current album
     const nextIndex = currentTrackIndex + 1;
 
@@ -940,13 +973,22 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
       }
       await playAlbum(currentPlayingAlbum, nextIndex);
     } else {
-      // End of album - loop back to the first track
-      if (process.env.NODE_ENV === 'development') {
-        console.log('🔁 End of album reached, looping back to first track');
+      // End of album
+      if (repeatMode === 'all') {
+        // Loop back to the first track
+        if (process.env.NODE_ENV === 'development') {
+          console.log('🔁 End of album reached, looping back to first track (repeat all)');
+        }
+        await playAlbum(currentPlayingAlbum, 0);
+      } else {
+        // No repeat - stop playback
+        if (process.env.NODE_ENV === 'development') {
+          console.log('⏹️ End of album reached, stopping playback');
+        }
+        setIsPlaying(false);
       }
-      await playAlbum(currentPlayingAlbum, 0);
     }
-  }, [currentPlayingAlbum, currentTrackIndex, isShuffleMode, shuffledPlaylist, currentShuffleIndex, playShuffledTrack, playAlbum]);
+  }, [currentPlayingAlbum, currentTrackIndex, isShuffleMode, repeatMode, shuffledPlaylist, currentShuffleIndex, playShuffledTrack, playAlbum]);
 
   // Update the ref whenever playNextTrack changes
   useEffect(() => {
@@ -1053,22 +1095,76 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     }
   };
 
+  // Toggle repeat mode
+  const toggleRepeat = () => {
+    setRepeatMode(prev => {
+      const modes: ('off' | 'all' | 'one')[] = ['off', 'all', 'one'];
+      const currentIndex = modes.indexOf(prev);
+      const nextMode = modes[(currentIndex + 1) % modes.length];
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔁 Repeat mode changed:', prev, '→', nextMode);
+      }
+      return nextMode;
+    });
+  };
+
+  // Set volume
+  const setVolume = (newVolume: number) => {
+    const clampedVolume = Math.max(0, Math.min(1, newVolume));
+    setVolumeState(clampedVolume);
+    
+    // Apply volume to current media element
+    const currentElement = isVideoMode ? videoRef.current : audioRef.current;
+    if (currentElement && !isVideoMode) {
+      (currentElement as HTMLAudioElement).volume = isMuted ? 0 : clampedVolume;
+    }
+    
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔊 Volume set to:', clampedVolume);
+    }
+  };
+
+  // Toggle mute
+  const toggleMute = () => {
+    setIsMuted(prev => {
+      const newMuted = !prev;
+      
+      // Apply mute to current media element
+      const currentElement = isVideoMode ? videoRef.current : audioRef.current;
+      if (currentElement && !isVideoMode) {
+        (currentElement as HTMLAudioElement).volume = newMuted ? 0 : volume;
+      }
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔇 Mute toggled:', newMuted);
+      }
+      
+      return newMuted;
+    });
+  };
+
   const value: AudioContextType = {
     currentPlayingAlbum,
     isPlaying,
     currentTrackIndex,
     currentTime,
     duration,
+    volume,
+    isMuted,
     isVideoMode,
     isShuffleMode,
+    repeatMode,
     playAlbum,
     playTrack,
     playShuffledTrack,
     shuffleAllTracks,
     toggleShuffle,
+    toggleRepeat,
     pause,
     resume,
     seek,
+    setVolume,
+    toggleMute,
     playNextTrack,
     playPreviousTrack,
     stop,
