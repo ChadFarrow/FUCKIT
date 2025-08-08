@@ -38,7 +38,7 @@ const FinampAlbumCard: React.FC<FinampAlbumCardProps> = ({
   showText = true,
   size = 'medium'
 }) => {
-  const { setCurrentPlayingAlbum } = useAudio();
+  const { playAlbum } = useAudio();
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
 
@@ -51,7 +51,7 @@ const FinampAlbumCard: React.FC<FinampAlbumCardProps> = ({
   const handlePlayAlbum = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setCurrentPlayingAlbum(album);
+    playAlbum(album, 0);
   };
 
   return (
