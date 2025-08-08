@@ -35,6 +35,7 @@ const EnhancedNowPlaying: React.FC = () => {
   const [hoverPosition, setHoverPosition] = useState<number | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [showQueue, setShowQueue] = useState(false);
+  const [showBlurredBackground, setShowBlurredBackground] = useState(true);
 
   // Set up keyboard shortcuts
   useEffect(() => {
@@ -230,9 +231,28 @@ const EnhancedNowPlaying: React.FC = () => {
     }
   };
 
+  const albumArtworkUrl = getAlbumArtworkUrl(track.image || currentPlayingAlbum.coverArt || '', 'medium');
+
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-gray-900 to-black border-t border-gray-700 p-4 z-50">
-      <div className="container mx-auto">
+    <div className="fixed bottom-0 left-0 right-0 border-t border-gray-700 z-50 overflow-hidden">
+      {/* Blurred Background */}
+      {showBlurredBackground && albumArtworkUrl && (
+        <div className="absolute inset-0">
+          <div 
+            className="absolute inset-0 scale-110"
+            style={{
+              backgroundImage: `url(${albumArtworkUrl})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              filter: 'blur(25px) brightness(0.4) saturate(1.2)',
+            }}
+          />
+          <div className="absolute inset-0 bg-gray-900 bg-opacity-85" />
+        </div>
+      )}
+      
+      <div className="relative z-10 bg-gradient-to-r from-gray-900/80 to-black/80 backdrop-blur-sm p-4">
+        <div className="container mx-auto">
         {/* Compact View */}
         <div className="flex items-center gap-4">
           {/* Album Info - Left Side */}
@@ -416,6 +436,17 @@ const EnhancedNowPlaying: React.FC = () => {
                 <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"/>
               </svg>
             </button>
+
+            {/* Background Toggle Button */}
+            <button
+              onClick={() => setShowBlurredBackground(!showBlurredBackground)}
+              className={`transition-colors ${showBlurredBackground ? 'text-blue-400 hover:text-blue-300' : 'text-gray-400 hover:text-white'}`}
+              title={`${showBlurredBackground ? 'Hide' : 'Show'} blurred background`}
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-4.18C14.4 2.84 13.3 2 12 2c-1.3 0-2.4.84-2.82 2H5c-.14 0-.27.01-.4.04-.39.08-.74.28-1.01.55-.18.18-.33.4-.43.64-.1.23-.16.49-.16.77v14c0 .27.06.54.16.78.1.23.25.45.43.64.27.27.62.47 1.01.55.13.02.26.03.4.03h14c.14 0 .27-.01.4-.04.39-.08.74-.28 1.01-.55.18-.18.33-.4.43-.64.1-.24.16-.5.16-.78V6c0-.28-.06-.54-.16-.78-.1-.23-.25-.45-.43-.64-.27-.27-.62-.47-1.01-.55-.13-.02-.26-.03-.4-.03zM12 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm7 15H5V6h14v13z"/>
+              </svg>
+            </button>
             
             <button
               onClick={stop}
@@ -439,6 +470,7 @@ const EnhancedNowPlaying: React.FC = () => {
           <p className="text-xs text-gray-600 mt-1" title="Keyboard shortcuts: Space=Play/Pause, ←/→=Prev/Next track, Shift+←/→=Skip 10s, Shift+↑/↓=Volume, Cmd/Ctrl+M=Mute, Cmd/Ctrl+S=Shuffle, Cmd/Ctrl+R=Repeat, Cmd/Ctrl+Q=Queue">
             💡 Use keyboard shortcuts for quick control
           </p>
+        </div>
         </div>
       </div>
 
