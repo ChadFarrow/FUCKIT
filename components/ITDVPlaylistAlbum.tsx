@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAudio } from '@/contexts/AudioContext';
 import { useScrollDetectionContext } from '@/components/ScrollDetectionProvider';
 import { Play, Pause, Music, ExternalLink, Download } from 'lucide-react';
@@ -44,6 +44,7 @@ export default function ITDVPlaylistAlbum() {
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number | null>(null);
   const [isClient, setIsClient] = useState(false);
   const [resolvedSongs, setResolvedSongs] = useState<ResolvedSong[]>([]);
+  const dataLoadedRef = useRef(false);
   const { playTrack, isPlaying, pause, resume, playAlbum } = useAudio();
   const { shouldPreventClick } = useScrollDetectionContext();
 
@@ -109,6 +110,7 @@ export default function ITDVPlaylistAlbum() {
           setTracks(resolvedTracks);
           setTotalTracks(resolvedTracks.length);
           setIsLoading(false);
+          dataLoadedRef.current = true; // Mark data as loaded
         }
         
         setResolvedSongs(songs);
@@ -123,9 +125,16 @@ export default function ITDVPlaylistAlbum() {
   };
 
   const loadITDVTracks = async () => {
+    // Skip if we already have loaded data
+    if (dataLoadedRef.current) {
+      console.log('✅ Data already loaded, skipping loadITDVTracks');
+      return;
+    }
+    
     // Skip if we already have tracks from resolved songs
     if (tracks.length > 0) {
       console.log('✅ Tracks already loaded from resolved songs');
+      dataLoadedRef.current = true;
       return;
     }
     
@@ -160,6 +169,7 @@ export default function ITDVPlaylistAlbum() {
         clearTimeout(timeoutId);
         console.log('📊 Data source: Resolved songs');
         setIsLoading(false);
+        dataLoadedRef.current = true; // Mark data as loaded
         return;
       }
 
@@ -197,6 +207,7 @@ export default function ITDVPlaylistAlbum() {
             clearTimeout(timeoutId);
             console.log('📊 Data source:', dataSource);
             setIsLoading(false);
+            dataLoadedRef.current = true;
             return;
           }
         }
@@ -247,6 +258,7 @@ export default function ITDVPlaylistAlbum() {
           clearTimeout(timeoutId);
           console.log('📊 Data source:', dataSource);
           setIsLoading(false);
+          dataLoadedRef.current = true;
           return;
         }
       } catch (error) {
@@ -266,6 +278,7 @@ export default function ITDVPlaylistAlbum() {
         const allTracks = data.musicTracks || [];
         setTotalTracks(allTracks.length || 122);
         setTracks(allTracks);
+        dataLoadedRef.current = true;
       } catch (error) {
         console.error('All fallbacks failed:', error);
         setTotalTracks(0);
@@ -274,6 +287,7 @@ export default function ITDVPlaylistAlbum() {
       
       clearTimeout(timeoutId);
       console.log('📊 Data source:', dataSource);
+      dataLoadedRef.current = true;
     } catch (error) {
       console.error('❌ Error loading ITDV tracks:', error);
       if (error instanceof Error && error.name === 'AbortError') {
