@@ -724,7 +724,6 @@ const EnhancedNowPlaying: React.FC = () => {
           </p>
         </div>
         
-        </div>
         )}
         </div>
       </div>
