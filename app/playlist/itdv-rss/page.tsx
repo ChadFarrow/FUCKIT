@@ -1,38 +1,8 @@
 import Link from 'next/link';
 import { Suspense } from 'react';
-import PlaylistAlbumProgressive from '@/components/PlaylistAlbumProgressive';
-import { PlaylistConfig } from '@/components/PlaylistAlbum';
-import { ITDV_AUDIO_URL_MAP } from '@/data/itdv-audio-urls';
-import { ITDV_ARTWORK_URL_MAP } from '@/data/itdv-artwork-urls';
-import resolvedSongsData from '@/data/itdv-resolved-songs.json';
+import ITDVPlaylistAlbum from '@/components/ITDVPlaylistAlbum';
 
 // TODO: Add metadata back after optimizing component structure
-
-// Pre-process tracks at build time for better performance - using Map for O(1) lookups
-const audioUrlMap = new Map(Object.entries(ITDV_AUDIO_URL_MAP));
-const artworkUrlMap = new Map(Object.entries(ITDV_ARTWORK_URL_MAP));
-
-const config: PlaylistConfig = {
-  name: 'Into The Doerfel-Verse',
-  description: 'Every music reference from Into The Doerfel-Verse podcast',
-  coverArt: 'https://www.doerfelverse.com/art/itdvchadf.png',
-  resolveAudioUrls: false, // We already have resolved URLs in the data
-  showResolutionStatus: false
-};
-
-// Pre-process tracks with enriched data for the original PlaylistAlbum component
-const enrichedTracks = resolvedSongsData.map((song: any) => ({
-  ...song,
-  audioUrl: audioUrlMap.get(song.title) || '',
-  artworkUrl: artworkUrlMap.get(song.title) || ''
-}));
-
-// Pre-calculate counts for the about section
-const trackCounts = {
-  total: enrichedTracks.length,
-  withAudio: enrichedTracks.filter((t: any) => t.audioUrl).length,
-  withArtwork: enrichedTracks.filter((t: any) => t.artworkUrl).length
-};
 
 export default function ITDVPlaylistPage() {
   // Use the same background style as album pages
@@ -98,42 +68,8 @@ export default function ITDVPlaylistPage() {
         <div className="bg-black/40 backdrop-blur-sm rounded-lg p-4 md:p-6 mb-8">
           <h2 className="text-xl font-semibold mb-4">Tracks</h2>
           <Suspense fallback={<div className="text-white animate-pulse">Loading tracks...</div>}>
-            <PlaylistAlbumProgressive
-              config={config}
-              tracks={enrichedTracks}
-            />
+            <ITDVPlaylistAlbum />
           </Suspense>
-          
-          <div className="mt-8 p-4 bg-gray-800/50 backdrop-blur-sm rounded-lg">
-            <h3 className="text-lg font-semibold text-white mb-2">About This Playlist</h3>
-            <p className="text-sm text-gray-300 mb-3">
-              This playlist contains every music reference from the Into The Doerfel-Verse podcast, featuring {trackCounts.total} tracks with audio and artwork.
-            </p>
-            <div className="space-y-2 text-sm">
-              <div>
-                <span className="text-gray-400">Total Tracks:</span>
-                <span className="ml-2 text-white">{trackCounts.total} songs</span>
-              </div>
-              <div>
-                <span className="text-gray-400">Tracks with Audio:</span>
-                <span className="ml-2 text-green-400">{trackCounts.withAudio} playable</span>
-              </div>
-              <div>
-                <span className="text-gray-400">Tracks with Artwork:</span>
-                <span className="ml-2 text-blue-400">{trackCounts.withArtwork} with covers</span>
-              </div>
-              <div>
-                <span className="text-gray-400">Source:</span>
-                <span className="ml-2 text-white">Episodes 31-56</span>
-              </div>
-            </div>
-            <p className="text-sm text-gray-400 mt-4">
-              Into The Doerfel-Verse playlist powered by Podcasting 2.0 and Value for Value. 
-              <a href="https://www.doerfelverse.com" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:text-cyan-300 ml-1 transition-colors">
-                Visit Doerfel-Verse →
-              </a>
-            </p>
-          </div>
         </div>
 
         {/* RSS Feed Info */}
