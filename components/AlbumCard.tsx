@@ -87,7 +87,7 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
   return (
     <Link 
       href={albumUrl}
-      className={`group relative bg-white/90 backdrop-blur-md rounded-xl border border-gray-200 overflow-hidden transition-all duration-300 hover:bg-white/95 hover:border-gray-300 hover:scale-[1.02] active:scale-[0.98] block shadow-lg hover:shadow-xl ${className}`}
+      className={`group relative bg-black/40 backdrop-blur-md rounded-xl border border-gray-700/50 overflow-hidden transition-all duration-300 hover:bg-black/50 hover:border-cyan-400/30 hover:scale-[1.02] active:scale-[0.98] block shadow-lg hover:shadow-xl hover:shadow-cyan-400/10 ${className}`}
       onClick={(e) => {
         console.log(`🔗 Navigating to album: "${album.title}" -> ${albumUrl}`);
       }}
@@ -186,7 +186,7 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
                 }, 100);
               }
             }}
-            className="w-16 h-16 md:w-12 md:h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 active:bg-white/40 transition-colors duration-200 touch-manipulation pointer-events-auto"
+            className="w-16 h-16 md:w-12 md:h-12 bg-cyan-400/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-cyan-400/30 active:bg-cyan-400/40 transition-colors duration-200 touch-manipulation pointer-events-auto border border-cyan-400/30 hover:border-cyan-400/50 shadow-lg shadow-cyan-400/20"
             aria-label={isPlaying ? 'Pause' : 'Play'}
           >
             {isPlaying ? (
@@ -199,7 +199,7 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
 
         {/* Track count badge */}
         {album.tracks.length > 0 && (
-          <div className="absolute top-1 right-1 sm:top-2 sm:right-2 bg-white/90 backdrop-blur-sm rounded-full px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs text-gray-800 border border-gray-200">
+          <div className="absolute top-1 right-1 sm:top-2 sm:right-2 bg-black/80 backdrop-blur-sm rounded-full px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs text-white border border-gray-600">
             {album.tracks.length} {album.tracks.length !== 1 ? 'tracks' : 'track'}
           </div>
         )}
@@ -213,17 +213,17 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
       </div>
 
       {/* Album Info */}
-      <div className="p-2 sm:p-3 bg-white/95 backdrop-blur-sm">
-        <h3 className="font-bold text-gray-900 text-xs sm:text-sm leading-tight line-clamp-2 group-hover:text-stablekraft-teal transition-colors duration-200">
+      <div className="p-2 sm:p-3 bg-black/60 backdrop-blur-sm">
+        <h3 className="font-bold text-white text-xs sm:text-sm leading-tight line-clamp-2 group-hover:text-cyan-400 transition-colors duration-200">
           {album.title}
         </h3>
-        <p className="text-gray-600 text-[10px] sm:text-xs mt-0.5 sm:mt-1 line-clamp-1 font-medium">
+        <p className="text-gray-300 text-[10px] sm:text-xs mt-0.5 sm:mt-1 line-clamp-1 font-medium">
           {album.artist}
         </p>
         
         {/* Release date or episode date */}
         {(album.releaseDate || (album as any).isMusicTrackAlbum) && (
-          <p className="text-gray-500 text-[10px] sm:text-xs mt-0.5 sm:mt-1 font-medium">
+          <p className="text-gray-400 text-[10px] sm:text-xs mt-0.5 sm:mt-1 font-medium">
             {(album as any).isMusicTrackAlbum 
               ? new Date(album.releaseDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
               : new Date(album.releaseDate).getFullYear()
