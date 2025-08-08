@@ -1157,8 +1157,9 @@ export default function ITDVPlaylistAlbum() {
     name: 'Into The Doerfel-Verse',
     description: 'Music playlist from Into The Doerfel-Verse podcast',
     coverArt: 'https://www.doerfelverse.com/art/itdvchadf.png',
-    resolveAudioUrls: true,
-    showResolutionStatus: true
+    // Disable audio resolution in production for now due to network issues
+    resolveAudioUrls: process.env.NODE_ENV === 'development',
+    showResolutionStatus: process.env.NODE_ENV === 'development'
   };
 
   const handleTrackResolved = (track: any) => {

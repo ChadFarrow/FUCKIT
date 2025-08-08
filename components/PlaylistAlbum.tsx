@@ -86,6 +86,10 @@ export default function PlaylistAlbum({ tracks: rawTracks, config, onTrackResolv
         setAudioResolutionStatus('Resolving audio URLs...');
         
         try {
+          // Add timeout and better error handling
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+          
           const response = await fetch('/api/resolve-audio-urls', {
             method: 'POST',
             headers: {
@@ -93,8 +97,11 @@ export default function PlaylistAlbum({ tracks: rawTracks, config, onTrackResolv
             },
             body: JSON.stringify({
               songs: rawTracks
-            })
+            }),
+            signal: controller.signal
           });
+          
+          clearTimeout(timeoutId);
           
           if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -143,9 +150,20 @@ export default function PlaylistAlbum({ tracks: rawTracks, config, onTrackResolv
           setTimeout(() => setAudioResolutionStatus(''), 5000);
           
         } catch (error) {
-          console.error(`❌ Failed to resolve audio URLs for ${config.name}:`, error);
-          setAudioResolutionStatus('⚠️ Audio resolution failed - using static data');
-          setTimeout(() => setAudioResolutionStatus(''), 5000);
+          console.warn(`⚠️ Audio resolution failed for ${config.name}, continuing with static data:`, error);
+          
+          // More specific error messages
+          let errorMessage = '⚠️ Audio resolution unavailable - using static data';
+          if (error instanceof Error) {
+            if (error.name === 'AbortError') {
+              errorMessage = '⚠️ Audio resolution timed out - using static data';
+            } else if (error.message.includes('NetworkError') || error.message.includes('fetch')) {
+              errorMessage = '⚠️ Network error during audio resolution - using static data';
+            }
+          }
+          
+          setAudioResolutionStatus(errorMessage);
+          setTimeout(() => setAudioResolutionStatus(''), 8000);
         }
       }
     };
