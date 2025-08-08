@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import '../styles/finamp-theme.css'
 // import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration' // Disabled to fix API issues
 import ErrorBoundary from '@/components/ErrorBoundary'
 import ClientErrorBoundary from '@/components/ClientErrorBoundary'
@@ -102,23 +103,21 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={inter.className}>
+      <body className={`${inter.className} finamp-theme`} style={{backgroundColor: 'var(--finamp-surface)'}}>
         <ClientErrorBoundary>
           <ErrorBoundary>
             <ScrollDetectionProvider>
               <AudioProvider>
-                <div className="min-h-screen relative">
-                  {/* Background Image */}
+                <div className="min-h-screen relative" style={{backgroundColor: 'var(--finamp-surface)'}}>
+                  {/* Finamp-style background */}
                   <div 
                     className="fixed inset-0 z-0"
                     style={{
-                      background: 'url(/stablekraft-rocket.png) center/contain fixed',
-                      backgroundAttachment: 'fixed',
-                      opacity: 0.6
+                      background: 'linear-gradient(135deg, var(--finamp-surface) 0%, var(--finamp-surface-variant) 100%)',
                     }}
                   />
                   {/* Content overlay */}
-                  <div className="relative z-10">
+                  <div className="relative z-10 finamp-container">
                     {children}
                   </div>
                 </div>

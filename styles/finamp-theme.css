@@ -1,0 +1,377 @@
+/* Finamp-Inspired Design System */
+
+:root {
+  /* Finamp Color Palette */
+  --finamp-primary: #6750a4;
+  --finamp-primary-container: #eaddff;
+  --finamp-secondary: #625b71;
+  --finamp-secondary-container: #e8def8;
+  --finamp-tertiary: #7d5260;
+  --finamp-tertiary-container: #ffd8e4;
+  
+  /* Surface Colors */
+  --finamp-surface: #fffbfe;
+  --finamp-surface-variant: #f4eff4;
+  --finamp-surface-container: #f0f0f0;
+  --finamp-surface-container-high: #ebebeb;
+  --finamp-surface-container-highest: #e6e6e6;
+  
+  /* Dark Theme */
+  --finamp-surface-dark: #1c1b1f;
+  --finamp-surface-variant-dark: #49454f;
+  --finamp-surface-container-dark: #211f26;
+  --finamp-surface-container-high-dark: #2b2930;
+  --finamp-surface-container-highest-dark: #36343b;
+  --finamp-primary-dark: #d0bcff;
+  --finamp-secondary-dark: #ccc2dc;
+  --finamp-tertiary-dark: #efb8c8;
+  
+  /* Text Colors */
+  --finamp-on-surface: #1c1b1f;
+  --finamp-on-surface-variant: #49454f;
+  --finamp-on-primary: #ffffff;
+  --finamp-on-secondary: #ffffff;
+  
+  /* Dark Text Colors */
+  --finamp-on-surface-dark: #e6e1e5;
+  --finamp-on-surface-variant-dark: #cac4d0;
+  --finamp-on-primary-dark: #381e72;
+  --finamp-on-secondary-dark: #332d41;
+  
+  /* Outline Colors */
+  --finamp-outline: #79747e;
+  --finamp-outline-variant: #cac4d0;
+  --finamp-outline-dark: #938f99;
+  --finamp-outline-variant-dark: #49454f;
+  
+  /* Spacing System (based on 8px grid) */
+  --finamp-spacing-xs: 4px;
+  --finamp-spacing-sm: 8px;
+  --finamp-spacing-md: 12px;
+  --finamp-spacing-lg: 16px;
+  --finamp-spacing-xl: 20px;
+  --finamp-spacing-2xl: 24px;
+  --finamp-spacing-3xl: 32px;
+  --finamp-spacing-4xl: 40px;
+  --finamp-spacing-5xl: 48px;
+  
+  /* Border Radius */
+  --finamp-radius-xs: 4px;
+  --finamp-radius-sm: 8px;
+  --finamp-radius-md: 12px;
+  --finamp-radius-lg: 16px;
+  --finamp-radius-xl: 20px;
+  --finamp-radius-2xl: 24px;
+  --finamp-radius-full: 9999px;
+  
+  /* Elevation Shadows */
+  --finamp-shadow-1: 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+  --finamp-shadow-2: 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
+  --finamp-shadow-3: 0px 1px 3px rgba(0, 0, 0, 0.3), 0px 4px 8px 3px rgba(0, 0, 0, 0.15);
+  --finamp-shadow-4: 0px 2px 3px rgba(0, 0, 0, 0.3), 0px 6px 10px 4px rgba(0, 0, 0, 0.15);
+  --finamp-shadow-5: 0px 4px 4px rgba(0, 0, 0, 0.3), 0px 8px 12px 6px rgba(0, 0, 0, 0.15);
+  
+  /* Typography Scale */
+  --finamp-text-display-large: 57px;
+  --finamp-text-display-medium: 45px;
+  --finamp-text-display-small: 36px;
+  --finamp-text-headline-large: 32px;
+  --finamp-text-headline-medium: 28px;
+  --finamp-text-headline-small: 24px;
+  --finamp-text-title-large: 22px;
+  --finamp-text-title-medium: 16px;
+  --finamp-text-title-small: 14px;
+  --finamp-text-label-large: 14px;
+  --finamp-text-label-medium: 12px;
+  --finamp-text-label-small: 11px;
+  --finamp-text-body-large: 16px;
+  --finamp-text-body-medium: 14px;
+  --finamp-text-body-small: 12px;
+  
+  /* Component Heights */
+  --finamp-component-height-sm: 32px;
+  --finamp-component-height-md: 40px;
+  --finamp-component-height-lg: 48px;
+  --finamp-component-height-xl: 56px;
+  
+  /* Animation */
+  --finamp-transition-fast: 150ms ease-out;
+  --finamp-transition-medium: 300ms ease-out;
+  --finamp-transition-slow: 500ms ease-out;
+}
+
+/* Dark Theme Toggle */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --finamp-surface: var(--finamp-surface-dark);
+    --finamp-surface-variant: var(--finamp-surface-variant-dark);
+    --finamp-surface-container: var(--finamp-surface-container-dark);
+    --finamp-surface-container-high: var(--finamp-surface-container-high-dark);
+    --finamp-surface-container-highest: var(--finamp-surface-container-highest-dark);
+    --finamp-primary: var(--finamp-primary-dark);
+    --finamp-secondary: var(--finamp-secondary-dark);
+    --finamp-tertiary: var(--finamp-tertiary-dark);
+    --finamp-on-surface: var(--finamp-on-surface-dark);
+    --finamp-on-surface-variant: var(--finamp-on-surface-variant-dark);
+    --finamp-on-primary: var(--finamp-on-primary-dark);
+    --finamp-on-secondary: var(--finamp-on-secondary-dark);
+    --finamp-outline: var(--finamp-outline-dark);
+    --finamp-outline-variant: var(--finamp-outline-variant-dark);
+  }
+}
+
+/* Global Base Styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--finamp-surface);
+  color: var(--finamp-on-surface);
+  margin: 0;
+  padding: 0;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Finamp Button System */
+.finamp-button {
+  font-family: inherit;
+  font-weight: 500;
+  font-size: var(--finamp-text-label-large);
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  border: none;
+  border-radius: var(--finamp-radius-xl);
+  cursor: pointer;
+  transition: all var(--finamp-transition-fast);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--finamp-spacing-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.finamp-button:focus-visible {
+  outline: 2px solid var(--finamp-primary);
+  outline-offset: 2px;
+}
+
+.finamp-button:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+/* Button Variants */
+.finamp-button--filled {
+  background-color: var(--finamp-primary);
+  color: var(--finamp-on-primary);
+  height: var(--finamp-component-height-lg);
+  padding: 0 var(--finamp-spacing-2xl);
+  box-shadow: var(--finamp-shadow-1);
+}
+
+.finamp-button--filled:hover {
+  box-shadow: var(--finamp-shadow-2);
+  transform: translateY(-1px);
+}
+
+.finamp-button--outlined {
+  background-color: transparent;
+  color: var(--finamp-primary);
+  border: 1px solid var(--finamp-outline);
+  height: var(--finamp-component-height-lg);
+  padding: 0 var(--finamp-spacing-2xl);
+}
+
+.finamp-button--outlined:hover {
+  background-color: rgba(103, 80, 164, 0.08);
+}
+
+.finamp-button--text {
+  background-color: transparent;
+  color: var(--finamp-primary);
+  height: var(--finamp-component-height-lg);
+  padding: 0 var(--finamp-spacing-md);
+}
+
+.finamp-button--text:hover {
+  background-color: rgba(103, 80, 164, 0.08);
+}
+
+.finamp-button--icon {
+  background-color: transparent;
+  color: var(--finamp-on-surface-variant);
+  width: var(--finamp-component-height-lg);
+  height: var(--finamp-component-height-lg);
+  padding: 0;
+  border-radius: var(--finamp-radius-full);
+}
+
+.finamp-button--icon:hover {
+  background-color: rgba(28, 27, 31, 0.08);
+}
+
+/* Finamp Card System */
+.finamp-card {
+  background-color: var(--finamp-surface-container);
+  border-radius: var(--finamp-radius-md);
+  box-shadow: var(--finamp-shadow-1);
+  overflow: hidden;
+  transition: all var(--finamp-transition-fast);
+}
+
+.finamp-card:hover {
+  box-shadow: var(--finamp-shadow-2);
+  transform: translateY(-2px);
+}
+
+.finamp-card--elevated {
+  background-color: var(--finamp-surface-container-high);
+  box-shadow: var(--finamp-shadow-2);
+}
+
+.finamp-card--outlined {
+  background-color: var(--finamp-surface);
+  border: 1px solid var(--finamp-outline-variant);
+  box-shadow: none;
+}
+
+/* Album Card Specific */
+.finamp-album-card {
+  aspect-ratio: 1;
+  position: relative;
+  border-radius: var(--finamp-radius-xs);
+  overflow: hidden;
+  box-shadow: var(--finamp-shadow-1);
+  transition: all var(--finamp-transition-fast);
+}
+
+.finamp-album-card:hover {
+  box-shadow: var(--finamp-shadow-3);
+  transform: scale(1.02);
+}
+
+.finamp-album-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.finamp-album-card__overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  padding: var(--finamp-spacing-md);
+  color: white;
+}
+
+/* Typography Classes */
+.finamp-display-large {
+  font-size: var(--finamp-text-display-large);
+  font-weight: 400;
+  line-height: 64px;
+  letter-spacing: -0.25px;
+}
+
+.finamp-headline-large {
+  font-size: var(--finamp-text-headline-large);
+  font-weight: 400;
+  line-height: 40px;
+}
+
+.finamp-headline-medium {
+  font-size: var(--finamp-text-headline-medium);
+  font-weight: 400;
+  line-height: 36px;
+}
+
+.finamp-title-large {
+  font-size: var(--finamp-text-title-large);
+  font-weight: 400;
+  line-height: 28px;
+}
+
+.finamp-title-medium {
+  font-size: var(--finamp-text-title-medium);
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: 0.15px;
+}
+
+.finamp-body-large {
+  font-size: var(--finamp-text-body-large);
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0.5px;
+}
+
+.finamp-body-medium {
+  font-size: var(--finamp-text-body-medium);
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 0.25px;
+}
+
+.finamp-label-large {
+  font-size: var(--finamp-text-label-large);
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+}
+
+/* Layout Utilities */
+.finamp-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--finamp-spacing-lg);
+}
+
+.finamp-grid {
+  display: grid;
+  gap: var(--finamp-spacing-lg);
+}
+
+.finamp-grid--albums {
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--finamp-spacing-md);
+}
+
+.finamp-flex {
+  display: flex;
+  align-items: center;
+  gap: var(--finamp-spacing-md);
+}
+
+.finamp-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--finamp-spacing-sm);
+}
+
+/* Spacing Utilities */
+.finamp-p-xs { padding: var(--finamp-spacing-xs); }
+.finamp-p-sm { padding: var(--finamp-spacing-sm); }
+.finamp-p-md { padding: var(--finamp-spacing-md); }
+.finamp-p-lg { padding: var(--finamp-spacing-lg); }
+.finamp-p-xl { padding: var(--finamp-spacing-xl); }
+
+.finamp-m-xs { margin: var(--finamp-spacing-xs); }
+.finamp-m-sm { margin: var(--finamp-spacing-sm); }
+.finamp-m-md { margin: var(--finamp-spacing-md); }
+.finamp-m-lg { margin: var(--finamp-spacing-lg); }
+.finamp-m-xl { margin: var(--finamp-spacing-xl); }
+
+/* State Colors */
+.finamp-text-primary { color: var(--finamp-primary); }
+.finamp-text-secondary { color: var(--finamp-on-surface-variant); }
+.finamp-text-disabled { color: var(--finamp-on-surface-variant); opacity: 0.38; }
+
+.finamp-bg-primary { background-color: var(--finamp-primary); }
+.finamp-bg-surface { background-color: var(--finamp-surface); }
+.finamp-bg-surface-variant { background-color: var(--finamp-surface-variant); }

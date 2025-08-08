@@ -162,7 +162,7 @@ const QueueManager: React.FC<QueueManagerProps> = ({ isOpen, onClose }) => {
                         {/* Duration */}
                         {track.duration && (
                           <div className="text-sm text-gray-400 ml-4">
-                            {formatTime(typeof track.duration === 'string' ? parseFloat(track.duration) : track.duration)}
+                            {formatTime(typeof track.duration === 'string' ? parseFloat(track.duration) || 0 : track.duration || 0)}
                           </div>
                         )}
                       </div>

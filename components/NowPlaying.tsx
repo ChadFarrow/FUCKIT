@@ -24,8 +24,9 @@ interface NowPlayingProps {
   onNext: () => void;
   onSeek: (time: number) => void;
   onVolumeChange: (volume: number) => void;
-  onClose: () => void;
-  onToggleShuffle?: () => void;
+  onClose: (e?: React.MouseEvent) => void;
+  onToggleShuffle?: (e?: React.MouseEvent) => void;
+  onExpand?: () => void;
 }
 
 const NowPlaying: React.FC<NowPlayingProps> = ({
@@ -40,7 +41,8 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
   onSeek,
   onVolumeChange,
   onClose,
-  onToggleShuffle
+  onToggleShuffle,
+  onExpand
 }) => {
   const [hoverPosition, setHoverPosition] = useState<number | null>(null);
 

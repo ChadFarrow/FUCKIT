@@ -19,6 +19,9 @@ interface AudioContextType {
   // Media type state
   isVideoMode: boolean;
   
+  // Player UI state
+  isPlayerExpanded: boolean;
+  
   // Playback modes
   isShuffleMode: boolean;
   repeatMode: 'off' | 'all' | 'one';
@@ -38,6 +41,10 @@ interface AudioContextType {
   playNextTrack: () => void;
   playPreviousTrack: () => void;
   stop: () => void;
+  
+  // Player UI controls
+  togglePlayerExpanded: () => void;
+  setPlayerExpanded: (expanded: boolean) => void;
   
   // Media element refs for direct access
   audioRef: React.RefObject<HTMLAudioElement>;
@@ -71,6 +78,9 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   
   // Video mode state
   const [isVideoMode, setIsVideoMode] = useState(false);
+  
+  // Player UI state
+  const [isPlayerExpanded, setIsPlayerExpandedState] = useState(false);
   
   // Playback modes
   const [isShuffleMode, setIsShuffleMode] = useState(false);
@@ -1051,6 +1061,15 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     return success;
   };
 
+  // Player UI control functions
+  const togglePlayerExpanded = () => {
+    setIsPlayerExpandedState(prev => !prev);
+  };
+
+  const setPlayerExpanded = (expanded: boolean) => {
+    setIsPlayerExpandedState(expanded);
+  };
+
   // Stop function
   const stop = () => {
     // Stop both audio and video elements
@@ -1152,6 +1171,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     volume,
     isMuted,
     isVideoMode,
+    isPlayerExpanded,
     isShuffleMode,
     repeatMode,
     playAlbum,
@@ -1168,6 +1188,8 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     playNextTrack,
     playPreviousTrack,
     stop,
+    togglePlayerExpanded,
+    setPlayerExpanded,
     audioRef,
     videoRef
   };
