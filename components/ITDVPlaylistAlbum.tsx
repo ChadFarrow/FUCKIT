@@ -58,6 +58,23 @@ export default function ITDVPlaylistAlbum() {
     }
   }, [resolvedSongs, isClient]);
 
+  // Add a safety timeout to prevent infinite loading
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (isLoading) {
+        console.log('⚠️ Loading timeout reached, forcing completion');
+        setIsLoading(false);
+        // If we still have no tracks, set empty array
+        if (tracks.length === 0) {
+          setTracks([]);
+          setTotalTracks(0);
+        }
+      }
+    }, 10000); // 10 second maximum wait
+
+    return () => clearTimeout(timeout);
+  }, [isLoading, tracks.length]);
+
   const loadResolvedSongs = async () => {
     try {
       console.log('🔄 Loading resolved ITDV songs...');
@@ -67,6 +84,33 @@ export default function ITDVPlaylistAlbum() {
         const data = await response.json();
         const songs = Array.isArray(data) ? data : [];
         console.log('✅ Loaded resolved songs:', songs.length);
+        
+        // If we got songs, immediately set them as tracks
+        if (songs.length > 0) {
+          const resolvedTracks = songs
+            .filter(song => song && song.feedGuid && song.itemGuid)
+            .map((song, index) => ({
+              id: `resolved-${index + 1}-${song.feedGuid?.substring(0, 8) || 'unknown'}`,
+              title: song.title || `Music Track ${index + 1}`,
+              artist: song.artist || 'Unknown Artist',
+              episodeTitle: song.feedTitle || 'Into The Doerfel-Verse',
+              duration: 180,
+              audioUrl: song.feedUrl || '',
+              valueForValue: {
+                feedGuid: song.feedGuid,
+                itemGuid: song.itemGuid,
+                resolved: true,
+                resolvedTitle: song.title,
+                resolvedArtist: song.artist
+              }
+            }));
+          
+          console.log('✅ Setting tracks directly from resolved songs:', resolvedTracks.length);
+          setTracks(resolvedTracks);
+          setTotalTracks(resolvedTracks.length);
+          setIsLoading(false);
+        }
+        
         setResolvedSongs(songs);
       } else {
         console.log('⚠️ Could not load resolved songs, will use fallback data');
@@ -79,6 +123,12 @@ export default function ITDVPlaylistAlbum() {
   };
 
   const loadITDVTracks = async () => {
+    // Skip if we already have tracks from resolved songs
+    if (tracks.length > 0) {
+      console.log('✅ Tracks already loaded from resolved songs');
+      return;
+    }
+    
     try {
       console.log('🔄 Loading Into The Doerfel-Verse tracks...');
       const controller = new AbortController();
