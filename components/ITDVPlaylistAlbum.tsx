@@ -228,8 +228,16 @@ export default function ITDVPlaylistAlbum() {
           const parser = new DOMParser();
           const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
           
-          // Look for podcast:remoteItem elements in the channel (not in items)
-          const remoteItems = xmlDoc.querySelectorAll('channel > remoteItem, channel podcast\\:remoteItem');
+          // Look for podcast:remoteItem elements - try both locations (in channel and in items)
+          let remoteItems = xmlDoc.querySelectorAll('channel > remoteItem, channel podcast\\:remoteItem');
+          
+          // If no remoteItems found in channel, look inside item elements (GitHub Pages format)
+          if (remoteItems.length === 0) {
+            remoteItems = xmlDoc.querySelectorAll('item remoteItem, item podcast\\:remoteItem');
+            console.log('📊 Using GitHub Pages feed format (remoteItems inside items)');
+          } else {
+            console.log('📊 Using local feed format (remoteItems in channel)');
+          }
           
           console.log(`📊 Found ${remoteItems.length} remoteItem elements in ITDV RSS playlist`);
           
