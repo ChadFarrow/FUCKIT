@@ -1193,7 +1193,7 @@ export default function ITDVPlaylistAlbum() {
         artist: song.artist || 'Unknown Artist',
         episodeTitle: song.feedTitle || 'Into The Doerfel-Verse',
         duration: generateRealisticDuration(song, index),
-        audioUrl: song.feedUrl || '',
+        audioUrl: '', // RSS feed URLs are not direct audio files
         valueForValue: {
           feedGuid: song.feedGuid,
           itemGuid: song.itemGuid,
@@ -1211,6 +1211,12 @@ export default function ITDVPlaylistAlbum() {
 
   const handlePlayTrack = async (track: ITDVTrack, index: number) => {
     if (shouldPreventClick()) return;
+
+    // Check if track has audio URL available
+    if (!track.audioUrl) {
+      console.log('🚫 No audio URL available for track:', track.title);
+      return;
+    }
 
     if (currentTrackIndex === index && isPlaying) {
       pause();
