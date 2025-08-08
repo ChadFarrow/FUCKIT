@@ -63,8 +63,10 @@ function parseStaticTop100Data(): Top100Track[] {
       // Use static audio URL mapping for known tracks
       const audioUrl = TOP100_AUDIO_URL_MAP[title] || '';
       
-      // Ensure HTTPS for artwork URLs to avoid mixed content warnings
-      const secureArtwork = item.artwork?.replace('http://', 'https://') || 
+      // Use image proxy to avoid CORS/OpaqueResponseBlocking issues
+      const originalArtwork = item.artwork?.replace('http://', 'https://') || '';
+      const proxiedArtwork = originalArtwork ? 
+        `/api/proxy-image?url=${encodeURIComponent(originalArtwork)}` :
         `https://picsum.photos/300/300?random=${item.rank}`;
       
       tracks.push({
@@ -74,7 +76,7 @@ function parseStaticTop100Data(): Top100Track[] {
         artist: artist,
         sats: item.boosts.toLocaleString(),
         satsNumber: item.boosts,
-        artwork: secureArtwork,
+        artwork: proxiedArtwork,
         podcastLink: item.podcastLink,
         audioUrl: audioUrl,
         feedUrl: '',

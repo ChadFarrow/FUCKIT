@@ -124,23 +124,31 @@ export default function Top100MusicPlaylist() {
     // Otherwise, play this track and set up the playlist
     setCurrentTrackIndex(index);
     
-    // Create album object for the audio context
+    // Create album object for the audio context with only playable tracks
+    const playableTracks = tracks.filter(t => t.audioUrl && t.audioUrl.trim() !== '');
     const playlistAlbum = {
       title: 'Top 100 V4V Music',
       artist: 'Various Artists',
       description: 'Top 100 Value for Value music tracks by sats received',
       coverArt: "https://picsum.photos/400/400?random=top100",
       releaseDate: new Date().toISOString(),
-      tracks: tracks.map(t => ({
+      tracks: playableTracks.map(t => ({
         title: t.title,
-        url: t.audioUrl || '',
+        url: t.audioUrl!,
         startTime: t.startTime || 0,
         duration: t.duration.toString()
       }))
     };
     
-    // Play the album starting from the selected track
-    await playAlbum(playlistAlbum, index);
+    // Find the correct index in the playable tracks array
+    const playableIndex = playableTracks.findIndex(t => t.id === track.id);
+    if (playableIndex === -1) {
+      console.warn(`⚠️ Track "${track.title}" is not playable (no audio URL)`);
+      return;
+    }
+    
+    // Play the album starting from the selected track (use playable index)
+    await playAlbum(playlistAlbum, playableIndex);
   };
 
   const formatDuration = (seconds: number) => {
