@@ -10,7 +10,7 @@ import { useAudio } from '@/contexts/AudioContext';
 interface Track {
   title: string;
   artist?: string;
-  duration?: number | string;
+  duration: string;
   startTime?: number | string;
   endTime?: number | string;
   image?: string;
