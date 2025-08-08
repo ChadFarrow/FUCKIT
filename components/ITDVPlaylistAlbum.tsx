@@ -1117,26 +1117,125 @@ const RESOLVED_SONGS = [
   }
 ].filter(song => song.title && song.artist); // Filter out null titles/artists
 
-// Get static audio URL for a track title
+// Import resolved audio URLs from the JSON file
+const AUDIO_URL_MAP: { [key: string]: string } = {
+  "Neon Hawk": "https://op3.dev/e,pg=3ae285ab-434c-59d8-aa2f-59c6129afb92/https://d12wklypp119aj.cloudfront.net/track/d8145cb6-97d9-4358-895b-2bf055d169aa.mp3",
+  "Grey's Birthday": "https://op3.dev/e,pg=6fc2ad98-d4a8-5d70-9c68-62e9efc1209c/https://d12wklypp119aj.cloudfront.net/track/aad6e3b1-6589-4e22-b8ca-521f3d888263.mp3",
+  "Smokestacks": "https://op3.dev/e,pg=dea01a9d-a024-5b13-84aa-b157304cd3bc/https://d12wklypp119aj.cloudfront.net/track/52007112-2772-42f9-957a-a93eaeedb222.mp3",
+  "Hit the Target [Live in Amsterdam]": "https://op3.dev/e,pg=95e5f7a9-d88e-5e51-b2ae-f4b1865d19c4/https://d12wklypp119aj.cloudfront.net/track/d79f242f-0651-4b12-be79-c2bac234cfde.mp3",
+  "Lost Summer": "https://op3.dev/e,pg=3058af0c-1807-5732-9a08-9114675ef7d6/https://d12wklypp119aj.cloudfront.net/track/c51ecaa4-f237-4707-9c62-2de611820e4b.mp3",
+  "Quiet Day": "https://op3.dev/e,pg=011c3a82-d716-54f7-9738-3d5fcacf65be/https://d12wklypp119aj.cloudfront.net/track/c2ba80cc-add9-42ad-9a8f-b490436826ae.mp3",
+  "it can be erased": "https://op3.dev/e,pg=0ab5bc9d-c9fb-52f4-8b8c-64be5edf322f/https://d12wklypp119aj.cloudfront.net/track/7bc23b30-5d37-4e03-8256-543b7bf17ba8.mp3",
+  "It's Christmastime Again! (lofi beats mix)": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/lofi-christmastimeagain.mp3",
+  "Leaving The Country": "https://op3.dev/e,pg=265706d5-d6a1-5e96-b4c8-5db454844254/https://d12wklypp119aj.cloudfront.net/track/fe6b1845-6b98-425d-aa07-9531474939de.mp3",
+  "Hyssop Branches": "https://www.doerfelverse.com/tracks/01-hyssop-branches.mp3",
+  "Bipolar": "https://www.doerfelverse.com/tracks/03-bipolar.mp3",
+  "C.R.V.P.": "https://www.doerfelverse.com/tracks/08-crvp.mp3",
+  "Breathe": "https://op3.dev/e,pg=de032037-63e0-5c6b-820d-13d4319a2b19/https://d12wklypp119aj.cloudfront.net/track/e046f9dd-aca3-4c7a-b396-2148a90ac0f2.mp3",
+  "Going Gold": "https://op3.dev/e,pg=377602c1-b049-5c14-bddf-eb4e349bee5c/https://d12wklypp119aj.cloudfront.net/track/3634469f-61ad-4e42-97f2-f1335c6ad267.mp3",
+  "Kid Yourself EP": "https://op3.dev/e,pg=de032037-63e0-5c6b-820d-13d4319a2b19/https://d12wklypp119aj.cloudfront.net/track/24f655ae-8918-4089-8f2c-4c5ef612088b.mp3",
+  "Endless Deja Vu": "https://op3.dev/e,pg=092e8cd8-6f44-5189-b574-9c0a5881b334/https://d12wklypp119aj.cloudfront.net/track/35e81e15-6820-4f83-9a3d-4ef2cf0da14b.mp3",
+  "Kid Yourself": "https://op3.dev/e,pg=e1e1fed5-4ca3-55b0-9370-182287ec24e5/https://d12wklypp119aj.cloudfront.net/track/86a439b0-6b51-46a4-86f3-2490b7ca34ad.mp3",
+  "Luv Song 4 U": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/LuvSong4U.mp3",
+  "Through The Mic": "https://www.doerfelverse.com/artists/elijahlied/throughthemic/through-the-mic.mp3",
+  "Hiding vs. Bad News": "https://op3.dev/e,pg=18843839-f79f-5b22-a842-241d0f6b12ea/https://d12wklypp119aj.cloudfront.net/track/7bf430ff-6f92-4b44-bd3e-c4d0366e7508.mp3",
+  "Better Days": "https://op3.dev/e,pg=57203632-2003-55d2-b710-c699db963f18/https://d12wklypp119aj.cloudfront.net/track/1f7e025c-e8f7-4e10-b12b-9715c9c460c7.mp3",
+  "All We Know": "https://op3.dev/e,pg=5d5be024-321d-5342-838e-988d1653296b/https://d12wklypp119aj.cloudfront.net/track/191c7fee-5fde-4bdd-96c3-d7af3b4b8585.mp3",
+  "Night Shift": "https://www.doerfelverse.com/tracks/night-shift.mp3",
+  "Smell the Roses": "https://op3.dev/e,pg=82235f8b-da8c-52a5-ba6b-1f11c199f526/https://d12wklypp119aj.cloudfront.net/track/c6e47574-4fcd-4a56-b2df-9e404a556d15.mp3",
+  "What Did You Mean (When You Said Love) [Live in London and Amsterdam]": "https://op3.dev/e,pg=95e5f7a9-d88e-5e51-b2ae-f4b1865d19c4/https://d12wklypp119aj.cloudfront.net/track/bfe9ed47-ac2a-4fc6-be19-6ab94f75c4c4.mp3",
+  "Inside Out": "https://www.doerfelverse.com/artists/middleseason/inside-out.mp3",
+  "Autumn": "https://www.doerfelverse.com/tracks/autumn.mp3",
+  "As Long As It's Rock": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/07/Tempest_As-Long-As-Its-Rock.mp3",
+  "The HeyCitizen Experience - Love Song 4 U": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/HeyCitizen/02_Love%20Song%204%20U_HeyCitizen_Sat%20Skirmish.wav.mp3",
+  "The Lightning": "https://op3.dev/e,pg=1b59e954-db0a-5096-8116-2ef3638cbb66/media.rssblue.com/podcasts/the-lightning/the-lightning/audio.the-lightning-the-trusted.mp3",
+  "Trailer": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/sproutingsymphonies/lavish%20heycitizen%20trailer.mp3",
+  "Animosity": "https://www.doerfelverse.com/tracks/animosity.mp3",
+  "West Coast Drive": "https://op3.dev/e,pg=0ca05681-c035-5e50-b538-6e42328f0dfd/https://d12wklypp119aj.cloudfront.net/track/454d3146-049c-49b1-b25e-c6551c083265.mp3",
+  "Chasing Waterfalls": "https://op3.dev/e,pg=f314df41-22c1-5fde-bc55-6f48e1625d96/https://d12wklypp119aj.cloudfront.net/track/2ebf7868-7696-4520-9c9c-ff4900978427.mp3",
+  "Call Me Medley": "https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1_Call-Me-Medlay.mp3",
+  "Empath Eyes - Apathy": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/Empath%20Eyes/03.%20Apathy%20-%20Empath%20Eyes.mp3",
+  "Bullet Train": "https://op3.dev/e,pg=999c4870-396c-5a6b-b22e-4c05ee46127d/https://d12wklypp119aj.cloudfront.net/track/3f239db2-6d3c-4164-86c0-92c84f5caafa.mp3",
+  "Mrs Valentine": "https://op3.dev/e,pg=85e076c0-d4e3-5ae4-9586-0ab862dadf64/https://d12wklypp119aj.cloudfront.net/track/8e175c89-437c-4543-ae0a-aba553da0e05.mp3",
+  "Once Had A Girl": "https://www.thisisjdog.com/media/once-had-a-girl.mp3",
+  "Porkchops Fried": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/PorkchopsFried.mp3",
+  "Not To Worry": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/NotToWorry.mp3",
+  "The Platform (lofi beats mix)": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/lofi-platform.mp3",
+  "The Platform": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/ThePlatform.mp3",
+  "I Want Love": "https://op3.dev/e/ipfspodcasting.net/e/music.jimmyv4v.com/bands/blackstone-valley/blackstone-valley-collection/blackstone_valley-i-want-love.mp3",
+  "Ring That Bell": "https://www.thisisjdog.com/media/ring-that-bell.mp3",
+  "Pour Me Some Water": "https://op3.dev/e/ipfspodcasting.net/e/music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/Pour_Me_Some_Water.mp3",
+  "Give it Up": "https://op3.dev/e/ipfspodcasting.net/e/music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/give_it_up/give_it_up-jimmy_v.mp3",
+  "Long As You're Loving Me": "https://www.doerfelverse.com/tracks/long-as-youre-loving-me.mp3",
+  "I Believe": "https://op3.dev/e/ipfspodcasting.net/e/music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/i_believe/i_believe-jimmy_v.mp3",
+  "Stay Awhile (reprise)": "https://ableandthewolf.com/static/media/music/07_StayAwhileReprise.mp3",
+  "Hard Work [Live in Amsterdam]": "https://op3.dev/e,pg=95e5f7a9-d88e-5e51-b2ae-f4b1865d19c4/https://d12wklypp119aj.cloudfront.net/track/3587c342-cd4a-481c-838c-de242e5beb0b.mp3",
+  "This Pain I've Grown": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/08/The-Death-of-Rock-and-Roll_This-Pain-Ive-Grown.mp3",
+  "A Sight To See Remix": "https://op3.dev/e,pg=c76ef0a6-0181-5b9b-a4bc-dd85d4ed178b/https://d12wklypp119aj.cloudfront.net/track/fe393a12-8545-440d-b88b-64e6568936fc.mp3",
+  "Honor You": "https://www.doerfelverse.com/tracks/honor-you.mp3",
+  "All Apology (EP track)": "https://op3.dev/e,pg=70b4915d-0c0b-5f7a-9980-82831d2a9ba2/https://d12wklypp119aj.cloudfront.net/track/b9471140-0674-4884-bbb5-39ce9c4a000f.mp3",
+  "St. Joan": "https://op3.dev/e,pg=52786c48-86b4-5fd9-b4fe-7b44dcc3e4ba/https://d12wklypp119aj.cloudfront.net/track/13468078-1a54-4b0e-92bc-2faea2999ae7.mp3",
+  "Bringing Em Down": "https://op3.dev/e,pg=c8d77c9c-e661-5d79-8d5f-735cfe9a95b7/https://d12wklypp119aj.cloudfront.net/track/17249ca4-fc26-45bb-afa3-d86212c9b2f8.mp3",
+  "Let Go (What's holding you back)": "https://www.doerfelverse.com/tracks/let-go.mp3",
+  "Calibrating Broadcast...": "https://music.behindthesch3m3s.com/wp-content/uploads/Mellow%20Cassette/Radio_Brigade/01Mellow_Cassette_Calibrating%20Broadcast.mp3",
+  "Radio Brigade": "https://music.behindthesch3m3s.com/wp-content/uploads/Mellow%20Cassette/Radio_Brigade/02Mellow_Cassette_Radio%20Brigade.mp3",
+  "Hello Stranger feat. Helen Tess": "https://op3.dev/e,pg=b9ee4d5d-77e7-56a4-a195-397ae28a3dfe/https://d12wklypp119aj.cloudfront.net/track/e92721f0-4291-4b50-a621-f658d875e640.mp3",
+  "A Chemical to Balance": "https://op3.dev/e,pg=beeeef0b-51e9-52ac-b8d7-9ed54d5be3b0/https://d12wklypp119aj.cloudfront.net/track/8ed4bcfe-a4f9-42a7-9529-d30c3d634656.mp3",
+  "Emma Rose": "https://www.doerfelverse.com/tracks/emma-rose.mp3",
+  "They Don't Know": "https://www.doerfelverse.com/tracks/theydontknow.mp3",
+  "Possible": "https://www.doerfelverse.com/tracks/possible.mp3",
+  "What Love Is": "https://www.doerfelverse.com/tracks/what-love-is.mp3",
+  "Bad People": "https://op3.dev/e,pg=537df90e-0cc4-535b-84d0-dcb3ca87f1f8/https://d12wklypp119aj.cloudfront.net/track/33932ccc-c707-411b-b914-4e9a94ec7e89.mp3",
+  "Hardware Store Lady": "https://www.hogstory.net/uploads/hardware_store_lady.mp3",
+  "That's How It Goes": "https://backend-api.justcast.com/public_feeds/true-blue/episodes/1246165.mp3",
+  "Out of the Blue": "https://backend-api.justcast.com/public_feeds/peace-pieces/episodes/1248738.mp3",
+  "The Poet Barfly - Demo": "https://op3.dev/e,pg=70456036-6a9c-5165-8fa7-84352259d602/https://d12wklypp119aj.cloudfront.net/track/ba10024a-d040-4b31-b61d-ea1fca19387d.mp3",
+  "Kerouac": "https://whitetriangles.com/Music/kerouac.mp3",
+  "So Far Away": "https://www.doerfelverse.com/tracks/so-far-away.mp3",
+  "I Do It Cuz It's Bad": "https://op3.dev/e,pg=bcd811d1-9fda-51d9-b2a6-9337f0131b66/https://d12wklypp119aj.cloudfront.net/track/ddc7dff4-121b-43ac-81b2-74c9ab618e59.mp3",
+  "Beer Run": "https://op3.dev/e,pg=7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93/https://d12wklypp119aj.cloudfront.net/track/3a5a784f-642f-41ab-b552-8c710415b8c6.mp3",
+  "Girls at Kroger": "https://op3.dev/e,pg=1ef2b1d6-c4c0-5ef5-b534-bfc025e4193e/media.rssblue.com/podcasts/girls-at-kroger/girls-at-kroger/audio.girls-at-kroger.mp3",
+  "Midnight Comin'": "https://op3.dev/e,pg=d3e9bb7a-3df8-5b7e-8f52-0b01decf2b66/https://d12wklypp119aj.cloudfront.net/track/360106a8-ddd8-4ee3-8bdf-2ef967b400ab.mp3",
+  "If I Promise(Demo)": "https://www.doerfelverse.com/tracks/if-i-promise-demo-version.mp3",
+  "Phatty The Grasshopper": "https://www.doerfelverse.com/tracks/phatty-the-grasshopper.mp3",
+  "Railroad Tracks": "https://op3.dev/e,pg=babd1567-2803-5ede-9a19-302c2fbf9eae/https://d12wklypp119aj.cloudfront.net/track/a2bf5272-8811-4882-aa39-a730c290af4d.mp3",
+  "Wonder Woman": "https://op3.dev/e,pg=2ec344a8-d756-5f8f-bde1-8a034321f1cb/https://d12wklypp119aj.cloudfront.net/track/c341b8f3-28b7-43c2-baff-b59eb6d8de8b.mp3",
+  "Now I Know": "https://www.doerfelverse.com/tracks/now-i-know.mp3",
+  "What's Your New Love Like": "https://op3.dev/e,pg=87ef86af-9d75-5876-97f9-5ea46e6094f7/https://d12wklypp119aj.cloudfront.net/track/eab9f1bd-94da-4c3c-afa7-3b4bc0c50c70.mp3",
+  "Pay The Bills": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/PayTheBills.mp3",
+  "Feeling Bout You": "https://www.doerfelverse.com/tracks/feeling-bout-you.mp3",
+  "Playing God": "https://www.doerfelverse.com/artists/opus/opus/02-playing-god.mp3",
+  "That's the Life": "https://op3.dev/e,pg=028e9f67-e0fc-558f-b598-25f06179cea3/https://d12wklypp119aj.cloudfront.net/track/f6ee3774-c452-4e25-b8f4-c8330ff00f43.mp3",
+  "Grow": "https://www.doerfelverse.com/tracks/yourchancealbum/06-grow.mp3",
+  "Let You Down": "https://op3.dev/e,pg=82235f8b-da8c-52a5-ba6b-1f11c199f526/https://d12wklypp119aj.cloudfront.net/track/e580458f-ee8d-4674-b851-2e271cc3ff8e.mp3",
+  "Happy New Year(demo)": "https://www.doerfelverse.com/tracks/happy-new-year-demo.mp3",
+  "Change Your Mind": "https://op3.dev/e,pg=6335b366-6a83-5df4-ba62-d356ede08d70/https://d12wklypp119aj.cloudfront.net/track/62767045-5cc0-4280-a552-145a56e6964a.mp3",
+  "That Duck": "https://music.behindthesch3m3s.com/wp-content/uploads/Sir%20Seat%20Sitter/That%20Duck.mp3",
+  "Big Sciota": "https://www.doerfelverse.com/tracks/generationgap/02-big-sciota.mp3",
+  "Sensitive Guy": "https://www.doerfelverse.com/tracks/sensitive-guy.mp3",
+  "Secrets": "https://www.doerfelverse.com/artists/jordandedo/secrets.mp3",
+  "Worth Fighting For": "https://www.doerfelverse.com/tracks/worth-fighting-for.mp3",
+  "You": "https://www.doerfelverse.com/tracks/you.mp3",
+  "Safe": "https://www.doerfelverse.com/tracks/safe.mp3",
+  "Hallucinations": "https://op3.dev/e,pg=66740bed-5dca-540f-98ff-0411593dab82/https://d12wklypp119aj.cloudfront.net/track/c660daaf-c499-4c36-af7c-f41171d9b612.mp3",
+  "Ordinary": "https://op3.dev/e/ipfspodcasting.net/e/music.jimmyv4v.com/bands/tyson_froese/tyson_froese_collection/tyson_froese-ordinary.mp3",
+  "Maybe It's You": "https://www.doerfelverse.com/tracks/maybe-its-you.mp3",
+  "Make It": "https://www.doerfelverse.com/tracks/make-it.mp3",
+  "Sing For You": "https://www.doerfelverse.com/tracks/sing-for-you.mp3",
+  "Pour Over": "https://www.doerfelverse.com/tracks/pour-over.mp3",
+  "So Far Away": "https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/So-Far-Away_So-Far-Away.mp3",
+  "Worthy Lofi": "https://www.doerfelverse.com/tracks/worthy-lofi.mp3",
+  "Breakaway (demo)": "https://www.doerfelverse.com/tracks/breakaway-demo.mp3",
+  "Thought It Was Real": "https://www.doerfelverse.com/tracks/thought-it-was-real.mp3",
+  "Morning Love": "https://www.doerfelverse.com/tracks/morning-love.mp3",
+  "SWEATS": "https://www.doerfelverse.com/tracks/sweats.mp3",
+  "Possible": "https://www.doerfelverse.com/tracks/possible.mp3"
+};
+
+// Get real audio URL for a track title
 function getStaticAudioUrl(title: string): string {
-  // Known working audio URLs - we'll cycle through these for demo purposes
-  // In production, you'd have the actual URL for each track
-  const workingUrls = [
-    "https://www.doerfelverse.com/tracks/worthy-lofi.mp3",
-    "https://www.doerfelverse.com/tracks/sweats.mp3",
-    "https://www.doerfelverse.com/tracks/morning-love.mp3",
-    "https://www.doerfelverse.com/tracks/thought-it-was-real.mp3"
-  ];
-  
-  // Use a hash of the title to deterministically select a URL
-  let hash = 0;
-  for (let i = 0; i < title.length; i++) {
-    hash = ((hash << 5) - hash) + title.charCodeAt(i);
-    hash = hash & hash; // Convert to 32bit integer
-  }
-  
-  const index = Math.abs(hash) % workingUrls.length;
-  return workingUrls[index];
+  // Return the actual resolved audio URL for this track
+  return AUDIO_URL_MAP[title] || '';
 }
 
 // Generate realistic duration based on song characteristics
