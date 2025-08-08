@@ -70,8 +70,8 @@ export default function ITDVPlaylistAlbum() {
             const guid = item.querySelector('guid')?.textContent || `track-${index}`;
             const remoteItem = item.querySelector('remoteItem, [feedguid]');
             
-            const feedGuid = remoteItem?.getAttribute('feedGuid') || remoteItem?.getAttribute('feedguid');
-            const itemGuid = remoteItem?.getAttribute('itemGuid') || remoteItem?.getAttribute('itemguid');
+            const feedGuid = remoteItem?.getAttribute('feedGuid') || remoteItem?.getAttribute('feedguid') || undefined;
+            const itemGuid = remoteItem?.getAttribute('itemGuid') || remoteItem?.getAttribute('itemguid') || undefined;
             
             return {
               id: guid,
