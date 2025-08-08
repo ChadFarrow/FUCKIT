@@ -25,19 +25,58 @@ interface ITDVTrack {
   };
 }
 
+// Interface for our resolved song data
+interface ResolvedSong {
+  feedGuid: string;
+  itemGuid: string;
+  title: string;
+  artist: string;
+  feedUrl?: string;
+  feedTitle?: string;
+  episodeId?: number;
+  feedId?: number;
+}
+
 export default function ITDVPlaylistAlbum() {
   const [tracks, setTracks] = useState<ITDVTrack[]>([]);
   const [totalTracks, setTotalTracks] = useState(122);
   const [isLoading, setIsLoading] = useState(true);
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number | null>(null);
   const [isClient, setIsClient] = useState(false);
+  const [resolvedSongs, setResolvedSongs] = useState<ResolvedSong[]>([]);
   const { playTrack, isPlaying, pause, resume, playAlbum } = useAudio();
   const { shouldPreventClick } = useScrollDetectionContext();
 
   useEffect(() => {
     setIsClient(true);
-    loadITDVTracks();
+    loadResolvedSongs();
   }, []);
+
+  useEffect(() => {
+    if (resolvedSongs.length > 0 || isClient) {
+      loadITDVTracks();
+    }
+  }, [resolvedSongs, isClient]);
+
+  const loadResolvedSongs = async () => {
+    try {
+      console.log('🔄 Loading resolved ITDV songs...');
+      const response = await fetch('/api/itdv-resolved-songs');
+      
+      if (response.ok) {
+        const data = await response.json();
+        const songs = Array.isArray(data) ? data : [];
+        console.log('✅ Loaded resolved songs:', songs.length);
+        setResolvedSongs(songs);
+      } else {
+        console.log('⚠️ Could not load resolved songs, will use fallback data');
+        setResolvedSongs([]);
+      }
+    } catch (error) {
+      console.log('⚠️ Error loading resolved songs:', error);
+      setResolvedSongs([]);
+    }
+  };
 
   const loadITDVTracks = async () => {
     try {
@@ -45,7 +84,36 @@ export default function ITDVPlaylistAlbum() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 15000);
 
-      // First, try the database API (which has some resolved track data)
+      // First, try to use our resolved songs data
+      if (resolvedSongs.length > 0) {
+        console.log('📊 Using resolved songs data');
+        const resolvedTracks = resolvedSongs
+          .filter(song => song && song.feedGuid && song.itemGuid) // Filter out invalid entries
+          .map((song, index) => ({
+            id: `resolved-${index + 1}-${song.feedGuid?.substring(0, 8) || 'unknown'}`,
+            title: song.title || `Music Track ${index + 1}`,
+            artist: song.artist || 'Unknown Artist',
+            episodeTitle: song.feedTitle || 'Into The Doerfel-Verse',
+            duration: 180, // Default 3 minutes
+            audioUrl: song.feedUrl || '', // Use feedUrl if available
+            valueForValue: {
+              feedGuid: song.feedGuid,
+              itemGuid: song.itemGuid,
+              resolved: true,
+              resolvedTitle: song.title,
+              resolvedArtist: song.artist
+            }
+          }));
+        
+        setTotalTracks(resolvedTracks.length);
+        setTracks(resolvedTracks);
+        clearTimeout(timeoutId);
+        console.log('📊 Data source: Resolved songs');
+        setIsLoading(false);
+        return;
+      }
+
+      // Fallback: Try the database API (which has some resolved track data)
       let response;
       let dataSource = '';
       
@@ -78,6 +146,7 @@ export default function ITDVPlaylistAlbum() {
             setTracks(itdvTracks);
             clearTimeout(timeoutId);
             console.log('📊 Data source:', dataSource);
+            setIsLoading(false);
             return;
           }
         }
@@ -127,6 +196,7 @@ export default function ITDVPlaylistAlbum() {
           setTracks(remoteItemTracks);
           clearTimeout(timeoutId);
           console.log('📊 Data source:', dataSource);
+          setIsLoading(false);
           return;
         }
       } catch (error) {
@@ -259,6 +329,11 @@ export default function ITDVPlaylistAlbum() {
     <div className="space-y-2">
       <div className="text-sm text-gray-400 mb-3">
         Showing {tracks.length} of {totalTracks} tracks
+        {resolvedSongs.length > 0 && (
+          <span className="ml-2 text-green-400">
+            • {resolvedSongs.length} resolved
+          </span>
+        )}
       </div>
       {tracks.filter(track => track && track.id && track.title).map((track, index) => {
         const isCurrentTrack = currentTrackIndex === index;
@@ -272,8 +347,9 @@ export default function ITDVPlaylistAlbum() {
           ? track.valueForValue.resolvedImage
           : "https://www.doerfelverse.com/art/itdvchadf.png";
         
-        // Check if this is a generic track that needs V4V resolution
+        // Check if this is a resolved track or needs V4V resolution
         const isGenericTrack = track.title.startsWith('Music Track ') && track.valueForValue?.feedGuid;
+        const isResolvedTrack = track.valueForValue?.resolved && track.valueForValue?.resolvedTitle;
         const needsResolution = isGenericTrack && !track.valueForValue?.resolved;
         
         return (
@@ -281,7 +357,7 @@ export default function ITDVPlaylistAlbum() {
             key={track.id} 
             className={`flex items-center justify-between p-4 hover:bg-white/10 rounded-lg transition-colors group cursor-pointer ${
               isCurrentTrack ? 'bg-white/20' : ''
-            } ${needsResolution ? 'border-l-2 border-yellow-500/50' : ''}`}
+            } ${needsResolution ? 'border-l-2 border-yellow-500/50' : ''} ${isResolvedTrack ? 'border-l-2 border-green-500/50' : ''}`}
             onClick={() => handlePlayTrack(track, index)}
           >
             <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -294,6 +370,9 @@ export default function ITDVPlaylistAlbum() {
                 {/* V4V Resolution Status Indicator */}
                 {needsResolution && (
                   <div className="absolute top-0 right-0 w-3 h-3 bg-yellow-500 rounded-full border border-gray-800"></div>
+                )}
+                {isResolvedTrack && (
+                  <div className="absolute top-0 right-0 w-3 h-3 bg-green-500 rounded-full border border-gray-800"></div>
                 )}
                 {/* Play Button Overlay */}
                 <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity duration-200">
@@ -320,6 +399,11 @@ export default function ITDVPlaylistAlbum() {
                       V4V
                     </span>
                   )}
+                  {isResolvedTrack && (
+                    <span className="flex-shrink-0 text-xs bg-green-500/20 text-green-300 px-1.5 py-0.5 rounded border border-green-500/30">
+                      RESOLVED
+                    </span>
+                  )}
                 </div>
                 <p className="text-xs md:text-sm text-gray-400 truncate">
                   {displayArtist} • {track.episodeTitle || 'Into The Doerfel-Verse'}
@@ -342,6 +426,12 @@ export default function ITDVPlaylistAlbum() {
       
       {/* Footer */}
       <div className="mt-6 pt-4 border-t border-gray-700 space-y-3">
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+          <p className="text-sm text-gray-400">
+            Tracks marked with <span className="text-green-300 bg-green-500/20 px-1 py-0.5 rounded text-xs border border-green-500/30">RESOLVED</span> have been resolved to show actual song titles and artists from the original feeds.
+          </p>
+        </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
           <p className="text-sm text-gray-400">
