@@ -723,7 +723,7 @@ const EnhancedNowPlaying: React.FC = () => {
             💡 Use keyboard shortcuts for quick control
           </p>
         </div>
-        
+        </div>
         )}
         </div>
       </div>
