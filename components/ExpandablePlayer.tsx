@@ -315,7 +315,7 @@ const ExpandablePlayer: React.FC<ExpandablePlayerProps> = ({
         {/* Queue */}
         {showQueue && (
           <div className="absolute inset-x-0 bottom-0 top-20 bg-black/80 backdrop-blur-lg">
-            <QueueManager onClose={() => setShowQueue(false)} />
+            <QueueManager isOpen={showQueue} onClose={() => setShowQueue(false)} />
           </div>
         )}
       </div>
