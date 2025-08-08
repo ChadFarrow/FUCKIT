@@ -306,7 +306,7 @@ const FinampMusicScreen: React.FC<FinampMusicScreenProps> = ({
           <p className="finamp-body-medium" style={{ color: 'var(--finamp-on-surface-variant)' }}>
             {isSearching ? (
               <>
-                {filteredAlbums.length} result{filteredAlbums.length !== 1 ? 's' : ''} for "{searchQuery}"
+                {filteredAlbums.length} result{filteredAlbums.length !== 1 ? 's' : ''} for &ldquo;{searchQuery}&rdquo;
               </>
             ) : (
               <>
@@ -341,7 +341,7 @@ const FinampMusicScreen: React.FC<FinampMusicScreenProps> = ({
             </h3>
             <p className="finamp-body-medium" style={{ color: 'var(--finamp-on-surface-variant)' }}>
               {isSearching 
-                ? `Try adjusting your search term "${searchQuery}"`
+                ? `Try adjusting your search term \u201c${searchQuery}\u201d`
                 : 'Check back later for new content'
               }
             </p>
