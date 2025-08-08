@@ -1257,7 +1257,29 @@ const ARTWORK_URL_MAP: { [key: string]: string } = {
   
   // External sources - verified working
   "The HeyCitizen Experience - Love Song 4 U": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/heycitizen%20his%201600.png",
-  "The Lightning": "https://media.rssblue.com/podcasts/the-lightning/cover-art.the-lightning.jpg"
+  "The Lightning": "https://media.rssblue.com/podcasts/the-lightning/cover-art.the-lightning.jpg",
+  
+  // Additional tracks that should use ITDV default (explicitly set to avoid placeholders)
+  "Smokestacks": "https://www.doerfelverse.com/art/itdvchadf.png",
+  "Neon Hawk": "https://www.doerfelverse.com/art/itdvchadf.png",
+  "Grey's Birthday": "https://www.doerfelverse.com/art/itdvchadf.png",
+  "Hit the Target [Live in Amsterdam]": "https://www.doerfelverse.com/art/itdvchadf.png",
+  "Lost Summer": "https://www.doerfelverse.com/art/itdvchadf.png",
+  "Quiet Day": "https://www.doerfelverse.com/art/itdvchadf.png",
+  "it can be erased": "https://www.doerfelverse.com/art/itdvchadf.png",
+  "It's Christmastime Again! (lofi beats mix)": "https://www.doerfelverse.com/art/itdvchadf.png",
+  "Leaving The Country": "https://www.doerfelverse.com/art/itdvchadf.png",
+  "Breathe": "https://www.doerfelverse.com/art/itdvchadf.png",
+  "Going Gold": "https://www.doerfelverse.com/art/itdvchadf.png",
+  "Kid Yourself EP": "https://www.doerfelverse.com/art/itdvchadf.png",
+  "Endless Deja Vu": "https://www.doerfelverse.com/art/itdvchadf.png",
+  "Kid Yourself": "https://www.doerfelverse.com/art/itdvchadf.png",
+  "Hiding vs. Bad News": "https://www.doerfelverse.com/art/itdvchadf.png",
+  "Better Days": "https://www.doerfelverse.com/art/itdvchadf.png",
+  "All We Know": "https://www.doerfelverse.com/art/itdvchadf.png",
+  "Smell the Roses": "https://www.doerfelverse.com/art/itdvchadf.png",
+  "What Did You Mean (When You Said Love) [Live in London and Amsterdam]": "https://www.doerfelverse.com/art/itdvchadf.png",
+  "As Long As It's Rock": "https://www.doerfelverse.com/art/itdvchadf.png"
 };
 
 // Get real audio URL for a track title
@@ -1269,7 +1291,14 @@ function getStaticAudioUrl(title: string): string {
 // Get artwork URL for a track title
 function getArtworkUrl(title: string): string {
   // Return custom artwork if available, otherwise use default ITDV cover
-  return ARTWORK_URL_MAP[title] || 'https://www.doerfelverse.com/art/itdvchadf.png';
+  const customArt = ARTWORK_URL_MAP[title];
+  if (customArt) {
+    console.log(`Using custom artwork for "${title}": ${customArt}`);
+    return customArt;
+  }
+  
+  console.log(`Using default ITDV artwork for "${title}"`);
+  return 'https://www.doerfelverse.com/art/itdvchadf.png';
 }
 
 // Generate realistic duration based on song characteristics
