@@ -1,0 +1,64 @@
+# Dependencies
+node_modules
+data
+.pnpm-store/
+
+# Build outputs
+dist
+dist-ssr
+build
+.wrangler
+.dev.vars
+
+# Environment files
+*.local
+.env
+.env.*
+!.env.example
+
+# Generated configuration files (created by CLI setup)
+ui/src/lib/firebase-config.json
+server/.dev.vars
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Testing
+coverage
+/cypress/videos/
+/cypress/screenshots/
+
+# Vite specific
+.vite
+*.timestamp-*.mjs
+
+# TypeScript
+*.tsbuildinfo
+
+# Cloudflare Workers specific
+.cloudflare
+worker-configuration.d.ts
+.dev.vars
+.mf
+
+# OS specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini

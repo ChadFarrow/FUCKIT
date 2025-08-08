@@ -1,0 +1,27 @@
+{
+  "name": "database-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "embedded-postgres": "17.5.0-beta.15"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "embedded-postgres",
+      "@embedded-postgres/darwin-arm64",
+      "@embedded-postgres/darwin-x64",
+      "@embedded-postgres/linux-arm64", 
+      "@embedded-postgres/linux-x64",
+      "@embedded-postgres/win32-x64"
+    ]
+  }
+} 
