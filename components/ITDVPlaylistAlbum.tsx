@@ -1230,49 +1230,34 @@ const AUDIO_URL_MAP: { [key: string]: string } = {
   "SWEATS": "https://www.doerfelverse.com/tracks/sweats.mp3"
 };
 
-// Artwork URL map for tracks with custom artwork
+// Artwork URL map for tracks with verified custom artwork
 const ARTWORK_URL_MAP: { [key: string]: string } = {
+  // Doerfel Family Bluegrass tracks - verified working
   "Hyssop Branches": "https://www.doerfelverse.com/art/dfbv2.png",
   "Bipolar": "https://www.doerfelverse.com/art/dfbv2.png", 
   "C.R.V.P.": "https://www.doerfelverse.com/art/dfbv2.png",
+  
+  // HeyCitizen tracks - verified working  
   "Luv Song 4 U": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/LuvSong4U.jpg",
+  "Porkchops Fried": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/PorkchopsFried.jpg",
+  "Not To Worry": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/NotToWorry.jpg",
+  "The Platform": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/ThePlatform.jpg",
+  "Pay The Bills": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/PayTheBills.jpg",
+  
+  // Jdog tracks - verified working
+  "Ring That Bell": "https://www.thisisjdog.com/media/ring-that-bell.jpg",
+  
+  // Individual artist tracks - verified working
   "Through The Mic": "https://www.doerfelverse.com/artists/elijahlied/throughthemic/through-the-mic.png",
   "Night Shift": "https://www.doerfelverse.com/art/ben-doerfel-red.png",
-  "Inside Out": "https://www.doerfelverse.com/artists/middleseason/inside-out.jpg",
-  "Autumn": "https://www.doerfelverse.com/art/autumn.gif",
-  "The HeyCitizen Experience - Love Song 4 U": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/heycitizen%20his%201600.png",
-  "The Lightning": "https://media.rssblue.com/podcasts/the-lightning/cover-art.the-lightning.jpg",
   "Honor You": "https://www.doerfelverse.com/art/ben-doerfel-red.png",
   "Emma Rose": "https://www.doerfelverse.com/art/ben-doerfel-red.png",
-  "They Don't Know": "https://www.doerfelverse.com/art/musicfromthedoerfelverse.jpg",
-  "Possible": "https://www.doerfelverse.com/art/musicfromthedoerfelverse.jpg",
-  "What Love Is": "https://www.doerfelverse.com/art/musicfromthedoerfelverse.jpg",
-  "Long As You're Loving Me": "https://www.doerfelverse.com/art/musicfromthedoerfelverse.jpg",
-  "So Far Away": "https://www.doerfelverse.com/art/musicfromthedoerfelverse.jpg",
-  "Now I Know": "https://www.doerfelverse.com/art/musicfromthedoerfelverse.jpg",
-  "Maybe It's You": "https://www.doerfelverse.com/art/musicfromthedoerfelverse.jpg",
-  "Make It": "https://www.doerfelverse.com/art/musicfromthedoerfelverse.jpg",
-  "Sing For You": "https://www.doerfelverse.com/art/musicfromthedoerfelverse.jpg",
-  "Worth Fighting For": "https://www.doerfelverse.com/art/musicfromthedoerfelverse.jpg",
-  "If I Promise(Demo)": "https://www.doerfelverse.com/art/musicfromthedoerfelverse.jpg",
-  "Happy New Year(demo)": "https://www.doerfelverse.com/art/musicfromthedoerfelverse.jpg",
-  "Breakaway (demo)": "https://www.doerfelverse.com/art/musicfromthedoerfelverse.jpg",
-  "Thought It Was Real": "https://www.doerfelverse.com/art/musicfromthedoerfelverse.jpg",
-  "Morning Love": "https://www.doerfelverse.com/art/musicfromthedoerfelverse.jpg",
-  "Phatty The Grasshopper": "https://www.doerfelverse.com/art/phatty-the-grasshopper.jpg",
-  "Big Sciota": "https://www.doerfelverse.com/art/generationgap.jpg",
-  "Sensitive Guy": "https://www.doerfelverse.com/art/sensitive-guy.jpg",
-  "Secrets": "https://www.doerfelverse.com/artists/jordandedo/secrets.jpg",
-  "You": "https://www.doerfelverse.com/art/citybeach.jpg",
-  "Safe": "https://www.doerfelverse.com/art/citybeach.jpg",
-  "Pour Over": "https://www.doerfelverse.com/art/pour-over.jpg",
-  "Animosity": "https://www.doerfelverse.com/art/citybeach.jpg",
-  "SWEATS": "https://www.doerfelverse.com/art/citybeach.jpg",
-  "Worthy Lofi": "https://www.doerfelverse.com/art/kurtisdrums.jpg",
-  "Feeling Bout You": "https://www.doerfelverse.com/art/kurtisdrums.jpg",
-  "Playing God": "https://www.doerfelverse.com/artists/opus/opus/opus.jpg",
-  "Grow": "https://www.doerfelverse.com/art/yourchance.jpg",
-  "Let Go (What's holding you back)": "https://www.doerfelverse.com/art/middle-season.jpg"
+  "Inside Out": "https://www.doerfelverse.com/artists/middleseason/inside-out.jpg",
+  "Autumn": "https://www.doerfelverse.com/art/autumn.gif",
+  
+  // External sources - verified working
+  "The HeyCitizen Experience - Love Song 4 U": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/heycitizen%20his%201600.png",
+  "The Lightning": "https://media.rssblue.com/podcasts/the-lightning/cover-art.the-lightning.jpg"
 };
 
 // Get real audio URL for a track title
