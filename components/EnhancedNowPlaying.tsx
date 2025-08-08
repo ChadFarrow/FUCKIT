@@ -713,21 +713,19 @@ const EnhancedNowPlaying: React.FC = () => {
           </div>
         </div>
 
-        {/* Track Info */}
-        <div className="mt-2 text-center">
-          <p className="text-xs text-gray-500">
-            Track {currentTrackIndex + 1} of {currentPlayingAlbum.tracks.length} • {currentPlayingAlbum.title}
-            {isShuffleMode && ' • Shuffle On'}
-            {repeatMode !== 'off' && ` • Repeat ${repeatMode === 'one' ? 'One' : 'All'}`}
-          </p>
-          <p className="text-xs text-gray-600 mt-1" title="Keyboard shortcuts: Space=Play/Pause, ←/→=Prev/Next track, Shift+←/→=Skip 10s, Shift+↑/↓=Volume, Cmd/Ctrl+M=Mute, Cmd/Ctrl+S=Shuffle, Cmd/Ctrl+R=Repeat, Cmd/Ctrl+Q=Queue, Cmd/Ctrl+F=Full Screen, Esc=Exit">
-            💡 Use keyboard shortcuts for quick control
-          </p>
-        </div>
-        </div>
+          {/* Track Info */}
+          <div className="mt-2 text-center">
+            <p className="text-xs text-gray-500">
+              Track {currentTrackIndex + 1} of {currentPlayingAlbum.tracks.length} • {currentPlayingAlbum.title}
+              {isShuffleMode && ' • Shuffle On'}
+              {repeatMode !== 'off' && ` • Repeat ${repeatMode === 'one' ? 'One' : 'All'}`}
+            </p>
+            <p className="text-xs text-gray-600 mt-1" title="Keyboard shortcuts: Space=Play/Pause, ←/→=Prev/Next track, Shift+←/→=Skip 10s, Shift+↑/↓=Volume, Cmd/Ctrl+M=Mute, Cmd/Ctrl+S=Shuffle, Cmd/Ctrl+R=Repeat, Cmd/Ctrl+Q=Queue, Cmd/Ctrl+F=Full Screen, Esc=Exit">
+              💡 Use keyboard shortcuts for quick control
+            </p>
+          </div>
         </div>
         )}
-        </div>
       </div>
 
       {/* Queue Manager Modal */}
