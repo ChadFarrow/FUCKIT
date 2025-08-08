@@ -92,10 +92,12 @@
   {
     "feedGuid": "5a95f9d8-35e3-51f5-a269-ba1df36b4bd8",
     "itemGuid": "7c823adf-1e53-4df1-98c0-979da81ec916",
-    "title": null,
-    "artist": null,
-    "feedUrl": null,
-    "feedTitle": null
+    "title": "Bloodshot Lies FUNK",
+    "artist": "The Doerfels",
+    "feedUrl": "https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml",
+    "feedTitle": "Bloodshot Lies - The Album",
+    "episodeId": 40193907278,
+    "feedId": 7365153
   },
   {
     "feedGuid": "6bf3785f-e053-57f4-9f70-261ee5e3747f",
@@ -150,10 +152,12 @@
   {
     "feedGuid": "5a95f9d8-35e3-51f5-a269-ba1df36b4bd8",
     "itemGuid": "822d7113-eab2-4857-82d2-cc0c1a52ce2b",
-    "title": null,
-    "artist": null,
-    "feedUrl": null,
-    "feedTitle": null
+    "title": "Heartbreak (album version)",
+    "artist": "The Doerfels",
+    "feedUrl": "https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml",
+    "feedTitle": "Bloodshot Lies - The Album",
+    "episodeId": 40193907266,
+    "feedId": 7365153
   },
   {
     "feedGuid": "de032037-63e0-5c6b-820d-13d4319a2b19",
@@ -168,10 +172,12 @@
   {
     "feedGuid": "5a95f9d8-35e3-51f5-a269-ba1df36b4bd8",
     "itemGuid": "24d8aa8b-317c-4f03-86d2-65c454370fb8",
-    "title": null,
-    "artist": null,
-    "feedUrl": null,
-    "feedTitle": null
+    "title": "Movie (album version)",
+    "artist": "The Doerfels",
+    "feedUrl": "https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml",
+    "feedTitle": "Bloodshot Lies - The Album",
+    "episodeId": 40193907265,
+    "feedId": 7365153
   },
   {
     "feedGuid": "092e8cd8-6f44-5189-b574-9c0a5881b334",
