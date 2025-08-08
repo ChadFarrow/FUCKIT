@@ -1191,7 +1191,6 @@ const AUDIO_URL_MAP: { [key: string]: string } = {
   "Out of the Blue": "https://backend-api.justcast.com/public_feeds/peace-pieces/episodes/1248738.mp3",
   "The Poet Barfly - Demo": "https://op3.dev/e,pg=70456036-6a9c-5165-8fa7-84352259d602/https://d12wklypp119aj.cloudfront.net/track/ba10024a-d040-4b31-b61d-ea1fca19387d.mp3",
   "Kerouac": "https://whitetriangles.com/Music/kerouac.mp3",
-  "So Far Away": "https://www.doerfelverse.com/tracks/so-far-away.mp3",
   "I Do It Cuz It's Bad": "https://op3.dev/e,pg=bcd811d1-9fda-51d9-b2a6-9337f0131b66/https://d12wklypp119aj.cloudfront.net/track/ddc7dff4-121b-43ac-81b2-74c9ab618e59.mp3",
   "Beer Run": "https://op3.dev/e,pg=7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93/https://d12wklypp119aj.cloudfront.net/track/3a5a784f-642f-41ab-b552-8c710415b8c6.mp3",
   "Girls at Kroger": "https://op3.dev/e,pg=1ef2b1d6-c4c0-5ef5-b534-bfc025e4193e/media.rssblue.com/podcasts/girls-at-kroger/girls-at-kroger/audio.girls-at-kroger.mp3",
@@ -1228,8 +1227,7 @@ const AUDIO_URL_MAP: { [key: string]: string } = {
   "Breakaway (demo)": "https://www.doerfelverse.com/tracks/breakaway-demo.mp3",
   "Thought It Was Real": "https://www.doerfelverse.com/tracks/thought-it-was-real.mp3",
   "Morning Love": "https://www.doerfelverse.com/tracks/morning-love.mp3",
-  "SWEATS": "https://www.doerfelverse.com/tracks/sweats.mp3",
-  "Possible": "https://www.doerfelverse.com/tracks/possible.mp3"
+  "SWEATS": "https://www.doerfelverse.com/tracks/sweats.mp3"
 };
 
 // Get real audio URL for a track title
