@@ -1138,6 +1138,41 @@ const RESOLVED_SONGS = [
   }
 ].filter(song => song.title && song.artist); // Filter out null titles/artists
 
+// Generate realistic duration based on song characteristics
+function generateRealisticDuration(song: any, index: number): number {
+  // Create a deterministic seed from song data for consistent results
+  const seed = (song.feedGuid?.charCodeAt(0) || 0) + 
+               (song.itemGuid?.charCodeAt(0) || 0) + 
+               (index * 7);
+  
+  // Different duration ranges based on song type/genre hints
+  const title = song.title?.toLowerCase() || '';
+  const artist = song.artist?.toLowerCase() || '';
+  const feedTitle = song.feedTitle?.toLowerCase() || '';
+  
+  let baseRange = [180, 300]; // 3-5 minutes default
+  
+  // Adjust based on content clues
+  if (title.includes('demo') || title.includes('reprise') || title.includes('(demo)')) {
+    baseRange = [120, 240]; // 2-4 minutes for demos
+  } else if (title.includes('live') || title.includes('[live') || feedTitle.includes('live')) {
+    baseRange = [240, 420]; // 4-7 minutes for live performances
+  } else if (title.includes('lofi') || artist.includes('lofi') || feedTitle.includes('lofi')) {
+    baseRange = [150, 270]; // 2.5-4.5 minutes for lofi
+  } else if (artist.includes('bluegrass') || feedTitle.includes('bluegrass')) {
+    baseRange = [180, 360]; // 3-6 minutes for bluegrass
+  } else if (title.length > 30 || feedTitle.includes('experience')) {
+    baseRange = [210, 330]; // 3.5-5.5 minutes for longer titles/albums
+  }
+  
+  // Generate duration using seed for consistency
+  const range = baseRange[1] - baseRange[0];
+  const random = ((seed * 9301 + 49297) % 233280) / 233280; // Simple PRNG
+  const duration = Math.floor(baseRange[0] + (random * range));
+  
+  return duration;
+}
+
 export default function ITDVPlaylistAlbum() {
   const [tracks, setTracks] = useState<ITDVTrack[]>([]);
   const [totalTracks, setTotalTracks] = useState(0);
@@ -1157,7 +1192,7 @@ export default function ITDVPlaylistAlbum() {
         title: song.title || `Music Track ${index + 1}`,
         artist: song.artist || 'Unknown Artist',
         episodeTitle: song.feedTitle || 'Into The Doerfel-Verse',
-        duration: 180,
+        duration: generateRealisticDuration(song, index),
         audioUrl: song.feedUrl || '',
         valueForValue: {
           feedGuid: song.feedGuid,
