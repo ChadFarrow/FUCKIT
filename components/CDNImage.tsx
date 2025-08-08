@@ -428,4 +428,27 @@ export default function CDNImage({
           alt={alt}
           width={dims.width}
           height={dims.height}
-          className={`${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`
+          className={`${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+          priority={priority}
+          quality={quality}
+          sizes={getResponsiveSizes()}
+          onError={handleError}
+          onLoad={handleLoad}
+          placeholder={placeholder}
+          unoptimized={currentSrc.includes('/api/optimized-images/')} // Don't double-optimize
+          style={style}
+          {...props}
+        />
+      )}
+      
+      {/* Debug info in development */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="absolute top-1 left-1 bg-black/50 text-white text-xs px-1 py-0.5 rounded opacity-0 hover:opacity-100 transition-opacity">
+          {currentSrc.includes('/api/optimized-images/') ? '🖼️ Optimized' : '📡 Original'}
+          {isMobile && ' 📱'}
+          {isGif && ' 🎬'}
+        </div>
+      )}
+    </div>
+  );
+}
