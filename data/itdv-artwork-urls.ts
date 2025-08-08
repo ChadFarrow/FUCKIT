@@ -131,5 +131,10 @@ export const ITDV_ARTWORK_URL_MAP: ITDVArtworkUrlMap = {
   "That's the Life": "https://d12wklypp119aj.cloudfront.net/image/6f724ceb-0688-40d5-a93f-4d0b6ec1c797.jpg",
   "Change Your Mind": "https://d12wklypp119aj.cloudfront.net/image/2cc8ce94-6b15-4426-8a6d-ed974d3258e5.jpg",
   "That Duck": "https://music.behindthesch3m3s.com/wp-content/uploads/Sir%20Seat%20Sitter/That%20Duck.png",
-  "Hallucinations": "https://d12wklypp119aj.cloudfront.net/image/24449797-c9b7-4151-a31a-8b9a74b1dd86.jpg"
+  "Hallucinations": "https://d12wklypp119aj.cloudfront.net/image/24449797-c9b7-4151-a31a-8b9a74b1dd86.jpg",
+  
+  // Bloodshot Lies - The Album tracks
+  "Bloodshot Lies FUNK": "https://www.doerfelverse.com/art/bloodshot-lies-the-album.png",
+  "Heartbreak (album version)": "https://www.doerfelverse.com/art/bloodshot-lies-the-album.png",
+  "Movie (album version)": "https://www.doerfelverse.com/art/bloodshot-lies-the-album.png"
 };
