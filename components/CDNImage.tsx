@@ -36,6 +36,7 @@ export default function CDNImage({
   sizes,
   placeholder = 'empty',
   style,
+  key: propKey,
   ...props
 }: CDNImageProps) {
   const [isLoading, setIsLoading] = useState(true);
@@ -400,7 +401,7 @@ export default function CDNImage({
       {isClient && isMobile ? (
         // Enhanced mobile image handling
         <img
-          key={props.key || imageKey}
+          key={propKey || imageKey}
           src={showGif ? currentSrc : ''}
           alt={alt}
           width={dims.width}
@@ -423,7 +424,7 @@ export default function CDNImage({
       ) : (
         // Use Next.js Image for desktop with full optimization
         <Image
-          key={props.key || imageKey}
+          key={propKey || imageKey}
           src={showGif ? currentSrc : ''}
           alt={alt}
           width={dims.width}

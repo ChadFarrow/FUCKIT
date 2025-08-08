@@ -245,7 +245,8 @@ export default function PlaylistAlbum({ tracks: rawTracks, config, onTrackResolv
         title: t.valueForValue?.resolved && t.valueForValue?.resolvedTitle ? t.valueForValue.resolvedTitle : t.title,
         url: t.valueForValue?.resolved && t.valueForValue?.resolvedAudioUrl ? t.valueForValue.resolvedAudioUrl : t.audioUrl || '',
         startTime: t.valueForValue?.resolved ? 0 : 0,
-        duration: t.duration ? t.duration.toString() : '300'
+        duration: t.duration ? t.duration.toString() : '300',
+        image: t.artworkUrl || t.valueForValue?.resolvedImage || config.coverArt || ''
       }))
     };
     

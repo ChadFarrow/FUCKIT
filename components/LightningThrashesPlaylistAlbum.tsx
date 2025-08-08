@@ -178,7 +178,8 @@ export default function LightningThrashesPlaylistAlbum() {
         title: t.valueForValue?.resolved && t.valueForValue?.resolvedTitle ? t.valueForValue.resolvedTitle : t.title,
         url: t.valueForValue?.resolved && t.valueForValue?.resolvedAudioUrl ? t.valueForValue.resolvedAudioUrl : t.audioUrl || '',
         startTime: t.valueForValue?.resolved ? 0 : (t.startTime || 0), // No startTime for resolved V4V tracks
-        duration: t.duration ? t.duration.toString() : '300'
+        duration: t.duration ? t.duration.toString() : '300',
+        image: t.valueForValue?.resolvedImage || "https://cdn.kolomona.com/podcasts/lightning-thrashes/060/060-Lightning-Thrashes-1000.jpg"
       }))
     };
     

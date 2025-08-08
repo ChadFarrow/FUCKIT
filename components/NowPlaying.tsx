@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import CDNImage from '@/components/CDNImage';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
@@ -43,6 +43,12 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
   onToggleShuffle
 }) => {
   const [hoverPosition, setHoverPosition] = useState<number | null>(null);
+  const [imageKey, setImageKey] = useState(0);
+
+  // Force image re-render when track changes
+  useEffect(() => {
+    setImageKey(prev => prev + 1);
+  }, [track.title, track.artist, track.albumArt]);
 
   const formatTime = (seconds: number): string => {
     if (isNaN(seconds) || seconds < 0) return '0:00';
@@ -91,7 +97,7 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
         className="flex items-center gap-3 min-w-0 flex-1 hover:bg-gray-700 rounded-lg p-2 -m-2 transition-colors cursor-pointer"
       >
         <CDNImage 
-          key={`${track.title}-${track.artist}-${track.albumArt}`}
+          key={`${track.title}-${track.artist}-${track.albumArt}-${Date.now()}`}
           src={track.albumArt || ''}
           alt={track.title}
           width={48}
