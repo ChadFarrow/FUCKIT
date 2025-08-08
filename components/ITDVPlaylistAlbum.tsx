@@ -1,6 +1,6 @@
 'use client';
 
-import PlaylistAlbum, { PlaylistConfig } from './PlaylistAlbum';
+import PlaylistAlbum, { PlaylistConfig, PlaylistTrack } from './PlaylistAlbum';
 import { ITDV_AUDIO_URL_MAP } from '@/data/itdv-audio-urls';
 import { ITDV_ARTWORK_URL_MAP } from '@/data/itdv-artwork-urls';
 import type { ITDVTrack, ITDVTrackWithUrls } from '@/types/itdv-types';
@@ -132,7 +132,7 @@ export default function ITDVPlaylistAlbum() {
     showResolutionStatus: false
   };
 
-  const handleTrackResolved = (track: ITDVTrackWithUrls) => {
+  const handleTrackResolved = (track: PlaylistTrack) => {
     console.log(`✅ ITDV track resolved: ${track.title} by ${track.artist}`);
   };
 
