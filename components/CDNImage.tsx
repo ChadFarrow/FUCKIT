@@ -55,6 +55,13 @@ export default function CDNImage({
   const [isClient, setIsClient] = useState(false);
   const [userAgent, setUserAgent] = useState('');
   
+  // Force image re-render when src changes
+  useEffect(() => {
+    if (src) {
+      setImageKey(prev => prev + 1);
+    }
+  }, [src]);
+  
   // Detect if the image is a GIF
   useEffect(() => {
     const isGifImage = Boolean((src && typeof src === 'string' && src.toLowerCase().includes('.gif')) || 
