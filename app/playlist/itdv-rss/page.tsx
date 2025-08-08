@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Suspense } from 'react';
-import PlaylistAlbum, { PlaylistConfig } from '@/components/PlaylistAlbum';
+import PlaylistAlbumProgressive from '@/components/PlaylistAlbumProgressive';
+import { PlaylistConfig } from '@/components/PlaylistAlbum';
 import { ITDV_AUDIO_URL_MAP } from '@/data/itdv-audio-urls';
 import { ITDV_ARTWORK_URL_MAP } from '@/data/itdv-artwork-urls';
 import resolvedSongsData from '@/data/itdv-resolved-songs.json';
@@ -97,7 +98,7 @@ export default function ITDVPlaylistPage() {
         <div className="bg-black/40 backdrop-blur-sm rounded-lg p-4 md:p-6 mb-8">
           <h2 className="text-xl font-semibold mb-4">Tracks</h2>
           <Suspense fallback={<div className="text-white animate-pulse">Loading tracks...</div>}>
-            <PlaylistAlbum
+            <PlaylistAlbumProgressive
               config={config}
               tracks={enrichedTracks}
             />
