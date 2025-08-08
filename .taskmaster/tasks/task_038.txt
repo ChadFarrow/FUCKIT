@@ -1,0 +1,11 @@
+# Task ID: 38
+# Title: Fix Album Artwork Not Showing on Mobile
+# Status: done
+# Dependencies: None
+# Priority: high
+# Description: Fix the persistent issue where album artwork is not displaying properly on mobile devices. This appears to be a mobile-specific image loading or rendering problem that needs investigation and resolution.
+# Details:
+Album artwork is still not showing on mobile devices despite previous attempts to fix this issue. Need to investigate mobile-specific image loading, CORS handling, caching, or rendering issues that prevent album art from displaying on mobile browsers.
+
+# Test Strategy:
+Test album artwork display on various mobile devices and browsers to identify the specific cause and ensure images load properly across all mobile platforms.

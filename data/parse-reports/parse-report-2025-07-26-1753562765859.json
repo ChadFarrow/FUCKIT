@@ -1,0 +1,25 @@
+{
+  "totalFeeds": 84,
+  "successfulParses": 82,
+  "failedParses": 2,
+  "albumsFound": 78,
+  "publishersFound": 4,
+  "totalTracks": 442,
+  "totalDuration": "00:00",
+  "podRollFeeds": 16,
+  "fundingFeeds": 5,
+  "parseTime": 88921,
+  "timestamp": "2025-07-26T20:46:05.859Z",
+  "errors": [
+    {
+      "feedId": "wavlake-album-11",
+      "feedUrl": "https://wavlake.com/feed/music/91367816-33e6-4b6e-8eb7-44b2832708fd",
+      "error": "No album data found"
+    },
+    {
+      "feedId": "fountain-artist-takeover",
+      "feedUrl": "https://wavlake.com/feed/music/6dc5c681-8beb-4193-93a3-d405c962d103",
+      "error": "No album data found"
+    }
+  ]
+}

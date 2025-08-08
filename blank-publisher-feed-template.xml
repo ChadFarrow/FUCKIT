@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:psc="http://podlove.org/simple-chapters" xmlns:podcast="https://podcastindex.org/namespace/1.0">
+	<channel>
+		<title><![CDATA[Publisher Name]]></title>
+		<description><![CDATA[Publisher description goes here]]></description>
+		<link>https://example.com/publisher-url</link>
+		<generator>Wavlake</generator>
+		<lastBuildDate>Wed, 23 Jul 2025 23:17:22 GMT</lastBuildDate>
+		<podcast:medium>publisher</podcast:medium>
+		<podcast:guid>YOUR-PUBLISHER-GUID-HERE</podcast:guid>
+		
+		<!-- Add your podcast:remoteItem entries here -->
+		<!-- Example format:
+		<podcast:remoteItem medium="music" feedGuid="ALBUM-FEED-GUID" feedUrl="https://wavlake.com/feed/music/ALBUM-FEED-GUID"/>
+		-->
+		
+		<itunes:summary>Publisher description for iTunes</itunes:summary>
+		<itunes:owner>
+			<itunes:name>Owner Name</itunes:name>
+			<itunes:email>owner@example.com</itunes:email>
+		</itunes:owner>
+		<itunes:explicit>false</itunes:explicit>
+		<itunes:image href="https://example.com/publisher-image.jpg"/>
+	</channel>
+</rss> 

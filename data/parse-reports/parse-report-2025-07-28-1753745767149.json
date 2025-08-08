@@ -1,0 +1,30 @@
+{
+  "totalFeeds": 107,
+  "successfulParses": 104,
+  "failedParses": 3,
+  "albumsFound": 98,
+  "publishersFound": 6,
+  "totalTracks": 508,
+  "totalDuration": "00:00",
+  "podRollFeeds": 16,
+  "fundingFeeds": 5,
+  "parseTime": 105034,
+  "timestamp": "2025-07-28T23:36:07.149Z",
+  "errors": [
+    {
+      "feedId": "iroh-album-11",
+      "feedUrl": "https://wavlake.com/feed/music/06376ab5-efca-459c-9801-49ceba5fdab1",
+      "error": "No album data found"
+    },
+    {
+      "feedId": "example-com-test-feed-xml",
+      "feedUrl": "https://example.com/test-feed.xml",
+      "error": "No album data found"
+    },
+    {
+      "feedId": "2-crystal-balls",
+      "feedUrl": "https://rocknrollbreakheart.com/msp/2CrystalBalls/2 crystal balls.xml",
+      "error": "No album data found"
+    }
+  ]
+}

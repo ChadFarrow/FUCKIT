@@ -1,0 +1,25 @@
+{
+  "totalFeeds": 91,
+  "successfulParses": 89,
+  "failedParses": 2,
+  "albumsFound": 85,
+  "publishersFound": 4,
+  "totalTracks": 489,
+  "totalDuration": "00:00",
+  "podRollFeeds": 16,
+  "fundingFeeds": 5,
+  "parseTime": 84890,
+  "timestamp": "2025-07-27T02:08:51.564Z",
+  "errors": [
+    {
+      "feedId": "example-com-test-feed-xml",
+      "feedUrl": "https://example.com/test-feed.xml",
+      "error": "No album data found"
+    },
+    {
+      "feedId": "2-crystal-balls",
+      "feedUrl": "https://rocknrollbreakheart.com/msp/2CrystalBalls/2 crystal balls.xml",
+      "error": "No album data found"
+    }
+  ]
+}

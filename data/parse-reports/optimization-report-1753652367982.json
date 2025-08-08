@@ -1,0 +1,55 @@
+{
+  "timestamp": "2025-07-27T21:39:27.981Z",
+  "optimizedImages": [
+    {
+      "name": "you-are-my-world.gif",
+      "originalUrl": "https://www.doerfelverse.com/art/you-are-my-world.gif",
+      "optimizedUrl": "https://re.podtards.com/api/optimized-images/you-are-my-world.gif",
+      "originalSize": 34.93
+    },
+    {
+      "name": "HowBoutYou.gif",
+      "originalUrl": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/HowBoutYou.gif",
+      "optimizedUrl": "https://re.podtards.com/api/optimized-images/HowBoutYou.gif",
+      "originalSize": 31.68
+    },
+    {
+      "name": "autumn.gif",
+      "originalUrl": "https://www.doerfelverse.com/art/autumn.gif",
+      "optimizedUrl": "https://re.podtards.com/api/optimized-images/autumn.gif",
+      "originalSize": 20.03
+    },
+    {
+      "name": "WIldandfreecover-copy-2.png",
+      "originalUrl": "https://annipowellmusic.com/wp-content/MusicSideProject/MP3%20Masters%20and%20Copy%20of%20Cover/WIldandfreecover%20copy%202.png",
+      "optimizedUrl": "https://re.podtards.com/api/optimized-images/WIldandfreecover-copy-2.png",
+      "originalSize": 17.46
+    },
+    {
+      "name": "alandace.gif",
+      "originalUrl": "https://www.doerfelverse.com/art/alandace.gif",
+      "optimizedUrl": "https://re.podtards.com/api/optimized-images/alandace.gif",
+      "originalSize": 7.23
+    },
+    {
+      "name": "doerfel-verse-idea-9.png",
+      "originalUrl": "https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/doerfel-verse-idea-9.png",
+      "optimizedUrl": "https://re.podtards.com/api/optimized-images/doerfel-verse-idea-9.png",
+      "originalSize": 6.06
+    },
+    {
+      "name": "SatoshiStreamer-track-1-album-art.png",
+      "originalUrl": "https://rocknrollbreakheart.com/msp/SatoshiStreamer/track%201/album-art.png",
+      "optimizedUrl": "https://re.podtards.com/api/optimized-images/SatoshiStreamer-track-1-album-art.png",
+      "originalSize": 5.49
+    },
+    {
+      "name": "dvep15-art.png",
+      "originalUrl": "https://www.doerfelverse.com/art/dvep15-art.png",
+      "optimizedUrl": "https://re.podtards.com/api/optimized-images/dvep15-art.png",
+      "originalSize": 5.12
+    }
+  ],
+  "replacements": 19,
+  "totalImages": 8
+}

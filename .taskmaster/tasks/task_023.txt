@@ -1,0 +1,11 @@
+# Task ID: 23
+# Title: Fix Global Playbar - Implement Consistent Bottom Player Bar
+# Status: done
+# Dependencies: None
+# Priority: high
+# Description: Create a persistent global player bar at the bottom that continues playing across all pages
+# Details:
+Currently there are 2 different player bars that come and go depending on navigation. Need to implement a single, persistent global player bar at the bottom of the site that: 1) Stays visible on all pages, 2) Continues playing music when navigating between pages, 3) Shows current track info and controls consistently, 4) Replaces the current inconsistent player implementations, 5) Integrates with the existing audio state management, 6) Provides seamless playback experience across the entire site. This will eliminate the confusion of having multiple player bars appearing and disappearing.
+
+# Test Strategy:
+

@@ -1,0 +1,37 @@
+#!/bin/sh
+
+# Git pre-push hook to auto-increment version
+# This hook runs before pushing to GitHub and increments the version by 0.001
+
+echo "🚀 Running pre-push hook..."
+
+# Get the current branch
+branch=$(git rev-parse --abbrev-ref HEAD)
+
+# Only increment version for main branch pushes
+if [ "$branch" = "main" ]; then
+    echo "📈 Incrementing version for main branch push..."
+    
+    # Run the version increment script
+    node scripts/increment-version.js
+    
+    # Check if version was updated
+    if [ $? -eq 0 ]; then
+        echo "✅ Version incremented successfully"
+        
+        # Add the updated version file and create a separate version commit
+        git add lib/version.ts
+        
+        # Create a separate commit for version update
+        git commit -m "chore: auto-increment version" --no-verify
+        
+        echo "🔄 Version updated in separate commit"
+    else
+        echo "❌ Failed to increment version"
+        exit 1
+    fi
+else
+    echo "⏭️  Skipping version increment for branch: $branch"
+fi
+
+echo "✅ Pre-push hook completed"

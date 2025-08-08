@@ -1,0 +1,44 @@
+# Example PRD Template
+
+## Project Overview
+[Brief description of what the project is and its main purpose]
+
+## Current Features
+[List of existing features and functionality]
+
+### Core Functionality
+- [Feature 1]
+- [Feature 2]
+- [Feature 3]
+
+### Technical Features
+- [Technical feature 1]
+- [Technical feature 2]
+
+## Future Enhancements
+[Planned features and improvements]
+
+### User Experience
+- [UX improvement 1]
+- [UX improvement 2]
+
+### Technical Improvements
+- [Technical improvement 1]
+- [Technical improvement 2]
+
+## Technical Architecture
+[Overview of the technical stack and architecture]
+
+### Frontend
+- [Frontend technology 1]
+- [Frontend technology 2]
+
+### Backend
+- [Backend technology 1]
+- [Backend technology 2]
+
+## Success Metrics
+[How success will be measured]
+
+## Technical Requirements
+[Specific technical requirements and constraints] 

@@ -1,0 +1,11 @@
+# Task ID: 40
+# Title: Fix publisher page loading and display issues
+# Status: done
+# Dependencies: None
+# Priority: high
+# Description: Fix publisher pages to properly display artist names and artwork instead of showing loading states and publisher IDs
+# Details:
+Fix publisher page loading states, add bitpunk.fm publisher mapping, improve publisher info display, and ensure proper artwork loading for publisher pages
+
+# Test Strategy:
+

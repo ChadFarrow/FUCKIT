@@ -1,0 +1,12 @@
+{
+  "id": "itdv-playlist-album",
+  "title": "Into The Doerfel-Verse Music Playlist",
+  "artist": "Various Artists",
+  "description": "Music from Into The Doerfel-Verse podcast episodes 31-56, extracted from RSS playlist",
+  "coverArt": "https://www.doerfelverse.com/art/itdvchadf.png",
+  "releaseDate": "2025-08-05T01:53:50.335Z",
+  "trackCount": 200,
+  "episodes": "31-56",
+  "source": "rss-playlist",
+  "tracks": []
+}

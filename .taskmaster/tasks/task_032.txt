@@ -1,0 +1,11 @@
+# Task ID: 32
+# Title: Fix Now Playing Navigation Bug
+# Status: done
+# Dependencies: None
+# Priority: high
+# Description: Fix issue where clicking on the "now playing" element doesn't always navigate to the correct album. The now playing bar should consistently take users to the correct album page when clicked.
+# Details:
+Investigate and fix the navigation logic in the now playing component to ensure clicking always leads to the correct album page. This may involve checking the album ID mapping, routing logic, or state management issues.
+
+# Test Strategy:
+Test clicking on now playing bar with different albums to verify consistent navigation to correct album pages.

@@ -1,0 +1,30 @@
+{
+  "totalFeeds": 111,
+  "successfulParses": 108,
+  "failedParses": 3,
+  "albumsFound": 102,
+  "publishersFound": 6,
+  "totalTracks": 593,
+  "totalDuration": "00:00",
+  "podRollFeeds": 16,
+  "fundingFeeds": 9,
+  "parseTime": 118924,
+  "timestamp": "2025-07-28T23:53:35.871Z",
+  "errors": [
+    {
+      "feedId": "example-com-test-feed-xml",
+      "feedUrl": "https://example.com/test-feed.xml",
+      "error": "No album data found"
+    },
+    {
+      "feedId": "2-crystal-balls",
+      "feedUrl": "https://rocknrollbreakheart.com/msp/2CrystalBalls/2 crystal balls.xml",
+      "error": "No album data found"
+    },
+    {
+      "feedId": "wavlake-com-feed-music-883ea557-39c0-4bec-9618-c75978bc63b5",
+      "feedUrl": "https://wavlake.com/feed/music/883ea557-39c0-4bec-9618-c75978bc63b5",
+      "error": "No album data found"
+    }
+  ]
+}

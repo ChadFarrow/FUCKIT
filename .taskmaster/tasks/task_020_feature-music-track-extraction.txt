@@ -1,0 +1,11 @@
+# Task ID: 20
+# Title: Fix persistent "Unknown Artist" display issue
+# Status: in-progress
+# Dependencies: 18
+# Priority: high
+# Description: Artists are still showing as "Unknown Artist" in the ITDV playlist despite V4V resolution returning correct artist names
+# Details:
+The API returns correct V4V resolved data with artist names like "John Depew Trio" and "Big Awesome", and the getDisplayArtist() function was updated to check valueForValue.resolvedArtist, but the UI still displays "Unknown Artist". This may be a caching issue, data transformation problem, or React rendering issue where the component isn't properly updating with the resolved data.
+
+# Test Strategy:
+

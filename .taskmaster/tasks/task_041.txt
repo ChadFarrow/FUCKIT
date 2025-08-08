@@ -1,0 +1,11 @@
+# Task ID: 41
+# Title: Add Bitpunk.fm RSS feeds to application
+# Status: done
+# Dependencies: None
+# Priority: medium
+# Description: Add four new RSS feeds from zine.bitpunk.fm to expand the music catalog
+# Details:
+Added spectral-hiding, poetry-on-tape, bitpunk-fm, and unwound feeds from zine.bitpunk.fm to feeds.json and parsed-feeds.json, improving feed parsing efficiency with incremental parsing scripts
+
+# Test Strategy:
+

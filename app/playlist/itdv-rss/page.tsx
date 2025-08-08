@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ITDVPlaylistAlbum } from '../../../components/ITDVPlaylistAlbum';
-import NowPlayingBar from '../../../components/NowPlayingBar';
+import ITDVPlaylistAlbum from '../../../components/ITDVPlaylistAlbum';
+import GlobalNowPlayingBar from '../../../components/GlobalNowPlayingBar';
 
 interface APISong {
   feedGuid: string;
@@ -121,12 +121,12 @@ export default function ITDVPlaylistPage() {
     loadSongs();
   }, []);
 
-  const resolvedSongs = songs.filter(song => song.valueForValue?.resolved);
+  const resolvedSongs = songs.filter((song: ComponentSong) => song.valueForValue?.resolved);
 
   // Handle play/pause
   const handlePlayPause = () => {
     if (currentTrack) {
-      setCurrentTrack(prev => prev ? { ...prev, isPlaying: !prev.isPlaying } : null);
+      setCurrentTrack((prev: NowPlayingTrack | null) => prev ? { ...prev, isPlaying: !prev.isPlaying } : null);
     }
   };
 
@@ -171,7 +171,7 @@ export default function ITDVPlaylistPage() {
   // Handle seek
   const handleSeek = (time: number) => {
     if (currentTrack) {
-      setCurrentTrack(prev => prev ? { ...prev, currentTime: time } : null);
+      setCurrentTrack((prev: NowPlayingTrack | null) => prev ? { ...prev, currentTime: time } : null);
     }
   };
 
@@ -192,7 +192,7 @@ export default function ITDVPlaylistPage() {
 
   // Use the same background style as album pages
   const backgroundStyle = {
-    background: 'linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url(https://www.doerfelverse.com/art/itdvchadf.png) center/cover fixed',
+    background: 'linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url(https://www.doerfelverse.com/art/itdvchadf.png) top center/cover fixed',
     backgroundAttachment: 'fixed'
   };
 
@@ -232,7 +232,9 @@ export default function ITDVPlaylistPage() {
           Back to Albums
         </Link>
 
+        {/* Playlist Header - Album Style */}
         <div className="flex flex-col gap-6 mb-8">
+          {/* Playlist Art */}
           <div className="relative group mx-auto w-[200px] h-[200px] sm:w-[240px] sm:h-[240px] md:w-[280px] md:h-[280px]">
             <img 
               src="https://www.doerfelverse.com/art/itdvchadf.png"
@@ -240,125 +242,46 @@ export default function ITDVPlaylistPage() {
               className="rounded-lg object-cover shadow-2xl w-full h-full"
             />
           </div>
-
+          
+          {/* Playlist Info */}
           <div className="text-center space-y-4">
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight">Into The Doerfel-Verse</h1>
             <p className="text-lg sm:text-xl text-gray-300">Music Collection</p>
             <p className="text-base sm:text-lg text-gray-300 italic">Episodes 31-56</p>
+            
             <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-sm text-gray-400">
               <span>2024</span>
-              <span>{songs.length} tracks</span>
+              <span>122 tracks</span>
               <span className="bg-purple-600 text-white px-2 py-1 rounded text-xs">PLAYLIST</span>
             </div>
+            
             <p className="text-gray-300 text-center max-w-xs sm:max-w-lg mx-auto leading-relaxed text-sm sm:text-base px-4">
               Every music track played on Into The Doerfel-Verse podcast from episodes 31-56. 
               This playlist features remote items that reference tracks from the original ITDV feed.
             </p>
+
+            {/* Badges */}
             <div className="flex flex-wrap justify-center gap-2">
-              <span className="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded border border-purple-500/30">RSS Feed</span>
-              <span className="text-xs bg-green-500/20 text-green-300 px-2 py-1 rounded border border-green-500/30">Podcasting 2.0</span>
-              <span className="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded border border-blue-500/30">Remote Items</span>
+              <span className="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded border border-purple-500/30">
+                RSS Feed
+              </span>
+              <span className="text-xs bg-green-500/20 text-green-300 px-2 py-1 rounded border border-green-500/30">
+                Podcasting 2.0
+              </span>
+              <span className="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded border border-blue-500/30">
+                Remote Items
+              </span>
             </div>
           </div>
         </div>
 
+        {/* Track List */}
         <div className="bg-black/40 backdrop-blur-sm rounded-lg p-4 md:p-6 mb-8">
           <h2 className="text-xl font-semibold mb-4">Tracks</h2>
-          <p className="text-gray-300 mb-6">
-            Showing {songs.length} of {songs.length} tracks • {resolvedSongs.length} resolved
-          </p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {songs.map((song, index) => (
-              <div 
-                key={song.id} 
-                className="bg-gray-800 rounded-lg p-4 hover:bg-gray-700 transition-colors cursor-pointer"
-                onClick={() => handleTrackSelect(song, index)}
-              >
-                {/* Album Art */}
-                <div className="relative mb-4">
-                  {song.albumArtwork || song.artwork || song.valueForValue?.resolvedImage ? (
-                    <div className="w-full aspect-square rounded-lg overflow-hidden">
-                      <img 
-                        src={song.albumArtwork || song.artwork || song.valueForValue?.resolvedImage || ''}
-                        alt={`${song.title} by ${song.artist}`}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          target.nextElementSibling?.classList.remove('hidden');
-                        }}
-                      />
-                      {/* Fallback placeholder */}
-                      <div className="w-full h-full bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center hidden">
-                        <div className="text-center">
-                          <div className="text-4xl mb-2">🎵</div>
-                          <div className="text-xs text-white/80">Album Art</div>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="w-full aspect-square bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
-                      {song.valueForValue?.resolved ? (
-                        <div className="text-center">
-                          <div className="text-4xl mb-2">🎵</div>
-                          <div className="text-xs text-white/80">Album Art</div>
-                        </div>
-                      ) : (
-                        <div className="text-center">
-                          <div className="text-4xl mb-2">❓</div>
-                          <div className="text-xs text-white/80">Unresolved</div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  {song.valueForValue?.resolved && (
-                    <div className="absolute top-2 right-2 bg-green-600 text-white text-xs px-2 py-1 rounded-full font-semibold">
-                      V4V
-                    </div>
-                  )}
-                  {(song.albumArtwork || song.artwork || song.valueForValue?.resolvedImage) && (
-                    <div className="absolute top-2 left-2 bg-purple-600 text-white text-xs px-2 py-1 rounded-full font-semibold">
-                      ART
-                    </div>
-                  )}
-                </div>
-
-                {/* Track Info */}
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-white truncate" title={song.title}>
-                    {song.title}
-                  </h3>
-                  
-                  <div className="text-sm text-gray-300 space-y-1">
-                    <p className="truncate" title={song.artist}>
-                      {song.artist}
-                    </p>
-                    <p className="truncate text-gray-400" title={song.episodeTitle}>
-                      {song.episodeTitle}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      ID: {song.id.substring(0, 8)}...
-                    </p>
-                  </div>
-
-                  {/* Duration */}
-                  <div className="text-sm text-gray-400">
-                    {Math.floor(song.duration / 60)}:{(song.duration % 60).toString().padStart(2, '0')}
-                  </div>
-
-                  {/* Resolution Status */}
-                  {!song.valueForValue?.resolved && (
-                    <div className="text-xs text-orange-400 bg-orange-900/20 px-2 py-1 rounded">
-                      Unresolved Track
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
+          <ITDVPlaylistAlbum />
         </div>
 
+        {/* RSS Feed Info */}
         <div className="bg-black/40 backdrop-blur-sm rounded-lg p-4 md:p-6">
           <h3 className="text-lg font-semibold text-white mb-4">RSS Feed Information</h3>
           <div className="space-y-3 text-sm">
@@ -370,9 +293,7 @@ export default function ITDVPlaylistPage() {
             </div>
             <div className="break-words">
               <span className="text-gray-400">Original Source:</span>
-              <span className="block sm:inline sm:ml-2 mt-1 sm:mt-0 text-white text-xs sm:text-sm">
-                https://www.doerfelverse.com/feeds/intothedoerfelverse.xml
-              </span>
+              <span className="block sm:inline sm:ml-2 mt-1 sm:mt-0 text-white text-xs sm:text-sm">https://www.doerfelverse.com/feeds/intothedoerfelverse.xml</span>
             </div>
             <div>
               <span className="text-gray-400">Format:</span>
@@ -383,19 +304,27 @@ export default function ITDVPlaylistPage() {
               <span className="ml-2 text-white">Works with all Podcasting 2.0 apps</span>
             </div>
             <div className="pt-2 space-y-2">
-              <a target="_blank" className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors" href="/api/playlist/itdv-rss">
+              <Link 
+                href="/api/playlist/itdv-rss" 
+                target="_blank"
+                className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
+              >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>
                 View RSS Feed
-              </a>
+              </Link>
               <div>
-                <a target="_blank" className="inline-flex items-center gap-2 text-green-400 hover:text-green-300 transition-colors" href="/api/itdv-songs-list">
+                <Link 
+                  href="/api/itdv-songs-list" 
+                  target="_blank"
+                  className="inline-flex items-center gap-2 text-green-400 hover:text-green-300 transition-colors"
+                >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                   View Resolved Songs List
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -403,7 +332,7 @@ export default function ITDVPlaylistPage() {
       </div>
 
       {/* Now Playing Bar */}
-      <NowPlayingBar
+      <GlobalNowPlayingBar
         currentTrack={currentTrack}
         onPlayPause={handlePlayPause}
         onNext={handleNext}

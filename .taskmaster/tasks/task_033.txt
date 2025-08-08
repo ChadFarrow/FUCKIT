@@ -1,0 +1,11 @@
+# Task ID: 33
+# Title: Fix Main Page Album Navigation Bug
+# Status: done
+# Dependencies: None
+# Priority: high
+# Description: Fix issue where clicking on albums from the main page doesn't always load the correct album. Album cards should consistently navigate to the correct album page when clicked.
+# Details:
+Investigate and fix the navigation logic for album cards on the main page to ensure clicking always leads to the correct album page. This may involve checking the album ID mapping, routing logic, or state management issues in the main page component.
+
+# Test Strategy:
+Test clicking on different album cards from the main page to verify consistent navigation to correct album pages.

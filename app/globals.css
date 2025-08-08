@@ -1,0 +1,196 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* StableKraft Color Variables */
+:root {
+  /* Primary Colors from StableKraft Rocket */
+  --stablekraft-yellow: #FFD700;
+  --stablekraft-orange: #FF6B35;
+  --stablekraft-teal: #4ECDC4;
+  --stablekraft-navy: #2C3E50;
+  --stablekraft-dark-blue: #1A252F;
+  
+  /* Complementary Colors */
+  --stablekraft-light-yellow: #FFF3A0;
+  --stablekraft-light-orange: #FF8C5A;
+  --stablekraft-light-teal: #7EDDD6;
+  --stablekraft-dark-teal: #3CBCB3;
+  
+  /* UI Colors - Light Theme */
+  --background-primary: rgba(255, 255, 255, 0.95);
+  --background-secondary: rgba(248, 250, 252, 0.9);
+  --background-overlay: rgba(255, 215, 0, 0.1);
+  --text-primary: #1A252F;
+  --text-secondary: #64748B;
+  --accent-primary: var(--stablekraft-teal);
+  --accent-secondary: var(--stablekraft-orange);
+}
+
+@layer base {
+  html {
+    font-family: system-ui, sans-serif;
+  }
+  
+  body {
+    @apply text-gray-900;
+    background-color: var(--background-primary);
+  }
+  
+  /* Background image fallback */
+  .bg-stablekraft-rocket {
+    background: url('/stablekraft-rocket.png') center/contain fixed;
+    background-attachment: fixed;
+  }
+  
+  /* Ensure content is readable over background */
+  .content-overlay {
+    background: var(--background-primary);
+    backdrop-filter: blur(10px);
+  }
+  
+  /* StableKraft themed elements */
+  .bg-stablekraft-primary {
+    background-color: var(--background-primary);
+  }
+  
+  .bg-stablekraft-secondary {
+    background-color: var(--background-secondary);
+  }
+  
+  .text-stablekraft-yellow {
+    color: var(--stablekraft-yellow);
+  }
+  
+  .text-stablekraft-teal {
+    color: var(--stablekraft-teal);
+  }
+  
+  .border-stablekraft-teal {
+    border-color: var(--stablekraft-teal);
+  }
+  
+  .bg-stablekraft-teal {
+    background-color: var(--stablekraft-teal);
+  }
+  
+  .hover\:bg-stablekraft-orange:hover {
+    background-color: var(--stablekraft-orange);
+  }
+}
+
+@layer components {
+  .podcast-card {
+    @apply bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden;
+    border: 1px solid rgba(78, 205, 196, 0.2);
+  }
+  
+  .episode-card {
+    @apply bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 p-4 border border-gray-100;
+  }
+  
+  .btn-primary {
+    background-color: var(--stablekraft-teal);
+    @apply hover:bg-stablekraft-orange text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+  }
+  
+  .btn-primary:hover {
+    background-color: var(--stablekraft-orange);
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+    border: 1px solid rgba(78, 205, 196, 0.3);
+  }
+  
+  .btn-secondary:hover {
+    background-color: var(--stablekraft-teal);
+    color: white;
+    border-color: var(--stablekraft-teal);
+  }
+
+  /* Scrollbar utilities */
+  .scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+
+  /* Audio Player Slider Styles */
+  .slider {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .slider::-webkit-slider-track {
+    background: #e5e7eb;
+    height: 4px;
+    border-radius: 2px;
+  }
+
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--stablekraft-teal);
+    height: 12px;
+    width: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  .slider::-moz-range-track {
+    background: #e5e7eb;
+    height: 4px;
+    border-radius: 2px;
+    border: none;
+  }
+
+  .slider::-moz-range-thumb {
+    background: var(--stablekraft-teal);
+    height: 12px;
+    width: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+  }
+}
+
+@layer utilities {
+  /* iOS Safe Area Support */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  /* Add extra padding on top of safe area for better spacing */
+  .pb-safe-plus {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+  
+  /* Top safe area for iPhone dynamic island */
+  .pt-safe {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  /* Add extra padding on top of safe area for better spacing */
+  .pt-safe-plus {
+    padding-top: calc(1rem + env(safe-area-inset-top));
+  }
+}
+
+/* PWA Standalone Mode Adjustments */
+@media (display-mode: standalone) {
+  /* Ensure the player bar is visible in standalone mode */
+  .fixed.bottom-0 {
+    bottom: env(safe-area-inset-bottom);
+  }
+  
+  /* Add padding to body for standalone mode */
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+} 

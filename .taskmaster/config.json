@@ -1,0 +1,63 @@
+{
+  "models": {
+    "main": {
+      "0": "c",
+      "1": "l",
+      "2": "a",
+      "3": "u",
+      "4": "d",
+      "5": "e",
+      "6": "-",
+      "7": "3",
+      "8": "-",
+      "9": "5",
+      "10": "-",
+      "11": "s",
+      "12": "o",
+      "13": "n",
+      "14": "n",
+      "15": "e",
+      "16": "t",
+      "provider": "mcp",
+      "modelId": "mcp-sampling",
+      "maxTokens": 100000,
+      "temperature": 0.2
+    },
+    "research": {
+      "0": "p",
+      "1": "e",
+      "2": "r",
+      "3": "p",
+      "4": "l",
+      "5": "e",
+      "6": "x",
+      "7": "i",
+      "8": "t",
+      "9": "y",
+      "provider": "mcp",
+      "modelId": "mcp-sampling",
+      "maxTokens": 100000,
+      "temperature": 0.1
+    },
+    "fallback": {
+      "provider": "anthropic",
+      "modelId": "claude-3-5-sonnet",
+      "maxTokens": 8192,
+      "temperature": 0.2
+    }
+  },
+  "global": {
+    "logLevel": "info",
+    "debug": false,
+    "defaultNumTasks": 10,
+    "defaultSubtasks": 5,
+    "defaultPriority": "medium",
+    "projectName": "Task Master",
+    "ollamaBaseURL": "http://localhost:11434/api",
+    "bedrockBaseURL": "https://bedrock.us-east-1.amazonaws.com",
+    "responseLanguage": "English",
+    "userId": "1234567890",
+    "defaultTag": "master"
+  },
+  "claudeCode": {}
+}

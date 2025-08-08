@@ -1,0 +1,12 @@
+{
+  "folders": [
+    {
+      "name": "FUCKIT",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "terminal.integrated.cwd": "${workspaceFolder}",
+    "files.defaultLanguage": "typescript"
+  }
+} 

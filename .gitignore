@@ -1,0 +1,167 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env*.local
+
+# vercel
+.vercel
+
+# security - API keys, passwords, and sensitive files
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+*.csr
+*.der
+secrets/
+keys/
+passwords/
+credentials/
+auth/
+token/
+.env.production
+.env.staging
+.env.development
+.env.test
+.env.*.local
+.env
+.envrc
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+config/secrets.json
+config/credentials.json
+config/auth.json
+config/tokens.json
+config/keys.json
+config/passwords.json
+secrets.json
+credentials.json
+auth.json
+tokens.json
+keys.json
+passwords.json
+*.secret
+*.credential
+*.auth
+*.token
+*.password
+*.private
+*.confidential
+*.sensitive
+# Database files with potential credentials
+*.db
+*.sqlite
+*.sqlite3
+# SSH keys
+.ssh/
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+# GPG keys
+*.gpg
+*.asc
+.gnupg/
+# Docker secrets
+docker-compose.override.yml
+# Kubernetes secrets
+k8s/secrets/
+*.secret.yaml
+*.secret.yml
+# Terraform state files (may contain sensitive data)
+*.tfstate
+*.tfstate.*
+.terraform/
+# AWS credentials
+.aws/
+aws-credentials
+# Google Cloud credentials
+gcloud/
+service-account-key.json
+# Azure credentials
+.azure/
+azure-credentials
+# Heroku credentials
+.heroku/
+# Firebase credentials
+firebase-credentials.json
+firebase-adminsdk.json
+# Stripe keys
+stripe-keys.json
+# Twilio credentials
+twilio-credentials.json
+# SendGrid credentials
+sendgrid-credentials.json
+# Mailgun credentials
+mailgun-credentials.json
+# Slack tokens
+slack-tokens.json
+# Discord tokens
+discord-tokens.json
+# GitHub tokens
+github-tokens.json
+# GitLab tokens
+gitlab-tokens.json
+# Bitbucket tokens
+bitbucket-tokens.json
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts 
+
+# Logs
+logs
+*.log
+dev-debug.log
+# Dependency directories
+node_modules/
+# Environment variables
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+# OS specific
+
+# MCP Configuration Files (contain API keys)
+.cursor/mcp.json
+.windsurf/mcp.json
+*.mcp.json 
+
+data/cache/
+
+# Task files
+# tasks.json
+# tasks/ 

@@ -1,0 +1,11 @@
+# Task ID: 43
+# Title: Fix publisher avatar to use last remote item artwork
+# Status: done
+# Dependencies: None
+# Priority: medium
+# Description: Updated publisher pages to use artwork from the last remote item in the publisher feed for the avatar instead of the first item, while keeping the publisher's main artwork for background
+# Details:
+Modified PublisherDetailClient.tsx to select feedInfo.remoteItems[feedInfo.remoteItems.length - 1] instead of feedInfo.remoteItems[0] for avatar artwork. Also updated parsing script comments to clarify the chronological order of remote items.
+
+# Test Strategy:
+

@@ -1,0 +1,13 @@
+# Task ID: 26
+# Title: Fix Mobile UI Issues - iOS Header Overlap and Auto-Play
+# Status: done
+# Dependencies: None
+# Priority: medium
+# Description: Fixed iOS mobile header overlap where title and beta badge were colliding, and prevented mobile browser auto-play issue
+# Details:
+- Created separate mobile/desktop header layouts to prevent overlap
+- Fixed mobile auto-play by changing audio initialization from play().then(pause()) to just load()
+- Improved mobile responsive design for better iOS compatibility
+
+# Test Strategy:
+

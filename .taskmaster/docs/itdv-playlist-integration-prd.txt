@@ -1,0 +1,67 @@
+# FUCKIT Music App - ITDV Playlist Integration PRD
+
+## Project Overview
+The FUCKIT music app needs to integrate the Into The Doerfel-Verse (ITDV) playlist with real audio URLs and artwork, and create a reusable system for adding multiple playlists to the site's centralized music database.
+
+## Current Features
+The ITDV playlist currently displays 114 resolved song titles and artists with generated durations, but cannot play audio due to missing audio URLs.
+
+### Core Functionality
+- Static display of 114 ITDV playlist tracks
+- Generated contextual track durations
+- Integration with existing AudioContext playback system
+- Main music page with existing track database
+
+### Technical Features
+- RSS feed parsing infrastructure
+- V4V (Value for Value) resolution system
+- Centralized music-tracks.json database
+- Audio playback prevention for invalid URLs
+
+## Future Enhancements
+Create a complete playlist integration system that supports multiple playlists with real audio playback.
+
+### User Experience
+- Full audio playback for ITDV playlist tracks
+- Track artwork display alongside titles/artists
+- ITDV tracks available on main page
+- Seamless integration with existing UI
+
+### Technical Improvements
+- Batch RSS feed processing for audio URL resolution
+- Artwork extraction from iTunes and media tags
+- Caching system for resolved URLs and metadata
+- Reusable playlist component for future playlists
+- Database integration preventing duplicate entries
+
+## Technical Architecture
+Next.js app with API routes for RSS feed processing and database management.
+
+### Frontend
+- React components with TypeScript
+- ITDVPlaylistAlbum component
+- Existing AudioContext integration
+- Main page track display
+
+### Backend
+- `/api/resolve-audio-urls` - Batch RSS feed processing
+- `/api/add-playlist-to-database` - Database integration
+- `/api/resolve-itdv-audio` - ITDV-specific testing
+- XML parsing for enclosure URLs and artwork
+- 24-hour caching for resolved data
+
+## Success Metrics
+- All 114 ITDV tracks can be played with real audio
+- Track artwork displays for resolved tracks
+- ITDV tracks appear on main page
+- System supports adding additional playlists
+- No performance degradation from processing
+
+## Technical Requirements
+- RSS feed XML parsing for enclosure URLs
+- iTunes image and duration metadata extraction
+- Batch processing with rate limiting
+- Integration with existing music-tracks.json structure
+- Compatibility with current AudioContext playbook
+- Error handling for failed RSS requests
+- Caching to minimize repeated API calls
