@@ -81,8 +81,13 @@ export default function PlaylistAlbum({ tracks: rawTracks, config, onTrackResolv
       setTotalTracks(initialTracks.length);
       setIsLoading(false);
       
-      // Resolve audio URLs if enabled
-      if (config.resolveAudioUrls && initialTracks.length > 0) {
+      // Check if tracks already have audio URLs
+      const tracksWithAudio = initialTracks.filter(t => t.audioUrl);
+      const needsResolution = tracksWithAudio.length < initialTracks.length;
+      
+      // Only resolve audio URLs if enabled AND tracks don't already have audio
+      if (config.resolveAudioUrls && initialTracks.length > 0 && needsResolution) {
+        console.log(`🔄 ${tracksWithAudio.length}/${initialTracks.length} tracks have audio, attempting to resolve remaining...`);
         setAudioResolutionStatus('Resolving audio URLs...');
         
         try {

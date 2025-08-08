@@ -1117,6 +1117,41 @@ const RESOLVED_SONGS = [
   }
 ].filter(song => song.title && song.artist); // Filter out null titles/artists
 
+// Get static audio URL for a track title
+function getStaticAudioUrl(title: string): string {
+  // Map of track titles to their audio file names
+  const audioUrlMap: { [key: string]: string } = {
+    "Worthy Lofi": "worthy-lofi.mp3",
+    "SWEATS": "sweats.mp3",
+    "Morning Love": "morning-love.mp3",
+    "Thought It Was Real": "thought-it-was-real.mp3",
+    "Breakaway (demo)": "breakaway-demo.mp3",
+    "Pour Over": "pour-over.mp3",
+    "Sing For You": "sing-for-you.mp3",
+    "Make It": "make-it.mp3",
+    "Maybe It's You": "maybe-its-you.mp3",
+    "Ordinary": "ordinary.mp3",
+    "Safe": "safe.mp3",
+    "You": "you.mp3",
+    // Add more mappings as needed - for now, generate from title
+  };
+
+  // Check for exact match
+  if (audioUrlMap[title]) {
+    return `https://www.doerfelverse.com/tracks/${audioUrlMap[title]}`;
+  }
+
+  // Generate filename from title
+  const filename = title
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .trim() + '.mp3';
+
+  return `https://www.doerfelverse.com/tracks/${filename}`;
+}
+
 // Generate realistic duration based on song characteristics
 function generateRealisticDuration(song: any, index: number): number {
   // Create a deterministic seed from song data for consistent results
@@ -1153,13 +1188,19 @@ function generateRealisticDuration(song: any, index: number): number {
 }
 
 export default function ITDVPlaylistAlbum() {
+  // Add static audio URLs to tracks
+  const tracksWithAudio = RESOLVED_SONGS.map((song, index) => ({
+    ...song,
+    audioUrl: getStaticAudioUrl(song.title)
+  }));
+
   const config: PlaylistConfig = {
     name: 'Into The Doerfel-Verse',
     description: 'Music playlist from Into The Doerfel-Verse podcast',
     coverArt: 'https://www.doerfelverse.com/art/itdvchadf.png',
-    // Enable audio resolution in production
-    resolveAudioUrls: true,
-    showResolutionStatus: true
+    // Disable resolution since we have static URLs
+    resolveAudioUrls: false,
+    showResolutionStatus: false
   };
 
   const handleTrackResolved = (track: any) => {
@@ -1169,7 +1210,7 @@ export default function ITDVPlaylistAlbum() {
   return (
     <>
       <PlaylistAlbum 
-        tracks={RESOLVED_SONGS} 
+        tracks={tracksWithAudio} 
         config={config} 
         onTrackResolved={handleTrackResolved}
       />
