@@ -15,6 +15,8 @@ interface ITDVTrack {
   startTime?: number;
   endTime?: number;
   valueForValue?: {
+    feedGuid?: string;
+    itemGuid?: string;
     resolved?: boolean;
     resolvedTitle?: string;
     resolvedArtist?: string;
