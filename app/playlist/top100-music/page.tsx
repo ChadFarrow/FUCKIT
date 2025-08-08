@@ -44,9 +44,22 @@ export default function Top100MusicPage() {
           <div className="relative group mx-auto w-[200px] h-[200px] sm:w-[240px] sm:h-[240px] md:w-[280px] md:h-[280px]">
             <div className="rounded-lg object-cover shadow-2xl w-full h-full bg-gradient-to-br from-yellow-400 via-orange-500 to-cyan-400 flex items-center justify-center">
               <div className="text-center text-white">
-                <svg className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-2" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2Z" />
-                </svg>
+                <img 
+                  src="https://podcastindex.org/images/brand-icon.svg" 
+                  alt="Podcast Index Logo"
+                  className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-2 filter brightness-0 invert"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    // Fallback to star icon if logo fails to load
+                    target.style.display = 'none';
+                    const fallback = document.createElement('svg');
+                    fallback.className = 'w-16 h-16 md:w-20 md:h-20 mx-auto mb-2';
+                    fallback.setAttribute('fill', 'currentColor');
+                    fallback.setAttribute('viewBox', '0 0 24 24');
+                    fallback.innerHTML = '<path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2Z" />';
+                    target.parentNode?.insertBefore(fallback, target);
+                  }}
+                />
                 <div className="text-lg font-bold">TOP 100</div>
               </div>
             </div>
