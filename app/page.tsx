@@ -578,12 +578,15 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen text-white relative overflow-hidden">
+      {/* Blue Background Base - Full Screen */}
+      <div className="fixed inset-0 z-0 bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900" />
+      
       {/* Static Background - STABLEKRAFT Rocket */}
       <div 
-        className="fixed inset-0 z-0"
+        className="fixed inset-0 z-10"
         style={{
           backgroundImage: 'url(/stablekraft-rocket-new.png)',
-          backgroundSize: 'cover',
+          backgroundSize: 'auto 100vh',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
         }}
@@ -607,7 +610,7 @@ export default function HomePage() {
       }} />
 
       {/* Content overlay */}
-      <div className="relative z-10">
+      <div className="relative z-20">
         {/* Audio element is now handled by the global AudioContext */}
         
         {/* Header */}
