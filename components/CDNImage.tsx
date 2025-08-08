@@ -19,6 +19,7 @@ interface CDNImageProps {
   sizes?: string;
   placeholder?: 'blur' | 'empty';
   style?: React.CSSProperties;
+  key?: string | number;
 }
 
 export default function CDNImage({
@@ -392,7 +393,7 @@ export default function CDNImage({
       {isClient && isMobile ? (
         // Enhanced mobile image handling
         <img
-          key={imageKey}
+          key={props.key || imageKey}
           src={showGif ? currentSrc : ''}
           alt={alt}
           width={dims.width}
@@ -415,25 +416,9 @@ export default function CDNImage({
       ) : (
         // Use Next.js Image for desktop with full optimization
         <Image
-          key={imageKey}
+          key={props.key || imageKey}
           src={showGif ? currentSrc : ''}
           alt={alt}
           width={dims.width}
           height={dims.height}
-          className={`${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
-          priority={priority}
-          quality={quality}
-          sizes={getResponsiveSizes()}
-          onError={handleError}
-          onLoad={handleLoad}
-          placeholder={placeholder}
-          unoptimized={currentSrc.includes('/api/optimized-images/')} // Don't double-optimize
-          style={style}
-          {...props}
-        />
-      )}
-      
-      {/* Debug info removed for performance */}
-    </div>
-  );
-}
+          className={`${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`
