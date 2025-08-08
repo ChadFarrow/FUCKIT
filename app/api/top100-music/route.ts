@@ -90,7 +90,7 @@ async function parseTop100Json(jsonData: any): Promise<Top100Track[]> {
         try {
           audioUrl = await resolveAudioFromFeed(feedUrl, title, artist, itemGuid);
         } catch (error) {
-          console.log(`⚠️ Could not resolve audio for "${title}" by ${artist}: ${error.message}`);
+          console.log(`⚠️ Could not resolve audio for "${title}" by ${artist}: ${error instanceof Error ? error.message : String(error)}`);
         }
       }
       
