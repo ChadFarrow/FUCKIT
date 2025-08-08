@@ -726,6 +726,7 @@ const EnhancedNowPlaying: React.FC = () => {
           </div>
         </div>
         )}
+        </div>
       </div>
 
       {/* Queue Manager Modal */}
