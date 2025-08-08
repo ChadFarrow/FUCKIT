@@ -21,7 +21,7 @@ interface Album {
   title: string;
   artist: string;
   year?: number;
-  coverArt?: string;
+  coverArt: string | null;
   tracks: Track[];
   description: string;
   genre?: string;
