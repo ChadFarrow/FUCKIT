@@ -11,8 +11,8 @@ interface Track {
   title: string;
   artist?: string;
   duration: string;
-  startTime?: number | string;
-  endTime?: number | string;
+  startTime?: number;
+  endTime?: number;
   image?: string;
 }
 
