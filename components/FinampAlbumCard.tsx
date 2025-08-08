@@ -25,6 +25,7 @@ interface Album {
   tracks: Track[];
   description?: string;
   genre?: string;
+  releaseDate: string;
 }
 
 interface FinampAlbumCardProps {
