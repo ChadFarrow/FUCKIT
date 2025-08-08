@@ -74,5 +74,11 @@ export const TOP100_AUDIO_URL_MAP: Record<string, string> = {
   // Doerfel Family Bluegrass tracks
   "Hyssop Branches": "https://www.doerfelverse.com/tracks/hyssop-branches.mp3",
   "Bipolar": "https://www.doerfelverse.com/tracks/bipolar.mp3",
-  "C.R.V.P.": "https://www.doerfelverse.com/tracks/crvp.mp3"
+  "C.R.V.P.": "https://www.doerfelverse.com/tracks/crvp.mp3",
+  
+  // Recently resolved Top 100 tracks
+  "Grey's Birthday": "https://op3.dev/e,pg=6fc2ad98-d4a8-5d70-9c68-62e9efc1209c/https://d12wklypp119aj.cloudfront.net/track/aad6e3b1-6589-4e22-b8ca-521f3d888263.mp3",
+  "Wild and Free": "https://annipowellmusic.com/wp-content/MusicSideProject/MP3%20Masters%20and%20Copy%20of%20Cover/Wild%20and%20Free%20MP3/Wild%20and%20Free%20MP3%20Master.mp3",
+  "Yellowhammer": "https://serve.podhome.fm/episode/048aea8e-476d-4dd2-675c-08ddd589f1dd/6389019306767115706fe2f866-8aa7-466e-bddc-cc1b698f723b.mp3",
+  "Just to be a Dick": "https://music.behindthesch3m3s.com/wp-content/uploads/Mike_Epting/LedBetter/Red%20Wings/05-Just%20to%20be%20a%20Dick_04-01.mp3"
 };
