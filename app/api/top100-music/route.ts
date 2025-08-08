@@ -172,7 +172,7 @@ async function resolveAudioFromFeed(feedUrl: string, title: string, artist: stri
     throw new Error('Audio URL not found in feed');
     
   } catch (error) {
-    throw new Error(`Feed resolution failed: ${error.message}`);
+    throw new Error(`Feed resolution failed: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
