@@ -19,12 +19,15 @@ if (fs.existsSync(envPath)) {
 const PODCAST_INDEX_API_KEY = process.env.PODCAST_INDEX_API_KEY;
 const PODCAST_INDEX_API_SECRET = process.env.PODCAST_INDEX_API_SECRET;
 
-// Target tracks that need audio URLs
+// Target tracks that need audio URLs - Batch 2
 const targetTracks = [
-  { title: "Grey's Birthday", artist: "Big Awesome", feedId: 7086035 },
-  { title: "Wild and Free", artist: "Anni Powell", feedId: 6773238 },
-  { title: "Yellowhammer", artist: "The Trusted", feedId: 7439697 },
-  { title: "Just to be a Dick", artist: "Ledbetter", feedId: 6806246 },
+  { title: "Divided We Stand", artist: "Massacre at the Opera", feedId: 6628334 },
+  { title: "Dowsing", artist: "Temples", feedId: 6692527 },
+  { title: "Medicine", artist: "POLANSKI", feedId: 6609682 },
+  { title: "Sovereigns of the Air", artist: "Denim Cobra", feedId: 6767029 },
+  { title: "Dinosaurs", artist: "Badniks", feedId: 7180209 },
+  { title: "Light & Shade", artist: "Delta OG", feedId: 6915515 },
+  { title: "Dusty Old Man", artist: "$2 Holla", feedId: 6562563 },
 ];
 
 async function generateAuthHeaders() {

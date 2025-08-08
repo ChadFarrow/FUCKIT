@@ -76,9 +76,18 @@ export const TOP100_AUDIO_URL_MAP: Record<string, string> = {
   "Bipolar": "https://www.doerfelverse.com/tracks/bipolar.mp3",
   "C.R.V.P.": "https://www.doerfelverse.com/tracks/crvp.mp3",
   
-  // Recently resolved Top 100 tracks
+  // Recently resolved Top 100 tracks - Batch 1
   "Grey's Birthday": "https://op3.dev/e,pg=6fc2ad98-d4a8-5d70-9c68-62e9efc1209c/https://d12wklypp119aj.cloudfront.net/track/aad6e3b1-6589-4e22-b8ca-521f3d888263.mp3",
   "Wild and Free": "https://annipowellmusic.com/wp-content/MusicSideProject/MP3%20Masters%20and%20Copy%20of%20Cover/Wild%20and%20Free%20MP3/Wild%20and%20Free%20MP3%20Master.mp3",
   "Yellowhammer": "https://serve.podhome.fm/episode/048aea8e-476d-4dd2-675c-08ddd589f1dd/6389019306767115706fe2f866-8aa7-466e-bddc-cc1b698f723b.mp3",
-  "Just to be a Dick": "https://music.behindthesch3m3s.com/wp-content/uploads/Mike_Epting/LedBetter/Red%20Wings/05-Just%20to%20be%20a%20Dick_04-01.mp3"
+  "Just to be a Dick": "https://music.behindthesch3m3s.com/wp-content/uploads/Mike_Epting/LedBetter/Red%20Wings/05-Just%20to%20be%20a%20Dick_04-01.mp3",
+  
+  // Recently resolved Top 100 tracks - Batch 2
+  "Divided We Stand": "https://op3.dev/e/ipfspodcasting.net/e/cdn.kolomona.com/podcasts/lightning-thrashes/massacre-at-the-opera/cue-the-slaughter/6-divided-we-stand.mp3",
+  "Dowsing": "https://feed.falsefinish.club/Temples/Temples%20-%20Cosmodrome/Temples%20-%20Cosmodrome%20-%2003%20Dowsing.mp3",
+  "Medicine": "https://op3.dev/e,pg=5847498b-9db5-509f-860f-3f3c3c422698/https://d12wklypp119aj.cloudfront.net/track/0624efde-d0e5-4327-b67a-1773001a4693.mp3",
+  "Sovereigns of the Air": "https://music.behindthesch3m3s.com/wp-content/uploads/Denim%20Cobra/Leather_Diamond/Denim%20Cobra%20-%20Sovereigns%20of%20the%20Air.mp3",
+  "Dinosaurs": "https://op3.dev/e,pg=4068353f-f404-5d5c-937e-2c1582fcbf14/https://d12wklypp119aj.cloudfront.net/track/29043fc6-63b4-4054-8259-a491666d4650.mp3",
+  "Light & Shade": "https://music.behindthesch3m3s.com/wp-content/uploads/Delta_OG/Aged_Friends_and_Old_Whiskey/Light%20And%20Shade.wav",
+  "Dusty Old Man": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/08/Dusty-Old-Man_Dusty-Old-Man.mp3"
 };
