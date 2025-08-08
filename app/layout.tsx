@@ -8,6 +8,7 @@ import ClientErrorBoundary from '@/components/ClientErrorBoundary'
 import { ToastContainer } from '@/components/Toast'
 import { AudioProvider } from '@/contexts/AudioContext'
 import EnhancedNowPlaying from '@/components/EnhancedNowPlaying'
+import FinampNavigation from '@/components/FinampNavigation'
 import PerformanceMonitor from '@/components/PerformanceMonitor'
 import ScrollDetectionProvider from '@/components/ScrollDetectionProvider'
 
@@ -117,8 +118,11 @@ export default function RootLayout({
                     }}
                   />
                   {/* Content overlay */}
-                  <div className="relative z-10 finamp-container">
-                    {children}
+                  <FinampNavigation />
+                  <div className="relative z-10 lg:ml-64">
+                    <div className="lg:pl-0 pt-14 lg:pt-0">
+                      {children}
+                    </div>
                   </div>
                 </div>
                 <EnhancedNowPlaying />
