@@ -71,28 +71,30 @@ export default function NowPlayingBar({
           {/* Album Artwork - Larger and more prominent */}
           <div className="relative w-16 h-16 flex-shrink-0">
             {currentTrack.albumArtwork || currentTrack.artwork ? (
-              <img
-                key={`${currentTrack.id}-${imageKey}`}
-                ref={imageRef}
-                src={currentTrack.albumArtwork || currentTrack.artwork}
-                alt={`${currentTrack.title} by ${currentTrack.artist}`}
-                className="w-full h-full object-cover rounded-lg shadow-lg"
-                onError={(e) => {
-                  console.error('❌ Image failed to load:', currentTrack.albumArtwork || currentTrack.artwork);
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
-                  target.nextElementSibling?.classList.remove('hidden');
-                }}
-                onLoad={() => {
-                  console.log('✅ Image loaded successfully:', currentTrack.albumArtwork || currentTrack.artwork);
-                }}
-              />
-              {/* Fallback placeholder */}
-              <div className="w-full h-full bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center hidden shadow-lg">
-                <div className="text-center">
-                  <div className="text-2xl">🎵</div>
+              <>
+                <img
+                  key={`${currentTrack.id}-${imageKey}`}
+                  ref={imageRef}
+                  src={currentTrack.albumArtwork || currentTrack.artwork}
+                  alt={`${currentTrack.title} by ${currentTrack.artist}`}
+                  className="w-full h-full object-cover rounded-lg shadow-lg"
+                  onError={(e) => {
+                    console.error('❌ Image failed to load:', currentTrack.albumArtwork || currentTrack.artwork);
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    target.nextElementSibling?.classList.remove('hidden');
+                  }}
+                  onLoad={() => {
+                    console.log('✅ Image loaded successfully:', currentTrack.albumArtwork || currentTrack.artwork);
+                  }}
+                />
+                {/* Fallback placeholder */}
+                <div className="w-full h-full bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center hidden shadow-lg">
+                  <div className="text-center">
+                    <div className="text-2xl">🎵</div>
+                  </div>
                 </div>
-              </div>
+              </>
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center shadow-lg">
                 <div className="text-center">
