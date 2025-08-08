@@ -23,7 +23,7 @@ interface Album {
   year?: number;
   coverArt?: string;
   tracks: Track[];
-  description?: string;
+  description: string;
   genre?: string;
   releaseDate: string;
 }
