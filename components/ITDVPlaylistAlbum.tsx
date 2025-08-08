@@ -58,6 +58,19 @@ export default function ITDVPlaylistAlbum() {
     }
   }, [resolvedSongs, isClient]);
 
+  // Fallback: if we've been loading for too long, show empty state
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (isLoading && isClient) {
+        console.log('⚠️ Loading timeout, showing empty state');
+        setIsLoading(false);
+        setTracks([]);
+      }
+    }, 10000); // 10 second timeout
+
+    return () => clearTimeout(timeout);
+  }, [isLoading, isClient]);
+
   const loadResolvedSongs = async () => {
     try {
       console.log('🔄 Loading resolved ITDV songs...');
@@ -67,6 +80,7 @@ export default function ITDVPlaylistAlbum() {
         const data = await response.json();
         const songs = Array.isArray(data) ? data : [];
         console.log('✅ Loaded resolved songs:', songs.length);
+        console.log('📊 First song sample:', songs[0]);
         setResolvedSongs(songs);
       } else {
         console.log('⚠️ Could not load resolved songs, will use fallback data');
@@ -105,12 +119,15 @@ export default function ITDVPlaylistAlbum() {
             }
           }));
         
+        console.log('📊 Created resolved tracks:', resolvedTracks.length);
         setTotalTracks(resolvedTracks.length);
         setTracks(resolvedTracks);
         clearTimeout(timeoutId);
         console.log('📊 Data source: Resolved songs');
         setIsLoading(false);
         return;
+      } else {
+        console.log('📊 No resolved songs available, trying fallback data sources');
       }
 
       // Fallback: Try the database API (which has some resolved track data)
