@@ -63,11 +63,27 @@ function parseStaticTop100Data(): Top100Track[] {
       // Use static audio URL mapping for known tracks
       const audioUrl = TOP100_AUDIO_URL_MAP[title] || '';
       
-      // Use image proxy to avoid CORS/OpaqueResponseBlocking issues
+      // Use image proxy selectively - some domains work fine without proxy
       const originalArtwork = item.artwork?.replace('http://', 'https://') || '';
-      const proxiedArtwork = originalArtwork ? 
-        `/api/proxy-image?url=${encodeURIComponent(originalArtwork)}` :
-        `https://picsum.photos/300/300?random=${item.rank}`;
+      const trustedDomains = [
+        'files.heycitizen.xyz',
+        'www.doerfelverse.com', 
+        'ableandthewolf.com',
+        'music.jimmyv4v.com',
+        'picsum.photos'
+      ];
+      
+      let finalArtwork = '';
+      if (!originalArtwork) {
+        finalArtwork = `https://picsum.photos/300/300?random=${item.rank}`;
+      } else {
+        const domain = new URL(originalArtwork).hostname;
+        const isTrustedDomain = trustedDomains.some(trusted => domain.includes(trusted));
+        
+        finalArtwork = isTrustedDomain ? 
+          originalArtwork : 
+          `/api/proxy-image?url=${encodeURIComponent(originalArtwork)}`;
+      }
       
       tracks.push({
         id: `v4v-${item.rank}`,
@@ -76,7 +92,7 @@ function parseStaticTop100Data(): Top100Track[] {
         artist: artist,
         sats: String(item.boosts).toLocaleString(),
         satsNumber: Number(item.boosts) || 0,
-        artwork: proxiedArtwork,
+        artwork: finalArtwork,
         podcastLink: item.podcastLink,
         audioUrl: audioUrl,
         feedUrl: '',

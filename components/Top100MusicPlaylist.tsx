@@ -237,7 +237,11 @@ export default function Top100MusicPlaylist() {
                   className="w-full h-full object-cover"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
-                    target.src = `https://picsum.photos/150/150?random=${track.position}`;
+                    // Only set fallback if we haven't already tried it
+                    if (!target.src.includes('picsum.photos')) {
+                      console.warn(`⚠️ Failed to load artwork for "${track.title}" - using fallback`);
+                      target.src = `https://picsum.photos/150/150?random=${track.position}`;
+                    }
                   }}
                 />
                 {/* Play Button Overlay */}
