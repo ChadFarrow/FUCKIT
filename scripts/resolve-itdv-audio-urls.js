@@ -45,12 +45,12 @@ async function fetchRSSFeed(feedUrl) {
   }
 }
 
-// Function to extract audio URL from RSS XML
-function extractAudioUrl(xmlText, itemGuid) {
+// Function to extract audio URL and artwork from RSS XML
+function extractMediaData(xmlText, itemGuid) {
   try {
     // Find all <item> blocks
     const itemMatches = xmlText.match(/<item[^>]*>[\s\S]*?<\/item>/gi);
-    if (!itemMatches) return null;
+    if (!itemMatches) return { audioUrl: null, artworkUrl: null };
 
     for (const itemBlock of itemMatches) {
       // Check if this item has the target GUID
@@ -61,21 +61,52 @@ function extractAudioUrl(xmlText, itemGuid) {
 
       // Found the target item, extract enclosure URL
       const enclosureMatch = itemBlock.match(/<enclosure[^>]+url=["']([^"']+)["'][^>]*>/i);
-      if (enclosureMatch) {
-        return enclosureMatch[1];
+      if (!enclosureMatch) {
+        continue;
       }
+
+      const audioUrl = enclosureMatch[1];
+      
+      // Try to extract artwork URL from various sources
+      let artworkUrl = null;
+      
+      // Try iTunes image first
+      const itunesImageMatch = itemBlock.match(/<itunes:image[^>]+href=["']([^"']+)["'][^>]*>/i);
+      if (itunesImageMatch) {
+        artworkUrl = itunesImageMatch[1];
+      }
+      
+      // Try media:thumbnail or media:content with image type
+      if (!artworkUrl) {
+        const mediaThumbnailMatch = itemBlock.match(/<media:thumbnail[^>]+url=["']([^"']+)["'][^>]*>/i);
+        if (mediaThumbnailMatch) {
+          artworkUrl = mediaThumbnailMatch[1];
+        }
+      }
+      
+      // Try podcast:images
+      if (!artworkUrl) {
+        const podcastImageMatch = itemBlock.match(/<podcast:images[^>]+srcset=["']([^"']+)["'][^>]*>/i);
+        if (podcastImageMatch) {
+          // Take the first URL from srcset
+          const firstUrl = podcastImageMatch[1].split(',')[0].trim().split(' ')[0];
+          artworkUrl = firstUrl;
+        }
+      }
+
+      return { audioUrl, artworkUrl };
     }
     
-    return null;
+    return { audioUrl: null, artworkUrl: null };
   } catch (error) {
     console.error('Error parsing XML:', error);
-    return null;
+    return { audioUrl: null, artworkUrl: null };
   }
 }
 
 // Main resolution process
-async function resolveAllAudioUrls() {
-  const resolvedUrls = {};
+async function resolveAllMediaData() {
+  const resolvedData = {};
   const feedCache = new Map();
   
   for (const song of songs) {
@@ -101,10 +132,16 @@ async function resolveAllAudioUrls() {
       continue;
     }
     
-    const audioUrl = extractAudioUrl(xmlContent, song.itemGuid);
-    if (audioUrl) {
-      console.log(`  ✅ Found: ${audioUrl}`);
-      resolvedUrls[song.title] = audioUrl;
+    const mediaData = extractMediaData(xmlContent, song.itemGuid);
+    if (mediaData.audioUrl) {
+      console.log(`  ✅ Audio: ${mediaData.audioUrl}`);
+      if (mediaData.artworkUrl) {
+        console.log(`  🎨 Artwork: ${mediaData.artworkUrl}`);
+      }
+      resolvedData[song.title] = {
+        audioUrl: mediaData.audioUrl,
+        artworkUrl: mediaData.artworkUrl
+      };
     } else {
       console.log(`  ⚠️ No audio URL found in feed`);
     }
@@ -113,25 +150,37 @@ async function resolveAllAudioUrls() {
     await new Promise(resolve => setTimeout(resolve, 500));
   }
   
-  return resolvedUrls;
+  return resolvedData;
 }
 
 // Run the resolution
-console.log('🚀 Starting audio URL resolution...\n');
-resolveAllAudioUrls().then(resolvedUrls => {
-  const outputPath = path.join(__dirname, '../data/itdv-resolved-audio-urls.json');
-  fs.writeFileSync(outputPath, JSON.stringify(resolvedUrls, null, 2));
+console.log('🚀 Starting media resolution...\n');
+resolveAllMediaData().then(resolvedData => {
+  const outputPath = path.join(__dirname, '../data/itdv-resolved-media-data.json');
+  fs.writeFileSync(outputPath, JSON.stringify(resolvedData, null, 2));
   
   console.log('\n📊 Resolution Summary:');
-  console.log(`✅ Resolved: ${Object.keys(resolvedUrls).length} tracks`);
-  console.log(`❌ Failed: ${songs.length - Object.keys(resolvedUrls).length} tracks`);
+  console.log(`✅ Resolved: ${Object.keys(resolvedData).length} tracks`);
+  console.log(`❌ Failed: ${songs.length - Object.keys(resolvedData).length} tracks`);
+  console.log(`🎨 With artwork: ${Object.values(resolvedData).filter(d => d.artworkUrl).length} tracks`);
   console.log(`\n💾 Saved to: ${outputPath}`);
   
   // Generate TypeScript code for the component
-  console.log('\n📝 Update ITDVPlaylistAlbum.tsx with this mapping:\n');
+  console.log('\n📝 Update ITDVPlaylistAlbum.tsx with these mappings:\n');
+  
   console.log('const AUDIO_URL_MAP: { [key: string]: string } = {');
-  for (const [title, url] of Object.entries(resolvedUrls)) {
-    console.log(`  "${title}": "${url}",`);
+  for (const [title, data] of Object.entries(resolvedData)) {
+    if (data.audioUrl) {
+      console.log(`  "${title}": "${data.audioUrl}",`);
+    }
+  }
+  console.log('};\n');
+  
+  console.log('const ARTWORK_URL_MAP: { [key: string]: string } = {');
+  for (const [title, data] of Object.entries(resolvedData)) {
+    if (data.artworkUrl) {
+      console.log(`  "${title}": "${data.artworkUrl}",`);
+    }
   }
   console.log('};\n');
 }).catch(error => {
