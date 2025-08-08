@@ -45,17 +45,53 @@ export default function ITDVPlaylistAlbum() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 15000);
 
-      // First, try to load from the ITDV RSS playlist API
+      // First, try the database API (which has some resolved track data)
       let response;
       let dataSource = '';
       
       try {
-        // Load from the ITDV RSS playlist endpoint
-        response = await fetch('/api/playlist/itdv-rss', { signal: controller.signal });
-        dataSource = 'ITDV RSS Playlist';
+        response = await fetch('/api/music-tracks/database?pageSize=1000', { signal: controller.signal });
+        dataSource = 'Database API';
         
         if (response.ok) {
-          console.log('✅ Successfully loaded ITDV RSS playlist');
+          const data = await response.json();
+          const allTracks = data.data?.tracks || [];
+          
+          console.log('📊 Database API tracks fetched:', allTracks.length);
+          
+          // Filter for ITDV tracks
+          const itdvTracks = allTracks.filter((track: any) => {
+            const hasITDVInFeed = track.feedUrl?.toLowerCase().includes('intothedoerfelverse') || 
+                                track.feedUrl?.toLowerCase().includes('doerfelverse');
+            const hasITDVInSource = track.playlistInfo?.source?.toLowerCase().includes('itdv') ||
+                                  track.playlistInfo?.source === 'ITDV RSS Playlist' ||
+                                  track.source === 'rss-playlist';
+            const hasITDVInArtist = track.artist?.toLowerCase().includes('doerfel');
+            
+            return hasITDVInFeed || hasITDVInSource || hasITDVInArtist;
+          });
+          
+          console.log('📊 ITDV tracks found:', itdvTracks.length);
+          
+          if (itdvTracks.length > 0) {
+            setTotalTracks(itdvTracks.length);
+            setTracks(itdvTracks);
+            clearTimeout(timeoutId);
+            console.log('📊 Data source:', dataSource);
+            return;
+          }
+        }
+      } catch (error) {
+        console.log('Database API failed, trying RSS playlist...', error);
+      }
+
+      // Fallback: Try to load from the ITDV RSS playlist API
+      try {
+        response = await fetch('/api/playlist/itdv-rss', { signal: controller.signal });
+        dataSource = 'ITDV RSS Playlist (fallback)';
+        
+        if (response.ok) {
+          console.log('✅ Successfully loaded ITDV RSS playlist as fallback');
           const xmlText = await response.text();
           
           // Parse the XML to extract remoteItem references
@@ -92,47 +128,17 @@ export default function ITDVPlaylistAlbum() {
           setTotalTracks(remoteItemTracks.length);
           setTracks(remoteItemTracks);
           clearTimeout(timeoutId);
+          console.log('📊 Data source:', dataSource);
           return;
         }
       } catch (error) {
-        console.log('ITDV RSS playlist failed, trying database API...', error);
+        console.log('ITDV RSS playlist failed, trying static file...', error);
       }
 
-      // Fallback to database API
+      // Final fallback to static file
       try {
-        response = await fetch('/api/music-tracks/database?pageSize=1000', { signal: controller.signal });
-        dataSource = 'Database API';
-        
-        if (!response.ok) {
-          throw new Error(`Database API failed: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        const allTracks = data.data?.tracks || [];
-        
-        console.log('📊 Database API tracks fetched:', allTracks.length);
-        
-        // Filter for ITDV tracks
-        const itdvTracks = allTracks.filter((track: any) => {
-          const hasITDVInFeed = track.feedUrl?.toLowerCase().includes('intothedoerfelverse') || 
-                              track.feedUrl?.toLowerCase().includes('doerfelverse');
-          const hasITDVInSource = track.playlistInfo?.source?.toLowerCase().includes('itdv') ||
-                                track.playlistInfo?.source === 'ITDV RSS Playlist' ||
-                                track.source === 'rss-playlist';
-          const hasITDVInArtist = track.artist?.toLowerCase().includes('doerfel');
-          
-          return hasITDVInFeed || hasITDVInSource || hasITDVInArtist;
-        });
-        
-        console.log('📊 ITDV tracks found:', itdvTracks.length);
-        setTotalTracks(itdvTracks.length || 122);
-        setTracks(itdvTracks);
-        
-      } catch (error) {
-        console.log('Database API failed, trying static file...', error);
-        // Final fallback to static file
         response = await fetch('/music-tracks.json', { signal: controller.signal });
-        dataSource = 'Static file (fallback)';
+        dataSource = 'Static file (final fallback)';
         
         if (!response.ok) {
           throw new Error(`All data sources failed`);
@@ -142,6 +148,10 @@ export default function ITDVPlaylistAlbum() {
         const allTracks = data.musicTracks || [];
         setTotalTracks(allTracks.length || 122);
         setTracks(allTracks);
+      } catch (error) {
+        console.error('All fallbacks failed:', error);
+        setTotalTracks(0);
+        setTracks([]);
       }
       
       clearTimeout(timeoutId);
