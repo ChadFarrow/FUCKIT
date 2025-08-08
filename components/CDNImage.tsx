@@ -47,7 +47,6 @@ export default function CDNImage({
   const [isGif, setIsGif] = useState(false);
   const [showGif, setShowGif] = useState(false);
   const [gifLoaded, setGifLoaded] = useState(false);
-  const [imageKey, setImageKey] = useState(0);
   const imageRef = useRef<HTMLImageElement>(null);
 
   // Check if we're on mobile
@@ -56,10 +55,12 @@ export default function CDNImage({
   const [isClient, setIsClient] = useState(false);
   const [userAgent, setUserAgent] = useState('');
   
-  // Force image re-render when src changes
+  // Simplified src change handling - no forced re-renders
   useEffect(() => {
-    if (src) {
-      setImageKey(prev => prev + 1);
+    if (src && src !== currentSrc) {
+      setCurrentSrc(src);
+      setHasError(false);
+      setIsLoading(true);
     }
   }, [src]);
   
@@ -323,9 +324,6 @@ export default function CDNImage({
     setRetryCount(0);
     setGifLoaded(false);
     
-    // Force image re-render when src changes
-    setImageKey(prev => prev + 1);
-    
     // Clear existing timeout
     if (timeoutId) {
       clearTimeout(timeoutId);
@@ -401,7 +399,7 @@ export default function CDNImage({
       {isClient && isMobile ? (
         // Enhanced mobile image handling
         <img
-          key={propKey || imageKey}
+          key={propKey}
           src={showGif ? currentSrc : ''}
           alt={alt}
           width={dims.width}
@@ -424,7 +422,7 @@ export default function CDNImage({
       ) : (
         // Use Next.js Image for desktop with full optimization
         <Image
-          key={propKey || imageKey}
+          key={propKey}
           src={showGif ? currentSrc : ''}
           alt={alt}
           width={dims.width}
