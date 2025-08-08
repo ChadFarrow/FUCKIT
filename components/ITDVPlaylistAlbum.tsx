@@ -23,7 +23,7 @@ function getArtworkUrl(title: string): string {
 const transformToPlaylistTracks = (): PlaylistTrack[] => {
   return RESOLVED_SONGS.map((song, index) => {
     const audioUrl = getStaticAudioUrl(song.title);
-    const artworkUrl = getArtworkUrl(song.title) || song.albumArtwork || song.artwork || '';
+    const artworkUrl = getArtworkUrl(song.title) || song.artworkUrl || '';
     
     return {
       id: `itdv-${index + 1}`,
@@ -47,21 +47,11 @@ const transformToPlaylistTracks = (): PlaylistTrack[] => {
 };
 
 const config: PlaylistConfig = {
-  id: 'itdv-music',
   name: 'Into The Doerfel-Verse',
   description: 'Every music reference from Into The Doerfel-Verse podcast',
   coverArt: 'https://www.doerfelverse.com/art/itdvchadf.png',
-  primaryColor: '#3B82F6', // Blue
-  secondaryColor: '#1E40AF', // Darker blue
-  creator: 'Chad F & Ben Doerfel',
-  website: 'https://www.doerfelverse.com',
-  rss: {
-    feedTitle: 'ITDV music playlist',
-    feedDescription: 'Every music reference from Into The Doerfel-Verse podcast',
-    feedGuid: '88b0640a-489f-4920-be4f-00f85af5b2d4',
-    feedImage: 'https://raw.githubusercontent.com/ChadFarrow/ITDV-music-playlist/refs/heads/main/docs/608f4bec-5bb7-4513-9d59-dc0723219cb2.webp',
-    feedUrl: '/api/playlist/itdv-rss'
-  }
+  resolveAudioUrls: false, // We already have resolved URLs
+  showResolutionStatus: true
 };
 
 export default function ITDVPlaylistAlbum() {
@@ -76,9 +66,6 @@ export default function ITDVPlaylistAlbum() {
       <PlaylistAlbum
         config={config}
         tracks={playableTracks}
-        showProgressBar={true}
-        allowShuffle={true}
-        allowExport={true}
       />
       <div className="mt-8 p-4 bg-gray-800/50 backdrop-blur-sm rounded-lg">
         <h3 className="text-lg font-semibold text-white mb-2">About This Playlist</h3>
