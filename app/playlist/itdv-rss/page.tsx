@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { Suspense } from 'react';
-import PlaylistAlbumStateless from '@/components/PlaylistAlbumStateless';
-import { PlaylistConfig } from '@/components/PlaylistAlbum';
+import PlaylistAlbum, { PlaylistConfig } from '@/components/PlaylistAlbum';
 import { ITDV_AUDIO_URL_MAP } from '@/data/itdv-audio-urls';
 import { ITDV_ARTWORK_URL_MAP } from '@/data/itdv-artwork-urls';
 import resolvedSongsData from '@/data/itdv-resolved-songs.json';
@@ -20,27 +19,18 @@ const config: PlaylistConfig = {
   showResolutionStatus: false
 };
 
-// Pre-process tracks into the exact format needed by the stateless component
-const processedTracks = resolvedSongsData
-  .filter(song => song && song.feedGuid && song.itemGuid)
-  .map((song: any, index) => ({
-    id: `${config.name.toLowerCase().replace(/\s+/g, '-')}-${index + 1}-${song.feedGuid?.substring(0, 8) || 'unknown'}`,
-    title: song.title || `Track ${index + 1}`,
-    artist: song.artist || 'Unknown Artist',
-    episodeTitle: song.feedTitle || config.name,
-    duration: song.duration || 180, // Default 3 minutes
-    audioUrl: audioUrlMap.get(song.title) || '',
-    artworkUrl: artworkUrlMap.get(song.title) || config.coverArt,
-  }));
+// Pre-process tracks with enriched data for the original PlaylistAlbum component
+const enrichedTracks = resolvedSongsData.map((song: any) => ({
+  ...song,
+  audioUrl: audioUrlMap.get(song.title) || '',
+  artworkUrl: artworkUrlMap.get(song.title) || ''
+}));
 
-// Pre-calculate statistics at build time
-const stats = {
-  total: processedTracks.length,
-  withAudio: processedTracks.filter(t => t.audioUrl).length,
-  withArtwork: processedTracks.filter(t => t.artworkUrl && t.artworkUrl !== config.coverArt).length,
-  get playablePercentage() { 
-    return this.total > 0 ? Math.round((this.withAudio / this.total) * 100) : 0;
-  }
+// Pre-calculate counts for the about section
+const trackCounts = {
+  total: enrichedTracks.length,
+  withAudio: enrichedTracks.filter((t: any) => t.audioUrl).length,
+  withArtwork: enrichedTracks.filter((t: any) => t.artworkUrl).length
 };
 
 export default function ITDVPlaylistPage() {
@@ -107,30 +97,29 @@ export default function ITDVPlaylistPage() {
         <div className="bg-black/40 backdrop-blur-sm rounded-lg p-4 md:p-6 mb-8">
           <h2 className="text-xl font-semibold mb-4">Tracks</h2>
           <Suspense fallback={<div className="text-white animate-pulse">Loading tracks...</div>}>
-            <PlaylistAlbumStateless
+            <PlaylistAlbum
               config={config}
-              tracks={processedTracks}
-              stats={stats}
+              tracks={enrichedTracks}
             />
           </Suspense>
           
           <div className="mt-8 p-4 bg-gray-800/50 backdrop-blur-sm rounded-lg">
             <h3 className="text-lg font-semibold text-white mb-2">About This Playlist</h3>
             <p className="text-sm text-gray-300 mb-3">
-              This playlist contains every music reference from the Into The Doerfel-Verse podcast, featuring {stats.total} tracks with audio and artwork.
+              This playlist contains every music reference from the Into The Doerfel-Verse podcast, featuring {trackCounts.total} tracks with audio and artwork.
             </p>
             <div className="space-y-2 text-sm">
               <div>
                 <span className="text-gray-400">Total Tracks:</span>
-                <span className="ml-2 text-white">{stats.total} songs</span>
+                <span className="ml-2 text-white">{trackCounts.total} songs</span>
               </div>
               <div>
                 <span className="text-gray-400">Tracks with Audio:</span>
-                <span className="ml-2 text-green-400">{stats.withAudio} playable</span>
+                <span className="ml-2 text-green-400">{trackCounts.withAudio} playable</span>
               </div>
               <div>
                 <span className="text-gray-400">Tracks with Artwork:</span>
-                <span className="ml-2 text-blue-400">{stats.withArtwork} with covers</span>
+                <span className="ml-2 text-blue-400">{trackCounts.withArtwork} with covers</span>
               </div>
               <div>
                 <span className="text-gray-400">Source:</span>
