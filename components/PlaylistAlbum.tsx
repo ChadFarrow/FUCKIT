@@ -117,7 +117,7 @@ export default function PlaylistAlbum({ tracks: rawTracks, config, onTrackResolv
               rt.itemGuid === track.valueForValue?.itemGuid
             );
             
-            if (resolvedTrack) {
+            if (resolvedTrack && resolvedTrack.audioUrl) {
               const updatedTrack = {
                 ...track,
                 audioUrl: resolvedTrack.audioUrl || '',
@@ -131,8 +131,8 @@ export default function PlaylistAlbum({ tracks: rawTracks, config, onTrackResolv
                 }
               };
               
-              // Call callback if provided
-              if (onTrackResolved) {
+              // Call callback if provided - only when we have actual audio URL
+              if (onTrackResolved && resolvedTrack.audioUrl) {
                 onTrackResolved(updatedTrack);
               }
               
@@ -164,6 +164,13 @@ export default function PlaylistAlbum({ tracks: rawTracks, config, onTrackResolv
           
           setAudioResolutionStatus(errorMessage);
           setTimeout(() => setAudioResolutionStatus(''), 8000);
+          
+          // Still call callbacks for static tracks to indicate they're loaded (but without audio)
+          if (onTrackResolved) {
+            initialTracks.forEach(track => {
+              onTrackResolved(track);
+            });
+          }
         }
       }
     };
