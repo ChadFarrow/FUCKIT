@@ -36,7 +36,7 @@ interface PlaylistData {
 
 function PlaylistContent() {
   const searchParams = useSearchParams();
-  const feedId = searchParams.get('feedId');
+  const feedId = searchParams?.get('feedId');
   const [playlist, setPlaylist] = useState<PlaylistData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number>(0);
