@@ -59,16 +59,18 @@ const GlobalNowPlayingBar: React.FC = () => {
     albumArt: currentPlayingAlbum.tracks?.[currentTrackIndex]?.image || currentPlayingAlbum.coverArt || ''
   };
 
-  // Debug logging in development - removed to prevent excessive logging
-  // if (process.env.NODE_ENV === 'development') {
-  //   console.log('🎵 Now Playing Track Data:', {
-  //     title: currentTrack.title,
-  //     artist: currentTrack.artist,
-  //     albumTitle: currentTrack.albumTitle,
-  //     albumArt: currentTrack.albumArt,
-  //     hasAlbumArt: !!currentTrack.albumArt
-  //   });
-  // }
+  // Debug logging for artwork troubleshooting
+  if (process.env.NODE_ENV === 'development' && currentPlayingAlbum.tracks?.[currentTrackIndex]) {
+    const track = currentPlayingAlbum.tracks[currentTrackIndex];
+    console.log('🎨 Now Playing Artwork Debug:', {
+      trackTitle: track.title,
+      trackImage: track.image,
+      albumCoverArt: currentPlayingAlbum.coverArt,
+      finalAlbumArt: currentTrack.albumArt,
+      hasTrackImage: !!track.image,
+      hasAlbumCoverArt: !!currentPlayingAlbum.coverArt
+    });
+  }
 
   return (
     <div style={{ 
