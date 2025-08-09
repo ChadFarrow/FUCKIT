@@ -10,7 +10,7 @@ import { ArrowLeft } from 'lucide-react';
 export default function TrackDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const trackId = params.trackId as string;
+  const trackId = params?.trackId as string;
   
   const [track, setTrack] = useState<MusicTrack | null>(null);
   const [relatedTracks, setRelatedTracks] = useState<MusicTrack[]>([]);
