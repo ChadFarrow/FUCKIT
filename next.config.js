@@ -80,6 +80,12 @@ const nextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'feed.bowlafterbowl.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
         hostname: 'www.thisisjdog.com',
         port: '',
         pathname: '/media/**',
@@ -229,6 +235,13 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'i.nostr.build',
+        port: '',
+        pathname: '/**',
+      },
+      // GitHub raw content for playlist artwork
+      {
+        protocol: 'https',
+        hostname: 'raw.githubusercontent.com',
         port: '',
         pathname: '/**',
       },
