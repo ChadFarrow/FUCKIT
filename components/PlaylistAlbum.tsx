@@ -40,7 +40,7 @@ interface PlaylistAlbumProps {
 }
 
 export default function PlaylistAlbum({ tracks: rawTracks, config, onTrackResolved }: PlaylistAlbumProps) {
-  console.log(`🔥 PlaylistAlbum component rendered for ${config.name} with ${rawTracks.length} raw tracks`);
+  // Debug log removed for performance - component working correctly
   
   const [tracks, setTracks] = useState<PlaylistTrack[]>([]);
   const [totalTracks, setTotalTracks] = useState(0);
