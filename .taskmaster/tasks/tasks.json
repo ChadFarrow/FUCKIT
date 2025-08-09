@@ -731,11 +731,44 @@
         "dependencies": [],
         "priority": "medium",
         "subtasks": []
+      },
+      {
+        "id": 27,
+        "title": "Add HGH playlist to navigation",
+        "description": "Add the HGH music playlist to the main navigation or playlist index page so users can discover it",
+        "details": "Currently the HGH playlist exists at /playlist/hgh-rss but isn't linked from the main UI. Need to add navigation links.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 28,
+        "title": "Fix Next.js image configuration",
+        "description": "Configure Next.js to allow external image domains to fix image loading errors",
+        "details": "Images from various domains are failing to load due to Next.js image restrictions. Need to update next.config.js to allow external domains.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 29,
+        "title": "Update HGH placeholder logo URL",
+        "description": "Replace placeholder HGH logo URL with actual working logo or fallback image",
+        "details": "Currently using https://homegrownhits.xyz/art/hgh-logo.png which may not exist. Need to find actual HGH logo or use a fallback.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
       }
     ],
     "metadata": {
       "created": "2025-08-01T21:46:44.417Z",
-      "updated": "2025-08-08T21:25:13.383Z",
+      "updated": "2025-08-09T11:29:37.982Z",
       "description": "Music track extraction feature development"
     }
   },

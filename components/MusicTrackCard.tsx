@@ -8,9 +8,11 @@ interface MusicTrackCardProps {
   track: MusicTrack;
   onPlay?: (track: MusicTrack) => void;
   onViewDetails?: (track: MusicTrack) => void;
+  actions?: React.ReactNode;
+  selected?: boolean;
 }
 
-export default function MusicTrackCard({ track, onPlay, onViewDetails }: MusicTrackCardProps) {
+export default function MusicTrackCard({ track, onPlay, onViewDetails, actions, selected = false }: MusicTrackCardProps) {
   const [imageError, setImageError] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -47,7 +49,7 @@ export default function MusicTrackCard({ track, onPlay, onViewDetails }: MusicTr
 
   return (
     <div
-      className="group bg-white/5 backdrop-blur-sm rounded-xl p-4 hover:bg-white/10 transition-all duration-200 border border-white/10 hover:border-white/20 cursor-pointer"
+      className={`group bg-white/5 backdrop-blur-sm rounded-xl p-4 hover:bg-white/10 transition-all duration-200 border cursor-pointer ${selected ? 'border-blue-500/60 hover:border-blue-400/70' : 'border-white/10 hover:border-white/20'}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleCardClick}
@@ -92,9 +94,16 @@ export default function MusicTrackCard({ track, onPlay, onViewDetails }: MusicTr
             <h3 className="font-semibold text-lg group-hover:text-blue-400 transition-colors truncate">
               {track.title}
             </h3>
-            <span className={`px-2 py-1 text-xs font-medium rounded-full border ${getSourceColor(track.source)}`}>
-              {track.source}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className={`px-2 py-1 text-xs font-medium rounded-full border ${getSourceColor(track.source)}`}>
+                {track.source}
+              </span>
+              {actions && (
+                <div onClick={(e) => e.stopPropagation()}>
+                  {actions}
+                </div>
+              )}
+            </div>
           </div>
           
           <p className="text-gray-400 text-sm mb-1">{track.artist}</p>

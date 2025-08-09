@@ -40,6 +40,8 @@ interface PlaylistAlbumProps {
 }
 
 export default function PlaylistAlbum({ tracks: rawTracks, config, onTrackResolved }: PlaylistAlbumProps) {
+  console.log(`🔥 PlaylistAlbum component rendered for ${config.name} with ${rawTracks.length} raw tracks`);
+  
   const [tracks, setTracks] = useState<PlaylistTrack[]>([]);
   const [totalTracks, setTotalTracks] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -51,6 +53,7 @@ export default function PlaylistAlbum({ tracks: rawTracks, config, onTrackResolv
   useEffect(() => {
     const loadAndResolveAudio = async () => {
       console.log(`✅ Loading tracks for playlist: ${config.name}`);
+      console.log(`🔍 Raw tracks received:`, rawTracks.length);
       setAudioResolutionStatus('Loading tracks...');
       
       // Convert raw tracks to PlaylistTrack format

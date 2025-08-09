@@ -8,22 +8,12 @@ export default function NotFound() {
         <div className="flex justify-center mb-4">
           <Search className="h-16 w-16 text-blue-500" />
         </div>
-        
-        <h1 className="text-2xl font-bold text-white mb-2">
-          Page Not Found
-        </h1>
-        
-        <p className="text-gray-400 mb-6">
-          The page you&apos;re looking for doesn&apos;t exist or has been moved.
-        </p>
-        
+        <h1 className="text-2xl font-bold text-white mb-2">Page Not Found</h1>
+        <p className="text-gray-400 mb-6">The page you&apos;re looking for doesn&apos;t exist or has been moved.</p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link
-            href="/"
-            className="flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
-          >
+          <Link href="/playlist/index" className="flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors">
             <Home className="h-4 w-4" />
-            Go Home
+            Go to Playlists
           </Link>
         </div>
       </div>

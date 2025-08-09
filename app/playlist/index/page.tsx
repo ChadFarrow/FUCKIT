@@ -167,6 +167,12 @@ export default function PlaylistIndexPage() {
             >
               🎵 Open HGH Player
             </Link>
+            <Link
+              href="/playlist/maker"
+              className="bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+            >
+              🛠️ Open Playlist Maker
+            </Link>
           </div>
         </div>
       </div>

@@ -10,12 +10,15 @@ import { Search, Filter, ChevronDown, X } from 'lucide-react';
 interface MusicTrackListProps {
   initialFeedUrls?: string[];
   onPlayTrack?: (track: MusicTrack) => void;
+  selectable?: boolean;
+  onToggleSelect?: (track: MusicTrack, selected: boolean) => void;
+  selectedIds?: Set<string>;
 }
 
 type SortOption = 'date-desc' | 'date-asc' | 'title-asc' | 'title-desc' | 'artist-asc' | 'artist-desc';
 type FilterSource = 'all' | 'chapter' | 'value-split' | 'description' | 'external-feed';
 
-export default function MusicTrackList({ initialFeedUrls = [], onPlayTrack }: MusicTrackListProps) {
+export default function MusicTrackList({ initialFeedUrls = [], onPlayTrack, selectable = false, onToggleSelect, selectedIds }: MusicTrackListProps) {
   const router = useRouter();
   const [tracks, setTracks] = useState<MusicTrack[]>([]);
   const [isLoading, setIsLoading] = useState(true); // Start with loading true to prevent hydration mismatch
@@ -378,14 +381,29 @@ export default function MusicTrackList({ initialFeedUrls = [], onPlayTrack }: Mu
       {paginatedTracks.length > 0 ? (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {paginatedTracks.map((track) => (
-              <MusicTrackCard
-                key={track.id}
-                track={track}
-                onPlay={onPlayTrack}
-                onViewDetails={handleViewTrackDetails}
-              />
-            ))}
+            {paginatedTracks.map((track) => {
+              const isSelected = selectedIds?.has(track.id) ?? false;
+              return (
+                <MusicTrackCard
+                  key={track.id}
+                  track={track}
+                  onPlay={onPlayTrack}
+                  onViewDetails={handleViewTrackDetails}
+                  selected={isSelected}
+                  actions={selectable && onToggleSelect ? (
+                    <label className="inline-flex items-center gap-2 text-xs text-gray-300">
+                      <input
+                        type="checkbox"
+                        className="accent-blue-500"
+                        checked={isSelected}
+                        onChange={(e) => onToggleSelect(track, e.target.checked)}
+                      />
+                      Add
+                    </label>
+                  ) : null}
+                />
+              );
+            })}
           </div>
 
           {/* Pagination */}

@@ -400,7 +400,7 @@ export default function CDNImage({
         // Enhanced mobile image handling
         <img
           key={propKey}
-          src={showGif ? currentSrc : ''}
+          src={showGif && currentSrc ? currentSrc : 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='}
           alt={alt}
           width={dims.width}
           height={dims.height}
@@ -423,7 +423,7 @@ export default function CDNImage({
         // Use Next.js Image for desktop with full optimization
         <Image
           key={propKey}
-          src={showGif ? currentSrc : ''}
+          src={showGif && currentSrc ? currentSrc : 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='}
           alt={alt}
           width={dims.width}
           height={dims.height}

@@ -15,16 +15,16 @@
     "artist": "The Tjukebox",
     "feedUrl": "https://podcast-index-lookup/378ffb10-c09a-5fe2-a95b-65aa8279e91b",
     "feedTitle": "The Tjukebox",
-    "duration": 180
+    "duration": 143
   },
   {
-    "feedGuid": "a0e2112b-1972-4ae2-84b5-c70df89bd909",
-    "itemGuid": "1ae5633e-44c4-458b-b338-5f3578d035fe",
-    "title": "Unknown Feed",
-    "artist": "Unknown Feed",
+    "feedGuid": "acddbb03-064b-5098-87ca-9b146beb12e8",
+    "itemGuid": "c7003607-233e-40e8-b2fa-6465127d0076",
+    "title": "Makin' Beans",
+    "artist": "Able and the Wolf",
     "feedUrl": "https://podcast-index-lookup/a0e2112b-1972-4ae2-84b5-c70df89bd909",
-    "feedTitle": "Unknown Feed",
-    "duration": 180
+    "feedTitle": "Able and the Wolf",
+    "duration": 459
   },
   {
     "feedGuid": "1b961a32-c5e3-5222-aa00-aa041957251c",
@@ -123,7 +123,7 @@
     "artist": "Pickle Popsicle (Single)",
     "feedUrl": "https://podcast-index-lookup/749c442d-5d43-50b0-9f7a-0f5cbf0a218a",
     "feedTitle": "Pickle Popsicle (Single)",
-    "duration": 150
+    "duration": 317
   },
   {
     "feedGuid": "ab7db89d-9602-5b8d-bba8-42855b20c13c",
@@ -132,7 +132,7 @@
     "artist": "Live at the Fickle Pickle - Into the Valueverse",
     "feedUrl": "https://podcast-index-lookup/ab7db89d-9602-5b8d-bba8-42855b20c13c",
     "feedTitle": "Live at the Fickle Pickle - Into the Valueverse",
-    "duration": 288
+    "duration": 180
   },
   {
     "feedGuid": "38edc858-5731-5221-86bf-86db9f886e2b",
@@ -141,7 +141,7 @@
     "artist": "E Pluribus Unum",
     "feedUrl": "https://podcast-index-lookup/38edc858-5731-5221-86bf-86db9f886e2b",
     "feedTitle": "E Pluribus Unum",
-    "duration": 292
+    "duration": 180
   },
   {
     "feedGuid": "5c87b91a-2141-590b-ab19-93e8a6f2d885",
@@ -195,15 +195,15 @@
     "artist": "Insomniak The Sleepless (Singles Playlist)",
     "feedUrl": "https://podcast-index-lookup/5f6bd882-bd60-4474-99e1-f268256100d9",
     "feedTitle": "Insomniak The Sleepless (Singles Playlist)",
-    "duration": 182
+    "duration": 309
   },
   {
     "feedGuid": "5f6bd882-bd60-4474-99e1-f268256100d9",
     "itemGuid": "0f18285e-a2f6-5cea-8367-21d73343f45a",
-    "title": "Track 23",
-    "artist": "Homegrown Hits Artist",
+    "title": "No Way Jose ft. Hyper Sniper",
+    "artist": "Insomniak The Sleepless (Singles Playlist)",
     "feedUrl": "https://podcast-index-lookup/5f6bd882-bd60-4474-99e1-f268256100d9",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Insomniak The Sleepless (Singles Playlist)",
     "duration": 180
   },
   {
@@ -213,7 +213,7 @@
     "artist": "The Heycitizen Experience",
     "feedUrl": "https://podcast-index-lookup/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
     "feedTitle": "The Heycitizen Experience",
-    "duration": 561
+    "duration": 180
   },
   {
     "feedGuid": "0d5a8efb-e132-5f1b-9ab4-3fd0644dbb30",
@@ -222,7 +222,7 @@
     "artist": "Leather Diamond",
     "feedUrl": "https://podcast-index-lookup/0d5a8efb-e132-5f1b-9ab4-3fd0644dbb30",
     "feedTitle": "Leather Diamond",
-    "duration": 284
+    "duration": 276
   },
   {
     "feedGuid": "879febfc-538d-5c10-a34e-a9de5a7666ca",
@@ -231,7 +231,7 @@
     "artist": "The Thinking Man's Redux",
     "feedUrl": "https://podcast-index-lookup/879febfc-538d-5c10-a34e-a9de5a7666ca",
     "feedTitle": "The Thinking Man's Redux",
-    "duration": 161
+    "duration": 411
   },
   {
     "feedGuid": "0653114c-dd08-5f36-863d-009d56bccb8d",
@@ -258,7 +258,7 @@
     "artist": "44",
     "feedUrl": "https://podcast-index-lookup/e745b541-8bc1-42b5-9d2d-5c3a67817d47",
     "feedTitle": "44",
-    "duration": 257
+    "duration": 277
   },
   {
     "feedGuid": "acddbb03-064b-5098-87ca-9b146beb12e8",
@@ -267,7 +267,7 @@
     "artist": "Stay Awhile",
     "feedUrl": "https://podcast-index-lookup/acddbb03-064b-5098-87ca-9b146beb12e8",
     "feedTitle": "Stay Awhile",
-    "duration": 210
+    "duration": 518
   },
   {
     "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
@@ -276,7 +276,7 @@
     "artist": "The Heycitizen Experience",
     "feedUrl": "https://podcast-index-lookup/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
     "feedTitle": "The Heycitizen Experience",
-    "duration": 264
+    "duration": 180
   },
   {
     "feedGuid": "05eaeb68-1d19-5f15-afb6-06aeba50381b",
@@ -288,7 +288,7 @@
     "duration": 194
   },
   {
-    "feedGuid": "5a95f9d8-35e3-51f5-a269-ba1df36b4bd8",
+    "feedGuid": "3d92b2f6-4aac-5f24-bffe-2536eb579286",
     "itemGuid": "7c823adf-1e53-4df1-98c0-979da81ec916",
     "title": "Unknown Feed",
     "artist": "Unknown Feed",
@@ -303,7 +303,7 @@
     "artist": "That's The Spirit!",
     "feedUrl": "https://podcast-index-lookup/671612fb-9039-5189-9d4b-0fd9df2093dd",
     "feedTitle": "That's The Spirit!",
-    "duration": 179
+    "duration": 180
   },
   {
     "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
@@ -312,7 +312,7 @@
     "artist": "The Heycitizen Experience",
     "feedUrl": "https://podcast-index-lookup/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
     "feedTitle": "The Heycitizen Experience",
-    "duration": 278
+    "duration": 525
   },
   {
     "feedGuid": "63fb0d8e-793f-5033-bbb4-39a836e3da76",
@@ -339,7 +339,7 @@
     "artist": "The Knuckledragger",
     "feedUrl": "https://podcast-index-lookup/1df430e3-20f6-595e-9af2-8f9d5123c19b",
     "feedTitle": "The Knuckledragger",
-    "duration": 180
+    "duration": 188
   },
   {
     "feedGuid": "19835a35-b7d1-5fee-8d67-a89d996098e1",
@@ -375,7 +375,7 @@
     "artist": "Sunny",
     "feedUrl": "https://podcast-index-lookup/3722ada5-2029-5485-a8f9-a007c2610c7f",
     "feedTitle": "Sunny",
-    "duration": 270
+    "duration": 180
   },
   {
     "feedGuid": "05b0141e-c90d-5ce4-9e49-274dd5029339",
@@ -420,7 +420,7 @@
     "artist": "Jimmy V - Music",
     "feedUrl": "https://podcast-index-lookup/dbad52b9-6253-4a9b-bfab-246b9e839815",
     "feedTitle": "Jimmy V - Music",
-    "duration": 186
+    "duration": 180
   },
   {
     "feedGuid": "0653114c-dd08-5f36-863d-009d56bccb8d",
@@ -465,7 +465,7 @@
     "artist": "At Your Cervix",
     "feedUrl": "https://podcast-index-lookup/0d6c245c-4b25-571c-8c7d-6a7e0d219427",
     "feedTitle": "At Your Cervix",
-    "duration": 169
+    "duration": 164
   },
   {
     "feedGuid": "75d02f1d-604c-5d31-a9e6-5a3da0ae591e",
@@ -492,7 +492,7 @@
     "artist": "Numb",
     "feedUrl": "https://podcast-index-lookup/ecb8f1a0-9196-5b19-8779-ecefcc419204",
     "feedTitle": "Numb",
-    "duration": 178
+    "duration": 368
   },
   {
     "feedGuid": "2c5f77fe-25d9-5a2d-97ef-236718c627df",
@@ -537,7 +537,7 @@
     "artist": "Self Destruct",
     "feedUrl": "https://podcast-index-lookup/3f38b0d6-d583-5b92-99bf-60a195bf764e",
     "feedTitle": "Self Destruct",
-    "duration": 183
+    "duration": 583
   },
   {
     "feedGuid": "57676ff4-82f4-589f-b8e7-d20e50e2dff9",
@@ -555,7 +555,7 @@
     "artist": "The Great Benefic",
     "feedUrl": "https://podcast-index-lookup/9906942b-7b18-5ad1-b2ac-57e2cf26c63d",
     "feedTitle": "The Great Benefic",
-    "duration": 324
+    "duration": 393
   },
   {
     "feedGuid": "03682fbc-b8e7-505e-b5d2-8cb0f32ff2cf",
@@ -564,7 +564,7 @@
     "artist": "These Days",
     "feedUrl": "https://podcast-index-lookup/03682fbc-b8e7-505e-b5d2-8cb0f32ff2cf",
     "feedTitle": "These Days",
-    "duration": 335
+    "duration": 180
   },
   {
     "feedGuid": "89606593-efe1-5981-9fae-25eeb51e6cc0",
@@ -582,7 +582,7 @@
     "artist": "44",
     "feedUrl": "https://podcast-index-lookup/e745b541-8bc1-42b5-9d2d-5c3a67817d47",
     "feedTitle": "44",
-    "duration": 190
+    "duration": 212
   },
   {
     "feedGuid": "4f8daef6-bdc9-5996-9c0a-0d05d49207ad",
@@ -621,7 +621,7 @@
     "duration": 172
   },
   {
-    "feedGuid": "5a95f9d8-35e3-51f5-a269-ba1df36b4bd8",
+    "feedGuid": "3d92b2f6-4aac-5f24-bffe-2536eb579286",
     "itemGuid": "91db4cd2-b87e-447e-8a54-b3d227a32e27",
     "title": "Unknown Feed",
     "artist": "Unknown Feed",
@@ -645,7 +645,7 @@
     "artist": "Biased Love and Shame",
     "feedUrl": "https://podcast-index-lookup/c3ab3195-5b16-58fa-9e4a-d22dd48a8e7a",
     "feedTitle": "Biased Love and Shame",
-    "duration": 164
+    "duration": 398
   },
   {
     "feedGuid": "ef5db97e-a5f3-5375-96a5-ea4749b3e8c3",
@@ -659,10 +659,10 @@
   {
     "feedGuid": "0d6c245c-4b25-571c-8c7d-6a7e0d219427",
     "itemGuid": "5555c343-ed25-4e3a-9add-a53dc25e09cc",
-    "title": "Track 74",
-    "artist": "Homegrown Hits Artist",
+    "title": "Hate Crime My Asshole",
+    "artist": "At Your Cervix",
     "feedUrl": "https://podcast-index-lookup/0d6c245c-4b25-571c-8c7d-6a7e0d219427",
-    "feedTitle": "Various Artists",
+    "feedTitle": "At Your Cervix",
     "duration": 180
   },
   {
@@ -672,7 +672,7 @@
     "artist": "Everything Is Lit",
     "feedUrl": "https://podcast-index-lookup/d518a5ad-4df1-413e-a4a4-f2c7e146e650",
     "feedTitle": "Everything Is Lit",
-    "duration": 210
+    "duration": 233
   },
   {
     "feedGuid": "c73b1a23-1c28-5edb-94c3-10d1745d0877",
@@ -690,7 +690,7 @@
     "artist": "You Sure Did",
     "feedUrl": "https://podcast-index-lookup/d00c6009-bc6f-5366-a2b0-2b47a6495d2f",
     "feedTitle": "You Sure Did",
-    "duration": 236
+    "duration": 286
   },
   {
     "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
@@ -699,7 +699,7 @@
     "artist": "The Heycitizen Experience",
     "feedUrl": "https://podcast-index-lookup/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
     "feedTitle": "The Heycitizen Experience",
-    "duration": 294
+    "duration": 180
   },
   {
     "feedGuid": "75f0b434-19dc-5959-9920-0fb5304be61b",
@@ -708,7 +708,7 @@
     "artist": "deathdreams",
     "feedUrl": "https://podcast-index-lookup/75f0b434-19dc-5959-9920-0fb5304be61b",
     "feedTitle": "deathdreams",
-    "duration": 264
+    "duration": 321
   },
   {
     "feedGuid": "afc5df5b-bfce-5843-802d-3c074b06e969",
@@ -717,7 +717,7 @@
     "artist": "Wild and Free",
     "feedUrl": "https://podcast-index-lookup/afc5df5b-bfce-5843-802d-3c074b06e969",
     "feedTitle": "Wild and Free",
-    "duration": 264
+    "duration": 321
   },
   {
     "feedGuid": "5c2ab722-886e-5d6f-a268-f52802852e94",
@@ -762,7 +762,7 @@
     "artist": "Sky Dreams",
     "feedUrl": "https://podcast-index-lookup/f77a481c-36bc-5677-b07a-1b8c3b3ae81a",
     "feedTitle": "Sky Dreams",
-    "duration": 482
+    "duration": 180
   },
   {
     "feedGuid": "d577b6cd-8c41-548b-abba-60e1502a94df",
@@ -798,7 +798,7 @@
     "artist": "White Triangles",
     "feedUrl": "https://podcast-index-lookup/121c26b0-33f8-5cb9-9e14-d706bd3f5db8",
     "feedTitle": "White Triangles",
-    "duration": 180
+    "duration": 306
   },
   {
     "feedGuid": "61676a69-5bab-57a9-8326-7fe68a572649",
@@ -807,7 +807,7 @@
     "artist": "Wild Thumbprints",
     "feedUrl": "https://podcast-index-lookup/61676a69-5bab-57a9-8326-7fe68a572649",
     "feedTitle": "Wild Thumbprints",
-    "duration": 232
+    "duration": 225
   },
   {
     "feedGuid": "1df430e3-20f6-595e-9af2-8f9d5123c19b",
@@ -825,7 +825,7 @@
     "artist": "Stay Awhile",
     "feedUrl": "https://podcast-index-lookup/acddbb03-064b-5098-87ca-9b146beb12e8",
     "feedTitle": "Stay Awhile",
-    "duration": 199
+    "duration": 493
   },
   {
     "feedGuid": "bf99e8c3-1f97-558d-bc1d-a4bda04027f7",
@@ -834,7 +834,7 @@
     "artist": "Red Wings",
     "feedUrl": "https://podcast-index-lookup/bf99e8c3-1f97-558d-bc1d-a4bda04027f7",
     "feedTitle": "Red Wings",
-    "duration": 258
+    "duration": 180
   },
   {
     "feedGuid": "c42a0900-c20e-59a2-a13b-c23b5c04e11f",
@@ -843,7 +843,7 @@
     "artist": "Hyper SpaceOut",
     "feedUrl": "https://podcast-index-lookup/c42a0900-c20e-59a2-a13b-c23b5c04e11f",
     "feedTitle": "Hyper SpaceOut",
-    "duration": 70
+    "duration": 180
   },
   {
     "feedGuid": "7b7949ca-5019-5814-aa53-d4b14bd15a6d",
@@ -861,7 +861,7 @@
     "artist": "Way to Go",
     "feedUrl": "https://podcast-index-lookup/c989830b-49a1-572f-9f0e-0fec994a6d5a",
     "feedTitle": "Way to Go",
-    "duration": 189
+    "duration": 542
   },
   {
     "feedGuid": "c39decf9-973e-564f-b741-0ad2985b3b1c",
@@ -870,7 +870,7 @@
     "artist": "Love In Its Purest Form",
     "feedUrl": "https://podcast-index-lookup/c39decf9-973e-564f-b741-0ad2985b3b1c",
     "feedTitle": "Love In Its Purest Form",
-    "duration": 246
+    "duration": 180
   },
   {
     "feedGuid": "69c634ad-afea-5826-ad9a-8e1f06d6470b",
@@ -879,16 +879,16 @@
     "artist": "Kurtisdrums",
     "feedUrl": "https://podcast-index-lookup/69c634ad-afea-5826-ad9a-8e1f06d6470b",
     "feedTitle": "Kurtisdrums",
-    "duration": 160
+    "duration": 390
   },
   {
     "feedGuid": "fc815bcf-3639-5395-ba7d-fa217ec93d32",
     "itemGuid": "bc060c02-581b-4a79-8b4c-3408015e7dfc",
-    "title": "Light & Shade",
+    "title": "Unknown Title",
     "artist": "Aged Friends & Old Whiskey",
     "feedUrl": "https://podcast-index-lookup/fc815bcf-3639-5395-ba7d-fa217ec93d32",
     "feedTitle": "Aged Friends & Old Whiskey",
-    "duration": 333
+    "duration": 180
   },
   {
     "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
@@ -906,7 +906,7 @@
     "artist": "Maze",
     "feedUrl": "https://podcast-index-lookup/7869bafd-2334-54a1-a76a-2c8f68f56828",
     "feedTitle": "Maze",
-    "duration": 261
+    "duration": 380
   },
   {
     "feedGuid": "fc815bcf-3639-5395-ba7d-fa217ec93d32",
@@ -915,7 +915,7 @@
     "artist": "Aged Friends & Old Whiskey",
     "feedUrl": "https://podcast-index-lookup/fc815bcf-3639-5395-ba7d-fa217ec93d32",
     "feedTitle": "Aged Friends & Old Whiskey",
-    "duration": 227
+    "duration": 180
   },
   {
     "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
@@ -924,7 +924,7 @@
     "artist": "The Heycitizen Experience",
     "feedUrl": "https://podcast-index-lookup/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
     "feedTitle": "The Heycitizen Experience",
-    "duration": 213
+    "duration": 422
   },
   {
     "feedGuid": "aa1e57df-d8aa-5de0-82d8-4f40fac65d7c",
@@ -933,7 +933,7 @@
     "artist": "The Inner Voice",
     "feedUrl": "https://podcast-index-lookup/aa1e57df-d8aa-5de0-82d8-4f40fac65d7c",
     "feedTitle": "The Inner Voice",
-    "duration": 116
+    "duration": 226
   },
   {
     "feedGuid": "2b6d971f-562e-510e-ad40-272cb3962c8b",
@@ -951,7 +951,7 @@
     "artist": "Boost Them All!",
     "feedUrl": "https://podcast-index-lookup/b328828c-9ba0-5b1d-be33-4cce51968ae1",
     "feedTitle": "Boost Them All!",
-    "duration": 72
+    "duration": 180
   },
   {
     "feedGuid": "4c08a49f-de9c-5de0-861f-972abb11f4f8",
@@ -978,7 +978,7 @@
     "artist": "Mr. Videoman",
     "feedUrl": "https://podcast-index-lookup/f842b7c8-9f12-54f2-a0b8-4f95c63dad4c",
     "feedTitle": "Mr. Videoman",
-    "duration": 288
+    "duration": 349
   },
   {
     "feedGuid": "a71b097b-4cf0-5e74-b6a9-1271373bb396",
@@ -987,7 +987,7 @@
     "artist": "The Wait Is Over",
     "feedUrl": "https://podcast-index-lookup/a71b097b-4cf0-5e74-b6a9-1271373bb396",
     "feedTitle": "The Wait Is Over",
-    "duration": 180
+    "duration": 310
   },
   {
     "feedGuid": "e64ef270-728d-51f0-8052-9fed4883f662",
@@ -996,7 +996,7 @@
     "artist": "Home Sweet Home (The Dream of Love Survives but it Disappoints Constantly)",
     "feedUrl": "https://podcast-index-lookup/e64ef270-728d-51f0-8052-9fed4883f662",
     "feedTitle": "Home Sweet Home (The Dream of Love Survives but it Disappoints Constantly)",
-    "duration": 250
+    "duration": 180
   },
   {
     "feedGuid": "6c277321-9d2c-5cd2-98b1-f49efcea0602",
@@ -1005,7 +1005,7 @@
     "artist": "Tiddies In My Face (Single)",
     "feedUrl": "https://podcast-index-lookup/6c277321-9d2c-5cd2-98b1-f49efcea0602",
     "feedTitle": "Tiddies In My Face (Single)",
-    "duration": 237
+    "duration": 575
   },
   {
     "feedGuid": "afc5df5b-bfce-5843-802d-3c074b06e969",
@@ -1014,7 +1014,7 @@
     "artist": "Wild and Free",
     "feedUrl": "https://podcast-index-lookup/afc5df5b-bfce-5843-802d-3c074b06e969",
     "feedTitle": "Wild and Free",
-    "duration": 244
+    "duration": 297
   },
   {
     "feedGuid": "de196d3e-276d-5b5f-aa30-34d747e5f6a7",
@@ -1032,7 +1032,7 @@
     "artist": "Coke Dick, Titties & Sarcasm",
     "feedUrl": "https://podcast-index-lookup/f21daf71-4c7b-5fe1-82c6-3a1c2a48c764",
     "feedTitle": "Coke Dick, Titties & Sarcasm",
-    "duration": 196
+    "duration": 180
   },
   {
     "feedGuid": "05eaeb68-1d19-5f15-afb6-06aeba50381b",
@@ -1050,15 +1050,15 @@
     "artist": "ovvr not unndr",
     "feedUrl": "https://podcast-index-lookup/8b41f7f4-2cc3-5a03-90f5-6c54e92bc96b",
     "feedTitle": "ovvr not unndr",
-    "duration": 164
+    "duration": 180
   },
   {
     "feedGuid": "b328828c-9ba0-5b1d-be33-4cce51968ae1",
     "itemGuid": "d047262b-072e-4527-aa87-fab9e4e44848",
-    "title": "Track 118",
-    "artist": "Homegrown Hits Artist",
+    "title": "Boost Them All!",
+    "artist": "Boost Them All!",
     "feedUrl": "https://podcast-index-lookup/b328828c-9ba0-5b1d-be33-4cce51968ae1",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Boost Them All!",
     "duration": 180
   },
   {
@@ -1068,7 +1068,7 @@
     "artist": "Hit Me Like Sugar",
     "feedUrl": "https://podcast-index-lookup/07b65561-a11e-5f18-a5fe-6e0586871b7e",
     "feedTitle": "Hit Me Like Sugar",
-    "duration": 149
+    "duration": 180
   },
   {
     "feedGuid": "ab7db89d-9602-5b8d-bba8-42855b20c13c",
@@ -1091,10 +1091,10 @@
   {
     "feedGuid": "c42a0900-c20e-59a2-a13b-c23b5c04e11f",
     "itemGuid": "2b4d8f9e-315c-42e5-9075-7e113392e340",
-    "title": "Track 122",
-    "artist": "Homegrown Hits Artist",
+    "title": "The Small Group does Vegas for Mary-Kate Ultra's Birthday",
+    "artist": "Hyper SpaceOut",
     "feedUrl": "https://podcast-index-lookup/c42a0900-c20e-59a2-a13b-c23b5c04e11f",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Hyper SpaceOut",
     "duration": 180
   },
   {
@@ -1104,7 +1104,7 @@
     "artist": "Way to Go",
     "feedUrl": "https://podcast-index-lookup/c989830b-49a1-572f-9f0e-0fec994a6d5a",
     "feedTitle": "Way to Go",
-    "duration": 236
+    "duration": 180
   },
   {
     "feedGuid": "b95514f8-0087-5777-a4a8-e0e44cb0233d",
@@ -1145,10 +1145,10 @@
   {
     "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
     "itemGuid": "6fcae535-09ae-46cc-9d9f-e15cf612bc89",
-    "title": "Track 128",
-    "artist": "Homegrown Hits Artist",
+    "title": "Love On The Radio (early edit)",
+    "artist": "The Heycitizen Experience",
     "feedUrl": "https://podcast-index-lookup/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Heycitizen Experience",
     "duration": 180
   },
   {
@@ -1167,15 +1167,15 @@
     "artist": "On My Way",
     "feedUrl": "https://podcast-index-lookup/3c87f137-9507-5bc6-858f-825eeb3988cd",
     "feedTitle": "On My Way",
-    "duration": 120
+    "duration": 180
   },
   {
     "feedGuid": "b328828c-9ba0-5b1d-be33-4cce51968ae1",
     "itemGuid": "d047262b-072e-4527-aa87-fab9e4e44848",
-    "title": "Track 131",
-    "artist": "Homegrown Hits Artist",
+    "title": "Boost Them All!",
+    "artist": "Boost Them All!",
     "feedUrl": "https://podcast-index-lookup/b328828c-9ba0-5b1d-be33-4cce51968ae1",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Boost Them All!",
     "duration": 180
   },
   {
@@ -1208,10 +1208,10 @@
   {
     "feedGuid": "c42a0900-c20e-59a2-a13b-c23b5c04e11f",
     "itemGuid": "2b4d8f9e-315c-42e5-9075-7e113392e340",
-    "title": "Track 135",
-    "artist": "Homegrown Hits Artist",
+    "title": "The Small Group does Vegas for Mary-Kate Ultra's Birthday",
+    "artist": "Hyper SpaceOut",
     "feedUrl": "https://podcast-index-lookup/c42a0900-c20e-59a2-a13b-c23b5c04e11f",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Hyper SpaceOut",
     "duration": 180
   },
   {
@@ -1266,7 +1266,7 @@
     "artist": "The Heycitizen Experience",
     "feedUrl": "https://podcast-index-lookup/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
     "feedTitle": "The Heycitizen Experience",
-    "duration": 213
+    "duration": 180
   },
   {
     "feedGuid": "f08498f5-c449-508f-b6c0-158f64e5827d",
@@ -1275,15 +1275,15 @@
     "artist": "HD Cable",
     "feedUrl": "https://podcast-index-lookup/f08498f5-c449-508f-b6c0-158f64e5827d",
     "feedTitle": "HD Cable",
-    "duration": 152
+    "duration": 180
   },
   {
     "feedGuid": "ab7db89d-9602-5b8d-bba8-42855b20c13c",
     "itemGuid": "f260aee4-63ba-431a-aef0-f24cd84ba59b",
-    "title": "Track 143",
-    "artist": "Homegrown Hits Artist",
+    "title": "The Big I am (Live) by Nathan Abbott",
+    "artist": "Live at the Fickle Pickle - Into the Valueverse",
     "feedUrl": "https://podcast-index-lookup/ab7db89d-9602-5b8d-bba8-42855b20c13c",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Live at the Fickle Pickle - Into the Valueverse",
     "duration": 180
   },
   {
@@ -1325,11 +1325,11 @@
   {
     "feedGuid": "fc815bcf-3639-5395-ba7d-fa217ec93d32",
     "itemGuid": "68c5434e-bdbf-40fd-8a72-6e1860991c1c",
-    "title": "Boogie Stillin'",
+    "title": "Unknown Title",
     "artist": "Aged Friends & Old Whiskey",
     "feedUrl": "https://podcast-index-lookup/fc815bcf-3639-5395-ba7d-fa217ec93d32",
     "feedTitle": "Aged Friends & Old Whiskey",
-    "duration": 222
+    "duration": 180
   },
   {
     "feedGuid": "fc815bcf-3639-5395-ba7d-fa217ec93d32",
@@ -1361,10 +1361,10 @@
   {
     "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
     "itemGuid": "9ff8f18b-cc79-474c-a3e9-2948113b8bf5",
-    "title": "Track 152",
-    "artist": "Homegrown Hits Artist",
+    "title": "Luv Song 4 U",
+    "artist": "The Heycitizen Experience",
     "feedUrl": "https://podcast-index-lookup/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Heycitizen Experience",
     "duration": 180
   },
   {
@@ -1419,7 +1419,7 @@
     "artist": "Midwestern Apathy",
     "feedUrl": "https://podcast-index-lookup/970cd229-dd92-5ba9-9356-00cd23c261f4",
     "feedTitle": "Midwestern Apathy",
-    "duration": 239
+    "duration": 180
   },
   {
     "feedGuid": "8b41f7f4-2cc3-5a03-90f5-6c54e92bc96b",
@@ -1451,10 +1451,10 @@
   {
     "feedGuid": "7869bafd-2334-54a1-a76a-2c8f68f56828",
     "itemGuid": "22d95926-5c70-56e8-8b79-2fc334ff5d31",
-    "title": "Track 162",
-    "artist": "Homegrown Hits Artist",
+    "title": "Maze",
+    "artist": "Maze",
     "feedUrl": "https://podcast-index-lookup/7869bafd-2334-54a1-a76a-2c8f68f56828",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Maze",
     "duration": 180
   },
   {
@@ -1572,7 +1572,7 @@
     "artist": "If We Stayed Alive",
     "feedUrl": "https://podcast-index-lookup/d67ffeaa-d4cc-5c76-9616-f839aa1b48f3",
     "feedTitle": "If We Stayed Alive",
-    "duration": 228
+    "duration": 180
   },
   {
     "feedGuid": "2cfd7dfd-19e1-545b-b3f3-8465d5d1d362",
@@ -1635,7 +1635,7 @@
     "artist": "Breathe Me In",
     "feedUrl": "https://podcast-index-lookup/8f2a0d0e-c1b9-59ab-85a0-0c69ef62a3aa",
     "feedTitle": "Breathe Me In",
-    "duration": 189
+    "duration": 180
   },
   {
     "feedGuid": "5bb8f186-2460-54dc-911d-54f642e8adf6",
@@ -1653,15 +1653,15 @@
     "artist": "Pleb Tunes by Brrreadfan",
     "feedUrl": "https://podcast-index-lookup/e7928a82-6bc1-5363-879b-a324992239dd",
     "feedTitle": "Pleb Tunes by Brrreadfan",
-    "duration": 448
+    "duration": 180
   },
   {
     "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
     "itemGuid": "9602d3a1-3e5b-4487-b504-5f21ce8dbbf5",
-    "title": "Track 185",
-    "artist": "Homegrown Hits Artist",
+    "title": "Boostagrams",
+    "artist": "The Heycitizen Experience",
     "feedUrl": "https://podcast-index-lookup/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Heycitizen Experience",
     "duration": 180
   },
   {
@@ -1761,7 +1761,7 @@
     "artist": "Way to Go",
     "feedUrl": "https://podcast-index-lookup/c989830b-49a1-572f-9f0e-0fec994a6d5a",
     "feedTitle": "Way to Go",
-    "duration": 170
+    "duration": 180
   },
   {
     "feedGuid": "13b9b3e1-0ceb-5bf0-bb0d-ae3e702e6590",
@@ -1770,7 +1770,7 @@
     "artist": "Suzy Brown",
     "feedUrl": "https://podcast-index-lookup/13b9b3e1-0ceb-5bf0-bb0d-ae3e702e6590",
     "feedTitle": "Suzy Brown",
-    "duration": 202
+    "duration": 180
   },
   {
     "feedGuid": "5416b239-0932-5a46-b3ea-090ee44521f2",
@@ -1842,7 +1842,7 @@
     "artist": "Dopesick",
     "feedUrl": "https://podcast-index-lookup/462c641d-8db0-508a-88ae-9660ceac9ece",
     "feedTitle": "Dopesick",
-    "duration": 229
+    "duration": 180
   },
   {
     "feedGuid": "af99d1b4-e10e-503f-8321-8d748bdc76f8",
@@ -1856,10 +1856,10 @@
   {
     "feedGuid": "c3ab3195-5b16-58fa-9e4a-d22dd48a8e7a",
     "itemGuid": "1efc1077-135e-4577-8a81-949a586db096",
-    "title": "Track 207",
-    "artist": "Homegrown Hits Artist",
+    "title": "Gauge 44",
+    "artist": "Biased Love and Shame",
     "feedUrl": "https://podcast-index-lookup/c3ab3195-5b16-58fa-9e4a-d22dd48a8e7a",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Biased Love and Shame",
     "duration": 180
   },
   {
@@ -1878,7 +1878,7 @@
     "artist": "44",
     "feedUrl": "https://podcast-index-lookup/e745b541-8bc1-42b5-9d2d-5c3a67817d47",
     "feedTitle": "44",
-    "duration": 453
+    "duration": 180
   },
   {
     "feedGuid": "a4df666a-132d-5a6e-bf35-bc5efc50a192",
@@ -1914,7 +1914,7 @@
     "artist": "Red Wings",
     "feedUrl": "https://podcast-index-lookup/bf99e8c3-1f97-558d-bc1d-a4bda04027f7",
     "feedTitle": "Red Wings",
-    "duration": 151
+    "duration": 180
   },
   {
     "feedGuid": "0a8495bd-9b8f-5e6b-b522-f5b986d5faac",
@@ -1941,7 +1941,7 @@
     "artist": "Aged Friends & Old Whiskey",
     "feedUrl": "https://podcast-index-lookup/fc815bcf-3639-5395-ba7d-fa217ec93d32",
     "feedTitle": "Aged Friends & Old Whiskey",
-    "duration": 190
+    "duration": 180
   },
   {
     "feedGuid": "e0658b29-1cd3-55b8-ac51-0997764ce334",
@@ -2031,7 +2031,7 @@
     "artist": "The Heycitizen Experience",
     "feedUrl": "https://podcast-index-lookup/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
     "feedTitle": "The Heycitizen Experience",
-    "duration": 301
+    "duration": 180
   },
   {
     "feedGuid": "2a3a5f81-8325-521b-b168-07ff09b15435",
@@ -2153,10 +2153,10 @@
   {
     "feedGuid": "f08498f5-c449-508f-b6c0-158f64e5827d",
     "itemGuid": "a7e6cabc-5055-5563-84f3-5298889b2abc",
-    "title": "Track 240",
-    "artist": "Homegrown Hits Artist",
+    "title": "HD Cable",
+    "artist": "HD Cable",
     "feedUrl": "https://podcast-index-lookup/f08498f5-c449-508f-b6c0-158f64e5827d",
-    "feedTitle": "Various Artists",
+    "feedTitle": "HD Cable",
     "duration": 180
   },
   {
@@ -2166,7 +2166,7 @@
     "artist": "Pony Up Daddy",
     "feedUrl": "https://podcast-index-lookup/99a14604-f38b-5e9d-8679-9314d1207cd4",
     "feedTitle": "Pony Up Daddy",
-    "duration": 148
+    "duration": 180
   },
   {
     "feedGuid": "5097caa0-8182-51ba-bbd2-20d294bf2f9a",
@@ -2292,7 +2292,7 @@
     "artist": "Trickster",
     "feedUrl": "https://podcast-index-lookup/04e812f9-1993-5aa1-9ab5-a9cf0cd81e82",
     "feedTitle": "Trickster",
-    "duration": 285
+    "duration": 180
   },
   {
     "feedGuid": "680882f9-f371-5eeb-bd90-6767d528854f",
@@ -2301,7 +2301,7 @@
     "artist": "Panzee",
     "feedUrl": "https://podcast-index-lookup/680882f9-f371-5eeb-bd90-6767d528854f",
     "feedTitle": "Panzee",
-    "duration": 156
+    "duration": 180
   },
   {
     "feedGuid": "fecb3926-2deb-59f0-b875-c0a5a41bd6f6",
@@ -2319,7 +2319,7 @@
     "artist": "Insomniak The Sleepless (Singles Playlist)",
     "feedUrl": "https://podcast-index-lookup/5f6bd882-bd60-4474-99e1-f268256100d9",
     "feedTitle": "Insomniak The Sleepless (Singles Playlist)",
-    "duration": 210
+    "duration": 180
   },
   {
     "feedGuid": "bb910a55-b2fe-561f-97a5-134db76c8cbc",
@@ -2337,7 +2337,7 @@
     "artist": "Love In Its Purest Form",
     "feedUrl": "https://podcast-index-lookup/c39decf9-973e-564f-b741-0ad2985b3b1c",
     "feedTitle": "Love In Its Purest Form",
-    "duration": 266
+    "duration": 180
   },
   {
     "feedGuid": "a1cd65ae-424d-5b88-a8d6-e95221f2d41a",
@@ -2346,7 +2346,7 @@
     "artist": "Beauty",
     "feedUrl": "https://podcast-index-lookup/a1cd65ae-424d-5b88-a8d6-e95221f2d41a",
     "feedTitle": "Beauty",
-    "duration": 291
+    "duration": 180
   },
   {
     "feedGuid": "f42a64ed-a330-563d-a4b0-f6343ef6ffd7",
@@ -2387,10 +2387,10 @@
   {
     "feedGuid": "c989830b-49a1-572f-9f0e-0fec994a6d5a",
     "itemGuid": "a17a2cd5-36ec-4689-a2c3-485d43eafe8a",
-    "title": "Track 266",
-    "artist": "Homegrown Hits Artist",
+    "title": "Ugly Side",
+    "artist": "Way to Go",
     "feedUrl": "https://podcast-index-lookup/c989830b-49a1-572f-9f0e-0fec994a6d5a",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Way to Go",
     "duration": 180
   },
   {
@@ -2405,20 +2405,20 @@
   {
     "feedGuid": "c989830b-49a1-572f-9f0e-0fec994a6d5a",
     "itemGuid": "637a08f6-049f-4610-9308-73f50ae423cf",
-    "title": "Track 268",
-    "artist": "Homegrown Hits Artist",
+    "title": "So Super Slow",
+    "artist": "Way to Go",
     "feedUrl": "https://podcast-index-lookup/c989830b-49a1-572f-9f0e-0fec994a6d5a",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Way to Go",
     "duration": 180
   },
   {
     "feedGuid": "c989830b-49a1-572f-9f0e-0fec994a6d5a",
     "itemGuid": "ebe13a73-a250-48ce-b94a-7e1efdaf712b",
-    "title": "Get Your Don't",
+    "title": "Unknown Title",
     "artist": "Way to Go",
     "feedUrl": "https://podcast-index-lookup/c989830b-49a1-572f-9f0e-0fec994a6d5a",
     "feedTitle": "Way to Go",
-    "duration": 217
+    "duration": 180
   },
   {
     "feedGuid": "c989830b-49a1-572f-9f0e-0fec994a6d5a",
@@ -2427,15 +2427,15 @@
     "artist": "Way to Go",
     "feedUrl": "https://podcast-index-lookup/c989830b-49a1-572f-9f0e-0fec994a6d5a",
     "feedTitle": "Way to Go",
-    "duration": 248
+    "duration": 180
   },
   {
     "feedGuid": "c989830b-49a1-572f-9f0e-0fec994a6d5a",
     "itemGuid": "5a29af60-4ff7-4ce3-9a71-4333b799a90d",
-    "title": "Track 271",
-    "artist": "Homegrown Hits Artist",
+    "title": "Nowhere Anywhere",
+    "artist": "Way to Go",
     "feedUrl": "https://podcast-index-lookup/c989830b-49a1-572f-9f0e-0fec994a6d5a",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Way to Go",
     "duration": 180
   },
   {
@@ -2454,7 +2454,7 @@
     "artist": "Way to Go",
     "feedUrl": "https://podcast-index-lookup/c989830b-49a1-572f-9f0e-0fec994a6d5a",
     "feedTitle": "Way to Go",
-    "duration": 194
+    "duration": 180
   },
   {
     "feedGuid": "c989830b-49a1-572f-9f0e-0fec994a6d5a",
@@ -2486,10 +2486,10 @@
   {
     "feedGuid": "04e812f9-1993-5aa1-9ab5-a9cf0cd81e82",
     "itemGuid": "84fd7d0d-434b-4119-ae15-363e716bfee3",
-    "title": "Track 277",
-    "artist": "Homegrown Hits Artist",
+    "title": "Radio",
+    "artist": "Trickster",
     "feedUrl": "https://podcast-index-lookup/04e812f9-1993-5aa1-9ab5-a9cf0cd81e82",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Trickster",
     "duration": 180
   },
   {
@@ -2522,19 +2522,19 @@
   {
     "feedGuid": "f77a481c-36bc-5677-b07a-1b8c3b3ae81a",
     "itemGuid": "76cd1a87-531d-4710-b629-09352d3477a5",
-    "title": "Track 281",
-    "artist": "Homegrown Hits Artist",
+    "title": "Sky Dreams",
+    "artist": "Sky Dreams",
     "feedUrl": "https://podcast-index-lookup/f77a481c-36bc-5677-b07a-1b8c3b3ae81a",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Sky Dreams",
     "duration": 180
   },
   {
     "feedGuid": "8f2a0d0e-c1b9-59ab-85a0-0c69ef62a3aa",
     "itemGuid": "1d458573-9412-5746-867c-845ee6a10501",
-    "title": "Track 282",
-    "artist": "Homegrown Hits Artist",
+    "title": "Breathe Me In",
+    "artist": "Breathe Me In",
     "feedUrl": "https://podcast-index-lookup/8f2a0d0e-c1b9-59ab-85a0-0c69ef62a3aa",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Breathe Me In",
     "duration": 180
   },
   {
@@ -2544,7 +2544,7 @@
     "artist": "Aged Friends & Old Whiskey",
     "feedUrl": "https://podcast-index-lookup/fc815bcf-3639-5395-ba7d-fa217ec93d32",
     "feedTitle": "Aged Friends & Old Whiskey",
-    "duration": 181
+    "duration": 180
   },
   {
     "feedGuid": "749c442d-5d43-50b0-9f7a-0f5cbf0a218a",
@@ -2562,7 +2562,7 @@
     "artist": "deathdreams",
     "feedUrl": "https://podcast-index-lookup/75f0b434-19dc-5959-9920-0fb5304be61b",
     "feedTitle": "deathdreams",
-    "duration": 247
+    "duration": 180
   },
   {
     "feedGuid": "779fff9e-481a-5541-8993-a3b64c194185",
@@ -2571,7 +2571,7 @@
     "artist": "Get Away",
     "feedUrl": "https://podcast-index-lookup/779fff9e-481a-5541-8993-a3b64c194185",
     "feedTitle": "Get Away",
-    "duration": 349
+    "duration": 180
   },
   {
     "feedGuid": "ac3e102d-5cb8-58d0-b37a-3f7cb2d47094",
@@ -2607,7 +2607,7 @@
     "artist": "Winds of Change",
     "feedUrl": "https://podcast-index-lookup/aa3abd8d-f8d4-511a-87c7-1400a8737ac3",
     "feedTitle": "Winds of Change",
-    "duration": 306
+    "duration": 180
   },
   {
     "feedGuid": "15ef0e58-49e5-500c-92d6-8e4802599314",
@@ -2616,7 +2616,7 @@
     "artist": "Goofball Bucket",
     "feedUrl": "https://podcast-index-lookup/15ef0e58-49e5-500c-92d6-8e4802599314",
     "feedTitle": "Goofball Bucket",
-    "duration": 266
+    "duration": 180
   },
   {
     "feedGuid": "95ae3428-d3e4-5db0-8c18-8801a8caa295",
@@ -2630,10 +2630,10 @@
   {
     "feedGuid": "c989830b-49a1-572f-9f0e-0fec994a6d5a",
     "itemGuid": "5a29af60-4ff7-4ce3-9a71-4333b799a90d",
-    "title": "Track 293",
-    "artist": "Homegrown Hits Artist",
+    "title": "Nowhere Anywhere",
+    "artist": "Way to Go",
     "feedUrl": "https://podcast-index-lookup/c989830b-49a1-572f-9f0e-0fec994a6d5a",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Way to Go",
     "duration": 180
   },
   {
@@ -2652,15 +2652,15 @@
     "artist": "Mister Roane County",
     "feedUrl": "https://podcast-index-lookup/826666ad-c321-5431-987f-5921d90d1b2f",
     "feedTitle": "Mister Roane County",
-    "duration": 127
+    "duration": 180
   },
   {
     "feedGuid": "13b9b3e1-0ceb-5bf0-bb0d-ae3e702e6590",
     "itemGuid": "cb16beb2-fef1-50dc-9def-cf11c7b9340e",
-    "title": "Track 296",
-    "artist": "Homegrown Hits Artist",
+    "title": "Suzy Brown",
+    "artist": "Suzy Brown",
     "feedUrl": "https://podcast-index-lookup/13b9b3e1-0ceb-5bf0-bb0d-ae3e702e6590",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Suzy Brown",
     "duration": 180
   },
   {
@@ -2679,7 +2679,7 @@
     "artist": "Qisill",
     "feedUrl": "https://podcast-index-lookup/90412406-f04d-44a2-a33b-8c87e137c291",
     "feedTitle": "Qisill",
-    "duration": 119
+    "duration": 180
   },
   {
     "feedGuid": "839ef11e-8430-5af8-b6dd-bac1a3d76825",
@@ -2697,15 +2697,15 @@
     "artist": "Leather Diamond",
     "feedUrl": "https://podcast-index-lookup/0d5a8efb-e132-5f1b-9ab4-3fd0644dbb30",
     "feedTitle": "Leather Diamond",
-    "duration": 274
+    "duration": 180
   },
   {
     "feedGuid": "749c442d-5d43-50b0-9f7a-0f5cbf0a218a",
     "itemGuid": "a67ef200-b887-4a79-acfe-d11ec1367851",
-    "title": "Track 301",
-    "artist": "Homegrown Hits Artist",
+    "title": "Pickle Popsicle",
+    "artist": "Pickle Popsicle (Single)",
     "feedUrl": "https://podcast-index-lookup/749c442d-5d43-50b0-9f7a-0f5cbf0a218a",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Pickle Popsicle (Single)",
     "duration": 180
   },
   {
@@ -2787,7 +2787,7 @@
     "artist": "Terrible Fight",
     "feedUrl": "https://podcast-index-lookup/8bb8dd8b-8cb4-5bf4-9f89-72ce31ef9072",
     "feedTitle": "Terrible Fight",
-    "duration": 201
+    "duration": 180
   },
   {
     "feedGuid": "ae017039-59ec-52c3-8528-368541b59d97",
@@ -2796,7 +2796,7 @@
     "artist": "no return",
     "feedUrl": "https://podcast-index-lookup/ae017039-59ec-52c3-8528-368541b59d97",
     "feedTitle": "no return",
-    "duration": 281
+    "duration": 180
   },
   {
     "feedGuid": "114f4140-ac60-57fe-a48f-252962024675",
@@ -2832,7 +2832,7 @@
     "artist": "Big Machine",
     "feedUrl": "https://podcast-index-lookup/d3915c44-f8c7-5fa7-9d82-d0c5a85ff2a0",
     "feedTitle": "Big Machine",
-    "duration": 280
+    "duration": 180
   },
   {
     "feedGuid": "04e812f9-1993-5aa1-9ab5-a9cf0cd81e82",
@@ -2882,10 +2882,10 @@
   {
     "feedGuid": "c989830b-49a1-572f-9f0e-0fec994a6d5a",
     "itemGuid": "a31532c5-c78f-4ba1-a4ab-247f9004f80c",
-    "title": "Track 321",
-    "artist": "Homegrown Hits Artist",
+    "title": "Way to Go",
+    "artist": "Way to Go",
     "feedUrl": "https://podcast-index-lookup/c989830b-49a1-572f-9f0e-0fec994a6d5a",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Way to Go",
     "duration": 180
   },
   {
@@ -2904,7 +2904,7 @@
     "artist": "A Busy Day (SINGLE)",
     "feedUrl": "https://podcast-index-lookup/25a4975b-071c-5416-b7d4-88bd9f578a54",
     "feedTitle": "A Busy Day (SINGLE)",
-    "duration": 294
+    "duration": 180
   },
   {
     "feedGuid": "400284cf-5de9-5d93-be3c-aa6f7ed2f9dd",
@@ -2918,10 +2918,10 @@
   {
     "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
     "itemGuid": "6fcae535-09ae-46cc-9d9f-e15cf612bc89",
-    "title": "Track 325",
-    "artist": "Homegrown Hits Artist",
+    "title": "Love On The Radio (early edit)",
+    "artist": "The Heycitizen Experience",
     "feedUrl": "https://podcast-index-lookup/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Heycitizen Experience",
     "duration": 180
   },
   {
@@ -2940,16 +2940,16 @@
     "artist": "Sweet Cheeks",
     "feedUrl": "https://podcast-index-lookup/738b248e-176e-501c-a0ff-eae8c7227228",
     "feedTitle": "Sweet Cheeks",
-    "duration": 221
+    "duration": 180
   },
   {
     "feedGuid": "42cb970f-600d-5282-880b-9b9bb6276801",
     "itemGuid": "7123063d-c6df-52aa-ab31-2d6cf1e6e932",
-    "title": "Let's Be True",
+    "title": "Let&#39;s Be True",
     "artist": "Let's Be True",
     "feedUrl": "https://podcast-index-lookup/42cb970f-600d-5282-880b-9b9bb6276801",
     "feedTitle": "Let's Be True",
-    "duration": 205
+    "duration": 180
   },
   {
     "feedGuid": "69c634ad-afea-5826-ad9a-8e1f06d6470b",
@@ -2990,19 +2990,19 @@
   {
     "feedGuid": "8b41f7f4-2cc3-5a03-90f5-6c54e92bc96b",
     "itemGuid": "b1d0471d-c9dc-4dfe-8c66-1593143c8142",
-    "title": "Marg Simpin'",
+    "title": "Unknown Title",
     "artist": "ovvr not unndr",
     "feedUrl": "https://podcast-index-lookup/8b41f7f4-2cc3-5a03-90f5-6c54e92bc96b",
     "feedTitle": "ovvr not unndr",
-    "duration": 178
+    "duration": 180
   },
   {
     "feedGuid": "acddbb03-064b-5098-87ca-9b146beb12e8",
     "itemGuid": "baa182e9-d088-4cc1-a3f7-e4af48ff112a",
-    "title": "Track 334",
-    "artist": "Homegrown Hits Artist",
+    "title": "Stay Awhile",
+    "artist": "Stay Awhile",
     "feedUrl": "https://podcast-index-lookup/acddbb03-064b-5098-87ca-9b146beb12e8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Stay Awhile",
     "duration": 180
   },
   {
@@ -3012,7 +3012,7 @@
     "artist": "Stay Awhile",
     "feedUrl": "https://podcast-index-lookup/acddbb03-064b-5098-87ca-9b146beb12e8",
     "feedTitle": "Stay Awhile",
-    "duration": 257
+    "duration": 180
   },
   {
     "feedGuid": "bf99e8c3-1f97-558d-bc1d-a4bda04027f7",
@@ -3021,15 +3021,15 @@
     "artist": "Red Wings",
     "feedUrl": "https://podcast-index-lookup/bf99e8c3-1f97-558d-bc1d-a4bda04027f7",
     "feedTitle": "Red Wings",
-    "duration": 301
+    "duration": 180
   },
   {
     "feedGuid": "bf99e8c3-1f97-558d-bc1d-a4bda04027f7",
     "itemGuid": "87bd76d0-077d-48aa-8feb-f032b8d3e075",
-    "title": "Track 337",
-    "artist": "Homegrown Hits Artist",
+    "title": "Thanks for the Pussy Last Night",
+    "artist": "Red Wings",
     "feedUrl": "https://podcast-index-lookup/bf99e8c3-1f97-558d-bc1d-a4bda04027f7",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Red Wings",
     "duration": 180
   },
   {
@@ -3039,15 +3039,15 @@
     "artist": "Coke Dick, Titties & Sarcasm",
     "feedUrl": "https://podcast-index-lookup/f21daf71-4c7b-5fe1-82c6-3a1c2a48c764",
     "feedTitle": "Coke Dick, Titties & Sarcasm",
-    "duration": 251
+    "duration": 180
   },
   {
     "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
     "itemGuid": "b38479ed-e823-418a-8cb1-b8e5c21ca546",
-    "title": "Track 339",
-    "artist": "Homegrown Hits Artist",
+    "title": "How Bout You?",
+    "artist": "The Heycitizen Experience",
     "feedUrl": "https://podcast-index-lookup/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Heycitizen Experience",
     "duration": 180
   },
   {
@@ -3057,15 +3057,15 @@
     "artist": "Matt Bigelow",
     "feedUrl": "https://podcast-index-lookup/76e1f55c-1a5b-55a0-b1da-039e2aa72f6a",
     "feedTitle": "Matt Bigelow",
-    "duration": 235
+    "duration": 180
   },
   {
     "feedGuid": "c989830b-49a1-572f-9f0e-0fec994a6d5a",
     "itemGuid": "a17a2cd5-36ec-4689-a2c3-485d43eafe8a",
-    "title": "Track 341",
-    "artist": "Homegrown Hits Artist",
+    "title": "Ugly Side",
+    "artist": "Way to Go",
     "feedUrl": "https://podcast-index-lookup/c989830b-49a1-572f-9f0e-0fec994a6d5a",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Way to Go",
     "duration": 180
   },
   {
@@ -3084,7 +3084,7 @@
     "artist": "Radio Brigade",
     "feedUrl": "https://podcast-index-lookup/2c5f77fe-25d9-5a2d-97ef-236718c627df",
     "feedTitle": "Radio Brigade",
-    "duration": 318
+    "duration": 180
   },
   {
     "feedGuid": "879febfc-538d-5c10-a34e-a9de5a7666ca",
@@ -3147,15 +3147,15 @@
     "artist": "Penis in the Ocean",
     "feedUrl": "https://podcast-index-lookup/5774ac21-df76-55f1-b8f6-23c683de8012",
     "feedTitle": "Penis in the Ocean",
-    "duration": 154
+    "duration": 180
   },
   {
     "feedGuid": "9906942b-7b18-5ad1-b2ac-57e2cf26c63d",
     "itemGuid": "844c6167-28f8-5a59-8b32-9b85789cf919",
-    "title": "Track 351",
-    "artist": "Homegrown Hits Artist",
+    "title": "The Great Benefic",
+    "artist": "The Great Benefic",
     "feedUrl": "https://podcast-index-lookup/9906942b-7b18-5ad1-b2ac-57e2cf26c63d",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Great Benefic",
     "duration": 180
   },
   {
@@ -3188,10 +3188,10 @@
   {
     "feedGuid": "c989830b-49a1-572f-9f0e-0fec994a6d5a",
     "itemGuid": "a8f3468a-d12c-429e-b96b-fcc6a6494e86",
-    "title": "Track 355",
-    "artist": "Homegrown Hits Artist",
+    "title": "January Shock",
+    "artist": "Way to Go",
     "feedUrl": "https://podcast-index-lookup/c989830b-49a1-572f-9f0e-0fec994a6d5a",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Way to Go",
     "duration": 180
   },
   {
@@ -3237,7 +3237,7 @@
     "artist": "Himalaya",
     "feedUrl": "https://podcast-index-lookup/9c4017a3-5a53-5b3d-b2bd-783fbf2afae9",
     "feedTitle": "Himalaya",
-    "duration": 234
+    "duration": 180
   },
   {
     "feedGuid": "627d8115-8a57-56f1-ba90-612857b9fd35",
@@ -3296,10 +3296,10 @@
   {
     "feedGuid": "bf99e8c3-1f97-558d-bc1d-a4bda04027f7",
     "itemGuid": "f0f15edf-bcfa-4773-b16b-72d99d16f815",
-    "title": "Track 367",
-    "artist": "Homegrown Hits Artist",
+    "title": "Altar of my Balls",
+    "artist": "Red Wings",
     "feedUrl": "https://podcast-index-lookup/bf99e8c3-1f97-558d-bc1d-a4bda04027f7",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Red Wings",
     "duration": 180
   },
   {
@@ -3318,7 +3318,7 @@
     "artist": "The Virus Takes",
     "feedUrl": "https://podcast-index-lookup/d4bd6713-ce91-5420-97d9-f6cbb68687c6",
     "feedTitle": "The Virus Takes",
-    "duration": 264
+    "duration": 180
   },
   {
     "feedGuid": "b39fc3b2-2742-5944-a800-e87c42a093a3",
@@ -3336,15 +3336,15 @@
     "artist": "Pony Up Daddy",
     "feedUrl": "https://podcast-index-lookup/99a14604-f38b-5e9d-8679-9314d1207cd4",
     "feedTitle": "Pony Up Daddy",
-    "duration": 208
+    "duration": 180
   },
   {
     "feedGuid": "5774ac21-df76-55f1-b8f6-23c683de8012",
     "itemGuid": "0b73ae40-b5aa-440e-89a2-b8f8eecc7518",
-    "title": "Track 372",
-    "artist": "Homegrown Hits Artist",
+    "title": "Penis in the Ocean",
+    "artist": "Penis in the Ocean",
     "feedUrl": "https://podcast-index-lookup/5774ac21-df76-55f1-b8f6-23c683de8012",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Penis in the Ocean",
     "duration": 180
   },
   {
@@ -3395,10 +3395,10 @@
   {
     "feedGuid": "fc815bcf-3639-5395-ba7d-fa217ec93d32",
     "itemGuid": "3fd5491f-3e4d-4c1b-a951-bbb59f5d88b1",
-    "title": "Track 378",
-    "artist": "Homegrown Hits Artist",
+    "title": "Montgomery Station",
+    "artist": "Aged Friends & Old Whiskey",
     "feedUrl": "https://podcast-index-lookup/fc815bcf-3639-5395-ba7d-fa217ec93d32",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Aged Friends & Old Whiskey",
     "duration": 180
   },
   {
@@ -3417,7 +3417,7 @@
     "artist": "The Dorian Sessions",
     "feedUrl": "https://podcast-index-lookup/700d1414-c005-5f43-8488-68c80d09bf6a",
     "feedTitle": "The Dorian Sessions",
-    "duration": 405
+    "duration": 180
   },
   {
     "feedGuid": "2b62ef49-fcff-523c-b81a-0a7dde2b0609",
@@ -3426,7 +3426,7 @@
     "artist": "Music From The Doerfel-Verse",
     "feedUrl": "https://podcast-index-lookup/2b62ef49-fcff-523c-b81a-0a7dde2b0609",
     "feedTitle": "Music From The Doerfel-Verse",
-    "duration": 232
+    "duration": 180
   },
   {
     "feedGuid": "f511794d-437f-5cbd-8fcd-c541652a7931",
@@ -3494,10 +3494,10 @@
   {
     "feedGuid": "fc815bcf-3639-5395-ba7d-fa217ec93d32",
     "itemGuid": "1e5e015c-638b-48f9-a656-c1b803cd3493",
-    "title": "Track 389",
-    "artist": "Homegrown Hits Artist",
+    "title": "The Way She Rolls",
+    "artist": "Aged Friends & Old Whiskey",
     "feedUrl": "https://podcast-index-lookup/fc815bcf-3639-5395-ba7d-fa217ec93d32",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Aged Friends & Old Whiskey",
     "duration": 180
   },
   {
@@ -3507,7 +3507,7 @@
     "artist": "ovvr not unndr",
     "feedUrl": "https://podcast-index-lookup/8b41f7f4-2cc3-5a03-90f5-6c54e92bc96b",
     "feedTitle": "ovvr not unndr",
-    "duration": 329
+    "duration": 180
   },
   {
     "feedGuid": "114f4140-ac60-57fe-a48f-252962024675",
@@ -3525,7 +3525,7 @@
     "artist": "If We Stayed Alive",
     "feedUrl": "https://podcast-index-lookup/d67ffeaa-d4cc-5c76-9616-f839aa1b48f3",
     "feedTitle": "If We Stayed Alive",
-    "duration": 183
+    "duration": 180
   },
   {
     "feedGuid": "2a3a5f81-8325-521b-b168-07ff09b15435",
@@ -3602,10 +3602,10 @@
   {
     "feedGuid": "121c26b0-33f8-5cb9-9e14-d706bd3f5db8",
     "itemGuid": "c2747138-3458-4a7d-b5be-7d2c637295bc",
-    "title": "Track 401",
-    "artist": "Homegrown Hits Artist",
+    "title": "Kerouac",
+    "artist": "White Triangles",
     "feedUrl": "https://podcast-index-lookup/121c26b0-33f8-5cb9-9e14-d706bd3f5db8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "White Triangles",
     "duration": 180
   },
   {
@@ -3660,7 +3660,7 @@
     "artist": "Trust in Life",
     "feedUrl": "https://podcast-index-lookup/4b52d66c-4b46-543f-abd3-e7cddecab8f1",
     "feedTitle": "Trust in Life",
-    "duration": 176
+    "duration": 180
   },
   {
     "feedGuid": "15ef0e58-49e5-500c-92d6-8e4802599314",
@@ -3678,7 +3678,7 @@
     "artist": "We Likes To Party",
     "feedUrl": "https://podcast-index-lookup/bedc43eb-bace-5d9d-902c-ea444897d6fa",
     "feedTitle": "We Likes To Party",
-    "duration": 223
+    "duration": 180
   },
   {
     "feedGuid": "31e9d928-80f6-542d-ae47-75b5212d0416",
@@ -3687,7 +3687,7 @@
     "artist": "I'm Hungry",
     "feedUrl": "https://podcast-index-lookup/31e9d928-80f6-542d-ae47-75b5212d0416",
     "feedTitle": "I'm Hungry",
-    "duration": 295
+    "duration": 180
   },
   {
     "feedGuid": "e8c38666-f7f8-5053-b5da-66fc1e29c8c7",
@@ -3714,7 +3714,7 @@
     "artist": "The Thinking Man's Redux",
     "feedUrl": "https://podcast-index-lookup/879febfc-538d-5c10-a34e-a9de5a7666ca",
     "feedTitle": "The Thinking Man's Redux",
-    "duration": 329
+    "duration": 180
   },
   {
     "feedGuid": "c227231c-feca-5b04-8d32-b08634a54258",
@@ -3723,7 +3723,7 @@
     "artist": "Slight Curiosity",
     "feedUrl": "https://podcast-index-lookup/c227231c-feca-5b04-8d32-b08634a54258",
     "feedTitle": "Slight Curiosity",
-    "duration": 182
+    "duration": 180
   },
   {
     "feedGuid": "6df28ecd-8029-59a3-a771-48f37f71e19a",
@@ -3732,24 +3732,24 @@
     "artist": "The Attic and the River",
     "feedUrl": "https://podcast-index-lookup/6df28ecd-8029-59a3-a771-48f37f71e19a",
     "feedTitle": "The Attic and the River",
-    "duration": 282
+    "duration": 180
   },
   {
     "feedGuid": "75f0b434-19dc-5959-9920-0fb5304be61b",
     "itemGuid": "ad80c239-4a23-4eae-bd62-9433b9bf5252",
-    "title": "Track 416",
-    "artist": "Homegrown Hits Artist",
+    "title": "Pie",
+    "artist": "deathdreams",
     "feedUrl": "https://podcast-index-lookup/75f0b434-19dc-5959-9920-0fb5304be61b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "deathdreams",
     "duration": 180
   },
   {
     "feedGuid": "69c634ad-afea-5826-ad9a-8e1f06d6470b",
     "itemGuid": "45cb0eb4-baaa-4925-9de6-80dfa57205f4",
-    "title": "Track 417",
-    "artist": "Homegrown Hits Artist",
+    "title": "First Saw (Feat. ImKidKid)",
+    "artist": "Kurtisdrums",
     "feedUrl": "https://podcast-index-lookup/69c634ad-afea-5826-ad9a-8e1f06d6470b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Kurtisdrums",
     "duration": 180
   },
   {
@@ -3759,7 +3759,7 @@
     "artist": "What Could Go Wrong?",
     "feedUrl": "https://podcast-index-lookup/72f2cafd-0535-5089-a2ff-6a54e396d30e",
     "feedTitle": "What Could Go Wrong?",
-    "duration": 275
+    "duration": 180
   },
   {
     "feedGuid": "f511794d-437f-5cbd-8fcd-c541652a7931",
@@ -3773,10 +3773,10 @@
   {
     "feedGuid": "d67ffeaa-d4cc-5c76-9616-f839aa1b48f3",
     "itemGuid": "bd8cd4e7-0637-4313-b43b-dbfda82e8c53",
-    "title": "Track 420",
-    "artist": "Homegrown Hits Artist",
+    "title": "My Year (This Is Going to Be)",
+    "artist": "If We Stayed Alive",
     "feedUrl": "https://podcast-index-lookup/d67ffeaa-d4cc-5c76-9616-f839aa1b48f3",
-    "feedTitle": "Various Artists",
+    "feedTitle": "If We Stayed Alive",
     "duration": 180
   },
   {
@@ -3800,11 +3800,11 @@
   {
     "feedGuid": "2269829e-8a1d-5f5e-bf61-cd7090d3f174",
     "itemGuid": "752a7534-0001-400f-9e20-a866b0f8c4b5",
-    "title": "Man! It's Christmas",
+    "title": "Unknown Title",
     "artist": "Man! It's Christmas",
     "feedUrl": "https://podcast-index-lookup/2269829e-8a1d-5f5e-bf61-cd7090d3f174",
     "feedTitle": "Man! It's Christmas",
-    "duration": 140
+    "duration": 180
   },
   {
     "feedGuid": "ece6541b-984d-5f8f-aa02-bb6d0bb1d0ca",
@@ -3813,7 +3813,7 @@
     "artist": "My Man Hates Christmas",
     "feedUrl": "https://podcast-index-lookup/ece6541b-984d-5f8f-aa02-bb6d0bb1d0ca",
     "feedTitle": "My Man Hates Christmas",
-    "duration": 191
+    "duration": 180
   },
   {
     "feedGuid": "d6d051f1-16e4-5131-a2f5-c89570a37f8e",
@@ -3822,7 +3822,7 @@
     "artist": "Bryan's Christmas",
     "feedUrl": "https://podcast-index-lookup/d6d051f1-16e4-5131-a2f5-c89570a37f8e",
     "feedTitle": "Bryan's Christmas",
-    "duration": 252
+    "duration": 180
   },
   {
     "feedGuid": "f275657c-4b58-563a-ad3b-91b65035b3d8",
@@ -3876,7 +3876,7 @@
     "artist": "Lionhead",
     "feedUrl": "https://podcast-index-lookup/3d92b2f6-4aac-5f24-bffe-2536eb579286",
     "feedTitle": "Lionhead",
-    "duration": 168
+    "duration": 180
   },
   {
     "feedGuid": "67239977-9d57-5fb2-937d-0c3987fb5c5a",
@@ -3885,7 +3885,7 @@
     "artist": "Christmas Medley",
     "feedUrl": "https://podcast-index-lookup/67239977-9d57-5fb2-937d-0c3987fb5c5a",
     "feedTitle": "Christmas Medley",
-    "duration": 238
+    "duration": 180
   },
   {
     "feedGuid": "61514864-0b81-5de1-9067-05e3205ce859",
@@ -3894,7 +3894,7 @@
     "artist": "Serenity",
     "feedUrl": "https://podcast-index-lookup/61514864-0b81-5de1-9067-05e3205ce859",
     "feedTitle": "Serenity",
-    "duration": 326
+    "duration": 180
   },
   {
     "feedGuid": "75f0b434-19dc-5959-9920-0fb5304be61b",
@@ -3903,7 +3903,7 @@
     "artist": "deathdreams",
     "feedUrl": "https://podcast-index-lookup/75f0b434-19dc-5959-9920-0fb5304be61b",
     "feedTitle": "deathdreams",
-    "duration": 194
+    "duration": 180
   },
   {
     "feedGuid": "b12d3157-1fbd-5afb-b7c8-aa2a4e00ff03",
@@ -3921,7 +3921,7 @@
     "artist": "HeyCitizen's Lo-Fi Hip-Hop Beats to Study and Relax to",
     "feedUrl": "https://podcast-index-lookup/187f22db-79cb-5ac4-aa60-54e424e3915e",
     "feedTitle": "HeyCitizen's Lo-Fi Hip-Hop Beats to Study and Relax to",
-    "duration": 462
+    "duration": 180
   },
   {
     "feedGuid": "7ddfdfb9-cc41-5c27-b1b7-cef7cf40071b",
@@ -3953,10 +3953,10 @@
   {
     "feedGuid": "ae017039-59ec-52c3-8528-368541b59d97",
     "itemGuid": "05ab35c7-dd30-5c99-8ad3-042679f44036",
-    "title": "Track 440",
-    "artist": "Homegrown Hits Artist",
+    "title": "no return",
+    "artist": "no return",
     "feedUrl": "https://podcast-index-lookup/ae017039-59ec-52c3-8528-368541b59d97",
-    "feedTitle": "Various Artists",
+    "feedTitle": "no return",
     "duration": 180
   },
   {
@@ -3966,7 +3966,7 @@
     "artist": "The Death of Rock and Roll",
     "feedUrl": "https://podcast-index-lookup/c73b1a23-1c28-5edb-94c3-10d1745d0877",
     "feedTitle": "The Death of Rock and Roll",
-    "duration": 239
+    "duration": 180
   },
   {
     "feedGuid": "5f6bd882-bd60-4474-99e1-f268256100d9",
@@ -4016,10 +4016,10 @@
   {
     "feedGuid": "3d92b2f6-4aac-5f24-bffe-2536eb579286",
     "itemGuid": "4b0bc998-db1d-4366-97ab-e3d338c658a7",
-    "title": "Track 447",
-    "artist": "Homegrown Hits Artist",
+    "title": "Christmas Day",
+    "artist": "Lionhead",
     "feedUrl": "https://podcast-index-lookup/3d92b2f6-4aac-5f24-bffe-2536eb579286",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Lionhead",
     "duration": 180
   },
   {
@@ -4029,7 +4029,7 @@
     "artist": "Stay Awhile",
     "feedUrl": "https://podcast-index-lookup/acddbb03-064b-5098-87ca-9b146beb12e8",
     "feedTitle": "Stay Awhile",
-    "duration": 206
+    "duration": 180
   },
   {
     "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
@@ -4043,19 +4043,19 @@
   {
     "feedGuid": "67239977-9d57-5fb2-937d-0c3987fb5c5a",
     "itemGuid": "7543ee2c-4306-55b1-85b7-264027df49de",
-    "title": "Track 450",
-    "artist": "Homegrown Hits Artist",
+    "title": "Christmas Medley",
+    "artist": "Christmas Medley",
     "feedUrl": "https://podcast-index-lookup/67239977-9d57-5fb2-937d-0c3987fb5c5a",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Christmas Medley",
     "duration": 180
   },
   {
     "feedGuid": "ece6541b-984d-5f8f-aa02-bb6d0bb1d0ca",
     "itemGuid": "548bd314-5e9a-4374-8eae-529ac5628064",
-    "title": "Track 451",
-    "artist": "Homegrown Hits Artist",
+    "title": "My Man Hates Christmas",
+    "artist": "My Man Hates Christmas",
     "feedUrl": "https://podcast-index-lookup/ece6541b-984d-5f8f-aa02-bb6d0bb1d0ca",
-    "feedTitle": "Various Artists",
+    "feedTitle": "My Man Hates Christmas",
     "duration": 180
   },
   {
@@ -4065,16 +4065,16 @@
     "artist": "Himalaya",
     "feedUrl": "https://podcast-index-lookup/9c4017a3-5a53-5b3d-b2bd-783fbf2afae9",
     "feedTitle": "Himalaya",
-    "duration": 231
+    "duration": 180
   },
   {
     "feedGuid": "3074902b-b2dc-5877-bfc3-30f5df0fbe6a",
     "itemGuid": "c59c7ffe-3847-4d55-ac27-5a1c1fbe6140",
-    "title": "Let Go (What's holding you back)",
+    "title": "Unknown Title",
     "artist": "Let Go (What's holding you back)",
     "feedUrl": "https://podcast-index-lookup/3074902b-b2dc-5877-bfc3-30f5df0fbe6a",
     "feedTitle": "Let Go (What's holding you back)",
-    "duration": 249
+    "duration": 180
   },
   {
     "feedGuid": "4ebbe8cb-8b26-5de8-92f0-3d8ef9e9ce0f",
@@ -4088,10 +4088,10 @@
   {
     "feedGuid": "4b52d66c-4b46-543f-abd3-e7cddecab8f1",
     "itemGuid": "285fe50a-26c7-4127-b270-ad6693b3fd3e",
-    "title": "Track 455",
-    "artist": "Homegrown Hits Artist",
+    "title": "Trust in Life",
+    "artist": "Trust in Life",
     "feedUrl": "https://podcast-index-lookup/4b52d66c-4b46-543f-abd3-e7cddecab8f1",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Trust in Life",
     "duration": 180
   },
   {
@@ -4124,10 +4124,10 @@
   {
     "feedGuid": "ecb8f1a0-9196-5b19-8779-ecefcc419204",
     "itemGuid": "faf08a67-7bf8-5899-80b8-89c53a871139",
-    "title": "Track 459",
-    "artist": "Homegrown Hits Artist",
+    "title": "Numb",
+    "artist": "Numb",
     "feedUrl": "https://podcast-index-lookup/ecb8f1a0-9196-5b19-8779-ecefcc419204",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Numb",
     "duration": 180
   },
   {
@@ -4160,19 +4160,19 @@
   {
     "feedGuid": "afc5df5b-bfce-5843-802d-3c074b06e969",
     "itemGuid": "26646655-b89d-4871-9d5d-9e3b82b9f382",
-    "title": "Track 463",
-    "artist": "Homegrown Hits Artist",
+    "title": "Dance With Me",
+    "artist": "Wild and Free",
     "feedUrl": "https://podcast-index-lookup/afc5df5b-bfce-5843-802d-3c074b06e969",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Wild and Free",
     "duration": 180
   },
   {
     "feedGuid": "aa1e57df-d8aa-5de0-82d8-4f40fac65d7c",
     "itemGuid": "0ec2fc22-e594-59c5-bf5a-91081f0dcd19",
-    "title": "Track 464",
-    "artist": "Homegrown Hits Artist",
+    "title": "The Inner Voice",
+    "artist": "The Inner Voice",
     "feedUrl": "https://podcast-index-lookup/aa1e57df-d8aa-5de0-82d8-4f40fac65d7c",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Inner Voice",
     "duration": 180
   },
   {
@@ -4187,10 +4187,10 @@
   {
     "feedGuid": "acddbb03-064b-5098-87ca-9b146beb12e8",
     "itemGuid": "08ddd646-7adb-49b6-b6df-fbc684622926",
-    "title": "Track 466",
-    "artist": "Homegrown Hits Artist",
+    "title": "One Christmas",
+    "artist": "Stay Awhile",
     "feedUrl": "https://podcast-index-lookup/acddbb03-064b-5098-87ca-9b146beb12e8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Stay Awhile",
     "duration": 180
   },
   {
@@ -4218,7 +4218,7 @@
     "artist": "Titicaca",
     "feedUrl": "https://podcast-index-lookup/77e1364f-3fbe-52ab-8fb3-7c2ef5fea0a0",
     "feedTitle": "Titicaca",
-    "duration": 172
+    "duration": 180
   },
   {
     "feedGuid": "2b62ef49-fcff-523c-b81a-0a7dde2b0609",
@@ -4236,7 +4236,7 @@
     "artist": "Good Morning",
     "feedUrl": "https://podcast-index-lookup/3db6aa74-e382-588c-b4ac-8a237f941515",
     "feedTitle": "Good Morning",
-    "duration": 237
+    "duration": 180
   },
   {
     "feedGuid": "05b0141e-c90d-5ce4-9e49-274dd5029339",
@@ -4245,7 +4245,7 @@
     "artist": "Self​-​Titled",
     "feedUrl": "https://podcast-index-lookup/05b0141e-c90d-5ce4-9e49-274dd5029339",
     "feedTitle": "Self​-​Titled",
-    "duration": 379
+    "duration": 180
   },
   {
     "feedGuid": "fc815bcf-3639-5395-ba7d-fa217ec93d32",
@@ -4259,11 +4259,11 @@
   {
     "feedGuid": "8b4358f8-1c21-5977-8674-d21113719ccf",
     "itemGuid": "d4331b84-2027-4a87-9120-bc7b167ee28c",
-    "title": "All that's Haunting Me",
+    "title": "Unknown Title",
     "artist": "All That's Haunting Me",
     "feedUrl": "https://podcast-index-lookup/8b4358f8-1c21-5977-8674-d21113719ccf",
     "feedTitle": "All That's Haunting Me",
-    "duration": 325
+    "duration": 180
   },
   {
     "feedGuid": "86f9ba78-7c4a-5bd2-a382-c6a88e9a96a0",
@@ -4272,24 +4272,24 @@
     "artist": "Early Demos I",
     "feedUrl": "https://podcast-index-lookup/86f9ba78-7c4a-5bd2-a382-c6a88e9a96a0",
     "feedTitle": "Early Demos I",
-    "duration": 204
+    "duration": 180
   },
   {
     "feedGuid": "c39decf9-973e-564f-b741-0ad2985b3b1c",
     "itemGuid": "a226c29e-9a34-48b9-8894-c5fb4573a957",
-    "title": "Track 476",
-    "artist": "Homegrown Hits Artist",
+    "title": "Joyride",
+    "artist": "Love In Its Purest Form",
     "feedUrl": "https://podcast-index-lookup/c39decf9-973e-564f-b741-0ad2985b3b1c",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Love In Its Purest Form",
     "duration": 180
   },
   {
     "feedGuid": "99a14604-f38b-5e9d-8679-9314d1207cd4",
     "itemGuid": "02f5de9c-3e64-4df5-ac27-03fb6ac612bb",
-    "title": "Track 477",
-    "artist": "Homegrown Hits Artist",
+    "title": "Holy Water",
+    "artist": "Pony Up Daddy",
     "feedUrl": "https://podcast-index-lookup/99a14604-f38b-5e9d-8679-9314d1207cd4",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Pony Up Daddy",
     "duration": 180
   },
   {
@@ -4299,7 +4299,7 @@
     "artist": "Pap Smears Are For Pussies",
     "feedUrl": "https://podcast-index-lookup/29397cc2-4bd3-583e-93b8-9f5aebc3d22b",
     "feedTitle": "Pap Smears Are For Pussies",
-    "duration": 167
+    "duration": 180
   },
   {
     "feedGuid": "378ffb10-c09a-5fe2-a95b-65aa8279e91b",
@@ -4313,10 +4313,10 @@
   {
     "feedGuid": "b328828c-9ba0-5b1d-be33-4cce51968ae1",
     "itemGuid": "d047262b-072e-4527-aa87-fab9e4e44848",
-    "title": "Track 480",
-    "artist": "Homegrown Hits Artist",
+    "title": "Boost Them All!",
+    "artist": "Boost Them All!",
     "feedUrl": "https://podcast-index-lookup/b328828c-9ba0-5b1d-be33-4cce51968ae1",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Boost Them All!",
     "duration": 180
   },
   {
@@ -4326,42 +4326,42 @@
     "artist": "Pap Smears Are For Pussies",
     "feedUrl": "https://podcast-index-lookup/29397cc2-4bd3-583e-93b8-9f5aebc3d22b",
     "feedTitle": "Pap Smears Are For Pussies",
-    "duration": 160
+    "duration": 180
   },
   {
     "feedGuid": "f21daf71-4c7b-5fe1-82c6-3a1c2a48c764",
     "itemGuid": "bec0407e-930c-4f4d-8262-40a986488706",
-    "title": "Track 482",
-    "artist": "Homegrown Hits Artist",
+    "title": "Everyone Peg Your Jeans",
+    "artist": "Coke Dick, Titties & Sarcasm",
     "feedUrl": "https://podcast-index-lookup/f21daf71-4c7b-5fe1-82c6-3a1c2a48c764",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Coke Dick, Titties & Sarcasm",
     "duration": 180
   },
   {
     "feedGuid": "acddbb03-064b-5098-87ca-9b146beb12e8",
     "itemGuid": "baa182e9-d088-4cc1-a3f7-e4af48ff112a",
-    "title": "Track 483",
-    "artist": "Homegrown Hits Artist",
+    "title": "Stay Awhile",
+    "artist": "Stay Awhile",
     "feedUrl": "https://podcast-index-lookup/acddbb03-064b-5098-87ca-9b146beb12e8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Stay Awhile",
     "duration": 180
   },
   {
     "feedGuid": "75f0b434-19dc-5959-9920-0fb5304be61b",
     "itemGuid": "ad80c239-4a23-4eae-bd62-9433b9bf5252",
-    "title": "Track 484",
-    "artist": "Homegrown Hits Artist",
+    "title": "Pie",
+    "artist": "deathdreams",
     "feedUrl": "https://podcast-index-lookup/75f0b434-19dc-5959-9920-0fb5304be61b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "deathdreams",
     "duration": 180
   },
   {
     "feedGuid": "a71b097b-4cf0-5e74-b6a9-1271373bb396",
     "itemGuid": "a45376c3-c8b3-4173-80c4-4cdfa266e0db",
-    "title": "Track 485",
-    "artist": "Homegrown Hits Artist",
+    "title": "The Wait Is Over",
+    "artist": "The Wait Is Over",
     "feedUrl": "https://podcast-index-lookup/a71b097b-4cf0-5e74-b6a9-1271373bb396",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Wait Is Over",
     "duration": 180
   },
   {
@@ -4371,7 +4371,7 @@
     "artist": "The Stables",
     "feedUrl": "https://podcast-index-lookup/c1a77b15-2e9c-5c88-9332-57d709a864c6",
     "feedTitle": "The Stables",
-    "duration": 165
+    "duration": 180
   },
   {
     "feedGuid": "75f0b434-19dc-5959-9920-0fb5304be61b",
@@ -4380,7 +4380,7 @@
     "artist": "deathdreams",
     "feedUrl": "https://podcast-index-lookup/75f0b434-19dc-5959-9920-0fb5304be61b",
     "feedTitle": "deathdreams",
-    "duration": 290
+    "duration": 180
   },
   {
     "feedGuid": "29397cc2-4bd3-583e-93b8-9f5aebc3d22b",
@@ -4389,7 +4389,7 @@
     "artist": "Pap Smears Are For Pussies",
     "feedUrl": "https://podcast-index-lookup/29397cc2-4bd3-583e-93b8-9f5aebc3d22b",
     "feedTitle": "Pap Smears Are For Pussies",
-    "duration": 115
+    "duration": 180
   },
   {
     "feedGuid": "75f0b434-19dc-5959-9920-0fb5304be61b",
@@ -4398,15 +4398,15 @@
     "artist": "deathdreams",
     "feedUrl": "https://podcast-index-lookup/75f0b434-19dc-5959-9920-0fb5304be61b",
     "feedTitle": "deathdreams",
-    "duration": 240
+    "duration": 180
   },
   {
     "feedGuid": "0d6c245c-4b25-571c-8c7d-6a7e0d219427",
     "itemGuid": "5555c343-ed25-4e3a-9add-a53dc25e09cc",
-    "title": "Track 490",
-    "artist": "Homegrown Hits Artist",
+    "title": "Hate Crime My Asshole",
+    "artist": "At Your Cervix",
     "feedUrl": "https://podcast-index-lookup/0d6c245c-4b25-571c-8c7d-6a7e0d219427",
-    "feedTitle": "Various Artists",
+    "feedTitle": "At Your Cervix",
     "duration": 180
   },
   {
@@ -4421,64 +4421,64 @@
   {
     "feedGuid": "acddbb03-064b-5098-87ca-9b146beb12e8",
     "itemGuid": "510f7879-071f-468b-91e1-d9766831bd9d",
-    "title": "Track 492",
-    "artist": "Homegrown Hits Artist",
+    "title": "Willow Brown (ft. Scream Mail)",
+    "artist": "Stay Awhile",
     "feedUrl": "https://podcast-index-lookup/acddbb03-064b-5098-87ca-9b146beb12e8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Stay Awhile",
     "duration": 180
   },
   {
     "feedGuid": "acddbb03-064b-5098-87ca-9b146beb12e8",
     "itemGuid": "08ddd646-7adb-49b6-b6df-fbc684622926",
-    "title": "Track 493",
-    "artist": "Homegrown Hits Artist",
+    "title": "One Christmas",
+    "artist": "Stay Awhile",
     "feedUrl": "https://podcast-index-lookup/acddbb03-064b-5098-87ca-9b146beb12e8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Stay Awhile",
     "duration": 180
   },
   {
     "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
     "itemGuid": "d2346732-acc5-4256-afe5-0a0f3e670e6b",
-    "title": "Track 494",
-    "artist": "Homegrown Hits Artist",
+    "title": "The Platform",
+    "artist": "The Heycitizen Experience",
     "feedUrl": "https://podcast-index-lookup/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Heycitizen Experience",
     "duration": 180
   },
   {
     "feedGuid": "90412406-f04d-44a2-a33b-8c87e137c291",
     "itemGuid": "b14fe324-40de-4b8e-95db-4678d3d72356",
-    "title": "Track 495",
-    "artist": "Homegrown Hits Artist",
+    "title": "Voluntary",
+    "artist": "Qisill",
     "feedUrl": "https://podcast-index-lookup/90412406-f04d-44a2-a33b-8c87e137c291",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Qisill",
     "duration": 180
   },
   {
     "feedGuid": "6c277321-9d2c-5cd2-98b1-f49efcea0602",
     "itemGuid": "8b850466-1a23-4298-b14c-a1099816e9a6",
-    "title": "Track 496",
-    "artist": "Homegrown Hits Artist",
+    "title": "Tiddies In My Face (Single)",
+    "artist": "Tiddies In My Face (Single)",
     "feedUrl": "https://podcast-index-lookup/6c277321-9d2c-5cd2-98b1-f49efcea0602",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Tiddies In My Face (Single)",
     "duration": 180
   },
   {
     "feedGuid": "acddbb03-064b-5098-87ca-9b146beb12e8",
     "itemGuid": "8958b128-e10b-4132-975c-65df41bb45ec",
-    "title": "Track 497",
-    "artist": "Homegrown Hits Artist",
+    "title": "Like Wine",
+    "artist": "Stay Awhile",
     "feedUrl": "https://podcast-index-lookup/acddbb03-064b-5098-87ca-9b146beb12e8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Stay Awhile",
     "duration": 180
   },
   {
     "feedGuid": "121c26b0-33f8-5cb9-9e14-d706bd3f5db8",
     "itemGuid": "7ab94c20-332c-40c6-a60c-f8e5885ce242",
-    "title": "Track 498",
-    "artist": "Homegrown Hits Artist",
+    "title": "White Suit Gold Rings",
+    "artist": "White Triangles",
     "feedUrl": "https://podcast-index-lookup/121c26b0-33f8-5cb9-9e14-d706bd3f5db8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "White Triangles",
     "duration": 180
   },
   {
@@ -4488,7 +4488,7 @@
     "artist": "deathdreams",
     "feedUrl": "https://podcast-index-lookup/75f0b434-19dc-5959-9920-0fb5304be61b",
     "feedTitle": "deathdreams",
-    "duration": 255
+    "duration": 180
   },
   {
     "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
@@ -4502,11 +4502,11 @@
   {
     "feedGuid": "353bc37b-1c94-5997-97a0-3c28f2a45604",
     "itemGuid": "759e54c9-ecbe-4bb4-9543-a39b6150cea4",
-    "title": "When I'm Here",
+    "title": "Unknown Title",
     "artist": "When I'm Here",
     "feedUrl": "https://podcast-index-lookup/353bc37b-1c94-5997-97a0-3c28f2a45604",
     "feedTitle": "When I'm Here",
-    "duration": 173
+    "duration": 180
   },
   {
     "feedGuid": "ef5db97e-a5f3-5375-96a5-ea4749b3e8c3",
@@ -4529,10 +4529,10 @@
   {
     "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
     "itemGuid": "6fcae535-09ae-46cc-9d9f-e15cf612bc89",
-    "title": "Track 504",
-    "artist": "Homegrown Hits Artist",
+    "title": "Love On The Radio (early edit)",
+    "artist": "The Heycitizen Experience",
     "feedUrl": "https://podcast-index-lookup/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Heycitizen Experience",
     "duration": 180
   },
   {
@@ -4542,7 +4542,7 @@
     "artist": "Damn Good Haunting",
     "feedUrl": "https://podcast-index-lookup/b9c92d07-c0ab-5712-b8e1-05f5e4992e3e",
     "feedTitle": "Damn Good Haunting",
-    "duration": 1800
+    "duration": 180
   },
   {
     "feedGuid": "86f9ba78-7c4a-5bd2-a382-c6a88e9a96a0",
@@ -4551,7 +4551,7 @@
     "artist": "Early Demos I",
     "feedUrl": "https://podcast-index-lookup/86f9ba78-7c4a-5bd2-a382-c6a88e9a96a0",
     "feedTitle": "Early Demos I",
-    "duration": 164
+    "duration": 180
   },
   {
     "feedGuid": "ca8c1e63-1e3a-5e7c-9cc8-ef9291f67255",
@@ -4601,10 +4601,10 @@
   {
     "feedGuid": "8b41f7f4-2cc3-5a03-90f5-6c54e92bc96b",
     "itemGuid": "e8983582-6c4d-4e87-9034-6942b8784ec5",
-    "title": "Track 512",
-    "artist": "Homegrown Hits Artist",
+    "title": "A Boofy Movie",
+    "artist": "ovvr not unndr",
     "feedUrl": "https://podcast-index-lookup/8b41f7f4-2cc3-5a03-90f5-6c54e92bc96b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "ovvr not unndr",
     "duration": 180
   },
   {
@@ -4628,10 +4628,10 @@
   {
     "feedGuid": "86f9ba78-7c4a-5bd2-a382-c6a88e9a96a0",
     "itemGuid": "7f523624-222e-42f3-a6c1-4399e9d5b6a0",
-    "title": "Track 515",
-    "artist": "Homegrown Hits Artist",
+    "title": "Six Captains",
+    "artist": "Early Demos I",
     "feedUrl": "https://podcast-index-lookup/86f9ba78-7c4a-5bd2-a382-c6a88e9a96a0",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Early Demos I",
     "duration": 180
   },
   {
@@ -4668,15 +4668,15 @@
     "artist": "The Heycitizen Experience",
     "feedUrl": "https://podcast-index-lookup/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
     "feedTitle": "The Heycitizen Experience",
-    "duration": 279
+    "duration": 180
   },
   {
     "feedGuid": "c227231c-feca-5b04-8d32-b08634a54258",
     "itemGuid": "54169cae-1d9b-5731-b166-3b6db1afa7ce",
-    "title": "Track 520",
-    "artist": "Homegrown Hits Artist",
+    "title": "Slight Curiosity",
+    "artist": "Slight Curiosity",
     "feedUrl": "https://podcast-index-lookup/c227231c-feca-5b04-8d32-b08634a54258",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Slight Curiosity",
     "duration": 180
   },
   {
@@ -4709,10 +4709,10 @@
   {
     "feedGuid": "dbad52b9-6253-4a9b-bfab-246b9e839815",
     "itemGuid": "13b9faaa-357e-4626-9e83-820bcef1cd8e",
-    "title": "Track 524",
-    "artist": "Homegrown Hits Artist",
+    "title": "Day in the Sun",
+    "artist": "Jimmy V - Music",
     "feedUrl": "https://podcast-index-lookup/dbad52b9-6253-4a9b-bfab-246b9e839815",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Jimmy V - Music",
     "duration": 180
   },
   {
@@ -4731,7 +4731,7 @@
     "artist": "The Death of Rock and Roll",
     "feedUrl": "https://podcast-index-lookup/c73b1a23-1c28-5edb-94c3-10d1745d0877",
     "feedTitle": "The Death of Rock and Roll",
-    "duration": 204
+    "duration": 180
   },
   {
     "feedGuid": "05b0141e-c90d-5ce4-9e49-274dd5029339",
@@ -4740,7 +4740,7 @@
     "artist": "Self​-​Titled",
     "feedUrl": "https://podcast-index-lookup/05b0141e-c90d-5ce4-9e49-274dd5029339",
     "feedTitle": "Self​-​Titled",
-    "duration": 280
+    "duration": 180
   },
   {
     "feedGuid": "ef5db97e-a5f3-5375-96a5-ea4749b3e8c3",
@@ -4749,15 +4749,15 @@
     "artist": "Spectral Hiding",
     "feedUrl": "https://podcast-index-lookup/ef5db97e-a5f3-5375-96a5-ea4749b3e8c3",
     "feedTitle": "Spectral Hiding",
-    "duration": 80
+    "duration": 180
   },
   {
     "feedGuid": "879febfc-538d-5c10-a34e-a9de5a7666ca",
     "itemGuid": "e810d24e-3149-540a-a9a8-289e3212ef4e",
-    "title": "Track 529",
-    "artist": "Homegrown Hits Artist",
+    "title": "Que Lastima",
+    "artist": "The Thinking Man's Redux",
     "feedUrl": "https://podcast-index-lookup/879febfc-538d-5c10-a34e-a9de5a7666ca",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Thinking Man's Redux",
     "duration": 180
   },
   {
@@ -4772,19 +4772,19 @@
   {
     "feedGuid": "a1ddf2a4-6466-5af4-95ff-5ead7361e02a",
     "itemGuid": "7b8d13c5-3dff-4190-a09c-dc38d63678eb",
-    "title": "There's Gonna Be (A Fight Tonight)",
+    "title": "Unknown Title",
     "artist": "The Submarines",
     "feedUrl": "https://podcast-index-lookup/a1ddf2a4-6466-5af4-95ff-5ead7361e02a",
     "feedTitle": "The Submarines",
-    "duration": 110
+    "duration": 180
   },
   {
     "feedGuid": "6c277321-9d2c-5cd2-98b1-f49efcea0602",
     "itemGuid": "8b850466-1a23-4298-b14c-a1099816e9a6",
-    "title": "Track 532",
-    "artist": "Homegrown Hits Artist",
+    "title": "Tiddies In My Face (Single)",
+    "artist": "Tiddies In My Face (Single)",
     "feedUrl": "https://podcast-index-lookup/6c277321-9d2c-5cd2-98b1-f49efcea0602",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Tiddies In My Face (Single)",
     "duration": 180
   },
   {
@@ -4794,33 +4794,33 @@
     "artist": "Voyage",
     "feedUrl": "https://podcast-index-lookup/bd545026-4fb5-5cfe-af64-1f6f1d14dd9c",
     "feedTitle": "Voyage",
-    "duration": 457
+    "duration": 180
   },
   {
     "feedGuid": "f4d63bc4-de49-5697-9a8f-75dc9521b1e5",
     "itemGuid": "fe8869d4-a409-4462-bf3f-08272e3136cd",
-    "title": "Slippin'",
+    "title": "Unknown Title",
     "artist": "The World Deserves to Know",
     "feedUrl": "https://podcast-index-lookup/f4d63bc4-de49-5697-9a8f-75dc9521b1e5",
     "feedTitle": "The World Deserves to Know",
-    "duration": 147
+    "duration": 180
   },
   {
     "feedGuid": "29397cc2-4bd3-583e-93b8-9f5aebc3d22b",
     "itemGuid": "6da3cb0b-bb33-480b-b9c6-da83f8e11391",
-    "title": "Track 535",
-    "artist": "Homegrown Hits Artist",
+    "title": "Sami Mary",
+    "artist": "Pap Smears Are For Pussies",
     "feedUrl": "https://podcast-index-lookup/29397cc2-4bd3-583e-93b8-9f5aebc3d22b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Pap Smears Are For Pussies",
     "duration": 180
   },
   {
     "feedGuid": "b9c92d07-c0ab-5712-b8e1-05f5e4992e3e",
     "itemGuid": "5d580bab-8a4a-4cfd-8644-304238c94830",
-    "title": "Track 536",
-    "artist": "Homegrown Hits Artist",
+    "title": "Damn Good Haunting",
+    "artist": "Damn Good Haunting",
     "feedUrl": "https://podcast-index-lookup/b9c92d07-c0ab-5712-b8e1-05f5e4992e3e",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Damn Good Haunting",
     "duration": 180
   },
   {
@@ -4848,7 +4848,7 @@
     "artist": "Stockholm",
     "feedUrl": "https://podcast-index-lookup/07e882cc-690e-544f-bccb-799730b4f3a9",
     "feedTitle": "Stockholm",
-    "duration": 197
+    "duration": 180
   },
   {
     "feedGuid": "2b62ef49-fcff-523c-b81a-0a7dde2b0609",
@@ -4866,24 +4866,24 @@
     "artist": "The Ultimate Album",
     "feedUrl": "https://podcast-index-lookup/19835a35-b7d1-5fee-8d67-a89d996098e1",
     "feedTitle": "The Ultimate Album",
-    "duration": 259
+    "duration": 180
   },
   {
     "feedGuid": "879febfc-538d-5c10-a34e-a9de5a7666ca",
     "itemGuid": "46bb371c-1ae5-57f8-a8ab-c12d81d0e584",
-    "title": "Track 542",
-    "artist": "Homegrown Hits Artist",
+    "title": "The End of an Era",
+    "artist": "The Thinking Man's Redux",
     "feedUrl": "https://podcast-index-lookup/879febfc-538d-5c10-a34e-a9de5a7666ca",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Thinking Man's Redux",
     "duration": 180
   },
   {
     "feedGuid": "75f0b434-19dc-5959-9920-0fb5304be61b",
     "itemGuid": "58f0d461-7ff0-4abc-bb04-3919cabf61a8",
-    "title": "Track 543",
-    "artist": "Homegrown Hits Artist",
+    "title": "Blood Perfume",
+    "artist": "deathdreams",
     "feedUrl": "https://podcast-index-lookup/75f0b434-19dc-5959-9920-0fb5304be61b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "deathdreams",
     "duration": 180
   },
   {
@@ -4898,64 +4898,64 @@
   {
     "feedGuid": "acddbb03-064b-5098-87ca-9b146beb12e8",
     "itemGuid": "510f7879-071f-468b-91e1-d9766831bd9d",
-    "title": "Track 545",
-    "artist": "Homegrown Hits Artist",
+    "title": "Willow Brown (ft. Scream Mail)",
+    "artist": "Stay Awhile",
     "feedUrl": "https://podcast-index-lookup/acddbb03-064b-5098-87ca-9b146beb12e8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Stay Awhile",
     "duration": 180
   },
   {
     "feedGuid": "b9c92d07-c0ab-5712-b8e1-05f5e4992e3e",
     "itemGuid": "5d580bab-8a4a-4cfd-8644-304238c94830",
-    "title": "Track 546",
-    "artist": "Homegrown Hits Artist",
+    "title": "Damn Good Haunting",
+    "artist": "Damn Good Haunting",
     "feedUrl": "https://podcast-index-lookup/b9c92d07-c0ab-5712-b8e1-05f5e4992e3e",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Damn Good Haunting",
     "duration": 180
   },
   {
     "feedGuid": "6c277321-9d2c-5cd2-98b1-f49efcea0602",
     "itemGuid": "8b850466-1a23-4298-b14c-a1099816e9a6",
-    "title": "Track 547",
-    "artist": "Homegrown Hits Artist",
+    "title": "Tiddies In My Face (Single)",
+    "artist": "Tiddies In My Face (Single)",
     "feedUrl": "https://podcast-index-lookup/6c277321-9d2c-5cd2-98b1-f49efcea0602",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Tiddies In My Face (Single)",
     "duration": 180
   },
   {
     "feedGuid": "c39decf9-973e-564f-b741-0ad2985b3b1c",
     "itemGuid": "a226c29e-9a34-48b9-8894-c5fb4573a957",
-    "title": "Track 548",
-    "artist": "Homegrown Hits Artist",
+    "title": "Joyride",
+    "artist": "Love In Its Purest Form",
     "feedUrl": "https://podcast-index-lookup/c39decf9-973e-564f-b741-0ad2985b3b1c",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Love In Its Purest Form",
     "duration": 180
   },
   {
     "feedGuid": "05b0141e-c90d-5ce4-9e49-274dd5029339",
     "itemGuid": "9af75b89-38e1-4edf-ba5b-8354728b0c4d",
-    "title": "Track 549",
-    "artist": "Homegrown Hits Artist",
+    "title": "Jabu",
+    "artist": "Self​-​Titled",
     "feedUrl": "https://podcast-index-lookup/05b0141e-c90d-5ce4-9e49-274dd5029339",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Self​-​Titled",
     "duration": 180
   },
   {
     "feedGuid": "ef5db97e-a5f3-5375-96a5-ea4749b3e8c3",
     "itemGuid": "a05461b7-a768-46e8-996c-4dd8c36d78b1",
-    "title": "Track 550",
-    "artist": "Homegrown Hits Artist",
+    "title": "Tune In, drop out",
+    "artist": "Spectral Hiding",
     "feedUrl": "https://podcast-index-lookup/ef5db97e-a5f3-5375-96a5-ea4749b3e8c3",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Spectral Hiding",
     "duration": 180
   },
   {
     "feedGuid": "879febfc-538d-5c10-a34e-a9de5a7666ca",
     "itemGuid": "e810d24e-3149-540a-a9a8-289e3212ef4e",
-    "title": "Track 551",
-    "artist": "Homegrown Hits Artist",
+    "title": "Que Lastima",
+    "artist": "The Thinking Man's Redux",
     "feedUrl": "https://podcast-index-lookup/879febfc-538d-5c10-a34e-a9de5a7666ca",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Thinking Man's Redux",
     "duration": 180
   },
   {
@@ -4979,19 +4979,19 @@
   {
     "feedGuid": "6c277321-9d2c-5cd2-98b1-f49efcea0602",
     "itemGuid": "8b850466-1a23-4298-b14c-a1099816e9a6",
-    "title": "Track 554",
-    "artist": "Homegrown Hits Artist",
+    "title": "Tiddies In My Face (Single)",
+    "artist": "Tiddies In My Face (Single)",
     "feedUrl": "https://podcast-index-lookup/6c277321-9d2c-5cd2-98b1-f49efcea0602",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Tiddies In My Face (Single)",
     "duration": 180
   },
   {
     "feedGuid": "bd545026-4fb5-5cfe-af64-1f6f1d14dd9c",
     "itemGuid": "90a038ac-7058-5f0f-885d-3c797c1657b9",
-    "title": "Track 555",
-    "artist": "Homegrown Hits Artist",
+    "title": "Voyage",
+    "artist": "Voyage",
     "feedUrl": "https://podcast-index-lookup/bd545026-4fb5-5cfe-af64-1f6f1d14dd9c",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Voyage",
     "duration": 180
   },
   {
@@ -5006,19 +5006,19 @@
   {
     "feedGuid": "29397cc2-4bd3-583e-93b8-9f5aebc3d22b",
     "itemGuid": "6da3cb0b-bb33-480b-b9c6-da83f8e11391",
-    "title": "Track 557",
-    "artist": "Homegrown Hits Artist",
+    "title": "Sami Mary",
+    "artist": "Pap Smears Are For Pussies",
     "feedUrl": "https://podcast-index-lookup/29397cc2-4bd3-583e-93b8-9f5aebc3d22b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Pap Smears Are For Pussies",
     "duration": 180
   },
   {
     "feedGuid": "b9c92d07-c0ab-5712-b8e1-05f5e4992e3e",
     "itemGuid": "5d580bab-8a4a-4cfd-8644-304238c94830",
-    "title": "Track 558",
-    "artist": "Homegrown Hits Artist",
+    "title": "Damn Good Haunting",
+    "artist": "Damn Good Haunting",
     "feedUrl": "https://podcast-index-lookup/b9c92d07-c0ab-5712-b8e1-05f5e4992e3e",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Damn Good Haunting",
     "duration": 180
   },
   {
@@ -5091,7 +5091,7 @@
     "artist": "Qisill",
     "feedUrl": "https://podcast-index-lookup/90412406-f04d-44a2-a33b-8c87e137c291",
     "feedTitle": "Qisill",
-    "duration": 244
+    "duration": 180
   },
   {
     "feedGuid": "75d02f1d-604c-5d31-a9e6-5a3da0ae591e",
@@ -5141,10 +5141,10 @@
   {
     "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
     "itemGuid": "ae81976d-a05e-4ff9-9adf-cdb11a33fff9",
-    "title": "Track 572",
-    "artist": "Homegrown Hits Artist",
+    "title": "Porkchops Fried",
+    "artist": "The Heycitizen Experience",
     "feedUrl": "https://podcast-index-lookup/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Heycitizen Experience",
     "duration": 180
   },
   {
@@ -5154,24 +5154,24 @@
     "artist": "At Your Cervix",
     "feedUrl": "https://podcast-index-lookup/0d6c245c-4b25-571c-8c7d-6a7e0d219427",
     "feedTitle": "At Your Cervix",
-    "duration": 158
+    "duration": 180
   },
   {
     "feedGuid": "f842b7c8-9f12-54f2-a0b8-4f95c63dad4c",
     "itemGuid": "ec6d696b-a580-5fdd-9049-a977501cb012",
-    "title": "Track 574",
-    "artist": "Homegrown Hits Artist",
+    "title": "Mr. Videoman",
+    "artist": "Mr. Videoman",
     "feedUrl": "https://podcast-index-lookup/f842b7c8-9f12-54f2-a0b8-4f95c63dad4c",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Mr. Videoman",
     "duration": 180
   },
   {
     "feedGuid": "25a4975b-071c-5416-b7d4-88bd9f578a54",
     "itemGuid": "b4f5275e-7797-4193-adcc-f5534c2c6d83",
-    "title": "Track 575",
-    "artist": "Homegrown Hits Artist",
+    "title": "A Busy Day",
+    "artist": "A Busy Day (SINGLE)",
     "feedUrl": "https://podcast-index-lookup/25a4975b-071c-5416-b7d4-88bd9f578a54",
-    "feedTitle": "Various Artists",
+    "feedTitle": "A Busy Day (SINGLE)",
     "duration": 180
   },
   {
@@ -5195,10 +5195,10 @@
   {
     "feedGuid": "6c277321-9d2c-5cd2-98b1-f49efcea0602",
     "itemGuid": "8b850466-1a23-4298-b14c-a1099816e9a6",
-    "title": "Track 578",
-    "artist": "Homegrown Hits Artist",
+    "title": "Tiddies In My Face (Single)",
+    "artist": "Tiddies In My Face (Single)",
     "feedUrl": "https://podcast-index-lookup/6c277321-9d2c-5cd2-98b1-f49efcea0602",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Tiddies In My Face (Single)",
     "duration": 180
   },
   {
@@ -5258,10 +5258,10 @@
   {
     "feedGuid": "121c26b0-33f8-5cb9-9e14-d706bd3f5db8",
     "itemGuid": "51c64565-b2f3-418a-a85f-51ba5c7095e2",
-    "title": "Track 585",
-    "artist": "Homegrown Hits Artist",
+    "title": "Pitiful",
+    "artist": "White Triangles",
     "feedUrl": "https://podcast-index-lookup/121c26b0-33f8-5cb9-9e14-d706bd3f5db8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "White Triangles",
     "duration": 180
   },
   {
@@ -5303,10 +5303,10 @@
   {
     "feedGuid": "879febfc-538d-5c10-a34e-a9de5a7666ca",
     "itemGuid": "46bb371c-1ae5-57f8-a8ab-c12d81d0e584",
-    "title": "Track 590",
-    "artist": "Homegrown Hits Artist",
+    "title": "The End of an Era",
+    "artist": "The Thinking Man's Redux",
     "feedUrl": "https://podcast-index-lookup/879febfc-538d-5c10-a34e-a9de5a7666ca",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Thinking Man's Redux",
     "duration": 180
   },
   {
@@ -5366,10 +5366,10 @@
   {
     "feedGuid": "a1cd65ae-424d-5b88-a8d6-e95221f2d41a",
     "itemGuid": "98e20d45-0ca6-4d7d-8aff-a07961197b20",
-    "title": "Track 597",
-    "artist": "Homegrown Hits Artist",
+    "title": "Beauty",
+    "artist": "Beauty",
     "feedUrl": "https://podcast-index-lookup/a1cd65ae-424d-5b88-a8d6-e95221f2d41a",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Beauty",
     "duration": 180
   },
   {
@@ -5393,19 +5393,19 @@
   {
     "feedGuid": "29397cc2-4bd3-583e-93b8-9f5aebc3d22b",
     "itemGuid": "dc557dfe-11d0-4a46-aa73-d75a08676f2b",
-    "title": "Track 600",
-    "artist": "Homegrown Hits Artist",
+    "title": "Good Girls",
+    "artist": "Pap Smears Are For Pussies",
     "feedUrl": "https://podcast-index-lookup/29397cc2-4bd3-583e-93b8-9f5aebc3d22b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Pap Smears Are For Pussies",
     "duration": 180
   },
   {
     "feedGuid": "970cd229-dd92-5ba9-9356-00cd23c261f4",
     "itemGuid": "27c735f0-23b9-4f47-9d33-12687e90e75a",
-    "title": "Track 601",
-    "artist": "Homegrown Hits Artist",
+    "title": "The Impossible Dream",
+    "artist": "Midwestern Apathy",
     "feedUrl": "https://podcast-index-lookup/970cd229-dd92-5ba9-9356-00cd23c261f4",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Midwestern Apathy",
     "duration": 180
   },
   {
@@ -5424,7 +5424,7 @@
     "artist": "Peach Clouds",
     "feedUrl": "https://podcast-index-lookup/e08ba325-55ca-5375-9e49-f86922b97a1e",
     "feedTitle": "Peach Clouds",
-    "duration": 260
+    "duration": 180
   },
   {
     "feedGuid": "2514d117-8a84-5345-82e8-8ed7b940cf1f",
@@ -5438,19 +5438,19 @@
   {
     "feedGuid": "d4bd6713-ce91-5420-97d9-f6cbb68687c6",
     "itemGuid": "737958a6-9d6c-44df-ae35-db190bcc5ddc",
-    "title": "Track 605",
-    "artist": "Homegrown Hits Artist",
+    "title": "Mr. Marlboro",
+    "artist": "The Virus Takes",
     "feedUrl": "https://podcast-index-lookup/d4bd6713-ce91-5420-97d9-f6cbb68687c6",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Virus Takes",
     "duration": 180
   },
   {
     "feedGuid": "f21daf71-4c7b-5fe1-82c6-3a1c2a48c764",
     "itemGuid": "bec0407e-930c-4f4d-8262-40a986488706",
-    "title": "Track 606",
-    "artist": "Homegrown Hits Artist",
+    "title": "Everyone Peg Your Jeans",
+    "artist": "Coke Dick, Titties & Sarcasm",
     "feedUrl": "https://podcast-index-lookup/f21daf71-4c7b-5fe1-82c6-3a1c2a48c764",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Coke Dick, Titties & Sarcasm",
     "duration": 180
   },
   {
@@ -5460,51 +5460,51 @@
     "artist": "Love In Its Purest Form",
     "feedUrl": "https://podcast-index-lookup/c39decf9-973e-564f-b741-0ad2985b3b1c",
     "feedTitle": "Love In Its Purest Form",
-    "duration": 227
+    "duration": 180
   },
   {
     "feedGuid": "75f0b434-19dc-5959-9920-0fb5304be61b",
     "itemGuid": "640abac0-697e-4702-8871-48438c3e3138",
-    "title": "Track 608",
-    "artist": "Homegrown Hits Artist",
+    "title": "Lady Neptune",
+    "artist": "deathdreams",
     "feedUrl": "https://podcast-index-lookup/75f0b434-19dc-5959-9920-0fb5304be61b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "deathdreams",
     "duration": 180
   },
   {
     "feedGuid": "e7928a82-6bc1-5363-879b-a324992239dd",
     "itemGuid": "bd13a889-82f2-4937-8c70-5a85df71adab",
-    "title": "Track 609",
-    "artist": "Homegrown Hits Artist",
+    "title": "NakamoTool - Right In Two",
+    "artist": "Pleb Tunes by Brrreadfan",
     "feedUrl": "https://podcast-index-lookup/e7928a82-6bc1-5363-879b-a324992239dd",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Pleb Tunes by Brrreadfan",
     "duration": 180
   },
   {
     "feedGuid": "187f22db-79cb-5ac4-aa60-54e424e3915e",
     "itemGuid": "17313b1e-3585-4bfa-9fb4-288636b84313",
-    "title": "Track 610",
-    "artist": "Homegrown Hits Artist",
+    "title": "The Platform (lofi beats mix)",
+    "artist": "HeyCitizen's Lo-Fi Hip-Hop Beats to Study and Relax to",
     "feedUrl": "https://podcast-index-lookup/187f22db-79cb-5ac4-aa60-54e424e3915e",
-    "feedTitle": "Various Artists",
+    "feedTitle": "HeyCitizen's Lo-Fi Hip-Hop Beats to Study and Relax to",
     "duration": 180
   },
   {
     "feedGuid": "bf99e8c3-1f97-558d-bc1d-a4bda04027f7",
     "itemGuid": "f0f15edf-bcfa-4773-b16b-72d99d16f815",
-    "title": "Track 611",
-    "artist": "Homegrown Hits Artist",
+    "title": "Altar of my Balls",
+    "artist": "Red Wings",
     "feedUrl": "https://podcast-index-lookup/bf99e8c3-1f97-558d-bc1d-a4bda04027f7",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Red Wings",
     "duration": 180
   },
   {
     "feedGuid": "acddbb03-064b-5098-87ca-9b146beb12e8",
     "itemGuid": "510f7879-071f-468b-91e1-d9766831bd9d",
-    "title": "Track 612",
-    "artist": "Homegrown Hits Artist",
+    "title": "Willow Brown (ft. Scream Mail)",
+    "artist": "Stay Awhile",
     "feedUrl": "https://podcast-index-lookup/acddbb03-064b-5098-87ca-9b146beb12e8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Stay Awhile",
     "duration": 180
   },
   {
@@ -5519,10 +5519,10 @@
   {
     "feedGuid": "3db6aa74-e382-588c-b4ac-8a237f941515",
     "itemGuid": "36d3103e-e0e2-4cf9-ad27-074fc2079946",
-    "title": "Track 614",
-    "artist": "Homegrown Hits Artist",
+    "title": "What They Say",
+    "artist": "Good Morning",
     "feedUrl": "https://podcast-index-lookup/3db6aa74-e382-588c-b4ac-8a237f941515",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Good Morning",
     "duration": 180
   },
   {
@@ -5600,10 +5600,10 @@
   {
     "feedGuid": "acddbb03-064b-5098-87ca-9b146beb12e8",
     "itemGuid": "baa182e9-d088-4cc1-a3f7-e4af48ff112a",
-    "title": "Track 623",
-    "artist": "Homegrown Hits Artist",
+    "title": "Stay Awhile",
+    "artist": "Stay Awhile",
     "feedUrl": "https://podcast-index-lookup/acddbb03-064b-5098-87ca-9b146beb12e8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Stay Awhile",
     "duration": 180
   },
   {
@@ -5658,7 +5658,7 @@
     "artist": "Stay Awhile",
     "feedUrl": "https://podcast-index-lookup/acddbb03-064b-5098-87ca-9b146beb12e8",
     "feedTitle": "Stay Awhile",
-    "duration": 96
+    "duration": 180
   },
   {
     "feedGuid": "7d092391-4608-5117-a7db-86fedb490ac4",
@@ -5690,28 +5690,28 @@
   {
     "feedGuid": "90412406-f04d-44a2-a33b-8c87e137c291",
     "itemGuid": "b14fe324-40de-4b8e-95db-4678d3d72356",
-    "title": "Track 633",
-    "artist": "Homegrown Hits Artist",
+    "title": "Voluntary",
+    "artist": "Qisill",
     "feedUrl": "https://podcast-index-lookup/90412406-f04d-44a2-a33b-8c87e137c291",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Qisill",
     "duration": 180
   },
   {
     "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
     "itemGuid": "ac34129c-c78a-463e-a64f-01405e1f2be4",
-    "title": "Track 634",
-    "artist": "Homegrown Hits Artist",
+    "title": "To be in Nashville",
+    "artist": "The Heycitizen Experience",
     "feedUrl": "https://podcast-index-lookup/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Heycitizen Experience",
     "duration": 180
   },
   {
     "feedGuid": "42cb970f-600d-5282-880b-9b9bb6276801",
     "itemGuid": "7123063d-c6df-52aa-ab31-2d6cf1e6e932",
-    "title": "Track 635",
-    "artist": "Homegrown Hits Artist",
+    "title": "Let&#39;s Be True",
+    "artist": "Let's Be True",
     "feedUrl": "https://podcast-index-lookup/42cb970f-600d-5282-880b-9b9bb6276801",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Let's Be True",
     "duration": 180
   },
   {
@@ -5744,10 +5744,10 @@
   {
     "feedGuid": "c39decf9-973e-564f-b741-0ad2985b3b1c",
     "itemGuid": "2853f702-c1b5-4fd1-8e30-ad1c36453f33",
-    "title": "Track 639",
-    "artist": "Homegrown Hits Artist",
+    "title": "Raining In The House",
+    "artist": "Love In Its Purest Form",
     "feedUrl": "https://podcast-index-lookup/c39decf9-973e-564f-b741-0ad2985b3b1c",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Love In Its Purest Form",
     "duration": 180
   },
   {
@@ -5766,15 +5766,15 @@
     "artist": "S.O.M.",
     "feedUrl": "https://podcast-index-lookup/a5ad6f3f-a279-504c-bc6a-30054e6b50e1",
     "feedTitle": "S.O.M.",
-    "duration": 177
+    "duration": 180
   },
   {
     "feedGuid": "b328828c-9ba0-5b1d-be33-4cce51968ae1",
     "itemGuid": "d047262b-072e-4527-aa87-fab9e4e44848",
-    "title": "Track 642",
-    "artist": "Homegrown Hits Artist",
+    "title": "Boost Them All!",
+    "artist": "Boost Them All!",
     "feedUrl": "https://podcast-index-lookup/b328828c-9ba0-5b1d-be33-4cce51968ae1",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Boost Them All!",
     "duration": 180
   },
   {
@@ -5802,15 +5802,15 @@
     "artist": "now i feel it",
     "feedUrl": "https://podcast-index-lookup/57676ff4-82f4-589f-b8e7-d20e50e2dff9",
     "feedTitle": "now i feel it",
-    "duration": 182
+    "duration": 180
   },
   {
     "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
     "itemGuid": "ac34129c-c78a-463e-a64f-01405e1f2be4",
-    "title": "Track 646",
-    "artist": "Homegrown Hits Artist",
+    "title": "To be in Nashville",
+    "artist": "The Heycitizen Experience",
     "feedUrl": "https://podcast-index-lookup/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Heycitizen Experience",
     "duration": 180
   },
   {
@@ -5825,19 +5825,19 @@
   {
     "feedGuid": "2c5f77fe-25d9-5a2d-97ef-236718c627df",
     "itemGuid": "85d91ec7-8b8c-4e03-aeef-b03f30e2a4ed",
-    "title": "Track 648",
-    "artist": "Homegrown Hits Artist",
+    "title": "Crop Circles",
+    "artist": "Radio Brigade",
     "feedUrl": "https://podcast-index-lookup/2c5f77fe-25d9-5a2d-97ef-236718c627df",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Radio Brigade",
     "duration": 180
   },
   {
     "feedGuid": "e745b541-8bc1-42b5-9d2d-5c3a67817d47",
     "itemGuid": "d9f4fc8c-30f5-4406-8d93-5ebf2384905f",
-    "title": "Track 649",
-    "artist": "Homegrown Hits Artist",
+    "title": "Cold Fusion Reborn",
+    "artist": "44",
     "feedUrl": "https://podcast-index-lookup/e745b541-8bc1-42b5-9d2d-5c3a67817d47",
-    "feedTitle": "Various Artists",
+    "feedTitle": "44",
     "duration": 180
   },
   {
@@ -5865,16 +5865,16 @@
     "artist": "Good Morning",
     "feedUrl": "https://podcast-index-lookup/3db6aa74-e382-588c-b4ac-8a237f941515",
     "feedTitle": "Good Morning",
-    "duration": 233
+    "duration": 180
   },
   {
     "feedGuid": "afc5df5b-bfce-5843-802d-3c074b06e969",
     "itemGuid": "8b51f93d-a81e-4eef-b340-b04de8f6e80e",
-    "title": "Where There's a Will There's a Way",
+    "title": "Unknown Title",
     "artist": "Wild and Free",
     "feedUrl": "https://podcast-index-lookup/afc5df5b-bfce-5843-802d-3c074b06e969",
     "feedTitle": "Wild and Free",
-    "duration": 238
+    "duration": 180
   },
   {
     "feedGuid": "3c362e7d-663b-5f5e-9736-71ca7dd653f9",
@@ -5892,7 +5892,7 @@
     "artist": "Panzee",
     "feedUrl": "https://podcast-index-lookup/680882f9-f371-5eeb-bd90-6767d528854f",
     "feedTitle": "Panzee",
-    "duration": 175
+    "duration": 180
   },
   {
     "feedGuid": "e45c294a-64f4-5c42-b452-47d6b92091b4",
@@ -5946,15 +5946,15 @@
     "artist": "The Heycitizen Experience",
     "feedUrl": "https://podcast-index-lookup/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
     "feedTitle": "The Heycitizen Experience",
-    "duration": 213
+    "duration": 180
   },
   {
     "feedGuid": "0d6c245c-4b25-571c-8c7d-6a7e0d219427",
     "itemGuid": "5555c343-ed25-4e3a-9add-a53dc25e09cc",
-    "title": "Track 662",
-    "artist": "Homegrown Hits Artist",
+    "title": "Hate Crime My Asshole",
+    "artist": "At Your Cervix",
     "feedUrl": "https://podcast-index-lookup/0d6c245c-4b25-571c-8c7d-6a7e0d219427",
-    "feedTitle": "Various Artists",
+    "feedTitle": "At Your Cervix",
     "duration": 180
   },
   {
@@ -5964,24 +5964,24 @@
     "artist": "Keep Searching",
     "feedUrl": "https://podcast-index-lookup/6eb0aab5-d5f0-5014-ba84-3de5609d0f21",
     "feedTitle": "Keep Searching",
-    "duration": 188
+    "duration": 180
   },
   {
     "feedGuid": "bf99e8c3-1f97-558d-bc1d-a4bda04027f7",
     "itemGuid": "87bd76d0-077d-48aa-8feb-f032b8d3e075",
-    "title": "Track 664",
-    "artist": "Homegrown Hits Artist",
+    "title": "Thanks for the Pussy Last Night",
+    "artist": "Red Wings",
     "feedUrl": "https://podcast-index-lookup/bf99e8c3-1f97-558d-bc1d-a4bda04027f7",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Red Wings",
     "duration": 180
   },
   {
     "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
     "itemGuid": "d2346732-acc5-4256-afe5-0a0f3e670e6b",
-    "title": "Track 665",
-    "artist": "Homegrown Hits Artist",
+    "title": "The Platform",
+    "artist": "The Heycitizen Experience",
     "feedUrl": "https://podcast-index-lookup/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Heycitizen Experience",
     "duration": 180
   },
   {
@@ -5996,10 +5996,10 @@
   {
     "feedGuid": "a71b097b-4cf0-5e74-b6a9-1271373bb396",
     "itemGuid": "a45376c3-c8b3-4173-80c4-4cdfa266e0db",
-    "title": "Track 667",
-    "artist": "Homegrown Hits Artist",
+    "title": "The Wait Is Over",
+    "artist": "The Wait Is Over",
     "feedUrl": "https://podcast-index-lookup/a71b097b-4cf0-5e74-b6a9-1271373bb396",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Wait Is Over",
     "duration": 180
   },
   {
@@ -6014,19 +6014,19 @@
   {
     "feedGuid": "fc815bcf-3639-5395-ba7d-fa217ec93d32",
     "itemGuid": "b6e5fe83-267b-472e-b86e-1190e1fbea93",
-    "title": "I'm Coming Home Today",
+    "title": "Unknown Title",
     "artist": "Aged Friends & Old Whiskey",
     "feedUrl": "https://podcast-index-lookup/fc815bcf-3639-5395-ba7d-fa217ec93d32",
     "feedTitle": "Aged Friends & Old Whiskey",
-    "duration": 205
+    "duration": 180
   },
   {
     "feedGuid": "bedc43eb-bace-5d9d-902c-ea444897d6fa",
     "itemGuid": "a7ffcbc5-01ef-4d9e-a1be-ecc45d67376c",
-    "title": "Track 670",
-    "artist": "Homegrown Hits Artist",
+    "title": "We Likes to Party",
+    "artist": "We Likes To Party",
     "feedUrl": "https://podcast-index-lookup/bedc43eb-bace-5d9d-902c-ea444897d6fa",
-    "feedTitle": "Various Artists",
+    "feedTitle": "We Likes To Party",
     "duration": 180
   },
   {
@@ -6036,15 +6036,15 @@
     "artist": "Qisill",
     "feedUrl": "https://podcast-index-lookup/90412406-f04d-44a2-a33b-8c87e137c291",
     "feedTitle": "Qisill",
-    "duration": 555
+    "duration": 180
   },
   {
     "feedGuid": "acddbb03-064b-5098-87ca-9b146beb12e8",
     "itemGuid": "8958b128-e10b-4132-975c-65df41bb45ec",
-    "title": "Track 672",
-    "artist": "Homegrown Hits Artist",
+    "title": "Like Wine",
+    "artist": "Stay Awhile",
     "feedUrl": "https://podcast-index-lookup/acddbb03-064b-5098-87ca-9b146beb12e8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Stay Awhile",
     "duration": 180
   },
   {
@@ -6054,15 +6054,15 @@
     "artist": "That Duck",
     "feedUrl": "https://podcast-index-lookup/cb086537-5673-57a8-9c78-72542da2a7d4",
     "feedTitle": "That Duck",
-    "duration": 129
+    "duration": 180
   },
   {
     "feedGuid": "121c26b0-33f8-5cb9-9e14-d706bd3f5db8",
     "itemGuid": "7ab94c20-332c-40c6-a60c-f8e5885ce242",
-    "title": "Track 674",
-    "artist": "Homegrown Hits Artist",
+    "title": "White Suit Gold Rings",
+    "artist": "White Triangles",
     "feedUrl": "https://podcast-index-lookup/121c26b0-33f8-5cb9-9e14-d706bd3f5db8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "White Triangles",
     "duration": 180
   },
   {
@@ -6086,10 +6086,10 @@
   {
     "feedGuid": "c39decf9-973e-564f-b741-0ad2985b3b1c",
     "itemGuid": "c7c78888-ba24-4852-9763-2f21e66340ca",
-    "title": "Track 677",
-    "artist": "Homegrown Hits Artist",
+    "title": "Purple Nights",
+    "artist": "Love In Its Purest Form",
     "feedUrl": "https://podcast-index-lookup/c39decf9-973e-564f-b741-0ad2985b3b1c",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Love In Its Purest Form",
     "duration": 180
   },
   {
@@ -6104,10 +6104,10 @@
   {
     "feedGuid": "69c634ad-afea-5826-ad9a-8e1f06d6470b",
     "itemGuid": "45cb0eb4-baaa-4925-9de6-80dfa57205f4",
-    "title": "Track 679",
-    "artist": "Homegrown Hits Artist",
+    "title": "First Saw (Feat. ImKidKid)",
+    "artist": "Kurtisdrums",
     "feedUrl": "https://podcast-index-lookup/69c634ad-afea-5826-ad9a-8e1f06d6470b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Kurtisdrums",
     "duration": 180
   },
   {
@@ -6140,10 +6140,10 @@
   {
     "feedGuid": "462c641d-8db0-508a-88ae-9660ceac9ece",
     "itemGuid": "68163b12-d849-53d8-b0c3-417b0ba2d781",
-    "title": "Track 683",
-    "artist": "Homegrown Hits Artist",
+    "title": "Dopesick",
+    "artist": "Dopesick",
     "feedUrl": "https://podcast-index-lookup/462c641d-8db0-508a-88ae-9660ceac9ece",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Dopesick",
     "duration": 180
   },
   {
@@ -6158,10 +6158,10 @@
   {
     "feedGuid": "fc815bcf-3639-5395-ba7d-fa217ec93d32",
     "itemGuid": "3fd5491f-3e4d-4c1b-a951-bbb59f5d88b1",
-    "title": "Track 685",
-    "artist": "Homegrown Hits Artist",
+    "title": "Montgomery Station",
+    "artist": "Aged Friends & Old Whiskey",
     "feedUrl": "https://podcast-index-lookup/fc815bcf-3639-5395-ba7d-fa217ec93d32",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Aged Friends & Old Whiskey",
     "duration": 180
   },
   {
@@ -6189,7 +6189,7 @@
     "artist": "Rhythmic Booze",
     "feedUrl": "https://podcast-index-lookup/726cfda1-f992-5468-8a0b-b0b9f83dee3c",
     "feedTitle": "Rhythmic Booze",
-    "duration": 178
+    "duration": 180
   },
   {
     "feedGuid": "7b7949ca-5019-5814-aa53-d4b14bd15a6d",
@@ -6243,15 +6243,15 @@
     "artist": "Echo Chamber",
     "feedUrl": "https://podcast-index-lookup/bd3985d4-89ea-506f-82a2-82e98835025b",
     "feedTitle": "Echo Chamber",
-    "duration": 216
+    "duration": 180
   },
   {
     "feedGuid": "afc5df5b-bfce-5843-802d-3c074b06e969",
     "itemGuid": "0cb8a38b-4792-4fdf-91e4-baa476a838cf",
-    "title": "Track 695",
-    "artist": "Homegrown Hits Artist",
+    "title": "Wild and Free",
+    "artist": "Wild and Free",
     "feedUrl": "https://podcast-index-lookup/afc5df5b-bfce-5843-802d-3c074b06e969",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Wild and Free",
     "duration": 180
   },
   {
@@ -6302,10 +6302,10 @@
   {
     "feedGuid": "05b0141e-c90d-5ce4-9e49-274dd5029339",
     "itemGuid": "1bf89a20-a6d6-4292-aeae-75a32054749c",
-    "title": "Track 701",
-    "artist": "Homegrown Hits Artist",
+    "title": "Lakeside",
+    "artist": "Self​-​Titled",
     "feedUrl": "https://podcast-index-lookup/05b0141e-c90d-5ce4-9e49-274dd5029339",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Self​-​Titled",
     "duration": 180
   },
   {
@@ -6329,28 +6329,28 @@
   {
     "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
     "itemGuid": "d2346732-acc5-4256-afe5-0a0f3e670e6b",
-    "title": "Track 704",
-    "artist": "Homegrown Hits Artist",
+    "title": "The Platform",
+    "artist": "The Heycitizen Experience",
     "feedUrl": "https://podcast-index-lookup/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Heycitizen Experience",
     "duration": 180
   },
   {
     "feedGuid": "c39decf9-973e-564f-b741-0ad2985b3b1c",
     "itemGuid": "a226c29e-9a34-48b9-8894-c5fb4573a957",
-    "title": "Track 705",
-    "artist": "Homegrown Hits Artist",
+    "title": "Joyride",
+    "artist": "Love In Its Purest Form",
     "feedUrl": "https://podcast-index-lookup/c39decf9-973e-564f-b741-0ad2985b3b1c",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Love In Its Purest Form",
     "duration": 180
   },
   {
     "feedGuid": "b9c92d07-c0ab-5712-b8e1-05f5e4992e3e",
     "itemGuid": "5d580bab-8a4a-4cfd-8644-304238c94830",
-    "title": "Track 706",
-    "artist": "Homegrown Hits Artist",
+    "title": "Damn Good Haunting",
+    "artist": "Damn Good Haunting",
     "feedUrl": "https://podcast-index-lookup/b9c92d07-c0ab-5712-b8e1-05f5e4992e3e",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Damn Good Haunting",
     "duration": 180
   },
   {
@@ -6378,51 +6378,51 @@
     "artist": "East To West",
     "feedUrl": "https://podcast-index-lookup/66162162-76b3-54c2-b519-096ccd887a6f",
     "feedTitle": "East To West",
-    "duration": 248
+    "duration": 180
   },
   {
     "feedGuid": "fc815bcf-3639-5395-ba7d-fa217ec93d32",
     "itemGuid": "b2a61b9f-4dc8-40e3-a849-e7fe96d4e843",
-    "title": "Track 710",
-    "artist": "Homegrown Hits Artist",
+    "title": "The Devil Never Change",
+    "artist": "Aged Friends & Old Whiskey",
     "feedUrl": "https://podcast-index-lookup/fc815bcf-3639-5395-ba7d-fa217ec93d32",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Aged Friends & Old Whiskey",
     "duration": 180
   },
   {
     "feedGuid": "77e1364f-3fbe-52ab-8fb3-7c2ef5fea0a0",
     "itemGuid": "eb4894f2-8cb4-538e-9162-634c1981aca0",
-    "title": "Track 711",
-    "artist": "Homegrown Hits Artist",
+    "title": "Titicaca",
+    "artist": "Titicaca",
     "feedUrl": "https://podcast-index-lookup/77e1364f-3fbe-52ab-8fb3-7c2ef5fea0a0",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Titicaca",
     "duration": 180
   },
   {
     "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
     "itemGuid": "b38479ed-e823-418a-8cb1-b8e5c21ca546",
-    "title": "Track 712",
-    "artist": "Homegrown Hits Artist",
+    "title": "How Bout You?",
+    "artist": "The Heycitizen Experience",
     "feedUrl": "https://podcast-index-lookup/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Heycitizen Experience",
     "duration": 180
   },
   {
     "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
     "itemGuid": "9602d3a1-3e5b-4487-b504-5f21ce8dbbf5",
-    "title": "Track 713",
-    "artist": "Homegrown Hits Artist",
+    "title": "Boostagrams",
+    "artist": "The Heycitizen Experience",
     "feedUrl": "https://podcast-index-lookup/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Heycitizen Experience",
     "duration": 180
   },
   {
     "feedGuid": "75f0b434-19dc-5959-9920-0fb5304be61b",
     "itemGuid": "640abac0-697e-4702-8871-48438c3e3138",
-    "title": "Track 714",
-    "artist": "Homegrown Hits Artist",
+    "title": "Lady Neptune",
+    "artist": "deathdreams",
     "feedUrl": "https://podcast-index-lookup/75f0b434-19dc-5959-9920-0fb5304be61b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "deathdreams",
     "duration": 180
   },
   {
@@ -6432,7 +6432,7 @@
     "artist": "Nocturnal",
     "feedUrl": "https://podcast-index-lookup/19e97c5f-5b45-5578-9519-5e460a2d05a3",
     "feedTitle": "Nocturnal",
-    "duration": 222
+    "duration": 180
   },
   {
     "feedGuid": "3338a5a7-f528-5582-af9a-3a4ce0d16ea4",
@@ -6450,7 +6450,7 @@
     "artist": "Vices",
     "feedUrl": "https://podcast-index-lookup/34973f26-85b8-582b-9db3-f67fe4be9ee7",
     "feedTitle": "Vices",
-    "duration": 200
+    "duration": 180
   },
   {
     "feedGuid": "5acc94ce-3823-5db9-b8cc-6fcead18e595",
@@ -6464,10 +6464,10 @@
   {
     "feedGuid": "29397cc2-4bd3-583e-93b8-9f5aebc3d22b",
     "itemGuid": "caf7ae96-4be2-4204-8487-a56523f9405e",
-    "title": "Track 719",
-    "artist": "Homegrown Hits Artist",
+    "title": "Love Drunk",
+    "artist": "Pap Smears Are For Pussies",
     "feedUrl": "https://podcast-index-lookup/29397cc2-4bd3-583e-93b8-9f5aebc3d22b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Pap Smears Are For Pussies",
     "duration": 180
   },
   {
@@ -6486,7 +6486,7 @@
     "artist": "Five More Minutes",
     "feedUrl": "https://podcast-index-lookup/a543e50f-141d-5079-9d23-3a5b0b2ef6ba",
     "feedTitle": "Five More Minutes",
-    "duration": 213
+    "duration": 180
   },
   {
     "feedGuid": "ec01f870-2f5f-5238-bcad-bdeccbcb9662",
@@ -6500,10 +6500,10 @@
   {
     "feedGuid": "d67ffeaa-d4cc-5c76-9616-f839aa1b48f3",
     "itemGuid": "bd8cd4e7-0637-4313-b43b-dbfda82e8c53",
-    "title": "Track 723",
-    "artist": "Homegrown Hits Artist",
+    "title": "My Year (This Is Going to Be)",
+    "artist": "If We Stayed Alive",
     "feedUrl": "https://podcast-index-lookup/d67ffeaa-d4cc-5c76-9616-f839aa1b48f3",
-    "feedTitle": "Various Artists",
+    "feedTitle": "If We Stayed Alive",
     "duration": 180
   },
   {
@@ -6518,19 +6518,19 @@
   {
     "feedGuid": "671612fb-9039-5189-9d4b-0fd9df2093dd",
     "itemGuid": "e25c0502-df12-540f-af65-5f8a308c3a18",
-    "title": "Track 725",
-    "artist": "Homegrown Hits Artist",
+    "title": "Come Around",
+    "artist": "That's The Spirit!",
     "feedUrl": "https://podcast-index-lookup/671612fb-9039-5189-9d4b-0fd9df2093dd",
-    "feedTitle": "Various Artists",
+    "feedTitle": "That's The Spirit!",
     "duration": 180
   },
   {
     "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
     "itemGuid": "9602d3a1-3e5b-4487-b504-5f21ce8dbbf5",
-    "title": "Track 726",
-    "artist": "Homegrown Hits Artist",
+    "title": "Boostagrams",
+    "artist": "The Heycitizen Experience",
     "feedUrl": "https://podcast-index-lookup/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Heycitizen Experience",
     "duration": 180
   },
   {
@@ -6540,51 +6540,51 @@
     "artist": "deathdreams",
     "feedUrl": "https://podcast-index-lookup/75f0b434-19dc-5959-9920-0fb5304be61b",
     "feedTitle": "deathdreams",
-    "duration": 249
+    "duration": 180
   },
   {
     "feedGuid": "75f0b434-19dc-5959-9920-0fb5304be61b",
     "itemGuid": "5f926d76-3ff5-49d9-8f22-2a6eccd86b1a",
-    "title": "Track 728",
-    "artist": "Homegrown Hits Artist",
+    "title": "Sour Sorrow",
+    "artist": "deathdreams",
     "feedUrl": "https://podcast-index-lookup/75f0b434-19dc-5959-9920-0fb5304be61b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "deathdreams",
     "duration": 180
   },
   {
     "feedGuid": "75f0b434-19dc-5959-9920-0fb5304be61b",
     "itemGuid": "ad80c239-4a23-4eae-bd62-9433b9bf5252",
-    "title": "Track 729",
-    "artist": "Homegrown Hits Artist",
+    "title": "Pie",
+    "artist": "deathdreams",
     "feedUrl": "https://podcast-index-lookup/75f0b434-19dc-5959-9920-0fb5304be61b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "deathdreams",
     "duration": 180
   },
   {
     "feedGuid": "75f0b434-19dc-5959-9920-0fb5304be61b",
     "itemGuid": "58f0d461-7ff0-4abc-bb04-3919cabf61a8",
-    "title": "Track 730",
-    "artist": "Homegrown Hits Artist",
+    "title": "Blood Perfume",
+    "artist": "deathdreams",
     "feedUrl": "https://podcast-index-lookup/75f0b434-19dc-5959-9920-0fb5304be61b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "deathdreams",
     "duration": 180
   },
   {
     "feedGuid": "75f0b434-19dc-5959-9920-0fb5304be61b",
     "itemGuid": "8a483fb2-7853-4b67-853d-1a28ae08f5d5",
-    "title": "Track 731",
-    "artist": "Homegrown Hits Artist",
+    "title": "Sharpshooter",
+    "artist": "deathdreams",
     "feedUrl": "https://podcast-index-lookup/75f0b434-19dc-5959-9920-0fb5304be61b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "deathdreams",
     "duration": 180
   },
   {
     "feedGuid": "75f0b434-19dc-5959-9920-0fb5304be61b",
     "itemGuid": "640abac0-697e-4702-8871-48438c3e3138",
-    "title": "Track 732",
-    "artist": "Homegrown Hits Artist",
+    "title": "Lady Neptune",
+    "artist": "deathdreams",
     "feedUrl": "https://podcast-index-lookup/75f0b434-19dc-5959-9920-0fb5304be61b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "deathdreams",
     "duration": 180
   },
   {
@@ -6599,10 +6599,10 @@
   {
     "feedGuid": "75f0b434-19dc-5959-9920-0fb5304be61b",
     "itemGuid": "53de21d3-cee1-4e11-a72c-945d752d48e3",
-    "title": "Track 734",
-    "artist": "Homegrown Hits Artist",
+    "title": "Fight Me",
+    "artist": "deathdreams",
     "feedUrl": "https://podcast-index-lookup/75f0b434-19dc-5959-9920-0fb5304be61b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "deathdreams",
     "duration": 180
   },
   {
@@ -6635,10 +6635,10 @@
   {
     "feedGuid": "38edc858-5731-5221-86bf-86db9f886e2b",
     "itemGuid": "6cd3752b-cad0-5f5c-8c2a-b0a1560d6eec",
-    "title": "Track 738",
-    "artist": "Homegrown Hits Artist",
+    "title": "World Trade Center",
+    "artist": "E Pluribus Unum",
     "feedUrl": "https://podcast-index-lookup/38edc858-5731-5221-86bf-86db9f886e2b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "E Pluribus Unum",
     "duration": 180
   },
   {
@@ -6662,10 +6662,10 @@
   {
     "feedGuid": "121c26b0-33f8-5cb9-9e14-d706bd3f5db8",
     "itemGuid": "7ab94c20-332c-40c6-a60c-f8e5885ce242",
-    "title": "Track 741",
-    "artist": "Homegrown Hits Artist",
+    "title": "White Suit Gold Rings",
+    "artist": "White Triangles",
     "feedUrl": "https://podcast-index-lookup/121c26b0-33f8-5cb9-9e14-d706bd3f5db8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "White Triangles",
     "duration": 180
   },
   {
@@ -6684,7 +6684,7 @@
     "artist": "Campfire Remedy",
     "feedUrl": "https://podcast-index-lookup/1d981641-347d-5c49-8d33-5450aedfb4fa",
     "feedTitle": "Campfire Remedy",
-    "duration": 225
+    "duration": 180
   },
   {
     "feedGuid": "84971935-1bbe-5b4b-9ce2-7de5008b9f30",
@@ -6693,15 +6693,15 @@
     "artist": "Giving Up The Ghost",
     "feedUrl": "https://podcast-index-lookup/84971935-1bbe-5b4b-9ce2-7de5008b9f30",
     "feedTitle": "Giving Up The Ghost",
-    "duration": 200
+    "duration": 180
   },
   {
     "feedGuid": "bf99e8c3-1f97-558d-bc1d-a4bda04027f7",
     "itemGuid": "f0f15edf-bcfa-4773-b16b-72d99d16f815",
-    "title": "Track 745",
-    "artist": "Homegrown Hits Artist",
+    "title": "Altar of my Balls",
+    "artist": "Red Wings",
     "feedUrl": "https://podcast-index-lookup/bf99e8c3-1f97-558d-bc1d-a4bda04027f7",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Red Wings",
     "duration": 180
   },
   {
@@ -6716,10 +6716,10 @@
   {
     "feedGuid": "3722ada5-2029-5485-a8f9-a007c2610c7f",
     "itemGuid": "8fe23ae7-eb91-4c06-8d7e-325579fa70ca",
-    "title": "Track 747",
-    "artist": "Homegrown Hits Artist",
+    "title": "Sunny",
+    "artist": "Sunny",
     "feedUrl": "https://podcast-index-lookup/3722ada5-2029-5485-a8f9-a007c2610c7f",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Sunny",
     "duration": 180
   },
   {
@@ -6752,10 +6752,10 @@
   {
     "feedGuid": "90412406-f04d-44a2-a33b-8c87e137c291",
     "itemGuid": "b14fe324-40de-4b8e-95db-4678d3d72356",
-    "title": "Track 751",
-    "artist": "Homegrown Hits Artist",
+    "title": "Voluntary",
+    "artist": "Qisill",
     "feedUrl": "https://podcast-index-lookup/90412406-f04d-44a2-a33b-8c87e137c291",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Qisill",
     "duration": 180
   },
   {
@@ -6779,10 +6779,10 @@
   {
     "feedGuid": "19e97c5f-5b45-5578-9519-5e460a2d05a3",
     "itemGuid": "de4265df-bce1-59ed-9fb3-02a312d7d284",
-    "title": "Track 754",
-    "artist": "Homegrown Hits Artist",
+    "title": "Nocturnal",
+    "artist": "Nocturnal",
     "feedUrl": "https://podcast-index-lookup/19e97c5f-5b45-5578-9519-5e460a2d05a3",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Nocturnal",
     "duration": 180
   },
   {
@@ -6842,10 +6842,10 @@
   {
     "feedGuid": "fc815bcf-3639-5395-ba7d-fa217ec93d32",
     "itemGuid": "1e5e015c-638b-48f9-a656-c1b803cd3493",
-    "title": "Track 761",
-    "artist": "Homegrown Hits Artist",
+    "title": "The Way She Rolls",
+    "artist": "Aged Friends & Old Whiskey",
     "feedUrl": "https://podcast-index-lookup/fc815bcf-3639-5395-ba7d-fa217ec93d32",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Aged Friends & Old Whiskey",
     "duration": 180
   },
   {
@@ -6860,10 +6860,10 @@
   {
     "feedGuid": "779fff9e-481a-5541-8993-a3b64c194185",
     "itemGuid": "a010a9ac-756b-5e5e-90bc-9b671aa24838",
-    "title": "Track 763",
-    "artist": "Homegrown Hits Artist",
+    "title": "Get Away",
+    "artist": "Get Away",
     "feedUrl": "https://podcast-index-lookup/779fff9e-481a-5541-8993-a3b64c194185",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Get Away",
     "duration": 180
   },
   {
@@ -6896,10 +6896,10 @@
   {
     "feedGuid": "fc815bcf-3639-5395-ba7d-fa217ec93d32",
     "itemGuid": "3fd5491f-3e4d-4c1b-a951-bbb59f5d88b1",
-    "title": "Track 767",
-    "artist": "Homegrown Hits Artist",
+    "title": "Montgomery Station",
+    "artist": "Aged Friends & Old Whiskey",
     "feedUrl": "https://podcast-index-lookup/fc815bcf-3639-5395-ba7d-fa217ec93d32",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Aged Friends & Old Whiskey",
     "duration": 180
   },
   {
@@ -6909,7 +6909,7 @@
     "artist": "Fierce Kitten",
     "feedUrl": "https://podcast-index-lookup/b95514f8-0087-5777-a4a8-e0e44cb0233d",
     "feedTitle": "Fierce Kitten",
-    "duration": 215
+    "duration": 180
   },
   {
     "feedGuid": "018c404c-9bd0-5e76-aeef-092435bd3dca",
@@ -6941,10 +6941,10 @@
   {
     "feedGuid": "03682fbc-b8e7-505e-b5d2-8cb0f32ff2cf",
     "itemGuid": "9d4389c6-5e6d-5f45-bbd7-d49e43f6414b",
-    "title": "Track 772",
-    "artist": "Homegrown Hits Artist",
+    "title": "These Days",
+    "artist": "These Days",
     "feedUrl": "https://podcast-index-lookup/03682fbc-b8e7-505e-b5d2-8cb0f32ff2cf",
-    "feedTitle": "Various Artists",
+    "feedTitle": "These Days",
     "duration": 180
   },
   {
@@ -7004,10 +7004,10 @@
   {
     "feedGuid": "c1a77b15-2e9c-5c88-9332-57d709a864c6",
     "itemGuid": "9b1d7fe4-e2f7-4008-af0a-2eea2bf6ad27",
-    "title": "Track 779",
-    "artist": "Homegrown Hits Artist",
+    "title": "The Stables",
+    "artist": "The Stables",
     "feedUrl": "https://podcast-index-lookup/c1a77b15-2e9c-5c88-9332-57d709a864c6",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Stables",
     "duration": 180
   },
   {
@@ -7022,19 +7022,19 @@
   {
     "feedGuid": "5774ac21-df76-55f1-b8f6-23c683de8012",
     "itemGuid": "0b73ae40-b5aa-440e-89a2-b8f8eecc7518",
-    "title": "Track 781",
-    "artist": "Homegrown Hits Artist",
+    "title": "Penis in the Ocean",
+    "artist": "Penis in the Ocean",
     "feedUrl": "https://podcast-index-lookup/5774ac21-df76-55f1-b8f6-23c683de8012",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Penis in the Ocean",
     "duration": 180
   },
   {
     "feedGuid": "acddbb03-064b-5098-87ca-9b146beb12e8",
     "itemGuid": "8958b128-e10b-4132-975c-65df41bb45ec",
-    "title": "Track 782",
-    "artist": "Homegrown Hits Artist",
+    "title": "Like Wine",
+    "artist": "Stay Awhile",
     "feedUrl": "https://podcast-index-lookup/acddbb03-064b-5098-87ca-9b146beb12e8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Stay Awhile",
     "duration": 180
   },
   {
@@ -7049,10 +7049,10 @@
   {
     "feedGuid": "84971935-1bbe-5b4b-9ce2-7de5008b9f30",
     "itemGuid": "98aee17e-a23d-4df3-84a3-9f5a9c66fe07",
-    "title": "Track 784",
-    "artist": "Homegrown Hits Artist",
+    "title": "Giving Up The Ghost",
+    "artist": "Giving Up The Ghost",
     "feedUrl": "https://podcast-index-lookup/84971935-1bbe-5b4b-9ce2-7de5008b9f30",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Giving Up The Ghost",
     "duration": 180
   },
   {
@@ -7085,19 +7085,19 @@
   {
     "feedGuid": "c1a77b15-2e9c-5c88-9332-57d709a864c6",
     "itemGuid": "9b1d7fe4-e2f7-4008-af0a-2eea2bf6ad27",
-    "title": "Track 788",
-    "artist": "Homegrown Hits Artist",
+    "title": "The Stables",
+    "artist": "The Stables",
     "feedUrl": "https://podcast-index-lookup/c1a77b15-2e9c-5c88-9332-57d709a864c6",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Stables",
     "duration": 180
   },
   {
     "feedGuid": "d518a5ad-4df1-413e-a4a4-f2c7e146e650",
     "itemGuid": "7470d39e-6a8a-4356-9349-b9887d0970be",
-    "title": "Track 789",
-    "artist": "Homegrown Hits Artist",
+    "title": "Hardware Store Lady",
+    "artist": "Everything Is Lit",
     "feedUrl": "https://podcast-index-lookup/d518a5ad-4df1-413e-a4a4-f2c7e146e650",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Everything Is Lit",
     "duration": 180
   },
   {
@@ -7202,10 +7202,10 @@
   {
     "feedGuid": "61676a69-5bab-57a9-8326-7fe68a572649",
     "itemGuid": "10511049-0835-4391-a755-f107f250245d",
-    "title": "Track 801",
-    "artist": "Homegrown Hits Artist",
+    "title": "Like Most People Do (English)",
+    "artist": "Wild Thumbprints",
     "feedUrl": "https://podcast-index-lookup/61676a69-5bab-57a9-8326-7fe68a572649",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Wild Thumbprints",
     "duration": 180
   },
   {
@@ -7215,7 +7215,7 @@
     "artist": "Leave It Alone",
     "feedUrl": "https://podcast-index-lookup/b9df0132-3241-53ed-a022-0f9f0ca7f1f7",
     "feedTitle": "Leave It Alone",
-    "duration": 227
+    "duration": 180
   },
   {
     "feedGuid": "d3b9a1b6-9767-5289-9a60-b0ac80d2cae2",
@@ -7238,10 +7238,10 @@
   {
     "feedGuid": "29397cc2-4bd3-583e-93b8-9f5aebc3d22b",
     "itemGuid": "dc557dfe-11d0-4a46-aa73-d75a08676f2b",
-    "title": "Track 805",
-    "artist": "Homegrown Hits Artist",
+    "title": "Good Girls",
+    "artist": "Pap Smears Are For Pussies",
     "feedUrl": "https://podcast-index-lookup/29397cc2-4bd3-583e-93b8-9f5aebc3d22b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Pap Smears Are For Pussies",
     "duration": 180
   },
   {
@@ -7265,19 +7265,19 @@
   {
     "feedGuid": "738b248e-176e-501c-a0ff-eae8c7227228",
     "itemGuid": "e7c3c76d-eac6-50c5-8f31-65059df05ec7",
-    "title": "Track 808",
-    "artist": "Homegrown Hits Artist",
+    "title": "Sweet Cheeks",
+    "artist": "Sweet Cheeks",
     "feedUrl": "https://podcast-index-lookup/738b248e-176e-501c-a0ff-eae8c7227228",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Sweet Cheeks",
     "duration": 180
   },
   {
     "feedGuid": "9c4017a3-5a53-5b3d-b2bd-783fbf2afae9",
     "itemGuid": "fea47576-2fb1-4959-8953-14f63735c299",
-    "title": "Track 809",
-    "artist": "Homegrown Hits Artist",
+    "title": "Medicine",
+    "artist": "Himalaya",
     "feedUrl": "https://podcast-index-lookup/9c4017a3-5a53-5b3d-b2bd-783fbf2afae9",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Himalaya",
     "duration": 180
   },
   {
@@ -7301,19 +7301,19 @@
   {
     "feedGuid": "d00c6009-bc6f-5366-a2b0-2b47a6495d2f",
     "itemGuid": "f4397a4a-4cab-50ac-b385-e2e2f4fbf3c2",
-    "title": "Track 812",
-    "artist": "Homegrown Hits Artist",
+    "title": "You Sure Did",
+    "artist": "You Sure Did",
     "feedUrl": "https://podcast-index-lookup/d00c6009-bc6f-5366-a2b0-2b47a6495d2f",
-    "feedTitle": "Various Artists",
+    "feedTitle": "You Sure Did",
     "duration": 180
   },
   {
     "feedGuid": "77e1364f-3fbe-52ab-8fb3-7c2ef5fea0a0",
     "itemGuid": "eb4894f2-8cb4-538e-9162-634c1981aca0",
-    "title": "Track 813",
-    "artist": "Homegrown Hits Artist",
+    "title": "Titicaca",
+    "artist": "Titicaca",
     "feedUrl": "https://podcast-index-lookup/77e1364f-3fbe-52ab-8fb3-7c2ef5fea0a0",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Titicaca",
     "duration": 180
   },
   {
@@ -7337,19 +7337,19 @@
   {
     "feedGuid": "99a14604-f38b-5e9d-8679-9314d1207cd4",
     "itemGuid": "66c912b0-355b-4d89-8dba-6310d71f927f",
-    "title": "Track 816",
-    "artist": "Homegrown Hits Artist",
+    "title": "Tax Collector",
+    "artist": "Pony Up Daddy",
     "feedUrl": "https://podcast-index-lookup/99a14604-f38b-5e9d-8679-9314d1207cd4",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Pony Up Daddy",
     "duration": 180
   },
   {
     "feedGuid": "3f38b0d6-d583-5b92-99bf-60a195bf764e",
     "itemGuid": "afd49dd3-948e-5cf6-b411-4caad3c9c893",
-    "title": "Track 817",
-    "artist": "Homegrown Hits Artist",
+    "title": "Self Destruct",
+    "artist": "Self Destruct",
     "feedUrl": "https://podcast-index-lookup/3f38b0d6-d583-5b92-99bf-60a195bf764e",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Self Destruct",
     "duration": 180
   },
   {
@@ -7364,10 +7364,10 @@
   {
     "feedGuid": "6eb0aab5-d5f0-5014-ba84-3de5609d0f21",
     "itemGuid": "e1fb4d42-483d-5b48-9a70-2b031a15dd09",
-    "title": "Track 819",
-    "artist": "Homegrown Hits Artist",
+    "title": "Keep Searching",
+    "artist": "Keep Searching",
     "feedUrl": "https://podcast-index-lookup/6eb0aab5-d5f0-5014-ba84-3de5609d0f21",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Keep Searching",
     "duration": 180
   },
   {
@@ -7377,7 +7377,7 @@
     "artist": "Music From The Doerfel-Verse",
     "feedUrl": "https://podcast-index-lookup/2b62ef49-fcff-523c-b81a-0a7dde2b0609",
     "feedTitle": "Music From The Doerfel-Verse",
-    "duration": 192
+    "duration": 180
   },
   {
     "feedGuid": "19835a35-b7d1-5fee-8d67-a89d996098e",
@@ -7400,10 +7400,10 @@
   {
     "feedGuid": "90412406-f04d-44a2-a33b-8c87e137c291",
     "itemGuid": "b14fe324-40de-4b8e-95db-4678d3d72356",
-    "title": "Track 823",
-    "artist": "Homegrown Hits Artist",
+    "title": "Voluntary",
+    "artist": "Qisill",
     "feedUrl": "https://podcast-index-lookup/90412406-f04d-44a2-a33b-8c87e137c291",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Qisill",
     "duration": 180
   },
   {
@@ -7418,10 +7418,10 @@
   {
     "feedGuid": "07b65561-a11e-5f18-a5fe-6e0586871b7e",
     "itemGuid": "c64b27fe-23d1-5691-9e2e-3f57e1d66b9f",
-    "title": "Track 825",
-    "artist": "Homegrown Hits Artist",
+    "title": "Hit Me Like Sugar",
+    "artist": "Hit Me Like Sugar",
     "feedUrl": "https://podcast-index-lookup/07b65561-a11e-5f18-a5fe-6e0586871b7e",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Hit Me Like Sugar",
     "duration": 180
   },
   {
@@ -7445,28 +7445,28 @@
   {
     "feedGuid": "0d6c245c-4b25-571c-8c7d-6a7e0d219427",
     "itemGuid": "21b862cc-4902-44e0-ba2f-c37417105787",
-    "title": "Track 828",
-    "artist": "Homegrown Hits Artist",
+    "title": "Revenge",
+    "artist": "At Your Cervix",
     "feedUrl": "https://podcast-index-lookup/0d6c245c-4b25-571c-8c7d-6a7e0d219427",
-    "feedTitle": "Various Artists",
+    "feedTitle": "At Your Cervix",
     "duration": 180
   },
   {
     "feedGuid": "b9df0132-3241-53ed-a022-0f9f0ca7f1f7",
     "itemGuid": "712df497-a7e0-5775-bd49-937ae3eb5093",
-    "title": "Track 829",
-    "artist": "Homegrown Hits Artist",
+    "title": "Leave It Alone",
+    "artist": "Leave It Alone",
     "feedUrl": "https://podcast-index-lookup/b9df0132-3241-53ed-a022-0f9f0ca7f1f7",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Leave It Alone",
     "duration": 180
   },
   {
     "feedGuid": "9c4017a3-5a53-5b3d-b2bd-783fbf2afae9",
     "itemGuid": "ac8ea012-8f97-474c-b00d-7ce5fe343cb6",
-    "title": "Track 830",
-    "artist": "Homegrown Hits Artist",
+    "title": "Little Glutton Miss Dreams",
+    "artist": "Himalaya",
     "feedUrl": "https://podcast-index-lookup/9c4017a3-5a53-5b3d-b2bd-783fbf2afae9",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Himalaya",
     "duration": 180
   },
   {
@@ -7481,19 +7481,19 @@
   {
     "feedGuid": "bf99e8c3-1f97-558d-bc1d-a4bda04027f7",
     "itemGuid": "854aca4b-ebad-4a72-8e80-3439e8d1c285",
-    "title": "Track 832",
-    "artist": "Homegrown Hits Artist",
+    "title": "Looking For Some Clit",
+    "artist": "Red Wings",
     "feedUrl": "https://podcast-index-lookup/bf99e8c3-1f97-558d-bc1d-a4bda04027f7",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Red Wings",
     "duration": 180
   },
   {
     "feedGuid": "75f0b434-19dc-5959-9920-0fb5304be61b",
     "itemGuid": "8a483fb2-7853-4b67-853d-1a28ae08f5d5",
-    "title": "Track 833",
-    "artist": "Homegrown Hits Artist",
+    "title": "Sharpshooter",
+    "artist": "deathdreams",
     "feedUrl": "https://podcast-index-lookup/75f0b434-19dc-5959-9920-0fb5304be61b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "deathdreams",
     "duration": 180
   },
   {
@@ -7508,10 +7508,10 @@
   {
     "feedGuid": "5f6bd882-bd60-4474-99e1-f268256100d9",
     "itemGuid": "96f2c8cb-7914-549e-80e0-5a35f5425ec6",
-    "title": "Track 835",
-    "artist": "Homegrown Hits Artist",
+    "title": "Long Road (ft. Gibby Stites)",
+    "artist": "Insomniak The Sleepless (Singles Playlist)",
     "feedUrl": "https://podcast-index-lookup/5f6bd882-bd60-4474-99e1-f268256100d9",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Insomniak The Sleepless (Singles Playlist)",
     "duration": 180
   },
   {
@@ -7530,7 +7530,7 @@
     "artist": "Stay Awhile",
     "feedUrl": "https://podcast-index-lookup/acddbb03-064b-5098-87ca-9b146beb12e8",
     "feedTitle": "Stay Awhile",
-    "duration": 187
+    "duration": 180
   },
   {
     "feedGuid": "e31f55e7-bb82-5d91-9ec4-6da66a6d3b8d",
@@ -7548,7 +7548,7 @@
     "artist": "Breathe",
     "feedUrl": "https://podcast-index-lookup/e3471c06-84fe-5c99-8b24-8eb5bfb1c93b",
     "feedTitle": "Breathe",
-    "duration": 173
+    "duration": 180
   },
   {
     "feedGuid": "030a333a-7753-5f96-bc66-d0e0dbd8c63f",
@@ -7571,10 +7571,10 @@
   {
     "feedGuid": "b9c92d07-c0ab-5712-b8e1-05f5e4992e3e",
     "itemGuid": "5d580bab-8a4a-4cfd-8644-304238c94830",
-    "title": "Track 842",
-    "artist": "Homegrown Hits Artist",
+    "title": "Damn Good Haunting",
+    "artist": "Damn Good Haunting",
     "feedUrl": "https://podcast-index-lookup/b9c92d07-c0ab-5712-b8e1-05f5e4992e3e",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Damn Good Haunting",
     "duration": 180
   },
   {
@@ -7589,37 +7589,37 @@
   {
     "feedGuid": "d67ffeaa-d4cc-5c76-9616-f839aa1b48f3",
     "itemGuid": "79289532-0965-4271-815b-6c735a638d3b",
-    "title": "Track 844",
-    "artist": "Homegrown Hits Artist",
+    "title": "The Beating",
+    "artist": "If We Stayed Alive",
     "feedUrl": "https://podcast-index-lookup/d67ffeaa-d4cc-5c76-9616-f839aa1b48f3",
-    "feedTitle": "Various Artists",
+    "feedTitle": "If We Stayed Alive",
     "duration": 180
   },
   {
     "feedGuid": "e08ba325-55ca-5375-9e49-f86922b97a1e",
     "itemGuid": "19a0a43f-63d1-48a1-af79-e9de2c3c854e",
-    "title": "Track 845",
-    "artist": "Homegrown Hits Artist",
+    "title": "Peach Clouds",
+    "artist": "Peach Clouds",
     "feedUrl": "https://podcast-index-lookup/e08ba325-55ca-5375-9e49-f86922b97a1e",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Peach Clouds",
     "duration": 180
   },
   {
     "feedGuid": "d518a5ad-4df1-413e-a4a4-f2c7e146e650",
     "itemGuid": "7470d39e-6a8a-4356-9349-b9887d0970be",
-    "title": "Track 846",
-    "artist": "Homegrown Hits Artist",
+    "title": "Hardware Store Lady",
+    "artist": "Everything Is Lit",
     "feedUrl": "https://podcast-index-lookup/d518a5ad-4df1-413e-a4a4-f2c7e146e650",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Everything Is Lit",
     "duration": 180
   },
   {
     "feedGuid": "57676ff4-82f4-589f-b8e7-d20e50e2dff9",
     "itemGuid": "3008730e-76e9-4dbe-badf-700c4d77b41f",
-    "title": "Track 847",
-    "artist": "Homegrown Hits Artist",
+    "title": "Your Call",
+    "artist": "now i feel it",
     "feedUrl": "https://podcast-index-lookup/57676ff4-82f4-589f-b8e7-d20e50e2dff9",
-    "feedTitle": "Various Artists",
+    "feedTitle": "now i feel it",
     "duration": 180
   },
   {
@@ -7652,10 +7652,10 @@
   {
     "feedGuid": "121c26b0-33f8-5cb9-9e14-d706bd3f5db8",
     "itemGuid": "51c64565-b2f3-418a-a85f-51ba5c7095e2",
-    "title": "Track 851",
-    "artist": "Homegrown Hits Artist",
+    "title": "Pitiful",
+    "artist": "White Triangles",
     "feedUrl": "https://podcast-index-lookup/121c26b0-33f8-5cb9-9e14-d706bd3f5db8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "White Triangles",
     "duration": 180
   },
   {
@@ -7697,10 +7697,10 @@
   {
     "feedGuid": "c1a77b15-2e9c-5c88-9332-57d709a864c6",
     "itemGuid": "9b1d7fe4-e2f7-4008-af0a-2eea2bf6ad27",
-    "title": "Track 856",
-    "artist": "Homegrown Hits Artist",
+    "title": "The Stables",
+    "artist": "The Stables",
     "feedUrl": "https://podcast-index-lookup/c1a77b15-2e9c-5c88-9332-57d709a864c6",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Stables",
     "duration": 180
   },
   {
@@ -7715,19 +7715,19 @@
   {
     "feedGuid": "86f9ba78-7c4a-5bd2-a382-c6a88e9a96a0",
     "itemGuid": "16e84f15-af1f-474f-9af1-19ba0fc6a589",
-    "title": "Track 858",
-    "artist": "Homegrown Hits Artist",
+    "title": "All the Smart People",
+    "artist": "Early Demos I",
     "feedUrl": "https://podcast-index-lookup/86f9ba78-7c4a-5bd2-a382-c6a88e9a96a0",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Early Demos I",
     "duration": 180
   },
   {
     "feedGuid": "e3471c06-84fe-5c99-8b24-8eb5bfb1c93b",
     "itemGuid": "40675301-de21-5950-b3b9-16bbe4306b87",
-    "title": "Track 859",
-    "artist": "Homegrown Hits Artist",
+    "title": "Breathe",
+    "artist": "Breathe",
     "feedUrl": "https://podcast-index-lookup/e3471c06-84fe-5c99-8b24-8eb5bfb1c93b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Breathe",
     "duration": 180
   },
   {
@@ -7742,10 +7742,10 @@
   {
     "feedGuid": "d3915c44-f8c7-5fa7-9d82-d0c5a85ff2a0",
     "itemGuid": "81953271-1e99-5ec3-b347-2fbddb5f56ca",
-    "title": "Track 861",
-    "artist": "Homegrown Hits Artist",
+    "title": "Big Machine",
+    "artist": "Big Machine",
     "feedUrl": "https://podcast-index-lookup/d3915c44-f8c7-5fa7-9d82-d0c5a85ff2a0",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Big Machine",
     "duration": 180
   },
   {
@@ -7805,28 +7805,28 @@
   {
     "feedGuid": "75f0b434-19dc-5959-9920-0fb5304be61b",
     "itemGuid": "ad80c239-4a23-4eae-bd62-9433b9bf5252",
-    "title": "Track 868",
-    "artist": "Homegrown Hits Artist",
+    "title": "Pie",
+    "artist": "deathdreams",
     "feedUrl": "https://podcast-index-lookup/75f0b434-19dc-5959-9920-0fb5304be61b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "deathdreams",
     "duration": 180
   },
   {
     "feedGuid": "0d5a8efb-e132-5f1b-9ab4-3fd0644dbb30",
     "itemGuid": "eccb8000-2b1f-4f1c-9cd8-0327da121e48",
-    "title": "Track 869",
-    "artist": "Homegrown Hits Artist",
+    "title": "Hermetic Drifter",
+    "artist": "Leather Diamond",
     "feedUrl": "https://podcast-index-lookup/0d5a8efb-e132-5f1b-9ab4-3fd0644dbb30",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Leather Diamond",
     "duration": 180
   },
   {
     "feedGuid": "d67ffeaa-d4cc-5c76-9616-f839aa1b48f3",
     "itemGuid": "bd8cd4e7-0637-4313-b43b-dbfda82e8c53",
-    "title": "Track 870",
-    "artist": "Homegrown Hits Artist",
+    "title": "My Year (This Is Going to Be)",
+    "artist": "If We Stayed Alive",
     "feedUrl": "https://podcast-index-lookup/d67ffeaa-d4cc-5c76-9616-f839aa1b48f3",
-    "feedTitle": "Various Artists",
+    "feedTitle": "If We Stayed Alive",
     "duration": 180
   },
   {
@@ -7850,10 +7850,10 @@
   {
     "feedGuid": "e745b541-8bc1-42b5-9d2d-5c3a67817d47",
     "itemGuid": "753702e0-1c0c-4996-9f25-09ac2bd40e94",
-    "title": "Track 873",
-    "artist": "Homegrown Hits Artist",
+    "title": "Storm Coming",
+    "artist": "44",
     "feedUrl": "https://podcast-index-lookup/e745b541-8bc1-42b5-9d2d-5c3a67817d47",
-    "feedTitle": "Various Artists",
+    "feedTitle": "44",
     "duration": 180
   },
   {
@@ -7877,10 +7877,10 @@
   {
     "feedGuid": "1d981641-347d-5c49-8d33-5450aedfb4fa",
     "itemGuid": "2b3b6b73-56d4-53bf-8cde-b858ecefb6df",
-    "title": "Track 876",
-    "artist": "Homegrown Hits Artist",
+    "title": "Campfire Remedy",
+    "artist": "Campfire Remedy",
     "feedUrl": "https://podcast-index-lookup/1d981641-347d-5c49-8d33-5450aedfb4fa",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Campfire Remedy",
     "duration": 180
   },
   {
@@ -7913,28 +7913,28 @@
   {
     "feedGuid": "aa3abd8d-f8d4-511a-87c7-1400a8737ac3",
     "itemGuid": "d27cfefa-8a5b-5a87-9e39-bceab5011b53",
-    "title": "Track 880",
-    "artist": "Homegrown Hits Artist",
+    "title": "Winds of Change",
+    "artist": "Winds of Change",
     "feedUrl": "https://podcast-index-lookup/aa3abd8d-f8d4-511a-87c7-1400a8737ac3",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Winds of Change",
     "duration": 180
   },
   {
     "feedGuid": "8bb8dd8b-8cb4-5bf4-9f89-72ce31ef9072",
     "itemGuid": "877ea3f7-87fa-5070-ae81-3cfc967dfce2",
-    "title": "Track 881",
-    "artist": "Homegrown Hits Artist",
+    "title": "Terrible Fight",
+    "artist": "Terrible Fight",
     "feedUrl": "https://podcast-index-lookup/8bb8dd8b-8cb4-5bf4-9f89-72ce31ef9072",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Terrible Fight",
     "duration": 180
   },
   {
     "feedGuid": "75f0b434-19dc-5959-9920-0fb5304be61b",
     "itemGuid": "53de21d3-cee1-4e11-a72c-945d752d48e3",
-    "title": "Track 882",
-    "artist": "Homegrown Hits Artist",
+    "title": "Fight Me",
+    "artist": "deathdreams",
     "feedUrl": "https://podcast-index-lookup/75f0b434-19dc-5959-9920-0fb5304be61b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "deathdreams",
     "duration": 180
   },
   {
@@ -7958,19 +7958,19 @@
   {
     "feedGuid": "f842b7c8-9f12-54f2-a0b8-4f95c63dad4c",
     "itemGuid": "ec6d696b-a580-5fdd-9049-a977501cb012",
-    "title": "Track 885",
-    "artist": "Homegrown Hits Artist",
+    "title": "Mr. Videoman",
+    "artist": "Mr. Videoman",
     "feedUrl": "https://podcast-index-lookup/f842b7c8-9f12-54f2-a0b8-4f95c63dad4c",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Mr. Videoman",
     "duration": 180
   },
   {
     "feedGuid": "34973f26-85b8-582b-9db3-f67fe4be9ee7",
     "itemGuid": "e4c35f1a-e155-531d-bdf0-108e2626b2bd",
-    "title": "Track 886",
-    "artist": "Homegrown Hits Artist",
+    "title": "Vices",
+    "artist": "Vices",
     "feedUrl": "https://podcast-index-lookup/34973f26-85b8-582b-9db3-f67fe4be9ee7",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Vices",
     "duration": 180
   },
   {
@@ -8039,19 +8039,19 @@
   {
     "feedGuid": "bf99e8c3-1f97-558d-bc1d-a4bda04027f7",
     "itemGuid": "87bd76d0-077d-48aa-8feb-f032b8d3e075",
-    "title": "Track 894",
-    "artist": "Homegrown Hits Artist",
+    "title": "Thanks for the Pussy Last Night",
+    "artist": "Red Wings",
     "feedUrl": "https://podcast-index-lookup/bf99e8c3-1f97-558d-bc1d-a4bda04027f7",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Red Wings",
     "duration": 180
   },
   {
     "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
     "itemGuid": "d2346732-acc5-4256-afe5-0a0f3e670e6b",
-    "title": "Track 895",
-    "artist": "Homegrown Hits Artist",
+    "title": "The Platform",
+    "artist": "The Heycitizen Experience",
     "feedUrl": "https://podcast-index-lookup/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Heycitizen Experience",
     "duration": 180
   },
   {
@@ -8174,10 +8174,10 @@
   {
     "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
     "itemGuid": "7f4c1f88-c525-482a-bf14-45ea1ce23c40",
-    "title": "Track 909",
-    "artist": "Homegrown Hits Artist",
+    "title": "Kiss Me Always",
+    "artist": "The Heycitizen Experience",
     "feedUrl": "https://podcast-index-lookup/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Heycitizen Experience",
     "duration": 180
   },
   {
@@ -8192,19 +8192,19 @@
   {
     "feedGuid": "c73b1a23-1c28-5edb-94c3-10d1745d0877",
     "itemGuid": "0842d07e-76a3-47da-b253-946f090836c2",
-    "title": "Track 911",
-    "artist": "Homegrown Hits Artist",
+    "title": "The Fun Has Left The Poison",
+    "artist": "The Death of Rock and Roll",
     "feedUrl": "https://podcast-index-lookup/c73b1a23-1c28-5edb-94c3-10d1745d0877",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Death of Rock and Roll",
     "duration": 180
   },
   {
     "feedGuid": "e64ef270-728d-51f0-8052-9fed4883f662",
     "itemGuid": "2d207369-4626-4ab7-a0e1-9f8e34befa82",
-    "title": "Track 912",
-    "artist": "Homegrown Hits Artist",
+    "title": "One (Ambivalence)",
+    "artist": "Home Sweet Home (The Dream of Love Survives but it Disappoints Constantly)",
     "feedUrl": "https://podcast-index-lookup/e64ef270-728d-51f0-8052-9fed4883f662",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Home Sweet Home (The Dream of Love Survives but it Disappoints Constantly)",
     "duration": 180
   },
   {
@@ -8219,10 +8219,10 @@
   {
     "feedGuid": "b328828c-9ba0-5b1d-be33-4cce51968ae1",
     "itemGuid": "d047262b-072e-4527-aa87-fab9e4e44848",
-    "title": "Track 914",
-    "artist": "Homegrown Hits Artist",
+    "title": "Boost Them All!",
+    "artist": "Boost Them All!",
     "feedUrl": "https://podcast-index-lookup/b328828c-9ba0-5b1d-be33-4cce51968ae1",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Boost Them All!",
     "duration": 180
   },
   {
@@ -8246,19 +8246,19 @@
   {
     "feedGuid": "0d6c245c-4b25-571c-8c7d-6a7e0d219427",
     "itemGuid": "5555c343-ed25-4e3a-9add-a53dc25e09cc",
-    "title": "Track 917",
-    "artist": "Homegrown Hits Artist",
+    "title": "Hate Crime My Asshole",
+    "artist": "At Your Cervix",
     "feedUrl": "https://podcast-index-lookup/0d6c245c-4b25-571c-8c7d-6a7e0d219427",
-    "feedTitle": "Various Artists",
+    "feedTitle": "At Your Cervix",
     "duration": 180
   },
   {
     "feedGuid": "90412406-f04d-44a2-a33b-8c87e137c291",
     "itemGuid": "b14fe324-40de-4b8e-95db-4678d3d72356",
-    "title": "Track 918",
-    "artist": "Homegrown Hits Artist",
+    "title": "Voluntary",
+    "artist": "Qisill",
     "feedUrl": "https://podcast-index-lookup/90412406-f04d-44a2-a33b-8c87e137c291",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Qisill",
     "duration": 180
   },
   {
@@ -8268,7 +8268,7 @@
     "artist": "Himalaya",
     "feedUrl": "https://podcast-index-lookup/9c4017a3-5a53-5b3d-b2bd-783fbf2afae9",
     "feedTitle": "Himalaya",
-    "duration": 170
+    "duration": 180
   },
   {
     "feedGuid": "483dde8e-7e94-59a7-8eb0-2b0dc64a87bd",
@@ -8282,46 +8282,46 @@
   {
     "feedGuid": "acddbb03-064b-5098-87ca-9b146beb12e8",
     "itemGuid": "8958b128-e10b-4132-975c-65df41bb45ec",
-    "title": "Track 921",
-    "artist": "Homegrown Hits Artist",
+    "title": "Like Wine",
+    "artist": "Stay Awhile",
     "feedUrl": "https://podcast-index-lookup/acddbb03-064b-5098-87ca-9b146beb12e8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Stay Awhile",
     "duration": 180
   },
   {
     "feedGuid": "acddbb03-064b-5098-87ca-9b146beb12e8",
     "itemGuid": "baa182e9-d088-4cc1-a3f7-e4af48ff112a",
-    "title": "Track 922",
-    "artist": "Homegrown Hits Artist",
+    "title": "Stay Awhile",
+    "artist": "Stay Awhile",
     "feedUrl": "https://podcast-index-lookup/acddbb03-064b-5098-87ca-9b146beb12e8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Stay Awhile",
     "duration": 180
   },
   {
     "feedGuid": "acddbb03-064b-5098-87ca-9b146beb12e8",
     "itemGuid": "0d616fe3-16ab-40be-a33c-98468f81fc11",
-    "title": "Track 923",
-    "artist": "Homegrown Hits Artist",
+    "title": "Stay Awhile (reprise)",
+    "artist": "Stay Awhile",
     "feedUrl": "https://podcast-index-lookup/acddbb03-064b-5098-87ca-9b146beb12e8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Stay Awhile",
     "duration": 180
   },
   {
     "feedGuid": "75f0b434-19dc-5959-9920-0fb5304be61b",
     "itemGuid": "892347e7-ecaf-4505-9e17-f012c78c844f",
-    "title": "Track 924",
-    "artist": "Homegrown Hits Artist",
+    "title": "Bad Little Seed",
+    "artist": "deathdreams",
     "feedUrl": "https://podcast-index-lookup/75f0b434-19dc-5959-9920-0fb5304be61b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "deathdreams",
     "duration": 180
   },
   {
     "feedGuid": "f21daf71-4c7b-5fe1-82c6-3a1c2a48c764",
     "itemGuid": "bec0407e-930c-4f4d-8262-40a986488706",
-    "title": "Track 925",
-    "artist": "Homegrown Hits Artist",
+    "title": "Everyone Peg Your Jeans",
+    "artist": "Coke Dick, Titties & Sarcasm",
     "feedUrl": "https://podcast-index-lookup/f21daf71-4c7b-5fe1-82c6-3a1c2a48c764",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Coke Dick, Titties & Sarcasm",
     "duration": 180
   },
   {
@@ -8349,15 +8349,15 @@
     "artist": "Bloodshot Lies - Single",
     "feedUrl": "https://podcast-index-lookup/b8b6971e-403e-568f-a4e6-7aa2b45e50d4",
     "feedTitle": "Bloodshot Lies - Single",
-    "duration": 216
+    "duration": 180
   },
   {
     "feedGuid": "99a14604-f38b-5e9d-8679-9314d1207cd4",
     "itemGuid": "02f5de9c-3e64-4df5-ac27-03fb6ac612bb",
-    "title": "Track 929",
-    "artist": "Homegrown Hits Artist",
+    "title": "Holy Water",
+    "artist": "Pony Up Daddy",
     "feedUrl": "https://podcast-index-lookup/99a14604-f38b-5e9d-8679-9314d1207cd4",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Pony Up Daddy",
     "duration": 180
   },
   {
@@ -8372,10 +8372,10 @@
   {
     "feedGuid": "0d5a8efb-e132-5f1b-9ab4-3fd0644dbb30",
     "itemGuid": "0d21cb26-005c-4972-82e9-aeb278148433",
-    "title": "Track 931",
-    "artist": "Homegrown Hits Artist",
+    "title": "Sovereigns of the Air",
+    "artist": "Leather Diamond",
     "feedUrl": "https://podcast-index-lookup/0d5a8efb-e132-5f1b-9ab4-3fd0644dbb30",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Leather Diamond",
     "duration": 180
   },
   {
@@ -8390,10 +8390,10 @@
   {
     "feedGuid": "66162162-76b3-54c2-b519-096ccd887a6f",
     "itemGuid": "b7eb390a-23ec-476d-b590-e1d16e21e1bd",
-    "title": "Track 933",
-    "artist": "Homegrown Hits Artist",
+    "title": "Momma Bear",
+    "artist": "East To West",
     "feedUrl": "https://podcast-index-lookup/66162162-76b3-54c2-b519-096ccd887a6f",
-    "feedTitle": "Various Artists",
+    "feedTitle": "East To West",
     "duration": 180
   },
   {
@@ -8417,28 +8417,28 @@
   {
     "feedGuid": "121c26b0-33f8-5cb9-9e14-d706bd3f5db8",
     "itemGuid": "7ab94c20-332c-40c6-a60c-f8e5885ce242",
-    "title": "Track 936",
-    "artist": "Homegrown Hits Artist",
+    "title": "White Suit Gold Rings",
+    "artist": "White Triangles",
     "feedUrl": "https://podcast-index-lookup/121c26b0-33f8-5cb9-9e14-d706bd3f5db8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "White Triangles",
     "duration": 180
   },
   {
     "feedGuid": "75f0b434-19dc-5959-9920-0fb5304be61b",
     "itemGuid": "8a483fb2-7853-4b67-853d-1a28ae08f5d5",
-    "title": "Track 937",
-    "artist": "Homegrown Hits Artist",
+    "title": "Sharpshooter",
+    "artist": "deathdreams",
     "feedUrl": "https://podcast-index-lookup/75f0b434-19dc-5959-9920-0fb5304be61b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "deathdreams",
     "duration": 180
   },
   {
     "feedGuid": "05b0141e-c90d-5ce4-9e49-274dd5029339",
     "itemGuid": "1bf89a20-a6d6-4292-aeae-75a32054749c",
-    "title": "Track 938",
-    "artist": "Homegrown Hits Artist",
+    "title": "Lakeside",
+    "artist": "Self​-​Titled",
     "feedUrl": "https://podcast-index-lookup/05b0141e-c90d-5ce4-9e49-274dd5029339",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Self​-​Titled",
     "duration": 180
   },
   {
@@ -8462,19 +8462,19 @@
   {
     "feedGuid": "29397cc2-4bd3-583e-93b8-9f5aebc3d22b",
     "itemGuid": "6da3cb0b-bb33-480b-b9c6-da83f8e11391",
-    "title": "Track 941",
-    "artist": "Homegrown Hits Artist",
+    "title": "Sami Mary",
+    "artist": "Pap Smears Are For Pussies",
     "feedUrl": "https://podcast-index-lookup/29397cc2-4bd3-583e-93b8-9f5aebc3d22b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Pap Smears Are For Pussies",
     "duration": 180
   },
   {
     "feedGuid": "cb086537-5673-57a8-9c78-72542da2a7d4",
     "itemGuid": "9a29c9f0-649f-4ddd-8888-55ed84d7c2ab",
-    "title": "Track 942",
-    "artist": "Homegrown Hits Artist",
+    "title": "That Duck",
+    "artist": "That Duck",
     "feedUrl": "https://podcast-index-lookup/cb086537-5673-57a8-9c78-72542da2a7d4",
-    "feedTitle": "Various Artists",
+    "feedTitle": "That Duck",
     "duration": 180
   },
   {
@@ -8489,55 +8489,55 @@
   {
     "feedGuid": "afc5df5b-bfce-5843-802d-3c074b06e969",
     "itemGuid": "26646655-b89d-4871-9d5d-9e3b82b9f382",
-    "title": "Track 944",
-    "artist": "Homegrown Hits Artist",
+    "title": "Dance With Me",
+    "artist": "Wild and Free",
     "feedUrl": "https://podcast-index-lookup/afc5df5b-bfce-5843-802d-3c074b06e969",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Wild and Free",
     "duration": 180
   },
   {
     "feedGuid": "bd3985d4-89ea-506f-82a2-82e98835025b",
     "itemGuid": "b9a28cfe-5f2c-4977-8c2e-873bd6ed02d8",
-    "title": "Track 945",
-    "artist": "Homegrown Hits Artist",
+    "title": "Apathy",
+    "artist": "Echo Chamber",
     "feedUrl": "https://podcast-index-lookup/bd3985d4-89ea-506f-82a2-82e98835025b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Echo Chamber",
     "duration": 180
   },
   {
     "feedGuid": "15ef0e58-49e5-500c-92d6-8e4802599314",
     "itemGuid": "4a03038f-e23a-4cc6-8ef0-dff9c1184055",
-    "title": "Track 946",
-    "artist": "Homegrown Hits Artist",
+    "title": "The Way You Make Me Feel",
+    "artist": "Goofball Bucket",
     "feedUrl": "https://podcast-index-lookup/15ef0e58-49e5-500c-92d6-8e4802599314",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Goofball Bucket",
     "duration": 180
   },
   {
     "feedGuid": "a71b097b-4cf0-5e74-b6a9-1271373bb396",
     "itemGuid": "a45376c3-c8b3-4173-80c4-4cdfa266e0db",
-    "title": "Track 947",
-    "artist": "Homegrown Hits Artist",
+    "title": "The Wait Is Over",
+    "artist": "The Wait Is Over",
     "feedUrl": "https://podcast-index-lookup/a71b097b-4cf0-5e74-b6a9-1271373bb396",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Wait Is Over",
     "duration": 180
   },
   {
     "feedGuid": "680882f9-f371-5eeb-bd90-6767d528854f",
     "itemGuid": "18ed0d43-f2bd-4dde-92ed-5127bb435edb",
-    "title": "Track 948",
-    "artist": "Homegrown Hits Artist",
+    "title": "Way to go Kid",
+    "artist": "Panzee",
     "feedUrl": "https://podcast-index-lookup/680882f9-f371-5eeb-bd90-6767d528854f",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Panzee",
     "duration": 180
   },
   {
     "feedGuid": "a543e50f-141d-5079-9d23-3a5b0b2ef6ba",
     "itemGuid": "e074df5a-552b-5d01-ba44-8979cc390342",
-    "title": "Track 949",
-    "artist": "Homegrown Hits Artist",
+    "title": "Five More Minutes",
+    "artist": "Five More Minutes",
     "feedUrl": "https://podcast-index-lookup/a543e50f-141d-5079-9d23-3a5b0b2ef6ba",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Five More Minutes",
     "duration": 180
   },
   {
@@ -8561,10 +8561,10 @@
   {
     "feedGuid": "90412406-f04d-44a2-a33b-8c87e137c291",
     "itemGuid": "1bc8bce2-b862-4245-b331-16dd0c9e5c04",
-    "title": "Track 952",
-    "artist": "Homegrown Hits Artist",
+    "title": "Manatee Might",
+    "artist": "Qisill",
     "feedUrl": "https://podcast-index-lookup/90412406-f04d-44a2-a33b-8c87e137c291",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Qisill",
     "duration": 180
   },
   {
@@ -8597,19 +8597,19 @@
   {
     "feedGuid": "75f0b434-19dc-5959-9920-0fb5304be61b",
     "itemGuid": "ad80c239-4a23-4eae-bd62-9433b9bf5252",
-    "title": "Track 956",
-    "artist": "Homegrown Hits Artist",
+    "title": "Pie",
+    "artist": "deathdreams",
     "feedUrl": "https://podcast-index-lookup/75f0b434-19dc-5959-9920-0fb5304be61b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "deathdreams",
     "duration": 180
   },
   {
     "feedGuid": "61514864-0b81-5de1-9067-05e3205ce859",
     "itemGuid": "1ca53abb-7583-50bc-b969-e539f1bfecba",
-    "title": "Track 957",
-    "artist": "Homegrown Hits Artist",
+    "title": "Serenity",
+    "artist": "Serenity",
     "feedUrl": "https://podcast-index-lookup/61514864-0b81-5de1-9067-05e3205ce859",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Serenity",
     "duration": 180
   },
   {
@@ -8628,7 +8628,7 @@
     "artist": "Emo Stormtrooper",
     "feedUrl": "https://podcast-index-lookup/1e683ce1-0af5-50ac-9fbd-668519174391",
     "feedTitle": "Emo Stormtrooper",
-    "duration": 248
+    "duration": 180
   },
   {
     "feedGuid": "bedc43eb-bace-5d9d-902c-ea444897d6fa",
@@ -8660,10 +8660,10 @@
   {
     "feedGuid": "76e1f55c-1a5b-55a0-b1da-039e2aa72f6a",
     "itemGuid": "7b45c216-7ac4-4b8f-9e9b-d0f60a00a6df",
-    "title": "Track 963",
-    "artist": "Homegrown Hits Artist",
+    "title": "Borneo",
+    "artist": "Matt Bigelow",
     "feedUrl": "https://podcast-index-lookup/76e1f55c-1a5b-55a0-b1da-039e2aa72f6a",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Matt Bigelow",
     "duration": 180
   },
   {
@@ -8696,19 +8696,19 @@
   {
     "feedGuid": "e745b541-8bc1-42b5-9d2d-5c3a67817d47",
     "itemGuid": "16d5b440-2e86-47b2-b3c8-907454953cf7",
-    "title": "Track 967",
-    "artist": "Homegrown Hits Artist",
+    "title": "You Name It",
+    "artist": "44",
     "feedUrl": "https://podcast-index-lookup/e745b541-8bc1-42b5-9d2d-5c3a67817d47",
-    "feedTitle": "Various Artists",
+    "feedTitle": "44",
     "duration": 180
   },
   {
     "feedGuid": "6df28ecd-8029-59a3-a771-48f37f71e19a",
     "itemGuid": "3e74b1db-b480-48a4-bc8e-d078ec1e5803",
-    "title": "Track 968",
-    "artist": "Homegrown Hits Artist",
+    "title": "Bloworld",
+    "artist": "The Attic and the River",
     "feedUrl": "https://podcast-index-lookup/6df28ecd-8029-59a3-a771-48f37f71e19a",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Attic and the River",
     "duration": 180
   },
   {
@@ -8759,19 +8759,19 @@
   {
     "feedGuid": "07e882cc-690e-544f-bccb-799730b4f3a9",
     "itemGuid": "a01f64a3-025a-5f95-8bf7-7a99f7a65bc4",
-    "title": "Track 974",
-    "artist": "Homegrown Hits Artist",
+    "title": "Stockholm",
+    "artist": "Stockholm",
     "feedUrl": "https://podcast-index-lookup/07e882cc-690e-544f-bccb-799730b4f3a9",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Stockholm",
     "duration": 180
   },
   {
     "feedGuid": "121c26b0-33f8-5cb9-9e14-d706bd3f5db8",
     "itemGuid": "8a4fa340-3ba7-446e-a375-866a60c23bf0",
-    "title": "Track 975",
-    "artist": "Homegrown Hits Artist",
+    "title": "Packets",
+    "artist": "White Triangles",
     "feedUrl": "https://podcast-index-lookup/121c26b0-33f8-5cb9-9e14-d706bd3f5db8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "White Triangles",
     "duration": 180
   },
   {
@@ -8840,19 +8840,19 @@
   {
     "feedGuid": "86f9ba78-7c4a-5bd2-a382-c6a88e9a96a0",
     "itemGuid": "7f523624-222e-42f3-a6c1-4399e9d5b6a0",
-    "title": "Track 983",
-    "artist": "Homegrown Hits Artist",
+    "title": "Six Captains",
+    "artist": "Early Demos I",
     "feedUrl": "https://podcast-index-lookup/86f9ba78-7c4a-5bd2-a382-c6a88e9a96a0",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Early Demos I",
     "duration": 180
   },
   {
     "feedGuid": "700d1414-c005-5f43-8488-68c80d09bf6a",
     "itemGuid": "1ea05b4d-5481-4daa-a01a-d72e66383120",
-    "title": "Track 984",
-    "artist": "Homegrown Hits Artist",
+    "title": "Oh My",
+    "artist": "The Dorian Sessions",
     "feedUrl": "https://podcast-index-lookup/700d1414-c005-5f43-8488-68c80d09bf6a",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Dorian Sessions",
     "duration": 180
   },
   {
@@ -8885,10 +8885,10 @@
   {
     "feedGuid": "0d6c245c-4b25-571c-8c7d-6a7e0d219427",
     "itemGuid": "5555c343-ed25-4e3a-9add-a53dc25e09cc",
-    "title": "Track 988",
-    "artist": "Homegrown Hits Artist",
+    "title": "Hate Crime My Asshole",
+    "artist": "At Your Cervix",
     "feedUrl": "https://podcast-index-lookup/0d6c245c-4b25-571c-8c7d-6a7e0d219427",
-    "feedTitle": "Various Artists",
+    "feedTitle": "At Your Cervix",
     "duration": 180
   },
   {
@@ -8912,10 +8912,10 @@
   {
     "feedGuid": "bedc43eb-bace-5d9d-902c-ea444897d6fa",
     "itemGuid": "a7ffcbc5-01ef-4d9e-a1be-ecc45d67376c",
-    "title": "Track 991",
-    "artist": "Homegrown Hits Artist",
+    "title": "We Likes to Party",
+    "artist": "We Likes To Party",
     "feedUrl": "https://podcast-index-lookup/bedc43eb-bace-5d9d-902c-ea444897d6fa",
-    "feedTitle": "Various Artists",
+    "feedTitle": "We Likes To Party",
     "duration": 180
   },
   {
@@ -8930,10 +8930,10 @@
   {
     "feedGuid": "75f0b434-19dc-5959-9920-0fb5304be61b",
     "itemGuid": "640abac0-697e-4702-8871-48438c3e3138",
-    "title": "Track 993",
-    "artist": "Homegrown Hits Artist",
+    "title": "Lady Neptune",
+    "artist": "deathdreams",
     "feedUrl": "https://podcast-index-lookup/75f0b434-19dc-5959-9920-0fb5304be61b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "deathdreams",
     "duration": 180
   },
   {
@@ -8948,10 +8948,10 @@
   {
     "feedGuid": "3d92b2f6-4aac-5f24-bffe-2536eb579286",
     "itemGuid": "4b0bc998-db1d-4366-97ab-e3d338c658a7",
-    "title": "Track 995",
-    "artist": "Homegrown Hits Artist",
+    "title": "Christmas Day",
+    "artist": "Lionhead",
     "feedUrl": "https://podcast-index-lookup/3d92b2f6-4aac-5f24-bffe-2536eb579286",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Lionhead",
     "duration": 180
   },
   {
@@ -9006,15 +9006,15 @@
     "artist": "First Married Christmas",
     "feedUrl": "https://podcast-index-lookup/a3d6d7d5-4b5d-5161-b119-cf5e99d35fda",
     "feedTitle": "First Married Christmas",
-    "duration": 261
+    "duration": 180
   },
   {
     "feedGuid": "acddbb03-064b-5098-87ca-9b146beb12e8",
     "itemGuid": "08ddd646-7adb-49b6-b6df-fbc684622926",
-    "title": "Track 1002",
-    "artist": "Homegrown Hits Artist",
+    "title": "One Christmas",
+    "artist": "Stay Awhile",
     "feedUrl": "https://podcast-index-lookup/acddbb03-064b-5098-87ca-9b146beb12e8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Stay Awhile",
     "duration": 180
   },
   {
@@ -9033,7 +9033,7 @@
     "artist": "Man! It's Christmas AGAIN!",
     "feedUrl": "https://podcast-index-lookup/c461bbea-3818-5b5b-a565-599f0f5be5e3",
     "feedTitle": "Man! It's Christmas AGAIN!",
-    "duration": 282
+    "duration": 180
   },
   {
     "feedGuid": "023a1b78-0e85-5adf-ae61-4f2ef59f9c71",
@@ -9047,10 +9047,10 @@
   {
     "feedGuid": "c461bbea-3818-5b5b-a565-599f0f5be5e3",
     "itemGuid": "91f5c71e-7030-4abc-8fa8-0f11d0b8fa47",
-    "title": "Track 1006",
-    "artist": "Homegrown Hits Artist",
+    "title": "Joy To The World",
+    "artist": "Man! It's Christmas AGAIN!",
     "feedUrl": "https://podcast-index-lookup/c461bbea-3818-5b5b-a565-599f0f5be5e3",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Man! It's Christmas AGAIN!",
     "duration": 180
   },
   {
@@ -9137,10 +9137,10 @@
   {
     "feedGuid": "19835a35-b7d1-5fee-8d67-a89d996098e1",
     "itemGuid": "ed4563f7-c84d-4748-ae4f-48570fe07217",
-    "title": "Track 1016",
-    "artist": "Homegrown Hits Artist",
+    "title": "Monkey Love",
+    "artist": "The Ultimate Album",
     "feedUrl": "https://podcast-index-lookup/19835a35-b7d1-5fee-8d67-a89d996098e1",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Ultimate Album",
     "duration": 180
   },
   {
@@ -9155,10 +9155,10 @@
   {
     "feedGuid": "acddbb03-064b-5098-87ca-9b146beb12e8",
     "itemGuid": "08ddd646-7adb-49b6-b6df-fbc684622926",
-    "title": "Track 1018",
-    "artist": "Homegrown Hits Artist",
+    "title": "One Christmas",
+    "artist": "Stay Awhile",
     "feedUrl": "https://podcast-index-lookup/acddbb03-064b-5098-87ca-9b146beb12e8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Stay Awhile",
     "duration": 180
   },
   {
@@ -9173,28 +9173,28 @@
   {
     "feedGuid": "31e9d928-80f6-542d-ae47-75b5212d0416",
     "itemGuid": "3e3b839c-de66-4a12-a9db-06c0f3487e73",
-    "title": "Track 1020",
-    "artist": "Homegrown Hits Artist",
+    "title": "Bacon Is On My Mind",
+    "artist": "I'm Hungry",
     "feedUrl": "https://podcast-index-lookup/31e9d928-80f6-542d-ae47-75b5212d0416",
-    "feedTitle": "Various Artists",
+    "feedTitle": "I'm Hungry",
     "duration": 180
   },
   {
     "feedGuid": "a3d6d7d5-4b5d-5161-b119-cf5e99d35fda",
     "itemGuid": "d6df67e4-75cb-4621-9310-71ed32772591",
-    "title": "Track 1021",
-    "artist": "Homegrown Hits Artist",
+    "title": "First Married Christmas",
+    "artist": "First Married Christmas",
     "feedUrl": "https://podcast-index-lookup/a3d6d7d5-4b5d-5161-b119-cf5e99d35fda",
-    "feedTitle": "Various Artists",
+    "feedTitle": "First Married Christmas",
     "duration": 180
   },
   {
     "feedGuid": "d6d051f1-16e4-5131-a2f5-c89570a37f8e",
     "itemGuid": "2063b2cb-5c47-4b79-af7d-2928e6a63dc2",
-    "title": "Track 1022",
-    "artist": "Homegrown Hits Artist",
+    "title": "Christmas Comes But Once A Year",
+    "artist": "Bryan's Christmas",
     "feedUrl": "https://podcast-index-lookup/d6d051f1-16e4-5131-a2f5-c89570a37f8e",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Bryan's Christmas",
     "duration": 180
   },
   {
@@ -9209,28 +9209,28 @@
   {
     "feedGuid": "3d92b2f6-4aac-5f24-bffe-2536eb579286",
     "itemGuid": "4b0bc998-db1d-4366-97ab-e3d338c658a7",
-    "title": "Track 1024",
-    "artist": "Homegrown Hits Artist",
+    "title": "Christmas Day",
+    "artist": "Lionhead",
     "feedUrl": "https://podcast-index-lookup/3d92b2f6-4aac-5f24-bffe-2536eb579286",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Lionhead",
     "duration": 180
   },
   {
     "feedGuid": "75f0b434-19dc-5959-9920-0fb5304be61b",
     "itemGuid": "58f0d461-7ff0-4abc-bb04-3919cabf61a8",
-    "title": "Track 1025",
-    "artist": "Homegrown Hits Artist",
+    "title": "Blood Perfume",
+    "artist": "deathdreams",
     "feedUrl": "https://podcast-index-lookup/75f0b434-19dc-5959-9920-0fb5304be61b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "deathdreams",
     "duration": 180
   },
   {
     "feedGuid": "29397cc2-4bd3-583e-93b8-9f5aebc3d22b",
     "itemGuid": "caf7ae96-4be2-4204-8487-a56523f9405e",
-    "title": "Track 1026",
-    "artist": "Homegrown Hits Artist",
+    "title": "Love Drunk",
+    "artist": "Pap Smears Are For Pussies",
     "feedUrl": "https://podcast-index-lookup/29397cc2-4bd3-583e-93b8-9f5aebc3d22b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Pap Smears Are For Pussies",
     "duration": 180
   },
   {
@@ -9263,10 +9263,10 @@
   {
     "feedGuid": "acddbb03-064b-5098-87ca-9b146beb12e8",
     "itemGuid": "08ddd646-7adb-49b6-b6df-fbc684622926",
-    "title": "Track 1030",
-    "artist": "Homegrown Hits Artist",
+    "title": "One Christmas",
+    "artist": "Stay Awhile",
     "feedUrl": "https://podcast-index-lookup/acddbb03-064b-5098-87ca-9b146beb12e8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Stay Awhile",
     "duration": 180
   },
   {
@@ -9299,19 +9299,19 @@
   {
     "feedGuid": "e745b541-8bc1-42b5-9d2d-5c3a67817d47",
     "itemGuid": "d9f4fc8c-30f5-4406-8d93-5ebf2384905f",
-    "title": "Track 1034",
-    "artist": "Homegrown Hits Artist",
+    "title": "Cold Fusion Reborn",
+    "artist": "44",
     "feedUrl": "https://podcast-index-lookup/e745b541-8bc1-42b5-9d2d-5c3a67817d47",
-    "feedTitle": "Various Artists",
+    "feedTitle": "44",
     "duration": 180
   },
   {
     "feedGuid": "2b62ef49-fcff-523c-b81a-0a7dde2b0609",
     "itemGuid": "27663b18-4c67-4d48-9f69-1641cdbc1de1",
-    "title": "Track 1035",
-    "artist": "Homegrown Hits Artist",
+    "title": "Way In My Life",
+    "artist": "Music From The Doerfel-Verse",
     "feedUrl": "https://podcast-index-lookup/2b62ef49-fcff-523c-b81a-0a7dde2b0609",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Music From The Doerfel-Verse",
     "duration": 180
   },
   {
@@ -9326,10 +9326,10 @@
   {
     "feedGuid": "c73b1a23-1c28-5edb-94c3-10d1745d0877",
     "itemGuid": "882b5d1b-0646-42cb-861f-a65345d66e9a",
-    "title": "Track 1037",
-    "artist": "Homegrown Hits Artist",
+    "title": "I Like a Lot",
+    "artist": "The Death of Rock and Roll",
     "feedUrl": "https://podcast-index-lookup/c73b1a23-1c28-5edb-94c3-10d1745d0877",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Death of Rock and Roll",
     "duration": 180
   },
   {
@@ -9362,37 +9362,37 @@
   {
     "feedGuid": "a5ad6f3f-a279-504c-bc6a-30054e6b50e1",
     "itemGuid": "tag:soundcloud,2010:tracks/319789777",
-    "title": "Track 1041",
-    "artist": "Homegrown Hits Artist",
+    "title": "Outlasted Motion",
+    "artist": "S.O.M.",
     "feedUrl": "https://podcast-index-lookup/a5ad6f3f-a279-504c-bc6a-30054e6b50e1",
-    "feedTitle": "Various Artists",
+    "feedTitle": "S.O.M.",
     "duration": 180
   },
   {
     "feedGuid": "680882f9-f371-5eeb-bd90-6767d528854f",
     "itemGuid": "8fb11ed6-9f55-4ac5-a8d1-2438a997c4d6",
-    "title": "Track 1042",
-    "artist": "Homegrown Hits Artist",
+    "title": "Western ways",
+    "artist": "Panzee",
     "feedUrl": "https://podcast-index-lookup/680882f9-f371-5eeb-bd90-6767d528854f",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Panzee",
     "duration": 180
   },
   {
     "feedGuid": "acddbb03-064b-5098-87ca-9b146beb12e8",
     "itemGuid": "c7003607-233e-40e8-b2fa-6465127d0076",
-    "title": "Track 1043",
-    "artist": "Homegrown Hits Artist",
+    "title": "Makin' Beans",
+    "artist": "Stay Awhile",
     "feedUrl": "https://podcast-index-lookup/acddbb03-064b-5098-87ca-9b146beb12e8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Stay Awhile",
     "duration": 180
   },
   {
     "feedGuid": "29397cc2-4bd3-583e-93b8-9f5aebc3d22b",
     "itemGuid": "caf7ae96-4be2-4204-8487-a56523f9405e",
-    "title": "Track 1044",
-    "artist": "Homegrown Hits Artist",
+    "title": "Love Drunk",
+    "artist": "Pap Smears Are For Pussies",
     "feedUrl": "https://podcast-index-lookup/29397cc2-4bd3-583e-93b8-9f5aebc3d22b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Pap Smears Are For Pussies",
     "duration": 180
   },
   {
@@ -9407,37 +9407,37 @@
   {
     "feedGuid": "90412406-f04d-44a2-a33b-8c87e137c291",
     "itemGuid": "f050666a-3575-497c-9d4e-034a0a40c591",
-    "title": "Track 1046",
-    "artist": "Homegrown Hits Artist",
+    "title": "Power",
+    "artist": "Qisill",
     "feedUrl": "https://podcast-index-lookup/90412406-f04d-44a2-a33b-8c87e137c291",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Qisill",
     "duration": 180
   },
   {
     "feedGuid": "2b62ef49-fcff-523c-b81a-0a7dde2b0609",
     "itemGuid": "9de8e45c-f543-4f6d-8e63-2482c22c9f66",
-    "title": "Track 1047",
-    "artist": "Homegrown Hits Artist",
+    "title": "Bloodshot Lies(Acoustic)",
+    "artist": "Music From The Doerfel-Verse",
     "feedUrl": "https://podcast-index-lookup/2b62ef49-fcff-523c-b81a-0a7dde2b0609",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Music From The Doerfel-Verse",
     "duration": 180
   },
   {
     "feedGuid": "3db6aa74-e382-588c-b4ac-8a237f941515",
     "itemGuid": "36d3103e-e0e2-4cf9-ad27-074fc2079946",
-    "title": "Track 1048",
-    "artist": "Homegrown Hits Artist",
+    "title": "What They Say",
+    "artist": "Good Morning",
     "feedUrl": "https://podcast-index-lookup/3db6aa74-e382-588c-b4ac-8a237f941515",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Good Morning",
     "duration": 180
   },
   {
     "feedGuid": "29397cc2-4bd3-583e-93b8-9f5aebc3d22b",
     "itemGuid": "dc557dfe-11d0-4a46-aa73-d75a08676f2b",
-    "title": "Track 1049",
-    "artist": "Homegrown Hits Artist",
+    "title": "Good Girls",
+    "artist": "Pap Smears Are For Pussies",
     "feedUrl": "https://podcast-index-lookup/29397cc2-4bd3-583e-93b8-9f5aebc3d22b",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Pap Smears Are For Pussies",
     "duration": 180
   },
   {
@@ -9524,10 +9524,10 @@
   {
     "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
     "itemGuid": "d2346732-acc5-4256-afe5-0a0f3e670e6b",
-    "title": "Track 1059",
-    "artist": "Homegrown Hits Artist",
+    "title": "The Platform",
+    "artist": "The Heycitizen Experience",
     "feedUrl": "https://podcast-index-lookup/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Heycitizen Experience",
     "duration": 180
   },
   {
@@ -9542,10 +9542,10 @@
   {
     "feedGuid": "86f9ba78-7c4a-5bd2-a382-c6a88e9a96a0",
     "itemGuid": "16e84f15-af1f-474f-9af1-19ba0fc6a589",
-    "title": "Track 1061",
-    "artist": "Homegrown Hits Artist",
+    "title": "All the Smart People",
+    "artist": "Early Demos I",
     "feedUrl": "https://podcast-index-lookup/86f9ba78-7c4a-5bd2-a382-c6a88e9a96a0",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Early Demos I",
     "duration": 180
   },
   {
@@ -9560,10 +9560,10 @@
   {
     "feedGuid": "826666ad-c321-5431-987f-5921d90d1b2f",
     "itemGuid": "e3dba488-48bd-46c8-847d-b33419b9ab56",
-    "title": "Track 1063",
-    "artist": "Homegrown Hits Artist",
+    "title": "Charlie Brown",
+    "artist": "Mister Roane County",
     "feedUrl": "https://podcast-index-lookup/826666ad-c321-5431-987f-5921d90d1b2f",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Mister Roane County",
     "duration": 180
   },
   {
@@ -9578,10 +9578,10 @@
   {
     "feedGuid": "f21daf71-4c7b-5fe1-82c6-3a1c2a48c764",
     "itemGuid": "bec0407e-930c-4f4d-8262-40a986488706",
-    "title": "Track 1065",
-    "artist": "Homegrown Hits Artist",
+    "title": "Everyone Peg Your Jeans",
+    "artist": "Coke Dick, Titties & Sarcasm",
     "feedUrl": "https://podcast-index-lookup/f21daf71-4c7b-5fe1-82c6-3a1c2a48c764",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Coke Dick, Titties & Sarcasm",
     "duration": 180
   },
   {
@@ -9614,19 +9614,19 @@
   {
     "feedGuid": "b8b6971e-403e-568f-a4e6-7aa2b45e50d4",
     "itemGuid": "72a3b402-8491-4cd9-823e-a621fd81b86f",
-    "title": "Track 1069",
-    "artist": "Homegrown Hits Artist",
+    "title": "Bloodshot Lies",
+    "artist": "Bloodshot Lies - Single",
     "feedUrl": "https://podcast-index-lookup/b8b6971e-403e-568f-a4e6-7aa2b45e50d4",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Bloodshot Lies - Single",
     "duration": 180
   },
   {
     "feedGuid": "726cfda1-f992-5468-8a0b-b0b9f83dee3c",
     "itemGuid": "9b0e44c7-bbb2-4eb9-a6ef-08afceb9b1ca",
-    "title": "Track 1070",
-    "artist": "Homegrown Hits Artist",
+    "title": "Baby Bed Bugs",
+    "artist": "Rhythmic Booze",
     "feedUrl": "https://podcast-index-lookup/726cfda1-f992-5468-8a0b-b0b9f83dee3c",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Rhythmic Booze",
     "duration": 180
   },
   {
@@ -9641,10 +9641,10 @@
   {
     "feedGuid": "a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
     "itemGuid": "44c77db1-0ce2-4e2b-8cae-4b93d8585e50",
-    "title": "Track 1072",
-    "artist": "Homegrown Hits Artist",
+    "title": "Milves in Teslas",
+    "artist": "The Heycitizen Experience",
     "feedUrl": "https://podcast-index-lookup/a2d2e313-9cbd-5169-b89c-ab07b33ecc33",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Heycitizen Experience",
     "duration": 180
   },
   {
@@ -9668,19 +9668,19 @@
   {
     "feedGuid": "9c4017a3-5a53-5b3d-b2bd-783fbf2afae9",
     "itemGuid": "6d9149cb-e7c0-463d-910d-dc7345a79aeb",
-    "title": "Track 1075",
-    "artist": "Homegrown Hits Artist",
+    "title": "Baby, not so rough!",
+    "artist": "Himalaya",
     "feedUrl": "https://podcast-index-lookup/9c4017a3-5a53-5b3d-b2bd-783fbf2afae9",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Himalaya",
     "duration": 180
   },
   {
     "feedGuid": "acddbb03-064b-5098-87ca-9b146beb12e8",
     "itemGuid": "510f7879-071f-468b-91e1-d9766831bd9d",
-    "title": "Track 1076",
-    "artist": "Homegrown Hits Artist",
+    "title": "Willow Brown (ft. Scream Mail)",
+    "artist": "Stay Awhile",
     "feedUrl": "https://podcast-index-lookup/acddbb03-064b-5098-87ca-9b146beb12e8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Stay Awhile",
     "duration": 180
   },
   {
@@ -9749,10 +9749,10 @@
   {
     "feedGuid": "3db6aa74-e382-588c-b4ac-8a237f941515",
     "itemGuid": "731e0ffe-e07d-4426-aae5-0cce8dcf6b03",
-    "title": "Track 1084",
-    "artist": "Homegrown Hits Artist",
+    "title": "Wake Up",
+    "artist": "Good Morning",
     "feedUrl": "https://podcast-index-lookup/3db6aa74-e382-588c-b4ac-8a237f941515",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Good Morning",
     "duration": 180
   },
   {
@@ -9767,10 +9767,10 @@
   {
     "feedGuid": "b95514f8-0087-5777-a4a8-e0e44cb0233d",
     "itemGuid": "84dc3d5b-e94b-46ca-9ef7-4c0293ed7c96",
-    "title": "Track 1086",
-    "artist": "Homegrown Hits Artist",
+    "title": "Sell it to my Soul",
+    "artist": "Fierce Kitten",
     "feedUrl": "https://podcast-index-lookup/b95514f8-0087-5777-a4a8-e0e44cb0233d",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Fierce Kitten",
     "duration": 180
   },
   {
@@ -9785,10 +9785,10 @@
   {
     "feedGuid": "a71b097b-4cf0-5e74-b6a9-1271373bb396",
     "itemGuid": "a45376c3-c8b3-4173-80c4-4cdfa266e0db",
-    "title": "Track 1088",
-    "artist": "Homegrown Hits Artist",
+    "title": "The Wait Is Over",
+    "artist": "The Wait Is Over",
     "feedUrl": "https://podcast-index-lookup/a71b097b-4cf0-5e74-b6a9-1271373bb396",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Wait Is Over",
     "duration": 180
   },
   {
@@ -9821,10 +9821,10 @@
   {
     "feedGuid": "121c26b0-33f8-5cb9-9e14-d706bd3f5db8",
     "itemGuid": "51c64565-b2f3-418a-a85f-51ba5c7095e2",
-    "title": "Track 1092",
-    "artist": "Homegrown Hits Artist",
+    "title": "Pitiful",
+    "artist": "White Triangles",
     "feedUrl": "https://podcast-index-lookup/121c26b0-33f8-5cb9-9e14-d706bd3f5db8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "White Triangles",
     "duration": 180
   },
   {
@@ -9848,10 +9848,10 @@
   {
     "feedGuid": "99a14604-f38b-5e9d-8679-9314d1207cd4",
     "itemGuid": "02f5de9c-3e64-4df5-ac27-03fb6ac612bb",
-    "title": "Track 1095",
-    "artist": "Homegrown Hits Artist",
+    "title": "Holy Water",
+    "artist": "Pony Up Daddy",
     "feedUrl": "https://podcast-index-lookup/99a14604-f38b-5e9d-8679-9314d1207cd4",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Pony Up Daddy",
     "duration": 180
   },
   {
@@ -9866,10 +9866,10 @@
   {
     "feedGuid": "970cd229-dd92-5ba9-9356-00cd23c261f4",
     "itemGuid": "27c735f0-23b9-4f47-9d33-12687e90e75a",
-    "title": "Track 1097",
-    "artist": "Homegrown Hits Artist",
+    "title": "The Impossible Dream",
+    "artist": "Midwestern Apathy",
     "feedUrl": "https://podcast-index-lookup/970cd229-dd92-5ba9-9356-00cd23c261f4",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Midwestern Apathy",
     "duration": 180
   },
   {
@@ -9884,19 +9884,19 @@
   {
     "feedGuid": "3c87f137-9507-5bc6-858f-825eeb3988cd",
     "itemGuid": "4eec9e5d-181b-48ce-8eed-e17df00d2ae5",
-    "title": "Track 1099",
-    "artist": "Homegrown Hits Artist",
+    "title": "Barbeque",
+    "artist": "On My Way",
     "feedUrl": "https://podcast-index-lookup/3c87f137-9507-5bc6-858f-825eeb3988cd",
-    "feedTitle": "Various Artists",
+    "feedTitle": "On My Way",
     "duration": 180
   },
   {
     "feedGuid": "72f2cafd-0535-5089-a2ff-6a54e396d30e",
     "itemGuid": "20fb6e8e-1548-46b8-842c-aea761ce295d",
-    "title": "Track 1100",
-    "artist": "Homegrown Hits Artist",
+    "title": "We Can’t Have Nice Things",
+    "artist": "What Could Go Wrong?",
     "feedUrl": "https://podcast-index-lookup/72f2cafd-0535-5089-a2ff-6a54e396d30e",
-    "feedTitle": "Various Artists",
+    "feedTitle": "What Could Go Wrong?",
     "duration": 180
   },
   {
@@ -9911,10 +9911,10 @@
   {
     "feedGuid": "f21daf71-4c7b-5fe1-82c6-3a1c2a48c764",
     "itemGuid": "c47651c1-714b-4ba5-8d29-ce113423adfd",
-    "title": "Track 1102",
-    "artist": "Homegrown Hits Artist",
+    "title": "Can You Hear the Clouds?",
+    "artist": "Coke Dick, Titties & Sarcasm",
     "feedUrl": "https://podcast-index-lookup/f21daf71-4c7b-5fe1-82c6-3a1c2a48c764",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Coke Dick, Titties & Sarcasm",
     "duration": 180
   },
   {
@@ -9947,10 +9947,10 @@
   {
     "feedGuid": "d4bd6713-ce91-5420-97d9-f6cbb68687c6",
     "itemGuid": "737958a6-9d6c-44df-ae35-db190bcc5ddc",
-    "title": "Track 1106",
-    "artist": "Homegrown Hits Artist",
+    "title": "Mr. Marlboro",
+    "artist": "The Virus Takes",
     "feedUrl": "https://podcast-index-lookup/d4bd6713-ce91-5420-97d9-f6cbb68687c6",
-    "feedTitle": "Various Artists",
+    "feedTitle": "The Virus Takes",
     "duration": 180
   },
   {
@@ -9965,28 +9965,28 @@
   {
     "feedGuid": "1e683ce1-0af5-50ac-9fbd-668519174391",
     "itemGuid": "5c8e3b28-30c9-47ba-b253-54b2f33904f5",
-    "title": "Track 1108",
-    "artist": "Homegrown Hits Artist",
+    "title": "Emo Stormtrooper",
+    "artist": "Emo Stormtrooper",
     "feedUrl": "https://podcast-index-lookup/1e683ce1-0af5-50ac-9fbd-668519174391",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Emo Stormtrooper",
     "duration": 180
   },
   {
     "feedGuid": "64ef270-728d-51f0-8052-9fed4883f662",
     "itemGuid": "https://www.falsefinish.club/wp-content/uploads/2023/05/10.-Have-Fun._24Bit_Aria_Master_MTC.mp3",
-    "title": "Unknown Feed",
-    "artist": "Unknown Feed",
+    "title": "Have Fun",
+    "artist": "False Finish",
     "feedUrl": "https://podcast-index-lookup/64ef270-728d-51f0-8052-9fed4883f662",
-    "feedTitle": "Unknown Feed",
+    "feedTitle": "False Finish",
     "duration": 180
   },
   {
     "feedGuid": "acddbb03-064b-5098-87ca-9b146beb12e8",
     "itemGuid": "baa182e9-d088-4cc1-a3f7-e4af48ff112a",
-    "title": "Track 1110",
-    "artist": "Homegrown Hits Artist",
+    "title": "Stay Awhile",
+    "artist": "Stay Awhile",
     "feedUrl": "https://podcast-index-lookup/acddbb03-064b-5098-87ca-9b146beb12e8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Stay Awhile",
     "duration": 180
   },
   {
@@ -10001,10 +10001,10 @@
   {
     "feedGuid": "121c26b0-33f8-5cb9-9e14-d706bd3f5db8",
     "itemGuid": "7ab94c20-332c-40c6-a60c-f8e5885ce242",
-    "title": "Track 1112",
-    "artist": "Homegrown Hits Artist",
+    "title": "White Suit Gold Rings",
+    "artist": "White Triangles",
     "feedUrl": "https://podcast-index-lookup/121c26b0-33f8-5cb9-9e14-d706bd3f5db8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "White Triangles",
     "duration": 180
   },
   {
@@ -10028,28 +10028,28 @@
   {
     "feedGuid": "64ef270-728d-51f0-8052-9fed4883f662",
     "itemGuid": "https://www.falsefinish.club/wp-content/uploads/2023/05/03.-Rings-of-Saturn_24Bit_Aria_Master_MTC.mp3",
-    "title": "Unknown Feed",
-    "artist": "Unknown Feed",
+    "title": "Rings of Saturn",
+    "artist": "False Finish",
     "feedUrl": "https://podcast-index-lookup/64ef270-728d-51f0-8052-9fed4883f662",
-    "feedTitle": "Unknown Feed",
+    "feedTitle": "False Finish",
     "duration": 180
   },
   {
     "feedGuid": "acddbb03-064b-5098-87ca-9b146beb12e8",
     "itemGuid": "8958b128-e10b-4132-975c-65df41bb45ec",
-    "title": "Track 1116",
-    "artist": "Homegrown Hits Artist",
+    "title": "Like Wine",
+    "artist": "Stay Awhile",
     "feedUrl": "https://podcast-index-lookup/acddbb03-064b-5098-87ca-9b146beb12e8",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Stay Awhile",
     "duration": 180
   },
   {
     "feedGuid": "64ef270-728d-51f0-8052-9fed4883f662",
     "itemGuid": "https://www.falsefinish.club/wp-content/uploads/2023/05/03.-Rings-of-Saturn_24Bit_Aria_Master_MTC.mp3",
-    "title": "Track 1117",
-    "artist": "Homegrown Hits Artist",
+    "title": "Rings of Saturn",
+    "artist": "False Finish",
     "feedUrl": "https://podcast-index-lookup/64ef270-728d-51f0-8052-9fed4883f662",
-    "feedTitle": "Various Artists",
+    "feedTitle": "False Finish",
     "duration": 180
   },
   {
@@ -10064,10 +10064,10 @@
   {
     "feedGuid": "b328828c-9ba0-5b1d-be33-4cce51968ae1",
     "itemGuid": "d047262b-072e-4527-aa87-fab9e4e44848",
-    "title": "Track 1119",
-    "artist": "Homegrown Hits Artist",
+    "title": "Boost Them All!",
+    "artist": "Boost Them All!",
     "feedUrl": "https://podcast-index-lookup/b328828c-9ba0-5b1d-be33-4cce51968ae1",
-    "feedTitle": "Various Artists",
+    "feedTitle": "Boost Them All!",
     "duration": 180
   }
 ]
