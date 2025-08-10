@@ -239,7 +239,7 @@ export default function HomePage() {
       const albums = data.albums || [];
       
       // Only load music tracks for full load
-      let musicTrackAlbums = [];
+      let musicTrackAlbums: any[] = [];
       if (!skipMusicTracks) {
         const musicTracks = await loadMusicTracksFromRSS();
         musicTrackAlbums = convertMusicTracksToAlbums(musicTracks);
