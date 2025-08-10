@@ -1163,26 +1163,13 @@ export default function HomePage() {
                         <h2 className="text-2xl font-bold mb-6 text-white">Albums</h2>
                         {viewType === 'grid' ? (
                           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
-                            {albumsWithMultipleTracks.slice(0, 12).map((album, index) => (
+                            {albumsWithMultipleTracks.map((album, index) => (
                               <AlbumCard
                                 key={`album-${index}`}
                                 album={album}
                                 onPlay={playAlbum}
                               />
                             ))}
-                            {albumsWithMultipleTracks.length > 12 && (
-                              <div className="col-span-full text-center py-4">
-                                <button 
-                                  onClick={() => {
-                                    // Trigger loading more albums
-                                    if (!isEnhancedLoaded) loadEnhancedAlbums();
-                                  }}
-                                  className="px-4 py-2 bg-stablekraft-teal text-white rounded-lg hover:bg-stablekraft-orange transition-colors"
-                                >
-                                  Load More Albums ({albumsWithMultipleTracks.length - 12} more)
-                                </button>
-                              </div>
-                            )}
                           </div>
                         ) : (
                           <div className="space-y-2">
@@ -1363,17 +1350,7 @@ export default function HomePage() {
           ) : (
             <div className="text-center py-12">
               <h2 className="text-2xl font-semibold mb-4 text-white">No Albums Found</h2>
-              <p className="text-gray-400">
-                {isCriticalLoaded ? 'Unable to load additional album information.' : 'Unable to load any album information from the RSS feeds.'}
-              </p>
-              {isCriticalLoaded && (
-                <button 
-                  onClick={() => loadEnhancedAlbums()}
-                  className="mt-4 px-4 py-2 bg-stablekraft-teal text-white rounded-lg hover:bg-stablekraft-orange transition-colors"
-                >
-                  Load More Albums
-                </button>
-              )}
+              <p className="text-gray-400">Unable to load any album information from the RSS feeds.</p>
             </div>
           )}
         </div>
