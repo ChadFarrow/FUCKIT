@@ -73,7 +73,9 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
     ? getAlbumArtworkUrl(album.coverArt, 'medium')
     : getPlaceholderImageUrl('medium');
   
-  const albumUrl = generateAlbumUrl(album.title);
+  // Check if this is a playlist card and use playlistUrl if available
+  const isPlaylistCard = (album as any).isPlaylistCard;
+  const albumUrl = isPlaylistCard ? (album as any).playlistUrl : generateAlbumUrl(album.title);
   
   // Only log in development mode to improve production performance
   if (process.env.NODE_ENV === 'development') {
@@ -201,13 +203,6 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
         {album.tracks.length > 0 && (
           <div className="absolute top-1 right-1 sm:top-2 sm:right-2 bg-black/80 backdrop-blur-sm rounded-full px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs text-white border border-gray-600">
             {album.tracks.length} {album.tracks.length !== 1 ? 'tracks' : 'track'}
-          </div>
-        )}
-        
-        {/* Music track source badge */}
-        {(album as any).isMusicTrackAlbum && (
-          <div className="absolute top-1 left-1 sm:top-2 sm:left-2 bg-stablekraft-teal backdrop-blur-sm rounded-full px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs text-white">
-            RSS
           </div>
         )}
       </div>

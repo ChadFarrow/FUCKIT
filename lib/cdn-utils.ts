@@ -14,6 +14,11 @@ export function getAlbumArtworkUrl(originalUrl: string, size: 'thumbnail' | 'med
     return getPlaceholderImageUrl(size);
   }
   
+  // Handle known missing placeholder images
+  if (originalUrl.includes('playlist-track-placeholder.png')) {
+    return getPlaceholderImageUrl(size);
+  }
+  
   // Ensure HTTPS for all URLs
   if (originalUrl.startsWith('http://')) {
     originalUrl = originalUrl.replace('http://', 'https://');

@@ -370,6 +370,11 @@ export default function HomePage() {
         return true;
       }
       
+      // Include ITDV playlist tracks - they're high quality and resolved
+      if (track.source === 'itdv-playlist') {
+        return true;
+      }
+      
       // For description tracks, be more selective
       if (track.source === 'description') {
         // Only include if it looks like a real song title
@@ -400,9 +405,9 @@ export default function HomePage() {
     return Object.values(episodeGroups).map((episode: any, index: number) => ({
       id: `music-episode-${episode.episodeId}`,
       title: episode.episodeTitle,
-      artist: 'From RSS Feed',
+      artist: episode.tracks.length > 0 ? episode.tracks[0].artist : 'From RSS Feed',
       description: `Music tracks from ${episode.episodeTitle}`,
-      coverArt: '', // Will use placeholder
+      coverArt: episode.tracks.length > 0 ? (episode.tracks[0].artworkUrl || episode.tracks[0].image || '') : '',
       releaseDate: episode.episodeDate,
       feedId: 'music-rss',
       tracks: episode.tracks.map((track: any, trackIndex: number) => ({
@@ -413,7 +418,7 @@ export default function HomePage() {
         trackNumber: trackIndex + 1,
         subtitle: track.episodeTitle,
         summary: track.description || '',
-        image: track.image || '',
+        image: track.artworkUrl || track.image || '',
         explicit: false,
         keywords: [],
         // Add music track specific fields
@@ -549,22 +554,107 @@ export default function HomePage() {
     // Apply filtering based on active filter
     let filtered = albumsToUse;
     
-    // Filter out explicit content by default
-    const baseAlbums = albumsToUse.filter(album => !album.explicit);
+    // Filter out explicit content and playlist items by default
+    const baseAlbums = albumsToUse.filter(album => !album.explicit && !(album as any).isMusicTrackAlbum);
+    
+    // Deduplicate albums by title and artist combination
+    const deduplicatedAlbums = baseAlbums.reduce((acc: RSSAlbum[], album: RSSAlbum) => {
+      const albumKey = `${album.title?.toLowerCase() || 'unknown'}-${album.artist?.toLowerCase() || 'unknown'}`;
+      
+      // Check if we already have an album with this title+artist combo
+      const existingIndex = acc.findIndex(existing => {
+        const existingKey = `${existing.title?.toLowerCase() || 'unknown'}-${existing.artist?.toLowerCase() || 'unknown'}`;
+        return existingKey === albumKey;
+      });
+      
+      if (existingIndex === -1) {
+        // No duplicate found, add this album
+        acc.push(album);
+      } else {
+        // Duplicate found, keep the one with more tracks or better data
+        const existing = acc[existingIndex];
+        if (album.tracks.length > existing.tracks.length || 
+            (!existing.coverArt && album.coverArt) ||
+            (!existing.description && album.description)) {
+          // Replace with better version
+          acc[existingIndex] = album;
+        }
+      }
+      
+      return acc;
+    }, []);
     
     switch (activeFilter) {
       case 'albums':
-        filtered = baseAlbums.filter(album => album.tracks.length > 6);
+        filtered = deduplicatedAlbums.filter(album => album.tracks.length > 6);
         break;
       case 'eps':
-        filtered = baseAlbums.filter(album => album.tracks.length > 1 && album.tracks.length <= 6);
+        filtered = deduplicatedAlbums.filter(album => album.tracks.length > 1 && album.tracks.length <= 6);
         break;
       case 'singles':
-        filtered = baseAlbums.filter(album => album.tracks.length === 1);
+        filtered = deduplicatedAlbums.filter(album => album.tracks.length === 1);
+        break;
+      case 'playlist':
+        // For playlist, show featured playlist cards
+        const featuredPlaylists = [
+          {
+            id: 'into-the-doerfelverse-playlist',
+            title: 'Into The Doerfel-Verse',
+            artist: 'Various Artists',
+            description: 'Every music reference from the Into The Doerfel-Verse podcast',
+            coverArt: 'https://raw.githubusercontent.com/ChadFarrow/chadf-musicl-playlists/refs/heads/main/docs/ITDV-music-playlist.webp',
+            releaseDate: new Date().toISOString(),
+            feedId: 'into-the-doerfelverse-playlist',
+            tracks: [],
+            isPlaylistCard: true,
+            playlistUrl: '/playlist/itdv-rss'
+          },
+          {
+            id: 'homegrown-hits-playlist',
+            title: 'Homegrown Hits',
+            artist: 'Various Artists',
+            description: 'Every music reference from the Homegrown Hits podcast',
+            coverArt: 'https://raw.githubusercontent.com/ChadFarrow/ITDV-music-playlist/refs/heads/main/docs/HGH-playlist-art.webp', 
+            releaseDate: new Date().toISOString(),
+            feedId: 'homegrown-hits-playlist',
+            tracks: [],
+            isPlaylistCard: true,
+            playlistUrl: '/playlist/hgh-rss'
+          },
+          {
+            id: 'lightning-thrashes-playlist',
+            title: 'Lightning Thrashes',
+            artist: 'Complete Collection',
+            description: 'Every song played on Lightning Thrashes from episode 1 to 60',
+            coverArt: 'https://cdn.kolomona.com/podcasts/lightning-thrashes/060/060-Lightning-Thrashes-1000.jpg',
+            releaseDate: new Date().toISOString(),
+            feedId: 'lightning-thrashes-playlist',
+            tracks: [],
+            isPlaylistCard: true,
+            playlistUrl: '/playlist/lightning-thrashes-rss'
+          },
+          {
+            id: 'top100-music-playlist',
+            title: 'Top 100 Music',
+            artist: 'Value for Value Music Charts',
+            description: 'Top 100 music tracks by value received in sats',
+            coverArt: 'https://podcastindex.org/images/brand-icon.svg',
+            releaseDate: new Date().toISOString(),
+            feedId: 'top100-music-playlist',
+            tracks: [],
+            isPlaylistCard: true,
+            playlistUrl: '/playlist/top100-music'
+          }
+        ];
+        filtered = featuredPlaylists as any;
+        console.log('🎵 Playlist filter - showing featured playlists:', { 
+          playlistCount: filtered.length,
+          playlists: filtered.map((p: any) => p.title)
+        });
         break;
 
       default: // 'all'
-        filtered = baseAlbums; // Show all non-explicit albums
+        filtered = deduplicatedAlbums; // Show all non-explicit deduplicated albums
     }
 
     // Apply hierarchical sorting to filtered results
@@ -941,6 +1031,7 @@ export default function HomePage() {
                 onFilterChange={setActiveFilter}
                 sortType={sortType}
                 onSortChange={setSortType}
+                showSort={false}
                 viewType={viewType}
                 onViewChange={setViewType}
                 showShuffle={true}
@@ -949,7 +1040,8 @@ export default function HomePage() {
                 resultLabel={activeFilter === 'all' ? 'Releases' : 
                   activeFilter === 'albums' ? 'Albums' :
                   activeFilter === 'eps' ? 'EPs' : 
-                  activeFilter === 'singles' ? 'Singles' : 'Releases'}
+                  activeFilter === 'singles' ? 'Singles' : 
+                  activeFilter === 'playlist' ? 'Playlist' : 'Releases'}
                 className="mb-8"
               />
 

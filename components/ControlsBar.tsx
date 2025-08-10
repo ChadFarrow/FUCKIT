@@ -2,7 +2,7 @@
 
 import { Filter, Grid3X3, List, Shuffle } from 'lucide-react';
 
-export type FilterType = 'all' | 'albums' | 'eps' | 'singles';
+export type FilterType = 'all' | 'albums' | 'eps' | 'singles' | 'playlist';
 export type ViewType = 'grid' | 'list';
 export type SortType = 'name' | 'year' | 'tracks';
 
@@ -17,6 +17,7 @@ interface ControlsBarProps {
   sortType: SortType;
   onSortChange: (sort: SortType) => void;
   sortOptions?: { value: SortType; label: string }[];
+  showSort?: boolean;
   
   // View props
   viewType: ViewType;
@@ -39,11 +40,13 @@ const defaultSortOptions: { value: SortType; label: string }[] = [
   { value: 'tracks', label: 'Sort by Tracks' },
 ];
 
+// Filter options including playlist
 const defaultFilters: { value: FilterType; label: string }[] = [
   { value: 'all', label: 'All' },
   { value: 'albums', label: 'Albums' },
   { value: 'eps', label: 'EPs' },
   { value: 'singles', label: 'Singles' },
+  { value: 'playlist', label: 'Playlist' },
 ];
 
 export default function ControlsBar({
@@ -54,6 +57,7 @@ export default function ControlsBar({
   sortType,
   onSortChange,
   sortOptions = defaultSortOptions,
+  showSort = true,
   viewType,
   onViewChange,
   showViewToggle = true,
@@ -92,17 +96,19 @@ export default function ControlsBar({
         <div className="flex items-center justify-between p-3 gap-3">
           <div className="flex items-center gap-3 flex-1 min-w-0">
             {/* Sort */}
-            <select 
-              value={sortType} 
-              onChange={(e) => onSortChange(e.target.value as SortType)}
-              className="bg-gray-800 border border-gray-600 rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:ring-2 focus:ring-stablekraft-teal focus:border-stablekraft-teal transition-all whitespace-nowrap touch-manipulation"
-            >
-              {sortOptions.map((option) => (
-                <option key={option.value} value={option.value} className="bg-gray-800 text-white">
-                  {option.label}
-                </option>
-              ))}
-            </select>
+            {showSort && (
+              <select 
+                value={sortType} 
+                onChange={(e) => onSortChange(e.target.value as SortType)}
+                className="bg-gray-800 border border-gray-600 rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:ring-2 focus:ring-stablekraft-teal focus:border-stablekraft-teal transition-all whitespace-nowrap touch-manipulation"
+              >
+                {sortOptions.map((option) => (
+                  <option key={option.value} value={option.value} className="bg-gray-800 text-white">
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            )}
 
             {/* Result count */}
             {resultCount !== undefined && (
@@ -163,7 +169,6 @@ export default function ControlsBar({
           {/* Filters */}
           {showFilters && (
             <div className="flex items-center gap-2">
-              <Filter className="w-4 h-4 text-gray-400 flex-shrink-0" />
               <div className="flex gap-1">
                 {filterOptions.map((filter) => (
                   <button
@@ -183,17 +188,19 @@ export default function ControlsBar({
           )}
 
           {/* Sort */}
-          <select 
-            value={sortType} 
-            onChange={(e) => onSortChange(e.target.value as SortType)}
-            className="bg-gray-800 border border-gray-600 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-stablekraft-teal focus:border-stablekraft-teal transition-all whitespace-nowrap touch-manipulation"
-          >
-            {sortOptions.map((option) => (
-              <option key={option.value} value={option.value} className="bg-gray-800 text-white">
-                {option.label}
-              </option>
-            ))}
-          </select>
+          {showSort && (
+            <select 
+              value={sortType} 
+              onChange={(e) => onSortChange(e.target.value as SortType)}
+              className="bg-gray-800 border border-gray-600 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-stablekraft-teal focus:border-stablekraft-teal transition-all whitespace-nowrap touch-manipulation"
+            >
+              {sortOptions.map((option) => (
+                <option key={option.value} value={option.value} className="bg-gray-800 text-white">
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          )}
 
           {/* Result count */}
           {resultCount !== undefined && (

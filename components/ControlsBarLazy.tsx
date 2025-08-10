@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
 
-// Dynamic import for the heavy ControlsBar component
+// Dynamic import for the ControlsBar component with playlist support
 const ControlsBar = dynamic(() => import('./ControlsBar'), {
   loading: () => (
     <div className="mb-8 p-4 bg-gray-800/20 rounded-lg animate-pulse">

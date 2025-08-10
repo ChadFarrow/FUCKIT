@@ -96,7 +96,12 @@ const nextConfig = {
       'www.falsefinish.club',
       'www.leuenbergmusic.com',
       'www.socialmedia101pro.com',
-      'socialmedia101pro.com'
+      'socialmedia101pro.com',
+      'homegrownhits.xyz',
+      'lightningthrashes.com',
+      'picsum.photos',
+      'podcastindex.org',
+      'raw.githubusercontent.com'
     ],
     remotePatterns: [
       {
@@ -318,6 +323,37 @@ const nextConfig = {
       {
         protocol: 'http',
         hostname: 'bobcatindex.us-southeast-1.linodeobjects.com',
+        port: '',
+        pathname: '/**',
+      },
+      // Playlist artwork domains
+      {
+        protocol: 'https',
+        hostname: 'homegrownhits.xyz',
+        port: '',
+        pathname: '/wp-content/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'lightningthrashes.com',
+        port: '',
+        pathname: '/wp-content/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'picsum.photos',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'podcastindex.org',
+        port: '',
+        pathname: '/images/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'raw.githubusercontent.com',
         port: '',
         pathname: '/**',
       },
