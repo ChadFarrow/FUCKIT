@@ -192,14 +192,16 @@ export default function HomePage() {
       setError(null);
       setLoadingProgress(0);
       
-      // Load critical albums first (core feeds)
-      const criticalAlbums = await loadAlbumsData('core');
+      // Load only essential albums (first 12 albums) for immediate display
+      const criticalAlbums = await loadAlbumsData('core', 12);
       setCriticalAlbums(criticalAlbums);
       setIsCriticalLoaded(true);
       setLoadingProgress(30);
       
-      // Start loading enhanced data in background
-      loadEnhancedAlbums();
+      // Load enhanced data immediately but without blocking
+      requestAnimationFrame(() => {
+        loadEnhancedAlbums();
+      });
       
     } catch (error) {
       setError('Failed to load critical albums');
@@ -223,7 +225,7 @@ export default function HomePage() {
     }
   };
 
-  const loadAlbumsData = async (loadTier: 'core' | 'extended' | 'lowPriority' | 'all' = 'all') => {
+  const loadAlbumsData = async (loadTier: 'core' | 'extended' | 'lowPriority' | 'all' = 'all', limit?: number) => {
     try {
       // For critical loading, skip music tracks initially
       const skipMusicTracks = loadTier === 'core';
@@ -310,7 +312,12 @@ export default function HomePage() {
         }
       });
       
-      const uniqueAlbums = Array.from(albumMap.values());
+      let uniqueAlbums = Array.from(albumMap.values());
+      
+      // Apply limit if specified (for critical loading)
+      if (limit && limit > 0) {
+        uniqueAlbums = uniqueAlbums.slice(0, limit);
+      }
       
       // Cache the results with shorter TTL for fresher data
       if (typeof window !== 'undefined') {
@@ -1017,15 +1024,7 @@ export default function HomePage() {
         {/* Main Content */}
         <div className="container mx-auto px-3 sm:px-6 py-6 sm:py-8 pb-28">
 
-          {isLoading && !isCriticalLoaded ? (
-            <div className="flex flex-col items-center justify-center py-12 gap-4">
-              <LoadingSpinner 
-                size="large"
-                text="Loading music feeds..."
-                showProgress={false}
-              />
-            </div>
-          ) : error ? (
+          {error ? (
             <div className="text-center py-12">
               <h2 className="text-2xl font-semibold mb-4 text-red-600">Error Loading Albums</h2>
               <p className="text-gray-400">{error}</p>
