@@ -29,11 +29,26 @@ const nextConfig = {
   // Domain configuration for re.podtards.com deployment
   basePath: '',
   
+  // Performance optimizations
+  reactStrictMode: true,
+  swcMinify: true,
+  
   // Dynamic route configuration to prevent build issues
   experimental: {
     // Disable static generation for dynamic API routes
     workerThreads: false,
     cpus: 1,
+    // Performance optimizations
+    optimizeCss: true,
+    optimizePackageImports: ['@/components'],
+    turbo: {
+      rules: {
+        '*.svg': {
+          loaders: ['@svgr/webpack'],
+          as: '*.js',
+        },
+      },
+    },
   },
   
   // Revert static export - doesn't work with API routes
@@ -46,7 +61,7 @@ const nextConfig = {
   images: {
     // Performance optimizations - enable optimization but with better error handling
     unoptimized: false, // Re-enable optimization but with better configuration
-    formats: ['image/webp'],
+    formats: ['image/webp', 'image/avif'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
     minimumCacheTTL: 60 * 60 * 24 * 7, // 7 days for faster updates
@@ -365,6 +380,31 @@ const nextConfig = {
   poweredByHeader: false,
   generateEtags: true,
   
+  // Webpack optimizations for performance
+  webpack: (config, { dev, isServer }) => {
+    // Performance optimizations
+    if (!dev && !isServer) {
+      config.optimization.splitChunks = {
+        chunks: 'all',
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
+            chunks: 'all',
+          },
+          common: {
+            name: 'common',
+            minChunks: 2,
+            chunks: 'all',
+            enforce: true,
+          },
+        },
+      };
+    }
+    
+    return config;
+  },
+  
   // Headers for CDN and performance
   async headers() {
     return [
@@ -408,6 +448,16 @@ const nextConfig = {
           {
             key: 'X-Content-Type-Options',
             value: 'nosniff',
+          },
+        ],
+      },
+      // Performance headers
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-DNS-Prefetch-Control',
+            value: 'on',
           },
         ],
       },
