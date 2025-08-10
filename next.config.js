@@ -1,27 +1,48 @@
 const withPWA = require('next-pwa')({
   dest: 'public',
-  register: false, // Completely disable service worker registration
+  register: true,
   skipWaiting: true,
-  disable: true, // Disable Service Worker for performance
-  // Exclude RSC payloads and critical Next.js files from service worker caching
+  disable: false,
+  // Simplified exclusions to prevent build issues
   exclude: [
     /_next\/static\/.*\/_buildManifest\.js$/,
     /_next\/static\/.*\/_ssgManifest\.js$/,
     /_next\/static\/.*\/_app-build-manifest\.json$/,
     /_next\/webpack-hmr/,
-    /_next\/static\/.*\/.*\.js$/,
-    /_next\/static\/.*\/.*\.mjs$/,
-    /_next\/static\/.*\/.*\.css$/,
-    /test-mobile-images/, // Exclude test pages from service worker
-    /api\/proxy-image/, // Exclude proxy API from service worker
-    /api\/optimized-images/, // Exclude optimized images API from service worker
-    /api\/albums/, // Exclude albums API from service worker to prevent decoding issues
-    /api\/parsed-feeds/, // Exclude parsed-feeds API from service worker
-    /api\/feeds/, // Exclude feeds API from service worker
-    /\?_rsc=/, // Exclude RSC payloads from service worker
-    /album\/.*\?_rsc=/, // Exclude album RSC payloads
+    /test-mobile-images/,
+    /api\/proxy-image/,
+    /api\/optimized-images/,
+    /api\/albums/,
+    /api\/parsed-feeds/,
+    /api\/feeds/,
+    /\?_rsc=/,
+    /album\/.*\?_rsc=/,
   ],
-  runtimeCaching: [], // Disable all runtime caching
+  // Simplified runtime caching to prevent build errors
+  runtimeCaching: [
+    {
+      urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'google-fonts-cache',
+        expiration: {
+          maxEntries: 10,
+          maxAgeSeconds: 60 * 60 * 24 * 365,
+        },
+      },
+    },
+    {
+      urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'gstatic-fonts-cache',
+        expiration: {
+          maxEntries: 10,
+          maxAgeSeconds: 60 * 60 * 24 * 365,
+        },
+      },
+    },
+  ],
 });
 
 /** @type {import('next').NextConfig} */
@@ -31,22 +52,23 @@ const nextConfig = {
   
   // Performance optimizations
   reactStrictMode: true,
-  swcMinify: true,
   
   // Dynamic route configuration to prevent build issues
   experimental: {
     // Disable static generation for dynamic API routes
     workerThreads: false,
     cpus: 1,
-    // Performance optimizations
-    optimizeCss: true,
-    optimizePackageImports: ['@/components'],
-    turbo: {
-      rules: {
-        '*.svg': {
-          loaders: ['@svgr/webpack'],
-          as: '*.js',
-        },
+      // Performance optimizations - CSS optimization is now properly configured
+  optimizeCss: true, // Re-enabled now that critters is installed
+  optimizePackageImports: ['@/components'],
+  },
+  
+  // Turbopack configuration (moved from experimental)
+  turbopack: {
+    rules: {
+      '*.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
       },
     },
   },
