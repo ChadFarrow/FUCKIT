@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -171,16 +171,17 @@ export default function HomePage() {
   }, []); // Run only once on mount
 
 
-  // Static background loading - Bloodshot Lies album art
-  // CDNImage component handles loading internally, so we just need to track the state
+  // Delay background image loading until after critical content
   useEffect(() => {
-    // Set a small delay to ensure the CDNImage component has time to load
-    const timer = setTimeout(() => {
-      setBackgroundImageLoaded(true);
-    }, 100);
-    
-    return () => clearTimeout(timer);
-  }, []); // Remove isClient dependency to prevent potential loops
+    // Only start loading background after critical albums are loaded
+    if (isCriticalLoaded && !backgroundImageLoaded) {
+      const timer = setTimeout(() => {
+        // Background image will be triggered by the img onLoad
+      }, 500); // Small delay after critical content
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isCriticalLoaded, backgroundImageLoaded]);
 
 
 
@@ -224,6 +225,9 @@ export default function HomePage() {
 
   const loadAlbumsData = async (loadTier: 'core' | 'extended' | 'lowPriority' | 'all' = 'all') => {
     try {
+      // For critical loading, skip music tracks initially
+      const skipMusicTracks = loadTier === 'core';
+      
       // Fetch pre-parsed album data from the new API endpoint
       const response = await fetch('/api/albums');
       
@@ -234,9 +238,12 @@ export default function HomePage() {
       const data = await response.json();
       const albums = data.albums || [];
       
-      // Load music tracks from RSS feeds with pagination for performance
-      const musicTracks = await loadMusicTracksFromRSS();
-      const musicTrackAlbums = convertMusicTracksToAlbums(musicTracks);
+      // Only load music tracks for full load
+      let musicTrackAlbums = [];
+      if (!skipMusicTracks) {
+        const musicTracks = await loadMusicTracksFromRSS();
+        musicTrackAlbums = convertMusicTracksToAlbums(musicTracks);
+      }
       
       // Combine albums and music track albums
       const allAlbums = [...albums, ...musicTrackAlbums];
@@ -501,8 +508,8 @@ export default function HomePage() {
 
   // Shuffle functionality is now handled by the global AudioContext
 
-  // Helper functions for filtering and sorting
-  const getFilteredAlbums = () => {
+  // Memoized helper functions for filtering and sorting
+  const getFilteredAlbums = useMemo(() => {
     // Use progressive loading: show critical albums first, then enhanced
     const albumsToUse = isEnhancedLoaded ? enhancedAlbums : criticalAlbums;
     
@@ -659,9 +666,9 @@ export default function HomePage() {
 
     // Apply hierarchical sorting to filtered results
     return sortWithHierarchy(filtered);
-  };
+  }, [criticalAlbums, enhancedAlbums, isEnhancedLoaded, activeFilter, sortType]);
 
-  const filteredAlbums = getFilteredAlbums();
+  const filteredAlbums = getFilteredAlbums;
   
   // Show loading state for progressive loading
   const showProgressiveLoading = isCriticalLoaded && !isEnhancedLoaded && filteredAlbums.length > 0;
@@ -674,27 +681,33 @@ export default function HomePage() {
         backgroundColor: '#0a0f1a'
       }} />
       
-      {/* Static Background - STABLEKRAFT Rocket */}
-      <div 
-        className="fixed inset-0 z-10"
-        style={{
-          backgroundImage: 'url(/stablekraft-rocket-new.png)',
-          backgroundSize: 'auto 100vh',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}
-      >
-        {/* Hidden image to trigger onLoad for backgroundImageLoaded state */}
+      {/* Static Background - STABLEKRAFT Rocket - Lazy loaded */}
+      {backgroundImageLoaded && (
+        <div 
+          className="fixed inset-0 z-10 transition-opacity duration-300"
+          style={{
+            backgroundImage: 'url(/stablekraft-rocket-new.png)',
+            backgroundSize: 'auto 100vh',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }}
+        >
+          {/* Dark overlay for better readability */}
+          <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-black/30 to-black/50" />
+        </div>
+      )}
+      
+      {/* Preload background image after critical content */}
+      {isClient && (
         <img 
           src="/stablekraft-rocket-new.png" 
           alt=""
           className="hidden"
           onLoad={() => setBackgroundImageLoaded(true)}
           onError={() => setBackgroundImageLoaded(true)}
+          loading="lazy"
         />
-        {/* Dark overlay for better readability */}
-        <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-black/30 to-black/50" />
-      </div>
+      )}
       
       {/* Fallback gradient background - only for very slow connections */}
       <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 z-0" style={{
@@ -1071,13 +1084,26 @@ export default function HomePage() {
                         <h2 className="text-2xl font-bold mb-6 text-white">Albums</h2>
                         {viewType === 'grid' ? (
                           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
-                            {albumsWithMultipleTracks.map((album, index) => (
+                            {albumsWithMultipleTracks.slice(0, 12).map((album, index) => (
                               <AlbumCard
                                 key={`album-${index}`}
                                 album={album}
                                 onPlay={playAlbum}
                               />
                             ))}
+                            {albumsWithMultipleTracks.length > 12 && (
+                              <div className="col-span-full text-center py-4">
+                                <button 
+                                  onClick={() => {
+                                    // Trigger loading more albums
+                                    if (!isEnhancedLoaded) loadEnhancedAlbums();
+                                  }}
+                                  className="px-4 py-2 bg-stablekraft-teal text-white rounded-lg hover:bg-stablekraft-orange transition-colors"
+                                >
+                                  Load More Albums ({albumsWithMultipleTracks.length - 12} more)
+                                </button>
+                              </div>
+                            )}
                           </div>
                         ) : (
                           <div className="space-y-2">
