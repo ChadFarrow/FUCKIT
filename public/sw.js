@@ -131,7 +131,7 @@ define(['./workbox-c008c882'], (function (workbox) { 'use strict';
     "revision": "846118c33b2c0e922d7b3a7676f81f6f"
   }, {
     "url": "/_next/static/chunks/webpack.js",
-    "revision": "9e6004ec86fde5ca8a8262311d2e720f"
+    "revision": "4741329765b54b3725d991bf7576f522"
   }, {
     "url": "/_next/static/css/app/layout.css",
     "revision": "53eebb614cc0f2127229276a1ebb7637"
@@ -163,7 +163,16 @@ define(['./workbox-c008c882'], (function (workbox) { 'use strict';
     "url": "/_next/static/media/e4af272ccee01ff0-s.woff2",
     "revision": "65850a373e258f1c897a2b3d75eb74de"
   }, {
-    "url": "/_next/static/webpack/633457081244afec._.hot-update.json",
+    "url": "/_next/static/webpack/0e0b5ec21099883d.webpack.hot-update.json",
+    "revision": "development"
+  }, {
+    "url": "/_next/static/webpack/app/layout.0e0b5ec21099883d.hot-update.js",
+    "revision": "development"
+  }, {
+    "url": "/_next/static/webpack/app/page.0e0b5ec21099883d.hot-update.js",
+    "revision": "development"
+  }, {
+    "url": "/_next/static/webpack/webpack.0e0b5ec21099883d.hot-update.js",
     "revision": "development"
   }], {
     "ignoreURLParametersMatching": [/ts/]
