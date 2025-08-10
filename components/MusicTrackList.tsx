@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { MusicTrack } from '@/lib/music-track-parser';
 import MusicTrackCard from './MusicTrackCard';
@@ -42,7 +42,7 @@ export default function MusicTrackList({ initialFeedUrls = [], onPlayTrack, sele
   const feedUrls = initialFeedUrls.length > 0 ? initialFeedUrls : defaultFeedUrls;
 
   // Load music tracks with fallback to local data
-  const loadMusicTracks = async () => {
+  const loadMusicTracks = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     
@@ -113,7 +113,7 @@ export default function MusicTrackList({ initialFeedUrls = [], onPlayTrack, sele
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [feedUrls]);
 
   useEffect(() => {
     // Set client flag and load tracks only on client side

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { MusicTrackRecord } from '@/lib/music-track-schema';
 import V4VMusicTrackCard from './V4VMusicTrackCard';
@@ -65,14 +65,14 @@ export default function V4VMusicTrackList({
 
   // Default feed URLs if none provided
   const defaultFeedUrls = [
-    'https://www.doerfelverse.com/feeds/intothedoerfelverse.xml'
+    'https://www.doerfelverse.com/feeds/intothedoerfelverse.xml',
     // Add more V4V-enabled feeds here as they become available
   ];
 
   const feedUrls = initialFeedUrls.length > 0 ? initialFeedUrls : defaultFeedUrls;
 
   // Load music tracks from database
-  const loadMusicTracks = async () => {
+  const loadMusicTracks = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     
@@ -109,10 +109,10 @@ export default function V4VMusicTrackList({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [currentPage, searchQuery, filterSource, filterEpisode, filterFeed, filterV4V, itemsPerPage]);
 
   // Extract tracks from feeds and store in database
-  const extractAndStoreTracks = async () => {
+  const extractAndStoreTracks = useCallback(async () => {
     setIsExtracting(true);
     setError(null);
     
@@ -146,18 +146,18 @@ export default function V4VMusicTrackList({
     } finally {
       setIsExtracting(false);
     }
-  };
+  }, [feedUrls, loadMusicTracks]);
 
   useEffect(() => {
     loadMusicTracks();
-  }, [currentPage, searchQuery, filterSource, filterEpisode, filterFeed, filterV4V]);
+  }, [loadMusicTracks, currentPage, searchQuery, filterSource, filterEpisode, filterFeed, filterV4V]);
 
   // Auto-extract on mount if enabled
   useEffect(() => {
     if (autoExtract && tracks.length === 0) {
       extractAndStoreTracks();
     }
-  }, [autoExtract]);
+  }, [autoExtract, tracks.length, extractAndStoreTracks]);
 
   // Get unique episodes and feeds for filters
   const uniqueEpisodes = useMemo(() => {

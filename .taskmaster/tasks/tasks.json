@@ -694,7 +694,7 @@
         "description": "Identify the causes of slow initial load and implement fixes to reduce TTFB and LCP.",
         "details": "- Profile Next.js server/API routes for bottlenecks (heavy synchronous work, uncached fetches)\n- Audit client bundles (large deps, unused components) and enable code-splitting where needed\n- Add caching (HTTP/CDN) for stable resources (artwork, feeds)\n- Optimize image delivery (next/image, sizes, preloads)\n- Track metrics with simple RUM logging",
         "testStrategy": "Measure before/after: Lighthouse (mobile), Web Vitals (LCP, CLS, FID), and server timing. Target >30% LCP improvement.",
-        "status": "pending",
+        "status": "in-progress",
         "dependencies": [],
         "priority": "high",
         "subtasks": []
@@ -768,7 +768,7 @@
     ],
     "metadata": {
       "created": "2025-08-01T21:46:44.417Z",
-      "updated": "2025-08-09T11:29:37.982Z",
+      "updated": "2025-08-10T22:58:08.232Z",
       "description": "Music track extraction feature development"
     }
   },
