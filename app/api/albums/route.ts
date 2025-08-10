@@ -3,35 +3,55 @@ import fs from 'fs';
 import path from 'path';
 import { generateAlbumSlug } from '@/lib/url-utils';
 
-export async function GET() {
-  try {
-    const parsedFeedsPath = path.join(process.cwd(), 'data', 'parsed-feeds.json');
-    
-    if (!fs.existsSync(parsedFeedsPath)) {
-      console.warn('Parsed feeds data not found at:', parsedFeedsPath);
-      return NextResponse.json({ 
-        albums: [], 
-        totalCount: 0, 
-        lastUpdated: new Date().toISOString(),
-        error: 'Parsed feeds data not found' 
-      }, { status: 404 });
-    }
+// Cache the parsed data to avoid reading the file on every request
+let cachedData: any = null;
+let cacheTimestamp = 0;
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-    const fileContent = fs.readFileSync(parsedFeedsPath, 'utf-8');
+export async function GET(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const limit = parseInt(searchParams.get('limit') || '50');
+    const offset = parseInt(searchParams.get('offset') || '0');
+    const tier = searchParams.get('tier') || 'all';
+    const feedId = searchParams.get('feedId');
     
-    // Validate JSON before parsing
-    let parsedData;
-    try {
-      parsedData = JSON.parse(fileContent);
-    } catch (parseError) {
-      console.error('Failed to parse parsed-feeds.json:', parseError);
-      return NextResponse.json({ 
-        albums: [], 
-        totalCount: 0, 
-        lastUpdated: new Date().toISOString(),
-        error: 'Invalid JSON in parsed feeds data' 
-      }, { status: 500 });
+    // Use cached data if available and fresh
+    const now = Date.now();
+    if (cachedData && (now - cacheTimestamp) < CACHE_DURATION) {
+      console.log('Using cached parsed feeds data');
+    } else {
+      const parsedFeedsPath = path.join(process.cwd(), 'data', 'parsed-feeds.json');
+      
+      if (!fs.existsSync(parsedFeedsPath)) {
+        console.warn('Parsed feeds data not found at:', parsedFeedsPath);
+        return NextResponse.json({ 
+          albums: [], 
+          totalCount: 0, 
+          lastUpdated: new Date().toISOString(),
+          error: 'Parsed feeds data not found' 
+        }, { status: 404 });
+      }
+
+      const fileContent = fs.readFileSync(parsedFeedsPath, 'utf-8');
+      
+      // Validate JSON before parsing
+      try {
+        cachedData = JSON.parse(fileContent);
+        cacheTimestamp = now;
+        console.log('Refreshed cached parsed feeds data');
+      } catch (parseError) {
+        console.error('Failed to parse parsed-feeds.json:', parseError);
+        return NextResponse.json({ 
+          albums: [], 
+          totalCount: 0, 
+          lastUpdated: new Date().toISOString(),
+          error: 'Invalid JSON in parsed feeds data' 
+        }, { status: 500 });
+      }
     }
+    
+    let parsedData = cachedData;
     
     // Validate data structure
     if (!parsedData || !Array.isArray(parsedData.feeds)) {
@@ -45,7 +65,7 @@ export async function GET() {
     }
     
     // Extract albums from parsed feeds with proper type checking
-    const albums = parsedData.feeds
+    let albums = parsedData.feeds
       .filter((feed: any) => feed.parseStatus === 'success' && feed.parsedData?.album)
       .map((feed: any) => {
         const album = feed.parsedData.album;
@@ -82,34 +102,71 @@ export async function GET() {
         };
       });
 
-    console.log(`✅ Albums API: Returning ${albums.length} albums`);
+    // Apply filtering by tier if specified
+    if (tier !== 'all') {
+      try {
+        const feedsResponse = await fetch(`${request.headers.get('origin') || 'http://localhost:3000'}/api/feeds`);
+        if (feedsResponse.ok) {
+          const feedsConfig = await feedsResponse.json();
+          const tierFeedIds = new Set(
+            feedsConfig[tier]?.map((feed: any) => feed.id) || []
+          );
+          albums = albums.filter((album: any) => tierFeedIds.has(album.feedId));
+        }
+      } catch (error) {
+        console.warn('Failed to load feeds configuration for tier filtering:', error);
+      }
+    }
+
+    // Apply feed ID filtering if specified
+    if (feedId) {
+      albums = albums.filter((album: any) => album.feedId === feedId);
+    }
+
+    // Deduplicate albums
+    const albumMap = new Map<string, any>();
+    albums.forEach((album: any) => {
+      const key = `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`;
+      if (!albumMap.has(key)) {
+        albumMap.set(key, album);
+      }
+    });
+    
+    const uniqueAlbums = Array.from(albumMap.values());
+    const totalCount = uniqueAlbums.length;
+
+    // Apply pagination
+    const paginatedAlbums = uniqueAlbums.slice(offset, offset + limit);
+
+    console.log(`✅ Albums API: Returning ${paginatedAlbums.length}/${totalCount} albums (tier: ${tier}, offset: ${offset}, limit: ${limit})`);
     
     return NextResponse.json({
-      albums,
-      totalCount: albums.length,
+      albums: paginatedAlbums,
+      totalCount,
+      hasMore: offset + limit < totalCount,
+      offset,
+      limit,
       lastUpdated: new Date().toISOString()
     }, {
       headers: {
-        'Cache-Control': 'public, max-age=600, s-maxage=600', // Cache for 10 minutes
+        'Cache-Control': 'public, max-age=180, s-maxage=180, stale-while-revalidate=300', // Faster cache with stale-while-revalidate
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
         'X-Content-Type-Options': 'nosniff',
-        'X-Frame-Options': 'DENY'
-        // Removed Content-Encoding: gzip to prevent decoding issues
-      },
+        'X-Frame-Options': 'DENY',
+        'ETag': `"${cacheTimestamp}-${totalCount}"` // Add ETag for better caching
+      }
     });
+
   } catch (error) {
-    console.error('Error loading parsed albums:', error);
-    return NextResponse.json(
-      { 
-        albums: [], 
-        totalCount: 0, 
-        lastUpdated: new Date().toISOString(),
-        error: 'Failed to load album data' 
-      },
-      { status: 500 }
-    );
+    console.error('Error in albums API:', error);
+    return NextResponse.json({ 
+      albums: [], 
+      totalCount: 0, 
+      lastUpdated: new Date().toISOString(),
+      error: 'Internal server error' 
+    }, { status: 500 });
   }
 } 
