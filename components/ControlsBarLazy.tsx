@@ -32,6 +32,7 @@ interface ControlsBarLazyProps {
   sortType: any;
   onSortChange: (sort: any) => void;
   sortOptions?: { value: any; label: string }[];
+  showSort?: boolean;
   
   // View props
   viewType: any;
