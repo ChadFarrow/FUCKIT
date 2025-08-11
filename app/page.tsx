@@ -259,7 +259,7 @@ export default function HomePage() {
     
     setIsLoadingMore(true);
     try {
-      if (activeFilter === 'hgh') {
+      if (false) { // HGH filter removed
         // Load more HGH tracks
         const hghFromMainDb = albums.filter(album => 
           album.feedId && album.feedId.startsWith('hgh-')
@@ -720,11 +720,11 @@ export default function HomePage() {
       
       // For HGH music, only show when specifically requested or in 'all' view
       if ((album as any).isHGHMusic) {
-        return activeFilter === 'hgh' || activeFilter === 'all';
+        return activeFilter === 'all';
       }
       
       // For regular albums, show in all non-HGH specific filters
-      return activeFilter !== 'hgh';
+      return true;
     });
     
     // Deduplicate albums by title and artist combination
@@ -1238,7 +1238,7 @@ export default function HomePage() {
                   activeFilter === 'albums' ? 'Albums' :
                   activeFilter === 'eps' ? 'EPs' : 
                   activeFilter === 'singles' ? 'Singles' : 
-                  activeFilter === 'hgh' ? 'HGH Tracks' : 
+ 
                   activeFilter === 'playlist' ? 'Playlist' : 'Releases'}
                 className="mb-8"
               />
@@ -1482,7 +1482,7 @@ export default function HomePage() {
                 const hghFromMainDb = albums.filter(album => 
                   album.feedId && album.feedId.startsWith('hgh-')
                 );
-                return activeFilter === 'hgh' && hghFromMainDb.length > visibleHghCount && (
+                return false && hghFromMainDb.length > visibleHghCount && ( // HGH filter removed
                   <div className="mt-8 text-center">
                     <button
                       onClick={loadMoreAlbums}
