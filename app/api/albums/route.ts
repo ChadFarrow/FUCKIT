@@ -135,15 +135,15 @@ export async function GET(request: Request) {
     const uniqueAlbums = Array.from(albumMap.values());
     const totalCount = uniqueAlbums.length;
 
-    // Apply pagination
-    const paginatedAlbums = uniqueAlbums.slice(offset, offset + limit);
+    // Apply pagination (limit=0 means return all)
+    const paginatedAlbums = limit === 0 ? uniqueAlbums.slice(offset) : uniqueAlbums.slice(offset, offset + limit);
 
     console.log(`✅ Albums API: Returning ${paginatedAlbums.length}/${totalCount} albums (tier: ${tier}, offset: ${offset}, limit: ${limit})`);
     
     return NextResponse.json({
       albums: paginatedAlbums,
       totalCount,
-      hasMore: offset + limit < totalCount,
+      hasMore: limit === 0 ? false : offset + limit < totalCount,
       offset,
       limit,
       lastUpdated: new Date().toISOString()

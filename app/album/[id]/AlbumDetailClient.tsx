@@ -73,28 +73,11 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
     // Try to preload background image from album title
     const preloadBackgroundImage = async () => {
       try {
-        // Load pre-parsed album data to find the album and its cover art
-        const response = await fetch('/api/albums');
+        // Use the new specific album API endpoint for much faster lookup
+        const response = await fetch(`/api/albums/${encodeURIComponent(albumTitle)}`);
         if (response.ok) {
           const data = await response.json();
-          const albums = data.albums || [];
-          
-          // Find album by title with comprehensive matching
-          const decodedAlbumTitle = decodeURIComponent(albumTitle);
-          const foundAlbum = albums.find((album: any) => {
-            const albumTitleLower = album.title.toLowerCase();
-            const searchTitleLower = decodedAlbumTitle.toLowerCase();
-            
-            // Try exact case-insensitive match first
-            if (albumTitleLower === searchTitleLower) {
-              return true;
-            }
-            
-            // Try aggressive normalization (remove all spaces and special chars)
-            const fullyNormalizedAlbum = albumTitleLower.replace(/[^a-z0-9]/g, '');
-            const fullyNormalizedSearch = searchTitleLower.replace(/[^a-z0-9]/g, '');
-            return fullyNormalizedAlbum === fullyNormalizedSearch;
-          });
+          const foundAlbum = data.album;
           
           if (foundAlbum?.coverArt) {
             console.log('🎨 Preloading background image for desktop:', foundAlbum.coverArt);
@@ -446,367 +429,32 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
           setIsLoading(true);
           setError(null);
           
-          // Smart feed selection based on album title
-          const decodedAlbumTitle = decodeURIComponent(albumTitle);
-          let feedUrls: string[] = [];
+          // Use the new specific album API endpoint for much faster lookup
+          console.log(`🔍 Loading album: ${albumTitle}`);
+          const response = await fetch(`/api/albums/${encodeURIComponent(albumTitle)}`);
           
-          // Map album titles to their specific feeds
-          const titleToFeedMap: { [key: string]: string } = {
-            'into the doerfel-verse': 'https://www.doerfelverse.com/feeds/intothedoerfelverse.xml',
-            'into the doerfelverse': 'https://www.doerfelverse.com/feeds/intothedoerfelverse.xml',
-            'music from the doerfel-verse': 'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml',
-            'music-from-the-doerfel-verse': 'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml',
-            'music from the doerfelverse': 'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml',
-            'bloodshot lies': 'https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml',
-            'bloodshot lies album': 'https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml',
-            'wrath of banjo': 'https://www.doerfelverse.com/feeds/wrath-of-banjo.xml',
-            'beware of banjo': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/07/Beware-of-Banjo.xml',
-            'ben doerfel': 'https://www.doerfelverse.com/feeds/ben-doerfel.xml',
-            '18 sundays': 'https://www.doerfelverse.com/feeds/18sundays.xml',
-            'alandace': 'https://www.doerfelverse.com/feeds/alandace.xml',
-            'autumn': 'https://www.doerfelverse.com/feeds/autumn.xml',
-            'christ exalted': 'https://www.doerfelverse.com/feeds/christ-exalted.xml',
-            'come back to me': 'https://www.doerfelverse.com/feeds/come-back-to-me.xml',
-            'dead time live 2016': 'https://www.doerfelverse.com/feeds/dead-time-live-2016.xml',
-            'dfb v1': 'https://www.doerfelverse.com/feeds/dfbv1.xml',
-            'dfb v2': 'https://www.doerfelverse.com/feeds/dfbv2.xml',
-            'disco swag': 'https://www.doerfelverse.com/feeds/disco-swag.xml',
-            'doerfels pubfeed': 'https://www.doerfelverse.com/feeds/music-from-the-doerfelverse.xml', // Use main album feed instead of publisher feed
-            'first married christmas': 'https://www.doerfelverse.com/feeds/first-married-christmas.xml',
-            'generation gap': 'https://www.doerfelverse.com/feeds/generation-gap.xml',
-            'heartbreak': 'https://www.doerfelverse.com/feeds/heartbreak.xml',
-            'merry christmix': 'https://www.doerfelverse.com/feeds/merry-christmix.xml',
-            'middle season let go': 'https://www.doerfelverse.com/feeds/middle-season-let-go.xml',
-            'phatty the grasshopper': 'https://www.doerfelverse.com/feeds/phatty-the-grasshopper.xml',
-            'possible': 'https://www.doerfelverse.com/feeds/possible.xml',
-            'pour over': 'https://www.doerfelverse.com/feeds/pour-over.xml',
-            'psalm 54': 'https://www.doerfelverse.com/feeds/psalm-54.xml',
-            'sensitive guy': 'https://www.doerfelverse.com/feeds/sensitive-guy.xml',
-            'they dont know': 'https://www.doerfelverse.com/feeds/they-dont-know.xml',
-            'think ep': 'https://www.doerfelverse.com/feeds/think-ep.xml',
-            'underwater single': 'https://www.doerfelverse.com/feeds/underwater-single.xml',
-            'unsound existence': 'https://www.doerfelverse.com/feeds/unsound-existence.xml',
-            'you are my world': 'https://www.doerfelverse.com/feeds/you-are-my-world.xml',
-            'you feel like home': 'https://www.doerfelverse.com/feeds/you-feel-like-home.xml',
-            'your chance': 'https://www.doerfelverse.com/feeds/your-chance.xml',
-            'nostalgic': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml',
-            'citybeach': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/CityBeach.xml',
-            'kurtisdrums v1': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml',
-            'ring that bell': 'https://www.thisisjdog.com/media/ring-that-bell.xml',
-            'tinderbox': 'https://wavlake.com/feed/music/d677db67-0310-4813-970e-e65927c689f1',
-            'nate johnivan': 'https://wavlake.com/feed/music/e678589b-5a9f-4918-9622-34119d2eed2c', // Nate Johnivan album
-            'fountain artist takeover': 'https://wavlake.com/feed/music/6dc5c681-8beb-4193-93a3-d405c962d103',
-            'fountain-artist-takeover': 'https://wavlake.com/feed/music/6dc5c681-8beb-4193-93a3-d405c962d103',
-            'fountain artist takeover nate johnivan': 'https://wavlake.com/feed/music/6dc5c681-8beb-4193-93a3-d405c962d103',
-            'fountain-artist-takeover-nate-johnivan': 'https://wavlake.com/feed/music/6dc5c681-8beb-4193-93a3-d405c962d103',
-            'empty passenger seat': 'https://wavlake.com/feed/music/95ea253a-4058-402c-8503-204f6d3f1494',
-            'joe martin': 'https://wavlake.com/feed/music/95ea253a-4058-402c-8503-204f6d3f1494', // Empty Passenger Seat album
-            'stay awhile': 'https://ableandthewolf.com/static/media/feed.xml',
-            'now i feel it': 'https://music.behindthesch3m3s.com/wp-content/uploads/c_kostra/now i feel it.xml',
-            'they ride': 'https://wavlake.com/feed/music/997060e3-9dc1-4cd8-b3c1-3ae06d54bb03',
-            'more': 'https://wavlake.com/feed/music/b54b9a19-b6ed-46c1-806c-7e82f7550edc',
-            // Temporarily disabled due to NetworkError issues
-            // 'love in its purest form': 'https://feed.falsefinish.club/Vance%20Latta/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form/love%20in%20its%20purest%20form.xml',
-            'opus': 'https://www.doerfelverse.com/artists/opus/opus/opus.xml',
-            
-            // Doerfels albums
-            'bloodshot-lies---the-album': 'https://www.doerfelverse.com/feeds/bloodshot-lies-album.xml',
-            'dead-timelive-2016': 'https://www.doerfelverse.com/feeds/dead-time-live-2016.xml',
-            'dfb-volume-1': 'https://www.doerfelverse.com/feeds/dfbv1.xml',
-            'dfb-volume-2': 'https://www.doerfelverse.com/feeds/dfbv2.xml',
-            'let-go-whats-holding-you-back': 'https://www.doerfelverse.com/feeds/middle-season-let-go.xml',
-            'unsound-existence-self-hosted-version': 'https://www.doerfelverse.com/feeds/unsound-existence.xml',
-            'you-feel-like-homesingle': 'https://www.doerfelverse.com/feeds/you-feel-like-home.xml',
-            'kurtisdrums': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml',
-            
-            // Playlist tracks from V4V time splits (need to be looked up)
-            'playlist-track-1': 'https://www.doerfelverse.com/feeds/playlist-track-1.xml',
-            'playlist-track-1-1106-1427': 'https://www.doerfelverse.com/feeds/playlist-track-1.xml',
-            'featured-track-1106-1427': 'https://www.doerfelverse.com/feeds/playlist-track-1.xml',
-                         'playlist-track-2': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml',
-             'playlist-track-2-1902-2333': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml',
-             'featured-track-1902-2333': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml',
-             'worthy-lofi': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml',
-             'kurtisdrums-worthy-lofi': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Kurtisdrums-V1.xml',
-                         'playlist-track-3': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml',
-             'playlist-track-3-5544-5930': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml',
-             'featured-track-5544-5930': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml',
-             'sweats': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml',
-             'citybeach-sweats': 'https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Nostalgic.xml',
-            'playlist-track-4': 'https://www.doerfelverse.com/feeds/playlist-track-4.xml',
-            'playlist-track-4-10400-10712': 'https://www.doerfelverse.com/feeds/playlist-track-4.xml',
-            'featured-track-10400-10712': 'https://www.doerfelverse.com/feeds/playlist-track-4.xml',
-            
-            // External artists
-            'deathdreams': 'https://static.staticsave.com/mspfiles/deathdreams.xml',
-            'way-to-go': 'https://static.staticsave.com/mspfiles/waytogo.xml',
-            'pilot': 'https://music.behindthesch3m3s.com/wp-content/uploads/Mellow%20Cassette/Pilot/pilot.xml',
-            'radio-brigade': 'https://music.behindthesch3m3s.com/wp-content/uploads/Mellow%20Cassette/Radio_Brigade/radio_brigade.xml',
-            
-            // Nate Johnivan albums
-            'singles': 'https://wavlake.com/feed/music/e678589b-5a9f-4918-9622-34119d2eed2c',
-            'bowl-of-oranges-a-bright-eyes-cover': 'https://wavlake.com/feed/music/3a152941-c914-43da-aeca-5d7c58892a7f',
-            'goodbye-uncle-walt': 'https://wavlake.com/feed/music/a97e0586-ecda-4b79-9c38-be9a9effe05a',
-            'fight': 'https://wavlake.com/feed/music/0ed13237-aca9-446f-9a03-de1a2d9331a3',
-            'safe-some-place': 'https://wavlake.com/feed/music/ce8c4910-51bf-4d5e-a0b3-338e58e5ee79',
-            'you-should-waste-it': 'https://wavlake.com/feed/music/acb43f23-cfec-4cc1-a418-4087a5378129',
-            'the-kid-the-dad-the-mom--the-tiny-window': 'https://wavlake.com/feed/music/d1a871a7-7e4c-4a91-b799-87dcbb6bc41d',
-            'kids': 'https://wavlake.com/feed/music/3294d8b5-f9f6-4241-a298-f04df818390c',
-            'dont-worry-you-still-have-time-to-ruin-it---demo': 'https://wavlake.com/feed/music/d3145292-bf71-415f-a841-7f5c9a9466e1',
-            'rose': 'https://wavlake.com/feed/music/91367816-33e6-4b6e-8eb7-44b2832708fd',
-            'fake-love---demo': 'https://wavlake.com/feed/music/8c8f8133-7ef1-4b72-a641-4e1a6a44d626',
-            'roommates---demo': 'https://wavlake.com/feed/music/9720d58b-22a5-4047-81de-f1940fec41c7',
-            'orange-pill-pink-pill-white-pill---demo': 'https://wavlake.com/feed/music/21536269-5192-49e7-a819-fab00f4a159e',
-            'tyson-vs-paul': 'https://wavlake.com/feed/music/624b19ac-5d8b-4fd6-8589-0eef7bcb9c9e',
-            
-            // bitpunk.fm albums
-            'bitpunk.fm': 'https://zine.bitpunk.fm/feeds/bitpunk-fm.xml',
-            'bitpunkfm': 'https://zine.bitpunk.fm/feeds/bitpunk-fm.xml',
-            'bitpunk-fm': 'https://zine.bitpunk.fm/feeds/bitpunk-fm.xml',
-            'bitpunk fm': 'https://zine.bitpunk.fm/feeds/bitpunk-fm.xml',
-            
-            // Joe Martin albums
-            'crocodile-tears': 'https://wavlake.com/feed/music/1c7917cc-357c-4eaf-ab54-1a7cda504976',
-            'letters-of-regret': 'https://wavlake.com/feed/music/e1f9dfcb-ee9b-4a6d-aee7-189043917fb5',
-            'hero': 'https://wavlake.com/feed/music/d4f791c3-4d0c-4fbd-a543-c136ee78a9de',
-            'bound-for-lonesome': 'https://wavlake.com/feed/music/51606506-66f8-4394-b6c6-cc0c1b554375',
-            'the-first-five-years': 'https://wavlake.com/feed/music/6b7793b8-fd9d-432b-af1a-184cd41aaf9d',
-            'daddy-gene': 'https://wavlake.com/feed/music/0bb8c9c7-1c55-4412-a517-572a98318921',
-            'love-strong': 'https://wavlake.com/feed/music/16e46ed0-b392-4419-a937-a7815f6ca43b',
-            'high-gravity': 'https://wavlake.com/feed/music/2cd1b9ea-9ef3-4a54-aa25-55295689f442',
-            'small-world': 'https://wavlake.com/feed/music/33eeda7e-8591-4ff5-83f8-f36a879b0a09',
-            'strangers-to-lovers---live-from-sloe-flower-studio': 'https://wavlake.com/feed/music/32a79df8-ec3e-4a14-bfcb-7a074e1974b9',
-            'cant-promise-you-the-world---live-from-sloe-flower-studio': 'https://wavlake.com/feed/music/06376ab5-efca-459c-9801-49ceba5fdab1',
-            
-            // Publisher feed
-            'iroh': 'https://wavlake.com/feed/artist/8a9c2e54-785a-4128-9412-737610f5d00a',
-            
-            // Death By Lions albums
-            'i guess this will have to do': 'https://music.behindthesch3m3s.com/wp-content/uploads/Death_by_Lions/i_guess_this_will_have_to_do.xml',
-            'i-guess-this-will-have-to-do': 'https://music.behindthesch3m3s.com/wp-content/uploads/Death_by_Lions/i_guess_this_will_have_to_do.xml'
-          };
-          
-          // Convert URL slug back to title format (e.g., "stay-awhile" -> "stay awhile")
-          const convertSlugToTitle = (slug: string): string => {
-            return slug.replace(/-/g, ' ');
-          };
-          
-          // Try to find a specific feed first
-          const titleFromSlug = convertSlugToTitle(decodedAlbumTitle);
-          const normalizedTitle = titleFromSlug.toLowerCase();
-          const specificFeed = titleToFeedMap[normalizedTitle];
-          
-          // Album lookup logging (removed to prevent infinite recursion)
-          
-          // Always use pre-parsed album data instead of parsing RSS feeds
-            const response = await fetch('/api/albums');
-            
-            if (!response.ok) {
-              throw new Error(`Failed to fetch albums: ${response.status} ${response.statusText}`);
+          if (!response.ok) {
+            if (response.status === 404) {
+              throw new Error('Album not found');
             }
-            
-            const data = await response.json();
-            const albumsData = data.albums || [];
-            
-            // Search for matching album in pre-parsed data
-            
-            
-            
-            // Find the matching album with more precise matching
-            const foundAlbum = albumsData.find((a: any) => {
-              const albumTitleLower = a.title.toLowerCase();
-              const searchTitleLower = decodedAlbumTitle.toLowerCase();
-              
-              // First try exact match (case-sensitive)
-              if (a.title === decodedAlbumTitle || a.title === albumTitle) {
-                  return true;
-              }
-              
-              // Then try case-insensitive exact match
-              if (albumTitleLower === searchTitleLower) {
-                return true;
-              }
-              
-              // Then try normalized exact match (remove special characters but preserve structure)
-              const normalizedAlbum = albumTitleLower.replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
-              const normalizedSearch = searchTitleLower.replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
-              if (normalizedAlbum === normalizedSearch) {
-                return true;
-              }
-              
-              // Try more aggressive normalization (remove all spaces and special chars)
-              const fullyNormalizedAlbum = albumTitleLower.replace(/[^a-z0-9]/g, '');
-              const fullyNormalizedSearch = searchTitleLower.replace(/[^a-z0-9]/g, '');
-              if (fullyNormalizedAlbum === fullyNormalizedSearch) {
-                return true;
-              }
-              
-              // For URL slugs, convert back to title format and try exact match
-              const slugToTitle = (slug: string) => slug.replace(/-/g, ' ');
-              const titleFromSlug = slugToTitle(searchTitleLower);
-              if (albumTitleLower === titleFromSlug) {
-                return true;
-              }
-              
-              // Try reverse slug generation to match
-              const albumSlug = generateAlbumSlug(a.title);
-              if (albumSlug === searchTitleLower) {
-                return true;
-              }
-              
-              // Special cases for known problematic titles
-              const specialCases: { [key: string]: string } = {
-                'stay awhile': 'Stay Awhile',
-                'all in a day': 'All in a Day',
-                'bloodshot lies': 'Bloodshot Lies',
-                'bloodshot lies album': 'Bloodshot Lies - The Album',
-                'bloodshot-lies': 'Bloodshot Lies - The Album',
-                'bloodshot-lies-the-album': 'Bloodshot Lies - The Album',
-                'into the doerfel verse': 'Into The Doerfel-Verse',
-                'into the doerfel-verse': 'Into The Doerfel-Verse',
-                'into-the-doerfel-verse': 'Into The Doerfel-Verse',
-                'into the doerfelverse': 'Into The Doerfel-Verse',
-                'music from the doerfel verse': 'Music From The Doerfel-Verse',
-                'music from the doerfel-verse': 'Music From The Doerfel-Verse',
-                'music-from-the-doerfel-verse': 'Music From The Doerfel-Verse',
-                'i guess this will have to do': 'I Guess This Will Have To Do',
-                'i-guess-this-will-have-to-do': 'I Guess This Will Have To Do',
-                'bitpunkfm': 'bitpunk.fm',
-                'bitpunk-fm': 'bitpunk.fm',
-                'bitpunk fm': 'bitpunk.fm',
-                'dead timelive 2016': 'Dead Time(live 2016)',
-                'dead-timelive-2016': 'Dead Time(live 2016)',
-                'let go whats holding you back': 'Let Go (What\'s holding you back)',
-                'let-go-whats-holding-you-back': 'Let Go (What\'s holding you back)',
-                'they dont know': 'They Don\'t Know',
-                'they-dont-know': 'They Don\'t Know',
-                'underwater single': 'Underwater - Single',
-                'underwater-single': 'Underwater - Single',
-                'unsound existence self hosted version': 'Unsound Existence (self-hosted version)',
-                'unsound-existence-self-hosted-version': 'Unsound Existence (self-hosted version)',
-                'you feel like homesingle': 'You Feel Like Home(Single)',
-                'you-feel-like-homesingle': 'You Feel Like Home(Single)',
-                'the kid the dad the mom and the tiny window': 'The Kid, The Dad, The Mom & the Tiny Window',
-                'the-kid-the-dad-the-mom-and-the-tiny-window': 'The Kid, The Dad, The Mom & the Tiny Window',
-                'dont worry you still have time to ruin it demo': 'Don\'t Worry, You Still Have Time To Ruin It - Demo',
-                'dont-worry-you-still-have-time-to-ruin-it-demo': 'Don\'t Worry, You Still Have Time To Ruin It - Demo',
-                'fake love demo': 'Fake Love - Demo',
-                'fake-love-demo': 'Fake Love - Demo',
-                'roommates demo': 'Roommates - Demo',
-                'roommates-demo': 'Roommates - Demo',
-                'orange pill pink pill white pill demo': 'Orange Pill, Pink Pill, White Pill - Demo',
-                'orange-pill-pink-pill-white-pill-demo': 'Orange Pill, Pink Pill, White Pill - Demo',
-                'strangers to lovers live from sloe flower studio': 'Strangers To Lovers - Live from Sloe Flower Studio',
-                'strangers-to-lovers-live-from-sloe-flower-studio': 'Strangers To Lovers - Live from Sloe Flower Studio',
-                'cant promise you the world live from sloe flower studio': 'Can\'t Promise You The World - Live from Sloe Flower Studio',
-                'cant-promise-you-the-world-live-from-sloe-flower-studio': 'Can\'t Promise You The World - Live from Sloe Flower Studio',
-                'heycitizens lo fi hip hop beats to study and relax to': 'HeyCitizen\'s Lo-Fi Hip-Hop Beats to Study and Relax to',
-                'heycitizens-lo-fi-hip-hop-beats-to-study-and-relax-to': 'HeyCitizen\'s Lo-Fi Hip-Hop Beats to Study and Relax to',
-                'fountain artist takeover nate johnivan': 'Fountain Artist Takeover - Nate Johnivan',
-                'fountain-artist-takeover-nate-johnivan': 'Fountain Artist Takeover - Nate Johnivan',
-                'rocknroll breakheart': 'Rock\'n\'Roll Breakheart',
-                'rocknroll-breakheart': 'Rock\'n\'Roll Breakheart',
-                'thankful feat witt lowry': 'Thankful (feat. Witt Lowry)',
-                'thankful-feat-witt-lowry': 'Thankful (feat. Witt Lowry)',
-                'bitpunkfm unwound': 'bitpunk.fm unwound',
-                'bitpunkfm-unwound': 'bitpunk.fm unwound',
-                'aged friends and old whiskey': 'Aged Friends & Old Whiskey',
-                'aged-friends-and-old-whiskey': 'Aged Friends & Old Whiskey'
-              };
-              
-              if (specialCases[searchTitleLower] && a.title === specialCases[searchTitleLower]) {
-                return true;
-              }
-              
-              // Try hyphen-aware matching for titles with hyphens
-              const albumTitleWithoutHyphens = albumTitleLower.replace(/-/g, ' ');
-              const searchTitleWithoutHyphens = searchTitleLower.replace(/-/g, ' ');
-              if (albumTitleWithoutHyphens === searchTitleWithoutHyphens) {
-                return true;
-              }
-              
-              // Avoid fuzzy matching to prevent incorrect album loads
-              // Only use contains match as a last resort and log a warning
-              if (albumTitleLower.includes(searchTitleLower) && searchTitleLower.length > 5) {
-                return true;
-              }
-              
-              return false;
-            });
+            throw new Error(`Failed to fetch album: ${response.status} ${response.statusText}`);
+          }
+          
+          const data = await response.json();
+          const foundAlbum = data.album;
             
             if (foundAlbum) {
-              // Custom track ordering for concept albums
-              let processedAlbum = { ...foundAlbum };
-              
-              // Fix track order for "They Ride" by IROH (concept album)
-              if (foundAlbum.title.toLowerCase() === 'they ride' && foundAlbum.artist.toLowerCase() === 'iroh') {
-                console.log('🎵 Applying custom track order for "They Ride" concept album');
-                
-                // Define the correct track order from YouTube Music (using exact RSS feed titles)
-                const correctTrackOrder = [
-                  '-',
-                  'Heaven Knows', 
-                  '....',
-                  'The Fever',
-                  '.',
-                  'In Exile',
-                  '-.--',
-                  'The Seed Man',
-                  '.-.',
-                  'Renfield',
-                  '..',
-                  'They Ride',
-                  '-..',
-                  'Pedal Down ( feat. Rob Montgomery )',
-                  '. ( The Last Transmission? )'
-                ];
-                
-                // Sort tracks by the correct order with better matching
-                processedAlbum.tracks = foundAlbum.tracks.sort((a: any, b: any) => {
-                  const aTitle = a.title.toLowerCase().trim();
-                  const bTitle = b.title.toLowerCase().trim();
-                  
-                  const aIndex = correctTrackOrder.findIndex(title => {
-                    const correctTitle = title.toLowerCase().trim();
-                    return aTitle === correctTitle || 
-                           aTitle.includes(correctTitle) || 
-                           correctTitle.includes(aTitle) ||
-                           aTitle.replace(/[^a-z0-9]/g, '') === correctTitle.replace(/[^a-z0-9]/g, '');
-                  });
-                  
-                  const bIndex = correctTrackOrder.findIndex(title => {
-                    const correctTitle = title.toLowerCase().trim();
-                    return bTitle === correctTitle || 
-                           bTitle.includes(correctTitle) || 
-                           correctTitle.includes(bTitle) ||
-                           bTitle.replace(/[^a-z0-9]/g, '') === correctTitle.replace(/[^a-z0-9]/g, '');
-                  });
-                  
-                  
-                  // If both found, sort by index
-                  if (aIndex !== -1 && bIndex !== -1) {
-                    return aIndex - bIndex;
-                  }
-                  // If only one found, prioritize it
-                  if (aIndex !== -1) return -1;
-                  if (bIndex !== -1) return 1;
-                  // If neither found, keep original order
-                  return 0;
-                });
-                
-                }
-              
-              
-              setAlbum(processedAlbum);
+              console.log(`✅ Successfully loaded album: ${foundAlbum.title} by ${foundAlbum.artist}`);
               
               // Validate album data structure
-              if (!Array.isArray(processedAlbum.tracks)) {
-                console.warn('⚠️ Album tracks is not an array:', processedAlbum.tracks);
+              if (!Array.isArray(foundAlbum.tracks)) {
+                console.warn('⚠️ Album tracks is not an array:', foundAlbum.tracks);
                 // Ensure tracks is always an array
-                processedAlbum.tracks = [];
+                foundAlbum.tracks = [];
               }
               
-              setAlbum(processedAlbum);
+              setAlbum(foundAlbum);
+              
               // Load Doerfels publisher data for all albums
               loadDoerfelsPublisherData();
               // Load PodRoll albums if they exist
