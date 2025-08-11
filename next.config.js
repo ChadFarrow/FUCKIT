@@ -366,7 +366,7 @@ const nextConfig = {
         pathname: '/**',
       },
       {
-        protocol: 'http',
+        protocol: 'https',
         hostname: 'bobcatindex.us-southeast-1.linodeobjects.com',
         port: '',
         pathname: '/**',
