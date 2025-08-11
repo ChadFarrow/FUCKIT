@@ -19,11 +19,6 @@ export function getAlbumArtworkUrl(originalUrl: string, size: 'thumbnail' | 'med
     return getPlaceholderImageUrl(size);
   }
   
-  // Handle broken doerfelverse.com URLs that return 404s
-  if (originalUrl.includes('doerfelverse.com/art/')) {
-    return getPlaceholderImageUrl(size);
-  }
-  
   // Ensure HTTPS for all URLs
   if (originalUrl.startsWith('http://')) {
     originalUrl = originalUrl.replace('http://', 'https://');
@@ -46,18 +41,24 @@ export function getPlaceholderImageUrl(size: 'thumbnail' | 'medium' | 'large' = 
 
   const { width, height } = sizeMap[size];
   
-  // Generate a local SVG placeholder to avoid external service issues
+  // Generate a more appealing placeholder with music note icon
   const svg = `
     <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#1f2937;stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#374151;stop-opacity:1" />
+          <stop offset="0%" style="stop-color:#1e40af;stop-opacity:1" />
+          <stop offset="50%" style="stop-color:#3b82f6;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#60a5fa;stop-opacity:1" />
         </linearGradient>
       </defs>
       <rect width="100%" height="100%" fill="url(#grad)"/>
-      <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="${Math.min(width, height) * 0.1}" 
-            fill="#ffffff" text-anchor="middle" dy="0.35em">Music</text>
+      <g transform="translate(${width/2}, ${height/2})" fill="white" opacity="0.9">
+        <!-- Music note icon -->
+        <circle cx="0" cy="-${height*0.15}" r="${Math.min(width, height) * 0.08}" fill="white"/>
+        <rect x="-${Math.min(width, height) * 0.02}" y="-${height*0.15}" width="${Math.min(width, height) * 0.04}" height="${height*0.4}" fill="white"/>
+        <circle cx="0" cy="${height*0.25}" r="${Math.min(width, height) * 0.08}" fill="white"/>
+        <rect x="-${Math.min(width, height) * 0.02}" y="${height*0.25}" width="${Math.min(width, height) * 0.04}" height="${height*0.2}" fill="white"/>
+      </g>
     </svg>
   `;
   

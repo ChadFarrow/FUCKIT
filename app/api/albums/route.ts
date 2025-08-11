@@ -5,8 +5,30 @@ import { generateAlbumSlug } from '@/lib/url-utils';
 
 // Cache the parsed data to avoid reading the file on every request
 let cachedData: any = null;
+let cachedMusicTracks: any = null;
 let cacheTimestamp = 0;
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+// Function to find working album art for a track
+function findWorkingAlbumArt(trackTitle: string, artist: string): string | null {
+  if (!cachedMusicTracks) return null;
+  
+  try {
+    // Look for matching track in music-tracks.json
+    const matchingTrack = cachedMusicTracks.find((track: any) => {
+      const titleMatch = track.title?.toLowerCase().includes(trackTitle.toLowerCase()) ||
+                        trackTitle.toLowerCase().includes(track.title?.toLowerCase() || '');
+      const artistMatch = track.artist?.toLowerCase().includes(artist.toLowerCase()) ||
+                         artist.toLowerCase().includes(track.artist?.toLowerCase() || '');
+      return titleMatch && artistMatch && track.artworkUrl;
+    });
+    
+    return matchingTrack?.artworkUrl || null;
+  } catch (error) {
+    console.warn('Error finding working album art:', error);
+    return null;
+  }
+}
 
 export async function GET(request: Request) {
   try {
@@ -18,10 +40,11 @@ export async function GET(request: Request) {
     
     // Use cached data if available and fresh
     const now = Date.now();
-    if (cachedData && (now - cacheTimestamp) < CACHE_DURATION) {
+    if (cachedData && cachedMusicTracks && (now - cacheTimestamp) < CACHE_DURATION) {
       console.log('Using cached parsed feeds data');
     } else {
       const parsedFeedsPath = path.join(process.cwd(), 'data', 'parsed-feeds.json');
+      const musicTracksPath = path.join(process.cwd(), 'data', 'music-tracks.json');
       
       if (!fs.existsSync(parsedFeedsPath)) {
         console.warn('Parsed feeds data not found at:', parsedFeedsPath);
@@ -33,20 +56,32 @@ export async function GET(request: Request) {
         }, { status: 404 });
       }
 
-      const fileContent = fs.readFileSync(parsedFeedsPath, 'utf-8');
-      
-      // Validate JSON before parsing
-      try {
-        cachedData = JSON.parse(fileContent);
-        cacheTimestamp = now;
-        console.log('Refreshed cached parsed feeds data');
-      } catch (parseError) {
-        console.error('Failed to parse parsed-feeds.json:', parseError);
+      if (!fs.existsSync(musicTracksPath)) {
+        console.warn('Music tracks data not found at:', musicTracksPath);
         return NextResponse.json({ 
           albums: [], 
           totalCount: 0, 
           lastUpdated: new Date().toISOString(),
-          error: 'Invalid JSON in parsed feeds data' 
+          error: 'Music tracks data not found' 
+        }, { status: 404 });
+      }
+
+      const fileContent = fs.readFileSync(parsedFeedsPath, 'utf-8');
+      const musicTracksContent = fs.readFileSync(musicTracksPath, 'utf-8');
+      
+      // Validate JSON before parsing
+      try {
+        cachedData = JSON.parse(fileContent);
+        cachedMusicTracks = JSON.parse(musicTracksContent);
+        cacheTimestamp = now;
+        console.log('Refreshed cached data');
+      } catch (parseError) {
+        console.error('Failed to parse data files:', parseError);
+        return NextResponse.json({ 
+          albums: [], 
+          totalCount: 0, 
+          lastUpdated: new Date().toISOString(),
+          error: 'Invalid JSON in data files' 
         }, { status: 500 });
       }
     }
@@ -64,7 +99,7 @@ export async function GET(request: Request) {
       }, { status: 500 });
     }
     
-    // Extract albums from parsed feeds with proper type checking
+    // Extract albums from parsed feeds with proper type checking and working album art
     let albums = parsedData.feeds
       .filter((feed: any) => feed.parseStatus === 'success' && feed.parsedData?.album)
       .map((feed: any) => {
@@ -74,7 +109,20 @@ export async function GET(request: Request) {
         const title = typeof album.title === 'string' ? album.title : '';
         const artist = typeof album.artist === 'string' ? album.artist : '';
         const description = typeof album.description === 'string' ? album.description : '';
-        const coverArt = typeof album.coverArt === 'string' ? album.coverArt : '';
+        let coverArt = typeof album.coverArt === 'string' ? album.coverArt : '';
+        
+        // Replace broken doerfelverse.com URLs with working album art from music-tracks.json
+        if (coverArt.includes('doerfelverse.com/art/')) {
+          // Try to find working album art for the first track
+          const firstTrack = album.tracks?.[0];
+          if (firstTrack) {
+            const workingArt = findWorkingAlbumArt(firstTrack.title, artist);
+            if (workingArt) {
+              coverArt = workingArt;
+              console.log(`✅ Replaced broken album art for "${title}" with working art`);
+            }
+          }
+        }
         
         return {
           id: generateAlbumSlug(title),
