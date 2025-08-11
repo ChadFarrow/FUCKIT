@@ -114,9 +114,7 @@ export default function HomePage() {
   const [visibleAlbumCount, setVisibleAlbumCount] = useState(50);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   
-  // HGH specific state
-  const [allHghAlbums, setAllHghAlbums] = useState<RSSAlbum[]>([]);
-  const [visibleHghCount, setVisibleHghCount] = useState(378); // Show all HGH items initially
+  // HGH filter removed - no longer needed
   
   // Global audio context
   const { playAlbum: globalPlayAlbum, shuffleAllTracks } = useAudio();
@@ -223,7 +221,7 @@ export default function HomePage() {
       const allAlbums = await loadAlbumsData('all', 0, 0); // Load all albums (0 = no limit)
       
       // Store empty HGH albums array (they're now in the main database)
-      setAllHghAlbums([]);
+      // HGH filter removed
       
       // Use only the main albums (which now includes former HGH tracks)
       const combinedAlbums = allAlbums;
@@ -259,15 +257,8 @@ export default function HomePage() {
     
     setIsLoadingMore(true);
     try {
-      if (false) { // HGH filter removed
-        // Load more HGH tracks
-        const hghFromMainDb = albums.filter(album => 
-          album.feedId && album.feedId.startsWith('hgh-')
-        );
-        const newCount = Math.min(visibleHghCount + 50, hghFromMainDb.length);
-        setVisibleHghCount(newCount);
-        console.log(`📈 Loaded more HGH tracks: ${newCount} of ${hghFromMainDb.length}`);
-      } else {
+      // HGH filter removed - no longer needed
+      {
         // Load more regular albums
         const nextOffset = visibleAlbumCount;
         const moreAlbums = await loadAlbumsData('all', 25, nextOffset);
@@ -421,87 +412,7 @@ export default function HomePage() {
     }
   };
 
-  const loadHGHTracksAsAlbums = async () => {
-    try {
-      console.log('🔄 Loading all HGH tracks...');
-      
-      // Import HGH data dynamically to avoid import errors
-      const { HGH_AUDIO_URL_MAP } = await import('@/data/hgh-audio-urls');
-      const { HGH_ARTWORK_URL_MAP } = await import('@/data/hgh-artwork-urls');
-      const resolvedSongsData = await import('@/data/hgh-resolved-songs.json');
-      
-      console.log(`📊 Processing ${resolvedSongsData.default.length} HGH tracks...`);
-      
-      // Process all HGH tracks (no limit)
-      const enrichedTracks = resolvedSongsData.default.map((song: any) => {
-        const audioUrl = HGH_AUDIO_URL_MAP[song.title] || '';
-        const artworkUrl = HGH_ARTWORK_URL_MAP[song.title] || '';
-        
-        return {
-          ...song,
-          audioUrl,
-          artworkUrl
-        };
-      });
 
-      // Group tracks by artist to create album-like structures with performance optimization
-      const artistGroups = enrichedTracks.reduce((groups: any, track: any) => {
-        const artistKey = track.artist || 'Various Artists';
-        if (!groups[artistKey]) {
-          groups[artistKey] = {
-            artist: artistKey,
-            tracks: []
-          };
-        }
-        groups[artistKey].tracks.push(track);
-        return groups;
-      }, {});
-
-      // Sort artists by track count (most tracks first) for better display
-      const sortedArtistGroups = Object.values(artistGroups).sort((a: any, b: any) => 
-        b.tracks.length - a.tracks.length
-      );
-
-      console.log(`🎨 Grouped into ${sortedArtistGroups.length} artist collections`);
-
-      // Convert to album format compatible with existing display
-      const hghAlbums = sortedArtistGroups.map((group: any, index: number) => ({
-        id: `hgh-artist-${index}`,
-        title: group.tracks.length === 1 ? group.tracks[0].title : `${group.artist} Collection`,
-        artist: group.artist,
-        description: `Music from Homegrown Hits featuring ${group.artist}`,
-        coverArt: group.tracks.find((t: any) => t.artworkUrl)?.artworkUrl || 'https://raw.githubusercontent.com/ChadFarrow/ITDV-music-playlist/refs/heads/main/docs/HGH-playlist-art.webp',
-        releaseDate: new Date().toISOString(),
-        feedId: 'hgh-music',
-        tracks: group.tracks.map((track: any, trackIndex: number) => ({
-          title: track.title,
-          artist: track.artist,
-          duration: track.duration || 0,
-          url: track.audioUrl || '',
-          trackNumber: trackIndex + 1,
-          subtitle: 'From Homegrown Hits',
-          summary: `Music track featured in Homegrown Hits podcast`,
-          image: track.artworkUrl || '',
-          explicit: false,
-          keywords: ['homegrown-hits', 'podcast-music']
-        })),
-        source: 'hgh-playlist',
-        isHGHMusic: true
-      }));
-
-      console.log(`✅ Loaded ${hghAlbums.length} HGH artist collections with ${enrichedTracks.length} total tracks`);
-      console.log('📊 HGH Stats:', {
-        totalTracks: enrichedTracks.length,
-        uniqueArtists: hghAlbums.length,
-        sampleArtists: hghAlbums.slice(0, 5).map(a => `${a.artist} (${a.tracks.length} tracks)`)
-      });
-      return hghAlbums;
-      
-    } catch (error) {
-      console.warn('Failed to load HGH tracks:', error);
-      return [];
-    }
-  };
 
   const convertMusicTracksToAlbums = (tracks: any[]) => {
     // Filter out low-quality tracks (HTML fragments, very short titles, etc.)
@@ -718,12 +629,7 @@ export default function HomePage() {
         return false;
       }
       
-      // For HGH music, only show when specifically requested or in 'all' view
-      if ((album as any).isHGHMusic) {
-        return activeFilter === 'all';
-      }
-      
-      // For regular albums, show in all non-HGH specific filters
+      // All albums are now treated equally
       return true;
     });
     
@@ -764,20 +670,7 @@ export default function HomePage() {
       case 'singles':
         filtered = deduplicatedAlbums.filter(album => album.tracks.length === 1);
         break;
-      case 'hgh':
-        // Show HGH music tracks from main database (they have feedId starting with 'hgh-')
-        const hghFromMainDb = deduplicatedAlbums.filter(album => 
-          album.feedId && album.feedId.startsWith('hgh-')
-        );
-        filtered = hghFromMainDb.slice(0, visibleHghCount);
-        console.log('🎵 HGH filter - showing HGH music from main database:', { 
-          hghCount: filtered.length,
-          totalHgh: hghFromMainDb.length,
-          visibleHghCount: visibleHghCount,
-          showing: `${filtered.length} of ${hghFromMainDb.length}`,
-          tracks: filtered.slice(0, 5).map((p: any) => p.title) // Log first 5 for brevity
-        });
-        break;
+      // HGH case removed - filter disabled
       case 'playlist':
         // For playlist, show featured playlist cards
         const featuredPlaylists = [
@@ -1477,33 +1370,7 @@ export default function HomePage() {
                 )
               )}
               
-              {/* Load More HGH Tracks Button */}
-              {(() => {
-                const hghFromMainDb = albums.filter(album => 
-                  album.feedId && album.feedId.startsWith('hgh-')
-                );
-                return false && hghFromMainDb.length > visibleHghCount && ( // HGH filter removed
-                  <div className="mt-8 text-center">
-                    <button
-                      onClick={loadMoreAlbums}
-                      disabled={isLoadingMore}
-                      className="px-6 py-3 bg-stablekraft-teal hover:bg-stablekraft-orange text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-                    >
-                      {isLoadingMore ? (
-                        <span className="flex items-center gap-2">
-                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                          Loading More...
-                        </span>
-                      ) : (
-                        `Load More HGH Tracks (${hghFromMainDb.length - visibleHghCount} remaining)`
-                      )}
-                    </button>
-                    <p className="text-sm text-gray-400 mt-2">
-                      Showing {visibleHghCount} of {hghFromMainDb.length} HGH tracks
-                    </p>
-                  </div>
-                );
-              })()}
+              {/* HGH filter removed - no longer needed */}
             </div>
           ) : (
             <div className="text-center py-12">
