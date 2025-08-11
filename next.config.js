@@ -371,6 +371,12 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'http',
+        hostname: 'bobcatindex.us-southeast-1.linodeobjects.com',
+        port: '',
+        pathname: '/**',
+      },
       // Playlist artwork domains
       {
         protocol: 'https',
