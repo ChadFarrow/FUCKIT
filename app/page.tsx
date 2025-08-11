@@ -875,14 +875,13 @@ export default function HomePage() {
       )}
       
       {/* Preload background image after critical content */}
-      {isClient && (
+      {isClient && isCriticalLoaded && (
         <img 
           src="/stablekraft-rocket-new.png" 
           alt=""
           className="hidden"
           onLoad={() => setBackgroundImageLoaded(true)}
           onError={() => setBackgroundImageLoaded(true)}
-          loading="lazy"
         />
       )}
       
