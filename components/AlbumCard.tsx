@@ -205,6 +205,13 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
             {album.tracks.length} {album.tracks.length !== 1 ? 'tracks' : 'track'}
           </div>
         )}
+
+        {/* HGH Music badge */}
+        {(album as any).isHGHMusic && (
+          <div className="absolute top-1 left-1 sm:top-2 sm:left-2 bg-green-600/90 backdrop-blur-sm rounded-full px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs text-white font-semibold border border-green-500/50">
+            HGH
+          </div>
+        )}
       </div>
 
       {/* Album Info */}

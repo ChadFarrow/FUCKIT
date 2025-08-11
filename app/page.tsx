@@ -215,18 +215,24 @@ export default function HomePage() {
       setError(null);
       setLoadingProgress(0);
       
-      // Load all albums in a single request to avoid multiple API calls
-      const allAlbums = await loadAlbumsData('all', 100, 0);
+      // Load both regular albums and HGH tracks in parallel
+      const [allAlbums, hghAlbums] = await Promise.all([
+        loadAlbumsData('all', 100, 0),
+        loadHGHTracksAsAlbums(30) // Load first 30 HGH tracks as albums
+      ]);
+      
+      // Combine albums with HGH music
+      const combinedAlbums = [...allAlbums, ...hghAlbums];
       
       // Split albums for progressive display  
-      const criticalAlbumsData = allAlbums.slice(0, 12);
+      const criticalAlbumsData = combinedAlbums.slice(0, 12);
       setCriticalAlbums(criticalAlbumsData);
       setIsCriticalLoaded(true);
       setLoadingProgress(50);
       
       // Set enhanced albums with slight delay for better perceived performance
       setTimeout(() => {
-        setEnhancedAlbums(allAlbums);
+        setEnhancedAlbums(combinedAlbums);
         setIsEnhancedLoaded(true);
         setLoadingProgress(100);
         setIsLoading(false);
@@ -396,6 +402,72 @@ export default function HomePage() {
       return data.data?.tracks || [];
     } catch (error) {
       console.warn('Error loading music tracks from RSS:', error);
+      return [];
+    }
+  };
+
+  const loadHGHTracksAsAlbums = async (limit: number = 50) => {
+    try {
+      // Import HGH data dynamically to avoid import errors
+      const { HGH_AUDIO_URL_MAP } = await import('@/data/hgh-audio-urls');
+      const { HGH_ARTWORK_URL_MAP } = await import('@/data/hgh-artwork-urls');
+      const resolvedSongsData = await import('@/data/hgh-resolved-songs.json');
+      
+      // Process HGH tracks similar to how HGHPlaylistAlbum does it
+      const enrichedTracks = resolvedSongsData.default.slice(0, limit).map((song: any) => {
+        const audioUrl = HGH_AUDIO_URL_MAP[song.title] || '';
+        const artworkUrl = HGH_ARTWORK_URL_MAP[song.title] || '';
+        
+        return {
+          ...song,
+          audioUrl,
+          artworkUrl
+        };
+      });
+
+      // Group tracks by artist to create album-like structures
+      const artistGroups = enrichedTracks.reduce((groups: any, track: any) => {
+        const artistKey = track.artist || 'Various Artists';
+        if (!groups[artistKey]) {
+          groups[artistKey] = {
+            artist: artistKey,
+            tracks: []
+          };
+        }
+        groups[artistKey].tracks.push(track);
+        return groups;
+      }, {});
+
+      // Convert to album format compatible with existing display
+      const hghAlbums = Object.values(artistGroups).map((group: any, index: number) => ({
+        id: `hgh-artist-${index}`,
+        title: group.tracks.length === 1 ? group.tracks[0].title : `${group.artist} Collection`,
+        artist: group.artist,
+        description: `Music from Homegrown Hits featuring ${group.artist}`,
+        coverArt: group.tracks.find((t: any) => t.artworkUrl)?.artworkUrl || 'https://raw.githubusercontent.com/ChadFarrow/ITDV-music-playlist/refs/heads/main/docs/HGH-playlist-art.webp',
+        releaseDate: new Date().toISOString(),
+        feedId: 'hgh-music',
+        tracks: group.tracks.map((track: any, trackIndex: number) => ({
+          title: track.title,
+          artist: track.artist,
+          duration: track.duration || 0,
+          url: track.audioUrl || '',
+          trackNumber: trackIndex + 1,
+          subtitle: 'From Homegrown Hits',
+          summary: `Music track featured in Homegrown Hits podcast`,
+          image: track.artworkUrl || '',
+          explicit: false,
+          keywords: ['homegrown-hits', 'podcast-music']
+        })),
+        source: 'hgh-playlist',
+        isHGHMusic: true
+      }));
+
+      console.log(`✅ Loaded ${hghAlbums.length} HGH artist collections with ${enrichedTracks.length} total tracks`);
+      return hghAlbums;
+      
+    } catch (error) {
+      console.warn('Failed to load HGH tracks:', error);
       return [];
     }
   };
@@ -608,8 +680,21 @@ export default function HomePage() {
     // Apply filtering based on active filter
     let filtered = albumsToUse;
     
-    // Filter out explicit content and playlist items by default
-    const baseAlbums = albumsToUse.filter(album => !album.explicit && !(album as any).isMusicTrackAlbum);
+    // Filter out explicit content and playlist items by default, but include HGH music appropriately
+    const baseAlbums = albumsToUse.filter(album => {
+      // Always exclude explicit content and old music track albums
+      if (album.explicit || (album as any).isMusicTrackAlbum) {
+        return false;
+      }
+      
+      // For HGH music, only show when specifically requested or in 'all' view
+      if ((album as any).isHGHMusic) {
+        return activeFilter === 'hgh' || activeFilter === 'all';
+      }
+      
+      // For regular albums, show in all non-HGH specific filters
+      return activeFilter !== 'hgh';
+    });
     
     // Deduplicate albums by title and artist combination
     const deduplicatedAlbums = baseAlbums.reduce((acc: RSSAlbum[], album: RSSAlbum) => {
@@ -647,6 +732,14 @@ export default function HomePage() {
         break;
       case 'singles':
         filtered = deduplicatedAlbums.filter(album => album.tracks.length === 1);
+        break;
+      case 'hgh':
+        // Show only HGH music tracks
+        filtered = albumsToUse.filter(album => (album as any).isHGHMusic);
+        console.log('🎵 HGH filter - showing HGH music:', { 
+          hghCount: filtered.length,
+          tracks: filtered.map((p: any) => p.title)
+        });
         break;
       case 'playlist':
         // For playlist, show featured playlist cards
@@ -1109,6 +1202,7 @@ export default function HomePage() {
                   activeFilter === 'albums' ? 'Albums' :
                   activeFilter === 'eps' ? 'EPs' : 
                   activeFilter === 'singles' ? 'Singles' : 
+                  activeFilter === 'hgh' ? 'HGH Tracks' : 
                   activeFilter === 'playlist' ? 'Playlist' : 'Releases'}
                 className="mb-8"
               />
