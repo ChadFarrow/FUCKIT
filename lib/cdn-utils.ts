@@ -19,6 +19,11 @@ export function getAlbumArtworkUrl(originalUrl: string, size: 'thumbnail' | 'med
     return getPlaceholderImageUrl(size);
   }
   
+  // Handle broken doerfelverse.com URLs that return 404s
+  if (originalUrl.includes('doerfelverse.com/art/')) {
+    return getPlaceholderImageUrl(size);
+  }
+  
   // Ensure HTTPS for all URLs
   if (originalUrl.startsWith('http://')) {
     originalUrl = originalUrl.replace('http://', 'https://');
