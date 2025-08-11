@@ -114,6 +114,10 @@ export default function HomePage() {
   const [visibleAlbumCount, setVisibleAlbumCount] = useState(50);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   
+  // HGH specific state
+  const [allHghAlbums, setAllHghAlbums] = useState<RSSAlbum[]>([]);
+  const [visibleHghCount, setVisibleHghCount] = useState(50);
+  
   // Global audio context
   const { playAlbum: globalPlayAlbum, shuffleAllTracks } = useAudio();
   const hasLoadedRef = useRef(false);
@@ -218,11 +222,14 @@ export default function HomePage() {
       // Load both regular albums and HGH tracks in parallel
       const [allAlbums, hghAlbums] = await Promise.all([
         loadAlbumsData('all', 100, 0),
-        loadHGHTracksAsAlbums(30) // Load first 30 HGH tracks as albums
+        loadHGHTracksAsAlbums() // Load all HGH tracks as albums
       ]);
       
-      // Combine albums with HGH music
-      const combinedAlbums = [...allAlbums, ...hghAlbums];
+      // Store all HGH albums separately for efficient filtering
+      setAllHghAlbums(hghAlbums);
+      
+      // Combine albums with HGH music (use a subset for initial display)
+      const combinedAlbums = [...allAlbums, ...hghAlbums.slice(0, 20)];
       
       // Split albums for progressive display  
       const criticalAlbumsData = combinedAlbums.slice(0, 12);
@@ -255,12 +262,20 @@ export default function HomePage() {
     
     setIsLoadingMore(true);
     try {
-      const nextOffset = visibleAlbumCount;
-      const moreAlbums = await loadAlbumsData('all', 25, nextOffset);
-      
-      if (moreAlbums.length > 0) {
-        setEnhancedAlbums(prev => [...prev, ...moreAlbums]);
-        setVisibleAlbumCount(prev => prev + moreAlbums.length);
+      if (activeFilter === 'hgh') {
+        // Load more HGH tracks
+        const newCount = Math.min(visibleHghCount + 50, allHghAlbums.length);
+        setVisibleHghCount(newCount);
+        console.log(`📈 Loaded more HGH tracks: ${newCount} of ${allHghAlbums.length}`);
+      } else {
+        // Load more regular albums
+        const nextOffset = visibleAlbumCount;
+        const moreAlbums = await loadAlbumsData('all', 25, nextOffset);
+        
+        if (moreAlbums.length > 0) {
+          setEnhancedAlbums(prev => [...prev, ...moreAlbums]);
+          setVisibleAlbumCount(prev => prev + moreAlbums.length);
+        }
       }
     } catch (error) {
       console.warn('Failed to load more albums:', error);
@@ -406,15 +421,19 @@ export default function HomePage() {
     }
   };
 
-  const loadHGHTracksAsAlbums = async (limit: number = 50) => {
+  const loadHGHTracksAsAlbums = async () => {
     try {
+      console.log('🔄 Loading all HGH tracks...');
+      
       // Import HGH data dynamically to avoid import errors
       const { HGH_AUDIO_URL_MAP } = await import('@/data/hgh-audio-urls');
       const { HGH_ARTWORK_URL_MAP } = await import('@/data/hgh-artwork-urls');
       const resolvedSongsData = await import('@/data/hgh-resolved-songs.json');
       
-      // Process HGH tracks similar to how HGHPlaylistAlbum does it
-      const enrichedTracks = resolvedSongsData.default.slice(0, limit).map((song: any) => {
+      console.log(`📊 Processing ${resolvedSongsData.default.length} HGH tracks...`);
+      
+      // Process all HGH tracks (no limit)
+      const enrichedTracks = resolvedSongsData.default.map((song: any) => {
         const audioUrl = HGH_AUDIO_URL_MAP[song.title] || '';
         const artworkUrl = HGH_ARTWORK_URL_MAP[song.title] || '';
         
@@ -425,7 +444,7 @@ export default function HomePage() {
         };
       });
 
-      // Group tracks by artist to create album-like structures
+      // Group tracks by artist to create album-like structures with performance optimization
       const artistGroups = enrichedTracks.reduce((groups: any, track: any) => {
         const artistKey = track.artist || 'Various Artists';
         if (!groups[artistKey]) {
@@ -438,8 +457,15 @@ export default function HomePage() {
         return groups;
       }, {});
 
+      // Sort artists by track count (most tracks first) for better display
+      const sortedArtistGroups = Object.values(artistGroups).sort((a: any, b: any) => 
+        b.tracks.length - a.tracks.length
+      );
+
+      console.log(`🎨 Grouped into ${sortedArtistGroups.length} artist collections`);
+
       // Convert to album format compatible with existing display
-      const hghAlbums = Object.values(artistGroups).map((group: any, index: number) => ({
+      const hghAlbums = sortedArtistGroups.map((group: any, index: number) => ({
         id: `hgh-artist-${index}`,
         title: group.tracks.length === 1 ? group.tracks[0].title : `${group.artist} Collection`,
         artist: group.artist,
@@ -734,11 +760,13 @@ export default function HomePage() {
         filtered = deduplicatedAlbums.filter(album => album.tracks.length === 1);
         break;
       case 'hgh':
-        // Show only HGH music tracks
-        filtered = albumsToUse.filter(album => (album as any).isHGHMusic);
+        // Show all HGH music tracks (use the full dataset stored separately)
+        filtered = allHghAlbums.slice(0, visibleHghCount);
         console.log('🎵 HGH filter - showing HGH music:', { 
           hghCount: filtered.length,
-          tracks: filtered.map((p: any) => p.title)
+          totalHgh: allHghAlbums.length,
+          showing: `${filtered.length} of ${allHghAlbums.length}`,
+          tracks: filtered.slice(0, 5).map((p: any) => p.title) // Log first 5 for brevity
         });
         break;
       case 'playlist':
@@ -1439,6 +1467,29 @@ export default function HomePage() {
                     ))}
                   </div>
                 )
+              )}
+              
+              {/* Load More HGH Tracks Button */}
+              {activeFilter === 'hgh' && allHghAlbums.length > visibleHghCount && (
+                <div className="mt-8 text-center">
+                  <button
+                    onClick={loadMoreAlbums}
+                    disabled={isLoadingMore}
+                    className="px-6 py-3 bg-stablekraft-teal hover:bg-stablekraft-orange text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                  >
+                    {isLoadingMore ? (
+                      <span className="flex items-center gap-2">
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Loading More...
+                      </span>
+                    ) : (
+                      `Load More HGH Tracks (${allHghAlbums.length - visibleHghCount} remaining)`
+                    )}
+                  </button>
+                  <p className="text-sm text-gray-400 mt-2">
+                    Showing {visibleHghCount} of {allHghAlbums.length} HGH tracks
+                  </p>
+                </div>
               )}
             </div>
           ) : (
