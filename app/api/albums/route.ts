@@ -2,33 +2,15 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import { generateAlbumSlug } from '@/lib/url-utils';
+import { HGH_ARTWORK_URL_MAP } from '@/data/hgh-artwork-urls';
+import { resolveArtworkFromPodcastIndex } from '@/lib/podcast-index-api';
 
 // Cache the parsed data to avoid reading the file on every request
 let cachedData: any = null;
 let cachedMusicTracks: any = null;
+let cachedHGHSongs: any = null;
 let cacheTimestamp = 0;
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-
-// Function to find working album art for a track
-function findWorkingAlbumArt(trackTitle: string, artist: string): string | null {
-  if (!cachedMusicTracks) return null;
-  
-  try {
-    // Look for matching track in music-tracks.json
-    const matchingTrack = cachedMusicTracks.find((track: any) => {
-      const titleMatch = track.title?.toLowerCase().includes(trackTitle.toLowerCase()) ||
-                        trackTitle.toLowerCase().includes(track.title?.toLowerCase() || '');
-      const artistMatch = track.artist?.toLowerCase().includes(artist.toLowerCase()) ||
-                         artist.toLowerCase().includes(track.artist?.toLowerCase() || '');
-      return titleMatch && artistMatch && track.artworkUrl;
-    });
-    
-    return matchingTrack?.artworkUrl || null;
-  } catch (error) {
-    console.warn('Error finding working album art:', error);
-    return null;
-  }
-}
 
 export async function GET(request: Request) {
   try {
@@ -38,10 +20,11 @@ export async function GET(request: Request) {
     const tier = searchParams.get('tier') || 'all';
     const feedId = searchParams.get('feedId');
     
-    // Use cached data if available and fresh
+    // Force cache refresh to fix artwork issues
     const now = Date.now();
-    if (cachedData && cachedMusicTracks && (now - cacheTimestamp) < CACHE_DURATION) {
-      console.log('Using cached parsed feeds data');
+    cacheTimestamp = 0; // Force refresh
+    if (false) { // Disabled cache temporarily
+      console.log(`Using cached data: ${cachedData?.feeds?.length || 0} feeds, ${cachedMusicTracks.length} music tracks`);
     } else {
       const parsedFeedsPath = path.join(process.cwd(), 'data', 'parsed-feeds.json');
       const musicTracksPath = path.join(process.cwd(), 'data', 'music-tracks.json');
@@ -69,10 +52,30 @@ export async function GET(request: Request) {
       const fileContent = fs.readFileSync(parsedFeedsPath, 'utf-8');
       const musicTracksContent = fs.readFileSync(musicTracksPath, 'utf-8');
       
+      // Load HGH resolved songs for Podcast Index lookup
+      const hghSongsPath = path.join(process.cwd(), 'data', 'hgh-resolved-songs.json');
+      let hghSongsContent = '[]';
+      if (fs.existsSync(hghSongsPath)) {
+        hghSongsContent = fs.readFileSync(hghSongsPath, 'utf-8');
+      }
+      
       // Validate JSON before parsing
       try {
         cachedData = JSON.parse(fileContent);
-        cachedMusicTracks = JSON.parse(musicTracksContent);
+        const musicTracksParsed = JSON.parse(musicTracksContent);
+        cachedHGHSongs = JSON.parse(hghSongsContent);
+        
+        // Extract the musicTracks array from the parsed data
+        if (musicTracksParsed && musicTracksParsed.musicTracks && Array.isArray(musicTracksParsed.musicTracks)) {
+          cachedMusicTracks = musicTracksParsed.musicTracks;
+          console.log(`✅ Loaded ${cachedMusicTracks.length} music tracks from music-tracks.json`);
+        } else {
+          console.warn('Invalid music tracks data structure:', musicTracksParsed);
+          cachedMusicTracks = [];
+        }
+        
+        console.log(`✅ Loaded ${cachedHGHSongs.length} HGH resolved songs from hgh-resolved-songs.json`);
+        
         cacheTimestamp = now;
         console.log('Refreshed cached data');
       } catch (parseError) {
@@ -111,16 +114,63 @@ export async function GET(request: Request) {
         const description = typeof album.description === 'string' ? album.description : '';
         let coverArt = typeof album.coverArt === 'string' ? album.coverArt : '';
         
-        // Replace broken doerfelverse.com URLs with working album art from music-tracks.json
-        if (coverArt.includes('doerfelverse.com/art/')) {
-          // Try to find working album art for the first track
-          const firstTrack = album.tracks?.[0];
-          if (firstTrack) {
-            const workingArt = findWorkingAlbumArt(firstTrack.title, artist);
-            if (workingArt) {
-              coverArt = workingArt;
-              console.log(`✅ Replaced broken album art for "${title}" with working art`);
+        // Fix known incorrect artwork assignments in the data
+        const artworkFixes: Record<string, string> = {
+          'Rock\'n\'Roll Breakheart': 'https://rocknrollbreakheart.com/album-art.jpg',
+          'Bestlegs': 'https://www.doerfelverse.com/art/bestlegs.png',
+          'Satoshi Streamer': 'https://www.doerfelverse.com/art/satoshi-streamer.png',
+          // Add more fixes as needed
+        };
+        
+        // Apply artwork fix if this album has a known issue
+        if (artworkFixes[title] && coverArt.includes('carol-of-the-bells')) {
+          coverArt = artworkFixes[title];
+          console.log(`Fixed incorrect artwork for "${title}"`);
+        }
+        
+        // Check if this is an HGH track that should use Podcast Index API resolution
+        const hghTrack = cachedHGHSongs?.find((song: any) => song.title === title);
+        if (hghTrack) {
+          // For now, use the manual mapping as fallback while we implement async PI resolution
+          if (HGH_ARTWORK_URL_MAP[title]) {
+            coverArt = HGH_ARTWORK_URL_MAP[title];
+            console.log(`Using HGH artwork mapping for "${title}": ${coverArt}`);
+            console.log(`📝 TODO: Replace with PI API for feedGuid: ${hghTrack.feedGuid}, itemGuid: ${hghTrack.itemGuid}`);
+          } else {
+            console.log(`⚠️ HGH track "${title}" found but no artwork mapping - feedGuid: ${hghTrack.feedGuid}`);
+          }
+        }
+        // Also check if the current coverArt is from homegrownhits.xyz (which are broken)
+        else if (coverArt && coverArt.includes('homegrownhits.xyz/wp-content/uploads/')) {
+          // Try to find a mapping for this title
+          if (HGH_ARTWORK_URL_MAP[title]) {
+            coverArt = HGH_ARTWORK_URL_MAP[title];
+            console.log(`Replaced broken homegrownhits.xyz URL for "${title}" with: ${coverArt}`);
+          } else {
+            // Try to use the first track's image as fallback for broken HGH URLs
+            const firstTrackWithImage = album.tracks?.find((track: any) => track.image && track.image.trim() !== '' && !track.image.includes('homegrownhits.xyz'));
+            if (firstTrackWithImage) {
+              coverArt = firstTrackWithImage.image;
+              console.log(`Using first track image as fallback for broken HGH URL "${title}"`);
+            } else {
+              // Clear the broken URL to use placeholder
+              coverArt = '';
+              console.log(`Cleared broken homegrownhits.xyz URL for "${title}"`);
             }
+          }
+        }
+        // Provide fallback artwork for albums with missing coverArt
+        else if (!coverArt || coverArt.trim() === '') {
+          // Try to use the first track's image as fallback
+          const firstTrackWithImage = album.tracks?.find((track: any) => track.image && track.image.trim() !== '' && !track.image.includes('homegrownhits.xyz'));
+          if (firstTrackWithImage) {
+            coverArt = firstTrackWithImage.image;
+            console.log(`Using first track image as fallback for "${title}": ${coverArt}`);
+          } else {
+            // For albums with no artwork, generate a placeholder URL based on title
+            // This will be handled by the CDNImage component to show a nice placeholder
+            coverArt = `/api/placeholder-image?title=${encodeURIComponent(title)}&artist=${encodeURIComponent(artist)}`;
+            console.log(`Using placeholder artwork for "${title}"`);
           }
         }
         
@@ -171,11 +221,34 @@ export async function GET(request: Request) {
       albums = albums.filter((album: any) => album.feedId === feedId);
     }
 
-    // Deduplicate albums
+    // Deduplicate albums with improved logic
     const albumMap = new Map<string, any>();
     albums.forEach((album: any) => {
-      const key = `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`;
-      if (!albumMap.has(key)) {
+      // Normalize the title and artist for better deduplication
+      const normalizedTitle = album.title
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, ' ')  // Replace multiple spaces with single space
+        .replace(/[^\w\s]/g, ''); // Remove special characters
+      
+      const normalizedArtist = album.artist
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, ' ')  // Replace multiple spaces with single space
+        .replace(/[^\w\s]/g, ''); // Remove special characters
+      
+      const key = `${normalizedTitle}|${normalizedArtist}`;
+      
+      // If we already have this album, keep the one with better data
+      if (albumMap.has(key)) {
+        const existing = albumMap.get(key);
+        // Keep the one with more tracks or better cover art
+        if (album.tracks.length > existing.tracks.length || 
+            (!existing.coverArt && album.coverArt) ||
+            (album.coverArt && !album.coverArt.includes('placeholder') && existing.coverArt?.includes('placeholder'))) {
+          albumMap.set(key, album);
+        }
+      } else {
         albumMap.set(key, album);
       }
     });
