@@ -7,10 +7,10 @@
       "title": "Bell of Hope",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.210Z",
-      "lastUpdated": "2025-08-13T23:12:30.210Z",
+      "addedAt": "2025-08-13T22:18:23.361Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.210Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Bell of Hope",
@@ -31,7 +31,14 @@
             }
           ],
           "podroll": null,
-          "publisher": null,
+          "publisher": {
+            "name": "<![CDATA[John Depew Trio]]>",
+            "feedGuid": "df5a4722-cd42-429c-896d-caec1ad39600",
+            "feedUrl": "https://wavlake.com/feed/artist/df5a4722-cd42-429c-896d-caec1ad39600",
+            "artwork": "https://d12wklypp119aj.cloudfront.net/image/df5a4722-cd42-429c-896d-caec1ad39600.jpg",
+            "description": "<![CDATA[John Depew Trio]]>",
+            "albumCount": 2
+          },
           "funding": {
             "$": {
               "type": "lightning",
@@ -58,10 +65,10 @@
       "title": "Birdfeeder (EP)",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.210Z",
-      "lastUpdated": "2025-08-13T23:12:30.210Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.210Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Birdfeeder (EP)",
@@ -82,7 +89,14 @@
             }
           ],
           "podroll": null,
-          "publisher": null,
+          "publisher": {
+            "name": "<![CDATA[Big Awesome]]>",
+            "feedGuid": "93fbacab-bbbb-4de4-863a-8adeb9fc4782",
+            "feedUrl": "https://wavlake.com/feed/artist/93fbacab-bbbb-4de4-863a-8adeb9fc4782",
+            "artwork": "https://d12wklypp119aj.cloudfront.net/image/93fbacab-bbbb-4de4-863a-8adeb9fc4782.jpg",
+            "description": "<![CDATA[Just have fun]]>",
+            "albumCount": 5
+          },
           "funding": {
             "$": {
               "type": "lightning",
@@ -109,10 +123,10 @@
       "title": "Smokestacks",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.210Z",
-      "lastUpdated": "2025-08-13T23:12:30.210Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.210Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Smokestacks",
@@ -133,7 +147,14 @@
             }
           ],
           "podroll": null,
-          "publisher": null,
+          "publisher": {
+            "name": "<![CDATA[Herbivore]]>",
+            "feedGuid": "eea2d330-fc71-4e90-81de-3de819728c9d",
+            "feedUrl": "https://wavlake.com/feed/artist/eea2d330-fc71-4e90-81de-3de819728c9d",
+            "artwork": "https://d12wklypp119aj.cloudfront.net/image/eea2d330-fc71-4e90-81de-3de819728c9d.jpg",
+            "description": "<![CDATA[Herbivore]]>",
+            "albumCount": 14
+          },
           "funding": {
             "$": {
               "type": "lightning",
@@ -160,10 +181,10 @@
       "title": "Live From the Other Side",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.210Z",
-      "lastUpdated": "2025-08-13T23:12:30.210Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.210Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Live From the Other Side",
@@ -184,7 +205,14 @@
             }
           ],
           "podroll": null,
-          "publisher": null,
+          "publisher": {
+            "name": "<![CDATA[Theo Katzman]]>",
+            "feedGuid": "09954f14-c5a7-4680-90f4-0869243b9c26",
+            "feedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26",
+            "artwork": "https://d12wklypp119aj.cloudfront.net/image/09954f14-c5a7-4680-90f4-0869243b9c26.jpg",
+            "description": "<![CDATA[Big Heart. High Voice. Strong Song.]]>",
+            "albumCount": 2
+          },
           "funding": {
             "$": {
               "type": "lightning",
@@ -211,10 +239,10 @@
       "title": "Lost Summer",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.210Z",
-      "lastUpdated": "2025-08-13T23:12:30.210Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.210Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Lost Summer",
@@ -235,7 +263,14 @@
             }
           ],
           "podroll": null,
-          "publisher": null,
+          "publisher": {
+            "name": "<![CDATA[Ollie]]>",
+            "feedGuid": "d2f43e9f-adfc-4811-b9c1-58d5ea383275",
+            "feedUrl": "https://wavlake.com/feed/artist/d2f43e9f-adfc-4811-b9c1-58d5ea383275",
+            "artwork": "https://d12wklypp119aj.cloudfront.net/image/d2f43e9f-adfc-4811-b9c1-58d5ea383275.jpg",
+            "description": "<![CDATA[Ollie]]>",
+            "albumCount": 0
+          },
           "funding": {
             "$": {
               "type": "lightning",
@@ -262,10 +297,10 @@
       "title": "Abyss / Quiet day",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.210Z",
-      "lastUpdated": "2025-08-13T23:12:30.210Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.210Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Abyss / Quiet day",
@@ -286,7 +321,14 @@
             }
           ],
           "podroll": null,
-          "publisher": null,
+          "publisher": {
+            "name": "<![CDATA[Lara J]]>",
+            "feedGuid": "912c0793-92cf-4726-a495-e5b1602693c0",
+            "feedUrl": "https://wavlake.com/feed/artist/912c0793-92cf-4726-a495-e5b1602693c0",
+            "artwork": "https://d12wklypp119aj.cloudfront.net/image/912c0793-92cf-4726-a495-e5b1602693c0.jpg",
+            "description": "<![CDATA[Love to make music in my spare time! :)]]>",
+            "albumCount": 4
+          },
           "funding": {
             "$": {
               "type": "lightning",
@@ -313,10 +355,10 @@
       "title": "it can be erased",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.210Z",
-      "lastUpdated": "2025-08-13T23:12:30.210Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.210Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "it can be erased",
@@ -337,7 +379,14 @@
             }
           ],
           "podroll": null,
-          "publisher": null,
+          "publisher": {
+            "name": "<![CDATA[Nate Johnivan]]>",
+            "feedGuid": "aa909244-7555-4b52-ad88-7233860c6fb4",
+            "feedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4",
+            "artwork": "https://d12wklypp119aj.cloudfront.net/image/aa909244-7555-4b52-ad88-7233860c6fb4.jpg",
+            "description": "<![CDATA[Middle aged guy in middle America occupying my spare time with making music.  Bands include: Red Arrow Highway, Death by Lions, Drawing Monsters, Monkey Robot War, Prom, DDNJ, R.A.T.A.H, and DJPJ's.]]>",
+            "albumCount": 0
+          },
           "funding": {
             "$": {
               "type": "lightning",
@@ -364,10 +413,10 @@
       "title": "HeyCitizen's Lo-Fi Hip-Hop Beats to Study and Relax to",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.210Z",
-      "lastUpdated": "2025-08-13T23:12:30.210Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.210Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "HeyCitizen's Lo-Fi Hip-Hop Beats to Study and Relax to",
@@ -423,10 +472,10 @@
       "title": "Sad Songs",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.210Z",
-      "lastUpdated": "2025-08-13T23:12:30.210Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.210Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Sad Songs",
@@ -447,7 +496,14 @@
             }
           ],
           "podroll": null,
-          "publisher": null,
+          "publisher": {
+            "name": "<![CDATA[bennyjeans]]>",
+            "feedGuid": "4e33ca0c-bd98-4f98-9284-e8073046c049",
+            "feedUrl": "https://wavlake.com/feed/artist/4e33ca0c-bd98-4f98-9284-e8073046c049",
+            "artwork": "https://d12wklypp119aj.cloudfront.net/image/4e33ca0c-bd98-4f98-9284-e8073046c049.jpg",
+            "description": "<![CDATA[bennyjeans is a solo musician hailing from Pleasant Grove, UT, with a new youthful sound that emphasizes true emotion over perfection. He is best known as the lead vocalist of the band \"With Andrea\"]]>",
+            "albumCount": 11
+          },
           "funding": {
             "$": {
               "type": "lightning",
@@ -474,10 +530,10 @@
       "title": "DFB Volume 2",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.210Z",
-      "lastUpdated": "2025-08-13T23:12:30.210Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.210Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "DFB Volume 2",
@@ -567,10 +623,10 @@
       "title": "Breathe EP",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.210Z",
-      "lastUpdated": "2025-08-13T23:12:30.210Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.210Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Breathe EP",
@@ -669,10 +725,10 @@
       "title": "Going Gold Single",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.210Z",
-      "lastUpdated": "2025-08-13T23:12:30.210Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.210Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Going Gold Single",
@@ -727,10 +783,10 @@
       "title": "Endless Deja Vu",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.210Z",
-      "lastUpdated": "2025-08-13T23:12:30.210Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.210Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Endless Deja Vu",
@@ -785,10 +841,10 @@
       "title": "Kid Yourself Single",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.210Z",
-      "lastUpdated": "2025-08-13T23:12:30.210Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.210Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Kid Yourself Single",
@@ -843,10 +899,10 @@
       "title": "The Heycitizen Experience",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.210Z",
-      "lastUpdated": "2025-08-13T23:12:30.210Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.210Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "The Heycitizen Experience",
@@ -1111,10 +1167,10 @@
       "title": "Through The Mic - Single",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.210Z",
-      "lastUpdated": "2025-08-13T23:12:30.210Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.210Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Through The Mic - Single",
@@ -1185,10 +1241,10 @@
       "title": "Fight!",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.210Z",
-      "lastUpdated": "2025-08-13T23:12:30.210Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.210Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Fight!",
@@ -1298,10 +1354,10 @@
       "title": "Think Of Me In Color",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.210Z",
-      "lastUpdated": "2025-08-13T23:12:30.210Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.210Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Think Of Me In Color",
@@ -1433,10 +1489,10 @@
       "title": "Finding Lavender",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.210Z",
-      "lastUpdated": "2025-08-13T23:12:30.210Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.210Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Finding Lavender",
@@ -1590,10 +1646,10 @@
       "title": "Ben Doerfel",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.210Z",
-      "lastUpdated": "2025-08-13T23:12:30.210Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.210Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Ben Doerfel",
@@ -1761,10 +1817,10 @@
       "title": "II",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "II",
@@ -1929,10 +1985,10 @@
       "title": "Live From the Other Side",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Live From the Other Side",
@@ -2152,10 +2208,10 @@
       "title": "Inside Out - Single",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Inside Out - Single",
@@ -2224,10 +2280,10 @@
       "title": "Autumn",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Autumn",
@@ -2314,10 +2370,10 @@
       "title": "Tempest",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Tempest",
@@ -2417,10 +2473,10 @@
       "title": "The Satellite Skirmish",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "The Satellite Skirmish",
@@ -2835,10 +2891,10 @@
       "title": "The Lightning",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "The Lightning",
@@ -2915,10 +2971,10 @@
       "title": "The Satellite Spotlight",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "The Satellite Spotlight",
@@ -2972,10 +3028,10 @@
       "title": "CityBeach",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "CityBeach",
@@ -3066,10 +3122,10 @@
       "title": "West Coast Drive",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "West Coast Drive",
@@ -3124,10 +3180,10 @@
       "title": "Chasing Waterfalls",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Chasing Waterfalls",
@@ -3182,10 +3238,10 @@
       "title": "Kurtisdrums",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Kurtisdrums",
@@ -3463,10 +3519,10 @@
       "title": "Bullet Train",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Bullet Train",
@@ -3521,10 +3577,10 @@
       "title": "Mrs Valentine",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Mrs Valentine",
@@ -3579,10 +3635,10 @@
       "title": "Ring That Bell",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Ring That Bell",
@@ -3700,10 +3756,10 @@
       "title": "HeyCitizen's Lo-Fi Hip-Hop Beats to Study and Relax to",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "HeyCitizen's Lo-Fi Hip-Hop Beats to Study and Relax to",
@@ -3819,10 +3875,10 @@
       "title": "Blackstone Valley - Songs",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Blackstone Valley - Songs",
@@ -3945,10 +4001,10 @@
       "title": "Jimmy V - Music",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Jimmy V - Music",
@@ -4150,10 +4206,10 @@
       "title": "Music From The Doerfel-Verse",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Music From The Doerfel-Verse",
@@ -4686,10 +4742,10 @@
       "title": "Stay Awhile",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Stay Awhile",
@@ -4821,10 +4877,10 @@
       "title": "The Death of Rock and Roll",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "The Death of Rock and Roll",
@@ -4979,10 +5035,10 @@
       "title": "A Sight To See Remix",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "A Sight To See Remix",
@@ -5037,10 +5093,10 @@
       "title": "Sink or Swim (EP)",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Sink or Swim (EP)",
@@ -5139,10 +5195,10 @@
       "title": "St. Joan",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "St. Joan",
@@ -5197,10 +5253,10 @@
       "title": "Bringing Em Down",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Bringing Em Down",
@@ -5255,10 +5311,10 @@
       "title": "Let Go (What's holding you back)",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Let Go (What's holding you back)",
@@ -5326,10 +5382,10 @@
       "title": "Radio Brigade",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Radio Brigade",
@@ -5459,10 +5515,10 @@
       "title": "Hello Stranger feat. Helen Tess",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Hello Stranger feat. Helen Tess",
@@ -5517,10 +5573,10 @@
       "title": "The Sheer Magnitude Of it All",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "The Sheer Magnitude Of it All",
@@ -5630,10 +5686,10 @@
       "title": "Tinderbox",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Tinderbox",
@@ -5831,10 +5887,10 @@
       "title": "Everything Is Lit",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Everything Is Lit",
@@ -6063,10 +6119,10 @@
       "title": "True Blue",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "True Blue",
@@ -6197,10 +6253,10 @@
       "title": "Peace Pieces",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Peace Pieces",
@@ -6392,10 +6448,10 @@
       "title": "The Poet Barfly - Demo",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "The Poet Barfly - Demo",
@@ -6450,10 +6506,10 @@
       "title": "White Triangles",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "White Triangles",
@@ -6575,10 +6631,10 @@
       "title": "Vote For Love",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Vote For Love",
@@ -6754,10 +6810,10 @@
       "title": "Take The Lead",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Take The Lead",
@@ -6944,10 +7000,10 @@
       "title": "Girls at Kroger",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Girls at Kroger",
@@ -7024,10 +7080,10 @@
       "title": "Cold Neon Blues",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Cold Neon Blues",
@@ -7126,10 +7182,10 @@
       "title": "Phatty The Grasshopper",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Phatty The Grasshopper",
@@ -7232,10 +7288,10 @@
       "title": "Halfway To Somwhere",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Halfway To Somwhere",
@@ -7356,10 +7412,10 @@
       "title": "Wonder Woman",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Wonder Woman",
@@ -7414,10 +7470,10 @@
       "title": "Shoot From the Hip, Straight to the Heart",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Shoot From the Hip, Straight to the Heart",
@@ -7593,10 +7649,10 @@
       "title": "Opus",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Opus",
@@ -7709,10 +7765,10 @@
       "title": "Be the Wheel",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Be the Wheel",
@@ -7877,10 +7933,10 @@
       "title": "Your Chance",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Your Chance",
@@ -8072,10 +8128,10 @@
       "title": "Change Your Mind",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Change Your Mind",
@@ -8130,10 +8186,10 @@
       "title": "That Duck",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "That Duck",
@@ -8208,10 +8264,10 @@
       "title": "Generation Gap",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Generation Gap",
@@ -8379,10 +8435,10 @@
       "title": "Sensitive Guy",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Sensitive Guy",
@@ -8451,10 +8507,10 @@
       "title": "Secrets - Single",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Secrets - Single",
@@ -8523,10 +8579,10 @@
       "title": "Hallucinations",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Hallucinations",
@@ -8581,10 +8637,10 @@
       "title": "Tyson Froese - Songs",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Tyson Froese - Songs",
@@ -8698,10 +8754,10 @@
       "title": "Pour Over",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Pour Over",
@@ -8780,10 +8836,10 @@
       "title": "So Far Away",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "So Far Away",
@@ -8878,10 +8934,10 @@
       "title": "Nostalgic",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Nostalgic",
@@ -8994,10 +9050,10 @@
       "title": "Possible",
       "priority": "generated",
       "status": "active",
-      "addedAt": "2025-08-13T23:12:30.211Z",
-      "lastUpdated": "2025-08-13T23:12:30.211Z",
+      "addedAt": "2025-08-13T22:18:23.362Z",
+      "lastUpdated": "2025-08-13T22:18:23.362Z",
       "parseStatus": "success",
-      "lastParsed": "2025-08-13T23:12:30.211Z",
+      "lastParsed": "2025-08-13T22:18:23.362Z",
       "parsedData": {
         "album": {
           "title": "Possible",
@@ -9096,9 +9152,9 @@
   ],
   "metadata": {
     "version": "1.0.0",
-    "lastUpdated": "2025-08-13T23:12:30.211Z",
+    "lastUpdated": "2025-08-13T22:18:23.362Z",
     "totalFeeds": 77,
     "generatedFrom": "music-tracks.json",
-    "rebuiltAt": "2025-08-13T23:12:30.211Z"
+    "rebuiltAt": "2025-08-13T22:18:23.362Z"
   }
 }

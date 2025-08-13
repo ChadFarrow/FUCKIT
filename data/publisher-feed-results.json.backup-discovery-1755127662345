@@ -211,24 +211,6 @@
   },
   {
     "feed": {
-      "id": "wavlake-publisher-7ca38fae",
-      "originalUrl": "https://wavlake.com/feed/artist/7ca38fae-f142-4ceb-ab0f-b17d92374315",
-      "type": "publisher",
-      "title": "Matt Johner (Wavlake)"
-    },
-    "imageUrl": null,
-    "imageTag": null,
-    "artworkTag": null,
-    "imgTag": null,
-    "itunesImage": "https://d12wklypp119aj.cloudfront.net/image/7ca38fae-f142-4ceb-ab0f-b17d92374315.jpg",
-    "description": "<![CDATA[Matt Johner is a 22 year old country singer/songwriter from Saskatoon, Saskatchewan, Canada.]]>",
-    "title": "<![CDATA[Matt Johner]]>",
-    "discoveredFrom": "https://wavlake.com/feed/music/7c295d64-8b85-4b4f-be2c-72f3954fdcaa",
-    "discoveredAt": "2025-08-13T23:27:36.798Z",
-    "remoteItemCount": 5
-  },
-  {
-    "feed": {
       "id": "my-friend-jimi-publisher",
       "originalUrl": "https://wavlake.com/feed/artist/0ea699be-e985-4aa1-8c00-43542e4b9e0d",
       "type": "publisher",

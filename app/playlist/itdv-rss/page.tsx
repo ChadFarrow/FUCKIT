@@ -7,7 +7,9 @@ import ITDVPlaylistAlbum from '@/components/ITDVPlaylistAlbum';
 export default function ITDVPlaylistPage() {
   // Use the same background style as album pages
   const backgroundStyle = {
-    background: 'linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url(https://www.doerfelverse.com/art/itdvchadf.png) top center/cover fixed',
+    backgroundImage: 'linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url(https://www.doerfelverse.com/art/itdvchadf.png)',
+    backgroundSize: 'cover',
+    backgroundPosition: 'top center',
     backgroundAttachment: 'fixed'
   };
 

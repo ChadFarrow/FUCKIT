@@ -1,24 +1,6 @@
 [
   {
     "feed": {
-      "id": "wavlake-publisher-4e33ca0c",
-      "originalUrl": "https://wavlake.com/feed/artist/4e33ca0c-bd98-4f98-9284-e8073046c049",
-      "type": "publisher",
-      "title": "bennyjeans (Wavlake)"
-    },
-    "imageUrl": null,
-    "imageTag": null,
-    "artworkTag": null,
-    "imgTag": null,
-    "itunesImage": "https://d12wklypp119aj.cloudfront.net/image/4e33ca0c-bd98-4f98-9284-e8073046c049.jpg",
-    "description": "<![CDATA[bennyjeans is a solo musician hailing from Pleasant Grove, UT, with a new youthful sound that emphasizes true emotion over perfection. He is best known as the lead vocalist of the band \"With Andrea\"]]>",
-    "title": "<![CDATA[bennyjeans]]>",
-    "discoveredFrom": "https://www.wavlake.com/feed/6f9ec822-9e9c-497d-b90a-f49035a40f0f",
-    "discoveredAt": "2025-08-13T23:10:39.343Z",
-    "remoteItemCount": 11
-  },
-  {
-    "feed": {
       "id": "wavlake-publisher-93fbacab",
       "originalUrl": "https://wavlake.com/feed/artist/93fbacab-bbbb-4de4-863a-8adeb9fc4782",
       "type": "publisher",
@@ -34,60 +16,6 @@
     "discoveredFrom": "https://wavlake.com/feed/music/5a07b3f1-8249-45a1-b40a-630797dc4941",
     "discoveredAt": "2025-08-13T22:40:43.426Z",
     "remoteItemCount": 5
-  },
-  {
-    "feed": {
-      "id": "wavlake-publisher-707bc821",
-      "originalUrl": "https://wavlake.com/feed/artist/707bc821-489e-46b2-8b51-d0aaad856f20",
-      "type": "publisher",
-      "title": "Charlie Crown (Wavlake)"
-    },
-    "imageUrl": null,
-    "imageTag": null,
-    "artworkTag": null,
-    "imgTag": null,
-    "itunesImage": "https://d12wklypp119aj.cloudfront.net/image/707bc821-489e-46b2-8b51-d0aaad856f20.jpg",
-    "description": "<![CDATA[Artist & Producer]]>",
-    "title": "<![CDATA[Charlie Crown]]>",
-    "discoveredFrom": "https://wavlake.com/feed/c5b7d7f5-bf48-41c7-b0cc-8139e300185e",
-    "discoveredAt": "2025-08-13T23:11:13.188Z",
-    "remoteItemCount": 12
-  },
-  {
-    "feed": {
-      "id": "wavlake-publisher-cc63b375",
-      "originalUrl": "https://wavlake.com/feed/artist/cc63b375-8977-4048-9aee-99a500fb6108",
-      "type": "publisher",
-      "title": "Cole Hansen (Wavlake)"
-    },
-    "imageUrl": null,
-    "imageTag": null,
-    "artworkTag": null,
-    "imgTag": null,
-    "itunesImage": "https://d12wklypp119aj.cloudfront.net/image/cc63b375-8977-4048-9aee-99a500fb6108.jpg",
-    "description": "<![CDATA[Cole Hansen is a Grand Rapids-based singer/songwriter and vocal powerhouse on a mission to help release the labels and limiting beliefs holding us back and spread love, light, and positivity. ]]>",
-    "title": "<![CDATA[Cole Hansen]]>",
-    "discoveredFrom": "https://wavlake.com/feed/music/82700713-4ecc-4fc1-94d9-2c0b765504eb",
-    "discoveredAt": "2025-08-13T23:11:23.141Z",
-    "remoteItemCount": 2
-  },
-  {
-    "feed": {
-      "id": "wavlake-publisher-1e7f8807",
-      "originalUrl": "https://wavlake.com/feed/artist/1e7f8807-31a7-454c-b612-f2563ba4cf67",
-      "type": "publisher",
-      "title": "Death by Lions (Wavlake)"
-    },
-    "imageUrl": null,
-    "imageTag": null,
-    "artworkTag": null,
-    "imgTag": null,
-    "itunesImage": "https://d12wklypp119aj.cloudfront.net/image/1e7f8807-31a7-454c-b612-f2563ba4cf67.jpg",
-    "description": "<![CDATA[Wes (Drums) - Earthmover and Walls of Jericho, Brian (Guitar) - Subsist, Nate (Vocals)- Red Arrow Highway, Drawing Monsters, Jamie (Bass) - Chokehold, Dustin (Guitar)- Fine Fine Titans   ]]>",
-    "title": "<![CDATA[Death by Lions]]>",
-    "discoveredFrom": "https://wavlake.com/feed/e9ae5762-130d-4a16-b8b2-98804cc1802e",
-    "discoveredAt": "2025-08-13T23:11:19.618Z",
-    "remoteItemCount": 2
   },
   {
     "feed": {
@@ -121,24 +49,6 @@
     "itunesImage": "https://d12wklypp119aj.cloudfront.net/image/7ce19adb-c9f7-4a5c-a557-90c112919f82.jpg",
     "description": "<![CDATA[Heavy Hazy Rock]]>",
     "title": "<![CDATA[IROH]]>"
-  },
-  {
-    "feed": {
-      "id": "wavlake-publisher-6fa983b3",
-      "originalUrl": "https://wavlake.com/feed/artist/6fa983b3-9aa2-4331-b22f-5f6d8dcdf3f2",
-      "type": "publisher",
-      "title": "Jessica Lynne Witty (Wavlake)"
-    },
-    "imageUrl": null,
-    "imageTag": null,
-    "artworkTag": null,
-    "imgTag": null,
-    "itunesImage": "https://d12wklypp119aj.cloudfront.net/image/6fa983b3-9aa2-4331-b22f-5f6d8dcdf3f2.jpg",
-    "description": "<![CDATA[https://www.jessicalynnewitty.com/about.html]]>",
-    "title": "<![CDATA[Jessica Lynne Witty]]>",
-    "discoveredFrom": "https://www.wavlake.com/feed/b337bd2b-46c5-4bd0-a57f-f93bca81ebea",
-    "discoveredAt": "2025-08-13T23:11:24.652Z",
-    "remoteItemCount": 16
   },
   {
     "feed": {
@@ -193,42 +103,6 @@
   },
   {
     "feed": {
-      "id": "wavlake-publisher-bfb52718",
-      "originalUrl": "https://wavlake.com/feed/artist/bfb52718-dcfd-44d6-af94-d05559be2f21",
-      "type": "publisher",
-      "title": "Late Night Special (Wavlake)"
-    },
-    "imageUrl": null,
-    "imageTag": null,
-    "artworkTag": null,
-    "imgTag": null,
-    "itunesImage": "https://d12wklypp119aj.cloudfront.net/image/bfb52718-dcfd-44d6-af94-d05559be2f21.jpg",
-    "description": "<![CDATA[Late Night Special is an orchestrated modern soulful rock band fronted by electric singer-songwriter Fred Lee IV. ]]>",
-    "title": "<![CDATA[Late Night Special]]>",
-    "discoveredFrom": "https://www.wavlake.com/feed/05b4cf50-f79b-4296-9f04-02c9223182c5",
-    "discoveredAt": "2025-08-13T23:11:29.352Z",
-    "remoteItemCount": 1
-  },
-  {
-    "feed": {
-      "id": "wavlake-publisher-7ca38fae",
-      "originalUrl": "https://wavlake.com/feed/artist/7ca38fae-f142-4ceb-ab0f-b17d92374315",
-      "type": "publisher",
-      "title": "Matt Johner (Wavlake)"
-    },
-    "imageUrl": null,
-    "imageTag": null,
-    "artworkTag": null,
-    "imgTag": null,
-    "itunesImage": "https://d12wklypp119aj.cloudfront.net/image/7ca38fae-f142-4ceb-ab0f-b17d92374315.jpg",
-    "description": "<![CDATA[Matt Johner is a 22 year old country singer/songwriter from Saskatoon, Saskatchewan, Canada.]]>",
-    "title": "<![CDATA[Matt Johner]]>",
-    "discoveredFrom": "https://wavlake.com/feed/music/7c295d64-8b85-4b4f-be2c-72f3954fdcaa",
-    "discoveredAt": "2025-08-13T23:27:36.798Z",
-    "remoteItemCount": 5
-  },
-  {
-    "feed": {
       "id": "my-friend-jimi-publisher",
       "originalUrl": "https://wavlake.com/feed/artist/0ea699be-e985-4aa1-8c00-43542e4b9e0d",
       "type": "publisher",
@@ -274,24 +148,6 @@
   },
   {
     "feed": {
-      "id": "wavlake-publisher-299267e2",
-      "originalUrl": "https://wavlake.com/feed/artist/299267e2-9309-4276-a22d-70b44f0be754",
-      "type": "publisher",
-      "title": "R.O. Shapiro (Wavlake)"
-    },
-    "imageUrl": null,
-    "imageTag": null,
-    "artworkTag": null,
-    "imgTag": null,
-    "itunesImage": "https://d12wklypp119aj.cloudfront.net/image/299267e2-9309-4276-a22d-70b44f0be754.jpg",
-    "description": "<![CDATA[Americana Soul singer and songwriter currently based in Northern California’s Bay Area ]]>",
-    "title": "<![CDATA[R.O. Shapiro]]>",
-    "discoveredFrom": "https://wavlake.com/feed/music/d3ee6d16-fc74-4661-a810-4059f745426d",
-    "discoveredAt": "2025-08-13T23:11:01.630Z",
-    "remoteItemCount": 2
-  },
-  {
-    "feed": {
       "id": "wavlake-publisher-d4c49f2e",
       "originalUrl": "https://wavlake.com/feed/artist/d4c49f2e-0b50-4a5e-8101-7543d68e032f",
       "type": "publisher",
@@ -306,24 +162,6 @@
     "title": "<![CDATA[Ryan Fonda]]>",
     "discoveredFrom": "https://www.wavlake.com/feed/6bece1b8-5385-4a33-9224-09e7f3ee6965",
     "discoveredAt": "2025-08-13T22:41:13.051Z",
-    "remoteItemCount": 15
-  },
-  {
-    "feed": {
-      "id": "wavlake-publisher-a8ad6318",
-      "originalUrl": "https://wavlake.com/feed/artist/a8ad6318-7312-4f77-adbf-80b54944c8da",
-      "type": "publisher",
-      "title": "Sara Jade (Wavlake)"
-    },
-    "imageUrl": null,
-    "imageTag": null,
-    "artworkTag": null,
-    "imgTag": null,
-    "itunesImage": "https://d12wklypp119aj.cloudfront.net/image/a8ad6318-7312-4f77-adbf-80b54944c8da.jpg",
-    "description": "<![CDATA[Keytar wielding singer songwriter - Americana and Baroque Pop Rock]]>",
-    "title": "<![CDATA[Sara Jade]]>",
-    "discoveredFrom": "https://wavlake.com/feed/0a131404-899f-4a7d-a2f3-3dbb61622887",
-    "discoveredAt": "2025-08-13T23:10:59.409Z",
     "remoteItemCount": 15
   },
   {
@@ -361,24 +199,6 @@
   },
   {
     "feed": {
-      "id": "wavlake-publisher-a8586318",
-      "originalUrl": "https://wavlake.com/feed/artist/a8586318-c588-46ad-a769-ffb7e9c27b2c",
-      "type": "publisher",
-      "title": "The Greensands (Wavlake)"
-    },
-    "imageUrl": null,
-    "imageTag": null,
-    "artworkTag": null,
-    "imgTag": null,
-    "itunesImage": "https://d12wklypp119aj.cloudfront.net/image/a8586318-c588-46ad-a769-ffb7e9c27b2c.jpg",
-    "description": "<![CDATA[The Greensands are an alternative rock band known for their raw energy, genre-blending sound, and introspective lyrics.]]>",
-    "title": "<![CDATA[The Greensands]]>",
-    "discoveredFrom": "https://wavlake.com/feed/music/169e65e4-c3fa-471f-a473-b75f3890848b",
-    "discoveredAt": "2025-08-13T23:10:40.590Z",
-    "remoteItemCount": 4
-  },
-  {
-    "feed": {
       "id": "wavlake-publisher-bd040774",
       "originalUrl": "https://wavlake.com/feed/artist/bd040774-1dd6-42c6-98ce-01d327697a1d",
       "type": "publisher",
@@ -412,23 +232,5 @@
     "discoveredFrom": "https://wavlake.com/feed/music/8aaf0d1e-7ac3-4f7d-993b-6f59f936d780",
     "discoveredAt": "2025-08-13T22:40:48.979Z",
     "remoteItemCount": 2
-  },
-  {
-    "feed": {
-      "id": "wavlake-publisher-eff27dd6",
-      "originalUrl": "https://wavlake.com/feed/artist/eff27dd6-764c-497e-81fe-3a7e10eb7b3b",
-      "type": "publisher",
-      "title": "Vertigo Kidd (Wavlake)"
-    },
-    "imageUrl": null,
-    "imageTag": null,
-    "artworkTag": null,
-    "imgTag": null,
-    "itunesImage": "https://d12wklypp119aj.cloudfront.net/image/eff27dd6-764c-497e-81fe-3a7e10eb7b3b.jpg",
-    "description": "<![CDATA[Some music I made with my friends]]>",
-    "title": "<![CDATA[Vertigo Kidd]]>",
-    "discoveredFrom": "https://www.wavlake.com/feed/733fe358-6754-4135-a640-d75bc704c85d",
-    "discoveredAt": "2025-08-13T23:11:27.025Z",
-    "remoteItemCount": 3
   }
 ]

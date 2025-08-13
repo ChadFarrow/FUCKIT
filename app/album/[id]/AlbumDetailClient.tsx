@@ -414,7 +414,9 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum }:
     
     const style = backgroundImage && isClient ? {
       ...baseStyle,
-      background: `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url('${backgroundImage}') center/cover fixed`,
+      backgroundImage: `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url('${backgroundImage}')`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
       backgroundAttachment: 'fixed'
     } : {
       ...baseStyle,
