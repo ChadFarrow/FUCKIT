@@ -333,7 +333,7 @@ export default function HomePage() {
       setLoadingProgress(75);
       
       // Convert to RSSAlbum format for compatibility
-      const rssAlbums: RSSAlbum[] = allAlbums.map((album: any): RSSAlbum => ({
+      let rssAlbums: RSSAlbum[] = allAlbums.map((album: any): RSSAlbum => ({
         title: album.title,
         artist: album.artist,
         description: album.description,
