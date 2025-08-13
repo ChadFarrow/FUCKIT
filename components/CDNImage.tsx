@@ -61,6 +61,11 @@ export default function CDNImage({
       setCurrentSrc(src);
       setHasError(false);
       setIsLoading(true);
+    } else if (!src || src.trim() === '') {
+      // Handle empty src by showing error state immediately
+      setCurrentSrc('');
+      setHasError(true);
+      setIsLoading(false);
     }
   }, [src]);
   
@@ -305,8 +310,21 @@ export default function CDNImage({
     const dims = getImageDimensions();
     let imageSrc = src;
     
-    // Mobile-first approach: bypass optimization, go straight to proxy if external
-    if (isClient && isMobile) {
+    // Use proxy for all external URLs to avoid CORS and loading issues
+    const isExternalUrl = src && (
+      src.includes('cloudfront.net') ||
+      src.includes('doerfelverse.com') ||
+      src.includes('ableandthewolf.com') ||
+      src.includes('thisisjdog.com') ||
+      src.includes('static.wixstatic.com') ||
+      src.includes('music.behindthesch3m3s.com') ||
+      src.includes('f4.bcbits.com') ||
+      (!src.includes('re.podtards.com') && !src.includes('/api/') && src.startsWith('http'))
+    );
+    
+    if (isExternalUrl) {
+      imageSrc = `/api/proxy-image?url=${encodeURIComponent(src)}`;
+    } else if (isClient && isMobile) {
       // For mobile, if it's an external URL, use proxy immediately
       if (src && !src.includes('re.podtards.com') && !src.includes('/api/')) {
         imageSrc = `/api/proxy-image?url=${encodeURIComponent(src)}`;
@@ -341,13 +359,17 @@ export default function CDNImage({
       setTimeoutId(null);
     }
     
-    // Set timeout based on retry count and whether it's a GIF
+    // Set timeout based on retry count and whether it's a GIF or proxy URL
     let timeout: NodeJS.Timeout;
+    const isProxyUrl = currentSrc.includes('/api/proxy-image');
+    const isCloudFrontProxy = isProxyUrl && currentSrc.includes('cloudfront.net');
+    
     if (retryCount === 0) {
-      // Initial load timeout
+      // Initial load timeout - shorter for better UX
+      const timeoutMs = isProxyUrl ? 8000 : (isGif ? 8000 : 10000);
       timeout = setTimeout(() => {
         if (!hasError) handleError();
-      }, isGif ? 12000 : 15000);
+      }, timeoutMs);
     } else if (retryCount === 1) {
       // Fallback/proxy timeout
       timeout = setTimeout(() => {
@@ -391,8 +413,15 @@ export default function CDNImage({
       )}
       
       {hasError && (
-        <div className="absolute inset-0 bg-gray-800/50 rounded flex items-center justify-center">
-          <div className="text-white/60 text-sm">Image unavailable</div>
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-700 to-gray-800 rounded flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-8 h-8 mx-auto mb-2 text-gray-400">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
+            </div>
+            <div className="text-white/60 text-xs">No artwork</div>
+          </div>
         </div>
       )}
       
@@ -434,7 +463,7 @@ export default function CDNImage({
           onError={handleError}
           onLoad={handleLoad}
           placeholder={placeholder}
-          unoptimized={currentSrc.includes('/api/optimized-images/')} // Don't double-optimize
+          unoptimized={currentSrc.includes('/api/optimized-images/') || currentSrc.includes('/api/placeholder-image/')} // Don't optimize API images or SVG placeholders
           style={style}
           {...props}
         />

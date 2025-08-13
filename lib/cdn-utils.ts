@@ -10,12 +10,18 @@
  * @returns The original artwork URL or placeholder
  */
 export function getAlbumArtworkUrl(originalUrl: string, size: 'thumbnail' | 'medium' | 'large' = 'medium'): string {
-  if (!originalUrl) {
+  // Always return placeholder for missing, empty, or invalid URLs
+  if (!originalUrl || originalUrl.trim() === '' || originalUrl === 'undefined' || originalUrl === 'null') {
     return getPlaceholderImageUrl(size);
   }
   
   // Handle known missing placeholder images
   if (originalUrl.includes('playlist-track-placeholder.png')) {
+    return getPlaceholderImageUrl(size);
+  }
+  
+  // Handle obvious broken or placeholder URLs
+  if (originalUrl.includes('placeholder') || originalUrl.includes('not-found') || originalUrl.includes('404')) {
     return getPlaceholderImageUrl(size);
   }
   

@@ -1,0 +1,45 @@
+{
+  "totalFeeds": 134,
+  "successfulParses": 128,
+  "failedParses": 6,
+  "albumsFound": 118,
+  "publishersFound": 10,
+  "totalTracks": 667,
+  "totalDuration": "00:00",
+  "podRollFeeds": 17,
+  "fundingFeeds": 9,
+  "parseTime": 164927,
+  "timestamp": "2025-08-12T21:55:28.096Z",
+  "errors": [
+    {
+      "feedId": "wavlake-album-11",
+      "feedUrl": "https://wavlake.com/feed/music/91367816-33e6-4b6e-8eb7-44b2832708fd",
+      "error": "No album data found"
+    },
+    {
+      "feedId": "wavlake-album-12",
+      "feedUrl": "https://wavlake.com/feed/music/8c8f8133-7ef1-4b72-a641-4e1a6a44d626",
+      "error": "No album data found"
+    },
+    {
+      "feedId": "example-com-test-feed-xml",
+      "feedUrl": "https://example.com/test-feed.xml",
+      "error": "No album data found"
+    },
+    {
+      "feedId": "2-crystal-balls",
+      "feedUrl": "https://rocknrollbreakheart.com/msp/2CrystalBalls/2 crystal balls.xml",
+      "error": "No album data found"
+    },
+    {
+      "feedId": "my-friend-jimi-3d8c7279-6aa6-41e7-be1c-2680e57af6c8",
+      "feedUrl": "https://wavlake.com/feed/music/3d8c7279-6aa6-41e7-be1c-2680e57af6c8",
+      "error": "No album data found"
+    },
+    {
+      "feedId": "drawing-monsters-old-wolf-wrong-scene",
+      "feedUrl": "https://wavlake.com/feed/music/c26d9d57-9e9e-444f-b131-1baf4ed85a0a",
+      "error": "No album data found"
+    }
+  ]
+}

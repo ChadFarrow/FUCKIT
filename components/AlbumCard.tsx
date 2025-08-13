@@ -69,9 +69,7 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
     setImageLoaded(false);
   };
 
-  const artworkUrl = album.coverArt 
-    ? getAlbumArtworkUrl(album.coverArt, 'medium')
-    : getPlaceholderImageUrl('medium');
+  const artworkUrl = getAlbumArtworkUrl(album.coverArt || '', 'medium');
   
   // Check if this is a playlist card and use playlistUrl if available
   const isPlaylistCard = (album as any).isPlaylistCard;

@@ -356,34 +356,22 @@ export default function HomePage() {
         feedId: album.feedId
       }));
       
-      // Deduplicate albums
-      const albumMap = new Map<string, RSSAlbum>();
-      
-      rssAlbums.forEach((album) => {
-        const key = `${album.title.toLowerCase()}|${album.artist.toLowerCase()}`;
-        if (!albumMap.has(key)) {
-          albumMap.set(key, album);
-        }
-      });
-      
-      let uniqueAlbums = Array.from(albumMap.values());
-      
       // Apply limit if specified (for critical loading)
       if (limit && limit > 0) {
-        uniqueAlbums = uniqueAlbums.slice(0, limit);
+        rssAlbums = rssAlbums.slice(0, limit);
       }
       
       // Cache only the main 'all' request for performance
       if (typeof window !== 'undefined' && loadTier === 'all' && offset === 0) {
         try {
-          localStorage.setItem('cachedAlbums', JSON.stringify(uniqueAlbums));
+          localStorage.setItem('cachedAlbums', JSON.stringify(rssAlbums));
           localStorage.setItem('albumsCacheTimestamp', Date.now().toString());
         } catch (error) {
           console.warn('⚠️ Failed to cache albums:', error);
         }
       }
       
-      return uniqueAlbums;
+      return rssAlbums;
       
     } catch (err) {
       const errorMessage = getErrorMessage(err);
@@ -633,13 +621,38 @@ export default function HomePage() {
       return true;
     });
     
-    // Deduplicate albums by title and artist combination
+    // Deduplicate albums by normalized title and artist combination
     const deduplicatedAlbums = baseAlbums.reduce((acc: RSSAlbum[], album: RSSAlbum) => {
-      const albumKey = `${album.title?.toLowerCase() || 'unknown'}-${album.artist?.toLowerCase() || 'unknown'}`;
+      // Normalize the title and artist for better deduplication
+      const normalizedTitle = (album.title || 'unknown')
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, ' ')  // Replace multiple spaces with single space
+        .replace(/[^\w\s]/g, ''); // Remove special characters
       
-      // Check if we already have an album with this title+artist combo
+      const normalizedArtist = (album.artist || 'unknown')
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, ' ')  // Replace multiple spaces with single space
+        .replace(/[^\w\s]/g, ''); // Remove special characters
+      
+      const albumKey = `${normalizedTitle}|${normalizedArtist}`;
+      
+      // Check if we already have an album with this normalized title+artist combo
       const existingIndex = acc.findIndex(existing => {
-        const existingKey = `${existing.title?.toLowerCase() || 'unknown'}-${existing.artist?.toLowerCase() || 'unknown'}`;
+        const existingNormalizedTitle = (existing.title || 'unknown')
+          .toLowerCase()
+          .trim()
+          .replace(/\s+/g, ' ')
+          .replace(/[^\w\s]/g, '');
+        
+        const existingNormalizedArtist = (existing.artist || 'unknown')
+          .toLowerCase()
+          .trim()
+          .replace(/\s+/g, ' ')
+          .replace(/[^\w\s]/g, '');
+        
+        const existingKey = `${existingNormalizedTitle}|${existingNormalizedArtist}`;
         return existingKey === albumKey;
       });
       
@@ -651,7 +664,8 @@ export default function HomePage() {
         const existing = acc[existingIndex];
         if (album.tracks.length > existing.tracks.length || 
             (!existing.coverArt && album.coverArt) ||
-            (!existing.description && album.description)) {
+            (!existing.description && album.description) ||
+            (album.coverArt && !album.coverArt.includes('placeholder') && existing.coverArt?.includes('placeholder'))) {
           // Replace with better version
           acc[existingIndex] = album;
         }
