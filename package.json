@@ -22,7 +22,12 @@
     "post-parse-cleanup": "node scripts/post-parse-cleanup.js",
     "fix-images": "node scripts/fix-corrupted-images.js",
     "clear-sw-cache": "node scripts/clear-sw-cache.js",
-    "fix-all": "node scripts/fix-all-issues.js"
+    "fix-all": "node scripts/fix-all-issues.js",
+    "update-music": "node scripts/update-music-workflow.js",
+    "discover-publishers": "node scripts/discover-wavlake-publisher-feeds.js",
+    "integrate-publishers": "node scripts/integrate-publisher-feeds.js",
+    "check-artwork": "node scripts/check-all-artwork-comprehensive.js",
+    "fix-artwork": "node scripts/fix-all-album-artwork.js"
   },
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",

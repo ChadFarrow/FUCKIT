@@ -303,7 +303,7 @@ export default function HomePage() {
         
         if (cached && timestamp) {
           const age = Date.now() - parseInt(timestamp);
-          if (age < 3 * 60 * 1000) { // 3 minutes cache for faster updates
+          if (age < 30 * 1000) { // 30 seconds cache to ensure fresh data after fixes
             console.log('📦 Using cached albums');
             return JSON.parse(cached);
           }
@@ -314,7 +314,8 @@ export default function HomePage() {
       const params = new URLSearchParams({
         limit: limit.toString(),
         offset: offset.toString(),
-        tier: loadTier
+        tier: loadTier,
+        v: Date.now().toString() // Cache busting for fresh data
       });
       
       const response = await fetch(`/api/albums?${params}`);
@@ -686,62 +687,9 @@ export default function HomePage() {
         break;
       // HGH case removed - filter disabled
       case 'playlist':
-        // For playlist, show featured playlist cards
-        const featuredPlaylists = [
-          {
-            id: 'into-the-doerfelverse-playlist',
-            title: 'Into The Doerfel-Verse',
-            artist: 'Various Artists',
-            description: 'Every music reference from the Into The Doerfel-Verse podcast',
-            coverArt: 'https://raw.githubusercontent.com/ChadFarrow/chadf-musicl-playlists/refs/heads/main/docs/ITDV-music-playlist.webp',
-            releaseDate: new Date().toISOString(),
-            feedId: 'into-the-doerfelverse-playlist',
-            tracks: [],
-            isPlaylistCard: true,
-            playlistUrl: '/playlist/itdv-rss'
-          },
-          {
-            id: 'homegrown-hits-playlist',
-            title: 'Homegrown Hits',
-            artist: 'Various Artists',
-            description: 'Every music reference from the Homegrown Hits podcast',
-            coverArt: 'https://raw.githubusercontent.com/ChadFarrow/ITDV-music-playlist/refs/heads/main/docs/HGH-playlist-art.webp', 
-            releaseDate: new Date().toISOString(),
-            feedId: 'homegrown-hits-playlist',
-            tracks: [],
-            isPlaylistCard: true,
-            playlistUrl: '/playlist/hgh-rss'
-          },
-          {
-            id: 'lightning-thrashes-playlist',
-            title: 'Lightning Thrashes',
-            artist: 'Complete Collection',
-            description: 'Every song played on Lightning Thrashes from episode 1 to 60',
-            coverArt: 'https://cdn.kolomona.com/podcasts/lightning-thrashes/060/060-Lightning-Thrashes-1000.jpg',
-            releaseDate: new Date().toISOString(),
-            feedId: 'lightning-thrashes-playlist',
-            tracks: [],
-            isPlaylistCard: true,
-            playlistUrl: '/playlist/lightning-thrashes-rss'
-          },
-          {
-            id: 'top100-music-playlist',
-            title: 'Top 100 Music',
-            artist: 'Value for Value Music Charts',
-            description: 'Top 100 music tracks by value received in sats',
-            coverArt: 'https://podcastindex.org/images/brand-icon.svg',
-            releaseDate: new Date().toISOString(),
-            feedId: 'top100-music-playlist',
-            tracks: [],
-            isPlaylistCard: true,
-            playlistUrl: '/playlist/top100-music'
-          }
-        ];
-        filtered = featuredPlaylists as any;
-        console.log('🎵 Playlist filter - showing featured playlists:', { 
-          playlistCount: filtered.length,
-          playlists: filtered.map((p: any) => p.title)
-        });
+        // Show only playlists from actual database data (no hardcoded playlists)
+        filtered = []; // No hardcoded playlists - only content explicitly added back
+        console.log('🎵 Playlist filter - no hardcoded playlists shown');
         break;
 
       default: // 'all'
@@ -955,56 +903,6 @@ export default function HomePage() {
               </Link>
             </div>
 
-            {/* Featured Playlists */}
-            <div className="mb-4">
-              <h3 className="text-sm font-semibold mb-2 text-white">Featured Playlists</h3>
-              <div className="space-y-1">
-                <Link 
-                  href="/playlist/itdv-rss" 
-                  className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800/50 transition-colors text-gray-300"
-                  onClick={() => setIsSidebarOpen(false)}
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 18V5l12-2v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-                  </svg>
-                  <span className="text-sm text-gray-300">Into The Doerfel-Verse</span>
-                </Link>
-                
-                <Link 
-                  href="/playlist/lightning-thrashes-rss" 
-                  className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800/50 transition-colors text-gray-300"
-                  onClick={() => setIsSidebarOpen(false)}
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 18V5l12-2v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-                  </svg>
-                  <span className="text-sm text-gray-300">Lightning Thrashes</span>
-                </Link>
-                
-                <Link 
-                  href="/playlist/hgh-rss" 
-                  className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800/50 transition-colors text-gray-300"
-                  onClick={() => setIsSidebarOpen(false)}
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 18V5l12-2v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-                  </svg>
-                  <span className="text-sm text-gray-300">Homegrown Hits</span>
-                </Link>
-                
-                <Link 
-                  href="/playlist/top100-music" 
-                  className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800/50 transition-colors text-gray-300"
-                  onClick={() => setIsSidebarOpen(false)}
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span className="text-sm text-gray-300">Top 100 Music</span>
-                </Link>
-              </div>
-            </div>
-            
 
 
             {/* Artists with Publisher Feeds */}
@@ -1049,7 +947,7 @@ export default function HomePage() {
                       <span className="ml-2 text-xs text-stablekraft-teal">(Loading more...)</span>
                     )}
                   </h3>
-                  <div className="space-y-1 max-h-32 overflow-y-auto">
+                  <div className="space-y-1 max-h-48 overflow-y-auto">
                     {artists.length > 0 ? (
                       artists.map((artist) => (
                         <Link
