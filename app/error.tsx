@@ -12,8 +12,38 @@ export default function Error({
   useEffect(() => {
     // Log to console for debugging in dev
     // eslint-disable-next-line no-console
-    console.error(error);
+    console.error('Error boundary caught error:', error);
+    
+    // Log additional error details for debugging
+    if (error.stack) {
+      console.error('Error stack:', error.stack);
+    }
+    
+    // Log error name and message
+    console.error('Error name:', error.name);
+    console.error('Error message:', error.message);
   }, [error]);
+
+  // Add global error handlers to prevent crashes
+  useEffect(() => {
+    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      console.error('Unhandled promise rejection:', event.reason);
+      event.preventDefault();
+    };
+
+    const handleError = (event: ErrorEvent) => {
+      console.error('Global error:', event.error);
+      event.preventDefault();
+    };
+
+    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+    window.addEventListener('error', handleError);
+
+    return () => {
+      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+      window.removeEventListener('error', handleError);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center p-6">

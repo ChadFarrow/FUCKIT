@@ -146,7 +146,10 @@ const nextConfig = {
       'lightningthrashes.com',
       'picsum.photos',
       'podcastindex.org',
-      'raw.githubusercontent.com'
+      'raw.githubusercontent.com',
+      'megaphone.imgix.net',
+      'cdn-images.owltail.com',
+      'www.haciendoelsueco.com'
     ],
     remotePatterns: [
       {
@@ -319,6 +322,27 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'raw.githubusercontent.com',
+        port: '',
+        pathname: '/**',
+      },
+      // Megaphone podcast hosting images
+      {
+        protocol: 'https',
+        hostname: 'megaphone.imgix.net',
+        port: '',
+        pathname: '/**',
+      },
+      // OwlTail podcast discovery images
+      {
+        protocol: 'https',
+        hostname: 'cdn-images.owltail.com',
+        port: '',
+        pathname: '/**',
+      },
+      // Haciendo El Sueco podcast images
+      {
+        protocol: 'https',
+        hostname: 'www.haciendoelsueco.com',
         port: '',
         pathname: '/**',
       },

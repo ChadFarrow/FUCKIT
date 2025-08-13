@@ -31,15 +31,15 @@ export async function GET(request: NextRequest) {
       }, { status: 400 });
     }
 
-    // Fetch the image
+    // Fetch the image with better error handling
     const response = await fetch(imageUrl, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; PodtardsImageProxy/1.0)',
         'Accept': 'image/*',
         'Accept-Encoding': 'gzip, deflate, br',
       },
-      // Add timeout
-      signal: AbortSignal.timeout(15000), // 15 second timeout
+      // Reduce timeout to prevent long-hanging requests
+      signal: AbortSignal.timeout(8000), // 8 second timeout
     });
 
     if (!response.ok) {
@@ -47,6 +47,15 @@ export async function GET(request: NextRequest) {
         success: false, 
         error: `Failed to fetch image: ${response.status} ${response.statusText}` 
       }, { status: response.status });
+    }
+
+    // Validate that we actually got an image
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.startsWith('image/')) {
+      return NextResponse.json({ 
+        success: false, 
+        error: `Invalid content type: ${contentType}. Expected image/*` 
+      }, { status: 400 });
     }
 
     // Get the image data
@@ -76,6 +85,14 @@ export async function GET(request: NextRequest) {
         success: false, 
         error: 'Image fetch timeout' 
       }, { status: 408 });
+    }
+
+    // Handle DNS resolution errors specifically
+    if (error instanceof Error && error.message.includes('ENOTFOUND')) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Domain not found - DNS resolution failed' 
+      }, { status: 404 });
     }
 
     return NextResponse.json({ 
