@@ -60,11 +60,10 @@ export async function GET(request: NextRequest) {
 
     // Get the image data
     const imageBuffer = await response.arrayBuffer();
-    const contentType = response.headers.get('content-type') || 'image/jpeg';
 
     // Set headers for image serving
     const headers = new Headers();
-    headers.set('Content-Type', contentType);
+    headers.set('Content-Type', contentType || 'image/jpeg');
     headers.set('Content-Length', imageBuffer.byteLength.toString());
     headers.set('Cache-Control', 'public, max-age=3600, s-maxage=86400'); // 1 hour client, 24 hours CDN
     headers.set('Access-Control-Allow-Origin', '*');
