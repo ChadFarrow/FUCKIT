@@ -1,0 +1,441 @@
+{
+  "found": [
+    {
+      "id": "hgh-the-tjukebox",
+      "title": "The Tjukebox",
+      "artwork": "https://www.whitetriangles.com/Music/Tjukebox/Artwork/Tjukebox.png"
+    },
+    {
+      "id": "hgh-the-everyday",
+      "title": "The Everyday",
+      "artwork": "http://thebearsnare.com/wp-content/uploads/2024/01/everyday-cover-1024x1024.jpg"
+    },
+    {
+      "id": "hgh-these-days",
+      "title": "These Days",
+      "artwork": "https://media.rssblue.com/podcasts/these-days/cover-art.coverart-thecollegeyears.jpg"
+    },
+    {
+      "id": "hgh-gay",
+      "title": "Gay?",
+      "artwork": "https://static.wixstatic.com/media/6f2e4f_b7930cbaf9a748c389b196353760f069~mv2.jpg"
+    },
+    {
+      "id": "hgh-true-blue",
+      "title": "True Blue",
+      "artwork": "https://justcast.sfo2.digitaloceanspaces.com/js-production/1646928601414-label%20tb%20no%20enhanced%20sqare%201400.jpg"
+    },
+    {
+      "id": "hgh-the-wait-is-over",
+      "title": "The Wait Is Over",
+      "artwork": "https://feed.bowlafterbowl.com/demu/wait-is-over/wait-is-over.jpg"
+    },
+    {
+      "id": "hgh-tiddies-in-my-face-single",
+      "title": "Tiddies In My Face (Single)",
+      "artwork": "https://feed.bowlafterbowl.com/demu/tiddies-in-my-face/images/cover-art.png"
+    },
+    {
+      "id": "hgh-on-my-way",
+      "title": "On My Way",
+      "artwork": "https://music.behindthesch3m3s.com/wp-content/uploads/The_Cooper_Friendly_Feel_Good_Group/On_My_Way/on%20my%20art%20small.jpg"
+    },
+    {
+      "id": "hgh-the-lightning",
+      "title": "The Lightning",
+      "artwork": "https://media.rssblue.com/podcasts/the-lightning/cover-art.the-lightning.jpg"
+    },
+    {
+      "id": "hgh-prevailing-domination",
+      "title": "Prevailing Domination",
+      "artwork": "https://cdn.kolomona.com/podcasts/lightning-thrashes/re-activate/prevailing-domination/album.jpg"
+    },
+    {
+      "id": "hgh-cue-the-slaughter",
+      "title": "Cue the Slaughter",
+      "artwork": "https://cdn.kolomona.com/podcasts/lightning-thrashes/massacre-at-the-opera/cue-the-slaughter/album.jpg"
+    },
+    {
+      "id": "hgh-kick-it",
+      "title": "Kick It",
+      "artwork": "https://media.rssblue.com/podcasts/kick-it/cover-art.caroline-hale.jpg"
+    },
+    {
+      "id": "hgh-motive-to-kill",
+      "title": "Motive to Kill",
+      "artwork": "https://ipfspodcasting.net/e/cdn.kolomona.com/podcasts/lightning-thrashes/motive-to-kill/motive-to-kill/album.jpg"
+    },
+    {
+      "id": "hgh-no-return",
+      "title": "no return",
+      "artwork": "https://media.rssblue.com/podcasts/no-return/cover-art.untitled.png"
+    },
+    {
+      "id": "hgh-hidden-hand",
+      "title": "Hidden Hand",
+      "artwork": "https://taylor-sound.com/msp/Silverseed/Hidden%20Hand/HiddenHandArt.png"
+    },
+    {
+      "id": "hgh-new-religion",
+      "title": "New Religion",
+      "artwork": "https://media.rssblue.com/podcasts/new-religion/cover-art.cte-new-religion.jpg"
+    },
+    {
+      "id": "hgh-youre-ok-single",
+      "title": "You're OK (single)",
+      "artwork": "https://ssl-static.libsyn.com/p/assets/3/f/5/d/3f5d5bbf8e293263a04421dee9605cbd/214F8567-B016-44DE-99F6-CB341A6BFB71.jpeg"
+    },
+    {
+      "id": "hgh-rainmaker",
+      "title": "Rainmaker",
+      "artwork": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/07/Rainmaker_artwork-1.png"
+    },
+    {
+      "id": "hgh-all-salsa-no-chips-ft-the-wolf",
+      "title": "All Salsa No Chips (ft. The Wolf)",
+      "artwork": "https://feed.bowlafterbowl.com/demu/all-salsa-no-chips/files/05_art_final.gif"
+    },
+    {
+      "id": "hgh-stuck-in-the-middle",
+      "title": "Stuck in the Middle",
+      "artwork": "https://media.rssblue.com/podcasts/stuck-in-the-middle/cover-art.stuck-in-the-middle-cte-album-cover-resized.jpg"
+    },
+    {
+      "id": "hgh-lightning-thrashes",
+      "title": "Lightning Thrashes",
+      "artwork": "https://cdn.kolomona.com/podcasts/lightning-thrashes/096/096-Lightning-Thrashes-1000.jpg"
+    },
+    {
+      "id": "hgh-the-world-deserves-to-know",
+      "title": "The World Deserves to Know",
+      "artwork": "https://cdn.kolomona.com/podcasts/lightning-thrashes/crash-landing/the-world-deserves-to-know/album.jpg"
+    },
+    {
+      "id": "hgh-thrash-forward-alliance",
+      "title": "Thrash Forward Alliance",
+      "artwork": "https://cdn.kolomona.com/podcasts/lightning-thrashes/bands/thrash-forward/thrash-forward-alliance/album.jpg"
+    },
+    {
+      "id": "hgh-consequence",
+      "title": "Consequence",
+      "artwork": "https://media.rssblue.com/podcasts/consequence/cover-art.prosperous-soul-consequence-skull.jpg"
+    },
+    {
+      "id": "hgh-underground",
+      "title": "Underground",
+      "artwork": "https://media.rssblue.com/podcasts/underground/cover-art.mountain-guards-large.jpg"
+    },
+    {
+      "id": "hgh-nocturnal",
+      "title": "Nocturnal",
+      "artwork": "https://media.rssblue.com/podcasts/nocturnal/cover-art.arreis-3.jpg"
+    },
+    {
+      "id": "hgh-vices",
+      "title": "Vices",
+      "artwork": "https://media.rssblue.com/podcasts/vices/cover-art.arreis.jpg"
+    },
+    {
+      "id": "hgh-giving-up-the-ghost",
+      "title": "Giving Up The Ghost",
+      "artwork": "https://music.behindthesch3m3s.com/wp-content/uploads/Empath%20Eyes/giving%20up%20the%20ghost/giving%20up%20the%20ghost.jpg"
+    },
+    {
+      "id": "hgh-red-light",
+      "title": "Red Light",
+      "artwork": "https://media.rssblue.com/podcasts/red-light/cover-art.red-light-cover.jpg"
+    },
+    {
+      "id": "hgh-doomsday",
+      "title": "Doomsday",
+      "artwork": "https://media.rssblue.com/podcasts/doomsday/cover-art.doomsday.jpg"
+    },
+    {
+      "id": "hgh-big-day",
+      "title": "Big Day",
+      "artwork": "https://media.rssblue.com/podcasts/bigday/cover-art.img-6539.jpg"
+    },
+    {
+      "id": "hgh-disciples-by-design",
+      "title": "Disciples by Design",
+      "artwork": "https://cdn.kolomona.com/podcasts/lightning-thrashes/bands/prismind/disciples-by-Design/album.jpg"
+    },
+    {
+      "id": "hgh-blueprint",
+      "title": "Blueprint",
+      "artwork": "https://media.rssblue.com/podcasts/blueprint/cover-art.blueprint-cover.jpg"
+    },
+    {
+      "id": "hgh-push",
+      "title": "Push",
+      "artwork": "https://thesynthesatsers.nyc3.cdn.digitaloceanspaces.com/Push/Cover%20Art.png"
+    },
+    {
+      "id": "hgh-catacomb",
+      "title": "Catacomb",
+      "artwork": "https://media.rssblue.com/podcasts/catacomb/cover-art.localzero.jpg"
+    },
+    {
+      "id": "hgh-face-pale",
+      "title": "Face Pale",
+      "artwork": "https://cdn.kolomona.com/podcasts/lightning-thrashes/faces-pale/album.jpg"
+    },
+    {
+      "id": "hgh-deep-end",
+      "title": "DEEP END",
+      "artwork": "https://media.rssblue.com/podcasts/deep-end/cover-art.img-0944.jpg"
+    },
+    {
+      "id": "hgh-screwing-around",
+      "title": "Screwing Around",
+      "artwork": "https://cdn.kolomona.com/media/images/profiles/sunflower01.jpg"
+    },
+    {
+      "id": "hgh-rockstar",
+      "title": "Rockstar",
+      "artwork": "https://www.sirtjthewrathful.com/wp-content/uploads/2023/08/Rockstar_artwork.jpg"
+    },
+    {
+      "id": "hgh-november-ep",
+      "title": "November EP",
+      "artwork": "http://bobcatindex.us-southeast-1.linodeobjects.com/albumart.jpg"
+    },
+    {
+      "id": "hgh-gone",
+      "title": "Gone",
+      "artwork": "https://music.behindthesch3m3s.com/wp-content/uploads/Sir%20Seat%20Sitter/7.jpg"
+    },
+    {
+      "id": "hgh-the-heycitizen-experience",
+      "title": "The Heycitizen Experience",
+      "artwork": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg"
+    },
+    {
+      "id": "hgh-bowl-covers",
+      "title": "Bowl Covers",
+      "artwork": "https://feed.bowlafterbowl.com/demu/bowl-covers/images/bowl-covers-cover.png"
+    },
+    {
+      "id": "hgh-spectral-hiding",
+      "title": "Spectral Hiding",
+      "artwork": "https://files.bitpunk.fm/spectral_hiding.png"
+    },
+    {
+      "id": "hgh-underwater-single",
+      "title": "Underwater - Single",
+      "artwork": "https://www.doerfelverse.com/art/underwater.jpg"
+    },
+    {
+      "id": "hgh-ring-that-bell",
+      "title": "Ring That Bell",
+      "artwork": "https://www.thisisjdog.com/media/ring-that-bell.jpg"
+    },
+    {
+      "id": "hgh-radio-brigade",
+      "title": "Radio Brigade",
+      "artwork": "https://f4.bcbits.com/img/a3037583348_16.jpg"
+    },
+    {
+      "id": "hgh-generation-gap",
+      "title": "Generation Gap",
+      "artwork": "https://www.doerfelverse.com/art/generation-gap.png"
+    },
+    {
+      "id": "hgh-now-i-feel-it",
+      "title": "now i feel it",
+      "artwork": "https://music.behindthesch3m3s.com/wp-content/uploads/c_kostra/now%20i%20feel%20it.jpg"
+    },
+    {
+      "id": "hgh-deathdreams",
+      "title": "deathdreams",
+      "artwork": "https://static.wixstatic.com/media/484406_9138bd56c7b64a388da3b927a5bb2220~mv2.png"
+    },
+    {
+      "id": "hgh-wild-and-free",
+      "title": "Wild and Free",
+      "artwork": "https://annipowellmusic.com/wp-content/MusicSideProject/MP3%20Masters%20and%20Copy%20of%20Cover/WIldandfreecover%20copy%202.png"
+    },
+    {
+      "id": "hgh-red-wings",
+      "title": "Red Wings",
+      "artwork": "https://music.behindthesch3m3s.com/wp-content/uploads/Mike_Epting/LedBetter/Red%20Wings/ledbetter%20red%20wings.png"
+    },
+    {
+      "id": "hgh-pilot",
+      "title": "Pilot",
+      "artwork": "https://f4.bcbits.com/img/a2986149142_16.jpg"
+    },
+    {
+      "id": "hgh-love-in-its-purest-form",
+      "title": "Love In Its Purest Form",
+      "artwork": "https://feed.falsefinish.club/Vance%20Latta/Vance%20Latta%20-%20Love%20In%20Its%20Purest%20Form/cover.png"
+    },
+    {
+      "id": "hgh-kurtisdrums",
+      "title": "Kurtisdrums",
+      "artwork": "https://www.doerfelverse.com/art/kurtisdrums.png"
+    },
+    {
+      "id": "hgh-aged-friends-old-whiskey",
+      "title": "Aged Friends & Old Whiskey",
+      "artwork": "https://music.behindthesch3m3s.com/wp-content/uploads/Delta_OG/Aged_Friends_and_Old_Whiskey/deltaog-bg.png"
+    },
+    {
+      "id": "hgh-disco-swag",
+      "title": "Disco Swag",
+      "artwork": "https://www.doerfelverse.com/art/disco-swag.png"
+    },
+    {
+      "id": "hgh-citybeach",
+      "title": "CityBeach",
+      "artwork": "https://www.doerfelverse.com/art/citybeach.png"
+    },
+    {
+      "id": "hgh-think-ep",
+      "title": "Think EP",
+      "artwork": "https://www.doerfelverse.com/art/think-ep.png"
+    },
+    {
+      "id": "hgh-wrath-of-banjo",
+      "title": "Wrath Of Banjo",
+      "artwork": "https://www.doerfelverse.com/art/wrath-of-banjo.png"
+    },
+    {
+      "id": "hgh-satoshi-streamer",
+      "title": "Satoshi Streamer",
+      "artwork": "https://rocknrollbreakheart.com/msp/SatoshiStreamer/album-art.png"
+    },
+    {
+      "id": "hgh-opus",
+      "title": "Opus",
+      "artwork": "https://www.doerfelverse.com/artists/opus/opus/opus.png"
+    },
+    {
+      "id": "hgh-all-in-a-day",
+      "title": "all in a day",
+      "artwork": "https://www.doerfelverse.com/artists/elijahlied/all-in-a-day/all-in-a-day.png"
+    },
+    {
+      "id": "hgh-beauty",
+      "title": "Beauty",
+      "artwork": "https://annipowellmusic.com/wp-content/MusicSideProject/Beauty%20Master%20and%20Album%20Cover/Beauty.jpg"
+    },
+    {
+      "id": "hgh-music-from-the-doerfel-verse",
+      "title": "Music From The Doerfel-Verse",
+      "artwork": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+    },
+    {
+      "id": "hgh-ben-doerfel",
+      "title": "Ben Doerfel",
+      "artwork": "https://www.doerfelverse.com/art/ben-doerfel-red.png"
+    },
+    {
+      "id": "hgh-himalaya",
+      "title": "Himalaya",
+      "artwork": "https://music.behindthesch3m3s.com/wp-content/uploads/Andy%20A/Johnson%20City/Himalaya/Himalaya.jpg"
+    },
+    {
+      "id": "hgh-heycitizen-s-lo-fi-hip-hop-beats-to-study-and-relax-to",
+      "title": "HeyCitizen's Lo-Fi Hip-Hop Beats to Study and Relax to",
+      "artwork": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/Lofi-Experience.png"
+    },
+    {
+      "id": "hgh-merry-christmix",
+      "title": "Merry Christmix",
+      "artwork": "https://www.doerfelverse.com/art/kurtisdrums-christmix.png"
+    },
+    {
+      "id": "hgh-your-chance",
+      "title": "Your Chance",
+      "artwork": "https://www.doerfelverse.com/art/your-chance.png"
+    },
+    {
+      "id": "hgh-let-go-what-s-holding-you-back",
+      "title": "Let Go (What's holding you back)",
+      "artwork": "https://www.doerfelverse.com/art/let-go-art.png"
+    },
+    {
+      "id": "hgh-bitpunk-fm-unwound",
+      "title": "bitpunk.fm unwound",
+      "artwork": "https://files.bitpunk.fm/unwound_cover_png.png"
+    },
+    {
+      "id": "hgh-sensitive-guy",
+      "title": "Sensitive Guy",
+      "artwork": "https://www.doerfelverse.com/art/sensitive-guy.png"
+    },
+    {
+      "id": "hgh-peach-clouds",
+      "title": "Peach Clouds",
+      "artwork": "https://annipowellmusic.com/wp-content/MusicSideProject/Peach%20Clouds%20Master%20and%20Album%20Cover/PeachCloudsCover.jpeg"
+    },
+    {
+      "id": "hgh-pour-over",
+      "title": "Pour Over",
+      "artwork": "https://www.doerfelverse.com/art/pour-over.png"
+    },
+    {
+      "id": "hgh-18-sundays",
+      "title": "18 Sundays",
+      "artwork": "https://www.doerfelverse.com/art/18sundays.gif"
+    },
+    {
+      "id": "hgh-rock-n-roll-breakheart",
+      "title": "Rock'n'Roll Breakheart",
+      "artwork": "http://rocknrollbreakheart.com/msp/RNRBH/album-art.png"
+    },
+    {
+      "id": "hgh-alandace",
+      "title": "Alandace",
+      "artwork": "https://www.doerfelverse.com/art/alandace.gif"
+    },
+    {
+      "id": "hgh-beyond-the-hills",
+      "title": "Beyond the Hills",
+      "artwork": "https://annipowellmusic.com/wp-content/MusicSideProject/Beyond%20the%20Hills%20MP3%20Master%20and%20Album%20Cover/IMG_7423%20copy.JPG"
+    },
+    {
+      "id": "hgh-dfb-volume-1",
+      "title": "DFB Volume 1",
+      "artwork": "https://www.doerfelverse.com/art/dfbv1.png"
+    },
+    {
+      "id": "hgh-so-it-goes",
+      "title": "So It Goes",
+      "artwork": "https://annipowellmusic.com/wp-content/MusicSideProject/So%20It%20Goes%20Master%20and%20Album%20Cover/SoItGoesCoverJPG.JPG"
+    },
+    {
+      "id": "hgh-unsound-existence-self-hosted-version",
+      "title": "Unsound Existence (self-hosted version)",
+      "artwork": "https://www.doerfelverse.com/art/unsound-existence.png"
+    },
+    {
+      "id": "hgh-first-married-christmas",
+      "title": "First Married Christmas",
+      "artwork": "https://www.doerfelverse.com/art/first-christmas-art.jpg"
+    },
+    {
+      "id": "hgh-bowl-after-bowl",
+      "title": "Bowl After Bowl",
+      "artwork": "https://pbcdn1.podbean.com/imglogo/image-logo/8891795/Bowl-After-BOWL-smol.jpg"
+    },
+    {
+      "id": "hgh-nostalgic",
+      "title": "Nostalgic",
+      "artwork": "https://www.doerfelverse.com/art/nostalgic.png"
+    },
+    {
+      "id": "hgh-they-don-t-know",
+      "title": "They Don't Know",
+      "artwork": "https://www.doerfelverse.com/art/theydontknowart.png"
+    }
+  ],
+  "notFound": [
+    {
+      "id": "hgh-unknown-feed",
+      "title": "Unknown Feed"
+    }
+  ],
+  "errors": []
+}

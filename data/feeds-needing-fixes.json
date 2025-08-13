@@ -1,0 +1,440 @@
+{
+  "needingArtwork": [
+    {
+      "id": "hgh-the-tjukebox",
+      "title": "The Tjukebox",
+      "artist": "The Tjukebox"
+    },
+    {
+      "id": "hgh-unknown-feed",
+      "title": "Unknown Feed",
+      "artist": "Unknown Feed"
+    },
+    {
+      "id": "hgh-the-everyday",
+      "title": "The Everyday",
+      "artist": "The Everyday"
+    },
+    {
+      "id": "hgh-these-days",
+      "title": "These Days",
+      "artist": "These Days"
+    },
+    {
+      "id": "hgh-gay",
+      "title": "Gay?",
+      "artist": "Gay?"
+    },
+    {
+      "id": "hgh-true-blue",
+      "title": "True Blue",
+      "artist": "True Blue"
+    },
+    {
+      "id": "hgh-the-wait-is-over",
+      "title": "The Wait Is Over",
+      "artist": "The Wait Is Over"
+    },
+    {
+      "id": "hgh-tiddies-in-my-face-single",
+      "title": "Tiddies In My Face (Single)",
+      "artist": "Tiddies In My Face (Single)"
+    },
+    {
+      "id": "hgh-on-my-way",
+      "title": "On My Way",
+      "artist": "On My Way"
+    },
+    {
+      "id": "hgh-the-lightning",
+      "title": "The Lightning",
+      "artist": "The Lightning"
+    },
+    {
+      "id": "hgh-prevailing-domination",
+      "title": "Prevailing Domination",
+      "artist": "Prevailing Domination"
+    },
+    {
+      "id": "hgh-cue-the-slaughter",
+      "title": "Cue the Slaughter",
+      "artist": "Cue the Slaughter"
+    },
+    {
+      "id": "hgh-kick-it",
+      "title": "Kick It",
+      "artist": "Kick It"
+    },
+    {
+      "id": "hgh-motive-to-kill",
+      "title": "Motive to Kill",
+      "artist": "Motive to Kill"
+    },
+    {
+      "id": "hgh-no-return",
+      "title": "no return",
+      "artist": "no return"
+    },
+    {
+      "id": "hgh-hidden-hand",
+      "title": "Hidden Hand",
+      "artist": "Hidden Hand"
+    },
+    {
+      "id": "hgh-new-religion",
+      "title": "New Religion",
+      "artist": "New Religion"
+    },
+    {
+      "id": "hgh-youre-ok-single",
+      "title": "You're OK (single)",
+      "artist": "You're OK (single)"
+    },
+    {
+      "id": "hgh-rainmaker",
+      "title": "Rainmaker",
+      "artist": "Rainmaker"
+    },
+    {
+      "id": "hgh-all-salsa-no-chips-ft-the-wolf",
+      "title": "All Salsa No Chips (ft. The Wolf)",
+      "artist": "All Salsa No Chips (ft. The Wolf)"
+    },
+    {
+      "id": "hgh-stuck-in-the-middle",
+      "title": "Stuck in the Middle",
+      "artist": "Stuck in the Middle"
+    },
+    {
+      "id": "hgh-lightning-thrashes",
+      "title": "Lightning Thrashes",
+      "artist": "Lightning Thrashes"
+    },
+    {
+      "id": "hgh-the-world-deserves-to-know",
+      "title": "The World Deserves to Know",
+      "artist": "The World Deserves to Know"
+    },
+    {
+      "id": "hgh-thrash-forward-alliance",
+      "title": "Thrash Forward Alliance",
+      "artist": "Thrash Forward Alliance"
+    },
+    {
+      "id": "hgh-consequence",
+      "title": "Consequence",
+      "artist": "Consequence"
+    },
+    {
+      "id": "hgh-underground",
+      "title": "Underground",
+      "artist": "Underground"
+    },
+    {
+      "id": "hgh-nocturnal",
+      "title": "Nocturnal",
+      "artist": "Nocturnal"
+    },
+    {
+      "id": "hgh-vices",
+      "title": "Vices",
+      "artist": "Vices"
+    },
+    {
+      "id": "hgh-giving-up-the-ghost",
+      "title": "Giving Up The Ghost",
+      "artist": "Giving Up The Ghost"
+    },
+    {
+      "id": "hgh-red-light",
+      "title": "Red Light",
+      "artist": "Red Light"
+    },
+    {
+      "id": "hgh-doomsday",
+      "title": "Doomsday",
+      "artist": "Doomsday"
+    },
+    {
+      "id": "hgh-big-day",
+      "title": "Big Day",
+      "artist": "Big Day"
+    },
+    {
+      "id": "hgh-disciples-by-design",
+      "title": "Disciples by Design",
+      "artist": "Disciples by Design"
+    },
+    {
+      "id": "hgh-blueprint",
+      "title": "Blueprint",
+      "artist": "Blueprint"
+    },
+    {
+      "id": "hgh-push",
+      "title": "Push",
+      "artist": "Push"
+    },
+    {
+      "id": "hgh-catacomb",
+      "title": "Catacomb",
+      "artist": "Catacomb"
+    },
+    {
+      "id": "hgh-face-pale",
+      "title": "Face Pale",
+      "artist": "Face Pale"
+    },
+    {
+      "id": "hgh-deep-end",
+      "title": "DEEP END",
+      "artist": "DEEP END"
+    },
+    {
+      "id": "hgh-screwing-around",
+      "title": "Screwing Around",
+      "artist": "Screwing Around"
+    },
+    {
+      "id": "hgh-rockstar",
+      "title": "Rockstar",
+      "artist": "Rockstar"
+    },
+    {
+      "id": "hgh-november-ep",
+      "title": "November EP",
+      "artist": "November EP"
+    },
+    {
+      "id": "hgh-gone",
+      "title": "Gone",
+      "artist": "Gone"
+    },
+    {
+      "id": "hgh-the-heycitizen-experience",
+      "title": "The Heycitizen Experience",
+      "artist": "The Heycitizen Experience"
+    },
+    {
+      "id": "hgh-bowl-covers",
+      "title": "Bowl Covers",
+      "artist": "Bowl Covers"
+    },
+    {
+      "id": "hgh-spectral-hiding",
+      "title": "Spectral Hiding",
+      "artist": "Spectral Hiding"
+    },
+    {
+      "id": "hgh-underwater-single",
+      "title": "Underwater - Single",
+      "artist": "Underwater - Single"
+    },
+    {
+      "id": "hgh-ring-that-bell",
+      "title": "Ring That Bell",
+      "artist": "Ring That Bell"
+    },
+    {
+      "id": "hgh-radio-brigade",
+      "title": "Radio Brigade",
+      "artist": "Radio Brigade"
+    },
+    {
+      "id": "hgh-generation-gap",
+      "title": "Generation Gap",
+      "artist": "Generation Gap"
+    },
+    {
+      "id": "hgh-now-i-feel-it",
+      "title": "now i feel it",
+      "artist": "now i feel it"
+    },
+    {
+      "id": "hgh-deathdreams",
+      "title": "deathdreams",
+      "artist": "deathdreams"
+    },
+    {
+      "id": "hgh-wild-and-free",
+      "title": "Wild and Free",
+      "artist": "Wild and Free"
+    },
+    {
+      "id": "hgh-red-wings",
+      "title": "Red Wings",
+      "artist": "Red Wings"
+    },
+    {
+      "id": "hgh-pilot",
+      "title": "Pilot",
+      "artist": "Pilot"
+    },
+    {
+      "id": "hgh-love-in-its-purest-form",
+      "title": "Love In Its Purest Form",
+      "artist": "Love In Its Purest Form"
+    },
+    {
+      "id": "hgh-kurtisdrums",
+      "title": "Kurtisdrums",
+      "artist": "Kurtisdrums"
+    },
+    {
+      "id": "hgh-aged-friends-old-whiskey",
+      "title": "Aged Friends & Old Whiskey",
+      "artist": "Aged Friends & Old Whiskey"
+    },
+    {
+      "id": "hgh-disco-swag",
+      "title": "Disco Swag",
+      "artist": "Disco Swag"
+    },
+    {
+      "id": "hgh-citybeach",
+      "title": "CityBeach",
+      "artist": "CityBeach"
+    },
+    {
+      "id": "hgh-think-ep",
+      "title": "Think EP",
+      "artist": "Think EP"
+    },
+    {
+      "id": "hgh-wrath-of-banjo",
+      "title": "Wrath Of Banjo",
+      "artist": "Wrath Of Banjo"
+    },
+    {
+      "id": "hgh-satoshi-streamer",
+      "title": "Satoshi Streamer",
+      "artist": "Satoshi Streamer"
+    },
+    {
+      "id": "hgh-opus",
+      "title": "Opus",
+      "artist": "Opus"
+    },
+    {
+      "id": "hgh-all-in-a-day",
+      "title": "all in a day",
+      "artist": "all in a day"
+    },
+    {
+      "id": "hgh-beauty",
+      "title": "Beauty",
+      "artist": "Beauty"
+    },
+    {
+      "id": "hgh-music-from-the-doerfel-verse",
+      "title": "Music From The Doerfel-Verse",
+      "artist": "Music From The Doerfel-Verse"
+    },
+    {
+      "id": "hgh-ben-doerfel",
+      "title": "Ben Doerfel",
+      "artist": "Ben Doerfel"
+    },
+    {
+      "id": "hgh-himalaya",
+      "title": "Himalaya",
+      "artist": "Himalaya"
+    },
+    {
+      "id": "hgh-heycitizen-s-lo-fi-hip-hop-beats-to-study-and-relax-to",
+      "title": "HeyCitizen's Lo-Fi Hip-Hop Beats to Study and Relax to",
+      "artist": "HeyCitizen's Lo-Fi Hip-Hop Beats to Study and Relax to"
+    },
+    {
+      "id": "hgh-merry-christmix",
+      "title": "Merry Christmix",
+      "artist": "Merry Christmix"
+    },
+    {
+      "id": "hgh-your-chance",
+      "title": "Your Chance",
+      "artist": "Your Chance"
+    },
+    {
+      "id": "hgh-let-go-what-s-holding-you-back",
+      "title": "Let Go (What's holding you back)",
+      "artist": "Let Go (What's holding you back)"
+    },
+    {
+      "id": "hgh-bitpunk-fm-unwound",
+      "title": "bitpunk.fm unwound",
+      "artist": "bitpunk.fm unwound"
+    },
+    {
+      "id": "hgh-sensitive-guy",
+      "title": "Sensitive Guy",
+      "artist": "Sensitive Guy"
+    },
+    {
+      "id": "hgh-peach-clouds",
+      "title": "Peach Clouds",
+      "artist": "Peach Clouds"
+    },
+    {
+      "id": "hgh-pour-over",
+      "title": "Pour Over",
+      "artist": "Pour Over"
+    },
+    {
+      "id": "hgh-18-sundays",
+      "title": "18 Sundays",
+      "artist": "18 Sundays"
+    },
+    {
+      "id": "hgh-rock-n-roll-breakheart",
+      "title": "Rock'n'Roll Breakheart",
+      "artist": "Rock'n'Roll Breakheart"
+    },
+    {
+      "id": "hgh-alandace",
+      "title": "Alandace",
+      "artist": "Alandace"
+    },
+    {
+      "id": "hgh-beyond-the-hills",
+      "title": "Beyond the Hills",
+      "artist": "Beyond the Hills"
+    },
+    {
+      "id": "hgh-dfb-volume-1",
+      "title": "DFB Volume 1",
+      "artist": "DFB Volume 1"
+    },
+    {
+      "id": "hgh-so-it-goes",
+      "title": "So It Goes",
+      "artist": "So It Goes"
+    },
+    {
+      "id": "hgh-unsound-existence-self-hosted-version",
+      "title": "Unsound Existence (self-hosted version)",
+      "artist": "Unsound Existence (self-hosted version)"
+    },
+    {
+      "id": "hgh-first-married-christmas",
+      "title": "First Married Christmas",
+      "artist": "First Married Christmas"
+    },
+    {
+      "id": "hgh-bowl-after-bowl",
+      "title": "Bowl After Bowl",
+      "artist": "Bowl After Bowl"
+    },
+    {
+      "id": "hgh-nostalgic",
+      "title": "Nostalgic",
+      "artist": "Nostalgic"
+    },
+    {
+      "id": "hgh-they-don-t-know",
+      "title": "They Don't Know",
+      "artist": "They Don't Know"
+    }
+  ],
+  "needingGuid": []
+}

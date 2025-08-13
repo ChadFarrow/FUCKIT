@@ -1,0 +1,5383 @@
+{
+  "timestamp": "2025-08-13T03:01:01.631Z",
+  "analysis": {
+    "totalFeeds": 510,
+    "missingArtwork": [
+      {
+        "id": "alandace",
+        "title": "Alandace",
+        "artist": "CityBeach"
+      },
+      {
+        "id": "come-back-to-me",
+        "title": "Come Back To Me",
+        "artist": "The Doerfels"
+      },
+      {
+        "id": "generation-gap",
+        "title": "Generation Gap",
+        "artist": "Generation Gap"
+      },
+      {
+        "id": "heartbreak",
+        "title": "Heartbreak",
+        "artist": "The Doerfels"
+      },
+      {
+        "id": "phatty-the-grasshopper",
+        "title": "Phatty The Grasshopper",
+        "artist": "The Doerfels"
+      },
+      {
+        "id": "possible",
+        "title": "Possible",
+        "artist": "The Doerfels"
+      },
+      {
+        "id": "pour-over",
+        "title": "Pour Over",
+        "artist": "CityBeach"
+      },
+      {
+        "id": "psalm-54",
+        "title": "Psalm 54",
+        "artist": "CityBeach"
+      },
+      {
+        "id": "sensitive-guy",
+        "title": "Sensitive Guy",
+        "artist": "Miles Fonda"
+      },
+      {
+        "id": "they-dont-know",
+        "title": "They Don't Know",
+        "artist": "The Doerfels"
+      },
+      {
+        "id": "underwater-single",
+        "title": "Underwater - Single",
+        "artist": "The Doerfels"
+      },
+      {
+        "id": "unsound-existence",
+        "title": "Unsound Existence (self-hosted version)",
+        "artist": "Ryan Fonda feat. CityBeach"
+      },
+      {
+        "id": "you-are-my-world",
+        "title": "You Are My World",
+        "artist": "CityBeach"
+      },
+      {
+        "id": "you-feel-like-home",
+        "title": "You Feel Like Home(Single)",
+        "artist": "CityBeach"
+      },
+      {
+        "id": "tj-doerfel-ring-that-bell",
+        "title": "Ring That Bell",
+        "artist": "Jdog"
+      },
+      {
+        "id": "deathdreams",
+        "title": "deathdreams",
+        "artist": "Survival Guide"
+      },
+      {
+        "id": "waytogo",
+        "title": "Way to Go",
+        "artist": "Survival Guide"
+      },
+      {
+        "id": "c-kostra-now-i-feel-it",
+        "title": "now i feel it",
+        "artist": "c.Kostra"
+      },
+      {
+        "id": "mellow-cassette-pilot",
+        "title": "Pilot",
+        "artist": "Mellow Cassette"
+      },
+      {
+        "id": "mellow-cassette-radio-brigade",
+        "title": "Radio Brigade",
+        "artist": "Mellow Cassette"
+      },
+      {
+        "id": "wavlake-album-1",
+        "title": "Tinderbox",
+        "artist": "Nate Johnivan"
+      },
+      {
+        "id": "wavlake-album-2",
+        "title": "Singles",
+        "artist": "Nate Johnivan"
+      },
+      {
+        "id": "wavlake-album-3",
+        "title": "Bowl of Oranges a Bright Eyes Cover",
+        "artist": "Nate Johnivan"
+      },
+      {
+        "id": "wavlake-album-4",
+        "title": "Goodbye Uncle Walt",
+        "artist": "Nate Johnivan"
+      },
+      {
+        "id": "wavlake-album-5",
+        "title": "Fight!",
+        "artist": "Nate Johnivan"
+      },
+      {
+        "id": "wavlake-album-6",
+        "title": "Safe Some Place",
+        "artist": "Nate Johnivan"
+      },
+      {
+        "id": "wavlake-album-7",
+        "title": "You Should Waste It",
+        "artist": "Nate Johnivan"
+      },
+      {
+        "id": "wavlake-album-8",
+        "title": "The Kid, The Dad, The Mom & the Tiny Window",
+        "artist": "Nate Johnivan"
+      },
+      {
+        "id": "wavlake-album-9",
+        "title": "Kids",
+        "artist": "Nate Johnivan"
+      },
+      {
+        "id": "wavlake-album-10",
+        "title": "Don't Worry, You Still Have Time To Ruin It - Demo",
+        "artist": "Nate Johnivan"
+      },
+      {
+        "id": "wavlake-album-11",
+        "title": "Rose",
+        "artist": "Nate Johnivan"
+      },
+      {
+        "id": "wavlake-album-12",
+        "title": "Fake Love - Demo",
+        "artist": "Nate Johnivan"
+      },
+      {
+        "id": "wavlake-album-13",
+        "title": "Roommates - Demo",
+        "artist": "Nate Johnivan"
+      },
+      {
+        "id": "wavlake-album-14",
+        "title": "Orange Pill, Pink Pill, White Pill - Demo",
+        "artist": "Nate Johnivan"
+      },
+      {
+        "id": "wavlake-album-15",
+        "title": "Tyson vs Paul",
+        "artist": "Nate Johnivan"
+      },
+      {
+        "id": "wavlake-album-16",
+        "title": "THEY RIDE",
+        "artist": "IROH"
+      },
+      {
+        "id": "wavlake-album-17",
+        "title": "More",
+        "artist": "Nate Johnivan"
+      },
+      {
+        "id": "joe-martin-publisher",
+        "title": "Joe Martin",
+        "artist": "Joe Martin (Wavlake)"
+      },
+      {
+        "id": "iroh-publisher",
+        "title": "IROH",
+        "artist": "IROH (Wavlake)"
+      },
+      {
+        "id": "iroh-album-1",
+        "title": "Crocodile Tears",
+        "artist": "Joe Martin"
+      },
+      {
+        "id": "iroh-album-2",
+        "title": "Letters Of Regret ",
+        "artist": "Joe Martin"
+      },
+      {
+        "id": "iroh-album-3",
+        "title": "Hero",
+        "artist": "Joe Martin"
+      },
+      {
+        "id": "iroh-album-4",
+        "title": "Bound For Lonesome ",
+        "artist": "Joe Martin"
+      },
+      {
+        "id": "iroh-album-5",
+        "title": "The First Five Years",
+        "artist": "Joe Martin"
+      },
+      {
+        "id": "iroh-album-6",
+        "title": "Daddy Gene",
+        "artist": "Joe Martin"
+      },
+      {
+        "id": "iroh-album-7",
+        "title": "Love Strong",
+        "artist": "Joe Martin"
+      },
+      {
+        "id": "iroh-album-8",
+        "title": "High Gravity",
+        "artist": "Joe Martin"
+      },
+      {
+        "id": "iroh-album-9",
+        "title": "Small World",
+        "artist": "Joe Martin"
+      },
+      {
+        "id": "iroh-album-10",
+        "title": "Strangers To Lovers - Live from Sloe Flower Studio",
+        "artist": "Joe Martin"
+      },
+      {
+        "id": "iroh-album-11",
+        "title": "Can't Promise You The World - Live from Sloe Flower Studio",
+        "artist": "Joe Martin"
+      },
+      {
+        "id": "wavlake-publisher-aa909244",
+        "title": "Nate Johnivan",
+        "artist": "Wavlake Publisher"
+      },
+      {
+        "id": "heycitizen-experience",
+        "title": "The Heycitizen Experience",
+        "artist": "HeyCitizen"
+      },
+      {
+        "id": "heycitizen-lofi",
+        "title": "HeyCitizen's Lo-Fi Hip-Hop Beats to Study and Relax to",
+        "artist": "HeyCitizen"
+      },
+      {
+        "id": "anni-powell-wild-and-free",
+        "title": "Wild and Free",
+        "artist": "Anni Powell"
+      },
+      {
+        "id": "anni-powell-beauty",
+        "title": "Beauty",
+        "artist": "Anni Powell"
+      },
+      {
+        "id": "anni-powell-peach-clouds",
+        "title": "Peach Clouds",
+        "artist": "Anni Powell"
+      },
+      {
+        "id": "anni-powell-beyond-the-hills",
+        "title": "Beyond the Hills",
+        "artist": "Anni Powell"
+      },
+      {
+        "id": "anni-powell-lingo",
+        "title": "Lingo",
+        "artist": "Anni Powell"
+      },
+      {
+        "id": "anni-powell-so-it-goes",
+        "title": "So It Goes",
+        "artist": "Anni Powell"
+      },
+      {
+        "id": "fountain-artist-takeover",
+        "title": "Fountain Artist Takeover - Nate Johnivan",
+        "artist": "Nate Johnivan"
+      },
+      {
+        "id": "empty-passenger-seat",
+        "title": "Empty Passenger Seat",
+        "artist": "Joe Martin"
+      },
+      {
+        "id": "doerfels-publisher",
+        "title": "The Doerfels",
+        "artist": "The Doerfels"
+      },
+      {
+        "id": "wavlake-com-feed-music-ef800a88-9a1c-4f8e-a7c5-f83d7d9b1c87",
+        "title": "Chasing Waterfalls",
+        "artist": "My Friend Jimi"
+      },
+      {
+        "id": "midnight-breakheart",
+        "title": "Midnight Breakheart",
+        "artist": "Rock'n'Roll Breakheart"
+      },
+      {
+        "id": "satoshi-streamer",
+        "title": "Satoshi Streamer",
+        "artist": "Rock'n'Roll Breakheart"
+      },
+      {
+        "id": "panisee-attack",
+        "title": "PANISEE Attack",
+        "artist": "Rock'n'Roll Breakheart"
+      },
+      {
+        "id": "2-crystal-balls",
+        "title": "2 Crystal Balls",
+        "artist": "Rock'n'Roll Breakheart"
+      },
+      {
+        "id": "rock-n-roll-breakheart",
+        "title": "Rock'n'Roll Breakheart",
+        "artist": "Rock'n'Roll Breakheart"
+      },
+      {
+        "id": "my-friend-jimi-publisher",
+        "title": "My Friend Jimi",
+        "artist": "My Friend Jimi"
+      },
+      {
+        "id": "wavlake-com-feed-music-883ea557-39c0-4bec-9618-c75978bc63b5",
+        "title": "Lost Summer",
+        "artist": "Ollie"
+      },
+      {
+        "id": "ollie-publisher",
+        "title": "Ollie",
+        "artist": "Ollie"
+      },
+      {
+        "id": "ollie-i-never-thought-things-would-be-different",
+        "title": "i never thought things would be different",
+        "artist": "Ollie"
+      },
+      {
+        "id": "ollie-ed653567-a662-4ed9-bc0d-387f8e19b6f3",
+        "title": "Feelings",
+        "artist": "Ollie"
+      },
+      {
+        "id": "ollie-3a925dda-cc31-4bb6-b285-3a09ed2e5307",
+        "title": "Deep Ends",
+        "artist": "Ollie"
+      },
+      {
+        "id": "ollie-d0bebcfa-e20b-4b1b-b797-bd7ac95e646f",
+        "title": "Perfect Timing",
+        "artist": "Ollie"
+      },
+      {
+        "id": "ollie-a80efac4-3637-4618-bd52-55493ce7d4c4",
+        "title": "High Thru The Lows",
+        "artist": "Ollie"
+      },
+      {
+        "id": "ollie-746e12e4-3b0d-47d2-b0d4-dd12d3a652dd",
+        "title": "Cold Feet",
+        "artist": "Ollie"
+      },
+      {
+        "id": "ollie-c2ff5364-7b02-4b94-af2c-bdde4a952778",
+        "title": "Worst Way",
+        "artist": "Ollie"
+      },
+      {
+        "id": "ollie-99217ff9-bfaa-4903-9201-f39113920618",
+        "title": "Thankful (feat. Witt Lowry)",
+        "artist": "Ollie"
+      },
+      {
+        "id": "ollie-1e0e29c2-f05d-42a6-8b6e-acbfe2b29318",
+        "title": "Lowkey",
+        "artist": "Ollie"
+      },
+      {
+        "id": "ollie-3cc3847a-8d5f-4086-9501-c1500165da07",
+        "title": "Lost Cause",
+        "artist": "Ollie"
+      },
+      {
+        "id": "ollie-c5cc9864-c687-4c6d-937d-0aa5f103a8d2",
+        "title": "Home",
+        "artist": "Ollie"
+      },
+      {
+        "id": "ollie-ccd54520-79e6-47e6-bc7d-9d951c023ef1",
+        "title": "Burning Room",
+        "artist": "Ollie"
+      },
+      {
+        "id": "vance-latta-love-in-its-purest-form",
+        "title": "Love In Its Purest Form",
+        "artist": "Vance Latta"
+      },
+      {
+        "id": "delta-og-aged-friends-old-whiskey",
+        "title": "Aged Friends & Old Whiskey",
+        "artist": "Delta OG"
+      },
+      {
+        "id": "red-arrow-highway-brothers-never-die",
+        "title": "Brothers Never Die",
+        "artist": "Red Arrow Highway"
+      },
+      {
+        "id": "drawing-monsters-nate-and-cole-find-a-radio",
+        "title": "Nate and Cole Find a Radio",
+        "artist": "Drawing Monsters"
+      },
+      {
+        "id": "my-friend-jimi-b220b396-0ebe-4760-8294-4bb27e06eabf",
+        "title": "Real Me",
+        "artist": "My Friend Jimi"
+      },
+      {
+        "id": "my-friend-jimi-e3f0086f-5ee2-4ead-ba9d-78a9a29acac8",
+        "title": "Lonely Girl",
+        "artist": "My Friend Jimi"
+      },
+      {
+        "id": "my-friend-jimi-6c539346-f58e-4480-9276-32da31368f8e",
+        "title": "Just One Sip",
+        "artist": "My Friend Jimi"
+      },
+      {
+        "id": "my-friend-jimi-76407adf-773c-4eb2-b5e2-8aef137d781f",
+        "title": "Weather Man",
+        "artist": "My Friend Jimi"
+      },
+      {
+        "id": "my-friend-jimi-6e236029-d72e-48a4-8d0b-aecf78d39e87",
+        "title": "Falling Out of Love",
+        "artist": "My Friend Jimi"
+      },
+      {
+        "id": "my-friend-jimi-b6d8f17c-f448-4085-8ce2-8b247eb26e63",
+        "title": "Bullet Train",
+        "artist": "My Friend Jimi"
+      },
+      {
+        "id": "my-friend-jimi-2b5b26a9-3b7a-4f78-9db2-424d94b182d8",
+        "title": "Endless Deja Vu",
+        "artist": "My Friend Jimi"
+      },
+      {
+        "id": "my-friend-jimi-ed3d6bdf-011b-4416-ab87-591672c07145",
+        "title": "West Coast Drive",
+        "artist": "My Friend Jimi"
+      },
+      {
+        "id": "my-friend-jimi-3d8c7279-6aa6-41e7-be1c-2680e57af6c8",
+        "title": "Mrs Valentine",
+        "artist": "My Friend Jimi"
+      },
+      {
+        "id": "my-friend-jimi-86061a0e-52df-4cad-8c6d-cd1e19ca1e63",
+        "title": "Manic Tendencies",
+        "artist": "My Friend Jimi"
+      },
+      {
+        "id": "death-by-lions-the-sheer-magnitude-of-it-all",
+        "title": "The Sheer Magnitude Of it All",
+        "artist": "Death by Lions"
+      },
+      {
+        "id": "death-by-lions-publisher",
+        "title": "Death by Lions",
+        "artist": "Death by Lions"
+      },
+      {
+        "id": "death-by-lions-second-album",
+        "title": "Thanks For Being Great",
+        "artist": "Death by Lions"
+      },
+      {
+        "id": "drawing-monsters-old-wolf-wrong-scene",
+        "title": "Old Wolf, Wrong Scene",
+        "artist": "Drawing Monsters"
+      },
+      {
+        "id": "drawing-monsters-publisher",
+        "title": "Drawing Monsters",
+        "artist": "Drawing Monsters"
+      }
+    ],
+    "placeholderArtwork": [
+      {
+        "id": "hgh-the-tjukebox",
+        "title": "The Tjukebox",
+        "artist": "The Tjukebox",
+        "currentArt": "https://via.placeholder.com/300x300/1e40af/ffffff?text=The%20Tjukebox"
+      },
+      {
+        "id": "hgh-unknown-feed",
+        "title": "Unknown Feed",
+        "artist": "Unknown Feed",
+        "currentArt": "https://via.placeholder.com/300x300/1e40af/ffffff?text=Unknown%20Feed"
+      },
+      {
+        "id": "hgh-the-everyday",
+        "title": "The Everyday",
+        "artist": "The Everyday",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-these-days",
+        "title": "These Days",
+        "artist": "These Days",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-gay",
+        "title": "Gay?",
+        "artist": "Gay?",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-true-blue",
+        "title": "True Blue",
+        "artist": "True Blue",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-the-wait-is-over",
+        "title": "The Wait Is Over",
+        "artist": "The Wait Is Over",
+        "currentArt": "https://via.placeholder.com/300x300/1e40af/ffffff?text=The%20Wait%20Is%20Over"
+      },
+      {
+        "id": "hgh-tiddies-in-my-face-single",
+        "title": "Tiddies In My Face (Single)",
+        "artist": "Tiddies In My Face (Single)",
+        "currentArt": "https://via.placeholder.com/300x300/1e40af/ffffff?text=Tiddies%20In%20My%20Face%20(Single)"
+      },
+      {
+        "id": "hgh-on-my-way",
+        "title": "On My Way",
+        "artist": "On My Way",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-the-lightning",
+        "title": "The Lightning",
+        "artist": "The Lightning",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-prevailing-domination",
+        "title": "Prevailing Domination",
+        "artist": "Prevailing Domination",
+        "currentArt": "https://cdn.kolomona.com/podcasts/lightning-thrashes/re-activate/prevailing-of-the-unkind-domination/album.jpg"
+      },
+      {
+        "id": "hgh-cue-the-slaughter",
+        "title": "Cue the Slaughter",
+        "artist": "Cue the Slaughter",
+        "currentArt": "https://cdn.kolomona.com/podcasts/lightning-thrashes/massacre-at-the-opera/cue-the-slaughter/album.jpg"
+      },
+      {
+        "id": "hgh-kick-it",
+        "title": "Kick It",
+        "artist": "Kick It",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-motive-to-kill",
+        "title": "Motive to Kill",
+        "artist": "Motive to Kill",
+        "currentArt": "https://ipfspodcasting.net/e/cdn.kolomona.com/podcasts/lightning-thrashes/motive-to-kill/motive-to-kill/album.jpg"
+      },
+      {
+        "id": "hgh-no-return",
+        "title": "no return",
+        "artist": "no return",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-hidden-hand",
+        "title": "Hidden Hand",
+        "artist": "Hidden Hand",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-new-religion",
+        "title": "New Religion",
+        "artist": "New Religion",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-youre-ok-single",
+        "title": "You're OK (single)",
+        "artist": "You're OK (single)",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-rainmaker",
+        "title": "Rainmaker",
+        "artist": "Rainmaker",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-all-salsa-no-chips-ft-the-wolf",
+        "title": "All Salsa No Chips (ft. The Wolf)",
+        "artist": "All Salsa No Chips (ft. The Wolf)",
+        "currentArt": "https://via.placeholder.com/300x300/1e40af/ffffff?text=All%20Salsa%20No%20Chips%20(ft.%20The%20Wolf)"
+      },
+      {
+        "id": "hgh-stuck-in-the-middle",
+        "title": "Stuck in the Middle",
+        "artist": "Stuck in the Middle",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-lightning-thrashes",
+        "title": "Lightning Thrashes",
+        "artist": "Lightning Thrashes",
+        "currentArt": "https://cdn.kolomona.com/podcasts/lightning-thrashes/096/096-Lightning-Thrashes-1000.jpg"
+      },
+      {
+        "id": "hgh-the-world-deserves-to-know",
+        "title": "The World Deserves to Know",
+        "artist": "The World Deserves to Know",
+        "currentArt": "https://cdn.kolomona.com/podcasts/lightning-thrashes/crash-landing/the-world-deserves-to-know/album.jpg"
+      },
+      {
+        "id": "hgh-thrash-forward-alliance",
+        "title": "Thrash Forward Alliance",
+        "artist": "Thrash Forward Alliance",
+        "currentArt": "https://cdn.kolomona.com/podcasts/lightning-thrashes/bands/thrash-forward/thrash-forward-alliance/album.jpg"
+      },
+      {
+        "id": "hgh-consequence",
+        "title": "Consequence",
+        "artist": "Consequence",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-underground",
+        "title": "Underground",
+        "artist": "Underground",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-nocturnal",
+        "title": "Nocturnal",
+        "artist": "Nocturnal",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-vices",
+        "title": "Vices",
+        "artist": "Vices",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-giving-up-the-ghost",
+        "title": "Giving Up The Ghost",
+        "artist": "Giving Up The Ghost",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-red-light",
+        "title": "Red Light",
+        "artist": "Red Light",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-doomsday",
+        "title": "Doomsday",
+        "artist": "Doomsday",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-big-day",
+        "title": "Big Day",
+        "artist": "Big Day",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-disciples-by-design",
+        "title": "Disciples by Design",
+        "artist": "Disciples by Design",
+        "currentArt": "https://cdn.kolomona.com/podcasts/lightning-thrashes/bands/prismind/disciples-by-Design/album.jpg"
+      },
+      {
+        "id": "hgh-blueprint",
+        "title": "Blueprint",
+        "artist": "Blueprint",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-push",
+        "title": "Push",
+        "artist": "Push",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-catacomb",
+        "title": "Catacomb",
+        "artist": "Catacomb",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-face-pale",
+        "title": "Face Pale",
+        "artist": "Face Pale",
+        "currentArt": "https://cdn.kolomona.com/podcasts/lightning-thrashes/faces-pale/album.jpg"
+      },
+      {
+        "id": "hgh-deep-end",
+        "title": "DEEP END",
+        "artist": "DEEP END",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-screwing-around",
+        "title": "Screwing Around",
+        "artist": "Screwing Around",
+        "currentArt": "https://cdn.kolomona.com/media/images/profiles/sunflower01.jpg"
+      },
+      {
+        "id": "hgh-rockstar",
+        "title": "Rockstar",
+        "artist": "Rockstar",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-november-ep",
+        "title": "November EP",
+        "artist": "November EP",
+        "currentArt": "https://via.placeholder.com/300x300/1e40af/ffffff?text=November%20EP"
+      },
+      {
+        "id": "hgh-gone",
+        "title": "Gone",
+        "artist": "Gone",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-the-heycitizen-experience",
+        "title": "The Heycitizen Experience",
+        "artist": "The Heycitizen Experience",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-bowl-covers",
+        "title": "Bowl Covers",
+        "artist": "Bowl Covers",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-spectral-hiding",
+        "title": "Spectral Hiding",
+        "artist": "Spectral Hiding",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-underwater-single",
+        "title": "Underwater - Single",
+        "artist": "Underwater - Single",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-ring-that-bell",
+        "title": "Ring That Bell",
+        "artist": "Ring That Bell",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-radio-brigade",
+        "title": "Radio Brigade",
+        "artist": "Radio Brigade",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-generation-gap",
+        "title": "Generation Gap",
+        "artist": "Generation Gap",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-now-i-feel-it",
+        "title": "now i feel it",
+        "artist": "now i feel it",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-deathdreams",
+        "title": "deathdreams",
+        "artist": "deathdreams",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-wild-and-free",
+        "title": "Wild and Free",
+        "artist": "Wild and Free",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-red-wings",
+        "title": "Red Wings",
+        "artist": "Red Wings",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-pilot",
+        "title": "Pilot",
+        "artist": "Pilot",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-love-in-its-purest-form",
+        "title": "Love In Its Purest Form",
+        "artist": "Love In Its Purest Form",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-kurtisdrums",
+        "title": "Kurtisdrums",
+        "artist": "Kurtisdrums",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-aged-friends-old-whiskey",
+        "title": "Aged Friends & Old Whiskey",
+        "artist": "Aged Friends & Old Whiskey",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-disco-swag",
+        "title": "Disco Swag",
+        "artist": "Disco Swag",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-citybeach",
+        "title": "CityBeach",
+        "artist": "CityBeach",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-think-ep",
+        "title": "Think EP",
+        "artist": "Think EP",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-wrath-of-banjo",
+        "title": "Wrath Of Banjo",
+        "artist": "Wrath Of Banjo",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-satoshi-streamer",
+        "title": "Satoshi Streamer",
+        "artist": "Satoshi Streamer",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-opus",
+        "title": "Opus",
+        "artist": "Opus",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-all-in-a-day",
+        "title": "all in a day",
+        "artist": "all in a day",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-beauty",
+        "title": "Beauty",
+        "artist": "Beauty",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-music-from-the-doerfel-verse",
+        "title": "Music From The Doerfel-Verse",
+        "artist": "Music From The Doerfel-Verse",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-ben-doerfel",
+        "title": "Ben Doerfel",
+        "artist": "Ben Doerfel",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-himalaya",
+        "title": "Himalaya",
+        "artist": "Himalaya",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-heycitizen-s-lo-fi-hip-hop-beats-to-study-and-relax-to",
+        "title": "HeyCitizen's Lo-Fi Hip-Hop Beats to Study and Relax to",
+        "artist": "HeyCitizen's Lo-Fi Hip-Hop Beats to Study and Relax to",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-merry-christmix",
+        "title": "Merry Christmix",
+        "artist": "Merry Christmix",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-your-chance",
+        "title": "Your Chance",
+        "artist": "Your Chance",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-let-go-what-s-holding-you-back",
+        "title": "Let Go (What's holding you back)",
+        "artist": "Let Go (What's holding you back)",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-bitpunk-fm-unwound",
+        "title": "bitpunk.fm unwound",
+        "artist": "bitpunk.fm unwound",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-sensitive-guy",
+        "title": "Sensitive Guy",
+        "artist": "Sensitive Guy",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-peach-clouds",
+        "title": "Peach Clouds",
+        "artist": "Peach Clouds",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-pour-over",
+        "title": "Pour Over",
+        "artist": "Pour Over",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-18-sundays",
+        "title": "18 Sundays",
+        "artist": "18 Sundays",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-rock-n-roll-breakheart",
+        "title": "Rock'n'Roll Breakheart",
+        "artist": "Rock'n'Roll Breakheart",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-alandace",
+        "title": "Alandace",
+        "artist": "Alandace",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-beyond-the-hills",
+        "title": "Beyond the Hills",
+        "artist": "Beyond the Hills",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-dfb-volume-1",
+        "title": "DFB Volume 1",
+        "artist": "DFB Volume 1",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-so-it-goes",
+        "title": "So It Goes",
+        "artist": "So It Goes",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-unsound-existence-self-hosted-version",
+        "title": "Unsound Existence (self-hosted version)",
+        "artist": "Unsound Existence (self-hosted version)",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-first-married-christmas",
+        "title": "First Married Christmas",
+        "artist": "First Married Christmas",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-bowl-after-bowl",
+        "title": "Bowl After Bowl",
+        "artist": "Bowl After Bowl",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-nostalgic",
+        "title": "Nostalgic",
+        "artist": "Nostalgic",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      },
+      {
+        "id": "hgh-they-don-t-know",
+        "title": "They Don't Know",
+        "artist": "They Don't Know",
+        "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+      }
+    ],
+    "missingFeedGuid": [],
+    "missingTracks": [
+      {
+        "id": "music-from-the-doerfelverse",
+        "title": "Music From The Doerfel-Verse",
+        "missingCount": 41,
+        "totalTracks": 41
+      },
+      {
+        "id": "bloodshot-lies-album",
+        "title": "Bloodshot Lies - The Album",
+        "missingCount": 14,
+        "totalTracks": 14
+      },
+      {
+        "id": "intothedoerfelverse",
+        "title": "Into The Doerfel-Verse",
+        "missingCount": 57,
+        "totalTracks": 57
+      },
+      {
+        "id": "wrath-of-banjo",
+        "title": "Wrath Of Banjo",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "ben-doerfel",
+        "title": "Ben Doerfel",
+        "missingCount": 10,
+        "totalTracks": 10
+      },
+      {
+        "id": "able-and-the-wolf",
+        "title": "Stay Awhile",
+        "missingCount": 7,
+        "totalTracks": 7
+      },
+      {
+        "id": "18sundays",
+        "title": "18 Sundays",
+        "missingCount": 12,
+        "totalTracks": 12
+      },
+      {
+        "id": "alandace",
+        "title": "Alandace",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "autumn",
+        "title": "Autumn",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "christ-exalted",
+        "title": "Christ Exalted",
+        "missingCount": 11,
+        "totalTracks": 11
+      },
+      {
+        "id": "come-back-to-me",
+        "title": "Come Back To Me",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "dead-time-live-2016",
+        "title": "Dead Time(live 2016)",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "dfbv1",
+        "title": "DFB Volume 1",
+        "missingCount": 6,
+        "totalTracks": 6
+      },
+      {
+        "id": "dfbv2",
+        "title": "DFB Volume 2",
+        "missingCount": 9,
+        "totalTracks": 9
+      },
+      {
+        "id": "disco-swag",
+        "title": "Disco Swag",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "first-married-christmas",
+        "title": "First Married Christmas",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "generation-gap",
+        "title": "Generation Gap",
+        "missingCount": 10,
+        "totalTracks": 10
+      },
+      {
+        "id": "heartbreak",
+        "title": "Heartbreak",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "merry-christmix",
+        "title": "Merry Christmix",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "middle-season-let-go",
+        "title": "Let Go (What's holding you back)",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "phatty-the-grasshopper",
+        "title": "Phatty The Grasshopper",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "possible",
+        "title": "Possible",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "pour-over",
+        "title": "Pour Over",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "psalm-54",
+        "title": "Psalm 54",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "sensitive-guy",
+        "title": "Sensitive Guy",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "they-dont-know",
+        "title": "They Don't Know",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "think-ep",
+        "title": "Think EP",
+        "missingCount": 6,
+        "totalTracks": 6
+      },
+      {
+        "id": "underwater-single",
+        "title": "Underwater - Single",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "unsound-existence",
+        "title": "Unsound Existence (self-hosted version)",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "you-are-my-world",
+        "title": "You Are My World",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "you-feel-like-home",
+        "title": "You Feel Like Home(Single)",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "your-chance",
+        "title": "Your Chance",
+        "missingCount": 10,
+        "totalTracks": 10
+      },
+      {
+        "id": "opus",
+        "title": "Opus",
+        "missingCount": 5,
+        "totalTracks": 5
+      },
+      {
+        "id": "ed-doerfel-nostalgic",
+        "title": "Nostalgic",
+        "missingCount": 5,
+        "totalTracks": 5
+      },
+      {
+        "id": "ed-doerfel-city-beach",
+        "title": "CityBeach",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "ed-doerfel-kurtisdrums-v1",
+        "title": "Kurtisdrums",
+        "missingCount": 20,
+        "totalTracks": 20
+      },
+      {
+        "id": "tj-doerfel-ring-that-bell",
+        "title": "Ring That Bell",
+        "missingCount": 6,
+        "totalTracks": 6
+      },
+      {
+        "id": "deathdreams",
+        "title": "deathdreams",
+        "missingCount": 11,
+        "totalTracks": 11
+      },
+      {
+        "id": "waytogo",
+        "title": "Way to Go",
+        "missingCount": 10,
+        "totalTracks": 10
+      },
+      {
+        "id": "c-kostra-now-i-feel-it",
+        "title": "now i feel it",
+        "missingCount": 10,
+        "totalTracks": 10
+      },
+      {
+        "id": "mellow-cassette-pilot",
+        "title": "Pilot",
+        "missingCount": 6,
+        "totalTracks": 6
+      },
+      {
+        "id": "mellow-cassette-radio-brigade",
+        "title": "Radio Brigade",
+        "missingCount": 6,
+        "totalTracks": 6
+      },
+      {
+        "id": "wavlake-album-1",
+        "title": "Tinderbox",
+        "missingCount": 13,
+        "totalTracks": 13
+      },
+      {
+        "id": "wavlake-album-2",
+        "title": "Singles",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "wavlake-album-3",
+        "title": "Bowl of Oranges a Bright Eyes Cover",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "wavlake-album-4",
+        "title": "Goodbye Uncle Walt",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "wavlake-album-5",
+        "title": "Fight!",
+        "missingCount": 6,
+        "totalTracks": 6
+      },
+      {
+        "id": "wavlake-album-6",
+        "title": "Safe Some Place",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "wavlake-album-7",
+        "title": "You Should Waste It",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "wavlake-album-8",
+        "title": "The Kid, The Dad, The Mom & the Tiny Window",
+        "missingCount": 4,
+        "totalTracks": 4
+      },
+      {
+        "id": "wavlake-album-9",
+        "title": "Kids",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "wavlake-album-10",
+        "title": "Don't Worry, You Still Have Time To Ruin It - Demo",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "wavlake-album-11",
+        "title": "Rose",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "wavlake-album-12",
+        "title": "Fake Love - Demo",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "wavlake-album-13",
+        "title": "Roommates - Demo",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "wavlake-album-14",
+        "title": "Orange Pill, Pink Pill, White Pill - Demo",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "wavlake-album-15",
+        "title": "Tyson vs Paul",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "wavlake-album-16",
+        "title": "THEY RIDE",
+        "missingCount": 15,
+        "totalTracks": 15
+      },
+      {
+        "id": "wavlake-album-17",
+        "title": "More",
+        "missingCount": 11,
+        "totalTracks": 11
+      },
+      {
+        "id": "iroh-album-1",
+        "title": "Crocodile Tears",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "iroh-album-2",
+        "title": "Letters Of Regret ",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "iroh-album-3",
+        "title": "Hero",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "iroh-album-4",
+        "title": "Bound For Lonesome ",
+        "missingCount": 5,
+        "totalTracks": 5
+      },
+      {
+        "id": "iroh-album-5",
+        "title": "The First Five Years",
+        "missingCount": 20,
+        "totalTracks": 20
+      },
+      {
+        "id": "iroh-album-6",
+        "title": "Daddy Gene",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "iroh-album-7",
+        "title": "Love Strong",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "iroh-album-8",
+        "title": "High Gravity",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "iroh-album-9",
+        "title": "Small World",
+        "missingCount": 5,
+        "totalTracks": 5
+      },
+      {
+        "id": "iroh-album-10",
+        "title": "Strangers To Lovers - Live from Sloe Flower Studio",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "iroh-album-11",
+        "title": "Can't Promise You The World - Live from Sloe Flower Studio",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "heycitizen-experience",
+        "title": "The Heycitizen Experience",
+        "missingCount": 19,
+        "totalTracks": 19
+      },
+      {
+        "id": "heycitizen-lofi",
+        "title": "HeyCitizen's Lo-Fi Hip-Hop Beats to Study and Relax to",
+        "missingCount": 6,
+        "totalTracks": 6
+      },
+      {
+        "id": "anni-powell-wild-and-free",
+        "title": "Wild and Free",
+        "missingCount": 5,
+        "totalTracks": 5
+      },
+      {
+        "id": "anni-powell-beauty",
+        "title": "Beauty",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "anni-powell-peach-clouds",
+        "title": "Peach Clouds",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "anni-powell-beyond-the-hills",
+        "title": "Beyond the Hills",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "anni-powell-lingo",
+        "title": "Lingo",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "anni-powell-so-it-goes",
+        "title": "So It Goes",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "fountain-artist-takeover",
+        "title": "Fountain Artist Takeover - Nate Johnivan",
+        "missingCount": 30,
+        "totalTracks": 30
+      },
+      {
+        "id": "empty-passenger-seat",
+        "title": "Empty Passenger Seat",
+        "missingCount": 12,
+        "totalTracks": 12
+      },
+      {
+        "id": "wavlake-com-feed-music-ef800a88-9a1c-4f8e-a7c5-f83d7d9b1c87",
+        "title": "Chasing Waterfalls",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "midnight-breakheart",
+        "title": "Midnight Breakheart",
+        "missingCount": 6,
+        "totalTracks": 6
+      },
+      {
+        "id": "satoshi-streamer",
+        "title": "Satoshi Streamer",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "panisee-attack",
+        "title": "PANISEE Attack",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "2-crystal-balls",
+        "title": "2 Crystal Balls",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "rock-n-roll-breakheart",
+        "title": "Rock'n'Roll Breakheart",
+        "missingCount": 7,
+        "totalTracks": 7
+      },
+      {
+        "id": "elijah-lied-all-in-a-day",
+        "title": "all in a day",
+        "missingCount": 5,
+        "totalTracks": 5
+      },
+      {
+        "id": "wavlake-com-feed-music-883ea557-39c0-4bec-9618-c75978bc63b5",
+        "title": "Lost Summer",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "ollie-i-never-thought-things-would-be-different",
+        "title": "i never thought things would be different",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "ollie-ed653567-a662-4ed9-bc0d-387f8e19b6f3",
+        "title": "Feelings",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "ollie-3a925dda-cc31-4bb6-b285-3a09ed2e5307",
+        "title": "Deep Ends",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "ollie-d0bebcfa-e20b-4b1b-b797-bd7ac95e646f",
+        "title": "Perfect Timing",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "ollie-a80efac4-3637-4618-bd52-55493ce7d4c4",
+        "title": "High Thru The Lows",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "ollie-746e12e4-3b0d-47d2-b0d4-dd12d3a652dd",
+        "title": "Cold Feet",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "ollie-c2ff5364-7b02-4b94-af2c-bdde4a952778",
+        "title": "Worst Way",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "ollie-99217ff9-bfaa-4903-9201-f39113920618",
+        "title": "Thankful (feat. Witt Lowry)",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "ollie-1e0e29c2-f05d-42a6-8b6e-acbfe2b29318",
+        "title": "Lowkey",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "ollie-3cc3847a-8d5f-4086-9501-c1500165da07",
+        "title": "Lost Cause",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "ollie-c5cc9864-c687-4c6d-937d-0aa5f103a8d2",
+        "title": "Home",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "ollie-ccd54520-79e6-47e6-bc7d-9d951c023ef1",
+        "title": "Burning Room",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "spectral-hiding",
+        "title": "Spectral Hiding",
+        "missingCount": 26,
+        "totalTracks": 26
+      },
+      {
+        "id": "poetry-on-tape",
+        "title": "Poetry on Tape",
+        "missingCount": 32,
+        "totalTracks": 32
+      },
+      {
+        "id": "bitpunk-fm",
+        "title": "bitpunk.fm",
+        "missingCount": 13,
+        "totalTracks": 13
+      },
+      {
+        "id": "unwound",
+        "title": "bitpunk.fm unwound",
+        "missingCount": 20,
+        "totalTracks": 20
+      },
+      {
+        "id": "vance-latta-love-in-its-purest-form",
+        "title": "Love In Its Purest Form",
+        "missingCount": 10,
+        "totalTracks": 10
+      },
+      {
+        "id": "delta-og-aged-friends-old-whiskey",
+        "title": "Aged Friends & Old Whiskey",
+        "missingCount": 6,
+        "totalTracks": 6
+      },
+      {
+        "id": "bowl-covers",
+        "title": "Bowl Covers",
+        "missingCount": 6,
+        "totalTracks": 6
+      },
+      {
+        "id": "red-arrow-highway-brothers-never-die",
+        "title": "Brothers Never Die",
+        "missingCount": 10,
+        "totalTracks": 10
+      },
+      {
+        "id": "drawing-monsters-nate-and-cole-find-a-radio",
+        "title": "Nate and Cole Find a Radio",
+        "missingCount": 14,
+        "totalTracks": 14
+      },
+      {
+        "id": "my-friend-jimi-b220b396-0ebe-4760-8294-4bb27e06eabf",
+        "title": "Real Me",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "my-friend-jimi-e3f0086f-5ee2-4ead-ba9d-78a9a29acac8",
+        "title": "Lonely Girl",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "my-friend-jimi-6c539346-f58e-4480-9276-32da31368f8e",
+        "title": "Just One Sip",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "my-friend-jimi-76407adf-773c-4eb2-b5e2-8aef137d781f",
+        "title": "Weather Man",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "my-friend-jimi-6e236029-d72e-48a4-8d0b-aecf78d39e87",
+        "title": "Falling Out of Love",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "my-friend-jimi-b6d8f17c-f448-4085-8ce2-8b247eb26e63",
+        "title": "Bullet Train",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "my-friend-jimi-2b5b26a9-3b7a-4f78-9db2-424d94b182d8",
+        "title": "Endless Deja Vu",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "my-friend-jimi-ed3d6bdf-011b-4416-ab87-591672c07145",
+        "title": "West Coast Drive",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "my-friend-jimi-3d8c7279-6aa6-41e7-be1c-2680e57af6c8",
+        "title": "Mrs Valentine",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "my-friend-jimi-86061a0e-52df-4cad-8c6d-cd1e19ca1e63",
+        "title": "Manic Tendencies",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "death-by-lions-the-sheer-magnitude-of-it-all",
+        "title": "The Sheer Magnitude Of it All",
+        "missingCount": 6,
+        "totalTracks": 6
+      },
+      {
+        "id": "death-by-lions-second-album",
+        "title": "Thanks For Being Great",
+        "missingCount": 6,
+        "totalTracks": 6
+      },
+      {
+        "id": "death-by-lions-i-guess-this-will-have-to-do-single",
+        "title": "I Guess This Will Have To Do",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "drawing-monsters-old-wolf-wrong-scene",
+        "title": "Old Wolf, Wrong Scene",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-early-demos-i",
+        "title": "Early Demos I",
+        "missingCount": 8,
+        "totalTracks": 8
+      },
+      {
+        "id": "hgh-the-tjukebox",
+        "title": "The Tjukebox",
+        "missingCount": 5,
+        "totalTracks": 5
+      },
+      {
+        "id": "hgh-able-and-the-wolf",
+        "title": "Able and the Wolf",
+        "missingCount": 30,
+        "totalTracks": 30
+      },
+      {
+        "id": "hgh-stpetersburg-ep",
+        "title": "St.Petersburg EP",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-salvation",
+        "title": "Salvation",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-the-northerns",
+        "title": "The Northerns",
+        "missingCount": 4,
+        "totalTracks": 4
+      },
+      {
+        "id": "hgh-insomniak-the-sleepless-singles-playlist",
+        "title": "Insomniak The Sleepless (Singles Playlist)",
+        "missingCount": 9,
+        "totalTracks": 9
+      },
+      {
+        "id": "hgh-the-trusted",
+        "title": "The Trusted",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-street-clones",
+        "title": "Street Clones",
+        "missingCount": 5,
+        "totalTracks": 5
+      },
+      {
+        "id": "hgh-beach-trash",
+        "title": "Beach Trash",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-lore-and-legend",
+        "title": "Lore and Legend",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-pickle-popsicle-single",
+        "title": "Pickle Popsicle (Single)",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-live-at-the-fickle-pickle-into-the-valueverse",
+        "title": "Live at the Fickle Pickle - Into the Valueverse",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-e-pluribus-unum",
+        "title": "E Pluribus Unum",
+        "missingCount": 5,
+        "totalTracks": 5
+      },
+      {
+        "id": "hgh-the-view",
+        "title": "The View",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-bleecker-street-revisited",
+        "title": "Bleecker Street Revisited",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-leather-diamond",
+        "title": "Leather Diamond",
+        "missingCount": 6,
+        "totalTracks": 6
+      },
+      {
+        "id": "hgh-the-thinking-mans-redux",
+        "title": "The Thinking Man's Redux",
+        "missingCount": 11,
+        "totalTracks": 11
+      },
+      {
+        "id": "hgh-44",
+        "title": "44",
+        "missingCount": 8,
+        "totalTracks": 8
+      },
+      {
+        "id": "hgh-grey-state",
+        "title": "Grey State",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-unknown-feed",
+        "title": "Unknown Feed",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-thats-the-spirit",
+        "title": "That's The Spirit!",
+        "missingCount": 6,
+        "totalTracks": 6
+      },
+      {
+        "id": "hgh-the-knuckledragger",
+        "title": "The Knuckledragger",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-the-ultimate-album",
+        "title": "The Ultimate Album",
+        "missingCount": 8,
+        "totalTracks": 8
+      },
+      {
+        "id": "hgh-sunny",
+        "title": "Sunny",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-self-titled",
+        "title": "Self​-​Titled",
+        "missingCount": 6,
+        "totalTracks": 6
+      },
+      {
+        "id": "hgh-pony-up-daddy",
+        "title": "Pony Up Daddy",
+        "missingCount": 10,
+        "totalTracks": 10
+      },
+      {
+        "id": "hgh-jimmy-v-music",
+        "title": "Jimmy V - Music",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-at-your-cervix",
+        "title": "At Your Cervix",
+        "missingCount": 10,
+        "totalTracks": 10
+      },
+      {
+        "id": "hgh-happy-hours-air-travel-club",
+        "title": "Happy Hours Air Travel Club",
+        "missingCount": 9,
+        "totalTracks": 9
+      },
+      {
+        "id": "hgh-numb",
+        "title": "Numb",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-i-cant-sleep-ep",
+        "title": "I Can't Sleep! (EP)",
+        "missingCount": 6,
+        "totalTracks": 6
+      },
+      {
+        "id": "hgh-the-everyday",
+        "title": "The Everyday",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-self-destruct",
+        "title": "Self Destruct",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-the-great-benefic",
+        "title": "The Great Benefic",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-these-days",
+        "title": "These Days",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-tripodacus",
+        "title": "Tripodacus",
+        "missingCount": 4,
+        "totalTracks": 4
+      },
+      {
+        "id": "hgh-2-crystal-balls",
+        "title": "2 Crystal Balls",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-gay",
+        "title": "Gay?",
+        "missingCount": 4,
+        "totalTracks": 4
+      },
+      {
+        "id": "hgh-through-the-mic-single",
+        "title": "Through The Mic - Single",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-samurai-holiday",
+        "title": "Samurai Holiday",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-biased-love-and-shame",
+        "title": "Biased Love and Shame",
+        "missingCount": 6,
+        "totalTracks": 6
+      },
+      {
+        "id": "hgh-everything-is-lit",
+        "title": "Everything Is Lit",
+        "missingCount": 6,
+        "totalTracks": 6
+      },
+      {
+        "id": "hgh-the-death-of-rock-and-roll",
+        "title": "The Death of Rock and Roll",
+        "missingCount": 9,
+        "totalTracks": 9
+      },
+      {
+        "id": "hgh-you-sure-did",
+        "title": "You Sure Did",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-oh-my-on-the-shelf",
+        "title": "Oh My-On the Shelf",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-sky-dreams",
+        "title": "Sky Dreams",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-true-blue",
+        "title": "True Blue",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-the-satellite-skirmish",
+        "title": "The Satellite Skirmish",
+        "missingCount": 4,
+        "totalTracks": 4
+      },
+      {
+        "id": "hgh-live-on-the-4th-of-july",
+        "title": "LIVE on the 4th of July",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-white-triangles",
+        "title": "White Triangles",
+        "missingCount": 15,
+        "totalTracks": 15
+      },
+      {
+        "id": "hgh-wild-thumbprints",
+        "title": "Wild Thumbprints",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-hyper-spaceout",
+        "title": "Hyper SpaceOut",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-way-to-go",
+        "title": "Way to Go",
+        "missingCount": 19,
+        "totalTracks": 19
+      },
+      {
+        "id": "hgh-maze",
+        "title": "Maze",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-the-inner-voice",
+        "title": "The Inner Voice",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-mejor-versin-single",
+        "title": "Mejor Versión - Single",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-boost-them-all",
+        "title": "Boost Them All!",
+        "missingCount": 7,
+        "totalTracks": 7
+      },
+      {
+        "id": "hgh-baia-silko-single",
+        "title": "Baia Silko (Single)",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-mr-videoman",
+        "title": "Mr. Videoman",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-the-wait-is-over",
+        "title": "The Wait Is Over",
+        "missingCount": 5,
+        "totalTracks": 5
+      },
+      {
+        "id": "hgh-home-sweet-home-the-dream-of-love-survives-but-it-disappoints-constantly",
+        "title": "Home Sweet Home (The Dream of Love Survives but it Disappoints Constantly)",
+        "missingCount": 5,
+        "totalTracks": 5
+      },
+      {
+        "id": "hgh-tiddies-in-my-face-single",
+        "title": "Tiddies In My Face (Single)",
+        "missingCount": 6,
+        "totalTracks": 6
+      },
+      {
+        "id": "hgh-coke-dick-titties-sarcasm",
+        "title": "Coke Dick, Titties & Sarcasm",
+        "missingCount": 8,
+        "totalTracks": 8
+      },
+      {
+        "id": "hgh-ovvr-not-unndr",
+        "title": "ovvr not unndr",
+        "missingCount": 12,
+        "totalTracks": 12
+      },
+      {
+        "id": "hgh-hit-me-like-sugar",
+        "title": "Hit Me Like Sugar",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-beware-of-banjo",
+        "title": "Beware of Banjo",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-fierce-kitten",
+        "title": "Fierce Kitten",
+        "missingCount": 4,
+        "totalTracks": 4
+      },
+      {
+        "id": "hgh-starbound-single",
+        "title": "Starbound - Single",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-live-for-tomorrow",
+        "title": "Live for Tomorrow",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-on-my-way",
+        "title": "On My Way",
+        "missingCount": 4,
+        "totalTracks": 4
+      },
+      {
+        "id": "hgh-ethereal",
+        "title": "Ethereal",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-32-track-super-jam",
+        "title": "32 Track Super Jam",
+        "missingCount": 4,
+        "totalTracks": 4
+      },
+      {
+        "id": "hgh-youth",
+        "title": "Youth",
+        "missingCount": 5,
+        "totalTracks": 5
+      },
+      {
+        "id": "hgh-hd-cable",
+        "title": "HD Cable",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-inside-out-single",
+        "title": "Inside Out - Single",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-the-lightning",
+        "title": "The Lightning",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-heat-lightning",
+        "title": "Heat Lightning",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-knights-of-the-round-flute",
+        "title": "Knights of the Round Flute",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-bitcoin-maxi-on-leverage",
+        "title": "Bitcoin Maxi on Leverage",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-midwestern-apathy",
+        "title": "Midwestern Apathy",
+        "missingCount": 4,
+        "totalTracks": 4
+      },
+      {
+        "id": "hgh-panzee",
+        "title": "Panzee",
+        "missingCount": 7,
+        "totalTracks": 7
+      },
+      {
+        "id": "hgh-death-by-convenience",
+        "title": "Death by Convenience",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-narcan-immunity-ovvrdos-remixes-and-bonus-tracks",
+        "title": "Narcan Immunity (ovvrdos remixes and bonus tracks)",
+        "missingCount": 4,
+        "totalTracks": 4
+      },
+      {
+        "id": "hgh-m0mmatake-one-single",
+        "title": "M0mma(take one) - Single",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-trickster",
+        "title": "Trickster",
+        "missingCount": 5,
+        "totalTracks": 5
+      },
+      {
+        "id": "hgh-i-wont-be-late",
+        "title": "I Won't Be Late",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-if-we-stayed-alive",
+        "title": "If We Stayed Alive",
+        "missingCount": 8,
+        "totalTracks": 8
+      },
+      {
+        "id": "hgh-midnight-breakheart",
+        "title": "Midnight Breakheart",
+        "missingCount": 5,
+        "totalTracks": 5
+      },
+      {
+        "id": "hgh-prevailing-domination",
+        "title": "Prevailing Domination",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-cue-the-slaughter",
+        "title": "Cue the Slaughter",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-good-morning",
+        "title": "Good Morning",
+        "missingCount": 9,
+        "totalTracks": 9
+      },
+      {
+        "id": "hgh-breathe-me-in",
+        "title": "Breathe Me In",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-pleb-tunes-by-brrreadfan",
+        "title": "Pleb Tunes by Brrreadfan",
+        "missingCount": 4,
+        "totalTracks": 4
+      },
+      {
+        "id": "hgh-laundry",
+        "title": "Laundry",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-the-retrograde",
+        "title": "The Retrograde",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-succumb-to-life",
+        "title": "Succumb To Life",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-crackin-the-dongle",
+        "title": "Crackin The Dongle",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-crazy-cloud",
+        "title": "Crazy Cloud",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-studio-v-featuring-tamala",
+        "title": "Studio V Featuring Tamala",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-suzy-brown",
+        "title": "Suzy Brown",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-thomas",
+        "title": "Thomas",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-when-truth-rings-single",
+        "title": "When Truth Rings (Single)",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-show-me-where-they-touched-you",
+        "title": "Show Me Where They Touched You",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-dopesick",
+        "title": "Dopesick",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-kick-it",
+        "title": "Kick It",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-sweet-anxiety",
+        "title": "Sweet Anxiety",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-in-hell-there-is-a-sea-of-wasted-loads",
+        "title": "In Hell There Is A Sea Of Wasted Loads",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-motive-to-kill",
+        "title": "Motive to Kill",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-east-to-west",
+        "title": "East To West",
+        "missingCount": 4,
+        "totalTracks": 4
+      },
+      {
+        "id": "hgh-fell-through-the-cracks-misfits-and-rejects-20-years-fo-bearsnare-records",
+        "title": "Fell Through the Cracks, Misfits and Rejects: 20 Years fo BearSnare Records",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-redemption",
+        "title": "Redemption",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-sweet-sunshine-single",
+        "title": "Sweet Sunshine (single)",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-polar-embrace",
+        "title": "Polar Embrace",
+        "missingCount": 4,
+        "totalTracks": 4
+      },
+      {
+        "id": "hgh-beam-of-light",
+        "title": "Beam of Light",
+        "missingCount": 4,
+        "totalTracks": 4
+      },
+      {
+        "id": "hgh-revelation-of-the-method",
+        "title": "Revelation of the Method",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-live-at-the-606-club",
+        "title": "Live at the 606 club",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-runaway",
+        "title": "Runaway",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-expecting-the-worst",
+        "title": "Expecting the Worst",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-a-busy-day-single",
+        "title": "A Busy Day (SINGLE)",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-the-attic-and-the-river",
+        "title": "The Attic and the River",
+        "missingCount": 4,
+        "totalTracks": 4
+      },
+      {
+        "id": "hgh-everything-is-lit-remixes",
+        "title": "Everything Is Lit Remixes",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-golden-years",
+        "title": "Golden Years",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-whathaveibecome",
+        "title": "WHATHAVEIBECOME",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-the-wolven-storm",
+        "title": "The Wolven Storm",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-titties-on-the-internet-single",
+        "title": "Titties on the Internet (Single)",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-sunset-boulevard",
+        "title": "Sunset Boulevard",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-what-could-go-wrong",
+        "title": "What Could Go Wrong?",
+        "missingCount": 4,
+        "totalTracks": 4
+      },
+      {
+        "id": "hgh-get-away",
+        "title": "Get Away",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-good-clean-fun-my-ass",
+        "title": "Good Clean Fun... My Ass",
+        "missingCount": 4,
+        "totalTracks": 4
+      },
+      {
+        "id": "hgh-where-does-the-time-go-prelude",
+        "title": "Where Does the Time Go (Prelude)",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-winds-of-change",
+        "title": "Winds of Change",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-goofball-bucket",
+        "title": "Goofball Bucket",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-sweet-dreams-live",
+        "title": "Sweet Dreams (live)",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-mister-roane-county",
+        "title": "Mister Roane County",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-selfish-habits",
+        "title": "Selfish Habits",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-qisill",
+        "title": "Qisill",
+        "missingCount": 10,
+        "totalTracks": 10
+      },
+      {
+        "id": "hgh-at-the-helm-of-despair",
+        "title": "At the Helm of Despair",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-somebody-stop-me",
+        "title": "Somebody Stop Me",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-lionhead",
+        "title": "Lionhead",
+        "missingCount": 10,
+        "totalTracks": 10
+      },
+      {
+        "id": "hgh-inertia",
+        "title": "Inertia",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-terrible-fight",
+        "title": "Terrible Fight",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-no-return",
+        "title": "no return",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-hidden-hand",
+        "title": "Hidden Hand",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-chester-the-protester-demo",
+        "title": "Chester, The Protester (demo)",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-big-machine",
+        "title": "Big Machine",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-the-leaves-shimmering-gold",
+        "title": "The Leaves, Shimmering Gold",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-daydreams",
+        "title": "Daydreams",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-one",
+        "title": "ONE",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-sweet-cheeks",
+        "title": "Sweet Cheeks",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-lets-be-true",
+        "title": "Let's Be True",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-matt-bigelow",
+        "title": "Matt Bigelow",
+        "missingCount": 4,
+        "totalTracks": 4
+      },
+      {
+        "id": "hgh-st-demo",
+        "title": "S​/​T Demo",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-lads",
+        "title": "lad​ə​s",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-i-dont-wanna-be-here",
+        "title": "I Don't Wanna Be Here",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-katerina",
+        "title": "Katerina",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-penis-in-the-ocean",
+        "title": "Penis in the Ocean",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-the-submarines",
+        "title": "The Submarines",
+        "missingCount": 4,
+        "totalTracks": 4
+      },
+      {
+        "id": "hgh-show-me-where-they-touched-youagain",
+        "title": "Show Me Where They Touched You​.​.​.​Again",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-the-merge",
+        "title": "The Merge",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-riot-in-progress-riot-in-progress",
+        "title": "Riot in Progress - Riot in Progress",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-acetaminophen",
+        "title": "Acetaminophen",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-the-virus-takes",
+        "title": "The Virus Takes",
+        "missingCount": 4,
+        "totalTracks": 4
+      },
+      {
+        "id": "hgh-junk-punk",
+        "title": "Junk Punk",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-meat-grease",
+        "title": "Meat Grease",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-autumn-rust",
+        "title": "Autumn Rust",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-the-dorian-sessions",
+        "title": "The Dorian Sessions",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-new-religion",
+        "title": "New Religion",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-fy-fazan-single",
+        "title": "Fy Fazan (Single)",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-the-helicopter-view",
+        "title": "The Helicopter View",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-youre-ok-single",
+        "title": "You're OK (single)",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-burn-myself",
+        "title": "Burn Myself",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-nevermind",
+        "title": "Nevermind",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-practice",
+        "title": "Practice",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-pap-smears-are-for-pussies",
+        "title": "Pap Smears Are For Pussies",
+        "missingCount": 15,
+        "totalTracks": 15
+      },
+      {
+        "id": "hgh-trust-in-life",
+        "title": "Trust in Life",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-we-likes-to-party",
+        "title": "We Likes To Party",
+        "missingCount": 7,
+        "totalTracks": 7
+      },
+      {
+        "id": "hgh-im-hungry",
+        "title": "I'm Hungry",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-seasonal-drifting",
+        "title": "Seasonal Drifting",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-hbd-anyway",
+        "title": "HBD ANYWAY",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-slight-curiosity",
+        "title": "Slight Curiosity",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-man-its-christmas",
+        "title": "Man! It's Christmas",
+        "missingCount": 5,
+        "totalTracks": 5
+      },
+      {
+        "id": "hgh-my-man-hates-christmas",
+        "title": "My Man Hates Christmas",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-bryans-christmas",
+        "title": "Bryan's Christmas",
+        "missingCount": 7,
+        "totalTracks": 7
+      },
+      {
+        "id": "hgh-o-come-all-ye-faithful",
+        "title": "O Come All Ye Faithful",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-we-three-kings-of-orient-are",
+        "title": "We Three Kings of Orient Are",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-christmas-medley",
+        "title": "Christmas Medley",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-serenity",
+        "title": "Serenity",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-maniac-on-mute",
+        "title": "Maniac on Mute",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-rainmaker",
+        "title": "Rainmaker",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-age-of-reason",
+        "title": "Age of Reason",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-tired",
+        "title": "tired.",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-marrow",
+        "title": "Marrow",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-too-many-pieces",
+        "title": "Too Many Pieces",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-titicaca",
+        "title": "Titicaca",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-all-thats-haunting-me",
+        "title": "All That's Haunting Me",
+        "missingCount": 6,
+        "totalTracks": 6
+      },
+      {
+        "id": "hgh-the-stables",
+        "title": "The Stables",
+        "missingCount": 4,
+        "totalTracks": 4
+      },
+      {
+        "id": "hgh-when-im-here",
+        "title": "When I'm Here",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-all-salsa-no-chips-ft-the-wolf",
+        "title": "All Salsa No Chips (ft. The Wolf)",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-damn-good-haunting",
+        "title": "Damn Good Haunting",
+        "missingCount": 6,
+        "totalTracks": 6
+      },
+      {
+        "id": "hgh-stuck-in-the-middle",
+        "title": "Stuck in the Middle",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-lightning-thrashes",
+        "title": "Lightning Thrashes",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-echo-chamber",
+        "title": "Echo Chamber",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-worried",
+        "title": "Worried",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-things-like-this",
+        "title": "Things Like This",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-the-world-deserves-to-know",
+        "title": "The World Deserves to Know",
+        "missingCount": 4,
+        "totalTracks": 4
+      },
+      {
+        "id": "hgh-secrets-single",
+        "title": "Secrets - Single",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-thrash-forward-alliance",
+        "title": "Thrash Forward Alliance",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-voyage",
+        "title": "Voyage",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-stockholm",
+        "title": "Stockholm",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-the-college-years-playlist",
+        "title": "The College Years Playlist",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-scarf-joint",
+        "title": "Scarf Joint",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-wayfaring-stranger",
+        "title": "Wayfaring Stranger",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-jay-eddys-country-express",
+        "title": "Jay Eddy's Country Express",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-cold-hearted",
+        "title": "Cold Hearted",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-rocket-paint",
+        "title": "Rocket Paint",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-consequence",
+        "title": "Consequence",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-a-real-song",
+        "title": "A Real Song",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-psychodrama",
+        "title": "Psychodrama",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-my-crutch-live-from-bands-at-bitcoin",
+        "title": "My Crutch - Live from Bands at Bitcoin",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-tyson-froese-songs",
+        "title": "Tyson Froese - Songs",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-lost-soul",
+        "title": "Lost Soul",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-sedative",
+        "title": "Sedative",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-rebel-hero-songs",
+        "title": "Rebel Hero - Songs",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-zza",
+        "title": "ZzA!",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-radiant",
+        "title": "Radiant",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-mosquito-mystery",
+        "title": "Mosquito Mystery",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-hometown-scenery",
+        "title": "Hometown Scenery",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-chris-wenske-singles-playlist",
+        "title": "Chris Wenske (Singles Playlist)",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-breaking-up",
+        "title": "BREAKING UP",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-hiddenkind",
+        "title": "Hiddenkind",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-lightwork-orange",
+        "title": "Lightwork Orange",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-somebody",
+        "title": "Somebody",
+        "missingCount": 5,
+        "totalTracks": 5
+      },
+      {
+        "id": "hgh-som",
+        "title": "S.O.M.",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-cant-hold-me-down",
+        "title": "Can't Hold Me Down",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-start-smashing-the-day-out",
+        "title": "Start Smashing the Day Out",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-schausteller-ep",
+        "title": "Schausteller EP",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-tunnel",
+        "title": "Tunnel",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-keep-searching",
+        "title": "Keep Searching",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-that-duck",
+        "title": "That Duck",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-no-hands-single",
+        "title": "No Hands (Single)",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-control",
+        "title": "Control",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-dusty-old-man",
+        "title": "Dusty Old Man",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-rhythmic-booze",
+        "title": "Rhythmic Booze",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-fat-cat-catepillar",
+        "title": "Fat Cat Catepillar",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-underground",
+        "title": "Underground",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-happy-little-sunshine-beam",
+        "title": "Happy Little Sunshine Beam",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-nocturnal",
+        "title": "Nocturnal",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-spirit-in-the-future",
+        "title": "Spirit In The Future",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-vices",
+        "title": "Vices",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-vertigo",
+        "title": "Vertigo",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-knight-in-shining-armor",
+        "title": "Knight in Shining Armor",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-five-more-minutes",
+        "title": "Five More Minutes",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-best-worst-love",
+        "title": "Best Worst Love",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-straight-to-hell",
+        "title": "Straight to Hell",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-burning-the-night",
+        "title": "Burning the Night",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-campfire-remedy",
+        "title": "Campfire Remedy",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-giving-up-the-ghost",
+        "title": "Giving Up The Ghost",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-insomniak-the-sleepless-chronicles-of-a-mad-man",
+        "title": "Insomniak The Sleepless: Chronicles of a Mad Man",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-h8m3",
+        "title": "H8M3",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-out-of-the-blue",
+        "title": "Out of the Blue",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-runnin",
+        "title": "Runnin'",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-protologic-music",
+        "title": "Protologic Music",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-anxious-in-a-good-way",
+        "title": "Anxious (In a Good Way)",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-jazz31",
+        "title": "Jazz31",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-tip-toe",
+        "title": "Tip Toe",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-closer-to-somewhere",
+        "title": "Closer to Somewhere",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-red-light",
+        "title": "Red Light",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-twin-turbo",
+        "title": "Twin Turbo",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-einsemd",
+        "title": "Einsemd",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-cosmodrome",
+        "title": "Cosmodrome",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-so-many-years",
+        "title": "So Many Years",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-defeat",
+        "title": "Defeat",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-gossip-queen",
+        "title": "Gossip Queen",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-12-rods-tour-eclipse-a-v4v-mirror-ball-stream-feat-mellow-cassette",
+        "title": "12 Rods Tour Eclipse: A v4v Mirror Ball Stream Feat. Mellow Cassette",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-now-thats-what-i-call-goofball-bucket-vol-1",
+        "title": "Now That's What I Call Goofball Bucket, Vol. 1",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-doomsday",
+        "title": "Doomsday",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-leave-it-alone",
+        "title": "Leave It Alone",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-waitin-on-alex",
+        "title": "Waitin' on Alex",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-into-the-blue",
+        "title": "Into the Blue",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-i-need-a-little",
+        "title": "I Need a Little",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-big-day",
+        "title": "Big Day",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-someone-else",
+        "title": "Someone Else",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-breathe",
+        "title": "Breathe",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-3-way",
+        "title": "3 Way",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-raskolnikov",
+        "title": "Raskolnikov",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-disciples-by-design",
+        "title": "Disciples by Design",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-set-up",
+        "title": "Set Up",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-skye-whale",
+        "title": "Skye Whale",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-self-under-siege",
+        "title": "Self Under Siege",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-blueprint",
+        "title": "Blueprint",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-tokyo-citadel-remix-single",
+        "title": "Tokyo Citadel Remix (Single)",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-waspzilla",
+        "title": "Waspzilla",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-simpletons-and-charlatans",
+        "title": "Simpletons and Charlatans",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-push",
+        "title": "Push",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-latest-singles-from-stefan-soltero",
+        "title": "Latest Singles from Stefan Soltero",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-tempest-4-tracks",
+        "title": "Tempest [4-Tracks]",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-peace-pieces",
+        "title": "Peace Pieces",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-voyage-quest",
+        "title": "Voyage Quest",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-sergios-serenade",
+        "title": "Sergio's Serenade",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-ive-tried",
+        "title": "I've Tried",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-catacomb",
+        "title": "Catacomb",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-hey-love",
+        "title": "Hey Love!",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-bloodshot-lies-single",
+        "title": "Bloodshot Lies - Single",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-the-moon-and-the-sky",
+        "title": "The Moon and the Sky",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-first-date",
+        "title": "First Date",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-emo-stormtrooper",
+        "title": "Emo Stormtrooper",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-face-pale",
+        "title": "Face Pale",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-god-candle-single",
+        "title": "God Candle (single)",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-katherines-wheel",
+        "title": "Katherines Wheel",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-deep-end",
+        "title": "DEEP END",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-torcon-vii",
+        "title": "Torcon VII",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-not-far-away",
+        "title": "Not Far Away",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-lightswitch",
+        "title": "Lightswitch",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-man-its-christmas-again",
+        "title": "Man! It's Christmas AGAIN!",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-ainsley-costello",
+        "title": "Ainsley Costello",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-namo-maitri",
+        "title": "Namo Maitri",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-the-kill",
+        "title": "The Kill",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-life-emergesthe-anatomy-of-bitcoin",
+        "title": "Life Emerges:The Anatomy Of Bitcoin",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-unintended-consequences",
+        "title": "Unintended Consequences",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-screwing-around",
+        "title": "Screwing Around",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-rockstar",
+        "title": "Rockstar",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-element-zero",
+        "title": "Element Zero",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-here-for-you",
+        "title": "Here For You",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-november-ep",
+        "title": "November EP",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-minus-4",
+        "title": "Minus-4",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-dance-forever-now",
+        "title": "Dance Forever Now",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-devoured",
+        "title": "Devoured",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-higher-featuring-sir-brian-with-an-i",
+        "title": "Higher- featuring Sir Brian With an I",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-gone",
+        "title": "Gone",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-false-finish",
+        "title": "False Finish",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-the-heycitizen-experience",
+        "title": "The Heycitizen Experience",
+        "missingCount": 46,
+        "totalTracks": 46
+      },
+      {
+        "id": "hgh-bowl-covers",
+        "title": "Bowl Covers",
+        "missingCount": 6,
+        "totalTracks": 6
+      },
+      {
+        "id": "hgh-spectral-hiding",
+        "title": "Spectral Hiding",
+        "missingCount": 19,
+        "totalTracks": 19
+      },
+      {
+        "id": "hgh-underwater-single",
+        "title": "Underwater - Single",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-ring-that-bell",
+        "title": "Ring That Bell",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-radio-brigade",
+        "title": "Radio Brigade",
+        "missingCount": 6,
+        "totalTracks": 6
+      },
+      {
+        "id": "hgh-generation-gap",
+        "title": "Generation Gap",
+        "missingCount": 4,
+        "totalTracks": 4
+      },
+      {
+        "id": "hgh-now-i-feel-it",
+        "title": "now i feel it",
+        "missingCount": 7,
+        "totalTracks": 7
+      },
+      {
+        "id": "hgh-deathdreams",
+        "title": "deathdreams",
+        "missingCount": 30,
+        "totalTracks": 30
+      },
+      {
+        "id": "hgh-wild-and-free",
+        "title": "Wild and Free",
+        "missingCount": 9,
+        "totalTracks": 9
+      },
+      {
+        "id": "hgh-red-wings",
+        "title": "Red Wings",
+        "missingCount": 14,
+        "totalTracks": 14
+      },
+      {
+        "id": "hgh-pilot",
+        "title": "Pilot",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-love-in-its-purest-form",
+        "title": "Love In Its Purest Form",
+        "missingCount": 13,
+        "totalTracks": 13
+      },
+      {
+        "id": "hgh-kurtisdrums",
+        "title": "Kurtisdrums",
+        "missingCount": 15,
+        "totalTracks": 15
+      },
+      {
+        "id": "hgh-aged-friends-old-whiskey",
+        "title": "Aged Friends & Old Whiskey",
+        "missingCount": 18,
+        "totalTracks": 18
+      },
+      {
+        "id": "hgh-disco-swag",
+        "title": "Disco Swag",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-citybeach",
+        "title": "CityBeach",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-think-ep",
+        "title": "Think EP",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-wrath-of-banjo",
+        "title": "Wrath Of Banjo",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-satoshi-streamer",
+        "title": "Satoshi Streamer",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-opus",
+        "title": "Opus",
+        "missingCount": 5,
+        "totalTracks": 5
+      },
+      {
+        "id": "hgh-all-in-a-day",
+        "title": "all in a day",
+        "missingCount": 3,
+        "totalTracks": 3
+      },
+      {
+        "id": "hgh-beauty",
+        "title": "Beauty",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-music-from-the-doerfel-verse",
+        "title": "Music From The Doerfel-Verse",
+        "missingCount": 15,
+        "totalTracks": 15
+      },
+      {
+        "id": "hgh-ben-doerfel",
+        "title": "Ben Doerfel",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-himalaya",
+        "title": "Himalaya",
+        "missingCount": 9,
+        "totalTracks": 9
+      },
+      {
+        "id": "hgh-heycitizen-s-lo-fi-hip-hop-beats-to-study-and-relax-to",
+        "title": "HeyCitizen's Lo-Fi Hip-Hop Beats to Study and Relax to",
+        "missingCount": 6,
+        "totalTracks": 6
+      },
+      {
+        "id": "hgh-merry-christmix",
+        "title": "Merry Christmix",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-your-chance",
+        "title": "Your Chance",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-let-go-what-s-holding-you-back",
+        "title": "Let Go (What's holding you back)",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-bitpunk-fm-unwound",
+        "title": "bitpunk.fm unwound",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-sensitive-guy",
+        "title": "Sensitive Guy",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-peach-clouds",
+        "title": "Peach Clouds",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-pour-over",
+        "title": "Pour Over",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-18-sundays",
+        "title": "18 Sundays",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-rock-n-roll-breakheart",
+        "title": "Rock'n'Roll Breakheart",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-alandace",
+        "title": "Alandace",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-beyond-the-hills",
+        "title": "Beyond the Hills",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-dfb-volume-1",
+        "title": "DFB Volume 1",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-so-it-goes",
+        "title": "So It Goes",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-unsound-existence-self-hosted-version",
+        "title": "Unsound Existence (self-hosted version)",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-first-married-christmas",
+        "title": "First Married Christmas",
+        "missingCount": 2,
+        "totalTracks": 2
+      },
+      {
+        "id": "hgh-bowl-after-bowl",
+        "title": "Bowl After Bowl",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-nostalgic",
+        "title": "Nostalgic",
+        "missingCount": 1,
+        "totalTracks": 1
+      },
+      {
+        "id": "hgh-they-don-t-know",
+        "title": "They Don't Know",
+        "missingCount": 1,
+        "totalTracks": 1
+      }
+    ],
+    "emptyTracks": [
+      {
+        "id": "joe-martin-publisher",
+        "title": "Joe Martin",
+        "artist": "Joe Martin (Wavlake)"
+      },
+      {
+        "id": "iroh-publisher",
+        "title": "IROH",
+        "artist": "IROH (Wavlake)"
+      },
+      {
+        "id": "wavlake-publisher-aa909244",
+        "title": "Nate Johnivan",
+        "artist": "Wavlake Publisher"
+      },
+      {
+        "id": "doerfels-publisher",
+        "title": "The Doerfels",
+        "artist": "The Doerfels"
+      },
+      {
+        "id": "my-friend-jimi-publisher",
+        "title": "My Friend Jimi",
+        "artist": "My Friend Jimi"
+      },
+      {
+        "id": "ollie-publisher",
+        "title": "Ollie",
+        "artist": "Ollie"
+      },
+      {
+        "id": "death-by-lions-publisher",
+        "title": "Death by Lions",
+        "artist": "Death by Lions"
+      },
+      {
+        "id": "bitpunk-fm-publisher",
+        "title": "Bitpunk.fm Publisher feed",
+        "artist": "Bitpunk.fm"
+      },
+      {
+        "id": "drawing-monsters-publisher",
+        "title": "Drawing Monsters",
+        "artist": "Drawing Monsters"
+      },
+      {
+        "id": "doerfels-publisher-direct",
+        "title": "The Doerfels",
+        "artist": "The Doerfels"
+      }
+    ],
+    "missingPublisher": [],
+    "failedParses": [
+      {
+        "id": "example-com-test-feed-xml",
+        "title": "Feed from example.com",
+        "url": "https://example.com/test-feed.xml"
+      }
+    ],
+    "missingDurations": [
+      {
+        "id": "intothedoerfelverse",
+        "title": "Into The Doerfel-Verse",
+        "missingCount": 1,
+        "totalTracks": 57
+      }
+    ]
+  },
+  "priorityFixes": [
+    {
+      "type": "artwork",
+      "priority": "HIGH",
+      "count": 87,
+      "items": [
+        {
+          "id": "hgh-the-tjukebox",
+          "title": "The Tjukebox",
+          "artist": "The Tjukebox",
+          "currentArt": "https://via.placeholder.com/300x300/1e40af/ffffff?text=The%20Tjukebox"
+        },
+        {
+          "id": "hgh-unknown-feed",
+          "title": "Unknown Feed",
+          "artist": "Unknown Feed",
+          "currentArt": "https://via.placeholder.com/300x300/1e40af/ffffff?text=Unknown%20Feed"
+        },
+        {
+          "id": "hgh-the-everyday",
+          "title": "The Everyday",
+          "artist": "The Everyday",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-these-days",
+          "title": "These Days",
+          "artist": "These Days",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-gay",
+          "title": "Gay?",
+          "artist": "Gay?",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-true-blue",
+          "title": "True Blue",
+          "artist": "True Blue",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-the-wait-is-over",
+          "title": "The Wait Is Over",
+          "artist": "The Wait Is Over",
+          "currentArt": "https://via.placeholder.com/300x300/1e40af/ffffff?text=The%20Wait%20Is%20Over"
+        },
+        {
+          "id": "hgh-tiddies-in-my-face-single",
+          "title": "Tiddies In My Face (Single)",
+          "artist": "Tiddies In My Face (Single)",
+          "currentArt": "https://via.placeholder.com/300x300/1e40af/ffffff?text=Tiddies%20In%20My%20Face%20(Single)"
+        },
+        {
+          "id": "hgh-on-my-way",
+          "title": "On My Way",
+          "artist": "On My Way",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-the-lightning",
+          "title": "The Lightning",
+          "artist": "The Lightning",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-prevailing-domination",
+          "title": "Prevailing Domination",
+          "artist": "Prevailing Domination",
+          "currentArt": "https://cdn.kolomona.com/podcasts/lightning-thrashes/re-activate/prevailing-of-the-unkind-domination/album.jpg"
+        },
+        {
+          "id": "hgh-cue-the-slaughter",
+          "title": "Cue the Slaughter",
+          "artist": "Cue the Slaughter",
+          "currentArt": "https://cdn.kolomona.com/podcasts/lightning-thrashes/massacre-at-the-opera/cue-the-slaughter/album.jpg"
+        },
+        {
+          "id": "hgh-kick-it",
+          "title": "Kick It",
+          "artist": "Kick It",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-motive-to-kill",
+          "title": "Motive to Kill",
+          "artist": "Motive to Kill",
+          "currentArt": "https://ipfspodcasting.net/e/cdn.kolomona.com/podcasts/lightning-thrashes/motive-to-kill/motive-to-kill/album.jpg"
+        },
+        {
+          "id": "hgh-no-return",
+          "title": "no return",
+          "artist": "no return",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-hidden-hand",
+          "title": "Hidden Hand",
+          "artist": "Hidden Hand",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-new-religion",
+          "title": "New Religion",
+          "artist": "New Religion",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-youre-ok-single",
+          "title": "You're OK (single)",
+          "artist": "You're OK (single)",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-rainmaker",
+          "title": "Rainmaker",
+          "artist": "Rainmaker",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-all-salsa-no-chips-ft-the-wolf",
+          "title": "All Salsa No Chips (ft. The Wolf)",
+          "artist": "All Salsa No Chips (ft. The Wolf)",
+          "currentArt": "https://via.placeholder.com/300x300/1e40af/ffffff?text=All%20Salsa%20No%20Chips%20(ft.%20The%20Wolf)"
+        },
+        {
+          "id": "hgh-stuck-in-the-middle",
+          "title": "Stuck in the Middle",
+          "artist": "Stuck in the Middle",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-lightning-thrashes",
+          "title": "Lightning Thrashes",
+          "artist": "Lightning Thrashes",
+          "currentArt": "https://cdn.kolomona.com/podcasts/lightning-thrashes/096/096-Lightning-Thrashes-1000.jpg"
+        },
+        {
+          "id": "hgh-the-world-deserves-to-know",
+          "title": "The World Deserves to Know",
+          "artist": "The World Deserves to Know",
+          "currentArt": "https://cdn.kolomona.com/podcasts/lightning-thrashes/crash-landing/the-world-deserves-to-know/album.jpg"
+        },
+        {
+          "id": "hgh-thrash-forward-alliance",
+          "title": "Thrash Forward Alliance",
+          "artist": "Thrash Forward Alliance",
+          "currentArt": "https://cdn.kolomona.com/podcasts/lightning-thrashes/bands/thrash-forward/thrash-forward-alliance/album.jpg"
+        },
+        {
+          "id": "hgh-consequence",
+          "title": "Consequence",
+          "artist": "Consequence",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-underground",
+          "title": "Underground",
+          "artist": "Underground",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-nocturnal",
+          "title": "Nocturnal",
+          "artist": "Nocturnal",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-vices",
+          "title": "Vices",
+          "artist": "Vices",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-giving-up-the-ghost",
+          "title": "Giving Up The Ghost",
+          "artist": "Giving Up The Ghost",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-red-light",
+          "title": "Red Light",
+          "artist": "Red Light",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-doomsday",
+          "title": "Doomsday",
+          "artist": "Doomsday",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-big-day",
+          "title": "Big Day",
+          "artist": "Big Day",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-disciples-by-design",
+          "title": "Disciples by Design",
+          "artist": "Disciples by Design",
+          "currentArt": "https://cdn.kolomona.com/podcasts/lightning-thrashes/bands/prismind/disciples-by-Design/album.jpg"
+        },
+        {
+          "id": "hgh-blueprint",
+          "title": "Blueprint",
+          "artist": "Blueprint",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-push",
+          "title": "Push",
+          "artist": "Push",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-catacomb",
+          "title": "Catacomb",
+          "artist": "Catacomb",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-face-pale",
+          "title": "Face Pale",
+          "artist": "Face Pale",
+          "currentArt": "https://cdn.kolomona.com/podcasts/lightning-thrashes/faces-pale/album.jpg"
+        },
+        {
+          "id": "hgh-deep-end",
+          "title": "DEEP END",
+          "artist": "DEEP END",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-screwing-around",
+          "title": "Screwing Around",
+          "artist": "Screwing Around",
+          "currentArt": "https://cdn.kolomona.com/media/images/profiles/sunflower01.jpg"
+        },
+        {
+          "id": "hgh-rockstar",
+          "title": "Rockstar",
+          "artist": "Rockstar",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-november-ep",
+          "title": "November EP",
+          "artist": "November EP",
+          "currentArt": "https://via.placeholder.com/300x300/1e40af/ffffff?text=November%20EP"
+        },
+        {
+          "id": "hgh-gone",
+          "title": "Gone",
+          "artist": "Gone",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-the-heycitizen-experience",
+          "title": "The Heycitizen Experience",
+          "artist": "The Heycitizen Experience",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-bowl-covers",
+          "title": "Bowl Covers",
+          "artist": "Bowl Covers",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-spectral-hiding",
+          "title": "Spectral Hiding",
+          "artist": "Spectral Hiding",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-underwater-single",
+          "title": "Underwater - Single",
+          "artist": "Underwater - Single",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-ring-that-bell",
+          "title": "Ring That Bell",
+          "artist": "Ring That Bell",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-radio-brigade",
+          "title": "Radio Brigade",
+          "artist": "Radio Brigade",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-generation-gap",
+          "title": "Generation Gap",
+          "artist": "Generation Gap",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-now-i-feel-it",
+          "title": "now i feel it",
+          "artist": "now i feel it",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-deathdreams",
+          "title": "deathdreams",
+          "artist": "deathdreams",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-wild-and-free",
+          "title": "Wild and Free",
+          "artist": "Wild and Free",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-red-wings",
+          "title": "Red Wings",
+          "artist": "Red Wings",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-pilot",
+          "title": "Pilot",
+          "artist": "Pilot",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-love-in-its-purest-form",
+          "title": "Love In Its Purest Form",
+          "artist": "Love In Its Purest Form",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-kurtisdrums",
+          "title": "Kurtisdrums",
+          "artist": "Kurtisdrums",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-aged-friends-old-whiskey",
+          "title": "Aged Friends & Old Whiskey",
+          "artist": "Aged Friends & Old Whiskey",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-disco-swag",
+          "title": "Disco Swag",
+          "artist": "Disco Swag",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-citybeach",
+          "title": "CityBeach",
+          "artist": "CityBeach",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-think-ep",
+          "title": "Think EP",
+          "artist": "Think EP",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-wrath-of-banjo",
+          "title": "Wrath Of Banjo",
+          "artist": "Wrath Of Banjo",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-satoshi-streamer",
+          "title": "Satoshi Streamer",
+          "artist": "Satoshi Streamer",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-opus",
+          "title": "Opus",
+          "artist": "Opus",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-all-in-a-day",
+          "title": "all in a day",
+          "artist": "all in a day",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-beauty",
+          "title": "Beauty",
+          "artist": "Beauty",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-music-from-the-doerfel-verse",
+          "title": "Music From The Doerfel-Verse",
+          "artist": "Music From The Doerfel-Verse",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-ben-doerfel",
+          "title": "Ben Doerfel",
+          "artist": "Ben Doerfel",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-himalaya",
+          "title": "Himalaya",
+          "artist": "Himalaya",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-heycitizen-s-lo-fi-hip-hop-beats-to-study-and-relax-to",
+          "title": "HeyCitizen's Lo-Fi Hip-Hop Beats to Study and Relax to",
+          "artist": "HeyCitizen's Lo-Fi Hip-Hop Beats to Study and Relax to",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-merry-christmix",
+          "title": "Merry Christmix",
+          "artist": "Merry Christmix",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-your-chance",
+          "title": "Your Chance",
+          "artist": "Your Chance",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-let-go-what-s-holding-you-back",
+          "title": "Let Go (What's holding you back)",
+          "artist": "Let Go (What's holding you back)",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-bitpunk-fm-unwound",
+          "title": "bitpunk.fm unwound",
+          "artist": "bitpunk.fm unwound",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-sensitive-guy",
+          "title": "Sensitive Guy",
+          "artist": "Sensitive Guy",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-peach-clouds",
+          "title": "Peach Clouds",
+          "artist": "Peach Clouds",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-pour-over",
+          "title": "Pour Over",
+          "artist": "Pour Over",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-18-sundays",
+          "title": "18 Sundays",
+          "artist": "18 Sundays",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-rock-n-roll-breakheart",
+          "title": "Rock'n'Roll Breakheart",
+          "artist": "Rock'n'Roll Breakheart",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-alandace",
+          "title": "Alandace",
+          "artist": "Alandace",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-beyond-the-hills",
+          "title": "Beyond the Hills",
+          "artist": "Beyond the Hills",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-dfb-volume-1",
+          "title": "DFB Volume 1",
+          "artist": "DFB Volume 1",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-so-it-goes",
+          "title": "So It Goes",
+          "artist": "So It Goes",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-unsound-existence-self-hosted-version",
+          "title": "Unsound Existence (self-hosted version)",
+          "artist": "Unsound Existence (self-hosted version)",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-first-married-christmas",
+          "title": "First Married Christmas",
+          "artist": "First Married Christmas",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-bowl-after-bowl",
+          "title": "Bowl After Bowl",
+          "artist": "Bowl After Bowl",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-nostalgic",
+          "title": "Nostalgic",
+          "artist": "Nostalgic",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        },
+        {
+          "id": "hgh-they-don-t-know",
+          "title": "They Don't Know",
+          "artist": "They Don't Know",
+          "currentArt": "https://cdn.kolomona.com/artwork/placeholder-album-art.jpg"
+        }
+      ]
+    },
+    {
+      "type": "trackUrls",
+      "priority": "LOW",
+      "count": 123,
+      "items": [
+        {
+          "id": "music-from-the-doerfelverse",
+          "title": "Music From The Doerfel-Verse",
+          "missingCount": 41,
+          "totalTracks": 41
+        },
+        {
+          "id": "bloodshot-lies-album",
+          "title": "Bloodshot Lies - The Album",
+          "missingCount": 14,
+          "totalTracks": 14
+        },
+        {
+          "id": "intothedoerfelverse",
+          "title": "Into The Doerfel-Verse",
+          "missingCount": 57,
+          "totalTracks": 57
+        },
+        {
+          "id": "wrath-of-banjo",
+          "title": "Wrath Of Banjo",
+          "missingCount": 2,
+          "totalTracks": 2
+        },
+        {
+          "id": "ben-doerfel",
+          "title": "Ben Doerfel",
+          "missingCount": 10,
+          "totalTracks": 10
+        },
+        {
+          "id": "able-and-the-wolf",
+          "title": "Stay Awhile",
+          "missingCount": 7,
+          "totalTracks": 7
+        },
+        {
+          "id": "18sundays",
+          "title": "18 Sundays",
+          "missingCount": 12,
+          "totalTracks": 12
+        },
+        {
+          "id": "alandace",
+          "title": "Alandace",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "autumn",
+          "title": "Autumn",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "christ-exalted",
+          "title": "Christ Exalted",
+          "missingCount": 11,
+          "totalTracks": 11
+        },
+        {
+          "id": "come-back-to-me",
+          "title": "Come Back To Me",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "dead-time-live-2016",
+          "title": "Dead Time(live 2016)",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "dfbv1",
+          "title": "DFB Volume 1",
+          "missingCount": 6,
+          "totalTracks": 6
+        },
+        {
+          "id": "dfbv2",
+          "title": "DFB Volume 2",
+          "missingCount": 9,
+          "totalTracks": 9
+        },
+        {
+          "id": "disco-swag",
+          "title": "Disco Swag",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "first-married-christmas",
+          "title": "First Married Christmas",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "generation-gap",
+          "title": "Generation Gap",
+          "missingCount": 10,
+          "totalTracks": 10
+        },
+        {
+          "id": "heartbreak",
+          "title": "Heartbreak",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "merry-christmix",
+          "title": "Merry Christmix",
+          "missingCount": 2,
+          "totalTracks": 2
+        },
+        {
+          "id": "middle-season-let-go",
+          "title": "Let Go (What's holding you back)",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "phatty-the-grasshopper",
+          "title": "Phatty The Grasshopper",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "possible",
+          "title": "Possible",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "pour-over",
+          "title": "Pour Over",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "psalm-54",
+          "title": "Psalm 54",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "sensitive-guy",
+          "title": "Sensitive Guy",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "they-dont-know",
+          "title": "They Don't Know",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "think-ep",
+          "title": "Think EP",
+          "missingCount": 6,
+          "totalTracks": 6
+        },
+        {
+          "id": "underwater-single",
+          "title": "Underwater - Single",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "unsound-existence",
+          "title": "Unsound Existence (self-hosted version)",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "you-are-my-world",
+          "title": "You Are My World",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "you-feel-like-home",
+          "title": "You Feel Like Home(Single)",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "your-chance",
+          "title": "Your Chance",
+          "missingCount": 10,
+          "totalTracks": 10
+        },
+        {
+          "id": "opus",
+          "title": "Opus",
+          "missingCount": 5,
+          "totalTracks": 5
+        },
+        {
+          "id": "ed-doerfel-nostalgic",
+          "title": "Nostalgic",
+          "missingCount": 5,
+          "totalTracks": 5
+        },
+        {
+          "id": "ed-doerfel-city-beach",
+          "title": "CityBeach",
+          "missingCount": 3,
+          "totalTracks": 3
+        },
+        {
+          "id": "ed-doerfel-kurtisdrums-v1",
+          "title": "Kurtisdrums",
+          "missingCount": 20,
+          "totalTracks": 20
+        },
+        {
+          "id": "tj-doerfel-ring-that-bell",
+          "title": "Ring That Bell",
+          "missingCount": 6,
+          "totalTracks": 6
+        },
+        {
+          "id": "deathdreams",
+          "title": "deathdreams",
+          "missingCount": 11,
+          "totalTracks": 11
+        },
+        {
+          "id": "waytogo",
+          "title": "Way to Go",
+          "missingCount": 10,
+          "totalTracks": 10
+        },
+        {
+          "id": "c-kostra-now-i-feel-it",
+          "title": "now i feel it",
+          "missingCount": 10,
+          "totalTracks": 10
+        },
+        {
+          "id": "mellow-cassette-pilot",
+          "title": "Pilot",
+          "missingCount": 6,
+          "totalTracks": 6
+        },
+        {
+          "id": "mellow-cassette-radio-brigade",
+          "title": "Radio Brigade",
+          "missingCount": 6,
+          "totalTracks": 6
+        },
+        {
+          "id": "wavlake-album-1",
+          "title": "Tinderbox",
+          "missingCount": 13,
+          "totalTracks": 13
+        },
+        {
+          "id": "wavlake-album-2",
+          "title": "Singles",
+          "missingCount": 2,
+          "totalTracks": 2
+        },
+        {
+          "id": "wavlake-album-3",
+          "title": "Bowl of Oranges a Bright Eyes Cover",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "wavlake-album-4",
+          "title": "Goodbye Uncle Walt",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "wavlake-album-5",
+          "title": "Fight!",
+          "missingCount": 6,
+          "totalTracks": 6
+        },
+        {
+          "id": "wavlake-album-6",
+          "title": "Safe Some Place",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "wavlake-album-7",
+          "title": "You Should Waste It",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "wavlake-album-8",
+          "title": "The Kid, The Dad, The Mom & the Tiny Window",
+          "missingCount": 4,
+          "totalTracks": 4
+        },
+        {
+          "id": "wavlake-album-9",
+          "title": "Kids",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "wavlake-album-10",
+          "title": "Don't Worry, You Still Have Time To Ruin It - Demo",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "wavlake-album-11",
+          "title": "Rose",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "wavlake-album-12",
+          "title": "Fake Love - Demo",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "wavlake-album-13",
+          "title": "Roommates - Demo",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "wavlake-album-14",
+          "title": "Orange Pill, Pink Pill, White Pill - Demo",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "wavlake-album-15",
+          "title": "Tyson vs Paul",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "wavlake-album-16",
+          "title": "THEY RIDE",
+          "missingCount": 15,
+          "totalTracks": 15
+        },
+        {
+          "id": "wavlake-album-17",
+          "title": "More",
+          "missingCount": 11,
+          "totalTracks": 11
+        },
+        {
+          "id": "iroh-album-1",
+          "title": "Crocodile Tears",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "iroh-album-2",
+          "title": "Letters Of Regret ",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "iroh-album-3",
+          "title": "Hero",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "iroh-album-4",
+          "title": "Bound For Lonesome ",
+          "missingCount": 5,
+          "totalTracks": 5
+        },
+        {
+          "id": "iroh-album-5",
+          "title": "The First Five Years",
+          "missingCount": 20,
+          "totalTracks": 20
+        },
+        {
+          "id": "iroh-album-6",
+          "title": "Daddy Gene",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "iroh-album-7",
+          "title": "Love Strong",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "iroh-album-8",
+          "title": "High Gravity",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "iroh-album-9",
+          "title": "Small World",
+          "missingCount": 5,
+          "totalTracks": 5
+        },
+        {
+          "id": "iroh-album-10",
+          "title": "Strangers To Lovers - Live from Sloe Flower Studio",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "iroh-album-11",
+          "title": "Can't Promise You The World - Live from Sloe Flower Studio",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "heycitizen-experience",
+          "title": "The Heycitizen Experience",
+          "missingCount": 19,
+          "totalTracks": 19
+        },
+        {
+          "id": "heycitizen-lofi",
+          "title": "HeyCitizen's Lo-Fi Hip-Hop Beats to Study and Relax to",
+          "missingCount": 6,
+          "totalTracks": 6
+        },
+        {
+          "id": "anni-powell-wild-and-free",
+          "title": "Wild and Free",
+          "missingCount": 5,
+          "totalTracks": 5
+        },
+        {
+          "id": "anni-powell-beauty",
+          "title": "Beauty",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "anni-powell-peach-clouds",
+          "title": "Peach Clouds",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "anni-powell-beyond-the-hills",
+          "title": "Beyond the Hills",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "anni-powell-lingo",
+          "title": "Lingo",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "anni-powell-so-it-goes",
+          "title": "So It Goes",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "fountain-artist-takeover",
+          "title": "Fountain Artist Takeover - Nate Johnivan",
+          "missingCount": 30,
+          "totalTracks": 30
+        },
+        {
+          "id": "empty-passenger-seat",
+          "title": "Empty Passenger Seat",
+          "missingCount": 12,
+          "totalTracks": 12
+        },
+        {
+          "id": "wavlake-com-feed-music-ef800a88-9a1c-4f8e-a7c5-f83d7d9b1c87",
+          "title": "Chasing Waterfalls",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "midnight-breakheart",
+          "title": "Midnight Breakheart",
+          "missingCount": 6,
+          "totalTracks": 6
+        },
+        {
+          "id": "satoshi-streamer",
+          "title": "Satoshi Streamer",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "panisee-attack",
+          "title": "PANISEE Attack",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "2-crystal-balls",
+          "title": "2 Crystal Balls",
+          "missingCount": 3,
+          "totalTracks": 3
+        },
+        {
+          "id": "rock-n-roll-breakheart",
+          "title": "Rock'n'Roll Breakheart",
+          "missingCount": 7,
+          "totalTracks": 7
+        },
+        {
+          "id": "elijah-lied-all-in-a-day",
+          "title": "all in a day",
+          "missingCount": 5,
+          "totalTracks": 5
+        },
+        {
+          "id": "wavlake-com-feed-music-883ea557-39c0-4bec-9618-c75978bc63b5",
+          "title": "Lost Summer",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "ollie-i-never-thought-things-would-be-different",
+          "title": "i never thought things would be different",
+          "missingCount": 3,
+          "totalTracks": 3
+        },
+        {
+          "id": "ollie-ed653567-a662-4ed9-bc0d-387f8e19b6f3",
+          "title": "Feelings",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "ollie-3a925dda-cc31-4bb6-b285-3a09ed2e5307",
+          "title": "Deep Ends",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "ollie-d0bebcfa-e20b-4b1b-b797-bd7ac95e646f",
+          "title": "Perfect Timing",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "ollie-a80efac4-3637-4618-bd52-55493ce7d4c4",
+          "title": "High Thru The Lows",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "ollie-746e12e4-3b0d-47d2-b0d4-dd12d3a652dd",
+          "title": "Cold Feet",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "ollie-c2ff5364-7b02-4b94-af2c-bdde4a952778",
+          "title": "Worst Way",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "ollie-99217ff9-bfaa-4903-9201-f39113920618",
+          "title": "Thankful (feat. Witt Lowry)",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "ollie-1e0e29c2-f05d-42a6-8b6e-acbfe2b29318",
+          "title": "Lowkey",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "ollie-3cc3847a-8d5f-4086-9501-c1500165da07",
+          "title": "Lost Cause",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "ollie-c5cc9864-c687-4c6d-937d-0aa5f103a8d2",
+          "title": "Home",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "ollie-ccd54520-79e6-47e6-bc7d-9d951c023ef1",
+          "title": "Burning Room",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "spectral-hiding",
+          "title": "Spectral Hiding",
+          "missingCount": 26,
+          "totalTracks": 26
+        },
+        {
+          "id": "poetry-on-tape",
+          "title": "Poetry on Tape",
+          "missingCount": 32,
+          "totalTracks": 32
+        },
+        {
+          "id": "bitpunk-fm",
+          "title": "bitpunk.fm",
+          "missingCount": 13,
+          "totalTracks": 13
+        },
+        {
+          "id": "unwound",
+          "title": "bitpunk.fm unwound",
+          "missingCount": 20,
+          "totalTracks": 20
+        },
+        {
+          "id": "vance-latta-love-in-its-purest-form",
+          "title": "Love In Its Purest Form",
+          "missingCount": 10,
+          "totalTracks": 10
+        },
+        {
+          "id": "delta-og-aged-friends-old-whiskey",
+          "title": "Aged Friends & Old Whiskey",
+          "missingCount": 6,
+          "totalTracks": 6
+        },
+        {
+          "id": "bowl-covers",
+          "title": "Bowl Covers",
+          "missingCount": 6,
+          "totalTracks": 6
+        },
+        {
+          "id": "red-arrow-highway-brothers-never-die",
+          "title": "Brothers Never Die",
+          "missingCount": 10,
+          "totalTracks": 10
+        },
+        {
+          "id": "drawing-monsters-nate-and-cole-find-a-radio",
+          "title": "Nate and Cole Find a Radio",
+          "missingCount": 14,
+          "totalTracks": 14
+        },
+        {
+          "id": "my-friend-jimi-b220b396-0ebe-4760-8294-4bb27e06eabf",
+          "title": "Real Me",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "my-friend-jimi-e3f0086f-5ee2-4ead-ba9d-78a9a29acac8",
+          "title": "Lonely Girl",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "my-friend-jimi-6c539346-f58e-4480-9276-32da31368f8e",
+          "title": "Just One Sip",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "my-friend-jimi-76407adf-773c-4eb2-b5e2-8aef137d781f",
+          "title": "Weather Man",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "my-friend-jimi-6e236029-d72e-48a4-8d0b-aecf78d39e87",
+          "title": "Falling Out of Love",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "my-friend-jimi-b6d8f17c-f448-4085-8ce2-8b247eb26e63",
+          "title": "Bullet Train",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "my-friend-jimi-2b5b26a9-3b7a-4f78-9db2-424d94b182d8",
+          "title": "Endless Deja Vu",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "my-friend-jimi-ed3d6bdf-011b-4416-ab87-591672c07145",
+          "title": "West Coast Drive",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "my-friend-jimi-3d8c7279-6aa6-41e7-be1c-2680e57af6c8",
+          "title": "Mrs Valentine",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "my-friend-jimi-86061a0e-52df-4cad-8c6d-cd1e19ca1e63",
+          "title": "Manic Tendencies",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "death-by-lions-the-sheer-magnitude-of-it-all",
+          "title": "The Sheer Magnitude Of it All",
+          "missingCount": 6,
+          "totalTracks": 6
+        },
+        {
+          "id": "death-by-lions-second-album",
+          "title": "Thanks For Being Great",
+          "missingCount": 6,
+          "totalTracks": 6
+        },
+        {
+          "id": "death-by-lions-i-guess-this-will-have-to-do-single",
+          "title": "I Guess This Will Have To Do",
+          "missingCount": 1,
+          "totalTracks": 1
+        },
+        {
+          "id": "drawing-monsters-old-wolf-wrong-scene",
+          "title": "Old Wolf, Wrong Scene",
+          "missingCount": 1,
+          "totalTracks": 1
+        }
+      ]
+    }
+  ]
+}
