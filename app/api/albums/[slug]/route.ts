@@ -188,7 +188,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
       lastUpdated: new Date().toISOString()
     }, {
       headers: {
-        'Cache-Control': 'public, max-age=300, s-maxage=300, stale-while-revalidate=600', // 5 minute cache
+        'Cache-Control': 'no-cache, no-store, must-revalidate', // Force refresh for artwork fix
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, OPTIONS',

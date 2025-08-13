@@ -1,0 +1,764 @@
+{
+  "timestamp": "2025-08-13T02:42:33.818Z",
+  "totalSuspicious": 26,
+  "notMusic": [
+    {
+      "id": "hgh-various-artists",
+      "title": "Church of the Redeemer",
+      "artist": "Church of the Redeemer",
+      "artwork": "https://podcasts.fusebox.fm/0bxo3OBxwJ/artwork/412b7630-2479-11ee-93b0-ba5fa9561315.png",
+      "trackCount": 22,
+      "genericTrackCount": 22,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Track 149",
+        "Track 309",
+        "Track 356"
+      ],
+      "feedGuid": "fc815bcf-3639-5395-ba7d-fa217ec93d32",
+      "likely": "NOT_MUSIC"
+    },
+    {
+      "id": "hgh-bowl-after-bowl",
+      "title": "Bowl After Bowl",
+      "artist": "Bowl After Bowl",
+      "artwork": "https://pbcdn1.podbean.com/imglogo/image-logo/8891795/Bowl-After-BOWL-smol.jpg",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 1,
+      "sampleTracks": [
+        "Episode 397 ★ Hit The Blow"
+      ],
+      "feedGuid": "2d418249-453a-5714-8abc-5b657570b641",
+      "likely": "NOT_MUSIC"
+    }
+  ],
+  "wrongArt": [
+    {
+      "id": "hgh-these-days",
+      "title": "These Days",
+      "artist": "These Days",
+      "artwork": "https://static.libsyn.com/p/assets/a/0/8/a/a08a9139e0e390cd27a2322813b393ee/These_Are_The_Days_Thumbnail-20240930-ett40kfq8r.png",
+      "trackCount": 2,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "These Days",
+        "These Days"
+      ],
+      "feedGuid": "03682fbc-b8e7-505e-b5d2-8cb0f32ff2cf",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-gay",
+      "title": "Gay?",
+      "artist": "Gay?",
+      "artwork": "https://megaphone.imgix.net/podcasts/6f8ec6e8-84a5-11ef-ba56-7fadd5192b92/image/332ccbe1e482695d079a9d55dc6c5ec5.jpg?ixlib=rails-4.3.1&max-w=3000&max-h=3000&fit=crop&auto=format,compress",
+      "trackCount": 4,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Red",
+        "Friend",
+        "Mexico"
+      ],
+      "feedGuid": "fb469712-af8e-57c9-b533-ddaebd452ab2",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-true-blue",
+      "title": "True Blue",
+      "artist": "True Blue",
+      "artwork": "https://megaphone.imgix.net/podcasts/38acafe2-2262-11ee-950d-af9f985de25a/image/80dcf20a6f300e6b548544ec8cd42345.jpg?ixlib=rails-4.3.1&max-w=3000&max-h=3000&fit=crop&auto=format,compress",
+      "trackCount": 3,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Speed Limit Years",
+        "You Can Only Be So Cosmic",
+        "Country Badminton"
+      ],
+      "feedGuid": "d577b6cd-8c41-548b-abba-60e1502a94df",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-the-lightning",
+      "title": "The Lightning",
+      "artist": "The Lightning",
+      "artwork": "https://megaphone.imgix.net/podcasts/8d601198-e6c9-11e8-a244-b79693f9f0ce/image/LRP-Logo-Social-Tile-1.jpg?ixlib=rails-4.3.1&max-w=3000&max-h=3000&fit=crop&auto=format,compress",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "The Lightning"
+      ],
+      "feedGuid": "1b59e954-db0a-5096-8116-2ef3638cbb66",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-kick-it",
+      "title": "Kick It",
+      "artist": "Kick It",
+      "artwork": "https://d3wo5wojvuv7l.cloudfront.net/t_rss_itunes_square_1400/images.spreaker.com/original/07402c4bec3dbd810251551cc4a451cc.jpg",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Kick It"
+      ],
+      "feedGuid": "a1e7b24a-e2b5-5232-be37-69f71dd0739e",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-no-return",
+      "title": "no return",
+      "artist": "no return",
+      "artwork": "https://static.libsyn.com/p/assets/5/b/4/a/5b4aeb403956f6d0/New_Image_for_Libsyn.png",
+      "trackCount": 2,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "no return",
+        "no return"
+      ],
+      "feedGuid": "ae017039-59ec-52c3-8528-368541b59d97",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-new-religion",
+      "title": "New Religion",
+      "artist": "New Religion",
+      "artwork": "https://megaphone.imgix.net/podcasts/1c98f90c-ed8b-11e8-95be-bb239e0d538f/image/indianreligions1.png?ixlib=rails-4.3.1&max-w=3000&max-h=3000&fit=crop&auto=format,compress",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "New Religion"
+      ],
+      "feedGuid": "a9aa9939-2bb1-52a7-90c7-bdf12abf4eb4",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-youre-ok-single",
+      "title": "You're OK (single)",
+      "artist": "You're OK (single)",
+      "artwork": "https://ssl-static.libsyn.com/p/assets/3/f/5/d/3f5d5bbf8e293263a04421dee9605cbd/214F8567-B016-44DE-99F6-CB341A6BFB71.jpeg",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "You're OK"
+      ],
+      "feedGuid": "df430c13-2dae-5aef-8b0d-728148bd3587",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-rainmaker",
+      "title": "Rainmaker",
+      "artist": "Rainmaker",
+      "artwork": "https://megaphone.imgix.net/podcasts/16e9a80e-a044-11ea-8a90-ef9eac92fb44/image/f27444f2745f5fffe41ffc51ea7c7048.png?ixlib=rails-4.3.1&max-w=3000&max-h=3000&fit=crop&auto=format,compress",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Kandy Kane"
+      ],
+      "feedGuid": "7ddfdfb9-cc41-5c27-b1b7-cef7cf40071b",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-stuck-in-the-middle",
+      "title": "Stuck in the Middle",
+      "artist": "Stuck in the Middle",
+      "artwork": "https://pbcdn1.podbean.com/imglogo/image-logo/19569940/podbean_final_dgmkns.png",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Stuck in the Middle"
+      ],
+      "feedGuid": "ca8c1e63-1e3a-5e7c-9cc8-ef9291f67255",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-consequence",
+      "title": "Consequence",
+      "artist": "Consequence",
+      "artwork": "https://storage.buzzsprout.com/zoxlxxcw6y44mprrhho01drokgx7?.jpg",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Consequence"
+      ],
+      "feedGuid": "62ec5dbe-781e-5335-9787-710a72d519a7",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-underground",
+      "title": "Underground",
+      "artist": "Underground",
+      "artwork": "https://storage.buzzsprout.com/mev3iqgng895zb411h62t1wv75fa?.jpg",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Underground"
+      ],
+      "feedGuid": "55681259-eba9-54ea-b550-e8bb1f5881d7",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-nocturnal",
+      "title": "Nocturnal",
+      "artist": "Nocturnal",
+      "artwork": "https://static.libsyn.com/p/assets/a/4/8/0/a480a78db635eb7516c3140a3186d450/NOCTRANS_ARTWORK_2000X2000.jpg",
+      "trackCount": 2,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Nocturnal",
+        "Nocturnal"
+      ],
+      "feedGuid": "19e97c5f-5b45-5578-9519-5e460a2d05a3",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-vices",
+      "title": "Vices",
+      "artist": "Vices",
+      "artwork": "https://megaphone.imgix.net/podcasts/e2a67bd0-80e0-11ef-af92-cf5cf2f9800c/image/35c0ff6b5d41685a7edf81b0d7342176.jpg?ixlib=rails-4.3.1&max-w=3000&max-h=3000&fit=crop&auto=format,compress",
+      "trackCount": 2,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Vices",
+        "Vices"
+      ],
+      "feedGuid": "34973f26-85b8-582b-9db3-f67fe4be9ee7",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-giving-up-the-ghost",
+      "title": "Giving Up The Ghost",
+      "artist": "Giving Up The Ghost",
+      "artwork": "https://d3wo5wojvuv7l.cloudfront.net/t_rss_itunes_square_1400/images.spreaker.com/original/55241788a7752684410bd84efa2a6f5d.jpg",
+      "trackCount": 2,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Giving Up The Ghost",
+        "Giving Up The Ghost"
+      ],
+      "feedGuid": "84971935-1bbe-5b4b-9ce2-7de5008b9f30",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-red-light",
+      "title": "Red Light",
+      "artist": "Red Light",
+      "artwork": "https://pbcdn1.podbean.com/imglogo/image-logo/10635338/Podcast-Cover-1BM.png",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Red Light"
+      ],
+      "feedGuid": "cf3d1279-c38c-51fc-a834-96e6b9b71f45",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-doomsday",
+      "title": "Doomsday",
+      "artist": "Doomsday",
+      "artwork": "https://d3wo5wojvuv7l.cloudfront.net/t_rss_itunes_square_1400/images.spreaker.com/original/b7688bfd9156e005fb094004e569d656.jpg",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Doomsday"
+      ],
+      "feedGuid": "07121659-17cc-5e3e-b754-b9a1de54b325",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-big-day",
+      "title": "Big Day",
+      "artist": "Big Day",
+      "artwork": "https://pbcdn1.podbean.com/imglogo/image-logo/1112978/Days_in_wild_podcast_banner_2_png.jpg",
+      "trackCount": 3,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "4th & Final",
+        "Dancing in the Red",
+        "Catacomb"
+      ],
+      "feedGuid": "b27c1f56-dff1-5fdd-bdee-a00e50c4c3f1",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-blueprint",
+      "title": "Blueprint",
+      "artist": "Blueprint",
+      "artwork": "https://pbcdn1.podbean.com/imglogo/image-logo/7137119/FABS_PC_Cover_3_951w4.png",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Blueprint"
+      ],
+      "feedGuid": "394f9ec5-c93c-57f2-a107-418898406215",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-push",
+      "title": "Push",
+      "artist": "Push",
+      "artwork": "https://static.libsyn.com/p/assets/2/c/0/d/2c0d49eb23e196a5bafc7308ab683e82/NEW_PODCAST_ICON_2021.png",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Let's Go"
+      ],
+      "feedGuid": "2a23c51f-e057-5f38-9fb1-2f426ecbe13f",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-catacomb",
+      "title": "Catacomb",
+      "artist": "Catacomb",
+      "artwork": "https://pbcdn1.podbean.com/imglogo/image-logo/6237155/Episode_066-2_yxzdkm.png",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Catacomb"
+      ],
+      "feedGuid": "5888ede6-1656-43cb-9c4a-50c05abcc2a0",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-deep-end",
+      "title": "DEEP END",
+      "artist": "DEEP END",
+      "artwork": "https://d3wo5wojvuv7l.cloudfront.net/t_rss_itunes_square_1400/images.spreaker.com/original/328cd61cfc6ff15bf8d9757e2f2d048e.jpg",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "DEEP END"
+      ],
+      "feedGuid": "b4a623a6-189a-5544-9ee4-9c147623227c",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-rockstar",
+      "title": "Rockstar",
+      "artist": "Rockstar",
+      "artwork": "https://megaphone.imgix.net/podcasts/e73a4736-56dd-11e9-b5f1-bf49e22c6d23/image/RER_Podcast_Logo_2023_Ombre_BG.png?ixlib=rails-4.3.1&max-w=3000&max-h=3000&fit=crop&auto=format,compress",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Rockstar"
+      ],
+      "feedGuid": "bac17f09-ef21-5218-811b-8e61775c9d67",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-gone",
+      "title": "Gone",
+      "artist": "Gone",
+      "artwork": "https://megaphone.imgix.net/podcasts/00e13f54-9857-11ee-811e-7b8f8141499f/image/9a86edf4591ff64c2b436532e6744efb.jpg?ixlib=rails-4.3.1&max-w=3000&max-h=3000&fit=crop&auto=format,compress",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Gone (ft Lil B, MoeFactz, FM Road Trip)"
+      ],
+      "feedGuid": "82cbf41e-dffa-5b43-a339-b0af58471dae",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    }
+  ],
+  "allSuspicious": [
+    {
+      "id": "hgh-these-days",
+      "title": "These Days",
+      "artist": "These Days",
+      "artwork": "https://static.libsyn.com/p/assets/a/0/8/a/a08a9139e0e390cd27a2322813b393ee/These_Are_The_Days_Thumbnail-20240930-ett40kfq8r.png",
+      "trackCount": 2,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "These Days",
+        "These Days"
+      ],
+      "feedGuid": "03682fbc-b8e7-505e-b5d2-8cb0f32ff2cf",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-gay",
+      "title": "Gay?",
+      "artist": "Gay?",
+      "artwork": "https://megaphone.imgix.net/podcasts/6f8ec6e8-84a5-11ef-ba56-7fadd5192b92/image/332ccbe1e482695d079a9d55dc6c5ec5.jpg?ixlib=rails-4.3.1&max-w=3000&max-h=3000&fit=crop&auto=format,compress",
+      "trackCount": 4,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Red",
+        "Friend",
+        "Mexico"
+      ],
+      "feedGuid": "fb469712-af8e-57c9-b533-ddaebd452ab2",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-true-blue",
+      "title": "True Blue",
+      "artist": "True Blue",
+      "artwork": "https://megaphone.imgix.net/podcasts/38acafe2-2262-11ee-950d-af9f985de25a/image/80dcf20a6f300e6b548544ec8cd42345.jpg?ixlib=rails-4.3.1&max-w=3000&max-h=3000&fit=crop&auto=format,compress",
+      "trackCount": 3,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Speed Limit Years",
+        "You Can Only Be So Cosmic",
+        "Country Badminton"
+      ],
+      "feedGuid": "d577b6cd-8c41-548b-abba-60e1502a94df",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-various-artists",
+      "title": "Church of the Redeemer",
+      "artist": "Church of the Redeemer",
+      "artwork": "https://podcasts.fusebox.fm/0bxo3OBxwJ/artwork/412b7630-2479-11ee-93b0-ba5fa9561315.png",
+      "trackCount": 22,
+      "genericTrackCount": 22,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Track 149",
+        "Track 309",
+        "Track 356"
+      ],
+      "feedGuid": "fc815bcf-3639-5395-ba7d-fa217ec93d32",
+      "likely": "NOT_MUSIC"
+    },
+    {
+      "id": "hgh-the-lightning",
+      "title": "The Lightning",
+      "artist": "The Lightning",
+      "artwork": "https://megaphone.imgix.net/podcasts/8d601198-e6c9-11e8-a244-b79693f9f0ce/image/LRP-Logo-Social-Tile-1.jpg?ixlib=rails-4.3.1&max-w=3000&max-h=3000&fit=crop&auto=format,compress",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "The Lightning"
+      ],
+      "feedGuid": "1b59e954-db0a-5096-8116-2ef3638cbb66",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-kick-it",
+      "title": "Kick It",
+      "artist": "Kick It",
+      "artwork": "https://d3wo5wojvuv7l.cloudfront.net/t_rss_itunes_square_1400/images.spreaker.com/original/07402c4bec3dbd810251551cc4a451cc.jpg",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Kick It"
+      ],
+      "feedGuid": "a1e7b24a-e2b5-5232-be37-69f71dd0739e",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-no-return",
+      "title": "no return",
+      "artist": "no return",
+      "artwork": "https://static.libsyn.com/p/assets/5/b/4/a/5b4aeb403956f6d0/New_Image_for_Libsyn.png",
+      "trackCount": 2,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "no return",
+        "no return"
+      ],
+      "feedGuid": "ae017039-59ec-52c3-8528-368541b59d97",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-new-religion",
+      "title": "New Religion",
+      "artist": "New Religion",
+      "artwork": "https://megaphone.imgix.net/podcasts/1c98f90c-ed8b-11e8-95be-bb239e0d538f/image/indianreligions1.png?ixlib=rails-4.3.1&max-w=3000&max-h=3000&fit=crop&auto=format,compress",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "New Religion"
+      ],
+      "feedGuid": "a9aa9939-2bb1-52a7-90c7-bdf12abf4eb4",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-youre-ok-single",
+      "title": "You're OK (single)",
+      "artist": "You're OK (single)",
+      "artwork": "https://ssl-static.libsyn.com/p/assets/3/f/5/d/3f5d5bbf8e293263a04421dee9605cbd/214F8567-B016-44DE-99F6-CB341A6BFB71.jpeg",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "You're OK"
+      ],
+      "feedGuid": "df430c13-2dae-5aef-8b0d-728148bd3587",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-rainmaker",
+      "title": "Rainmaker",
+      "artist": "Rainmaker",
+      "artwork": "https://megaphone.imgix.net/podcasts/16e9a80e-a044-11ea-8a90-ef9eac92fb44/image/f27444f2745f5fffe41ffc51ea7c7048.png?ixlib=rails-4.3.1&max-w=3000&max-h=3000&fit=crop&auto=format,compress",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Kandy Kane"
+      ],
+      "feedGuid": "7ddfdfb9-cc41-5c27-b1b7-cef7cf40071b",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-stuck-in-the-middle",
+      "title": "Stuck in the Middle",
+      "artist": "Stuck in the Middle",
+      "artwork": "https://pbcdn1.podbean.com/imglogo/image-logo/19569940/podbean_final_dgmkns.png",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Stuck in the Middle"
+      ],
+      "feedGuid": "ca8c1e63-1e3a-5e7c-9cc8-ef9291f67255",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-consequence",
+      "title": "Consequence",
+      "artist": "Consequence",
+      "artwork": "https://storage.buzzsprout.com/zoxlxxcw6y44mprrhho01drokgx7?.jpg",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Consequence"
+      ],
+      "feedGuid": "62ec5dbe-781e-5335-9787-710a72d519a7",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-underground",
+      "title": "Underground",
+      "artist": "Underground",
+      "artwork": "https://storage.buzzsprout.com/mev3iqgng895zb411h62t1wv75fa?.jpg",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Underground"
+      ],
+      "feedGuid": "55681259-eba9-54ea-b550-e8bb1f5881d7",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-nocturnal",
+      "title": "Nocturnal",
+      "artist": "Nocturnal",
+      "artwork": "https://static.libsyn.com/p/assets/a/4/8/0/a480a78db635eb7516c3140a3186d450/NOCTRANS_ARTWORK_2000X2000.jpg",
+      "trackCount": 2,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Nocturnal",
+        "Nocturnal"
+      ],
+      "feedGuid": "19e97c5f-5b45-5578-9519-5e460a2d05a3",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-vices",
+      "title": "Vices",
+      "artist": "Vices",
+      "artwork": "https://megaphone.imgix.net/podcasts/e2a67bd0-80e0-11ef-af92-cf5cf2f9800c/image/35c0ff6b5d41685a7edf81b0d7342176.jpg?ixlib=rails-4.3.1&max-w=3000&max-h=3000&fit=crop&auto=format,compress",
+      "trackCount": 2,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Vices",
+        "Vices"
+      ],
+      "feedGuid": "34973f26-85b8-582b-9db3-f67fe4be9ee7",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-giving-up-the-ghost",
+      "title": "Giving Up The Ghost",
+      "artist": "Giving Up The Ghost",
+      "artwork": "https://d3wo5wojvuv7l.cloudfront.net/t_rss_itunes_square_1400/images.spreaker.com/original/55241788a7752684410bd84efa2a6f5d.jpg",
+      "trackCount": 2,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Giving Up The Ghost",
+        "Giving Up The Ghost"
+      ],
+      "feedGuid": "84971935-1bbe-5b4b-9ce2-7de5008b9f30",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-red-light",
+      "title": "Red Light",
+      "artist": "Red Light",
+      "artwork": "https://pbcdn1.podbean.com/imglogo/image-logo/10635338/Podcast-Cover-1BM.png",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Red Light"
+      ],
+      "feedGuid": "cf3d1279-c38c-51fc-a834-96e6b9b71f45",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-doomsday",
+      "title": "Doomsday",
+      "artist": "Doomsday",
+      "artwork": "https://d3wo5wojvuv7l.cloudfront.net/t_rss_itunes_square_1400/images.spreaker.com/original/b7688bfd9156e005fb094004e569d656.jpg",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Doomsday"
+      ],
+      "feedGuid": "07121659-17cc-5e3e-b754-b9a1de54b325",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-big-day",
+      "title": "Big Day",
+      "artist": "Big Day",
+      "artwork": "https://pbcdn1.podbean.com/imglogo/image-logo/1112978/Days_in_wild_podcast_banner_2_png.jpg",
+      "trackCount": 3,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "4th & Final",
+        "Dancing in the Red",
+        "Catacomb"
+      ],
+      "feedGuid": "b27c1f56-dff1-5fdd-bdee-a00e50c4c3f1",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-blueprint",
+      "title": "Blueprint",
+      "artist": "Blueprint",
+      "artwork": "https://pbcdn1.podbean.com/imglogo/image-logo/7137119/FABS_PC_Cover_3_951w4.png",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Blueprint"
+      ],
+      "feedGuid": "394f9ec5-c93c-57f2-a107-418898406215",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-push",
+      "title": "Push",
+      "artist": "Push",
+      "artwork": "https://static.libsyn.com/p/assets/2/c/0/d/2c0d49eb23e196a5bafc7308ab683e82/NEW_PODCAST_ICON_2021.png",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Let's Go"
+      ],
+      "feedGuid": "2a23c51f-e057-5f38-9fb1-2f426ecbe13f",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-catacomb",
+      "title": "Catacomb",
+      "artist": "Catacomb",
+      "artwork": "https://pbcdn1.podbean.com/imglogo/image-logo/6237155/Episode_066-2_yxzdkm.png",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Catacomb"
+      ],
+      "feedGuid": "5888ede6-1656-43cb-9c4a-50c05abcc2a0",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-deep-end",
+      "title": "DEEP END",
+      "artist": "DEEP END",
+      "artwork": "https://d3wo5wojvuv7l.cloudfront.net/t_rss_itunes_square_1400/images.spreaker.com/original/328cd61cfc6ff15bf8d9757e2f2d048e.jpg",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "DEEP END"
+      ],
+      "feedGuid": "b4a623a6-189a-5544-9ee4-9c147623227c",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-bowl-after-bowl",
+      "title": "Bowl After Bowl",
+      "artist": "Bowl After Bowl",
+      "artwork": "https://pbcdn1.podbean.com/imglogo/image-logo/8891795/Bowl-After-BOWL-smol.jpg",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 1,
+      "sampleTracks": [
+        "Episode 397 ★ Hit The Blow"
+      ],
+      "feedGuid": "2d418249-453a-5714-8abc-5b657570b641",
+      "likely": "NOT_MUSIC"
+    },
+    {
+      "id": "hgh-rockstar",
+      "title": "Rockstar",
+      "artist": "Rockstar",
+      "artwork": "https://megaphone.imgix.net/podcasts/e73a4736-56dd-11e9-b5f1-bf49e22c6d23/image/RER_Podcast_Logo_2023_Ombre_BG.png?ixlib=rails-4.3.1&max-w=3000&max-h=3000&fit=crop&auto=format,compress",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Rockstar"
+      ],
+      "feedGuid": "bac17f09-ef21-5218-811b-8e61775c9d67",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    },
+    {
+      "id": "hgh-gone",
+      "title": "Gone",
+      "artist": "Gone",
+      "artwork": "https://megaphone.imgix.net/podcasts/00e13f54-9857-11ee-811e-7b8f8141499f/image/9a86edf4591ff64c2b436532e6744efb.jpg?ixlib=rails-4.3.1&max-w=3000&max-h=3000&fit=crop&auto=format,compress",
+      "trackCount": 1,
+      "genericTrackCount": 0,
+      "inappropriateTrackCount": 0,
+      "sampleTracks": [
+        "Gone (ft Lil B, MoeFactz, FM Road Trip)"
+      ],
+      "feedGuid": "82cbf41e-dffa-5b43-a339-b0af58471dae",
+      "likely": "MUSIC_WITH_WRONG_ART"
+    }
+  ]
+}

@@ -263,7 +263,7 @@ export default function CDNImage({
     }
     
     // Try image proxy for CORS errors (all devices)
-    if (retryCount === 1 && !currentSrc.includes('/api/')) {
+    if (retryCount === 1 && !currentSrc.includes('/api/') && !currentSrc.startsWith('data:')) {
       const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(currentSrc)}`;
       setCurrentSrc(proxyUrl);
       setHasError(false);
@@ -310,8 +310,12 @@ export default function CDNImage({
     const dims = getImageDimensions();
     let imageSrc = src;
     
+    // Never proxy data URLs - they're self-contained
+    if (src.startsWith('data:')) {
+      imageSrc = src;
+    }
     // Use proxy for all external URLs to avoid CORS and loading issues
-    const isExternalUrl = src && (
+    else if (src && (
       src.includes('cloudfront.net') ||
       src.includes('doerfelverse.com') ||
       src.includes('ableandthewolf.com') ||
@@ -320,9 +324,7 @@ export default function CDNImage({
       src.includes('music.behindthesch3m3s.com') ||
       src.includes('f4.bcbits.com') ||
       (!src.includes('re.podtards.com') && !src.includes('/api/') && src.startsWith('http'))
-    );
-    
-    if (isExternalUrl) {
+    )) {
       imageSrc = `/api/proxy-image?url=${encodeURIComponent(src)}`;
     } else if (isClient && isMobile) {
       // For mobile, if it's an external URL, use proxy immediately
