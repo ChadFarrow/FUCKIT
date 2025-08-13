@@ -23,20 +23,19 @@ export async function GET(request: Request) {
     // Force cache refresh to fix artwork issues
     const now = Date.now();
     cacheTimestamp = 0; // Force refresh
-    if (false) { // Disabled cache temporarily
+    if (false) { // Force fresh read to debug
       console.log(`Using cached data: ${cachedData?.feeds?.length || 0} feeds, ${cachedMusicTracks.length} music tracks`);
     } else {
       const parsedFeedsPath = path.join(process.cwd(), 'data', 'parsed-feeds.json');
       const musicTracksPath = path.join(process.cwd(), 'data', 'music-tracks.json');
       
-      if (!fs.existsSync(parsedFeedsPath)) {
-        console.warn('Parsed feeds data not found at:', parsedFeedsPath);
-        return NextResponse.json({ 
-          albums: [], 
-          totalCount: 0, 
-          lastUpdated: new Date().toISOString(),
-          error: 'Parsed feeds data not found' 
-        }, { status: 404 });
+      // Initialize empty data if parsed feeds don't exist (music-only mode)
+      let parsedFeedsData = { feeds: [] };
+      if (fs.existsSync(parsedFeedsPath)) {
+        const fileContent = fs.readFileSync(parsedFeedsPath, 'utf-8');
+        parsedFeedsData = JSON.parse(fileContent);
+      } else {
+        console.log('No parsed feeds found - using music tracks only');
       }
 
       if (!fs.existsSync(musicTracksPath)) {
@@ -49,7 +48,6 @@ export async function GET(request: Request) {
         }, { status: 404 });
       }
 
-      const fileContent = fs.readFileSync(parsedFeedsPath, 'utf-8');
       const musicTracksContent = fs.readFileSync(musicTracksPath, 'utf-8');
       
       // Load HGH resolved songs for Podcast Index lookup
@@ -61,7 +59,7 @@ export async function GET(request: Request) {
       
       // Validate JSON before parsing
       try {
-        cachedData = JSON.parse(fileContent);
+        cachedData = parsedFeedsData;
         const musicTracksParsed = JSON.parse(musicTracksContent);
         cachedHGHSongs = JSON.parse(hghSongsContent);
         
@@ -253,7 +251,193 @@ export async function GET(request: Request) {
       }
     });
     
-    const uniqueAlbums = Array.from(albumMap.values());
+    // ALSO add albums from music-tracks.json that aren't in parsed feeds
+    console.log('🎵 Adding albums from music-tracks.json...');
+    
+    // Group music tracks by feedGuid to create albums
+    const musicAlbumGroups = new Map<string, any>();
+    
+    cachedMusicTracks.forEach((track: any) => {
+      const key = track.feedGuid || 'unknown';
+      if (!musicAlbumGroups.has(key)) {
+        musicAlbumGroups.set(key, {
+          feedGuid: track.feedGuid,
+          feedTitle: track.feedTitle,
+          feedImage: track.feedImage || track.image,
+          feedUrl: track.feedUrl,
+          tracks: []
+        });
+      }
+      musicAlbumGroups.get(key).tracks.push(track);
+    });
+    
+    // Load publisher feeds data to match with music tracks
+    let publisherFeeds: any[] = [];
+    try {
+      const publisherFeedsPath = path.join(process.cwd(), 'data', 'publisher-feed-results.json');
+      if (fs.existsSync(publisherFeedsPath)) {
+        const publisherFeedsContent = fs.readFileSync(publisherFeedsPath, 'utf-8');
+        publisherFeeds = JSON.parse(publisherFeedsContent);
+        console.log(`✅ Loaded ${publisherFeeds.length} publisher feeds for matching`);
+      }
+    } catch (error) {
+      console.warn('Failed to load publisher feeds:', error);
+    }
+    
+    // Convert music track groups to album format
+    const musicAlbums = Array.from(musicAlbumGroups.values()).map((group: any) => {
+      // Skip if this feed URL is already in parsed feeds (to avoid duplicates)
+      const isDuplicate = albums.some((album: any) => album.feedUrl === group.feedUrl);
+      if (isDuplicate) return null;
+      
+      // Create album from music track group
+      const firstTrack = group.tracks[0];
+      const albumTitle = group.feedTitle || 'Unknown Album';
+      
+      // Extract artist from track data - find first track with valid artist that's different from album title
+      let artist = 'Unknown Artist';
+      for (const track of group.tracks) {
+        if (track.artist && track.artist.trim() !== '' && track.artist !== albumTitle) {
+          artist = track.artist;
+          break;
+        }
+      }
+      // Fallback to first track's artist if no better option found
+      if (artist === 'Unknown Artist' && firstTrack.artist) {
+        artist = firstTrack.artist;
+      }
+      
+      // Debug log for Tinderbox
+      if (albumTitle === 'Tinderbox') {
+        console.log(`🎵 DEBUG Tinderbox: albumTitle="${albumTitle}", final artist="${artist}"`);
+        console.log(`🎵 DEBUG Tinderbox tracks:`, group.tracks.map(t => ({title: t.title, artist: t.artist})));
+      }
+      
+      // Try to find matching publisher feed for this album/artist
+      let publisher = null;
+      if (publisherFeeds.length > 0) {
+        // Try to match by artist name (most reliable for Wavlake structure)
+        const matchByArtist = publisherFeeds.find((pubFeed: any) => {
+          const pubTitle = pubFeed.title?.replace('<![CDATA[', '').replace(']]>', '') || '';
+          // Exact match first
+          if (pubTitle.toLowerCase() === artist.toLowerCase()) {
+            console.log(`🎭 Matched "${albumTitle}" to publisher "${pubTitle}" (exact match)`);
+            return true;
+          }
+          // Partial match
+          if (pubTitle.toLowerCase().includes(artist.toLowerCase()) || 
+              artist.toLowerCase().includes(pubTitle.toLowerCase())) {
+            console.log(`🎭 Matched "${albumTitle}" to publisher "${pubTitle}" (partial match)`);
+            return true;
+          }
+          return false;
+        });
+        
+        if (matchByArtist) {
+          // Extract the artist GUID from the publisher feed URL
+          const artistGuid = matchByArtist.feed.originalUrl.split('/').pop() || '';
+          
+          publisher = {
+            feedGuid: artistGuid,
+            feedUrl: matchByArtist.feed.originalUrl,
+            title: matchByArtist.title?.replace('<![CDATA[', '').replace(']]>', '') || artist,
+            artistImage: matchByArtist.itunesImage || null
+          };
+          console.log(`🎭 Matched "${albumTitle}" to publisher "${publisher.title}" (${artistGuid})`);
+        } else {
+          // Try to match by checking if any track came from a discoveredFrom feed that might be related
+          const firstTrack = group.tracks[0];
+          if (firstTrack.feedUrl) {
+            // Extract the album GUID from the track's feed URL  
+            const albumGuid = firstTrack.feedUrl.split('/').pop();
+            
+            // Check if any publisher feed "discovered" this album
+            const matchByDiscovery = publisherFeeds.find((pubFeed: any) => 
+              pubFeed.discoveredFrom && pubFeed.discoveredFrom.includes(albumGuid)
+            );
+            
+            if (matchByDiscovery) {
+              const artistGuid = matchByDiscovery.feed.originalUrl.split('/').pop() || '';
+              
+              publisher = {
+                feedGuid: artistGuid,
+                feedUrl: matchByDiscovery.feed.originalUrl,
+                title: matchByDiscovery.title?.replace('<![CDATA[', '').replace(']]>', '') || artist,
+                artistImage: matchByDiscovery.itunesImage || null
+              };
+              console.log(`🔗 Matched "${albumTitle}" to publisher "${publisher.title}" by discovery link`);
+            }
+          }
+        }
+      }
+      
+      return {
+        id: generateAlbumSlug(albumTitle),
+        title: albumTitle,
+        artist: artist,
+        description: firstTrack.description || '',
+        coverArt: group.feedImage || firstTrack.image || `/api/placeholder-image?title=${encodeURIComponent(albumTitle)}&artist=${encodeURIComponent(artist)}`,
+        tracks: group.tracks.map((track: any, index: number) => ({
+          title: track.title || 'Untitled',
+          duration: track.duration ? Math.floor(track.duration / 60) + ':' + String(track.duration % 60).padStart(2, '0') : '0:00',
+          url: track.enclosureUrl || '',
+          trackNumber: index + 1,
+          subtitle: '',
+          summary: track.description || '',
+          image: track.image || group.feedImage || '',
+          explicit: track.explicit || false,
+          keywords: []
+        })),
+        podroll: null,
+        publisher: publisher, // Now includes publisher info when matched
+        funding: firstTrack.value ? { 
+          type: 'lightning', 
+          destinations: firstTrack.value.destinations || [] 
+        } : null,
+        feedId: group.feedGuid || 'music-' + generateAlbumSlug(albumTitle),
+        feedUrl: group.feedUrl || '',
+        lastUpdated: new Date(firstTrack.datePublished * 1000 || Date.now()).toISOString()
+      };
+    }).filter((album: any) => album !== null); // Remove null entries (duplicates)
+    
+    console.log(`✅ Added ${musicAlbums.length} albums from music tracks`);
+    
+    // Merge with existing albums
+    albums = [...albums, ...musicAlbums];
+    
+    // Re-run deduplication on the combined albums list
+    const finalAlbumMap = new Map<string, any>();
+    albums.forEach((album: any) => {
+      // Normalize the title and artist for better deduplication
+      const normalizedTitle = album.title
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, ' ')  // Replace multiple spaces with single space
+        .replace(/[^\w\s]/g, ''); // Remove special characters
+      
+      const normalizedArtist = album.artist
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, ' ')  // Replace multiple spaces with single space
+        .replace(/[^\w\s]/g, ''); // Remove special characters
+      
+      const key = `${normalizedTitle}|${normalizedArtist}`;
+      
+      // If we already have this album, keep the one with better data
+      if (finalAlbumMap.has(key)) {
+        const existing = finalAlbumMap.get(key);
+        // Keep the one with more tracks or better cover art
+        if (album.tracks.length > existing.tracks.length || 
+            (!existing.coverArt && album.coverArt) ||
+            (album.coverArt && !album.coverArt.includes('placeholder') && existing.coverArt?.includes('placeholder'))) {
+          finalAlbumMap.set(key, album);
+        }
+      } else {
+        finalAlbumMap.set(key, album);
+      }
+    });
+    
+    const uniqueAlbums = Array.from(finalAlbumMap.values());
     const totalCount = uniqueAlbums.length;
 
     // Apply pagination (limit=0 means return all)
