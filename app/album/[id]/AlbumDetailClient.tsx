@@ -14,10 +14,11 @@ import CDNImage from '@/components/CDNImage';
 
 interface AlbumDetailClientProps {
   albumTitle: string;
+  albumId: string; // Add albumId prop
   initialAlbum: RSSAlbum | null;
 }
 
-export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDetailClientProps) {
+export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum }: AlbumDetailClientProps) {
   const [album, setAlbum] = useState<RSSAlbum | null>(initialAlbum);
   const [isLoading, setIsLoading] = useState(!initialAlbum);
   const [error, setError] = useState<string | null>(null);
@@ -74,7 +75,7 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
     const preloadBackgroundImage = async () => {
       try {
         // Use the new specific album API endpoint for much faster lookup
-        const response = await fetch(`/api/albums/${encodeURIComponent(albumTitle)}`);
+        const response = await fetch(`/api/albums/${encodeURIComponent(albumId)}`);
         if (response.ok) {
           const data = await response.json();
           const foundAlbum = data.album;
@@ -98,8 +99,11 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
             img.onerror = (error) => {
               console.error('❌ Background image preload failed:', foundAlbum.coverArt, error);
               
-              // Try image proxy for external URLs
-              if (foundAlbum.coverArt && typeof foundAlbum.coverArt === 'string' && !foundAlbum.coverArt.includes('re.podtards.com')) {
+              // Try image proxy for external URLs (but never for data URLs)
+              if (foundAlbum.coverArt && 
+                  typeof foundAlbum.coverArt === 'string' && 
+                  !foundAlbum.coverArt.includes('re.podtards.com') &&
+                  !foundAlbum.coverArt.startsWith('data:')) {
                 const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(foundAlbum.coverArt)}`;
                 console.log('🔄 Trying image proxy for background:', proxyUrl);
                 
@@ -430,8 +434,8 @@ export default function AlbumDetailClient({ albumTitle, initialAlbum }: AlbumDet
           setError(null);
           
           // Use the new specific album API endpoint for much faster lookup
-          console.log(`🔍 Loading album: ${albumTitle}`);
-          const response = await fetch(`/api/albums/${encodeURIComponent(albumTitle)}`);
+          console.log(`🔍 Loading album: ${albumTitle} (ID: ${albumId})`);
+          const response = await fetch(`/api/albums/${encodeURIComponent(albumId)}`);
           
           if (!response.ok) {
             if (response.status === 404) {

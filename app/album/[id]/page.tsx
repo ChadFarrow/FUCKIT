@@ -126,5 +126,7 @@ export default async function AlbumDetailPage({ params }: { params: Promise<{ id
   // Let the client component handle data loading
   const album = null;
   
-  return <AlbumDetailClient albumTitle={albumTitle} initialAlbum={album} />;
+  // FIXED: Pass the original ID to the client component, not the converted title
+  // This allows the client component to fetch the album using the correct ID format
+  return <AlbumDetailClient albumTitle={albumTitle} albumId={id} initialAlbum={album} />;
 }
