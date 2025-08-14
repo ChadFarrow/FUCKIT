@@ -22,48 +22,53 @@ async function loadPublisherData(publisherId: string) {
   // First, try to resolve human-readable slug to actual feedGuid
   const publisherInfo = getPublisherInfo(publisherId);
   const actualFeedGuid = publisherInfo?.feedGuid || publisherId;
+  
   try {
-    const parsedFeedsPath = path.join(process.cwd(), 'data', 'parsed-feeds.json');
+    // Load from the new publisher feed results
+    const publisherFeedsPath = path.join(process.cwd(), 'data', 'publisher-feed-results.json');
     
-    if (!fs.existsSync(parsedFeedsPath)) {
-      console.error('Parsed feeds file not found at:', parsedFeedsPath);
+    if (!fs.existsSync(publisherFeedsPath)) {
+      console.error('Publisher feeds file not found at:', publisherFeedsPath);
       return null;
     }
 
-    const fileContent = fs.readFileSync(parsedFeedsPath, 'utf-8');
-    const parsedFeedsData = JSON.parse(fileContent);
+    const fileContent = fs.readFileSync(publisherFeedsPath, 'utf-8');
+    const publisherFeeds = JSON.parse(fileContent);
     
-    // Find the publisher feed by ID
-    const feedId = `${publisherId}-publisher`;
-    console.log(`🏢 Server-side: Looking for publisher feed with ID: ${feedId}`);
+    console.log(`🏢 Server-side: Looking for publisher: ${publisherId}`);
     
-    const publisherFeed = parsedFeedsData.feeds.find((feed: any) => 
-      feed.type === 'publisher' && 
-      feed.parseStatus === 'success' &&
-      feed.parsedData &&
-      feed.id === feedId
-    );
+    // Try to find publisher by title match (case-insensitive)
+    const publisherFeed = publisherFeeds.find((feed: any) => {
+      const cleanTitle = feed.title?.replace('<![CDATA[', '').replace(']]>', '').toLowerCase() || '';
+      return cleanTitle === publisherId.toLowerCase();
+    });
     
     if (!publisherFeed) {
-      console.log(`❌ Publisher feed not found: ${publisherId} (resolved to: ${actualFeedGuid})`);
-      console.log(`🔍 Available publisher feeds:`, parsedFeedsData.feeds
-        .filter((f: any) => f.type === 'publisher')
-        .map((f: any) => f.id)
-      );
+      console.log(`❌ Publisher not found: ${publisherId}`);
+      console.log(`🔍 Available publishers:`, publisherFeeds.map((f: any) => 
+        f.title?.replace('<![CDATA[', '').replace(']]>', '') || 'Unknown'
+      ));
       return null;
     }
     
-    console.log(`✅ Publisher feed found: ${publisherFeed.id}`);
+    console.log(`✅ Publisher found: ${publisherFeed.title}`);
     
+    // Convert to expected format
     const data = {
-      publisherInfo: publisherFeed.parsedData?.publisherInfo || null,
-      publisherItems: publisherFeed.parsedData?.publisherItems || publisherFeed.parsedData?.publisherInfo?.remoteItems || [],
-      feedId: publisherFeed.id
+      publisherInfo: {
+        name: publisherFeed.title?.replace('<![CDATA[', '').replace(']]>', '') || publisherId,
+        description: publisherFeed.description?.replace('<![CDATA[', '').replace(']]>', '') || '',
+        image: publisherFeed.itunesImage || null,
+        feedUrl: publisherFeed.feed.originalUrl,
+        feedGuid: publisherFeed.feed.originalUrl.split('/').pop() || ''
+      },
+      publisherItems: [], // Will be populated by client-side API call
+      feedId: publisherFeed.feed.id
     };
     
     console.log(`🏢 Server-side: Found publisher data for ${publisherId}:`, {
-      publisherItemsCount: data.publisherItems.length,
-      sampleItem: data.publisherItems[0]
+      name: data.publisherInfo.name,
+      feedGuid: data.publisherInfo.feedGuid
     });
     
     return data;

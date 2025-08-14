@@ -217,8 +217,8 @@ export default function HomePage() {
       setError(null);
       setLoadingProgress(0);
       
-      // Load albums - HGH tracks are now in the main database, no need for separate loading
-      const allAlbums = await loadAlbumsData('all', 0, 0); // Load all albums (0 = no limit)
+      // Load albums with pagination for better performance
+      const allAlbums = await loadAlbumsData('all', 50, 0); // Load first 50 albums initially
       
       // Store empty HGH albums array (they're now in the main database)
       // HGH filter removed
@@ -226,8 +226,8 @@ export default function HomePage() {
       // Use only the main albums (which now includes former HGH tracks)
       const combinedAlbums = allAlbums;
       
-      // Split albums for progressive display  
-      const criticalAlbumsData = combinedAlbums.slice(0, 12);
+      // Split albums for progressive display - show fewer initially for faster load
+      const criticalAlbumsData = combinedAlbums.slice(0, 8);
       setCriticalAlbums(criticalAlbumsData);
       setIsCriticalLoaded(true);
       setLoadingProgress(50);
@@ -257,16 +257,13 @@ export default function HomePage() {
     
     setIsLoadingMore(true);
     try {
-      // HGH filter removed - no longer needed
-      {
-        // Load more regular albums
-        const nextOffset = visibleAlbumCount;
-        const moreAlbums = await loadAlbumsData('all', 25, nextOffset);
-        
-        if (moreAlbums.length > 0) {
-          setEnhancedAlbums(prev => [...prev, ...moreAlbums]);
-          setVisibleAlbumCount(prev => prev + moreAlbums.length);
-        }
+      // Load more albums efficiently
+      const nextOffset = enhancedAlbums.length;
+      const moreAlbums = await loadAlbumsData('all', 20, nextOffset);
+      
+      if (moreAlbums.length > 0) {
+        setEnhancedAlbums(prev => [...prev, ...moreAlbums]);
+        setVisibleAlbumCount(prev => prev + moreAlbums.length);
       }
     } catch (error) {
       console.warn('Failed to load more albums:', error);
@@ -287,7 +284,7 @@ export default function HomePage() {
           loadMoreAlbums();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.5 } // Load more when user is halfway to the bottom
     );
     
     observer.observe(loadMoreRef.current);
@@ -303,7 +300,7 @@ export default function HomePage() {
         
         if (cached && timestamp) {
           const age = Date.now() - parseInt(timestamp);
-          if (age < 30 * 1000) { // 30 seconds cache to ensure fresh data after fixes
+          if (age < 5 * 60 * 1000) { // 5 minutes cache for better performance
             console.log('📦 Using cached albums');
             return JSON.parse(cached);
           }
@@ -314,8 +311,8 @@ export default function HomePage() {
       const params = new URLSearchParams({
         limit: limit.toString(),
         offset: offset.toString(),
-        tier: loadTier,
-        v: Date.now().toString() // Cache busting for fresh data
+        tier: loadTier
+        // Remove cache busting for better performance
       });
       
       const response = await fetch(`/api/albums?${params}`);
@@ -1283,6 +1280,18 @@ export default function HomePage() {
               )}
               
               {/* HGH filter removed - no longer needed */}
+              
+              {/* Infinite scroll trigger */}
+              {isEnhancedLoaded && enhancedAlbums.length > 0 && (
+                <div ref={loadMoreRef} className="h-20 flex items-center justify-center">
+                  {isLoadingMore && (
+                    <div className="flex items-center gap-2 text-gray-400">
+                      <div className="w-4 h-4 border-2 border-stablekraft-teal border-t-transparent rounded-full animate-spin"></div>
+                      <span>Loading more albums...</span>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           ) : (
             <div className="text-center py-12">

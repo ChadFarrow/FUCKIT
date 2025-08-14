@@ -104,9 +104,29 @@ export async function GET(request: Request) {
         
         // Ensure all string fields are properly typed
         const title = typeof album.title === 'string' ? album.title : '';
-        const artist = typeof album.artist === 'string' ? album.artist : '';
         const description = typeof album.description === 'string' ? album.description : '';
         let coverArt = typeof album.coverArt === 'string' ? album.coverArt : '';
+        
+        // Extract artist with improved logic - find first track with valid artist different from album title
+        let artist = 'Unknown Artist';
+        if (album.artist && typeof album.artist === 'string' && album.artist.trim() !== '' && album.artist !== title) {
+          artist = album.artist;
+        } else if (album.tracks && Array.isArray(album.tracks)) {
+          // Extract from track data if album artist is missing or same as title
+          for (const track of album.tracks) {
+            if (track.artist && track.artist.trim() !== '' && track.artist !== title) {
+              artist = track.artist;
+              break;
+            }
+          }
+          // Fallback to first track's artist if no better option found
+          if (artist === 'Unknown Artist' && album.tracks[0]?.artist) {
+            artist = album.tracks[0].artist;
+          }
+        } else if (album.artist && typeof album.artist === 'string' && album.artist.trim() !== '') {
+          // Last resort: use album artist even if it matches title
+          artist = album.artist;
+        }
         
         // Fix known incorrect artwork assignments in the data
         const artworkFixes: Record<string, string> = {
@@ -366,17 +386,30 @@ export async function GET(request: Request) {
         artist: artist,
         description: firstTrack.description || '',
         coverArt: group.feedImage || firstTrack.image || `/api/placeholder-image?title=${encodeURIComponent(albumTitle)}&artist=${encodeURIComponent(artist)}`,
-        tracks: group.tracks.map((track: any, index: number) => ({
-          title: track.title || 'Untitled',
-          duration: track.duration ? Math.floor(track.duration / 60) + ':' + String(track.duration % 60).padStart(2, '0') : '0:00',
-          url: track.enclosureUrl || '',
-          trackNumber: index + 1,
-          subtitle: '',
-          summary: track.description || '',
-          image: track.image || group.feedImage || '',
-          explicit: track.explicit || false,
-          keywords: []
-        })),
+        tracks: group.tracks.map((track: any, index: number) => {
+          // Remove OP3.dev tracking wrapper from URLs
+          let cleanUrl = track.enclosureUrl || '';
+          if (cleanUrl.includes('op3.dev/')) {
+            // Extract the original URL from OP3.dev wrapper
+            const urlMatch = cleanUrl.match(/https:\/\/op3\.dev\/[^\/]+\/(https?:\/\/.+)/);
+            if (urlMatch) {
+              cleanUrl = urlMatch[1];
+              console.log(`🚫 Removed OP3.dev tracking from URL: ${cleanUrl}`);
+            }
+          }
+          
+          return {
+            title: track.title || 'Untitled',
+            duration: track.duration ? Math.floor(track.duration / 60) + ':' + String(track.duration % 60).padStart(2, '0') : '0:00',
+            url: cleanUrl,
+            trackNumber: index + 1,
+            subtitle: '',
+            summary: track.description || '',
+            image: track.image || group.feedImage || '',
+            explicit: track.explicit || false,
+            keywords: []
+          };
+        }),
         podroll: null,
         publisher: publisher, // Now includes publisher info when matched
         funding: firstTrack.value ? { 

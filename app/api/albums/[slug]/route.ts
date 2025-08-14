@@ -2,45 +2,49 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import { generateAlbumSlug } from '@/lib/url-utils';
+import { HGH_ARTWORK_URL_MAP } from '@/data/hgh-artwork-urls';
 
 export async function GET(request: Request, { params }: { params: Promise<{ slug: string }> }) {
   try {
     const { slug } = await params;
     console.log(`🔍 Album API: Looking for slug "${slug}"`);
     
-    const parsedFeedsPath = path.join(process.cwd(), 'data', 'parsed-feeds.json');
+    // Use the same data source as the main albums API - music tracks
+    const musicTracksPath = path.join(process.cwd(), 'data', 'music-tracks.json');
     
-    if (!fs.existsSync(parsedFeedsPath)) {
-      console.warn('Parsed feeds data not found at:', parsedFeedsPath);
+    if (!fs.existsSync(musicTracksPath)) {
+      console.warn('Music tracks data not found at:', musicTracksPath);
       return NextResponse.json({ 
         album: null, 
-        error: 'Parsed feeds data not found' 
+        error: 'Music tracks data not found' 
       }, { status: 404 });
     }
 
-    // Read and parse the file synchronously but with error handling
-    let parsedData;
+    // Read and parse the music tracks file
+    let musicTracksData;
     try {
-      console.log('📖 Reading parsed feeds file...');
-      const fileContent = fs.readFileSync(parsedFeedsPath, 'utf-8');
+      console.log('📖 Reading music tracks file...');
+      const fileContent = fs.readFileSync(musicTracksPath, 'utf-8');
       console.log(`📊 File size: ${Math.round(fileContent.length / 1024)}KB`);
       
-      parsedData = JSON.parse(fileContent);
-      console.log('✅ Successfully parsed JSON');
+      const musicTracksParsed = JSON.parse(fileContent);
+      
+      // Extract the musicTracks array from the parsed data
+      if (musicTracksParsed && musicTracksParsed.musicTracks && Array.isArray(musicTracksParsed.musicTracks)) {
+        musicTracksData = musicTracksParsed.musicTracks;
+        console.log(`✅ Successfully loaded ${musicTracksData.length} music tracks`);
+      } else {
+        console.warn('Invalid music tracks data structure:', musicTracksParsed);
+        return NextResponse.json({ 
+          album: null, 
+          error: 'Invalid music tracks data structure' 
+        }, { status: 500 });
+      }
     } catch (parseError) {
-      console.error('❌ Failed to parse parsed-feeds.json:', parseError);
+      console.error('❌ Failed to parse music-tracks.json:', parseError);
       return NextResponse.json({ 
         album: null, 
-        error: 'Invalid JSON in parsed feeds data' 
-      }, { status: 500 });
-    }
-    
-    // Validate data structure
-    if (!parsedData || !Array.isArray(parsedData.feeds)) {
-      console.warn('Invalid parsed feeds data structure:', parsedData);
-      return NextResponse.json({ 
-        album: null, 
-        error: 'Invalid data structure' 
+        error: 'Invalid JSON in music tracks data' 
       }, { status: 500 });
     }
     
@@ -51,17 +55,41 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
     
     console.log(`🔍 Searching for album with slug: "${slug}" -> normalized: "${searchSlug}" -> title: "${titleFromSlug}"`);
     
-    // Find the specific album by searching through all feeds
+    // Group music tracks by feedGuid to create albums (same logic as main albums API)
+    const musicAlbumGroups = new Map<string, any>();
+    
+    musicTracksData.forEach((track: any) => {
+      const key = track.feedGuid || 'unknown';
+      if (!musicAlbumGroups.has(key)) {
+        musicAlbumGroups.set(key, {
+          feedGuid: track.feedGuid,
+          feedTitle: track.feedTitle,
+          feedImage: track.feedImage || track.image,
+          feedUrl: track.feedUrl,
+          tracks: []
+        });
+      }
+      musicAlbumGroups.get(key).tracks.push(track);
+    });
+    
+    // Convert music track groups to album format and search
     let foundAlbum = null;
     
-    for (const feed of parsedData.feeds) {
-      if (feed.parseStatus !== 'success' || !feed.parsedData?.album) {
-        continue;
-      }
+    for (const group of musicAlbumGroups.values()) {
+      const albumTitle = group.feedTitle || 'Unknown Album';
       
-      const album = feed.parsedData.album;
-      const albumTitle = typeof album.title === 'string' ? album.title : '';
-      const albumArtist = typeof album.artist === 'string' ? album.artist : '';
+      // Extract artist from track data - find first track with valid artist different from album title
+      let albumArtist = 'Unknown Artist';
+      for (const track of group.tracks) {
+        if (track.artist && track.artist.trim() !== '' && track.artist !== albumTitle) {
+          albumArtist = track.artist;
+          break;
+        }
+      }
+      // Fallback to first track's artist if no better option found
+      if (albumArtist === 'Unknown Artist' && group.tracks[0]?.artist) {
+        albumArtist = group.tracks[0].artist;
+      }
       
       if (!albumTitle) continue;
       
@@ -102,34 +130,52 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
       if (matches.some(match => match)) {
         console.log(`✅ Found matching album: "${albumTitle}" by ${albumArtist}`);
         
-        // Process the album data with proper type checking
+        const firstTrack = group.tracks[0];
+        
+        // Process the album data with proper type checking for music track format
         foundAlbum = {
           id: generateAlbumSlug(albumTitle),
           title: albumTitle,
           artist: albumArtist,
-          description: typeof album.description === 'string' ? album.description : '',
-          summary: typeof album.summary === 'string' ? album.summary : '',
-          subtitle: typeof album.subtitle === 'string' ? album.subtitle : '',
-          coverArt: typeof album.coverArt === 'string' ? album.coverArt : '',
-          releaseDate: typeof album.releaseDate === 'string' ? album.releaseDate : '',
-          explicit: typeof album.explicit === 'boolean' ? album.explicit : false,
-          tracks: (album.tracks || []).map((track: any) => ({
-            title: typeof track.title === 'string' ? track.title : '',
-            duration: typeof track.duration === 'string' ? track.duration : '0:00',
-            url: typeof track.url === 'string' ? track.url : '',
-            trackNumber: typeof track.trackNumber === 'number' ? track.trackNumber : 0,
-            subtitle: typeof track.subtitle === 'string' ? track.subtitle : '',
-            summary: typeof track.summary === 'string' ? track.summary : '',
-            image: typeof track.image === 'string' ? track.image : '',
-            explicit: typeof track.explicit === 'boolean' ? track.explicit : false,
-            keywords: Array.isArray(track.keywords) ? track.keywords.filter((k: any) => typeof k === 'string') : []
-          })),
-          podroll: album.podroll || null,
-          publisher: album.publisher || null,
-          funding: album.funding || null,
-          feedId: typeof feed.id === 'string' ? feed.id : '',
-          feedUrl: typeof feed.originalUrl === 'string' ? feed.originalUrl : '',
-          lastUpdated: typeof feed.lastParsed === 'string' ? feed.lastParsed : new Date().toISOString()
+          description: firstTrack.description || '',
+          summary: firstTrack.description || '',
+          subtitle: '',
+          coverArt: group.feedImage || firstTrack.image || '',
+          releaseDate: new Date(firstTrack.datePublished * 1000 || Date.now()).toISOString(),
+          explicit: firstTrack.explicit || false,
+          tracks: group.tracks.map((track: any, index: number) => {
+            // Remove OP3.dev tracking wrapper from URLs
+            let cleanUrl = track.enclosureUrl || '';
+            if (cleanUrl.includes('op3.dev/')) {
+              // Extract the original URL from OP3.dev wrapper
+              const urlMatch = cleanUrl.match(/https:\/\/op3\.dev\/[^\/]+\/(https?:\/\/.+)/);
+              if (urlMatch) {
+                cleanUrl = urlMatch[1];
+                console.log(`🚫 Removed OP3.dev tracking from URL: ${cleanUrl}`);
+              }
+            }
+            
+            return {
+              title: track.title || 'Untitled',
+              duration: track.duration ? Math.floor(track.duration / 60) + ':' + String(track.duration % 60).padStart(2, '0') : '0:00',
+              url: cleanUrl,
+              trackNumber: index + 1,
+              subtitle: '',
+              summary: track.description || '',
+              image: track.image || group.feedImage || '',
+              explicit: track.explicit || false,
+              keywords: []
+            };
+          }),
+          podroll: null,
+          publisher: null, // Could be enhanced with publisher matching logic
+          funding: firstTrack.value ? { 
+            type: 'lightning', 
+            destinations: firstTrack.value.destinations || [] 
+          } : null,
+          feedId: group.feedGuid || generateAlbumSlug(albumTitle),
+          feedUrl: group.feedUrl || '',
+          lastUpdated: new Date(firstTrack.datePublished * 1000 || Date.now()).toISOString()
         };
         
         // Custom track ordering for concept albums (e.g., "They Ride" by IROH)

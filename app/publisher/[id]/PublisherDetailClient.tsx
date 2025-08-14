@@ -32,11 +32,11 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
   const [error, setError] = useState<string | null>(null);
   const [publisherInfo, setPublisherInfo] = useState<{ title?: string; description?: string; artist?: string; coverArt?: string; avatarArt?: string } | null>(
     initialData?.publisherInfo ? {
-      title: initialData.publisherInfo.artist || initialData.publisherInfo.title,
+      title: initialData.publisherInfo.name || initialData.publisherInfo.title,
       description: initialData.publisherInfo.description,
-      artist: initialData.publisherInfo.artist,
-      coverArt: initialData.publisherInfo.coverArt,
-      avatarArt: initialData.publisherInfo.avatarArt || initialData.publisherInfo.coverArt
+      artist: initialData.publisherInfo.name,
+      coverArt: initialData.publisherInfo.image,
+      avatarArt: initialData.publisherInfo.image
     } : null
   );
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
@@ -68,61 +68,31 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
     console.log('🚀 fetchPublisherAlbums function called!');
     console.log('🚀 This should appear in the browser console!');
     
-    if (!initialData?.publisherItems) {
-      console.log('⚠️ No publisher items in initialData');
+    if (!publisherInfo?.artist) {
+      console.log('⚠️ No artist name available');
       setAlbumsLoading(false);
       return;
     }
 
     try {
-      console.log(`🔍 Fetching albums using simplified data service`);
-      console.log(`📋 Publisher items:`, initialData.publisherItems);
+      console.log(`🔍 Fetching albums for artist: ${publisherInfo.artist}`);
       
-      // Extract feedGuids from publisher items
-      const feedGuids = initialData.publisherItems
-        .map((item: any) => item.feedGuid)
-        .filter((guid: string) => guid && guid.trim() !== '');
-
-      console.log(`🔑 Extracted feedGuids:`, feedGuids);
-
-      if (feedGuids.length === 0) {
-        console.log('⚠️ No valid feedGuids found in publisher items');
-        setAlbumsLoading(false);
-        return;
+      // Fetch all albums and filter by artist name
+      const response = await fetch('/api/albums?limit=0');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-
-      console.log(`🎯 Calling dataService.findAlbumsByFeedGuids with ${feedGuids.length} feedGuids`);
       
-      // Use simplified data service
-      try {
-        console.log('🔍 Attempting to call dataService.findAlbumsByFeedGuids...');
-        const matchedAlbums = await dataService.findAlbumsByFeedGuids(feedGuids);
-        console.log(`🎵 Data service found ${matchedAlbums.length} albums:`, matchedAlbums);
-        setAlbums(matchedAlbums);
-      } catch (dataServiceError) {
-        console.error('❌ Data service error:', dataServiceError);
-        
-        // Fallback: create dummy albums for testing
-        console.log('🔄 Creating fallback albums for testing');
-        const fallbackAlbums = feedGuids.map((guid, index) => ({
-          id: `fallback-${index}`,
-          title: `Album ${index + 1} (${guid.substring(0, 8)}...)`,
-          artist: 'The Doerfels',
-          description: 'Fallback album for testing',
-          coverArt: null,
-          tracks: Array(5).fill(null).map((_, i) => ({
-            id: `track-${i}`,
-            title: `Track ${i + 1}`,
-            duration: '3:00',
-            url: '#'
-          })),
-          releaseDate: new Date().toISOString(),
-          link: '#',
-          feedUrl: '#'
-        }));
-        console.log(`🎵 Created ${fallbackAlbums.length} fallback albums`);
-        setAlbums(fallbackAlbums);
-      }
+      const data = await response.json();
+      console.log(`📋 Total albums fetched:`, data.albums.length);
+      
+      // Filter albums by artist name (case-insensitive)
+      const artistAlbums = data.albums.filter((album: any) => 
+        album.artist && album.artist.toLowerCase() === publisherInfo.artist?.toLowerCase()
+      );
+
+      console.log(`🎵 Found ${artistAlbums.length} albums for artist "${publisherInfo.artist}":`, artistAlbums);
+      setAlbums(artistAlbums);
       
     } catch (error) {
       console.error('❌ Error fetching publisher albums:', error);
