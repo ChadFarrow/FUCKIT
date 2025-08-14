@@ -1,16 +1,10 @@
 import { NextResponse } from 'next/server';
-import hghResolvedSongs from '@/data/hgh-resolved-songs.json';
 
 export async function GET() {
   try {
-    // Generate RSS feed XML with podcast:remoteItem elements
-    const rssItems = hghResolvedSongs.map((song, index) => {
-      return `    <item>
-      <title>HGH Track ${index + 1}</title>
-      <description>Music reference from Homegrown Hits podcast</description>
-      <podcast:remoteItem feedGuid="${song.feedGuid}" itemGuid="${song.itemGuid}" />
-    </item>`;
-    }).join('\n');
+    // HGH data has been migrated to the main music database
+    // This endpoint is deprecated but returns an empty feed for compatibility
+    const rssItems = '';
 
     const rssXml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" 

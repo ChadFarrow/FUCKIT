@@ -4,7 +4,8 @@ import { useMemo } from 'react';
 import PlaylistAlbum, { PlaylistConfig } from './PlaylistAlbum';
 import { HGH_AUDIO_URL_MAP } from '@/data/hgh-audio-urls';
 import { HGH_ARTWORK_URL_MAP } from '@/data/hgh-artwork-urls';
-import resolvedSongsData from '@/data/hgh-resolved-songs.json';
+// HGH resolved songs data was moved to music-tracks.json database
+// import resolvedSongsData from '@/data/hgh-resolved-songs.json';
 
 const config: PlaylistConfig = {
   name: 'Homegrown Hits',
@@ -15,35 +16,10 @@ const config: PlaylistConfig = {
 };
 
 export default function HGHPlaylistAlbum() {
-  // Use useMemo to prevent re-processing tracks on every render
-  const enrichedTracks = useMemo(() => {
-    console.log('🔄 Processing HGH tracks...');
-    
-    return resolvedSongsData.map((song: any) => {
-      // Get audio URL from the map using the song title (like ITDV does)
-      const audioUrl = HGH_AUDIO_URL_MAP[song.title] || '';
-      
-      // Get artwork URL from the map using the song title (like ITDV does)
-      const artworkUrl = HGH_ARTWORK_URL_MAP[song.title] || '';
-      
-      return {
-        ...song, // Spread all song properties (like ITDV does)
-        audioUrl: audioUrl,
-        artworkUrl: artworkUrl
-      };
-    });
-  }, []); // Empty dependency array means this only runs once
-
-  // Pre-calculate counts for better performance
-  const trackCounts = useMemo(() => {
-    const withAudio = enrichedTracks.filter((t: any) => t.audioUrl).length;
-    const withArtwork = enrichedTracks.filter((t: any) => t.artworkUrl).length;
-    
-    console.log(`✅ HGH tracks processed: ${enrichedTracks.length} total, ${withAudio} with audio, ${withArtwork} with artwork`);
-    console.log(`🔍 About to pass ${enrichedTracks.length} tracks to PlaylistAlbum component`);
-    
-    return { total: enrichedTracks.length, withAudio, withArtwork };
-  }, [enrichedTracks]);
+  // HGH data is now integrated into the main music tracks database
+  // This component is deprecated but kept for compatibility
+  const enrichedTracks: any[] = [];
+  const trackCounts = { total: 0, withAudio: 0, withArtwork: 0 };
 
   return (
     <>

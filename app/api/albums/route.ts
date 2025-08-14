@@ -50,12 +50,8 @@ export async function GET(request: Request) {
 
       const musicTracksContent = fs.readFileSync(musicTracksPath, 'utf-8');
       
-      // Load HGH resolved songs for Podcast Index lookup
-      const hghSongsPath = path.join(process.cwd(), 'data', 'hgh-resolved-songs.json');
+      // HGH songs are now integrated into music-tracks.json
       let hghSongsContent = '[]';
-      if (fs.existsSync(hghSongsPath)) {
-        hghSongsContent = fs.readFileSync(hghSongsPath, 'utf-8');
-      }
       
       // Validate JSON before parsing
       try {
@@ -72,7 +68,7 @@ export async function GET(request: Request) {
           cachedMusicTracks = [];
         }
         
-        console.log(`✅ Loaded ${cachedHGHSongs.length} HGH resolved songs from hgh-resolved-songs.json`);
+        console.log(`✅ HGH songs now integrated into music tracks database`);
         
         cacheTimestamp = now;
         console.log('Refreshed cached data');
@@ -126,17 +122,10 @@ export async function GET(request: Request) {
           console.log(`Fixed incorrect artwork for "${title}"`);
         }
         
-        // Check if this is an HGH track that should use Podcast Index API resolution
-        const hghTrack = cachedHGHSongs?.find((song: any) => song.title === title);
-        if (hghTrack) {
-          // For now, use the manual mapping as fallback while we implement async PI resolution
-          if (HGH_ARTWORK_URL_MAP[title]) {
-            coverArt = HGH_ARTWORK_URL_MAP[title];
-            console.log(`Using HGH artwork mapping for "${title}": ${coverArt}`);
-            console.log(`📝 TODO: Replace with PI API for feedGuid: ${hghTrack.feedGuid}, itemGuid: ${hghTrack.itemGuid}`);
-          } else {
-            console.log(`⚠️ HGH track "${title}" found but no artwork mapping - feedGuid: ${hghTrack.feedGuid}`);
-          }
+        // Check if this track has HGH artwork mapping
+        if (HGH_ARTWORK_URL_MAP[title]) {
+          coverArt = HGH_ARTWORK_URL_MAP[title];
+          console.log(`Using HGH artwork mapping for "${title}": ${coverArt}`);
         }
         // Also check if the current coverArt is from homegrownhits.xyz (which are broken)
         else if (coverArt && coverArt.includes('homegrownhits.xyz/wp-content/uploads/')) {
@@ -310,7 +299,7 @@ export async function GET(request: Request) {
       // Debug log for Tinderbox
       if (albumTitle === 'Tinderbox') {
         console.log(`🎵 DEBUG Tinderbox: albumTitle="${albumTitle}", final artist="${artist}"`);
-        console.log(`🎵 DEBUG Tinderbox tracks:`, group.tracks.map(t => ({title: t.title, artist: t.artist})));
+        console.log(`🎵 DEBUG Tinderbox tracks:`, group.tracks.map((t: any) => ({title: t.title, artist: t.artist})));
       }
       
       // Try to find matching publisher feed for this album/artist
