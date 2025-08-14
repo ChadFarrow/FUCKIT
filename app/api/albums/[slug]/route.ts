@@ -75,7 +75,9 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
     // Convert music track groups to album format and search
     let foundAlbum = null;
     
-    for (const group of musicAlbumGroups.values()) {
+    // Convert Map to array and iterate
+    const albumGroups = Array.from(musicAlbumGroups.values());
+    for (const group of albumGroups) {
       const albumTitle = group.feedTitle || 'Unknown Album';
       
       // Extract artist from track data - find first track with valid artist different from album title
