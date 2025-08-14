@@ -75,7 +75,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
     // Convert music track groups to album format and search
     let foundAlbum = null;
     
-    // Convert Map to array and iterate
+    // Convert Map to array and iterate (compatible with TypeScript build)
     const albumGroups = Array.from(musicAlbumGroups.values());
     for (const group of albumGroups) {
       const albumTitle = group.feedTitle || 'Unknown Album';
