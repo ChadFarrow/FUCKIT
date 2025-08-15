@@ -19,6 +19,7 @@ export async function GET(request: Request) {
     const offset = parseInt(searchParams.get('offset') || '0');
     const tier = searchParams.get('tier') || 'all';
     const feedId = searchParams.get('feedId');
+    const filter = searchParams.get('filter') || 'all'; // albums, eps, singles, all
     
     // Force cache refresh to fix artwork and artist issues
     const now = Date.now();
@@ -539,12 +540,38 @@ export async function GET(request: Request) {
     });
     
     const uniqueAlbums = Array.from(finalAlbumMap.values());
-    const totalCount = uniqueAlbums.length;
+    
+    // Apply filtering by type (albums, eps, singles)
+    let filteredAlbums = uniqueAlbums;
+    if (filter !== 'all') {
+      switch (filter) {
+        case 'albums':
+          filteredAlbums = uniqueAlbums.filter(album => album.tracks.length > 6);
+          break;
+        case 'eps':
+          filteredAlbums = uniqueAlbums.filter(album => album.tracks.length > 1 && album.tracks.length <= 6);
+          break;
+        case 'singles':
+          filteredAlbums = uniqueAlbums.filter(album => album.tracks.length === 1);
+          break;
+        case 'playlist':
+          // Show only playlists - albums with podroll data or multiple artists
+          filteredAlbums = uniqueAlbums.filter(album => 
+            album.podroll || 
+            (album.tracks.length > 1 && new Set(album.tracks.map(t => t.artist || album.artist)).size > 1)
+          );
+          break;
+        default:
+          filteredAlbums = uniqueAlbums;
+      }
+    }
+    
+    const totalCount = filteredAlbums.length;
 
     // Apply pagination (limit=0 means return all)
-    const paginatedAlbums = limit === 0 ? uniqueAlbums.slice(offset) : uniqueAlbums.slice(offset, offset + limit);
+    const paginatedAlbums = limit === 0 ? filteredAlbums.slice(offset) : filteredAlbums.slice(offset, offset + limit);
 
-    console.log(`✅ Albums API: Returning ${paginatedAlbums.length}/${totalCount} albums (tier: ${tier}, offset: ${offset}, limit: ${limit})`);
+    console.log(`✅ Albums API: Returning ${paginatedAlbums.length}/${totalCount} albums (tier: ${tier}, filter: ${filter}, offset: ${offset}, limit: ${limit})`);
     
     return NextResponse.json({
       albums: paginatedAlbums,

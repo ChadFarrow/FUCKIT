@@ -222,14 +222,14 @@ export default function HomePage() {
       setError(null);
       setLoadingProgress(0);
       
-      // Get total count first for pagination
-      const totalCountResponse = await fetch('/api/albums?limit=1&offset=0');
+      // Get total count first for pagination with current filter
+      const totalCountResponse = await fetch(`/api/albums?limit=1&offset=0&filter=${activeFilter}`);
       const totalCountData = await totalCountResponse.json();
       setTotalAlbums(totalCountData.totalCount || 0);
       
       // Load only current page albums for better performance
       const startIndex = (currentPage - 1) * ALBUMS_PER_PAGE;
-      const pageAlbums = await loadAlbumsData('all', ALBUMS_PER_PAGE, startIndex);
+      const pageAlbums = await loadAlbumsData('all', ALBUMS_PER_PAGE, startIndex, activeFilter);
       
       // Set albums directly - no progressive loading needed
       setCriticalAlbums(pageAlbums.slice(0, 8));
@@ -259,7 +259,7 @@ export default function HomePage() {
     
     try {
       const startIndex = (page - 1) * ALBUMS_PER_PAGE;
-      const pageAlbums = await loadAlbumsData('all', ALBUMS_PER_PAGE, startIndex);
+      const pageAlbums = await loadAlbumsData('all', ALBUMS_PER_PAGE, startIndex, activeFilter);
       
       setCriticalAlbums(pageAlbums.slice(0, 8));
       setEnhancedAlbums(pageAlbums);
@@ -275,15 +275,47 @@ export default function HomePage() {
     }
   };
 
+  // Handle filter changes - reload data and reset to page 1
+  const handleFilterChange = async (newFilter: FilterType) => {
+    if (newFilter === activeFilter) return; // No change
+    
+    setActiveFilter(newFilter);
+    setCurrentPage(1); // Reset to first page
+    setIsLoading(true);
+    
+    try {
+      // Get new total count with filter
+      const totalCountResponse = await fetch(`/api/albums?limit=1&offset=0&filter=${newFilter}`);
+      const totalCountData = await totalCountResponse.json();
+      setTotalAlbums(totalCountData.totalCount || 0);
+      
+      // Load first page with new filter
+      const pageAlbums = await loadAlbumsData('all', ALBUMS_PER_PAGE, 0, newFilter);
+      
+      setCriticalAlbums(pageAlbums.slice(0, 8));
+      setEnhancedAlbums(pageAlbums);
+      setIsCriticalLoaded(true);
+      setIsEnhancedLoaded(true);
+      
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (error) {
+      console.warn('Failed to load filtered albums:', error);
+      setError('Failed to load albums');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Calculate pagination info
   const totalPages = Math.ceil(totalAlbums / ALBUMS_PER_PAGE);
   const hasNextPage = currentPage < totalPages;
   const hasPrevPage = currentPage > 1;
 
-  const loadAlbumsData = async (loadTier: 'core' | 'extended' | 'lowPriority' | 'all' = 'all', limit: number = 50, offset: number = 0) => {
+  const loadAlbumsData = async (loadTier: 'core' | 'extended' | 'lowPriority' | 'all' = 'all', limit: number = 50, offset: number = 0, filter: string = 'all') => {
     try {
-      // Simplified caching - only cache the main 'all' request
-      if (typeof window !== 'undefined' && loadTier === 'all' && offset === 0) {
+      // Simplified caching - only cache the main 'all' request with no filtering
+      if (typeof window !== 'undefined' && loadTier === 'all' && offset === 0 && filter === 'all') {
         const cached = localStorage.getItem('cachedAlbums');
         const timestamp = localStorage.getItem('albumsCacheTimestamp');
         
@@ -300,7 +332,8 @@ export default function HomePage() {
       const params = new URLSearchParams({
         limit: limit.toString(),
         offset: offset.toString(),
-        tier: loadTier
+        tier: loadTier,
+        filter: filter
         // Remove cache busting for better performance
       });
       
@@ -544,149 +577,9 @@ export default function HomePage() {
 
   // Shuffle functionality is now handled by the global AudioContext
 
-  // Memoized helper functions for filtering and sorting
-  const getFilteredAlbums = useMemo(() => {
-    // Use progressive loading: show critical albums first, then enhanced
-    const albumsToUse = isEnhancedLoaded ? enhancedAlbums : criticalAlbums;
-    
-    // Universal sorting function that implements hierarchical order: Albums → EPs → Singles
-    const sortWithHierarchy = (albums: RSSAlbum[]) => {
-      return albums.sort((a, b) => {
-        // Pin "Stay Awhile" first - with proper type checking
-        const aTitle = a.title && typeof a.title === 'string' ? a.title : '';
-        const bTitle = b.title && typeof b.title === 'string' ? b.title : '';
-        
-        const aIsStayAwhile = aTitle.toLowerCase().includes('stay awhile');
-        const bIsStayAwhile = bTitle.toLowerCase().includes('stay awhile');
-        
-        if (aIsStayAwhile && !bIsStayAwhile) return -1;
-        if (!aIsStayAwhile && bIsStayAwhile) return 1;
-        
-        // Pin "Bloodshot Lies" second - with proper type checking
-        const aIsBloodshot = aTitle.toLowerCase().includes('bloodshot lie');
-        const bIsBloodshot = bTitle.toLowerCase().includes('bloodshot lie');
-        
-        if (aIsBloodshot && !bIsBloodshot) return -1;
-        if (!aIsBloodshot && bIsBloodshot) return 1;
-        
-        // Hierarchical sorting: Albums (7+ tracks) → EPs (2-6 tracks) → Singles (1 track)
-        const aIsAlbum = a.tracks.length > 6;
-        const bIsAlbum = b.tracks.length > 6;
-        const aIsEP = a.tracks.length > 1 && a.tracks.length <= 6;
-        const bIsEP = b.tracks.length > 1 && b.tracks.length <= 6;
-        const aIsSingle = a.tracks.length === 1;
-        const bIsSingle = b.tracks.length === 1;
-        
-        // Albums come first
-        if (aIsAlbum && !bIsAlbum) return -1;
-        if (!aIsAlbum && bIsAlbum) return 1;
-        
-        // EPs come second (if both are not albums)
-        if (aIsEP && !bIsEP) return -1;
-        if (!aIsEP && bIsEP) return 1;
-        
-        // Singles come last (if both are not albums or EPs)
-        if (aIsSingle && !bIsSingle) return -1;
-        if (!aIsSingle && bIsSingle) return 1;
-        
-        // If same type, sort by title
-        return aTitle.localeCompare(bTitle);
-      });
-    };
-    
-    // Apply filtering based on active filter
-    let filtered = albumsToUse;
-    
-    // Filter out explicit content and playlist items by default, but include HGH music appropriately
-    const baseAlbums = albumsToUse.filter(album => {
-      // Always exclude explicit content and old music track albums
-      if (album.explicit || (album as any).isMusicTrackAlbum) {
-        return false;
-      }
-      
-      // All albums are now treated equally
-      return true;
-    });
-    
-    // Deduplicate albums by normalized title and artist combination
-    const deduplicatedAlbums = baseAlbums.reduce((acc: RSSAlbum[], album: RSSAlbum) => {
-      // Normalize the title and artist for better deduplication
-      const normalizedTitle = (album.title || 'unknown')
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, ' ')  // Replace multiple spaces with single space
-        .replace(/[^\w\s]/g, ''); // Remove special characters
-      
-      const normalizedArtist = (album.artist || 'unknown')
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, ' ')  // Replace multiple spaces with single space
-        .replace(/[^\w\s]/g, ''); // Remove special characters
-      
-      const albumKey = `${normalizedTitle}|${normalizedArtist}`;
-      
-      // Check if we already have an album with this normalized title+artist combo
-      const existingIndex = acc.findIndex(existing => {
-        const existingNormalizedTitle = (existing.title || 'unknown')
-          .toLowerCase()
-          .trim()
-          .replace(/\s+/g, ' ')
-          .replace(/[^\w\s]/g, '');
-        
-        const existingNormalizedArtist = (existing.artist || 'unknown')
-          .toLowerCase()
-          .trim()
-          .replace(/\s+/g, ' ')
-          .replace(/[^\w\s]/g, '');
-        
-        const existingKey = `${existingNormalizedTitle}|${existingNormalizedArtist}`;
-        return existingKey === albumKey;
-      });
-      
-      if (existingIndex === -1) {
-        // No duplicate found, add this album
-        acc.push(album);
-      } else {
-        // Duplicate found, keep the one with more tracks or better data
-        const existing = acc[existingIndex];
-        if (album.tracks.length > existing.tracks.length || 
-            (!existing.coverArt && album.coverArt) ||
-            (!existing.description && album.description) ||
-            (album.coverArt && !album.coverArt.includes('placeholder') && existing.coverArt?.includes('placeholder'))) {
-          // Replace with better version
-          acc[existingIndex] = album;
-        }
-      }
-      
-      return acc;
-    }, []);
-    
-    switch (activeFilter) {
-      case 'albums':
-        filtered = deduplicatedAlbums.filter(album => album.tracks.length > 6);
-        break;
-      case 'eps':
-        filtered = deduplicatedAlbums.filter(album => album.tracks.length > 1 && album.tracks.length <= 6);
-        break;
-      case 'singles':
-        filtered = deduplicatedAlbums.filter(album => album.tracks.length === 1);
-        break;
-      // HGH case removed - filter disabled
-      case 'playlist':
-        // Show only playlists from actual database data (no hardcoded playlists)
-        filtered = []; // No hardcoded playlists - only content explicitly added back
-        console.log('🎵 Playlist filter - no hardcoded playlists shown');
-        break;
-
-      default: // 'all'
-        filtered = deduplicatedAlbums; // Show all non-explicit deduplicated albums
-    }
-
-    // Apply hierarchical sorting to filtered results
-    return sortWithHierarchy(filtered);
-  }, [criticalAlbums, enhancedAlbums, isEnhancedLoaded, activeFilter, sortType]);
-
-  const filteredAlbums = getFilteredAlbums;
+  // Since filtering is now done server-side, we just use the albums directly
+  // The albums are already filtered by the API based on activeFilter
+  const filteredAlbums = isEnhancedLoaded ? enhancedAlbums : criticalAlbums;
   
   // Show loading state for progressive loading
   const showProgressiveLoading = isCriticalLoaded && !isEnhancedLoaded && filteredAlbums.length > 0;
@@ -1016,7 +909,7 @@ export default function HomePage() {
               {/* Controls Bar */}
               <ControlsBar
                 activeFilter={activeFilter}
-                onFilterChange={setActiveFilter}
+                onFilterChange={handleFilterChange}
                 sortType={sortType}
                 onSortChange={setSortType}
                 showSort={false}
