@@ -278,7 +278,8 @@
       },
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T21:31:15.808Z",
-      "addedAt": "2025-08-13T21:31:15.809Z"
+      "addedAt": "2025-08-13T21:31:15.809Z",
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/Lofi-Experience.png"
     },
     {
       "id": "track-9",
@@ -1956,7 +1957,8 @@
       },
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:43.814Z",
-      "addedAt": "2025-08-13T22:12:43.838Z"
+      "addedAt": "2025-08-13T22:12:43.838Z",
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/Lofi-Experience.png"
     },
     {
       "id": "track-43",
@@ -2510,7 +2512,8 @@
       },
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:43.827Z",
-      "addedAt": "2025-08-13T22:12:43.850Z"
+      "addedAt": "2025-08-13T22:12:43.850Z",
+      "feedImage": "https://ableandthewolf.com/static/media/01_MakinBeans.6dfb9c8e18b0f28adf4d.jpg"
     },
     {
       "id": "track-51",
@@ -12754,7 +12757,8 @@
       },
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:33.967Z",
-      "addedAt": "2025-08-13T22:17:33.969Z"
+      "addedAt": "2025-08-13T22:17:33.969Z",
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/Lofi-Experience.png"
     },
     {
       "id": "track-234",
@@ -12770,7 +12774,7 @@
       "enclosureUrl": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/lofi-montreal.mp3",
       "enclosureType": "mp3",
       "pubDate": 1733697807,
-      "image": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/lofi-montreal.png",
+      "image": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/Lofi-Experience.png",
       "value": {
         "model": {
           "type": "lightning",
@@ -12802,7 +12806,8 @@
       },
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:33.967Z",
-      "addedAt": "2025-08-13T22:17:33.969Z"
+      "addedAt": "2025-08-13T22:17:33.969Z",
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/Lofi-Experience.png"
     },
     {
       "id": "track-235",
@@ -12850,7 +12855,8 @@
       },
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:33.967Z",
-      "addedAt": "2025-08-13T22:17:33.969Z"
+      "addedAt": "2025-08-13T22:17:33.969Z",
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/Lofi-Experience.png"
     },
     {
       "id": "track-236",
@@ -12898,7 +12904,8 @@
       },
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:33.967Z",
-      "addedAt": "2025-08-13T22:17:33.969Z"
+      "addedAt": "2025-08-13T22:17:33.969Z",
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/Lofi-Experience.png"
     },
     {
       "id": "track-237",
@@ -12946,7 +12953,8 @@
       },
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:33.967Z",
-      "addedAt": "2025-08-13T22:17:33.969Z"
+      "addedAt": "2025-08-13T22:17:33.969Z",
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/Lofi-Experience.png"
     },
     {
       "id": "track-238",
@@ -15643,7 +15651,8 @@
       },
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:38.692Z",
-      "addedAt": "2025-08-13T22:17:38.695Z"
+      "addedAt": "2025-08-13T22:17:38.695Z",
+      "feedImage": "https://ableandthewolf.com/static/media/01_MakinBeans.6dfb9c8e18b0f28adf4d.jpg"
     },
     {
       "id": "track-275",
@@ -15690,7 +15699,8 @@
       },
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:38.692Z",
-      "addedAt": "2025-08-13T22:17:38.695Z"
+      "addedAt": "2025-08-13T22:17:38.695Z",
+      "feedImage": "https://ableandthewolf.com/static/media/01_MakinBeans.6dfb9c8e18b0f28adf4d.jpg"
     },
     {
       "id": "track-276",
@@ -15743,7 +15753,8 @@
       },
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:38.692Z",
-      "addedAt": "2025-08-13T22:17:38.695Z"
+      "addedAt": "2025-08-13T22:17:38.695Z",
+      "feedImage": "https://ableandthewolf.com/static/media/01_MakinBeans.6dfb9c8e18b0f28adf4d.jpg"
     },
     {
       "id": "track-277",
@@ -15796,7 +15807,8 @@
       },
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:38.692Z",
-      "addedAt": "2025-08-13T22:17:38.695Z"
+      "addedAt": "2025-08-13T22:17:38.695Z",
+      "feedImage": "https://ableandthewolf.com/static/media/01_MakinBeans.6dfb9c8e18b0f28adf4d.jpg"
     },
     {
       "id": "track-278",
@@ -15843,7 +15855,8 @@
       },
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:38.692Z",
-      "addedAt": "2025-08-13T22:17:38.695Z"
+      "addedAt": "2025-08-13T22:17:38.695Z",
+      "feedImage": "https://ableandthewolf.com/static/media/01_MakinBeans.6dfb9c8e18b0f28adf4d.jpg"
     },
     {
       "id": "track-279",
@@ -15896,7 +15909,8 @@
       },
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:38.692Z",
-      "addedAt": "2025-08-13T22:17:38.695Z"
+      "addedAt": "2025-08-13T22:17:38.695Z",
+      "feedImage": "https://ableandthewolf.com/static/media/01_MakinBeans.6dfb9c8e18b0f28adf4d.jpg"
     },
     {
       "id": "track-280",
