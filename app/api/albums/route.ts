@@ -558,7 +558,7 @@ export async function GET(request: Request) {
           // Show only playlists - albums with podroll data or multiple artists
           filteredAlbums = uniqueAlbums.filter(album => 
             album.podroll || 
-            (album.tracks.length > 1 && new Set(album.tracks.map(t => t.artist || album.artist)).size > 1)
+            (album.tracks.length > 1 && new Set(album.tracks.map((t: any) => t.artist || album.artist)).size > 1)
           );
           break;
         default:
