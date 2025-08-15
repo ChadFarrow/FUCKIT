@@ -20,9 +20,9 @@ export async function GET(request: Request) {
     const tier = searchParams.get('tier') || 'all';
     const feedId = searchParams.get('feedId');
     
-    // Force cache refresh to fix artwork issues
+    // Force cache refresh to fix artwork and artist issues
     const now = Date.now();
-    cacheTimestamp = 0; // Force refresh
+    cacheTimestamp = 0; // Force refresh for artist fixes
     if (false) { // Force fresh read to debug
       console.log(`Using cached data: ${cachedData?.feeds?.length || 0} feeds, ${cachedMusicTracks.length} music tracks`);
     } else {
@@ -311,7 +311,16 @@ export async function GET(request: Request) {
         'CityBeach': 'SirTJ The Wrathful',
         'Kurtisdrums': 'SirTJ The Wrathful',
         'So Far Away': 'SirTJ The Wrathful',
-        'Nostalgic': 'SirTJ The Wrathful'
+        'Nostalgic': 'SirTJ The Wrathful',
+        // Additional mappings from RSS feeds
+        'Millennium': 'The Trusted',
+        'Mine Enemy': 'Hurling Pixels', 
+        'Money Maker': 'Two Weeks In Nashville',
+        'Mixed': 'Mixed',
+        'Mrs Valentine': 'Mrs Valentine',
+        'My Love': 'Hurling Pixels',
+        'More of Their Lies': 'More of Their Lies',
+        'My Crutch - Live from Bands at Bitcoin': 'My Crutch'
       };
       
       // Extract artist from track data with smarter detection
@@ -354,9 +363,15 @@ export async function GET(request: Request) {
         }
       }
       
-      // Final fallback to album title if still no artist found
+      // Final fallback - avoid showing identical artist and album names
       if (artist === 'Unknown Artist') {
-        artist = albumTitle;
+        // For single word titles, assume self-titled
+        if (!albumTitle.includes(' ')) {
+          artist = albumTitle;
+        } else {
+          // For multi-word titles, try to extract a reasonable artist name
+          artist = `Various Artists`;
+        }
       }
       
       // Debug log for Tinderbox
