@@ -114,6 +114,11 @@ export default function HomePage() {
   const [visibleAlbumCount, setVisibleAlbumCount] = useState(50);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalAlbums, setTotalAlbums] = useState(0);
+  const ALBUMS_PER_PAGE = 24; // 4x6 grid on desktop
+  
   // HGH filter removed - no longer needed
   
   // Global audio context
@@ -217,28 +222,22 @@ export default function HomePage() {
       setError(null);
       setLoadingProgress(0);
       
-      // Load albums progressively for better performance
-      const allAlbums = await loadAlbumsData('all', 50, 0); // Start with 50 albums for fast initial load
+      // Get total count first for pagination
+      const totalCountResponse = await fetch('/api/albums?limit=1&offset=0');
+      const totalCountData = await totalCountResponse.json();
+      setTotalAlbums(totalCountData.totalCount || 0);
       
-      // Store empty HGH albums array (they're now in the main database)
-      // HGH filter removed
+      // Load only current page albums for better performance
+      const startIndex = (currentPage - 1) * ALBUMS_PER_PAGE;
+      const pageAlbums = await loadAlbumsData('all', ALBUMS_PER_PAGE, startIndex);
       
-      // Use only the main albums (which now includes former HGH tracks)
-      const combinedAlbums = allAlbums;
-      
-      // Split albums for progressive display - show fewer initially for faster load
-      const criticalAlbumsData = combinedAlbums.slice(0, 8);
-      setCriticalAlbums(criticalAlbumsData);
+      // Set albums directly - no progressive loading needed
+      setCriticalAlbums(pageAlbums.slice(0, 8));
+      setEnhancedAlbums(pageAlbums);
       setIsCriticalLoaded(true);
-      setLoadingProgress(50);
-      
-      // Set enhanced albums with slight delay for better perceived performance
-      setTimeout(() => {
-        setEnhancedAlbums(combinedAlbums);
-        setIsEnhancedLoaded(true);
-        setLoadingProgress(100);
-        setIsLoading(false);
-      }, 100);
+      setIsEnhancedLoaded(true);
+      setLoadingProgress(100);
+      setIsLoading(false);
       
     } catch (error) {
       setError('Failed to load albums');
@@ -251,52 +250,35 @@ export default function HomePage() {
     // This function is now handled in loadCriticalAlbums
   };
 
-  // Load more albums progressively for better performance
-  const loadMoreAlbums = async () => {
-    if (isLoadingMore || !isEnhancedLoaded) return;
+  // Pagination function to load specific page
+  const loadPage = async (page: number) => {
+    if (isLoading) return;
     
-    setIsLoadingMore(true);
+    setIsLoading(true);
+    setCurrentPage(page);
+    
     try {
-      // Load more albums efficiently - larger batches for better performance
-      const nextOffset = enhancedAlbums.length;
-      const moreAlbums = await loadAlbumsData('all', 50, nextOffset);
+      const startIndex = (page - 1) * ALBUMS_PER_PAGE;
+      const pageAlbums = await loadAlbumsData('all', ALBUMS_PER_PAGE, startIndex);
       
-      if (moreAlbums.length > 0) {
-        // Use setTimeout to batch DOM updates for better performance
-        setTimeout(() => {
-          setEnhancedAlbums(prev => [...prev, ...moreAlbums]);
-          setVisibleAlbumCount(prev => prev + moreAlbums.length);
-        }, 0);
-      }
+      setCriticalAlbums(pageAlbums.slice(0, 8));
+      setEnhancedAlbums(pageAlbums);
+      setIsCriticalLoaded(true);
+      setIsEnhancedLoaded(true);
+      
+      // Scroll to top when changing pages
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (error) {
-      console.warn('Failed to load more albums:', error);
+      console.warn('Failed to load page:', error);
     } finally {
-      // Delay clearing loading state to prevent rapid re-triggers
-      setTimeout(() => setIsLoadingMore(false), 100);
+      setIsLoading(false);
     }
   };
 
-  // Intersection observer for infinite scrolling
-  const loadMoreRef = useRef<HTMLDivElement>(null);
-  
-  useEffect(() => {
-    if (!isEnhancedLoaded || !loadMoreRef.current) return;
-    
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !isLoadingMore) {
-          loadMoreAlbums();
-        }
-      },
-      { 
-        threshold: 0.1, // Load more earlier for smoother experience
-        rootMargin: '100px' // Start loading 100px before the element is visible
-      }
-    );
-    
-    observer.observe(loadMoreRef.current);
-    return () => observer.disconnect();
-  }, [isEnhancedLoaded, isLoadingMore, enhancedAlbums.length]); // Add albums length to dependency
+  // Calculate pagination info
+  const totalPages = Math.ceil(totalAlbums / ALBUMS_PER_PAGE);
+  const hasNextPage = currentPage < totalPages;
+  const hasPrevPage = currentPage > 1;
 
   const loadAlbumsData = async (loadTier: 'core' | 'extended' | 'lowPriority' | 'all' = 'all', limit: number = 50, offset: number = 0) => {
     try {
@@ -1042,7 +1024,7 @@ export default function HomePage() {
                 onViewChange={setViewType}
                 showShuffle={true}
                 onShuffle={handleShuffle}
-                resultCount={filteredAlbums.length}
+                resultCount={totalAlbums}
                 resultLabel={activeFilter === 'all' ? 'Releases' : 
                   activeFilter === 'albums' ? 'Albums' :
                   activeFilter === 'eps' ? 'EPs' : 
@@ -1051,6 +1033,13 @@ export default function HomePage() {
                   activeFilter === 'playlist' ? 'Playlist' : 'Releases'}
                 className="mb-8"
               />
+
+              {/* Page indicator */}
+              {totalPages > 1 && (
+                <div className="mb-6 text-center text-gray-400">
+                  Page {currentPage} of {totalPages} • Showing {((currentPage - 1) * ALBUMS_PER_PAGE) + 1}-{Math.min(currentPage * ALBUMS_PER_PAGE, totalAlbums)} of {totalAlbums} albums
+                </div>
+              )}
 
               {/* Shuffle functionality is now handled by the global AudioContext */}
 
@@ -1288,15 +1277,54 @@ export default function HomePage() {
               
               {/* HGH filter removed - no longer needed */}
               
-              {/* Infinite scroll trigger */}
-              {isEnhancedLoaded && enhancedAlbums.length > 0 && (
-                <div ref={loadMoreRef} className="h-20 flex items-center justify-center">
-                  {isLoadingMore && (
-                    <div className="flex items-center gap-2 text-gray-400">
-                      <div className="w-4 h-4 border-2 border-stablekraft-teal border-t-transparent rounded-full animate-spin"></div>
-                      <span>Loading more albums...</span>
-                    </div>
-                  )}
+              {/* Pagination controls */}
+              {isEnhancedLoaded && totalPages > 1 && (
+                <div className="mt-12 flex justify-center items-center gap-4">
+                  <button
+                    onClick={() => loadPage(currentPage - 1)}
+                    disabled={!hasPrevPage || isLoading}
+                    className="px-4 py-2 bg-white/10 hover:bg-white/20 disabled:bg-white/5 disabled:text-gray-500 text-white rounded-lg transition-colors"
+                  >
+                    Previous
+                  </button>
+                  
+                  <div className="flex items-center gap-2">
+                    {Array.from({ length: Math.min(7, totalPages) }, (_, i) => {
+                      let pageNum;
+                      if (totalPages <= 7) {
+                        pageNum = i + 1;
+                      } else if (currentPage <= 4) {
+                        pageNum = i + 1;
+                      } else if (currentPage >= totalPages - 3) {
+                        pageNum = totalPages - 6 + i;
+                      } else {
+                        pageNum = currentPage - 3 + i;
+                      }
+                      
+                      return (
+                        <button
+                          key={pageNum}
+                          onClick={() => loadPage(pageNum)}
+                          disabled={isLoading}
+                          className={`w-10 h-10 rounded-lg transition-colors ${
+                            pageNum === currentPage
+                              ? 'bg-stablekraft-teal text-white'
+                              : 'bg-white/10 hover:bg-white/20 text-white'
+                          }`}
+                        >
+                          {pageNum}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  
+                  <button
+                    onClick={() => loadPage(currentPage + 1)}
+                    disabled={!hasNextPage || isLoading}
+                    className="px-4 py-2 bg-white/10 hover:bg-white/20 disabled:bg-white/5 disabled:text-gray-500 text-white rounded-lg transition-colors"
+                  >
+                    Next
+                  </button>
                 </div>
               )}
             </div>

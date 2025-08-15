@@ -80,120 +80,39 @@ define(['./workbox-c008c882'], (function (workbox) { 'use strict';
    */
   workbox.precacheAndRoute([{
     "url": "/_next/app-build-manifest.json",
-    "revision": "e236b911ea3c83b26ef836ccd3291cfe"
+    "revision": "9873b1830ce4ea26c3fc91b8ef15cbfb"
   }, {
     "url": "/_next/build-manifest.json",
-    "revision": "7a171affcdfa17fe8c82235b5cdc45a7"
+    "revision": "35f1562458fde1518b2c9808eefc3fc1"
   }, {
     "url": "/_next/react-loadable-manifest.json",
-    "revision": "f82df41fadb3b5209a237dcac14babd5"
+    "revision": "99914b932bd37a50b983c5e7c90ae93b"
   }, {
     "url": "/_next/server/middleware-build-manifest.js",
-    "revision": "ea0aab4189e8b54c9e23d68ec9a01da8"
+    "revision": "4dc6647f58dedfc99e331e8429e885a0"
   }, {
     "url": "/_next/server/middleware-react-loadable-manifest.js",
-    "revision": "b85a5b13797e184511198d0103890b2a"
+    "revision": "537157e425123611736ddcf544160221"
   }, {
     "url": "/_next/server/next-font-manifest.js",
-    "revision": "8b814f56062a52e63f9fe54bb63ecf79"
+    "revision": "f7097bf7c93c1cbb4c118491ca6d2b04"
   }, {
     "url": "/_next/server/next-font-manifest.json",
-    "revision": "705ea294a39b0b15310687c6789e131b"
-  }, {
-    "url": "/_next/static/chunks//_error.js",
-    "revision": "76d0f3525c6ca8e35d0da3356fda754a"
-  }, {
-    "url": "/_next/static/chunks/_app-pages-browser_components_AlbumCardLazy_tsx.js",
-    "revision": "37825dd76266c518fd71f334d7c01b1e"
-  }, {
-    "url": "/_next/static/chunks/_app-pages-browser_components_AlbumCard_tsx.js",
-    "revision": "35407ab8ae5a4c1b561bee1c99b7f7b9"
-  }, {
-    "url": "/_next/static/chunks/_app-pages-browser_components_CDNImageLazy_tsx.js",
-    "revision": "d9de070697493f22832baaa895de2b92"
-  }, {
-    "url": "/_next/static/chunks/_app-pages-browser_components_CDNImage_tsx.js",
-    "revision": "7280e7fa627103a68b863735a55996ab"
-  }, {
-    "url": "/_next/static/chunks/_app-pages-browser_components_ControlsBarLazy_tsx.js",
-    "revision": "983d0417430ff4c5bc54d509ef0b5f49"
-  }, {
-    "url": "/_next/static/chunks/_app-pages-browser_components_ControlsBar_tsx.js",
-    "revision": "4506513419bae79b292bd82bd8f853fe"
-  }, {
-    "url": "/_next/static/chunks/app-pages-internals.js",
-    "revision": "b892ef673678d4db454f7f7e9e591f1e"
-  }, {
-    "url": "/_next/static/chunks/app/_not-found/page.js",
-    "revision": "16579c4c581d4ed2883ec2cea5a5dd82"
-  }, {
-    "url": "/_next/static/chunks/app/api/music-tracks/route.js",
-    "revision": "2edb7c5b731882cc41530f557734e894"
-  }, {
-    "url": "/_next/static/chunks/app/api/proxy-audio/route.js",
-    "revision": "143f80959c4ac971d1a4b10393a8ed14"
-  }, {
-    "url": "/_next/static/chunks/app/error.js",
-    "revision": "97a8f9464e7a890f82c5db20651c28d5"
-  }, {
-    "url": "/_next/static/chunks/app/not-found.js",
-    "revision": "6a952670c259e51a1aee875b55266368"
-  }, {
-    "url": "/_next/static/chunks/app/playlist/index/page.js",
-    "revision": "7d4d27a9541f949f0d8fc5b38bc79e88"
-  }, {
-    "url": "/_next/static/chunks/pages/_app.js",
-    "revision": "411119a28969cf1a2f5c97a430474c9b"
-  }, {
-    "url": "/_next/static/chunks/pages/_error.js",
-    "revision": "50d6eafc3c7b90fce46183e8023d58d2"
+    "revision": "d51420cd4aa5d37d6719849cf36d0d6f"
   }, {
     "url": "/_next/static/chunks/polyfills.js",
     "revision": "846118c33b2c0e922d7b3a7676f81f6f"
   }, {
-    "url": "/_next/static/chunks/react-refresh.js",
-    "revision": "101c0e35645529ee91315fcaffbddccb"
-  }, {
     "url": "/_next/static/chunks/webpack.js",
-    "revision": "e21745364a45b78d8e381a1feb4f5266"
-  }, {
-    "url": "/_next/static/css/app/layout.css",
-    "revision": "7024b2b67c2d7432064af0b74bc05554"
+    "revision": "9bde811c0f89fdbf5396da3ea70b227a"
   }, {
     "url": "/_next/static/development/_buildManifest.js",
-    "revision": "bc359c6db1aab0d45919c5a1108ae213"
+    "revision": "97f1258b3dd30d37ba33a4c4ed741eed"
   }, {
     "url": "/_next/static/development/_ssgManifest.js",
     "revision": "abee47769bf307639ace4945f9cfd4ff"
   }, {
-    "url": "/_next/static/media/26a46d62cd723877-s.woff2",
-    "revision": "befd9c0fdfa3d8a645d5f95717ed6420"
-  }, {
-    "url": "/_next/static/media/55c55f0601d81cf3-s.woff2",
-    "revision": "43828e14271c77b87e3ed582dbff9f74"
-  }, {
-    "url": "/_next/static/media/581909926a08bbc8-s.woff2",
-    "revision": "f0b86e7c24f455280b8df606b89af891"
-  }, {
-    "url": "/_next/static/media/8e9860b6e62d6359-s.woff2",
-    "revision": "01ba6c2a184b8cba08b0d57167664d75"
-  }, {
-    "url": "/_next/static/media/97e0cb1ae144a2a9-s.woff2",
-    "revision": "e360c61c5bd8d90639fd4503c829c2dc"
-  }, {
-    "url": "/_next/static/media/df0a9ae256c0569c-s.woff2",
-    "revision": "d54db44de5ccb18886ece2fda72bdfe0"
-  }, {
-    "url": "/_next/static/media/e4af272ccee01ff0-s.woff2",
-    "revision": "65850a373e258f1c897a2b3d75eb74de"
-  }, {
-    "url": "/_next/static/webpack/app/layout.e426ec878918509f.hot-update.js",
-    "revision": "development"
-  }, {
-    "url": "/_next/static/webpack/e426ec878918509f.webpack.hot-update.json",
-    "revision": "development"
-  }, {
-    "url": "/_next/static/webpack/webpack.e426ec878918509f.hot-update.js",
+    "url": "/_next/static/webpack/633457081244afec._.hot-update.json",
     "revision": "development"
   }], {
     "ignoreURLParametersMatching": [/ts/]
