@@ -217,8 +217,8 @@ export default function HomePage() {
       setError(null);
       setLoadingProgress(0);
       
-      // Load albums with pagination for better performance
-      const allAlbums = await loadAlbumsData('all', 50, 0); // Load first 50 albums initially
+      // Load all albums - increased limit to show all releases
+      const allAlbums = await loadAlbumsData('all', 500, 0); // Load up to 500 albums
       
       // Store empty HGH albums array (they're now in the main database)
       // HGH filter removed
