@@ -107,25 +107,22 @@ export async function GET(request: Request) {
         const description = typeof album.description === 'string' ? album.description : '';
         let coverArt = typeof album.coverArt === 'string' ? album.coverArt : '';
         
-        // Extract artist with improved logic - find first track with valid artist different from album title
+        // Extract artist with improved logic - prefer album artist first, then track artists
         let artist = 'Unknown Artist';
-        if (album.artist && typeof album.artist === 'string' && album.artist.trim() !== '' && album.artist !== title) {
+        if (album.artist && typeof album.artist === 'string' && album.artist.trim() !== '') {
           artist = album.artist;
         } else if (album.tracks && Array.isArray(album.tracks)) {
-          // Extract from track data if album artist is missing or same as title
+          // Extract from track data if album artist is missing
           for (const track of album.tracks) {
-            if (track.artist && track.artist.trim() !== '' && track.artist !== title) {
+            if (track.artist && track.artist.trim() !== '') {
               artist = track.artist;
               break;
             }
           }
-          // Fallback to first track's artist if no better option found
-          if (artist === 'Unknown Artist' && album.tracks[0]?.artist) {
-            artist = album.tracks[0].artist;
-          }
-        } else if (album.artist && typeof album.artist === 'string' && album.artist.trim() !== '') {
-          // Last resort: use album artist even if it matches title
-          artist = album.artist;
+        }
+        // Fallback to album title if no artist found
+        if (artist === 'Unknown Artist') {
+          artist = title;
         }
         
         // Fix known incorrect artwork assignments in the data
@@ -303,17 +300,17 @@ export async function GET(request: Request) {
       const firstTrack = group.tracks[0];
       const albumTitle = group.feedTitle || 'Unknown Album';
       
-      // Extract artist from track data - find first track with valid artist that's different from album title
+      // Extract artist from track data - prefer first track with valid artist
       let artist = 'Unknown Artist';
       for (const track of group.tracks) {
-        if (track.artist && track.artist.trim() !== '' && track.artist !== albumTitle) {
+        if (track.artist && track.artist.trim() !== '') {
           artist = track.artist;
           break;
         }
       }
-      // Fallback to first track's artist if no better option found
-      if (artist === 'Unknown Artist' && firstTrack.artist) {
-        artist = firstTrack.artist;
+      // Fallback to album title if no track artist found
+      if (artist === 'Unknown Artist') {
+        artist = albumTitle;
       }
       
       // Debug log for Tinderbox
