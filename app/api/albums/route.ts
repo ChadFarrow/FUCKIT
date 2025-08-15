@@ -300,15 +300,61 @@ export async function GET(request: Request) {
       const firstTrack = group.tracks[0];
       const albumTitle = group.feedTitle || 'Unknown Album';
       
-      // Extract artist from track data - prefer first track with valid artist
-      let artist = 'Unknown Artist';
-      for (const track of group.tracks) {
-        if (track.artist && track.artist.trim() !== '') {
-          artist = track.artist;
-          break;
+      // Manual mapping for known collaborative albums and complex cases
+      const artistMappings: Record<string, string> = {
+        'Everything Is Lit': 'Fletcher and Blaney',
+        'Stay Awhile': 'Able and the Wolf',
+        'The HeyCitizen Experience': 'HeyCitizen',
+        "HeyCitizen's Lo-Fi Hip-Hop Beats to Study and Relax to": 'HeyCitizen',
+        'Music From The Doerfel-Verse': 'Various Artists',
+        'Homegrown Hits Vol. I': 'Various Artists',
+        'CityBeach': 'SirTJ The Wrathful',
+        'Kurtisdrums': 'SirTJ The Wrathful',
+        'So Far Away': 'SirTJ The Wrathful',
+        'Nostalgic': 'SirTJ The Wrathful'
+      };
+      
+      // Extract artist from track data with smarter detection
+      let artist = artistMappings[albumTitle] || 'Unknown Artist';
+      
+      // If no manual mapping, try to find a track artist that's different from the album title
+      if (!artistMappings[albumTitle]) {
+        for (const track of group.tracks) {
+          if (track.artist && track.artist.trim() !== '' && track.artist !== albumTitle) {
+            artist = track.artist;
+            break;
+          }
         }
       }
-      // Fallback to album title if no track artist found
+      
+      // If no different artist found, look for patterns in album title that suggest artist name
+      if (artist === 'Unknown Artist') {
+        // Check for " - " pattern (Artist - Album)
+        if (albumTitle.includes(' - ')) {
+          const parts = albumTitle.split(' - ');
+          if (parts.length >= 2) {
+            artist = parts[0].trim();
+          }
+        }
+        // Check for "feat." pattern
+        else if (albumTitle.includes(' feat.') || albumTitle.includes(' featuring ')) {
+          const featMatch = albumTitle.match(/^(.+?)\s+(?:feat\.|featuring)\s+(.+)$/i);
+          if (featMatch) {
+            artist = featMatch[1].trim();
+          }
+        }
+        // Use any track artist even if it matches album title (better than "Unknown Artist")
+        else {
+          for (const track of group.tracks) {
+            if (track.artist && track.artist.trim() !== '') {
+              artist = track.artist;
+              break;
+            }
+          }
+        }
+      }
+      
+      // Final fallback to album title if still no artist found
       if (artist === 'Unknown Artist') {
         artist = albumTitle;
       }
