@@ -365,12 +365,33 @@ export async function GET(request: Request) {
       
       // Final fallback - avoid showing identical artist and album names
       if (artist === 'Unknown Artist') {
-        // For single word titles, assume self-titled
-        if (!albumTitle.includes(' ')) {
+        // Check if this is likely a single track vs full album
+        const trackCount = group.tracks.length;
+        const isSingle = trackCount === 1;
+        const hasCompilationKeywords = albumTitle.toLowerCase().includes('various') || 
+                                      albumTitle.toLowerCase().includes('compilation') ||
+                                      albumTitle.toLowerCase().includes('collection') ||
+                                      albumTitle.toLowerCase().includes('sampler');
+        
+        if (isSingle && !hasCompilationKeywords) {
+          // For single tracks, use the album title as artist (self-titled)
           artist = albumTitle;
+        } else if (hasCompilationKeywords) {
+          // Only use "Various Artists" for actual compilation albums
+          artist = 'Various Artists';
         } else {
-          // For multi-word titles, try to extract a reasonable artist name
-          artist = `Various Artists`;
+          // For albums with multiple tracks, try to extract artist from title
+          if (albumTitle.includes(' - ')) {
+            // Try "Artist - Album" format
+            const parts = albumTitle.split(' - ');
+            artist = parts[0].trim();
+          } else if (!albumTitle.includes(' ')) {
+            // Single word - likely self-titled
+            artist = albumTitle;
+          } else {
+            // Multi-word album - use as is rather than "Various Artists"
+            artist = albumTitle;
+          }
         }
       }
       
