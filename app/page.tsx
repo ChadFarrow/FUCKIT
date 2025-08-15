@@ -217,8 +217,8 @@ export default function HomePage() {
       setError(null);
       setLoadingProgress(0);
       
-      // Load all albums - increased limit to show all releases
-      const allAlbums = await loadAlbumsData('all', 500, 0); // Load up to 500 albums
+      // Load albums progressively for better performance
+      const allAlbums = await loadAlbumsData('all', 50, 0); // Start with 50 albums for fast initial load
       
       // Store empty HGH albums array (they're now in the main database)
       // HGH filter removed
@@ -257,18 +257,22 @@ export default function HomePage() {
     
     setIsLoadingMore(true);
     try {
-      // Load more albums efficiently
+      // Load more albums efficiently - larger batches for better performance
       const nextOffset = enhancedAlbums.length;
-      const moreAlbums = await loadAlbumsData('all', 20, nextOffset);
+      const moreAlbums = await loadAlbumsData('all', 50, nextOffset);
       
       if (moreAlbums.length > 0) {
-        setEnhancedAlbums(prev => [...prev, ...moreAlbums]);
-        setVisibleAlbumCount(prev => prev + moreAlbums.length);
+        // Use setTimeout to batch DOM updates for better performance
+        setTimeout(() => {
+          setEnhancedAlbums(prev => [...prev, ...moreAlbums]);
+          setVisibleAlbumCount(prev => prev + moreAlbums.length);
+        }, 0);
       }
     } catch (error) {
       console.warn('Failed to load more albums:', error);
     } finally {
-      setIsLoadingMore(false);
+      // Delay clearing loading state to prevent rapid re-triggers
+      setTimeout(() => setIsLoadingMore(false), 100);
     }
   };
 
@@ -284,12 +288,15 @@ export default function HomePage() {
           loadMoreAlbums();
         }
       },
-      { threshold: 0.5 } // Load more when user is halfway to the bottom
+      { 
+        threshold: 0.1, // Load more earlier for smoother experience
+        rootMargin: '100px' // Start loading 100px before the element is visible
+      }
     );
     
     observer.observe(loadMoreRef.current);
     return () => observer.disconnect();
-  }, [isEnhancedLoaded, isLoadingMore]);
+  }, [isEnhancedLoaded, isLoadingMore, enhancedAlbums.length]); // Add albums length to dependency
 
   const loadAlbumsData = async (loadTier: 'core' | 'extended' | 'lowPriority' | 'all' = 'all', limit: number = 50, offset: number = 0) => {
     try {
