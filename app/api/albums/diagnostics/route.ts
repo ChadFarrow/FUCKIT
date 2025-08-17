@@ -124,7 +124,7 @@ export async function GET() {
           album: albumTitle,
           feedGuid: feedGuid,
           suspiciousCount: suspiciousPatterns.length,
-          examples: [...new Set(suspiciousPatterns)].slice(0, 3),
+          examples: Array.from(new Set(suspiciousPatterns)).slice(0, 3),
           description: `Album has tracks with suspicious naming patterns that might indicate duplicates`
         });
       }

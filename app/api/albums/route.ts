@@ -65,7 +65,7 @@ export async function GET(request: Request) {
       const publisherStats = new Map<string, { name: string; feedGuid: string; albumCount: number }>();
       
       filteredAlbums
-        .filter(album => {
+        .filter((album: any) => {
           const artistName = album.artist && typeof album.artist === 'string' ? album.artist.toLowerCase() : '';
           return album.publisher && album.publisher.feedGuid &&
                  !artistName.includes('doerfel') && 
@@ -74,7 +74,7 @@ export async function GET(request: Request) {
                  !artistName.includes('shredward') &&
                  !artistName.includes('tj doerfel');
         })
-        .forEach(album => {
+        .forEach((album: any) => {
           const key = album.publisher!.feedGuid;
           if (!publisherStats.has(key)) {
             publisherStats.set(key, {
