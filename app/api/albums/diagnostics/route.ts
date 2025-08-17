@@ -109,10 +109,10 @@ export async function GET() {
       }
       
       // Issue 3: Suspicious patterns (same track repeated with numbers)
-      const suspiciousPatterns = trackTitles.filter(title => {
+      const suspiciousPatterns = trackTitles.filter((title: string) => {
         // Look for tracks with numbers at the end that might be duplicates
         const baseTitle = title.replace(/\s*\d+$/, '').trim();
-        const matches = trackTitles.filter(t => t.startsWith(baseTitle));
+        const matches = trackTitles.filter((t: string) => t.startsWith(baseTitle));
         return matches.length > 2; // More than 2 tracks with similar base names
       });
       
