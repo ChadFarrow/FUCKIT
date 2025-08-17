@@ -77,6 +77,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
     
     // Convert Map to array and iterate (compatible with TypeScript build)
     const albumGroups = Array.from(musicAlbumGroups.values());
+    const potentialMatches = [];
+    
     for (const group of albumGroups) {
       const albumTitle = group.feedTitle || 'Unknown Album';
       
@@ -130,7 +132,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
       ];
       
       if (matches.some(match => match)) {
-        console.log(`✅ Found matching album: "${albumTitle}" by ${albumArtist}`);
+        console.log(`✅ Found matching album: "${albumTitle}" by ${albumArtist} (${group.tracks.length} tracks)`);
         
         // Debug log for albums with potential duplicates
         if (['Tinderbox', 'Fight!', 'it can be erased', 'deathdreams', 'Everything Is Lit', 'Kurtisdrums', 'Live From the Other Side', 'Music From The Doerfel-Verse'].includes(albumTitle)) {
@@ -159,112 +161,136 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
           }
         }
         
-        const firstTrack = group.tracks[0];
-        
-        // Process the album data with proper type checking for music track format
-        foundAlbum = {
-          id: generateAlbumSlug(albumTitle),
-          title: albumTitle,
-          artist: albumArtist,
-          description: firstTrack.description || '',
-          summary: firstTrack.description || '',
-          subtitle: '',
-          coverArt: group.feedImage || firstTrack.image || '',
-          releaseDate: new Date(firstTrack.datePublished * 1000 || Date.now()).toISOString(),
-          explicit: firstTrack.explicit || false,
-          tracks: group.tracks
-            // Deduplicate tracks by title (prioritize tracks with URLs)
-            .filter((track: any, index: number, array: any[]) => {
-              const title = track.title || 'Untitled';
-              
-              // Find all tracks with the same title
-              const sameTitle = array.filter(t => (t.title || 'Untitled') === title);
-              
-              // If only one track with this title, keep it
-              if (sameTitle.length === 1) return true;
-              
-              // If multiple tracks with same title, prefer the one with a URL
-              const withUrl = sameTitle.find(t => t.enclosureUrl && t.enclosureUrl.trim() !== '');
-              if (withUrl) {
-                return track === withUrl;
-              }
-              
-              // If none have URLs, keep the first occurrence
-              return array.findIndex(t => (t.title || 'Untitled') === title) === index;
-            })
-            .map((track: any, index: number) => {
-            // Remove OP3.dev tracking wrapper from URLs
-            let cleanUrl = track.enclosureUrl || '';
-            if (cleanUrl.includes('op3.dev/')) {
-              // Extract the original URL from OP3.dev wrapper
-              const urlMatch = cleanUrl.match(/https:\/\/op3\.dev\/[^\/]+\/(https?:\/\/.+)/);
-              if (urlMatch) {
-                cleanUrl = urlMatch[1];
-                console.log(`🚫 Removed OP3.dev tracking from URL: ${cleanUrl}`);
-              }
+        // Store as potential match instead of immediately selecting
+        potentialMatches.push({
+          group,
+          albumTitle,
+          albumArtist,
+          trackCount: group.tracks.length
+        });
+      }
+    }
+    
+    // Select the best match from potential matches
+    if (potentialMatches.length > 0) {
+      // Sort by track count descending to prefer albums with more tracks
+      potentialMatches.sort((a, b) => b.trackCount - a.trackCount);
+      
+      if (potentialMatches.length > 1) {
+        console.log(`🔍 Found ${potentialMatches.length} matching albums for "${slug}"`);
+        potentialMatches.forEach((match, index) => {
+          console.log(`  ${index + 1}. "${match.albumTitle}" by ${match.albumArtist} (${match.trackCount} tracks)`);
+        });
+        console.log(`✅ Selected album with most tracks: "${potentialMatches[0].albumTitle}" (${potentialMatches[0].trackCount} tracks)`);
+      }
+      
+      const selectedMatch = potentialMatches[0];
+      const group = selectedMatch.group;
+      const albumTitle = selectedMatch.albumTitle;
+      const albumArtist = selectedMatch.albumArtist;
+      const firstTrack = group.tracks[0];
+      
+      // Process the album data with proper type checking for music track format
+      foundAlbum = {
+        id: generateAlbumSlug(albumTitle),
+        title: albumTitle,
+        artist: albumArtist,
+        description: firstTrack.description || '',
+        summary: firstTrack.description || '',
+        subtitle: '',
+        coverArt: group.feedImage || firstTrack.image || '',
+        releaseDate: new Date(firstTrack.datePublished * 1000 || Date.now()).toISOString(),
+        explicit: firstTrack.explicit || false,
+        tracks: group.tracks
+          // Deduplicate tracks by title (prioritize tracks with URLs)
+          .filter((track: any, index: number, array: any[]) => {
+            const title = track.title || 'Untitled';
+            
+            // Find all tracks with the same title
+            const sameTitle = array.filter(t => (t.title || 'Untitled') === title);
+            
+            // If only one track with this title, keep it
+            if (sameTitle.length === 1) return true;
+            
+            // If multiple tracks with same title, prefer the one with a URL
+            const withUrl = sameTitle.find(t => t.enclosureUrl && t.enclosureUrl.trim() !== '');
+            if (withUrl) {
+              return track === withUrl;
             }
             
-            return {
-              title: track.title || 'Untitled',
-              duration: track.duration ? Math.floor(track.duration / 60) + ':' + String(track.duration % 60).padStart(2, '0') : '0:00',
-              url: cleanUrl,
-              trackNumber: index + 1,
-              subtitle: '',
-              summary: track.description || '',
-              image: track.image || group.feedImage || '',
-              explicit: track.explicit || false,
-              keywords: []
-            };
-          }),
-          podroll: null,
-          publisher: null, // Could be enhanced with publisher matching logic
-          funding: firstTrack.value ? { 
-            type: 'lightning', 
-            destinations: firstTrack.value.destinations || [] 
-          } : null,
-          feedId: group.feedGuid || generateAlbumSlug(albumTitle),
-          feedUrl: group.feedUrl || '',
-          lastUpdated: new Date(firstTrack.datePublished * 1000 || Date.now()).toISOString()
-        };
+            // If none have URLs, keep the first occurrence
+            return array.findIndex(t => (t.title || 'Untitled') === title) === index;
+          })
+          .map((track: any, index: number) => {
+          // Remove OP3.dev tracking wrapper from URLs
+          let cleanUrl = track.enclosureUrl || '';
+          if (cleanUrl.includes('op3.dev/')) {
+            // Extract the original URL from OP3.dev wrapper
+            const urlMatch = cleanUrl.match(/https:\/\/op3\.dev\/[^\/]+\/(https?:\/\/.+)/);
+            if (urlMatch) {
+              cleanUrl = urlMatch[1];
+              console.log(`🚫 Removed OP3.dev tracking from URL: ${cleanUrl}`);
+            }
+          }
+          
+          return {
+            title: track.title || 'Untitled',
+            duration: track.duration ? Math.floor(track.duration / 60) + ':' + String(track.duration % 60).padStart(2, '0') : '0:00',
+            url: cleanUrl,
+            trackNumber: index + 1,
+            subtitle: '',
+            summary: track.description || '',
+            image: track.image || group.feedImage || '',
+            explicit: track.explicit || false,
+            keywords: []
+          };
+        }),
+        podroll: null,
+        publisher: null, // Could be enhanced with publisher matching logic
+        funding: firstTrack.value ? { 
+          type: 'lightning', 
+          destinations: firstTrack.value.destinations || [] 
+        } : null,
+        feedId: group.feedGuid || generateAlbumSlug(albumTitle),
+        feedUrl: group.feedUrl || '',
+        lastUpdated: new Date(firstTrack.datePublished * 1000 || Date.now()).toISOString()
+      };
+      
+      // Custom track ordering for concept albums (e.g., "They Ride" by IROH)
+      if (foundAlbum.title.toLowerCase() === 'they ride' && foundAlbum.artist.toLowerCase() === 'iroh') {
+        console.log('🎵 Applying custom track order for "They Ride" concept album');
         
-        // Custom track ordering for concept albums (e.g., "They Ride" by IROH)
-        if (foundAlbum.title.toLowerCase() === 'they ride' && foundAlbum.artist.toLowerCase() === 'iroh') {
-          console.log('🎵 Applying custom track order for "They Ride" concept album');
+        const correctTrackOrder = [
+          '-', 'Heaven Knows', '....', 'The Fever', '.', 'In Exile', '-.--', 'The Seed Man',
+          '-.-.', 'Renfield', '..', 'They Ride', '-..', 'Pedal Down ( feat. Rob Montgomery )',
+          '. ( The Last Transmission? )'
+        ];
+        
+        foundAlbum.tracks = foundAlbum.tracks.sort((a: any, b: any) => {
+          const aTitle = a.title.toLowerCase().trim();
+          const bTitle = b.title.toLowerCase().trim();
           
-          const correctTrackOrder = [
-            '-', 'Heaven Knows', '....', 'The Fever', '.', 'In Exile', '-.--', 'The Seed Man',
-            '-.-.', 'Renfield', '..', 'They Ride', '-..', 'Pedal Down ( feat. Rob Montgomery )',
-            '. ( The Last Transmission? )'
-          ];
-          
-          foundAlbum.tracks = foundAlbum.tracks.sort((a: any, b: any) => {
-            const aTitle = a.title.toLowerCase().trim();
-            const bTitle = b.title.toLowerCase().trim();
-            
-            const aIndex = correctTrackOrder.findIndex(title => {
-              const correctTitle = title.toLowerCase().trim();
-              return aTitle === correctTitle || 
-                     aTitle.includes(correctTitle) || 
-                     correctTitle.includes(aTitle) ||
-                     aTitle.replace(/[^a-z0-9]/g, '') === correctTitle.replace(/[^a-z0-9]/g, '');
-            });
-            
-            const bIndex = correctTrackOrder.findIndex(title => {
-              const correctTitle = title.toLowerCase().trim();
-              return bTitle === correctTitle || 
-                     bTitle.includes(correctTitle) || 
-                     correctTitle.includes(bTitle) ||
-                     bTitle.replace(/[^a-z0-9]/g, '') === correctTitle.replace(/[^a-z0-9]/g, '');
-            });
-            
-            if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
-            if (aIndex !== -1) return -1;
-            if (bIndex !== -1) return 1;
-            return 0;
+          const aIndex = correctTrackOrder.findIndex(title => {
+            const correctTitle = title.toLowerCase().trim();
+            return aTitle === correctTitle || 
+                   aTitle.includes(correctTitle) || 
+                   correctTitle.includes(aTitle) ||
+                   aTitle.replace(/[^a-z0-9]/g, '') === correctTitle.replace(/[^a-z0-9]/g, '');
           });
-        }
-        
-        break;
+          
+          const bIndex = correctTrackOrder.findIndex(title => {
+            const correctTitle = title.toLowerCase().trim();
+            return bTitle === correctTitle || 
+                   bTitle.includes(correctTitle) || 
+                   correctTitle.includes(bTitle) ||
+                   bTitle.replace(/[^a-z0-9]/g, '') === correctTitle.replace(/[^a-z0-9]/g, '');
+          });
+          
+          if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
+          if (aIndex !== -1) return -1;
+          if (bIndex !== -1) return 1;
+          return 0;
+        });
       }
     }
     
