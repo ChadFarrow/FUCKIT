@@ -364,6 +364,7 @@ export async function GET(request: Request) {
     
     // Load publisher feeds data to match with music tracks
     let publisherFeeds: any[] = [];
+    let publisherMappings: any = {};
     try {
       const publisherFeedsPath = path.join(process.cwd(), 'data', 'publisher-feed-results.json');
       if (fs.existsSync(publisherFeedsPath)) {
@@ -371,8 +372,15 @@ export async function GET(request: Request) {
         publisherFeeds = JSON.parse(publisherFeedsContent);
         console.log(`✅ Loaded ${publisherFeeds.length} publisher feeds for matching`);
       }
+      
+      // Load manual publisher mappings for better coverage
+      const publisherMappingsPath = path.join(process.cwd(), 'data', 'publisher-mappings-manual.json');
+      if (fs.existsSync(publisherMappingsPath)) {
+        publisherMappings = JSON.parse(fs.readFileSync(publisherMappingsPath, 'utf-8'));
+        console.log(`✅ Loaded manual publisher mappings`);
+      }
     } catch (error) {
-      console.warn('Failed to load publisher feeds:', error);
+      console.warn('Failed to load publisher data:', error);
     }
     
     // Convert music track groups to album format
@@ -509,7 +517,24 @@ export async function GET(request: Request) {
       
       // Try to find matching publisher feed for this album/artist
       let publisher = null;
-      if (publisherFeeds.length > 0) {
+      
+      // First check manual publisher mappings
+      const albumGuid = group.feedGuid || group.feedUrl?.split('/').pop();
+      for (const [publisherGuid, publisherData] of Object.entries(publisherMappings)) {
+        if ((publisherData as any).albumGuids?.includes(albumGuid)) {
+          publisher = {
+            feedGuid: publisherGuid,
+            feedUrl: (publisherData as any).feedUrl,
+            title: (publisherData as any).name,
+            artistImage: null
+          };
+          console.log(`📍 Matched "${albumTitle}" to publisher "${(publisherData as any).name}" via manual mapping`);
+          break;
+        }
+      }
+      
+      // If no manual match, try existing matching logic
+      if (!publisher && publisherFeeds.length > 0) {
         // Try to match by artist name (most reliable for Wavlake structure)
         const matchByArtist = publisherFeeds.find((pubFeed: any) => {
           const pubTitle = pubFeed.title?.replace('<![CDATA[', '').replace(']]>', '') || '';

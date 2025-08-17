@@ -1,0 +1,134 @@
+{
+  "analysisDate": "2025-08-17T23:27:51.402Z",
+  "totalPublishers": 25,
+  "publishersWithMissingAlbums": 14,
+  "totalMissingAlbums": 88,
+  "publishers": [
+    {
+      "name": "Jessica Lynne Witty",
+      "publisherGuid": "6fa983b3-9aa2-4331-b22f-5f6d8dcdf3f2",
+      "feedUrl": "https://wavlake.com/feed/artist/6fa983b3-9aa2-4331-b22f-5f6d8dcdf3f2",
+      "expectedCount": 16,
+      "actualCount": 1,
+      "missingCount": 15,
+      "priority": 30
+    },
+    {
+      "name": "Ryan Fonda",
+      "publisherGuid": "d4c49f2e-0b50-4a5e-8101-7543d68e032f",
+      "feedUrl": "https://wavlake.com/feed/artist/d4c49f2e-0b50-4a5e-8101-7543d68e032f",
+      "expectedCount": 15,
+      "actualCount": 1,
+      "missingCount": 14,
+      "priority": 28
+    },
+    {
+      "name": "Herbivore",
+      "publisherGuid": "eea2d330-fc71-4e90-81de-3de819728c9d",
+      "feedUrl": "https://wavlake.com/feed/artist/eea2d330-fc71-4e90-81de-3de819728c9d",
+      "expectedCount": 14,
+      "actualCount": 3,
+      "missingCount": 11,
+      "priority": 22
+    },
+    {
+      "name": "Sara Jade",
+      "publisherGuid": "a8ad6318-7312-4f77-adbf-80b54944c8da",
+      "feedUrl": "https://wavlake.com/feed/artist/a8ad6318-7312-4f77-adbf-80b54944c8da",
+      "expectedCount": 15,
+      "actualCount": 4,
+      "missingCount": 11,
+      "priority": 22
+    },
+    {
+      "name": "bennyjeans",
+      "publisherGuid": "4e33ca0c-bd98-4f98-9284-e8073046c049",
+      "feedUrl": "https://wavlake.com/feed/artist/4e33ca0c-bd98-4f98-9284-e8073046c049",
+      "expectedCount": 11,
+      "actualCount": 1,
+      "missingCount": 10,
+      "priority": 20
+    },
+    {
+      "name": "Charlie Crown",
+      "publisherGuid": "707bc821-489e-46b2-8b51-d0aaad856f20",
+      "feedUrl": "https://wavlake.com/feed/artist/707bc821-489e-46b2-8b51-d0aaad856f20",
+      "expectedCount": 12,
+      "actualCount": 2,
+      "missingCount": 10,
+      "priority": 20
+    },
+    {
+      "name": "Big Awesome",
+      "publisherGuid": "93fbacab-bbbb-4de4-863a-8adeb9fc4782",
+      "feedUrl": "https://wavlake.com/feed/artist/93fbacab-bbbb-4de4-863a-8adeb9fc4782",
+      "expectedCount": 5,
+      "actualCount": 1,
+      "missingCount": 4,
+      "priority": 4
+    },
+    {
+      "name": "Lara J",
+      "publisherGuid": "912c0793-92cf-4726-a495-e5b1602693c0",
+      "feedUrl": "https://wavlake.com/feed/artist/912c0793-92cf-4726-a495-e5b1602693c0",
+      "expectedCount": 4,
+      "actualCount": 1,
+      "missingCount": 3,
+      "priority": 3
+    },
+    {
+      "name": "Matt Johner",
+      "publisherGuid": "7ca38fae-f142-4ceb-ab0f-b17d92374315",
+      "feedUrl": "https://wavlake.com/feed/artist/7ca38fae-f142-4ceb-ab0f-b17d92374315",
+      "expectedCount": 5,
+      "actualCount": 2,
+      "missingCount": 3,
+      "priority": 3
+    },
+    {
+      "name": "The Johner Boys",
+      "publisherGuid": "bd040774-1dd6-42c6-98ce-01d327697a1d",
+      "feedUrl": "https://wavlake.com/feed/artist/bd040774-1dd6-42c6-98ce-01d327697a1d",
+      "expectedCount": 4,
+      "actualCount": 2,
+      "missingCount": 2,
+      "priority": 2
+    },
+    {
+      "name": "Vertigo Kidd",
+      "publisherGuid": "eff27dd6-764c-497e-81fe-3a7e10eb7b3b",
+      "feedUrl": "https://wavlake.com/feed/artist/eff27dd6-764c-497e-81fe-3a7e10eb7b3b",
+      "expectedCount": 3,
+      "actualCount": 1,
+      "missingCount": 2,
+      "priority": 2
+    },
+    {
+      "name": "Cole Hansen",
+      "publisherGuid": "cc63b375-8977-4048-9aee-99a500fb6108",
+      "feedUrl": "https://wavlake.com/feed/artist/cc63b375-8977-4048-9aee-99a500fb6108",
+      "expectedCount": 2,
+      "actualCount": 1,
+      "missingCount": 1,
+      "priority": 1
+    },
+    {
+      "name": "John Depew Trio",
+      "publisherGuid": "df5a4722-cd42-429c-896d-caec1ad39600",
+      "feedUrl": "https://wavlake.com/feed/artist/df5a4722-cd42-429c-896d-caec1ad39600",
+      "expectedCount": 2,
+      "actualCount": 1,
+      "missingCount": 1,
+      "priority": 1
+    },
+    {
+      "name": "The Greensands",
+      "publisherGuid": "a8586318-c588-46ad-a769-ffb7e9c27b2c",
+      "feedUrl": "https://wavlake.com/feed/artist/a8586318-c588-46ad-a769-ffb7e9c27b2c",
+      "expectedCount": 4,
+      "actualCount": 3,
+      "missingCount": 1,
+      "priority": 1
+    }
+  ]
+}
