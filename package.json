@@ -27,7 +27,8 @@
     "discover-publishers": "node scripts/discover-wavlake-publisher-feeds.js",
     "integrate-publishers": "node scripts/integrate-publisher-feeds.js",
     "check-artwork": "node scripts/check-all-artwork-comprehensive.js",
-    "fix-artwork": "node scripts/fix-all-album-artwork.js"
+    "fix-artwork": "node scripts/fix-all-album-artwork.js",
+    "check-albums": "./scripts/check-album-issues.sh"
   },
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",

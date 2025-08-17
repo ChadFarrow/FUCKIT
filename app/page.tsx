@@ -109,6 +109,7 @@ export default function HomePage() {
   const [enhancedAlbums, setEnhancedAlbums] = useState<RSSAlbum[]>([]);
   const [isCriticalLoaded, setIsCriticalLoaded] = useState(false);
   const [isEnhancedLoaded, setIsEnhancedLoaded] = useState(false);
+  const [publisherStats, setPublisherStats] = useState<{ name: string; feedGuid: string; albumCount: number }[]>([]);
   
   // Performance optimization: Limit rendered albums for better scrolling
   const [visibleAlbumCount, setVisibleAlbumCount] = useState(50);
@@ -119,7 +120,8 @@ export default function HomePage() {
   const [totalAlbums, setTotalAlbums] = useState(0);
   const [displayedAlbums, setDisplayedAlbums] = useState<RSSAlbum[]>([]);
   const [hasMoreAlbums, setHasMoreAlbums] = useState(true);
-  const ALBUMS_PER_PAGE = 24; // 4x6 grid on desktop
+  const ALBUMS_PER_PAGE = 0; // Load all albums for accurate sidebar counting
+  const API_VERSION = 'v2'; // Increment to bust cache when API changes
   
   // HGH filter removed - no longer needed
   
@@ -192,12 +194,12 @@ export default function HomePage() {
     
     // Only clear cache if it's stale (older than 5 minutes)
     if (typeof window !== 'undefined') {
-      const timestamp = localStorage.getItem('albumsCacheTimestamp');
+      const timestamp = localStorage.getItem(`albumsCacheTimestamp_${ALBUMS_PER_PAGE}_${API_VERSION}`);
       if (timestamp) {
         const age = Date.now() - parseInt(timestamp);
         if (age > 5 * 60 * 1000) { // 5 minutes
-          localStorage.removeItem('cachedAlbums');
-          localStorage.removeItem('albumsCacheTimestamp');
+          localStorage.removeItem(`cachedAlbums_${ALBUMS_PER_PAGE}_${API_VERSION}`);
+          localStorage.removeItem(`albumsCacheTimestamp_${ALBUMS_PER_PAGE}_${API_VERSION}`);
         }
       }
     }
@@ -366,8 +368,8 @@ export default function HomePage() {
     try {
       // Simplified caching - only cache the main 'all' request with no filtering
       if (typeof window !== 'undefined' && loadTier === 'all' && offset === 0 && filter === 'all') {
-        const cached = localStorage.getItem('cachedAlbums');
-        const timestamp = localStorage.getItem('albumsCacheTimestamp');
+        const cached = localStorage.getItem(`cachedAlbums_${ALBUMS_PER_PAGE}_${API_VERSION}`);
+        const timestamp = localStorage.getItem(`albumsCacheTimestamp_${ALBUMS_PER_PAGE}_${API_VERSION}`);
         
         if (cached && timestamp) {
           const age = Date.now() - parseInt(timestamp);
@@ -395,6 +397,13 @@ export default function HomePage() {
       
       const data = await response.json();
       const albums = data.albums || [];
+      const publisherStatsFromAPI = data.publisherStats || [];
+      
+      // Update publisher stats from API response
+      if (publisherStatsFromAPI.length > 0) {
+        setPublisherStats(publisherStatsFromAPI);
+        console.log(`📊 Updated publisher stats: ${publisherStatsFromAPI.length} publishers`);
+      }
       
       // Skip music tracks processing for initial load performance
       // Music tracks can be loaded separately if needed
@@ -434,8 +443,8 @@ export default function HomePage() {
       // Cache only the main 'all' request for performance
       if (typeof window !== 'undefined' && loadTier === 'all' && offset === 0) {
         try {
-          localStorage.setItem('cachedAlbums', JSON.stringify(rssAlbums));
-          localStorage.setItem('albumsCacheTimestamp', Date.now().toString());
+          localStorage.setItem(`cachedAlbums_${ALBUMS_PER_PAGE}_${API_VERSION}`, JSON.stringify(rssAlbums));
+          localStorage.setItem(`albumsCacheTimestamp_${ALBUMS_PER_PAGE}_${API_VERSION}`, Date.now().toString());
         } catch (error) {
           console.warn('⚠️ Failed to cache albums:', error);
         }
@@ -835,36 +844,8 @@ export default function HomePage() {
 
             {/* Artists with Publisher Feeds */}
             {(() => {
-              // Extract unique artists with publisher feeds, excluding Doerfels artists
-              const albumsToUse = isEnhancedLoaded ? enhancedAlbums : criticalAlbums;
-              const artistsWithPublishers = albumsToUse
-                .filter(album => album.publisher && album.publisher.feedGuid)
-                .filter(album => {
-                  // Exclude Doerfels family artists
-                  const artistName = album.artist && typeof album.artist === 'string' ? album.artist.toLowerCase() : '';
-                  return !artistName.includes('doerfel') && 
-                         !artistName.includes('ben doerfel') && 
-                         !artistName.includes('sirtj') &&
-                         !artistName.includes('shredward') &&
-                         !artistName.includes('tj doerfel');
-                })
-                .reduce((acc, album) => {
-                  const key = album.publisher!.feedGuid;
-                  if (!acc.has(key)) {
-                    acc.set(key, {
-                      name: album.artist,
-                      feedGuid: album.publisher!.feedGuid,
-                      albumCount: 1
-                    });
-                  } else {
-                    acc.get(key)!.albumCount++;
-                  }
-                  return acc;
-                }, new Map<string, { name: string; feedGuid: string; albumCount: number }>());
-
-              const artists = Array.from(artistsWithPublishers.values()).sort((a, b) => 
-                a.name.toLowerCase().localeCompare(b.name.toLowerCase())
-              );
+              // Use pre-computed publisher stats from API
+              console.log(`📊 Publisher Stats: Using ${publisherStats.length} pre-computed publisher stats`);
 
               // Always show the section, even if empty, to indicate it exists
               return (
@@ -876,8 +857,8 @@ export default function HomePage() {
                     )}
                   </h3>
                   <div className="space-y-1 max-h-48 overflow-y-auto">
-                    {artists.length > 0 ? (
-                      artists.map((artist) => (
+                    {publisherStats.length > 0 ? (
+                      publisherStats.map((artist) => (
                         <Link
                           key={artist.feedGuid}
                           href={`/publisher/${generatePublisherSlug({ title: artist.name, feedGuid: artist.feedGuid })}`}

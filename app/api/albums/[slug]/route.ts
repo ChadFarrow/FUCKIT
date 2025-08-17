@@ -132,6 +132,33 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
       if (matches.some(match => match)) {
         console.log(`✅ Found matching album: "${albumTitle}" by ${albumArtist}`);
         
+        // Debug log for albums with potential duplicates
+        if (['Tinderbox', 'Fight!', 'it can be erased', 'deathdreams', 'Everything Is Lit', 'Kurtisdrums', 'Live From the Other Side', 'Music From The Doerfel-Verse'].includes(albumTitle)) {
+          const originalTracks = group.tracks.length;
+          const deduplicatedTracks = group.tracks.filter((track: any, index: number, array: any[]) => {
+            const title = track.title || 'Untitled';
+            
+            // Find all tracks with the same title
+            const sameTitle = array.filter(t => (t.title || 'Untitled') === title);
+            
+            // If only one track with this title, keep it
+            if (sameTitle.length === 1) return true;
+            
+            // If multiple tracks with same title, prefer the one with a URL
+            const withUrl = sameTitle.find(t => t.enclosureUrl && t.enclosureUrl.trim() !== '');
+            if (withUrl) {
+              return track === withUrl;
+            }
+            
+            // If none have URLs, keep the first occurrence
+            return array.findIndex(t => (t.title || 'Untitled') === title) === index;
+          });
+          console.log(`🎵 DEBUG [${slug}] ${albumTitle}: ${originalTracks} original tracks → ${deduplicatedTracks.length} deduplicated tracks`);
+          if (originalTracks !== deduplicatedTracks.length) {
+            console.log(`🔄 [${slug}] Removed ${originalTracks - deduplicatedTracks.length} duplicate tracks from "${albumTitle}"`);
+          }
+        }
+        
         const firstTrack = group.tracks[0];
         
         // Process the album data with proper type checking for music track format
@@ -145,7 +172,27 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
           coverArt: group.feedImage || firstTrack.image || '',
           releaseDate: new Date(firstTrack.datePublished * 1000 || Date.now()).toISOString(),
           explicit: firstTrack.explicit || false,
-          tracks: group.tracks.map((track: any, index: number) => {
+          tracks: group.tracks
+            // Deduplicate tracks by title (prioritize tracks with URLs)
+            .filter((track: any, index: number, array: any[]) => {
+              const title = track.title || 'Untitled';
+              
+              // Find all tracks with the same title
+              const sameTitle = array.filter(t => (t.title || 'Untitled') === title);
+              
+              // If only one track with this title, keep it
+              if (sameTitle.length === 1) return true;
+              
+              // If multiple tracks with same title, prefer the one with a URL
+              const withUrl = sameTitle.find(t => t.enclosureUrl && t.enclosureUrl.trim() !== '');
+              if (withUrl) {
+                return track === withUrl;
+              }
+              
+              // If none have URLs, keep the first occurrence
+              return array.findIndex(t => (t.title || 'Untitled') === title) === index;
+            })
+            .map((track: any, index: number) => {
             // Remove OP3.dev tracking wrapper from URLs
             let cleanUrl = track.enclosureUrl || '';
             if (cleanUrl.includes('op3.dev/')) {

@@ -9,6 +9,8 @@ import { resolveArtworkFromPodcastIndex } from '@/lib/podcast-index-api';
 let cachedData: any = null;
 let cachedMusicTracks: any = null;
 let cachedHGHSongs: any = null;
+let cachedProcessedAlbums: any = null; // Cache processed albums - cleared for deduplication
+const PROCESSED_CACHE_VERSION = 'v2-dedup'; // Increment to invalidate cache when logic changes
 let cacheTimestamp = 0;
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
@@ -21,11 +23,93 @@ export async function GET(request: Request) {
     const feedId = searchParams.get('feedId');
     const filter = searchParams.get('filter') || 'all'; // albums, eps, singles, all
     
-    // Force cache refresh to fix artwork and artist issues
+    // Use cache for better performance
     const now = Date.now();
-    cacheTimestamp = 0; // Force refresh for artist fixes
-    if (false) { // Force fresh read to debug
-      console.log(`Using cached data: ${cachedData?.feeds?.length || 0} feeds, ${cachedMusicTracks.length} music tracks`);
+    const shouldUseCache = cachedData && cachedMusicTracks && (now - cacheTimestamp) < CACHE_DURATION;
+    
+    // Early return with cached processed albums if available and no specific filtering
+    // Note: Cache is invalidated when deduplication logic changes via PROCESSED_CACHE_VERSION
+    if (shouldUseCache && cachedProcessedAlbums && tier === 'all' && !feedId) {
+      console.log(`⚡ Fast path: Using cached processed albums (${cachedProcessedAlbums.length} albums)`);
+      
+      // Verify cached albums have publisher data
+      const albumsWithPublishers = cachedProcessedAlbums.filter((album: any) => album.publisher && album.publisher.feedGuid);
+      console.log(`📊 Fast path cache contains ${albumsWithPublishers.length} albums with publisher data`);
+      
+      // Apply filtering and pagination on cached data
+      let filteredAlbums = cachedProcessedAlbums;
+      if (filter !== 'all') {
+        switch (filter) {
+          case 'albums':
+            filteredAlbums = cachedProcessedAlbums.filter((album: any) => album.tracks.length > 6);
+            break;
+          case 'eps':
+            filteredAlbums = cachedProcessedAlbums.filter((album: any) => album.tracks.length > 1 && album.tracks.length <= 6);
+            break;
+          case 'singles':
+            filteredAlbums = cachedProcessedAlbums.filter((album: any) => album.tracks.length === 1);
+            break;
+          case 'playlist':
+            filteredAlbums = cachedProcessedAlbums.filter((album: any) => 
+              album.podroll || 
+              (album.tracks.length > 1 && new Set(album.tracks.map((t: any) => t.artist || album.artist)).size > 1)
+            );
+            break;
+        }
+      }
+      
+      const totalCount = filteredAlbums.length;
+      const paginatedAlbums = limit === 0 ? filteredAlbums.slice(offset) : filteredAlbums.slice(offset, offset + limit);
+      
+      // Pre-compute publisher statistics for fast path too
+      const publisherStats = new Map<string, { name: string; feedGuid: string; albumCount: number }>();
+      
+      filteredAlbums
+        .filter(album => {
+          const artistName = album.artist && typeof album.artist === 'string' ? album.artist.toLowerCase() : '';
+          return album.publisher && album.publisher.feedGuid &&
+                 !artistName.includes('doerfel') && 
+                 !artistName.includes('ben doerfel') && 
+                 !artistName.includes('sirtj') &&
+                 !artistName.includes('shredward') &&
+                 !artistName.includes('tj doerfel');
+        })
+        .forEach(album => {
+          const key = album.publisher!.feedGuid;
+          if (!publisherStats.has(key)) {
+            publisherStats.set(key, {
+              name: album.artist,
+              feedGuid: album.publisher!.feedGuid,
+              albumCount: 1
+            });
+          } else {
+            publisherStats.get(key)!.albumCount++;
+          }
+        });
+
+      const publisherStatsArray = Array.from(publisherStats.values()).sort((a, b) => 
+        a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+      );
+      
+      return NextResponse.json({
+        albums: paginatedAlbums,
+        totalCount,
+        hasMore: limit === 0 ? false : offset + limit < totalCount,
+        offset,
+        limit,
+        publisherStats: publisherStatsArray,
+        lastUpdated: new Date(cacheTimestamp).toISOString()
+      }, {
+        headers: {
+          'Cache-Control': 'public, max-age=300, s-maxage=300, stale-while-revalidate=600',
+          'Content-Type': 'application/json',
+          'ETag': `"${cacheTimestamp}-${totalCount}"`
+        }
+      });
+    }
+    
+    if (shouldUseCache) { // Use cache when available
+      console.log(`Using cached data: ${cachedData?.feeds?.length || 0} feeds, ${cachedMusicTracks?.length || 0} music tracks`);
     } else {
       const parsedFeedsPath = path.join(process.cwd(), 'data', 'parsed-feeds.json');
       const musicTracksPath = path.join(process.cwd(), 'data', 'music-tracks.json');
@@ -396,10 +480,31 @@ export async function GET(request: Request) {
         }
       }
       
-      // Debug log for Tinderbox
-      if (albumTitle === 'Tinderbox') {
-        console.log(`🎵 DEBUG Tinderbox: albumTitle="${albumTitle}", final artist="${artist}"`);
-        console.log(`🎵 DEBUG Tinderbox tracks:`, group.tracks.map((t: any) => ({title: t.title, artist: t.artist})));
+      // Debug log for albums with potential duplicates
+      if (['Tinderbox', 'Fight!', 'it can be erased', 'Everything Is Lit', 'Kurtisdrums', 'Live From the Other Side', 'Music From The Doerfel-Verse'].includes(albumTitle)) {
+        const originalTracks = group.tracks.length;
+        const deduplicatedTracks = group.tracks.filter((track: any, index: number, array: any[]) => {
+          const title = track.title || 'Untitled';
+          
+          // Find all tracks with the same title
+          const sameTitle = array.filter(t => (t.title || 'Untitled') === title);
+          
+          // If only one track with this title, keep it
+          if (sameTitle.length === 1) return true;
+          
+          // If multiple tracks with same title, prefer the one with a URL
+          const withUrl = sameTitle.find(t => t.enclosureUrl && t.enclosureUrl.trim() !== '');
+          if (withUrl) {
+            return track === withUrl;
+          }
+          
+          // If none have URLs, keep the first occurrence
+          return array.findIndex(t => (t.title || 'Untitled') === title) === index;
+        });
+        console.log(`🎵 DEBUG ${albumTitle}: ${originalTracks} original tracks → ${deduplicatedTracks.length} deduplicated tracks`);
+        if (originalTracks !== deduplicatedTracks.length) {
+          console.log(`🔄 Removed ${originalTracks - deduplicatedTracks.length} duplicate tracks from "${albumTitle}"`);
+        }
       }
       
       // Try to find matching publisher feed for this album/artist
@@ -466,7 +571,27 @@ export async function GET(request: Request) {
         artist: artist,
         description: firstTrack.description || '',
         coverArt: group.feedImage || firstTrack.image || `/api/placeholder-image?title=${encodeURIComponent(albumTitle)}&artist=${encodeURIComponent(artist)}`,
-        tracks: group.tracks.map((track: any, index: number) => {
+        tracks: group.tracks
+          // Deduplicate tracks by title (prioritize tracks with URLs)
+          .filter((track: any, index: number, array: any[]) => {
+            const title = track.title || 'Untitled';
+            
+            // Find all tracks with the same title
+            const sameTitle = array.filter(t => (t.title || 'Untitled') === title);
+            
+            // If only one track with this title, keep it
+            if (sameTitle.length === 1) return true;
+            
+            // If multiple tracks with same title, prefer the one with a URL
+            const withUrl = sameTitle.find(t => t.enclosureUrl && t.enclosureUrl.trim() !== '');
+            if (withUrl) {
+              return track === withUrl;
+            }
+            
+            // If none have URLs, keep the first occurrence
+            return array.findIndex(t => (t.title || 'Untitled') === title) === index;
+          })
+          .map((track: any, index: number) => {
           // Remove OP3.dev tracking wrapper from URLs
           let cleanUrl = track.enclosureUrl || '';
           if (cleanUrl.includes('op3.dev/')) {
@@ -541,48 +666,85 @@ export async function GET(request: Request) {
     
     const uniqueAlbums = Array.from(finalAlbumMap.values());
     
+    // Sort albums by type: Albums first (7+ tracks), then EPs (2-6 tracks), then Singles (1 track)
+    // Each group sorted alphabetically by title
+    const sortedUniqueAlbums = [
+      ...uniqueAlbums.filter(album => album.tracks.length > 6)
+        .sort((a, b) => a.title.toLowerCase().localeCompare(b.title.toLowerCase())),
+      ...uniqueAlbums.filter(album => album.tracks.length > 1 && album.tracks.length <= 6)
+        .sort((a, b) => a.title.toLowerCase().localeCompare(b.title.toLowerCase())),
+      ...uniqueAlbums.filter(album => album.tracks.length === 1)
+        .sort((a, b) => a.title.toLowerCase().localeCompare(b.title.toLowerCase()))
+    ];
+    
+    // Cache the processed and sorted albums for future fast access
+    if (tier === 'all' && !feedId) {
+      cachedProcessedAlbums = sortedUniqueAlbums;
+      console.log(`💾 Cached ${sortedUniqueAlbums.length} processed albums for fast access`);
+    }
+    
     // Apply filtering by type (albums, eps, singles)
-    let filteredAlbums = uniqueAlbums;
+    let filteredAlbums = sortedUniqueAlbums;
     if (filter !== 'all') {
       switch (filter) {
         case 'albums':
-          filteredAlbums = uniqueAlbums.filter(album => album.tracks.length > 6);
+          filteredAlbums = sortedUniqueAlbums.filter(album => album.tracks.length > 6);
           break;
         case 'eps':
-          filteredAlbums = uniqueAlbums.filter(album => album.tracks.length > 1 && album.tracks.length <= 6);
+          filteredAlbums = sortedUniqueAlbums.filter(album => album.tracks.length > 1 && album.tracks.length <= 6);
           break;
         case 'singles':
-          filteredAlbums = uniqueAlbums.filter(album => album.tracks.length === 1);
+          filteredAlbums = sortedUniqueAlbums.filter(album => album.tracks.length === 1);
           break;
         case 'playlist':
           // Show only playlists - albums with podroll data or multiple artists
-          filteredAlbums = uniqueAlbums.filter(album => 
+          filteredAlbums = sortedUniqueAlbums.filter(album => 
             album.podroll || 
             (album.tracks.length > 1 && new Set(album.tracks.map((t: any) => t.artist || album.artist)).size > 1)
           );
           break;
         default:
-          filteredAlbums = uniqueAlbums;
+          filteredAlbums = sortedUniqueAlbums;
       }
     }
     
     const totalCount = filteredAlbums.length;
-
-    // Sort albums by type: Albums first (7+ tracks), then EPs (2-6 tracks), then Singles (1 track)
-    // Each group sorted alphabetically by title
-    const sortedAlbums = [
-      ...filteredAlbums.filter(album => album.tracks.length > 6)
-        .sort((a, b) => a.title.toLowerCase().localeCompare(b.title.toLowerCase())),
-      ...filteredAlbums.filter(album => album.tracks.length > 1 && album.tracks.length <= 6)
-        .sort((a, b) => a.title.toLowerCase().localeCompare(b.title.toLowerCase())),
-      ...filteredAlbums.filter(album => album.tracks.length === 1)
-        .sort((a, b) => a.title.toLowerCase().localeCompare(b.title.toLowerCase()))
-    ];
     
-    // Apply pagination (limit=0 means return all)
-    const paginatedAlbums = limit === 0 ? sortedAlbums.slice(offset) : sortedAlbums.slice(offset, offset + limit);
+    // Apply pagination (limit=0 means return all) - albums are already sorted
+    const paginatedAlbums = limit === 0 ? filteredAlbums.slice(offset) : filteredAlbums.slice(offset, offset + limit);
 
-    console.log(`✅ Albums API: Returning ${paginatedAlbums.length}/${totalCount} albums (tier: ${tier}, filter: ${filter}, offset: ${offset}, limit: ${limit})`);
+    // Pre-compute publisher statistics for the sidebar
+    const publisherStats = new Map<string, { name: string; feedGuid: string; albumCount: number }>();
+    
+    // Only include non-Doerfel family artists
+    filteredAlbums
+      .filter(album => {
+        const artistName = album.artist && typeof album.artist === 'string' ? album.artist.toLowerCase() : '';
+        return album.publisher && album.publisher.feedGuid &&
+               !artistName.includes('doerfel') && 
+               !artistName.includes('ben doerfel') && 
+               !artistName.includes('sirtj') &&
+               !artistName.includes('shredward') &&
+               !artistName.includes('tj doerfel');
+      })
+      .forEach(album => {
+        const key = album.publisher!.feedGuid;
+        if (!publisherStats.has(key)) {
+          publisherStats.set(key, {
+            name: album.artist,
+            feedGuid: album.publisher!.feedGuid,
+            albumCount: 1
+          });
+        } else {
+          publisherStats.get(key)!.albumCount++;
+        }
+      });
+
+    const publisherStatsArray = Array.from(publisherStats.values()).sort((a, b) => 
+      a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+    );
+    
+    console.log(`✅ Albums API: Returning ${paginatedAlbums.length}/${totalCount} albums with ${publisherStatsArray.length} publisher feeds (tier: ${tier}, filter: ${filter}, offset: ${offset}, limit: ${limit})`);
     
     return NextResponse.json({
       albums: paginatedAlbums,
@@ -590,6 +752,7 @@ export async function GET(request: Request) {
       hasMore: limit === 0 ? false : offset + limit < totalCount,
       offset,
       limit,
+      publisherStats: publisherStatsArray,
       lastUpdated: new Date().toISOString()
     }, {
       headers: {

@@ -80,7 +80,7 @@ define(['./workbox-c008c882'], (function (workbox) { 'use strict';
    */
   workbox.precacheAndRoute([{
     "url": "/_next/app-build-manifest.json",
-    "revision": "4709176bd9b3cec7815aff0ef3d6acfc"
+    "revision": "efcdc804a0cb26e5f9729bb0909049f2"
   }, {
     "url": "/_next/build-manifest.json",
     "revision": "35f1562458fde1518b2c9808eefc3fc1"
@@ -104,13 +104,13 @@ define(['./workbox-c008c882'], (function (workbox) { 'use strict';
     "revision": "37825dd76266c518fd71f334d7c01b1e"
   }, {
     "url": "/_next/static/chunks/_app-pages-browser_components_AlbumCard_tsx.js",
-    "revision": "6ff9dbad27cea90851c65788e5a13bd8"
+    "revision": "a278b682e18a3c72a2f03d922a831801"
   }, {
     "url": "/_next/static/chunks/_app-pages-browser_components_CDNImageLazy_tsx.js",
     "revision": "d9de070697493f22832baaa895de2b92"
   }, {
     "url": "/_next/static/chunks/_app-pages-browser_components_CDNImage_tsx.js",
-    "revision": "f5d1f31f600f8570f2f6d92a42eb8d2f"
+    "revision": "6e0de2b880ec7b5f7cac3d8bb83a338f"
   }, {
     "url": "/_next/static/chunks/_app-pages-browser_components_ControlsBarLazy_tsx.js",
     "revision": "983d0417430ff4c5bc54d509ef0b5f49"
@@ -124,6 +124,9 @@ define(['./workbox-c008c882'], (function (workbox) { 'use strict';
     "url": "/_next/static/chunks/app/_not-found/page.js",
     "revision": "16579c4c581d4ed2883ec2cea5a5dd82"
   }, {
+    "url": "/_next/static/chunks/app/api/proxy-audio/route.js",
+    "revision": "143f80959c4ac971d1a4b10393a8ed14"
+  }, {
     "url": "/_next/static/chunks/app/error.js",
     "revision": "97a8f9464e7a890f82c5db20651c28d5"
   }, {
@@ -134,7 +137,7 @@ define(['./workbox-c008c882'], (function (workbox) { 'use strict';
     "revision": "846118c33b2c0e922d7b3a7676f81f6f"
   }, {
     "url": "/_next/static/chunks/webpack.js",
-    "revision": "3e80761f863f186ff57e3e5bd04872d4"
+    "revision": "c032cf72202169f420a87e41e89f5d6d"
   }, {
     "url": "/_next/static/css/app/layout.css",
     "revision": "679f95fc95d285ca91388d73242ca2a4"
@@ -166,16 +169,13 @@ define(['./workbox-c008c882'], (function (workbox) { 'use strict';
     "url": "/_next/static/media/e4af272ccee01ff0-s.woff2",
     "revision": "65850a373e258f1c897a2b3d75eb74de"
   }, {
-    "url": "/_next/static/webpack/_app-pages-browser_components_AlbumCard_tsx.fb95b7d097cf62aa.hot-update.js",
+    "url": "/_next/static/webpack/9b61a2de26c7ad0d.webpack.hot-update.json",
     "revision": "development"
   }, {
-    "url": "/_next/static/webpack/app/layout.fb95b7d097cf62aa.hot-update.js",
+    "url": "/_next/static/webpack/app/layout.9b61a2de26c7ad0d.hot-update.js",
     "revision": "development"
   }, {
-    "url": "/_next/static/webpack/fb95b7d097cf62aa.webpack.hot-update.json",
-    "revision": "development"
-  }, {
-    "url": "/_next/static/webpack/webpack.fb95b7d097cf62aa.hot-update.js",
+    "url": "/_next/static/webpack/webpack.9b61a2de26c7ad0d.hot-update.js",
     "revision": "development"
   }], {
     "ignoreURLParametersMatching": [/ts/]
