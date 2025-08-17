@@ -49,7 +49,8 @@ export async function GET() {
     };
     
     // Analyze each album for issues
-    for (const [feedGuid, group] of albumGroups) {
+    const albumGroupsArray = Array.from(albumGroups.entries());
+    for (const [feedGuid, group] of albumGroupsArray) {
       const albumTitle = group.feedTitle || 'Unknown Album';
       const originalTrackCount = group.tracks.length;
       
@@ -67,7 +68,7 @@ export async function GET() {
         
         // Find which titles are duplicated
         const titleCounts = new Map<string, number>();
-        trackTitles.forEach(title => {
+        trackTitles.forEach((title: string) => {
           titleCounts.set(title, (titleCounts.get(title) || 0) + 1);
         });
         
