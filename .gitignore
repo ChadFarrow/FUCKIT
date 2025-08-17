@@ -165,3 +165,6 @@ data/cache/
 # Task files
 # tasks.json
 # tasks/ 
+
+# Generated service worker files
+public/sw.js
