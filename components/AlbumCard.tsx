@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, memo, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Play, Pause, Music } from 'lucide-react';
@@ -17,7 +17,7 @@ interface AlbumCardProps {
   className?: string;
 }
 
-export default function AlbumCard({ album, isPlaying = false, onPlay, className = '' }: AlbumCardProps) {
+function AlbumCard({ album, isPlaying = false, onPlay, className = '' }: AlbumCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
@@ -27,16 +27,16 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
   // Minimum swipe distance (in px)
   const minSwipeDistance = 50;
 
-  const onTouchStart = (e: React.TouchEvent) => {
+  const onTouchStart = useCallback((e: React.TouchEvent) => {
     setTouchEnd(null);
     setTouchStart(e.targetTouches[0].clientX);
-  };
+  }, []);
 
-  const onTouchMove = (e: React.TouchEvent) => {
+  const onTouchMove = useCallback((e: React.TouchEvent) => {
     setTouchEnd(e.targetTouches[0].clientX);
-  };
+  }, []);
 
-  const onTouchEnd = (e: React.TouchEvent) => {
+  const onTouchEnd = useCallback((e: React.TouchEvent) => {
     if (!touchStart || !touchEnd) return;
     
     const distance = touchStart - touchEnd;
@@ -45,51 +45,45 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
 
     if (isLeftSwipe) {
       // Left swipe - play next track (future enhancement)
-      console.log('Left swipe detected - next track');
     } else if (isRightSwipe) {
       // Right swipe - play previous track (future enhancement)
-      console.log('Right swipe detected - previous track');
     } else {
       // Tap - play/pause, but check scroll detection first
       if (!shouldPreventClick()) {
         onPlay(album, e);
-      } else {
-        console.log('🚫 Prevented tap while scrolling');
       }
     }
-  };
+  }, [touchStart, touchEnd, shouldPreventClick, onPlay, album]);
 
-  const handleImageLoad = () => {
+  const handleImageLoad = useCallback(() => {
     setImageLoaded(true);
     setImageError(false);
-  };
+  }, []);
 
-  const handleImageError = () => {
+  const handleImageError = useCallback(() => {
     setImageError(true);
     setImageLoaded(false);
-  };
+  }, []);
 
-  const artworkUrl = getAlbumArtworkUrl(album.coverArt || '', 'medium');
+  const artworkUrl = useMemo(() => 
+    getAlbumArtworkUrl(album.coverArt || '', 'medium'), 
+    [album.coverArt]
+  );
   
   // Check if this is a playlist card and use playlistUrl if available
-  const isPlaylistCard = (album as any).isPlaylistCard;
-  const albumUrl = isPlaylistCard ? (album as any).playlistUrl : generateAlbumUrl(album.title);
+  const { isPlaylistCard, albumUrl } = useMemo(() => {
+    const isPlaylistCard = (album as any).isPlaylistCard;
+    const albumUrl = isPlaylistCard ? (album as any).playlistUrl : generateAlbumUrl(album.title);
+    return { isPlaylistCard, albumUrl };
+  }, [album.title, (album as any).isPlaylistCard, (album as any).playlistUrl]);
   
-  // Only log in development mode to improve production performance
-  if (process.env.NODE_ENV === 'development') {
-    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
-    if (isMobile) {
-      console.log(`Mobile album card for "${album.title}": coverArt=${album.coverArt}, artworkUrl=${artworkUrl}`);
-    }
-    console.log(`🎵 Album card: "${album.title}" -> URL: ${albumUrl}`);
-  }
 
   return (
     <Link 
       href={albumUrl}
       className={`group relative bg-black/40 backdrop-blur-md rounded-xl border border-gray-700/50 overflow-hidden transition-all duration-300 hover:bg-black/50 hover:border-cyan-400/30 hover:scale-[1.02] active:scale-[0.98] block shadow-lg hover:shadow-xl hover:shadow-cyan-400/10 ${className}`}
       onClick={(e) => {
-        console.log(`🔗 Navigating to album: "${album.title}" -> ${albumUrl}`);
+        // Navigation handled by Link component
       }}
       aria-label={`View album details for ${album.title} by ${album.artist}`}
     >
@@ -116,7 +110,6 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
           // Prevent navigation when clicking on the artwork area (play button handles its own clicks)
           if (!(e.target as HTMLElement).closest('button')) {
             // Let the Link handle the navigation
-            console.log('🎵 Album artwork clicked - navigating to album page');
           }
         }}
       >
@@ -160,8 +153,6 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
               // Use scroll detection context to prevent accidental clicks
               if (!shouldPreventClick()) {
                 onPlay(album, e);
-              } else {
-                console.log('🚫 Prevented click while scrolling');
               }
             }}
             onTouchStart={(e) => {
@@ -180,8 +171,6 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
                 setTimeout(() => {
                   if (!shouldPreventClick()) {
                     onPlay(album, e);
-                  } else {
-                    console.log('🚫 Prevented touch while scrolling');
                   }
                 }, 100);
               }
@@ -239,3 +228,17 @@ export default function AlbumCard({ album, isPlaying = false, onPlay, className 
     </Link>
   );
 }
+
+// Memoize the component to prevent unnecessary re-renders
+// Only re-render if album id, title, isPlaying status, or className changes
+export default memo(AlbumCard, (prevProps, nextProps) => {
+  return (
+    prevProps.album.id === nextProps.album.id &&
+    prevProps.album.title === nextProps.album.title &&
+    prevProps.album.artist === nextProps.album.artist &&
+    prevProps.album.coverArt === nextProps.album.coverArt &&
+    prevProps.isPlaying === nextProps.isPlaying &&
+    prevProps.className === nextProps.className &&
+    prevProps.album.tracks.length === nextProps.album.tracks.length
+  );
+});

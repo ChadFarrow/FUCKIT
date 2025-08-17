@@ -80,31 +80,64 @@ define(['./workbox-c008c882'], (function (workbox) { 'use strict';
    */
   workbox.precacheAndRoute([{
     "url": "/_next/app-build-manifest.json",
-    "revision": "9873b1830ce4ea26c3fc91b8ef15cbfb"
+    "revision": "4709176bd9b3cec7815aff0ef3d6acfc"
   }, {
     "url": "/_next/build-manifest.json",
     "revision": "35f1562458fde1518b2c9808eefc3fc1"
   }, {
     "url": "/_next/react-loadable-manifest.json",
-    "revision": "99914b932bd37a50b983c5e7c90ae93b"
+    "revision": "f82df41fadb3b5209a237dcac14babd5"
   }, {
     "url": "/_next/server/middleware-build-manifest.js",
     "revision": "4dc6647f58dedfc99e331e8429e885a0"
   }, {
     "url": "/_next/server/middleware-react-loadable-manifest.js",
-    "revision": "537157e425123611736ddcf544160221"
+    "revision": "b85a5b13797e184511198d0103890b2a"
   }, {
     "url": "/_next/server/next-font-manifest.js",
-    "revision": "f7097bf7c93c1cbb4c118491ca6d2b04"
+    "revision": "8b814f56062a52e63f9fe54bb63ecf79"
   }, {
     "url": "/_next/server/next-font-manifest.json",
-    "revision": "d51420cd4aa5d37d6719849cf36d0d6f"
+    "revision": "705ea294a39b0b15310687c6789e131b"
+  }, {
+    "url": "/_next/static/chunks/_app-pages-browser_components_AlbumCardLazy_tsx.js",
+    "revision": "37825dd76266c518fd71f334d7c01b1e"
+  }, {
+    "url": "/_next/static/chunks/_app-pages-browser_components_AlbumCard_tsx.js",
+    "revision": "6ff9dbad27cea90851c65788e5a13bd8"
+  }, {
+    "url": "/_next/static/chunks/_app-pages-browser_components_CDNImageLazy_tsx.js",
+    "revision": "d9de070697493f22832baaa895de2b92"
+  }, {
+    "url": "/_next/static/chunks/_app-pages-browser_components_CDNImage_tsx.js",
+    "revision": "f5d1f31f600f8570f2f6d92a42eb8d2f"
+  }, {
+    "url": "/_next/static/chunks/_app-pages-browser_components_ControlsBarLazy_tsx.js",
+    "revision": "983d0417430ff4c5bc54d509ef0b5f49"
+  }, {
+    "url": "/_next/static/chunks/_app-pages-browser_components_ControlsBar_tsx.js",
+    "revision": "4506513419bae79b292bd82bd8f853fe"
+  }, {
+    "url": "/_next/static/chunks/app-pages-internals.js",
+    "revision": "f5f81776f740358589e74f5c06d353c5"
+  }, {
+    "url": "/_next/static/chunks/app/_not-found/page.js",
+    "revision": "16579c4c581d4ed2883ec2cea5a5dd82"
+  }, {
+    "url": "/_next/static/chunks/app/error.js",
+    "revision": "97a8f9464e7a890f82c5db20651c28d5"
+  }, {
+    "url": "/_next/static/chunks/app/not-found.js",
+    "revision": "6a952670c259e51a1aee875b55266368"
   }, {
     "url": "/_next/static/chunks/polyfills.js",
     "revision": "846118c33b2c0e922d7b3a7676f81f6f"
   }, {
     "url": "/_next/static/chunks/webpack.js",
-    "revision": "9bde811c0f89fdbf5396da3ea70b227a"
+    "revision": "3e80761f863f186ff57e3e5bd04872d4"
+  }, {
+    "url": "/_next/static/css/app/layout.css",
+    "revision": "679f95fc95d285ca91388d73242ca2a4"
   }, {
     "url": "/_next/static/development/_buildManifest.js",
     "revision": "97f1258b3dd30d37ba33a4c4ed741eed"
@@ -112,7 +145,37 @@ define(['./workbox-c008c882'], (function (workbox) { 'use strict';
     "url": "/_next/static/development/_ssgManifest.js",
     "revision": "abee47769bf307639ace4945f9cfd4ff"
   }, {
-    "url": "/_next/static/webpack/633457081244afec._.hot-update.json",
+    "url": "/_next/static/media/26a46d62cd723877-s.woff2",
+    "revision": "befd9c0fdfa3d8a645d5f95717ed6420"
+  }, {
+    "url": "/_next/static/media/55c55f0601d81cf3-s.woff2",
+    "revision": "43828e14271c77b87e3ed582dbff9f74"
+  }, {
+    "url": "/_next/static/media/581909926a08bbc8-s.woff2",
+    "revision": "f0b86e7c24f455280b8df606b89af891"
+  }, {
+    "url": "/_next/static/media/8e9860b6e62d6359-s.woff2",
+    "revision": "01ba6c2a184b8cba08b0d57167664d75"
+  }, {
+    "url": "/_next/static/media/97e0cb1ae144a2a9-s.woff2",
+    "revision": "e360c61c5bd8d90639fd4503c829c2dc"
+  }, {
+    "url": "/_next/static/media/df0a9ae256c0569c-s.woff2",
+    "revision": "d54db44de5ccb18886ece2fda72bdfe0"
+  }, {
+    "url": "/_next/static/media/e4af272ccee01ff0-s.woff2",
+    "revision": "65850a373e258f1c897a2b3d75eb74de"
+  }, {
+    "url": "/_next/static/webpack/_app-pages-browser_components_AlbumCard_tsx.fb95b7d097cf62aa.hot-update.js",
+    "revision": "development"
+  }, {
+    "url": "/_next/static/webpack/app/layout.fb95b7d097cf62aa.hot-update.js",
+    "revision": "development"
+  }, {
+    "url": "/_next/static/webpack/fb95b7d097cf62aa.webpack.hot-update.json",
+    "revision": "development"
+  }, {
+    "url": "/_next/static/webpack/webpack.fb95b7d097cf62aa.hot-update.js",
     "revision": "development"
   }], {
     "ignoreURLParametersMatching": [/ts/]

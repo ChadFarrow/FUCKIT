@@ -568,8 +568,19 @@ export async function GET(request: Request) {
     
     const totalCount = filteredAlbums.length;
 
+    // Sort albums by type: Albums first (7+ tracks), then EPs (2-6 tracks), then Singles (1 track)
+    // Each group sorted alphabetically by title
+    const sortedAlbums = [
+      ...filteredAlbums.filter(album => album.tracks.length > 6)
+        .sort((a, b) => a.title.toLowerCase().localeCompare(b.title.toLowerCase())),
+      ...filteredAlbums.filter(album => album.tracks.length > 1 && album.tracks.length <= 6)
+        .sort((a, b) => a.title.toLowerCase().localeCompare(b.title.toLowerCase())),
+      ...filteredAlbums.filter(album => album.tracks.length === 1)
+        .sort((a, b) => a.title.toLowerCase().localeCompare(b.title.toLowerCase()))
+    ];
+    
     // Apply pagination (limit=0 means return all)
-    const paginatedAlbums = limit === 0 ? filteredAlbums.slice(offset) : filteredAlbums.slice(offset, offset + limit);
+    const paginatedAlbums = limit === 0 ? sortedAlbums.slice(offset) : sortedAlbums.slice(offset, offset + limit);
 
     console.log(`✅ Albums API: Returning ${paginatedAlbums.length}/${totalCount} albums (tier: ${tier}, filter: ${filter}, offset: ${offset}, limit: ${limit})`);
     

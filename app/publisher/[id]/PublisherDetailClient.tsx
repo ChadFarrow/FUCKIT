@@ -792,6 +792,7 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
                   ]}
                   sortType={sortType}
                   onSortChange={setSortType}
+                  showSort={false}
                   viewType={viewType}
                   onViewChange={setViewType}
                   showShuffle={true}

@@ -874,6 +874,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum }:
               showFilters={false}
               sortType="name"
               onSortChange={() => {}}
+              showSort={false}
               viewType="list"
               onViewChange={() => {}}
               showViewToggle={false}

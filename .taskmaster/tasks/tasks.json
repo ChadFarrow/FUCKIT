@@ -586,7 +586,7 @@
         "description": "Artists are still showing as \"Unknown Artist\" in the ITDV playlist despite V4V resolution returning correct artist names",
         "details": "The API returns correct V4V resolved data with artist names like \"John Depew Trio\" and \"Big Awesome\", and the getDisplayArtist() function was updated to check valueForValue.resolvedArtist, but the UI still displays \"Unknown Artist\". This may be a caching issue, data transformation problem, or React rendering issue where the component isn't properly updating with the resolved data.",
         "testStrategy": "",
-        "status": "in-progress",
+        "status": "done",
         "dependencies": [
           18
         ],
@@ -768,7 +768,7 @@
     ],
     "metadata": {
       "created": "2025-08-01T21:46:44.417Z",
-      "updated": "2025-08-10T22:58:08.232Z",
+      "updated": "2025-08-17T20:08:30.261Z",
       "description": "Music track extraction feature development"
     }
   },

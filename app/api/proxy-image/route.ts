@@ -51,10 +51,16 @@ export async function GET(request: NextRequest) {
 
     // Validate that we actually got an image
     const contentType = response.headers.get('content-type');
-    if (!contentType || !contentType.startsWith('image/')) {
+    const isValidImageType = contentType && contentType.startsWith('image/');
+    
+    // If content-type is not image/*, check if URL looks like an image file
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.bmp'];
+    const hasImageExtension = imageExtensions.some(ext => imageUrl.toLowerCase().includes(ext));
+    
+    if (!isValidImageType && !hasImageExtension) {
       return NextResponse.json({ 
         success: false, 
-        error: `Invalid content type: ${contentType}. Expected image/*` 
+        error: `Invalid content type: ${contentType}. Expected image/* or image file extension` 
       }, { status: 400 });
     }
 
@@ -63,7 +69,15 @@ export async function GET(request: NextRequest) {
 
     // Set headers for image serving
     const headers = new Headers();
-    headers.set('Content-Type', contentType || 'image/jpeg');
+    // Use detected content-type or infer from URL extension
+    let finalContentType = contentType;
+    if (!isValidImageType) {
+      if (imageUrl.toLowerCase().includes('.png')) finalContentType = 'image/png';
+      else if (imageUrl.toLowerCase().includes('.gif')) finalContentType = 'image/gif';
+      else if (imageUrl.toLowerCase().includes('.webp')) finalContentType = 'image/webp';
+      else finalContentType = 'image/jpeg'; // Default fallback
+    }
+    headers.set('Content-Type', finalContentType || 'image/jpeg');
     headers.set('Content-Length', imageBuffer.byteLength.toString());
     headers.set('Cache-Control', 'public, max-age=3600, s-maxage=86400'); // 1 hour client, 24 hours CDN
     headers.set('Access-Control-Allow-Origin', '*');
