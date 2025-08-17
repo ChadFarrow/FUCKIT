@@ -4,32 +4,38 @@ import * as path from 'path';
 
 export async function GET() {
   try {
-    const parsedFeedsPath = path.join(process.cwd(), 'data', 'parsed-feeds.json');
+    // Load publisher feed results and music tracks to build publisher data
+    let publisherFeeds: any[] = [];
+    let musicTracks: any[] = [];
+    let publisherMappings: any = {};
     
-    if (!fs.existsSync(parsedFeedsPath)) {
-      console.error('Parsed feeds file not found at:', parsedFeedsPath);
-      return NextResponse.json({ 
-        error: 'Parsed feeds not found',
-        timestamp: new Date().toISOString()
-      }, { 
-        status: 404,
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
-        }
-      });
-    }
-
-    // Read file with error handling
-    let parsedFeedsData;
     try {
-      const fileContent = fs.readFileSync(parsedFeedsPath, 'utf-8');
-      parsedFeedsData = JSON.parse(fileContent);
-    } catch (readError) {
-      console.error('Error reading or parsing parsed-feeds.json:', readError);
+      // Load publisher feed results
+      const publisherFeedsPath = path.join(process.cwd(), 'data', 'publisher-feed-results.json');
+      if (fs.existsSync(publisherFeedsPath)) {
+        const publisherFeedsContent = fs.readFileSync(publisherFeedsPath, 'utf-8');
+        publisherFeeds = JSON.parse(publisherFeedsContent);
+        console.log(`✅ Loaded ${publisherFeeds.length} publisher feeds`);
+      }
+      
+      // Load music tracks to count albums per publisher
+      const musicTracksPath = path.join(process.cwd(), 'data', 'music-tracks.json');
+      if (fs.existsSync(musicTracksPath)) {
+        const musicTracksData = JSON.parse(fs.readFileSync(musicTracksPath, 'utf-8'));
+        musicTracks = musicTracksData.musicTracks || [];
+        console.log(`✅ Loaded ${musicTracks.length} music tracks`);
+      }
+      
+      // Load manual publisher mappings
+      const publisherMappingsPath = path.join(process.cwd(), 'data', 'publisher-mappings-manual.json');
+      if (fs.existsSync(publisherMappingsPath)) {
+        publisherMappings = JSON.parse(fs.readFileSync(publisherMappingsPath, 'utf-8'));
+        console.log(`✅ Loaded manual publisher mappings`);
+      }
+    } catch (loadError) {
+      console.error('Error loading publisher data:', loadError);
       return NextResponse.json({ 
-        error: 'Failed to read parsed feeds',
+        error: 'Failed to load publisher data',
         timestamp: new Date().toISOString()
       }, { 
         status: 500,
@@ -41,39 +47,84 @@ export async function GET() {
       });
     }
     
-    // Validate parsed feeds data structure
-    if (!parsedFeedsData || !Array.isArray(parsedFeedsData.feeds)) {
-      console.error('Invalid parsed feeds data structure:', parsedFeedsData);
-      return NextResponse.json({ 
-        error: 'Invalid parsed feeds format',
-        timestamp: new Date().toISOString()
-      }, { 
-        status: 500,
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
+    // Group music tracks by feed to create album groups
+    const albumGroups = new Map();
+    musicTracks.forEach((track: any) => {
+      const feedKey = track.feedGuid || track.feedUrl || 'unknown';
+      if (!albumGroups.has(feedKey)) {
+        albumGroups.set(feedKey, {
+          feedGuid: track.feedGuid,
+          feedUrl: track.feedUrl,
+          feedTitle: track.feedTitle,
+          feedArtist: track.feedArtist,
+          tracks: []
+        });
+      }
+      albumGroups.get(feedKey).tracks.push(track);
+    });
+    
+    // Build publisher data with album counts
+    const publishersMap = new Map();
+    
+    // Process each album group to find its publisher
+    Array.from(albumGroups.values()).forEach((group: any) => {
+      let publisherGuid = null;
+      let publisherName = null;
+      let publisherFeedUrl = null;
+      
+      // Check manual mappings first
+      const albumGuid = group.feedGuid || group.feedUrl?.split('/').pop();
+      for (const [guid, publisherData] of Object.entries(publisherMappings)) {
+        if ((publisherData as any).albumGuids?.includes(albumGuid)) {
+          publisherGuid = guid;
+          publisherName = (publisherData as any).name;
+          publisherFeedUrl = (publisherData as any).feedUrl;
+          break;
         }
-      });
-    }
+      }
+      
+      // Fallback to artist name matching with publisher feeds
+      if (!publisherGuid && publisherFeeds.length > 0) {
+        const artist = group.feedArtist || '';
+        const matchingPublisher = publisherFeeds.find((pubFeed: any) => {
+          const pubTitle = pubFeed.title?.replace('<![CDATA[', '').replace(']]>', '') || '';
+          return pubTitle.toLowerCase() === artist.toLowerCase() ||
+                 pubTitle.toLowerCase().includes(artist.toLowerCase()) ||
+                 artist.toLowerCase().includes(pubTitle.toLowerCase());
+        });
+        
+        if (matchingPublisher) {
+          publisherGuid = matchingPublisher.feed.originalUrl.split('/').pop();
+          publisherName = matchingPublisher.title?.replace('<![CDATA[', '').replace(']]>', '') || '';
+          publisherFeedUrl = matchingPublisher.feed.originalUrl;
+        }
+      }
+      
+      if (publisherGuid && publisherName) {
+        if (!publishersMap.has(publisherGuid)) {
+          publishersMap.set(publisherGuid, {
+            id: publisherGuid,
+            title: publisherName,
+            feedGuid: publisherGuid,
+            originalUrl: publisherFeedUrl,
+            albums: [],
+            itemCount: 0
+          });
+        }
+        
+        const publisher = publishersMap.get(publisherGuid);
+        publisher.albums.push({
+          title: group.feedTitle,
+          artist: group.feedArtist,
+          trackCount: group.tracks.length,
+          feedGuid: group.feedGuid,
+          feedUrl: group.feedUrl
+        });
+        publisher.itemCount = publisher.albums.length;
+      }
+    });
     
-    // Filter publisher feeds with parsed data
-    const publisherFeeds = parsedFeedsData.feeds.filter((feed: any) => 
-      feed.type === 'publisher' && 
-      feed.parseStatus === 'success' &&
-      feed.parsedData
-    );
-    
-    const publishers = publisherFeeds.map((feed: any) => ({
-      id: feed.id,
-      title: feed.title,
-      originalUrl: feed.originalUrl,
-      parseStatus: feed.parseStatus,
-      lastParsed: feed.lastParsed,
-      publisherInfo: feed.parsedData?.publisherInfo || null,
-      publisherItems: feed.parsedData?.publisherItems || [],
-      itemCount: feed.parsedData?.publisherItems?.length || 0
-    }));
+    const publishers = Array.from(publishersMap.values());
 
     const response = {
       publishers,

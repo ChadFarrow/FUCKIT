@@ -59,8 +59,8 @@ async function parseXMLString(xmlString) {
   });
 }
 
-// Get artwork from feed
-async function getArtworkFromFeed(feedUrl, feedGuid, apiCredentials) {
+// Get artist info from feed
+async function getArtistFromFeed(feedUrl, feedGuid, apiCredentials) {
   try {
     // Try Podcast Index API first
     if (feedGuid && apiCredentials.PODCAST_INDEX_API_KEY) {
@@ -75,9 +75,12 @@ async function getArtworkFromFeed(feedUrl, feedGuid, apiCredentials) {
       
       if (response.ok) {
         const data = await response.json();
-        if (data.feed && data.feed.image) {
-          console.log(`✅ Found artwork via API: ${data.feed.image}`);
-          return data.feed.image;
+        if (data.feed) {
+          const artist = data.feed.author || data.feed.itunesAuthor || '';
+          if (artist && typeof artist === 'string' && artist.trim()) {
+            console.log(`✅ Found artist via API: "${artist}"`);
+            return artist.trim();
+          }
         }
       }
     }
@@ -91,15 +94,10 @@ async function getArtworkFromFeed(feedUrl, feedGuid, apiCredentials) {
         
         if (parsed?.rss?.channel) {
           const channel = parsed.rss.channel;
-          const artwork = channel.image?.url || 
-                         channel.itunesImage?.href || 
-                         channel.itunesImage ||
-                         channel.image ||
-                         '';
-          
-          if (artwork && typeof artwork === 'string' && artwork.startsWith('http')) {
-            console.log(`✅ Found artwork via RSS: ${artwork}`);
-            return artwork;
+          const artist = channel.itunesauthor || channel.author || channel.managingEditor || '';
+          if (artist && typeof artist === 'string' && artist.trim()) {
+            console.log(`✅ Found artist via RSS: "${artist}"`);
+            return artist.trim();
           }
         }
       }
@@ -107,14 +105,14 @@ async function getArtworkFromFeed(feedUrl, feedGuid, apiCredentials) {
     
     return null;
   } catch (error) {
-    console.log(`⚠️  Error getting artwork: ${error.message}`);
+    console.log(`⚠️  Error getting artist info: ${error.message}`);
     return null;
   }
 }
 
-// Fix missing artwork for albums
-async function fixMissingArtwork(maxAlbums = 30) {
-  console.log('🎨 Fixing missing artwork for albums...\n');
+// Update albums with publisher info
+async function addMissingPublisherInfo(maxAlbums = 20) {
+  console.log('🎯 Adding missing publisher information to albums...\n');
   
   const apiCredentials = loadApiCredentials();
   if (!apiCredentials || !apiCredentials.PODCAST_INDEX_API_KEY) {
@@ -122,15 +120,15 @@ async function fixMissingArtwork(maxAlbums = 30) {
     return;
   }
   
-  // Load albums missing artwork
-  const artworkPath = path.join(__dirname, '../data/albums-missing-artwork.json');
-  if (!fs.existsSync(artworkPath)) {
-    console.error('❌ albums-missing-artwork.json not found.');
+  // Load albums without publisher info
+  const albumsPath = path.join(__dirname, '../data/albums-without-publisher.json');
+  if (!fs.existsSync(albumsPath)) {
+    console.error('❌ albums-without-publisher.json not found. Run the analysis first.');
     return;
   }
   
-  const albumsMissingArtwork = JSON.parse(fs.readFileSync(artworkPath, 'utf8'));
-  console.log(`📊 Found ${albumsMissingArtwork.length} albums missing artwork`);
+  const albumsWithoutPublisher = JSON.parse(fs.readFileSync(albumsPath, 'utf8'));
+  console.log(`📊 Found ${albumsWithoutPublisher.length} albums without publisher info`);
   
   // Load music tracks data
   const dbPath = path.join(__dirname, '../data/music-tracks.json');
@@ -142,34 +140,33 @@ async function fixMissingArtwork(maxAlbums = 30) {
   console.log(`💾 Backed up to: ${backupPath}\n`);
   
   let updated = 0;
-  const albumsToProcess = albumsMissingArtwork.slice(0, maxAlbums);
+  const albumsToProcess = albumsWithoutPublisher.slice(0, maxAlbums);
   
   for (let i = 0; i < albumsToProcess.length; i++) {
     const album = albumsToProcess[i];
     console.log(`[${i + 1}/${albumsToProcess.length}] Processing: ${album.feedTitle}`);
     
-    // Get artwork URL
-    const artworkUrl = await getArtworkFromFeed(album.feedUrl, album.feedGuid, apiCredentials);
+    // Get artist info
+    const artist = await getArtistFromFeed(album.feedUrl, album.feedGuid, apiCredentials);
     
-    if (artworkUrl) {
+    if (artist) {
       // Update all tracks for this album
       let tracksUpdated = 0;
       musicData.musicTracks.forEach(track => {
         if ((track.feedGuid === album.feedGuid || track.feedUrl === album.feedUrl) && 
-            (!track.feedImage || track.feedImage.trim() === '' || !track.image || track.image.trim() === '')) {
-          track.feedImage = artworkUrl;
-          track.image = artworkUrl;
+            (!track.feedArtist || track.feedArtist.trim() === '')) {
+          track.feedArtist = artist;
           tracksUpdated++;
         }
       });
       
-      console.log(`  ✅ Updated ${tracksUpdated} tracks with artwork`);
+      console.log(`  ✅ Updated ${tracksUpdated} tracks with artist: "${artist}"`);
       updated++;
     } else {
-      console.log(`  ❌ Could not find artwork`);
+      console.log(`  ❌ Could not find artist information`);
     }
     
-    // Light rate limiting
+    // Light rate limiting for API requests
     if (i < albumsToProcess.length - 1) {
       await new Promise(resolve => setTimeout(resolve, 100));
     }
@@ -189,9 +186,9 @@ async function fixMissingArtwork(maxAlbums = 30) {
 
 // Run the script
 if (require.main === module) {
-  const maxAlbums = process.argv[2] ? parseInt(process.argv[2]) : 30;
+  const maxAlbums = process.argv[2] ? parseInt(process.argv[2]) : 20;
   console.log(`🚀 Processing up to ${maxAlbums} albums\n`);
-  fixMissingArtwork(maxAlbums).catch(console.error);
+  addMissingPublisherInfo(maxAlbums).catch(console.error);
 }
 
-module.exports = { fixMissingArtwork };
+module.exports = { addMissingPublisherInfo };

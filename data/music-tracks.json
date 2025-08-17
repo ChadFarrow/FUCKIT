@@ -146,7 +146,8 @@
       "addedAt": "2025-08-13T21:31:12.613Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/8aaf0d1e-7ac3-4f7d-993b-6f59f936d780.jpg",
       "publisherFeedGuid": "09954f14-c5a7-4680-90f4-0869243b9c26",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26",
+      "feedArtist": "Theo Katzman"
     },
     {
       "id": "track-5",
@@ -300,7 +301,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T21:31:15.808Z",
       "addedAt": "2025-08-13T21:31:15.809Z",
-      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/Lofi-Experience.png"
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/Lofi-Experience.png",
+      "feedArtist": "HeyCitizen"
     },
     {
       "id": "track-9",
@@ -392,7 +394,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T21:31:19.272Z",
       "addedAt": "2025-08-13T21:31:19.273Z",
-      "feedImage": "https://www.doerfelverse.com/art/dfbv2.png"
+      "feedImage": "https://www.doerfelverse.com/art/dfbv2.png",
+      "feedArtist": "Doerfel Family Bluegrass"
     },
     {
       "id": "track-11",
@@ -438,7 +441,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T21:31:21.972Z",
       "addedAt": "2025-08-13T21:31:21.972Z",
-      "feedImage": "https://www.doerfelverse.com/art/dfbv2.png"
+      "feedImage": "https://www.doerfelverse.com/art/dfbv2.png",
+      "feedArtist": "Doerfel Family Bluegrass"
     },
     {
       "id": "track-12",
@@ -484,7 +488,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T21:31:24.706Z",
       "addedAt": "2025-08-13T21:31:24.707Z",
-      "feedImage": "https://www.doerfelverse.com/art/dfbv2.png"
+      "feedImage": "https://www.doerfelverse.com/art/dfbv2.png",
+      "feedArtist": "Doerfel Family Bluegrass"
     },
     {
       "id": "track-13",
@@ -529,7 +534,8 @@
       "addedAt": "2025-08-13T22:08:13.130Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/169e65e4-c3fa-471f-a473-b75f3890848b.jpg",
       "publisherFeedGuid": "a8586318-c588-46ad-a769-ffb7e9c27b2c",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/a8586318-c588-46ad-a769-ffb7e9c27b2c"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/a8586318-c588-46ad-a769-ffb7e9c27b2c",
+      "feedArtist": "The Greensands"
     },
     {
       "id": "track-14",
@@ -574,7 +580,8 @@
       "addedAt": "2025-08-13T22:08:13.447Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/87c4f77c-f400-4548-bb7d-78f1ec8a7fa9.jpg",
       "publisherFeedGuid": "a8586318-c588-46ad-a769-ffb7e9c27b2c",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/a8586318-c588-46ad-a769-ffb7e9c27b2c"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/a8586318-c588-46ad-a769-ffb7e9c27b2c",
+      "feedArtist": "The Greensands"
     },
     {
       "id": "track-15",
@@ -619,7 +626,8 @@
       "addedAt": "2025-08-13T22:08:14.043Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/169e65e4-c3fa-471f-a473-b75f3890848b.jpg",
       "publisherFeedGuid": "a8586318-c588-46ad-a769-ffb7e9c27b2c",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/a8586318-c588-46ad-a769-ffb7e9c27b2c"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/a8586318-c588-46ad-a769-ffb7e9c27b2c",
+      "feedArtist": "The Greensands"
     },
     {
       "id": "track-16",
@@ -664,7 +672,8 @@
       "addedAt": "2025-08-13T22:12:42.560Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/2b5b26a9-3b7a-4f78-9db2-424d94b182d8.jpg",
       "publisherFeedGuid": "0ea699be-e985-4aa1-8c00-43542e4b9e0d",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/0ea699be-e985-4aa1-8c00-43542e4b9e0d"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/0ea699be-e985-4aa1-8c00-43542e4b9e0d",
+      "feedArtist": "My Friend Jimi"
     },
     {
       "id": "track-17",
@@ -709,7 +718,8 @@
       "addedAt": "2025-08-13T22:12:42.560Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/ec5905f8-0f48-4ce8-ab8e-9a4a959a2104.jpg",
       "publisherFeedGuid": "a8586318-c588-46ad-a769-ffb7e9c27b2c",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/a8586318-c588-46ad-a769-ffb7e9c27b2c"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/a8586318-c588-46ad-a769-ffb7e9c27b2c",
+      "feedArtist": "The Greensands"
     },
     {
       "id": "track-18",
@@ -764,7 +774,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:42.502Z",
       "addedAt": "2025-08-13T22:12:42.560Z",
-      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg"
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg",
+      "feedArtist": "HeyCitizen"
     },
     {
       "id": "track-19",
@@ -823,7 +834,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:42.482Z",
       "addedAt": "2025-08-13T22:12:42.561Z",
-      "feedImage": "https://www.doerfelverse.com/artists/elijahlied/throughthemic/through-the-mic.png"
+      "feedImage": "https://www.doerfelverse.com/artists/elijahlied/throughthemic/through-the-mic.png",
+      "feedArtist": "Elijah Lied"
     },
     {
       "id": "track-20",
@@ -868,7 +880,8 @@
       "addedAt": "2025-08-13T22:12:42.561Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/0ed13237-aca9-446f-9a03-de1a2d9331a3.jpg",
       "publisherFeedGuid": "aa909244-7555-4b52-ad88-7233860c6fb4",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4",
+      "feedArtist": "Nate Johnivan"
     },
     {
       "id": "track-21",
@@ -912,7 +925,8 @@
       "resolvedAt": "2025-08-13T22:12:42.495Z",
       "addedAt": "2025-08-13T22:12:42.561Z",
       "publisherFeedGuid": "d4c49f2e-0b50-4a5e-8101-7543d68e032f",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/d4c49f2e-0b50-4a5e-8101-7543d68e032f"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/d4c49f2e-0b50-4a5e-8101-7543d68e032f",
+      "feedArtist": "Ryan Fonda"
     },
     {
       "id": "track-22",
@@ -957,7 +971,8 @@
       "addedAt": "2025-08-13T22:12:42.561Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/2663f4e8-aa52-4398-89e7-d26381b65545.jpg",
       "publisherFeedGuid": "d5067e8a-e2a2-47d7-a80c-b1a13def9a8d",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/d5067e8a-e2a2-47d7-a80c-b1a13def9a8d"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/d5067e8a-e2a2-47d7-a80c-b1a13def9a8d",
+      "feedArtist": "Seth Fonda"
     },
     {
       "id": "track-23",
@@ -1014,7 +1029,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:42.484Z",
       "addedAt": "2025-08-13T22:12:42.562Z",
-      "feedImage": "https://www.doerfelverse.com/art/ben-doerfel-red.png"
+      "feedImage": "https://www.doerfelverse.com/art/ben-doerfel-red.png",
+      "feedArtist": "Ben Doerfel"
     },
     {
       "id": "track-24",
@@ -1059,7 +1075,8 @@
       "addedAt": "2025-08-13T22:12:42.562Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/9e673dbf-0c6e-49f1-85fa-5b3bdd9b9f08.jpg",
       "publisherFeedGuid": "bd040774-1dd6-42c6-98ce-01d327697a1d",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/bd040774-1dd6-42c6-98ce-01d327697a1d"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/bd040774-1dd6-42c6-98ce-01d327697a1d",
+      "feedArtist": "The Johner Boys"
     },
     {
       "id": "track-25",
@@ -1103,7 +1120,8 @@
       "resolvedAt": "2025-08-13T22:12:43.182Z",
       "addedAt": "2025-08-13T22:12:43.198Z",
       "publisherFeedGuid": "09954f14-c5a7-4680-90f4-0869243b9c26",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26",
+      "feedArtist": "Theo Katzman"
     },
     {
       "id": "track-26",
@@ -1160,7 +1178,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:43.181Z",
       "addedAt": "2025-08-13T22:12:43.199Z",
-      "feedImage": "https://www.doerfelverse.com/artists/middleseason/inside-out.jpg"
+      "feedImage": "https://www.doerfelverse.com/artists/middleseason/inside-out.jpg",
+      "feedArtist": "Middle Season"
     },
     {
       "id": "track-27",
@@ -1235,7 +1254,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:43.148Z",
       "addedAt": "2025-08-13T22:12:43.200Z",
-      "feedImage": "https://www.doerfelverse.com/art/autumn.gif"
+      "feedImage": "https://www.doerfelverse.com/art/autumn.gif",
+      "feedArtist": "CityBeach"
     },
     {
       "id": "track-28",
@@ -1290,7 +1310,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:43.160Z",
       "addedAt": "2025-08-13T22:12:43.201Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/07/Tempest_artwork.png"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/07/Tempest_artwork.png",
+      "feedArtist": "Climbing The Mountain (1979-1990)"
     },
     {
       "id": "track-29",
@@ -1363,7 +1384,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:43.171Z",
       "addedAt": "2025-08-13T22:12:43.201Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-30",
@@ -1428,7 +1450,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:43.183Z",
       "addedAt": "2025-08-13T22:12:43.202Z",
-      "feedImage": "https://media.rssblue.com/podcasts/the-lightning/cover-art.the-lightning.jpg"
+      "feedImage": "https://media.rssblue.com/podcasts/the-lightning/cover-art.the-lightning.jpg",
+      "feedArtist": "The Trusted"
     },
     {
       "id": "track-31",
@@ -1470,7 +1493,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:43.197Z",
       "addedAt": "2025-08-13T22:12:43.202Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/sproutingsymphonies/art/sat%20spotlight%20show%20art.png"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/sproutingsymphonies/art/sat%20spotlight%20show%20art.png",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-32",
@@ -1527,7 +1551,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:43.168Z",
       "addedAt": "2025-08-13T22:12:43.203Z",
-      "feedImage": "https://www.doerfelverse.com/art/citybeach.png"
+      "feedImage": "https://www.doerfelverse.com/art/citybeach.png",
+      "feedArtist": "CityBeach"
     },
     {
       "id": "track-33",
@@ -1572,7 +1597,8 @@
       "addedAt": "2025-08-13T22:12:43.204Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/ed3d6bdf-011b-4416-ab87-591672c07145.jpg",
       "publisherFeedGuid": "0ea699be-e985-4aa1-8c00-43542e4b9e0d",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/0ea699be-e985-4aa1-8c00-43542e4b9e0d"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/0ea699be-e985-4aa1-8c00-43542e4b9e0d",
+      "feedArtist": "My Friend Jimi"
     },
     {
       "id": "track-34",
@@ -1617,7 +1643,8 @@
       "addedAt": "2025-08-13T22:12:43.205Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/ef800a88-9a1c-4f8e-a7c5-f83d7d9b1c87.jpg",
       "publisherFeedGuid": "0ea699be-e985-4aa1-8c00-43542e4b9e0d",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/0ea699be-e985-4aa1-8c00-43542e4b9e0d"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/0ea699be-e985-4aa1-8c00-43542e4b9e0d",
+      "feedArtist": "My Friend Jimi"
     },
     {
       "id": "track-35",
@@ -1674,7 +1701,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:43.183Z",
       "addedAt": "2025-08-13T22:12:43.206Z",
-      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png"
+      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png",
+      "feedArtist": "Kurtisdrums"
     },
     {
       "id": "track-36",
@@ -1749,7 +1777,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:43.173Z",
       "addedAt": "2025-08-13T22:12:43.206Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-37",
@@ -1794,7 +1823,8 @@
       "addedAt": "2025-08-13T22:12:43.207Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/b6d8f17c-f448-4085-8ce2-8b247eb26e63.jpg",
       "publisherFeedGuid": "0ea699be-e985-4aa1-8c00-43542e4b9e0d",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/0ea699be-e985-4aa1-8c00-43542e4b9e0d"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/0ea699be-e985-4aa1-8c00-43542e4b9e0d",
+      "feedArtist": "My Friend Jimi"
     },
     {
       "id": "track-38",
@@ -1839,7 +1869,8 @@
       "addedAt": "2025-08-13T22:12:43.208Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/3d8c7279-6aa6-41e7-be1c-2680e57af6c8.jpg",
       "publisherFeedGuid": "0ea699be-e985-4aa1-8c00-43542e4b9e0d",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/0ea699be-e985-4aa1-8c00-43542e4b9e0d"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/0ea699be-e985-4aa1-8c00-43542e4b9e0d",
+      "feedArtist": "My Friend Jimi"
     },
     {
       "id": "track-39",
@@ -1890,7 +1921,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:43.810Z",
       "addedAt": "2025-08-13T22:12:43.834Z",
-      "feedImage": "https://www.thisisjdog.com/media/ring-that-bell.jpg"
+      "feedImage": "https://www.thisisjdog.com/media/ring-that-bell.jpg",
+      "feedArtist": "Jdog"
     },
     {
       "id": "track-40",
@@ -1943,7 +1975,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:43.809Z",
       "addedAt": "2025-08-13T22:12:43.835Z",
-      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg"
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg",
+      "feedArtist": "HeyCitizen"
     },
     {
       "id": "track-41",
@@ -1990,7 +2023,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:43.827Z",
       "addedAt": "2025-08-13T22:12:43.837Z",
-      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg"
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg",
+      "feedArtist": "HeyCitizen"
     },
     {
       "id": "track-42",
@@ -2039,7 +2073,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:43.814Z",
       "addedAt": "2025-08-13T22:12:43.838Z",
-      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/Lofi-Experience.png"
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/Lofi-Experience.png",
+      "feedArtist": "HeyCitizen"
     },
     {
       "id": "track-43",
@@ -2086,7 +2121,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:43.812Z",
       "addedAt": "2025-08-13T22:12:43.839Z",
-      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg"
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg",
+      "feedArtist": "HeyCitizen"
     },
     {
       "id": "track-44",
@@ -2175,7 +2211,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:43.809Z",
       "addedAt": "2025-08-13T22:12:43.840Z",
-      "feedImage": "https://music.jimmyv4v.com/bands/blackstone-valley/blackstone-valley-collection/album.jpg"
+      "feedImage": "https://music.jimmyv4v.com/bands/blackstone-valley/blackstone-valley-collection/album.jpg",
+      "feedArtist": "Blackstone Valley"
     },
     {
       "id": "track-45",
@@ -2226,7 +2263,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:43.829Z",
       "addedAt": "2025-08-13T22:12:43.843Z",
-      "feedImage": "https://www.thisisjdog.com/media/ring-that-bell.jpg"
+      "feedImage": "https://www.thisisjdog.com/media/ring-that-bell.jpg",
+      "feedArtist": "Jdog"
     },
     {
       "id": "track-46",
@@ -2306,7 +2344,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:43.826Z",
       "addedAt": "2025-08-13T22:12:43.845Z",
-      "feedImage": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/album-1000.jpg"
+      "feedImage": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/album-1000.jpg",
+      "feedArtist": "Jimmy V"
     },
     {
       "id": "track-47",
@@ -2386,7 +2425,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:43.826Z",
       "addedAt": "2025-08-13T22:12:43.846Z",
-      "feedImage": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/album-1000.jpg"
+      "feedImage": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/album-1000.jpg",
+      "feedArtist": "Jimmy V"
     },
     {
       "id": "track-48",
@@ -2467,7 +2507,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:43.825Z",
       "addedAt": "2025-08-13T22:12:43.848Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-49",
@@ -2547,7 +2588,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:43.827Z",
       "addedAt": "2025-08-13T22:12:43.849Z",
-      "feedImage": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/album-1000.jpg"
+      "feedImage": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/album-1000.jpg",
+      "feedArtist": "Jimmy V"
     },
     {
       "id": "track-50",
@@ -2601,7 +2643,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:43.827Z",
       "addedAt": "2025-08-13T22:12:43.850Z",
-      "feedImage": "https://ableandthewolf.com/static/media/01_MakinBeans.6dfb9c8e18b0f28adf4d.jpg"
+      "feedImage": "https://ableandthewolf.com/static/media/01_MakinBeans.6dfb9c8e18b0f28adf4d.jpg",
+      "feedArtist": "Able and The Wolf"
     },
     {
       "id": "track-51",
@@ -2645,7 +2688,8 @@
       "resolvedAt": "2025-08-13T22:12:43.810Z",
       "addedAt": "2025-08-13T22:12:43.851Z",
       "publisherFeedGuid": "09954f14-c5a7-4680-90f4-0869243b9c26",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26",
+      "feedArtist": "Theo Katzman"
     },
     {
       "id": "track-52",
@@ -2700,7 +2744,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:43.811Z",
       "addedAt": "2025-08-13T22:12:43.852Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/08/The-Death-of-Rock-and-Roll_artwork.jpg"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/08/The-Death-of-Rock-and-Roll_artwork.jpg",
+      "feedArtist": "The Death of Rock and Roll"
     },
     {
       "id": "track-53",
@@ -2742,7 +2787,8 @@
       },
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:43.833Z",
-      "addedAt": "2025-08-13T22:12:43.854Z"
+      "addedAt": "2025-08-13T22:12:43.854Z",
+      "feedArtist": "Ryan Fonda"
     },
     {
       "id": "track-54",
@@ -2798,7 +2844,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:44.451Z",
       "addedAt": "2025-08-13T22:12:44.485Z",
-      "feedImage": "https://www.doerfelverse.com/art/ben-doerfel-red.png"
+      "feedImage": "https://www.doerfelverse.com/art/ben-doerfel-red.png",
+      "feedArtist": "Ben Doerfel"
     },
     {
       "id": "track-55",
@@ -2840,7 +2887,8 @@
       },
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:44.472Z",
-      "addedAt": "2025-08-13T22:12:44.486Z"
+      "addedAt": "2025-08-13T22:12:44.486Z",
+      "feedArtist": "Sara Jade"
     },
     {
       "id": "track-56",
@@ -2883,7 +2931,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:44.455Z",
       "addedAt": "2025-08-13T22:12:44.487Z",
-      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/d3ee6d16-fc74-4661-a810-4059f745426d.jpg"
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/d3ee6d16-fc74-4661-a810-4059f745426d.jpg",
+      "feedArtist": "R.O. Shapiro"
     },
     {
       "id": "track-57",
@@ -2927,7 +2976,8 @@
       "resolvedAt": "2025-08-13T22:12:44.475Z",
       "addedAt": "2025-08-13T22:12:44.489Z",
       "publisherFeedGuid": "d4c49f2e-0b50-4a5e-8101-7543d68e032f",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/d4c49f2e-0b50-4a5e-8101-7543d68e032f"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/d4c49f2e-0b50-4a5e-8101-7543d68e032f",
+      "feedArtist": "Ryan Fonda"
     },
     {
       "id": "track-58",
@@ -2983,7 +3033,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:44.460Z",
       "addedAt": "2025-08-13T22:12:44.490Z",
-      "feedImage": "https://www.doerfelverse.com/art/let-go-art.png"
+      "feedImage": "https://www.doerfelverse.com/art/let-go-art.png",
+      "feedArtist": "Middle Season"
     },
     {
       "id": "track-59",
@@ -3046,7 +3097,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:44.459Z",
       "addedAt": "2025-08-13T22:12:44.491Z",
-      "feedImage": "https://f4.bcbits.com/img/a3037583348_16.jpg"
+      "feedImage": "https://f4.bcbits.com/img/a3037583348_16.jpg",
+      "feedArtist": "Mellow Cassette"
     },
     {
       "id": "track-60",
@@ -3109,7 +3161,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:44.478Z",
       "addedAt": "2025-08-13T22:12:44.493Z",
-      "feedImage": "https://f4.bcbits.com/img/a3037583348_16.jpg"
+      "feedImage": "https://f4.bcbits.com/img/a3037583348_16.jpg",
+      "feedArtist": "Mellow Cassette"
     },
     {
       "id": "track-61",
@@ -3153,7 +3206,8 @@
       "resolvedAt": "2025-08-13T22:12:44.475Z",
       "addedAt": "2025-08-13T22:12:44.494Z",
       "publisherFeedGuid": "707bc821-489e-46b2-8b51-d0aaad856f20",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/707bc821-489e-46b2-8b51-d0aaad856f20"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/707bc821-489e-46b2-8b51-d0aaad856f20",
+      "feedArtist": "Charlie Crown"
     },
     {
       "id": "track-62",
@@ -3195,7 +3249,8 @@
       },
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:44.464Z",
-      "addedAt": "2025-08-13T22:12:44.495Z"
+      "addedAt": "2025-08-13T22:12:44.495Z",
+      "feedArtist": "Death by Lions"
     },
     {
       "id": "track-63",
@@ -3252,7 +3307,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:44.461Z",
       "addedAt": "2025-08-13T22:12:44.497Z",
-      "feedImage": "https://www.doerfelverse.com/art/ben-doerfel-red.png"
+      "feedImage": "https://www.doerfelverse.com/art/ben-doerfel-red.png",
+      "feedArtist": "Ben Doerfel"
     },
     {
       "id": "track-64",
@@ -3333,7 +3389,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:44.472Z",
       "addedAt": "2025-08-13T22:12:44.498Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-65",
@@ -3414,7 +3471,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:44.464Z",
       "addedAt": "2025-08-13T22:12:44.499Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-66",
@@ -3495,7 +3553,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:44.472Z",
       "addedAt": "2025-08-13T22:12:44.500Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-67",
@@ -3540,7 +3599,8 @@
       "addedAt": "2025-08-13T22:12:44.502Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/d677db67-0310-4813-970e-e65927c689f1.jpg",
       "publisherFeedGuid": "aa909244-7555-4b52-ad88-7233860c6fb4",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4",
+      "feedArtist": "Nate Johnivan"
     },
     {
       "id": "track-68",
@@ -3864,7 +3924,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:45.122Z",
       "addedAt": "2025-08-13T22:12:45.156Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-74",
@@ -4133,7 +4194,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:45.124Z",
       "addedAt": "2025-08-13T22:12:45.169Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-79",
@@ -4394,7 +4456,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:45.127Z",
       "addedAt": "2025-08-13T22:12:45.175Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-83",
@@ -4493,7 +4556,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:45.768Z",
       "addedAt": "2025-08-13T22:12:45.805Z",
-      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg"
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg",
+      "feedArtist": "HeyCitizen"
     },
     {
       "id": "track-85",
@@ -4550,7 +4614,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:45.804Z",
       "addedAt": "2025-08-13T22:12:45.807Z",
-      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png"
+      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png",
+      "feedArtist": "Kurtisdrums"
     },
     {
       "id": "track-86",
@@ -4778,7 +4843,8 @@
       "addedAt": "2025-08-13T22:12:45.812Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/9e673dbf-0c6e-49f1-85fa-5b3bdd9b9f08.jpg",
       "publisherFeedGuid": "bd040774-1dd6-42c6-98ce-01d327697a1d",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/bd040774-1dd6-42c6-98ce-01d327697a1d"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/bd040774-1dd6-42c6-98ce-01d327697a1d",
+      "feedArtist": "The Johner Boys"
     },
     {
       "id": "track-90",
@@ -4851,7 +4917,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:45.782Z",
       "addedAt": "2025-08-13T22:12:45.814Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-91",
@@ -5201,7 +5268,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:46.464Z",
       "addedAt": "2025-08-13T22:12:46.480Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-97",
@@ -5258,7 +5326,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:46.460Z",
       "addedAt": "2025-08-13T22:12:46.484Z",
-      "feedImage": "https://www.doerfelverse.com/art/citybeach.png"
+      "feedImage": "https://www.doerfelverse.com/art/citybeach.png",
+      "feedArtist": "CityBeach"
     },
     {
       "id": "track-98",
@@ -5315,7 +5384,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:46.464Z",
       "addedAt": "2025-08-13T22:12:46.486Z",
-      "feedImage": "https://www.doerfelverse.com/art/citybeach.png"
+      "feedImage": "https://www.doerfelverse.com/art/citybeach.png",
+      "feedArtist": "CityBeach"
     },
     {
       "id": "track-99",
@@ -5510,7 +5580,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:46.468Z",
       "addedAt": "2025-08-13T22:12:46.493Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-102",
@@ -5583,7 +5654,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:46.479Z",
       "addedAt": "2025-08-13T22:12:46.495Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-103",
@@ -5656,7 +5728,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:46.460Z",
       "addedAt": "2025-08-13T22:12:46.497Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-104",
@@ -5863,7 +5936,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:46.460Z",
       "addedAt": "2025-08-13T22:12:46.502Z",
-      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png"
+      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png",
+      "feedArtist": "Kurtisdrums"
     },
     {
       "id": "track-107",
@@ -5936,7 +6010,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:46.426Z",
       "addedAt": "2025-08-13T22:12:46.504Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-108",
@@ -6009,7 +6084,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:46.434Z",
       "addedAt": "2025-08-13T22:12:46.506Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-109",
@@ -6066,7 +6142,8 @@
       "resolvedFrom": "direct-feed-fetch",
       "resolvedAt": "2025-08-13T22:12:47.097Z",
       "addedAt": "2025-08-13T22:12:47.105Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-110",
@@ -6259,7 +6336,8 @@
       "addedAt": "2025-08-13T22:17:04.599Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/169e65e4-c3fa-471f-a473-b75f3890848b.jpg",
       "publisherFeedGuid": "a8586318-c588-46ad-a769-ffb7e9c27b2c",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/a8586318-c588-46ad-a769-ffb7e9c27b2c"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/a8586318-c588-46ad-a769-ffb7e9c27b2c",
+      "feedArtist": "The Greensands"
     },
     {
       "id": "track-113",
@@ -6304,7 +6382,8 @@
       "addedAt": "2025-08-13T22:17:04.599Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/169e65e4-c3fa-471f-a473-b75f3890848b.jpg",
       "publisherFeedGuid": "a8586318-c588-46ad-a769-ffb7e9c27b2c",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/a8586318-c588-46ad-a769-ffb7e9c27b2c"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/a8586318-c588-46ad-a769-ffb7e9c27b2c",
+      "feedArtist": "The Greensands"
     },
     {
       "id": "track-114",
@@ -6349,7 +6428,8 @@
       "addedAt": "2025-08-13T22:17:04.599Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/169e65e4-c3fa-471f-a473-b75f3890848b.jpg",
       "publisherFeedGuid": "a8586318-c588-46ad-a769-ffb7e9c27b2c",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/a8586318-c588-46ad-a769-ffb7e9c27b2c"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/a8586318-c588-46ad-a769-ffb7e9c27b2c",
+      "feedArtist": "The Greensands"
     },
     {
       "id": "track-115",
@@ -6416,7 +6496,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:09.280Z",
       "addedAt": "2025-08-13T22:17:09.282Z",
-      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg"
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg",
+      "feedArtist": "HeyCitizen"
     },
     {
       "id": "track-116",
@@ -6463,7 +6544,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:09.280Z",
       "addedAt": "2025-08-13T22:17:09.282Z",
-      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg"
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg",
+      "feedArtist": "HeyCitizen"
     },
     {
       "id": "track-117",
@@ -6510,7 +6592,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:09.280Z",
       "addedAt": "2025-08-13T22:17:09.282Z",
-      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg"
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg",
+      "feedArtist": "HeyCitizen"
     },
     {
       "id": "track-118",
@@ -6565,7 +6648,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:09.280Z",
       "addedAt": "2025-08-13T22:17:09.282Z",
-      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg"
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg",
+      "feedArtist": "HeyCitizen"
     },
     {
       "id": "track-119",
@@ -6612,7 +6696,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:09.280Z",
       "addedAt": "2025-08-13T22:17:09.282Z",
-      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg"
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg",
+      "feedArtist": "HeyCitizen"
     },
     {
       "id": "track-120",
@@ -6659,7 +6744,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:09.280Z",
       "addedAt": "2025-08-13T22:17:09.282Z",
-      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg"
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg",
+      "feedArtist": "HeyCitizen"
     },
     {
       "id": "track-121",
@@ -6706,7 +6792,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:09.280Z",
       "addedAt": "2025-08-13T22:17:09.282Z",
-      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg"
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg",
+      "feedArtist": "HeyCitizen"
     },
     {
       "id": "track-122",
@@ -6761,7 +6848,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:09.280Z",
       "addedAt": "2025-08-13T22:17:09.282Z",
-      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg"
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg",
+      "feedArtist": "HeyCitizen"
     },
     {
       "id": "track-123",
@@ -6808,7 +6896,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:09.280Z",
       "addedAt": "2025-08-13T22:17:09.282Z",
-      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg"
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg",
+      "feedArtist": "HeyCitizen"
     },
     {
       "id": "track-124",
@@ -6855,7 +6944,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:09.280Z",
       "addedAt": "2025-08-13T22:17:09.282Z",
-      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg"
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg",
+      "feedArtist": "HeyCitizen"
     },
     {
       "id": "track-125",
@@ -6902,7 +6992,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:09.280Z",
       "addedAt": "2025-08-13T22:17:09.282Z",
-      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg"
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg",
+      "feedArtist": "HeyCitizen"
     },
     {
       "id": "track-126",
@@ -6961,7 +7052,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:09.280Z",
       "addedAt": "2025-08-13T22:17:09.282Z",
-      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg"
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg",
+      "feedArtist": "HeyCitizen"
     },
     {
       "id": "track-127",
@@ -7016,7 +7108,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:09.280Z",
       "addedAt": "2025-08-13T22:17:09.282Z",
-      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg"
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg",
+      "feedArtist": "HeyCitizen"
     },
     {
       "id": "track-128",
@@ -7063,7 +7156,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:09.280Z",
       "addedAt": "2025-08-13T22:17:09.282Z",
-      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg"
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg",
+      "feedArtist": "HeyCitizen"
     },
     {
       "id": "track-129",
@@ -7108,7 +7202,8 @@
       "addedAt": "2025-08-13T22:17:11.646Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/0ed13237-aca9-446f-9a03-de1a2d9331a3.jpg",
       "publisherFeedGuid": "aa909244-7555-4b52-ad88-7233860c6fb4",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4",
+      "feedArtist": "Nate Johnivan"
     },
     {
       "id": "track-130",
@@ -7153,7 +7248,8 @@
       "addedAt": "2025-08-13T22:17:11.646Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/0ed13237-aca9-446f-9a03-de1a2d9331a3.jpg",
       "publisherFeedGuid": "aa909244-7555-4b52-ad88-7233860c6fb4",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4",
+      "feedArtist": "Nate Johnivan"
     },
     {
       "id": "track-131",
@@ -7198,7 +7294,8 @@
       "addedAt": "2025-08-13T22:17:11.646Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/0ed13237-aca9-446f-9a03-de1a2d9331a3.jpg",
       "publisherFeedGuid": "aa909244-7555-4b52-ad88-7233860c6fb4",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4",
+      "feedArtist": "Nate Johnivan"
     },
     {
       "id": "track-132",
@@ -7243,7 +7340,8 @@
       "addedAt": "2025-08-13T22:17:11.646Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/0ed13237-aca9-446f-9a03-de1a2d9331a3.jpg",
       "publisherFeedGuid": "aa909244-7555-4b52-ad88-7233860c6fb4",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4",
+      "feedArtist": "Nate Johnivan"
     },
     {
       "id": "track-133",
@@ -7288,7 +7386,8 @@
       "addedAt": "2025-08-13T22:17:11.646Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/0ed13237-aca9-446f-9a03-de1a2d9331a3.jpg",
       "publisherFeedGuid": "aa909244-7555-4b52-ad88-7233860c6fb4",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4",
+      "feedArtist": "Nate Johnivan"
     },
     {
       "id": "track-134",
@@ -7332,7 +7431,8 @@
       "resolvedAt": "2025-08-13T22:17:12.831Z",
       "addedAt": "2025-08-13T22:17:12.834Z",
       "publisherFeedGuid": "d4c49f2e-0b50-4a5e-8101-7543d68e032f",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/d4c49f2e-0b50-4a5e-8101-7543d68e032f"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/d4c49f2e-0b50-4a5e-8101-7543d68e032f",
+      "feedArtist": "Ryan Fonda"
     },
     {
       "id": "track-135",
@@ -7376,7 +7476,8 @@
       "resolvedAt": "2025-08-13T22:17:12.831Z",
       "addedAt": "2025-08-13T22:17:12.834Z",
       "publisherFeedGuid": "d4c49f2e-0b50-4a5e-8101-7543d68e032f",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/d4c49f2e-0b50-4a5e-8101-7543d68e032f"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/d4c49f2e-0b50-4a5e-8101-7543d68e032f",
+      "feedArtist": "Ryan Fonda"
     },
     {
       "id": "track-136",
@@ -7420,7 +7521,8 @@
       "resolvedAt": "2025-08-13T22:17:12.831Z",
       "addedAt": "2025-08-13T22:17:12.834Z",
       "publisherFeedGuid": "d4c49f2e-0b50-4a5e-8101-7543d68e032f",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/d4c49f2e-0b50-4a5e-8101-7543d68e032f"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/d4c49f2e-0b50-4a5e-8101-7543d68e032f",
+      "feedArtist": "Ryan Fonda"
     },
     {
       "id": "track-137",
@@ -7464,7 +7566,8 @@
       "resolvedAt": "2025-08-13T22:17:12.831Z",
       "addedAt": "2025-08-13T22:17:12.834Z",
       "publisherFeedGuid": "d4c49f2e-0b50-4a5e-8101-7543d68e032f",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/d4c49f2e-0b50-4a5e-8101-7543d68e032f"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/d4c49f2e-0b50-4a5e-8101-7543d68e032f",
+      "feedArtist": "Ryan Fonda"
     },
     {
       "id": "track-138",
@@ -7508,7 +7611,8 @@
       "resolvedAt": "2025-08-13T22:17:12.831Z",
       "addedAt": "2025-08-13T22:17:12.834Z",
       "publisherFeedGuid": "d4c49f2e-0b50-4a5e-8101-7543d68e032f",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/d4c49f2e-0b50-4a5e-8101-7543d68e032f"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/d4c49f2e-0b50-4a5e-8101-7543d68e032f",
+      "feedArtist": "Ryan Fonda"
     },
     {
       "id": "track-139",
@@ -7552,7 +7656,8 @@
       "resolvedAt": "2025-08-13T22:17:12.831Z",
       "addedAt": "2025-08-13T22:17:12.834Z",
       "publisherFeedGuid": "d4c49f2e-0b50-4a5e-8101-7543d68e032f",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/d4c49f2e-0b50-4a5e-8101-7543d68e032f"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/d4c49f2e-0b50-4a5e-8101-7543d68e032f",
+      "feedArtist": "Ryan Fonda"
     },
     {
       "id": "track-140",
@@ -7596,7 +7701,8 @@
       "resolvedAt": "2025-08-13T22:17:12.831Z",
       "addedAt": "2025-08-13T22:17:12.834Z",
       "publisherFeedGuid": "d4c49f2e-0b50-4a5e-8101-7543d68e032f",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/d4c49f2e-0b50-4a5e-8101-7543d68e032f"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/d4c49f2e-0b50-4a5e-8101-7543d68e032f",
+      "feedArtist": "Ryan Fonda"
     },
     {
       "id": "track-141",
@@ -7641,7 +7747,8 @@
       "addedAt": "2025-08-13T22:17:14.010Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/2663f4e8-aa52-4398-89e7-d26381b65545.jpg",
       "publisherFeedGuid": "d5067e8a-e2a2-47d7-a80c-b1a13def9a8d",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/d5067e8a-e2a2-47d7-a80c-b1a13def9a8d"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/d5067e8a-e2a2-47d7-a80c-b1a13def9a8d",
+      "feedArtist": "Seth Fonda"
     },
     {
       "id": "track-142",
@@ -7686,7 +7793,8 @@
       "addedAt": "2025-08-13T22:17:14.010Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/2663f4e8-aa52-4398-89e7-d26381b65545.jpg",
       "publisherFeedGuid": "d5067e8a-e2a2-47d7-a80c-b1a13def9a8d",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/d5067e8a-e2a2-47d7-a80c-b1a13def9a8d"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/d5067e8a-e2a2-47d7-a80c-b1a13def9a8d",
+      "feedArtist": "Seth Fonda"
     },
     {
       "id": "track-143",
@@ -7731,7 +7839,8 @@
       "addedAt": "2025-08-13T22:17:14.010Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/2663f4e8-aa52-4398-89e7-d26381b65545.jpg",
       "publisherFeedGuid": "d5067e8a-e2a2-47d7-a80c-b1a13def9a8d",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/d5067e8a-e2a2-47d7-a80c-b1a13def9a8d"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/d5067e8a-e2a2-47d7-a80c-b1a13def9a8d",
+      "feedArtist": "Seth Fonda"
     },
     {
       "id": "track-144",
@@ -7776,7 +7885,8 @@
       "addedAt": "2025-08-13T22:17:14.010Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/2663f4e8-aa52-4398-89e7-d26381b65545.jpg",
       "publisherFeedGuid": "d5067e8a-e2a2-47d7-a80c-b1a13def9a8d",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/d5067e8a-e2a2-47d7-a80c-b1a13def9a8d"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/d5067e8a-e2a2-47d7-a80c-b1a13def9a8d",
+      "feedArtist": "Seth Fonda"
     },
     {
       "id": "track-145",
@@ -7821,7 +7931,8 @@
       "addedAt": "2025-08-13T22:17:14.010Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/2663f4e8-aa52-4398-89e7-d26381b65545.jpg",
       "publisherFeedGuid": "d5067e8a-e2a2-47d7-a80c-b1a13def9a8d",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/d5067e8a-e2a2-47d7-a80c-b1a13def9a8d"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/d5067e8a-e2a2-47d7-a80c-b1a13def9a8d",
+      "feedArtist": "Seth Fonda"
     },
     {
       "id": "track-146",
@@ -7866,7 +7977,8 @@
       "addedAt": "2025-08-13T22:17:14.010Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/2663f4e8-aa52-4398-89e7-d26381b65545.jpg",
       "publisherFeedGuid": "d5067e8a-e2a2-47d7-a80c-b1a13def9a8d",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/d5067e8a-e2a2-47d7-a80c-b1a13def9a8d"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/d5067e8a-e2a2-47d7-a80c-b1a13def9a8d",
+      "feedArtist": "Seth Fonda"
     },
     {
       "id": "track-147",
@@ -7911,7 +8023,8 @@
       "addedAt": "2025-08-13T22:17:14.010Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/2663f4e8-aa52-4398-89e7-d26381b65545.jpg",
       "publisherFeedGuid": "d5067e8a-e2a2-47d7-a80c-b1a13def9a8d",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/d5067e8a-e2a2-47d7-a80c-b1a13def9a8d"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/d5067e8a-e2a2-47d7-a80c-b1a13def9a8d",
+      "feedArtist": "Seth Fonda"
     },
     {
       "id": "track-148",
@@ -7956,7 +8069,8 @@
       "addedAt": "2025-08-13T22:17:14.010Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/2663f4e8-aa52-4398-89e7-d26381b65545.jpg",
       "publisherFeedGuid": "d5067e8a-e2a2-47d7-a80c-b1a13def9a8d",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/d5067e8a-e2a2-47d7-a80c-b1a13def9a8d"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/d5067e8a-e2a2-47d7-a80c-b1a13def9a8d",
+      "feedArtist": "Seth Fonda"
     },
     {
       "id": "track-149",
@@ -8001,7 +8115,8 @@
       "addedAt": "2025-08-13T22:17:14.010Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/2663f4e8-aa52-4398-89e7-d26381b65545.jpg",
       "publisherFeedGuid": "d5067e8a-e2a2-47d7-a80c-b1a13def9a8d",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/d5067e8a-e2a2-47d7-a80c-b1a13def9a8d"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/d5067e8a-e2a2-47d7-a80c-b1a13def9a8d",
+      "feedArtist": "Seth Fonda"
     },
     {
       "id": "track-150",
@@ -8058,7 +8173,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:15.182Z",
       "addedAt": "2025-08-13T22:17:15.185Z",
-      "feedImage": "https://www.doerfelverse.com/art/ben-doerfel-red.png"
+      "feedImage": "https://www.doerfelverse.com/art/ben-doerfel-red.png",
+      "feedArtist": "Ben Doerfel"
     },
     {
       "id": "track-151",
@@ -8114,7 +8230,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:15.182Z",
       "addedAt": "2025-08-13T22:17:15.185Z",
-      "feedImage": "https://www.doerfelverse.com/art/ben-doerfel-red.png"
+      "feedImage": "https://www.doerfelverse.com/art/ben-doerfel-red.png",
+      "feedArtist": "Ben Doerfel"
     },
     {
       "id": "track-152",
@@ -8171,7 +8288,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:15.182Z",
       "addedAt": "2025-08-13T22:17:15.185Z",
-      "feedImage": "https://www.doerfelverse.com/art/ben-doerfel-red.png"
+      "feedImage": "https://www.doerfelverse.com/art/ben-doerfel-red.png",
+      "feedArtist": "Ben Doerfel"
     },
     {
       "id": "track-153",
@@ -8227,7 +8345,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:15.182Z",
       "addedAt": "2025-08-13T22:17:15.185Z",
-      "feedImage": "https://www.doerfelverse.com/art/ben-doerfel-red.png"
+      "feedImage": "https://www.doerfelverse.com/art/ben-doerfel-red.png",
+      "feedArtist": "Ben Doerfel"
     },
     {
       "id": "track-154",
@@ -8284,7 +8403,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:15.182Z",
       "addedAt": "2025-08-13T22:17:15.185Z",
-      "feedImage": "https://www.doerfelverse.com/art/ben-doerfel-red.png"
+      "feedImage": "https://www.doerfelverse.com/art/ben-doerfel-red.png",
+      "feedArtist": "Ben Doerfel"
     },
     {
       "id": "track-155",
@@ -8341,7 +8461,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:15.182Z",
       "addedAt": "2025-08-13T22:17:15.185Z",
-      "feedImage": "https://www.doerfelverse.com/art/ben-doerfel-red.png"
+      "feedImage": "https://www.doerfelverse.com/art/ben-doerfel-red.png",
+      "feedArtist": "Ben Doerfel"
     },
     {
       "id": "track-156",
@@ -8398,7 +8519,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:15.182Z",
       "addedAt": "2025-08-13T22:17:15.185Z",
-      "feedImage": "https://www.doerfelverse.com/art/ben-doerfel-red.png"
+      "feedImage": "https://www.doerfelverse.com/art/ben-doerfel-red.png",
+      "feedArtist": "Ben Doerfel"
     },
     {
       "id": "track-157",
@@ -8443,7 +8565,8 @@
       "addedAt": "2025-08-13T22:17:16.360Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/9e673dbf-0c6e-49f1-85fa-5b3bdd9b9f08.jpg",
       "publisherFeedGuid": "bd040774-1dd6-42c6-98ce-01d327697a1d",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/bd040774-1dd6-42c6-98ce-01d327697a1d"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/bd040774-1dd6-42c6-98ce-01d327697a1d",
+      "feedArtist": "The Johner Boys"
     },
     {
       "id": "track-158",
@@ -8488,7 +8611,8 @@
       "addedAt": "2025-08-13T22:17:16.360Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/9e673dbf-0c6e-49f1-85fa-5b3bdd9b9f08.jpg",
       "publisherFeedGuid": "bd040774-1dd6-42c6-98ce-01d327697a1d",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/bd040774-1dd6-42c6-98ce-01d327697a1d"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/bd040774-1dd6-42c6-98ce-01d327697a1d",
+      "feedArtist": "The Johner Boys"
     },
     {
       "id": "track-159",
@@ -8533,7 +8657,8 @@
       "addedAt": "2025-08-13T22:17:16.360Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/9e673dbf-0c6e-49f1-85fa-5b3bdd9b9f08.jpg",
       "publisherFeedGuid": "bd040774-1dd6-42c6-98ce-01d327697a1d",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/bd040774-1dd6-42c6-98ce-01d327697a1d"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/bd040774-1dd6-42c6-98ce-01d327697a1d",
+      "feedArtist": "The Johner Boys"
     },
     {
       "id": "track-160",
@@ -8578,7 +8703,8 @@
       "addedAt": "2025-08-13T22:17:16.360Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/9e673dbf-0c6e-49f1-85fa-5b3bdd9b9f08.jpg",
       "publisherFeedGuid": "bd040774-1dd6-42c6-98ce-01d327697a1d",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/bd040774-1dd6-42c6-98ce-01d327697a1d"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/bd040774-1dd6-42c6-98ce-01d327697a1d",
+      "feedArtist": "The Johner Boys"
     },
     {
       "id": "track-161",
@@ -8623,7 +8749,8 @@
       "addedAt": "2025-08-13T22:17:16.360Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/9e673dbf-0c6e-49f1-85fa-5b3bdd9b9f08.jpg",
       "publisherFeedGuid": "bd040774-1dd6-42c6-98ce-01d327697a1d",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/bd040774-1dd6-42c6-98ce-01d327697a1d"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/bd040774-1dd6-42c6-98ce-01d327697a1d",
+      "feedArtist": "The Johner Boys"
     },
     {
       "id": "track-162",
@@ -8668,7 +8795,8 @@
       "addedAt": "2025-08-13T22:17:16.360Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/9e673dbf-0c6e-49f1-85fa-5b3bdd9b9f08.jpg",
       "publisherFeedGuid": "bd040774-1dd6-42c6-98ce-01d327697a1d",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/bd040774-1dd6-42c6-98ce-01d327697a1d"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/bd040774-1dd6-42c6-98ce-01d327697a1d",
+      "feedArtist": "The Johner Boys"
     },
     {
       "id": "track-163",
@@ -8713,7 +8841,8 @@
       "addedAt": "2025-08-13T22:17:16.360Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/9e673dbf-0c6e-49f1-85fa-5b3bdd9b9f08.jpg",
       "publisherFeedGuid": "bd040774-1dd6-42c6-98ce-01d327697a1d",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/bd040774-1dd6-42c6-98ce-01d327697a1d"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/bd040774-1dd6-42c6-98ce-01d327697a1d",
+      "feedArtist": "The Johner Boys"
     },
     {
       "id": "track-164",
@@ -8758,7 +8887,8 @@
       "addedAt": "2025-08-13T22:17:16.360Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/9e673dbf-0c6e-49f1-85fa-5b3bdd9b9f08.jpg",
       "publisherFeedGuid": "bd040774-1dd6-42c6-98ce-01d327697a1d",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/bd040774-1dd6-42c6-98ce-01d327697a1d"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/bd040774-1dd6-42c6-98ce-01d327697a1d",
+      "feedArtist": "The Johner Boys"
     },
     {
       "id": "track-165",
@@ -8803,7 +8933,8 @@
       "addedAt": "2025-08-13T22:17:16.360Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/9e673dbf-0c6e-49f1-85fa-5b3bdd9b9f08.jpg",
       "publisherFeedGuid": "bd040774-1dd6-42c6-98ce-01d327697a1d",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/bd040774-1dd6-42c6-98ce-01d327697a1d"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/bd040774-1dd6-42c6-98ce-01d327697a1d",
+      "feedArtist": "The Johner Boys"
     },
     {
       "id": "track-166",
@@ -8847,7 +8978,8 @@
       "resolvedAt": "2025-08-13T22:17:17.540Z",
       "addedAt": "2025-08-13T22:17:17.542Z",
       "publisherFeedGuid": "09954f14-c5a7-4680-90f4-0869243b9c26",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26",
+      "feedArtist": "Theo Katzman"
     },
     {
       "id": "track-167",
@@ -8891,7 +9023,8 @@
       "resolvedAt": "2025-08-13T22:17:17.540Z",
       "addedAt": "2025-08-13T22:17:17.542Z",
       "publisherFeedGuid": "09954f14-c5a7-4680-90f4-0869243b9c26",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26",
+      "feedArtist": "Theo Katzman"
     },
     {
       "id": "track-168",
@@ -8935,7 +9068,8 @@
       "resolvedAt": "2025-08-13T22:17:17.540Z",
       "addedAt": "2025-08-13T22:17:17.542Z",
       "publisherFeedGuid": "09954f14-c5a7-4680-90f4-0869243b9c26",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26",
+      "feedArtist": "Theo Katzman"
     },
     {
       "id": "track-169",
@@ -8979,7 +9113,8 @@
       "resolvedAt": "2025-08-13T22:17:17.540Z",
       "addedAt": "2025-08-13T22:17:17.542Z",
       "publisherFeedGuid": "09954f14-c5a7-4680-90f4-0869243b9c26",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26",
+      "feedArtist": "Theo Katzman"
     },
     {
       "id": "track-170",
@@ -9023,7 +9158,8 @@
       "resolvedAt": "2025-08-13T22:17:17.540Z",
       "addedAt": "2025-08-13T22:17:17.542Z",
       "publisherFeedGuid": "09954f14-c5a7-4680-90f4-0869243b9c26",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26",
+      "feedArtist": "Theo Katzman"
     },
     {
       "id": "track-171",
@@ -9067,7 +9203,8 @@
       "resolvedAt": "2025-08-13T22:17:17.540Z",
       "addedAt": "2025-08-13T22:17:17.542Z",
       "publisherFeedGuid": "09954f14-c5a7-4680-90f4-0869243b9c26",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26",
+      "feedArtist": "Theo Katzman"
     },
     {
       "id": "track-172",
@@ -9111,7 +9248,8 @@
       "resolvedAt": "2025-08-13T22:17:17.540Z",
       "addedAt": "2025-08-13T22:17:17.542Z",
       "publisherFeedGuid": "09954f14-c5a7-4680-90f4-0869243b9c26",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26",
+      "feedArtist": "Theo Katzman"
     },
     {
       "id": "track-173",
@@ -9155,7 +9293,8 @@
       "resolvedAt": "2025-08-13T22:17:17.540Z",
       "addedAt": "2025-08-13T22:17:17.542Z",
       "publisherFeedGuid": "09954f14-c5a7-4680-90f4-0869243b9c26",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26",
+      "feedArtist": "Theo Katzman"
     },
     {
       "id": "track-174",
@@ -9199,7 +9338,8 @@
       "resolvedAt": "2025-08-13T22:17:17.540Z",
       "addedAt": "2025-08-13T22:17:17.542Z",
       "publisherFeedGuid": "09954f14-c5a7-4680-90f4-0869243b9c26",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26",
+      "feedArtist": "Theo Katzman"
     },
     {
       "id": "track-175",
@@ -9243,7 +9383,8 @@
       "resolvedAt": "2025-08-13T22:17:17.540Z",
       "addedAt": "2025-08-13T22:17:17.542Z",
       "publisherFeedGuid": "09954f14-c5a7-4680-90f4-0869243b9c26",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26",
+      "feedArtist": "Theo Katzman"
     },
     {
       "id": "track-176",
@@ -9287,7 +9428,8 @@
       "resolvedAt": "2025-08-13T22:17:17.540Z",
       "addedAt": "2025-08-13T22:17:17.542Z",
       "publisherFeedGuid": "09954f14-c5a7-4680-90f4-0869243b9c26",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26",
+      "feedArtist": "Theo Katzman"
     },
     {
       "id": "track-177",
@@ -9329,7 +9471,8 @@
       },
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:17.540Z",
-      "addedAt": "2025-08-13T22:17:17.542Z"
+      "addedAt": "2025-08-13T22:17:17.542Z",
+      "feedArtist": "Theo Katzman"
     },
     {
       "id": "track-178",
@@ -9373,7 +9516,8 @@
       "resolvedAt": "2025-08-13T22:17:17.540Z",
       "addedAt": "2025-08-13T22:17:17.542Z",
       "publisherFeedGuid": "09954f14-c5a7-4680-90f4-0869243b9c26",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26",
+      "feedArtist": "Theo Katzman"
     },
     {
       "id": "track-179",
@@ -9417,7 +9561,8 @@
       "resolvedAt": "2025-08-13T22:17:17.540Z",
       "addedAt": "2025-08-13T22:17:17.542Z",
       "publisherFeedGuid": "09954f14-c5a7-4680-90f4-0869243b9c26",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26",
+      "feedArtist": "Theo Katzman"
     },
     {
       "id": "track-180",
@@ -9472,7 +9617,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:21.075Z",
       "addedAt": "2025-08-13T22:17:21.077Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/07/Tempest_artwork.png"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/07/Tempest_artwork.png",
+      "feedArtist": "Climbing The Mountain (1979-1990)"
     },
     {
       "id": "track-181",
@@ -9527,7 +9673,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:21.075Z",
       "addedAt": "2025-08-13T22:17:21.077Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/07/Tempest_artwork.png"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/07/Tempest_artwork.png",
+      "feedArtist": "Climbing The Mountain (1979-1990)"
     },
     {
       "id": "track-182",
@@ -9582,7 +9729,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:21.075Z",
       "addedAt": "2025-08-13T22:17:21.077Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/07/Tempest_artwork.png"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/07/Tempest_artwork.png",
+      "feedArtist": "Climbing The Mountain (1979-1990)"
     },
     {
       "id": "track-183",
@@ -9688,7 +9836,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:22.268Z",
       "addedAt": "2025-08-13T22:17:22.271Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-184",
@@ -9763,7 +9912,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:22.268Z",
       "addedAt": "2025-08-13T22:17:22.271Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-185",
@@ -9838,7 +9988,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:22.268Z",
       "addedAt": "2025-08-13T22:17:22.271Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-186",
@@ -9913,7 +10064,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:22.268Z",
       "addedAt": "2025-08-13T22:17:22.271Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-187",
@@ -9988,7 +10140,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:22.268Z",
       "addedAt": "2025-08-13T22:17:22.271Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-188",
@@ -10063,7 +10216,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:22.268Z",
       "addedAt": "2025-08-13T22:17:22.271Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-189",
@@ -10138,7 +10292,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:22.268Z",
       "addedAt": "2025-08-13T22:17:22.271Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-190",
@@ -10213,7 +10368,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:22.268Z",
       "addedAt": "2025-08-13T22:17:22.271Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-191",
@@ -10288,7 +10444,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:22.268Z",
       "addedAt": "2025-08-13T22:17:22.271Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-192",
@@ -10363,7 +10520,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:22.268Z",
       "addedAt": "2025-08-13T22:17:22.271Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-193",
@@ -10438,7 +10596,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:22.268Z",
       "addedAt": "2025-08-13T22:17:22.271Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-194",
@@ -10511,7 +10670,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:22.268Z",
       "addedAt": "2025-08-13T22:17:22.271Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-195",
@@ -10584,7 +10744,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:22.268Z",
       "addedAt": "2025-08-13T22:17:22.271Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-196",
@@ -10657,7 +10818,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:22.269Z",
       "addedAt": "2025-08-13T22:17:22.271Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-197",
@@ -10732,7 +10894,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:22.269Z",
       "addedAt": "2025-08-13T22:17:22.271Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-198",
@@ -10807,7 +10970,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:22.269Z",
       "addedAt": "2025-08-13T22:17:22.271Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-199",
@@ -10882,7 +11046,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:22.269Z",
       "addedAt": "2025-08-13T22:17:22.271Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-200",
@@ -10957,7 +11122,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:22.269Z",
       "addedAt": "2025-08-13T22:17:22.271Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-201",
@@ -11032,7 +11198,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:22.269Z",
       "addedAt": "2025-08-13T22:17:22.271Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-202",
@@ -11107,7 +11274,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:22.269Z",
       "addedAt": "2025-08-13T22:17:22.271Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-203",
@@ -11182,7 +11350,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:22.269Z",
       "addedAt": "2025-08-13T22:17:22.272Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-204",
@@ -11257,7 +11426,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:22.269Z",
       "addedAt": "2025-08-13T22:17:22.272Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-205",
@@ -11332,7 +11502,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:22.269Z",
       "addedAt": "2025-08-13T22:17:22.272Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-206",
@@ -11407,7 +11578,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:22.269Z",
       "addedAt": "2025-08-13T22:17:22.272Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-207",
@@ -11482,7 +11654,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:22.269Z",
       "addedAt": "2025-08-13T22:17:22.272Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-208",
@@ -11557,7 +11730,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:22.269Z",
       "addedAt": "2025-08-13T22:17:22.272Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-209",
@@ -11632,7 +11806,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:22.269Z",
       "addedAt": "2025-08-13T22:17:22.272Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-210",
@@ -11707,7 +11882,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:22.269Z",
       "addedAt": "2025-08-13T22:17:22.273Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-211",
@@ -11881,7 +12057,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:22.269Z",
       "addedAt": "2025-08-13T22:17:22.273Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/Sat_Skirmish/art/the%20satellite%20skirmish%20mku.gif",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "id": "track-212",
@@ -11938,7 +12115,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:29.295Z",
       "addedAt": "2025-08-13T22:17:29.299Z",
-      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png"
+      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png",
+      "feedArtist": "Kurtisdrums"
     },
     {
       "id": "track-213",
@@ -11995,7 +12173,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:29.295Z",
       "addedAt": "2025-08-13T22:17:29.299Z",
-      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png"
+      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png",
+      "feedArtist": "Kurtisdrums"
     },
     {
       "id": "track-214",
@@ -12052,7 +12231,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:29.295Z",
       "addedAt": "2025-08-13T22:17:29.300Z",
-      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png"
+      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png",
+      "feedArtist": "Kurtisdrums"
     },
     {
       "id": "track-215",
@@ -12109,7 +12289,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:29.295Z",
       "addedAt": "2025-08-13T22:17:29.300Z",
-      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png"
+      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png",
+      "feedArtist": "Kurtisdrums"
     },
     {
       "id": "track-216",
@@ -12166,7 +12347,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:29.295Z",
       "addedAt": "2025-08-13T22:17:29.300Z",
-      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png"
+      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png",
+      "feedArtist": "Kurtisdrums"
     },
     {
       "id": "track-217",
@@ -12223,7 +12405,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:29.295Z",
       "addedAt": "2025-08-13T22:17:29.300Z",
-      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png"
+      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png",
+      "feedArtist": "Kurtisdrums"
     },
     {
       "id": "track-218",
@@ -12280,7 +12463,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:29.295Z",
       "addedAt": "2025-08-13T22:17:29.300Z",
-      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png"
+      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png",
+      "feedArtist": "Kurtisdrums"
     },
     {
       "id": "track-219",
@@ -12337,7 +12521,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:29.295Z",
       "addedAt": "2025-08-13T22:17:29.300Z",
-      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png"
+      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png",
+      "feedArtist": "Kurtisdrums"
     },
     {
       "id": "track-220",
@@ -12394,7 +12579,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:29.295Z",
       "addedAt": "2025-08-13T22:17:29.300Z",
-      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png"
+      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png",
+      "feedArtist": "Kurtisdrums"
     },
     {
       "id": "track-221",
@@ -12451,7 +12637,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:29.295Z",
       "addedAt": "2025-08-13T22:17:29.300Z",
-      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png"
+      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png",
+      "feedArtist": "Kurtisdrums"
     },
     {
       "id": "track-222",
@@ -12508,7 +12695,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:29.295Z",
       "addedAt": "2025-08-13T22:17:29.300Z",
-      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png"
+      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png",
+      "feedArtist": "Kurtisdrums"
     },
     {
       "id": "track-223",
@@ -12565,7 +12753,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:29.295Z",
       "addedAt": "2025-08-13T22:17:29.300Z",
-      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png"
+      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png",
+      "feedArtist": "Kurtisdrums"
     },
     {
       "id": "track-224",
@@ -12622,7 +12811,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:29.295Z",
       "addedAt": "2025-08-13T22:17:29.300Z",
-      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png"
+      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png",
+      "feedArtist": "Kurtisdrums"
     },
     {
       "id": "track-225",
@@ -12679,7 +12869,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:29.295Z",
       "addedAt": "2025-08-13T22:17:29.300Z",
-      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png"
+      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png",
+      "feedArtist": "Kurtisdrums"
     },
     {
       "id": "track-226",
@@ -12736,7 +12927,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:29.295Z",
       "addedAt": "2025-08-13T22:17:29.300Z",
-      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png"
+      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png",
+      "feedArtist": "Kurtisdrums"
     },
     {
       "id": "track-227",
@@ -12793,7 +12985,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:29.295Z",
       "addedAt": "2025-08-13T22:17:29.300Z",
-      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png"
+      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png",
+      "feedArtist": "Kurtisdrums"
     },
     {
       "id": "track-228",
@@ -12850,7 +13043,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:29.295Z",
       "addedAt": "2025-08-13T22:17:29.300Z",
-      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png"
+      "feedImage": "https://www.doerfelverse.com/art/kurtisdrums.png",
+      "feedArtist": "Kurtisdrums"
     },
     {
       "id": "track-229",
@@ -12909,7 +13103,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:32.781Z",
       "addedAt": "2025-08-13T22:17:32.785Z",
-      "feedImage": "https://www.thisisjdog.com/media/ring-that-bell.jpg"
+      "feedImage": "https://www.thisisjdog.com/media/ring-that-bell.jpg",
+      "feedArtist": "Jdog"
     },
     {
       "id": "track-230",
@@ -12960,7 +13155,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:32.781Z",
       "addedAt": "2025-08-13T22:17:32.785Z",
-      "feedImage": "https://www.thisisjdog.com/media/ring-that-bell.jpg"
+      "feedImage": "https://www.thisisjdog.com/media/ring-that-bell.jpg",
+      "feedArtist": "Jdog"
     },
     {
       "id": "track-231",
@@ -13011,7 +13207,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:32.781Z",
       "addedAt": "2025-08-13T22:17:32.786Z",
-      "feedImage": "https://www.thisisjdog.com/media/ring-that-bell.jpg"
+      "feedImage": "https://www.thisisjdog.com/media/ring-that-bell.jpg",
+      "feedArtist": "Jdog"
     },
     {
       "id": "track-232",
@@ -13062,7 +13259,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:32.781Z",
       "addedAt": "2025-08-13T22:17:32.786Z",
-      "feedImage": "https://www.thisisjdog.com/media/ring-that-bell.jpg"
+      "feedImage": "https://www.thisisjdog.com/media/ring-that-bell.jpg",
+      "feedArtist": "Jdog"
     },
     {
       "id": "track-233",
@@ -13109,7 +13307,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:33.967Z",
       "addedAt": "2025-08-13T22:17:33.969Z",
-      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/Lofi-Experience.png"
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/Lofi-Experience.png",
+      "feedArtist": "HeyCitizen"
     },
     {
       "id": "track-234",
@@ -13158,7 +13357,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:33.967Z",
       "addedAt": "2025-08-13T22:17:33.969Z",
-      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/Lofi-Experience.png"
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/Lofi-Experience.png",
+      "feedArtist": "HeyCitizen"
     },
     {
       "id": "track-235",
@@ -13207,7 +13407,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:33.967Z",
       "addedAt": "2025-08-13T22:17:33.969Z",
-      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/Lofi-Experience.png"
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/Lofi-Experience.png",
+      "feedArtist": "HeyCitizen"
     },
     {
       "id": "track-236",
@@ -13256,7 +13457,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:33.967Z",
       "addedAt": "2025-08-13T22:17:33.969Z",
-      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/Lofi-Experience.png"
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/Lofi-Experience.png",
+      "feedArtist": "HeyCitizen"
     },
     {
       "id": "track-237",
@@ -13305,7 +13507,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:33.967Z",
       "addedAt": "2025-08-13T22:17:33.969Z",
-      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/Lofi-Experience.png"
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/Lofi-Experience/Lofi-Experience.png",
+      "feedArtist": "HeyCitizen"
     },
     {
       "id": "track-238",
@@ -13393,7 +13596,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:35.131Z",
       "addedAt": "2025-08-13T22:17:35.134Z",
-      "feedImage": "https://music.jimmyv4v.com/bands/blackstone-valley/blackstone-valley-collection/album.jpg"
+      "feedImage": "https://music.jimmyv4v.com/bands/blackstone-valley/blackstone-valley-collection/album.jpg",
+      "feedArtist": "Blackstone Valley"
     },
     {
       "id": "track-239",
@@ -13477,7 +13681,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:35.131Z",
       "addedAt": "2025-08-13T22:17:35.134Z",
-      "feedImage": "https://music.jimmyv4v.com/bands/blackstone-valley/blackstone-valley-collection/album.jpg"
+      "feedImage": "https://music.jimmyv4v.com/bands/blackstone-valley/blackstone-valley-collection/album.jpg",
+      "feedArtist": "Blackstone Valley"
     },
     {
       "id": "track-240",
@@ -13557,7 +13762,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:36.305Z",
       "addedAt": "2025-08-13T22:17:36.309Z",
-      "feedImage": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/album-1000.jpg"
+      "feedImage": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/album-1000.jpg",
+      "feedArtist": "Jimmy V"
     },
     {
       "id": "track-241",
@@ -13637,7 +13843,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:36.305Z",
       "addedAt": "2025-08-13T22:17:36.309Z",
-      "feedImage": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/album-1000.jpg"
+      "feedImage": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/album-1000.jpg",
+      "feedArtist": "Jimmy V"
     },
     {
       "id": "track-242",
@@ -13717,7 +13924,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:36.305Z",
       "addedAt": "2025-08-13T22:17:36.309Z",
-      "feedImage": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/album-1000.jpg"
+      "feedImage": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/album-1000.jpg",
+      "feedArtist": "Jimmy V"
     },
     {
       "id": "track-243",
@@ -13797,7 +14005,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:36.305Z",
       "addedAt": "2025-08-13T22:17:36.309Z",
-      "feedImage": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/album-1000.jpg"
+      "feedImage": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/album-1000.jpg",
+      "feedArtist": "Jimmy V"
     },
     {
       "id": "track-244",
@@ -13877,7 +14086,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:36.305Z",
       "addedAt": "2025-08-13T22:17:36.309Z",
-      "feedImage": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/album-1000.jpg"
+      "feedImage": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/album-1000.jpg",
+      "feedArtist": "Jimmy V"
     },
     {
       "id": "track-245",
@@ -13957,7 +14167,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:36.305Z",
       "addedAt": "2025-08-13T22:17:36.309Z",
-      "feedImage": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/album-1000.jpg"
+      "feedImage": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/album-1000.jpg",
+      "feedArtist": "Jimmy V"
     },
     {
       "id": "track-246",
@@ -14037,7 +14248,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:36.305Z",
       "addedAt": "2025-08-13T22:17:36.309Z",
-      "feedImage": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/album-1000.jpg"
+      "feedImage": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/album-1000.jpg",
+      "feedArtist": "Jimmy V"
     },
     {
       "id": "track-247",
@@ -14117,7 +14329,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:36.305Z",
       "addedAt": "2025-08-13T22:17:36.309Z",
-      "feedImage": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/album-1000.jpg"
+      "feedImage": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/album-1000.jpg",
+      "feedArtist": "Jimmy V"
     },
     {
       "id": "track-248",
@@ -14198,7 +14411,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:37.497Z",
       "addedAt": "2025-08-13T22:17:37.500Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-249",
@@ -14279,7 +14493,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:37.497Z",
       "addedAt": "2025-08-13T22:17:37.500Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-250",
@@ -14352,7 +14567,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:37.497Z",
       "addedAt": "2025-08-13T22:17:37.500Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-251",
@@ -14433,7 +14649,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:37.497Z",
       "addedAt": "2025-08-13T22:17:37.500Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-252",
@@ -14506,7 +14723,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:37.497Z",
       "addedAt": "2025-08-13T22:17:37.501Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-253",
@@ -14587,7 +14805,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:37.497Z",
       "addedAt": "2025-08-13T22:17:37.501Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-254",
@@ -14652,7 +14871,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:37.497Z",
       "addedAt": "2025-08-13T22:17:37.501Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-255",
@@ -14725,7 +14945,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:37.497Z",
       "addedAt": "2025-08-13T22:17:37.501Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-256",
@@ -14798,7 +15019,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:37.497Z",
       "addedAt": "2025-08-13T22:17:37.501Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-257",
@@ -14863,7 +15085,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:37.497Z",
       "addedAt": "2025-08-13T22:17:37.501Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-258",
@@ -14936,7 +15159,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:37.497Z",
       "addedAt": "2025-08-13T22:17:37.502Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-259",
@@ -15009,7 +15233,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:37.497Z",
       "addedAt": "2025-08-13T22:17:37.502Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-260",
@@ -15090,7 +15315,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:37.497Z",
       "addedAt": "2025-08-13T22:17:37.502Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-261",
@@ -15155,7 +15381,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:37.497Z",
       "addedAt": "2025-08-13T22:17:37.502Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-262",
@@ -15212,7 +15439,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:37.497Z",
       "addedAt": "2025-08-13T22:17:37.502Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-263",
@@ -15285,7 +15513,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:37.497Z",
       "addedAt": "2025-08-13T22:17:37.502Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-264",
@@ -15374,7 +15603,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:37.497Z",
       "addedAt": "2025-08-13T22:17:37.502Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-265",
@@ -15431,7 +15661,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:37.497Z",
       "addedAt": "2025-08-13T22:17:37.502Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-266",
@@ -15512,7 +15743,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:37.497Z",
       "addedAt": "2025-08-13T22:17:37.502Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-267",
@@ -15585,7 +15817,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:37.497Z",
       "addedAt": "2025-08-13T22:17:37.502Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-268",
@@ -15642,7 +15875,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:37.497Z",
       "addedAt": "2025-08-13T22:17:37.502Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-269",
@@ -15699,7 +15933,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:37.497Z",
       "addedAt": "2025-08-13T22:17:37.502Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-270",
@@ -15772,7 +16007,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:37.497Z",
       "addedAt": "2025-08-13T22:17:37.502Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-271",
@@ -15845,7 +16081,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:37.497Z",
       "addedAt": "2025-08-13T22:17:37.502Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-272",
@@ -15918,7 +16155,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:37.497Z",
       "addedAt": "2025-08-13T22:17:37.502Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-273",
@@ -15991,7 +16229,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:37.497Z",
       "addedAt": "2025-08-13T22:17:37.503Z",
-      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "feedArtist": "The Doerfels"
     },
     {
       "id": "track-274",
@@ -16039,7 +16278,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:38.692Z",
       "addedAt": "2025-08-13T22:17:38.695Z",
-      "feedImage": "https://ableandthewolf.com/static/media/01_MakinBeans.6dfb9c8e18b0f28adf4d.jpg"
+      "feedImage": "https://ableandthewolf.com/static/media/01_MakinBeans.6dfb9c8e18b0f28adf4d.jpg",
+      "feedArtist": "Able and The Wolf"
     },
     {
       "id": "track-275",
@@ -16087,7 +16327,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:38.692Z",
       "addedAt": "2025-08-13T22:17:38.695Z",
-      "feedImage": "https://ableandthewolf.com/static/media/01_MakinBeans.6dfb9c8e18b0f28adf4d.jpg"
+      "feedImage": "https://ableandthewolf.com/static/media/01_MakinBeans.6dfb9c8e18b0f28adf4d.jpg",
+      "feedArtist": "Able and The Wolf"
     },
     {
       "id": "track-276",
@@ -16141,7 +16382,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:38.692Z",
       "addedAt": "2025-08-13T22:17:38.695Z",
-      "feedImage": "https://ableandthewolf.com/static/media/01_MakinBeans.6dfb9c8e18b0f28adf4d.jpg"
+      "feedImage": "https://ableandthewolf.com/static/media/01_MakinBeans.6dfb9c8e18b0f28adf4d.jpg",
+      "feedArtist": "Able and The Wolf"
     },
     {
       "id": "track-277",
@@ -16195,7 +16437,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:38.692Z",
       "addedAt": "2025-08-13T22:17:38.695Z",
-      "feedImage": "https://ableandthewolf.com/static/media/01_MakinBeans.6dfb9c8e18b0f28adf4d.jpg"
+      "feedImage": "https://ableandthewolf.com/static/media/01_MakinBeans.6dfb9c8e18b0f28adf4d.jpg",
+      "feedArtist": "Able and The Wolf"
     },
     {
       "id": "track-278",
@@ -16243,7 +16486,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:38.692Z",
       "addedAt": "2025-08-13T22:17:38.695Z",
-      "feedImage": "https://ableandthewolf.com/static/media/01_MakinBeans.6dfb9c8e18b0f28adf4d.jpg"
+      "feedImage": "https://ableandthewolf.com/static/media/01_MakinBeans.6dfb9c8e18b0f28adf4d.jpg",
+      "feedArtist": "Able and The Wolf"
     },
     {
       "id": "track-279",
@@ -16297,7 +16541,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:38.692Z",
       "addedAt": "2025-08-13T22:17:38.695Z",
-      "feedImage": "https://ableandthewolf.com/static/media/01_MakinBeans.6dfb9c8e18b0f28adf4d.jpg"
+      "feedImage": "https://ableandthewolf.com/static/media/01_MakinBeans.6dfb9c8e18b0f28adf4d.jpg",
+      "feedArtist": "Able and The Wolf"
     },
     {
       "id": "track-280",
@@ -16352,7 +16597,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:39.872Z",
       "addedAt": "2025-08-13T22:17:39.876Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/08/The-Death-of-Rock-and-Roll_artwork.jpg"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/08/The-Death-of-Rock-and-Roll_artwork.jpg",
+      "feedArtist": "The Death of Rock and Roll"
     },
     {
       "id": "track-281",
@@ -16407,7 +16653,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:39.872Z",
       "addedAt": "2025-08-13T22:17:39.876Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/08/The-Death-of-Rock-and-Roll_artwork.jpg"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/08/The-Death-of-Rock-and-Roll_artwork.jpg",
+      "feedArtist": "The Death of Rock and Roll"
     },
     {
       "id": "track-282",
@@ -16462,7 +16709,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:39.872Z",
       "addedAt": "2025-08-13T22:17:39.876Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/08/The-Death-of-Rock-and-Roll_artwork.jpg"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/08/The-Death-of-Rock-and-Roll_artwork.jpg",
+      "feedArtist": "The Death of Rock and Roll"
     },
     {
       "id": "track-283",
@@ -16517,7 +16765,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:39.872Z",
       "addedAt": "2025-08-13T22:17:39.876Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/08/The-Death-of-Rock-and-Roll_artwork.jpg"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/08/The-Death-of-Rock-and-Roll_artwork.jpg",
+      "feedArtist": "The Death of Rock and Roll"
     },
     {
       "id": "track-284",
@@ -16572,7 +16821,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:39.872Z",
       "addedAt": "2025-08-13T22:17:39.876Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/08/The-Death-of-Rock-and-Roll_artwork.jpg"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/08/The-Death-of-Rock-and-Roll_artwork.jpg",
+      "feedArtist": "The Death of Rock and Roll"
     },
     {
       "id": "track-285",
@@ -16627,7 +16877,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:39.872Z",
       "addedAt": "2025-08-13T22:17:39.876Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/08/The-Death-of-Rock-and-Roll_artwork.jpg"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/08/The-Death-of-Rock-and-Roll_artwork.jpg",
+      "feedArtist": "The Death of Rock and Roll"
     },
     {
       "id": "track-286",
@@ -16682,7 +16933,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:39.872Z",
       "addedAt": "2025-08-13T22:17:39.876Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/08/The-Death-of-Rock-and-Roll_artwork.jpg"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/08/The-Death-of-Rock-and-Roll_artwork.jpg",
+      "feedArtist": "The Death of Rock and Roll"
     },
     {
       "id": "track-287",
@@ -16737,7 +16989,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:39.872Z",
       "addedAt": "2025-08-13T22:17:39.876Z",
-      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/08/The-Death-of-Rock-and-Roll_artwork.jpg"
+      "feedImage": "https://music.behindthesch3m3s.com/wp-content/uploads/2023/08/The-Death-of-Rock-and-Roll_artwork.jpg",
+      "feedArtist": "The Death of Rock and Roll"
     },
     {
       "id": "track-288",
@@ -16779,7 +17032,8 @@
       },
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:42.243Z",
-      "addedAt": "2025-08-13T22:17:42.246Z"
+      "addedAt": "2025-08-13T22:17:42.246Z",
+      "feedArtist": "Sara Jade"
     },
     {
       "id": "track-289",
@@ -16821,7 +17075,8 @@
       },
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:42.243Z",
-      "addedAt": "2025-08-13T22:17:42.246Z"
+      "addedAt": "2025-08-13T22:17:42.246Z",
+      "feedArtist": "Sara Jade"
     },
     {
       "id": "track-290",
@@ -16863,7 +17118,8 @@
       },
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:42.243Z",
-      "addedAt": "2025-08-13T22:17:42.246Z"
+      "addedAt": "2025-08-13T22:17:42.246Z",
+      "feedArtist": "Sara Jade"
     },
     {
       "id": "track-291",
@@ -16905,7 +17161,8 @@
       },
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:42.243Z",
-      "addedAt": "2025-08-13T22:17:42.246Z"
+      "addedAt": "2025-08-13T22:17:42.246Z",
+      "feedArtist": "Sara Jade"
     },
     {
       "id": "track-292",
@@ -16968,7 +17225,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:46.951Z",
       "addedAt": "2025-08-13T22:17:46.955Z",
-      "feedImage": "https://f4.bcbits.com/img/a3037583348_16.jpg"
+      "feedImage": "https://f4.bcbits.com/img/a3037583348_16.jpg",
+      "feedArtist": "Mellow Cassette"
     },
     {
       "id": "track-293",
@@ -17031,7 +17289,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:46.951Z",
       "addedAt": "2025-08-13T22:17:46.955Z",
-      "feedImage": "https://f4.bcbits.com/img/a3037583348_16.jpg"
+      "feedImage": "https://f4.bcbits.com/img/a3037583348_16.jpg",
+      "feedArtist": "Mellow Cassette"
     },
     {
       "id": "track-294",
@@ -17094,7 +17353,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:46.951Z",
       "addedAt": "2025-08-13T22:17:46.955Z",
-      "feedImage": "https://f4.bcbits.com/img/a3037583348_16.jpg"
+      "feedImage": "https://f4.bcbits.com/img/a3037583348_16.jpg",
+      "feedArtist": "Mellow Cassette"
     },
     {
       "id": "track-295",
@@ -17157,7 +17417,8 @@
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:46.951Z",
       "addedAt": "2025-08-13T22:17:46.955Z",
-      "feedImage": "https://f4.bcbits.com/img/a3037583348_16.jpg"
+      "feedImage": "https://f4.bcbits.com/img/a3037583348_16.jpg",
+      "feedArtist": "Mellow Cassette"
     },
     {
       "id": "track-296",
@@ -17199,7 +17460,8 @@
       },
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:49.311Z",
-      "addedAt": "2025-08-13T22:17:49.314Z"
+      "addedAt": "2025-08-13T22:17:49.314Z",
+      "feedArtist": "Death by Lions"
     },
     {
       "id": "track-297",
@@ -17241,7 +17503,8 @@
       },
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:49.311Z",
-      "addedAt": "2025-08-13T22:17:49.314Z"
+      "addedAt": "2025-08-13T22:17:49.314Z",
+      "feedArtist": "Death by Lions"
     },
     {
       "id": "track-298",
@@ -17283,7 +17546,8 @@
       },
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:49.311Z",
-      "addedAt": "2025-08-13T22:17:49.314Z"
+      "addedAt": "2025-08-13T22:17:49.314Z",
+      "feedArtist": "Death by Lions"
     },
     {
       "id": "track-299",
@@ -17325,7 +17589,8 @@
       },
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:49.311Z",
-      "addedAt": "2025-08-13T22:17:49.314Z"
+      "addedAt": "2025-08-13T22:17:49.314Z",
+      "feedArtist": "Death by Lions"
     },
     {
       "id": "track-300",
@@ -17367,7 +17632,8 @@
       },
       "resolvedFrom": "complete-album-fetch",
       "resolvedAt": "2025-08-13T22:17:49.311Z",
-      "addedAt": "2025-08-13T22:17:49.314Z"
+      "addedAt": "2025-08-13T22:17:49.314Z",
+      "feedArtist": "Death by Lions"
     },
     {
       "id": "track-301",
@@ -17412,7 +17678,8 @@
       "addedAt": "2025-08-13T22:17:50.487Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/d677db67-0310-4813-970e-e65927c689f1.jpg",
       "publisherFeedGuid": "aa909244-7555-4b52-ad88-7233860c6fb4",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4",
+      "feedArtist": "Nate Johnivan"
     },
     {
       "id": "track-302",
@@ -17457,7 +17724,8 @@
       "addedAt": "2025-08-13T22:17:50.487Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/d677db67-0310-4813-970e-e65927c689f1.jpg",
       "publisherFeedGuid": "aa909244-7555-4b52-ad88-7233860c6fb4",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4",
+      "feedArtist": "Nate Johnivan"
     },
     {
       "id": "track-303",
@@ -17502,7 +17770,8 @@
       "addedAt": "2025-08-13T22:17:50.487Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/d677db67-0310-4813-970e-e65927c689f1.jpg",
       "publisherFeedGuid": "aa909244-7555-4b52-ad88-7233860c6fb4",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4",
+      "feedArtist": "Nate Johnivan"
     },
     {
       "id": "track-304",
@@ -17547,7 +17816,8 @@
       "addedAt": "2025-08-13T22:17:50.487Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/d677db67-0310-4813-970e-e65927c689f1.jpg",
       "publisherFeedGuid": "aa909244-7555-4b52-ad88-7233860c6fb4",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4",
+      "feedArtist": "Nate Johnivan"
     },
     {
       "id": "track-305",
@@ -17592,7 +17862,8 @@
       "addedAt": "2025-08-13T22:17:50.487Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/d677db67-0310-4813-970e-e65927c689f1.jpg",
       "publisherFeedGuid": "aa909244-7555-4b52-ad88-7233860c6fb4",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4",
+      "feedArtist": "Nate Johnivan"
     },
     {
       "id": "track-306",
@@ -17637,7 +17908,8 @@
       "addedAt": "2025-08-13T22:17:50.489Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/d677db67-0310-4813-970e-e65927c689f1.jpg",
       "publisherFeedGuid": "aa909244-7555-4b52-ad88-7233860c6fb4",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4",
+      "feedArtist": "Nate Johnivan"
     },
     {
       "id": "track-307",
@@ -17682,7 +17954,8 @@
       "addedAt": "2025-08-13T22:17:50.489Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/d677db67-0310-4813-970e-e65927c689f1.jpg",
       "publisherFeedGuid": "aa909244-7555-4b52-ad88-7233860c6fb4",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4",
+      "feedArtist": "Nate Johnivan"
     },
     {
       "id": "track-308",
@@ -17727,7 +18000,8 @@
       "addedAt": "2025-08-13T22:17:50.489Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/d677db67-0310-4813-970e-e65927c689f1.jpg",
       "publisherFeedGuid": "aa909244-7555-4b52-ad88-7233860c6fb4",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4",
+      "feedArtist": "Nate Johnivan"
     },
     {
       "id": "track-309",
@@ -17772,7 +18046,8 @@
       "addedAt": "2025-08-13T22:17:50.489Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/d677db67-0310-4813-970e-e65927c689f1.jpg",
       "publisherFeedGuid": "aa909244-7555-4b52-ad88-7233860c6fb4",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4",
+      "feedArtist": "Nate Johnivan"
     },
     {
       "id": "track-310",
@@ -17817,7 +18092,8 @@
       "addedAt": "2025-08-13T22:17:50.489Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/d677db67-0310-4813-970e-e65927c689f1.jpg",
       "publisherFeedGuid": "aa909244-7555-4b52-ad88-7233860c6fb4",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4",
+      "feedArtist": "Nate Johnivan"
     },
     {
       "id": "track-311",
@@ -17862,7 +18138,8 @@
       "addedAt": "2025-08-13T22:17:50.489Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/d677db67-0310-4813-970e-e65927c689f1.jpg",
       "publisherFeedGuid": "aa909244-7555-4b52-ad88-7233860c6fb4",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4",
+      "feedArtist": "Nate Johnivan"
     },
     {
       "id": "track-312",
@@ -17907,7 +18184,8 @@
       "addedAt": "2025-08-13T22:17:50.489Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/d677db67-0310-4813-970e-e65927c689f1.jpg",
       "publisherFeedGuid": "aa909244-7555-4b52-ad88-7233860c6fb4",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4",
+      "feedArtist": "Nate Johnivan"
     },
     {
       "id": "track-313",
@@ -17952,7 +18230,8 @@
       "addedAt": "2025-08-13T22:17:50.489Z",
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/d677db67-0310-4813-970e-e65927c689f1.jpg",
       "publisherFeedGuid": "aa909244-7555-4b52-ad88-7233860c6fb4",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4",
+      "feedArtist": "Nate Johnivan"
     },
     {
       "id": "track-314",
@@ -24744,7 +25023,8 @@
       "socialInteract": [],
       "artist": "The Greensands",
       "publisherFeedGuid": "a8586318-c588-46ad-a769-ffb7e9c27b2c",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/a8586318-c588-46ad-a769-ffb7e9c27b2c"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/a8586318-c588-46ad-a769-ffb7e9c27b2c",
+      "feedArtist": "The Greensands"
     },
     {
       "guid": "cfd984c1-327a-4574-8c26-63c56f953cb3",
@@ -24880,7 +25160,8 @@
         }
       ],
       "socialInteract": [],
-      "artist": "Elijah Lied"
+      "artist": "Elijah Lied",
+      "feedArtist": "Elijah Lied"
     },
     {
       "guid": "18b5a290-e6be-4d74-877b-bde5c906e04b",
@@ -25834,7 +26115,8 @@
         }
       ],
       "socialInteract": [],
-      "artist": "Middle Season"
+      "artist": "Middle Season",
+      "feedArtist": "Middle Season"
     },
     {
       "guid": "8917f274-fd81-41ad-9e61-776437164990",
@@ -26015,7 +26297,8 @@
       },
       "persons": [],
       "socialInteract": [],
-      "artist": "HeyCitizen"
+      "artist": "HeyCitizen",
+      "feedArtist": "HeyCitizen"
     },
     {
       "guid": "c6af996f-14ce-4a52-8639-9e719314acbe",
@@ -26230,7 +26513,8 @@
           "img": "https://www.doerfelverse.com/art/ben-doerfel.png"
         }
       ],
-      "socialInteract": []
+      "socialInteract": [],
+      "feedArtist": "Ben Doerfel"
     },
     {
       "guid": "acef126c-42ed-42f8-b942-dd69f2259341",
@@ -26445,7 +26729,8 @@
         ]
       },
       "persons": [],
-      "socialInteract": []
+      "socialInteract": [],
+      "feedArtist": "Sara Jade"
     },
     {
       "guid": "687ef047-ff2d-4e94-8aa1-d35cab412cb8",
@@ -26498,7 +26783,8 @@
         ]
       },
       "persons": [],
-      "socialInteract": []
+      "socialInteract": [],
+      "feedArtist": "Sara Jade"
     },
     {
       "guid": "08d82e46-c938-4ac9-923f-9a84aaeab01f",
@@ -26551,7 +26837,8 @@
         ]
       },
       "persons": [],
-      "socialInteract": []
+      "socialInteract": [],
+      "feedArtist": "Sara Jade"
     },
     {
       "guid": "56da09ae-54c9-4df5-b8ce-d88b3d078a1f",
@@ -26604,7 +26891,8 @@
         ]
       },
       "persons": [],
-      "socialInteract": []
+      "socialInteract": [],
+      "feedArtist": "Sara Jade"
     },
     {
       "guid": "949e7562-ec44-4c8b-accc-8fbd903a02c5",
@@ -26960,7 +27248,8 @@
       "socialInteract": [],
       "artist": "The Greensands",
       "publisherFeedGuid": "a8586318-c588-46ad-a769-ffb7e9c27b2c",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/a8586318-c588-46ad-a769-ffb7e9c27b2c"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/a8586318-c588-46ad-a769-ffb7e9c27b2c",
+      "feedArtist": "The Greensands"
     },
     {
       "guid": "5dfe649a-9d27-46e6-b01e-a7eb274fa496",
@@ -27124,7 +27413,8 @@
         }
       ],
       "socialInteract": [],
-      "artist": "The Doerfels"
+      "artist": "The Doerfels",
+      "feedArtist": "The Doerfels"
     },
     {
       "guid": "dad387c1-97f1-4fc2-900d-6b510fd4f3ac",
@@ -27624,7 +27914,8 @@
       },
       "persons": [],
       "socialInteract": [],
-      "artist": "The Satellite Skirmish"
+      "artist": "The Satellite Skirmish",
+      "feedArtist": "The Satellite Skirmish"
     },
     {
       "guid": "8de3246b-ad60-427f-9eea-694ea42b417b",
@@ -28698,7 +28989,8 @@
       "socialInteract": [],
       "artist": "Nate Johnivan",
       "publisherFeedGuid": "aa909244-7555-4b52-ad88-7233860c6fb4",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4",
+      "feedArtist": "Nate Johnivan"
     },
     {
       "guid": "d40fd2ae-5ae6-4bc9-9328-1286e00d05c0",
@@ -29022,7 +29314,8 @@
       },
       "persons": [],
       "socialInteract": [],
-      "artist": "R.O. Shapiro"
+      "artist": "R.O. Shapiro",
+      "feedArtist": "R.O. Shapiro"
     },
     {
       "guid": "48944a0f-2651-4258-a570-6bb0334b75db",
@@ -29184,7 +29477,8 @@
       "persons": [],
       "socialInteract": [],
       "publisherFeedGuid": "707bc821-489e-46b2-8b51-d0aaad856f20",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/707bc821-489e-46b2-8b51-d0aaad856f20"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/707bc821-489e-46b2-8b51-d0aaad856f20",
+      "feedArtist": "Charlie Crown"
     },
     {
       "guid": "2bb748ae-f846-4ac5-85da-0bbe079adbc1",
@@ -29291,7 +29585,8 @@
           "img": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/album-500.jpg"
         }
       ],
-      "socialInteract": []
+      "socialInteract": [],
+      "feedArtist": "Jimmy V"
     },
     {
       "guid": "ddf0a433-79bf-4f50-a29c-c7d6dc5dd462",
@@ -29535,7 +29830,8 @@
       },
       "persons": [],
       "socialInteract": [],
-      "artist": "HeyCitizen"
+      "artist": "HeyCitizen",
+      "feedArtist": "HeyCitizen"
     },
     {
       "guid": "20c22cc0-b9bf-43a1-a8e4-244797b4b6fb",
@@ -30754,7 +31050,8 @@
           "img": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/album-500.jpg"
         }
       ],
-      "socialInteract": []
+      "socialInteract": [],
+      "feedArtist": "Jimmy V"
     },
     {
       "guid": "e6868853-2941-4e0d-8b1d-d24d59212650",
@@ -31669,7 +31966,8 @@
       },
       "persons": [],
       "socialInteract": [],
-      "artist": "The Doerfels"
+      "artist": "The Doerfels",
+      "feedArtist": "The Doerfels"
     },
     {
       "guid": "cda87d91-b09b-4276-bf82-0ffaa0997a66",
@@ -32061,7 +32359,8 @@
       },
       "persons": [],
       "socialInteract": [],
-      "artist": "Mellow Cassette"
+      "artist": "Mellow Cassette",
+      "feedArtist": "Mellow Cassette"
     },
     {
       "guid": "78041b53-a5d2-4ff7-a356-aa4806853673",
@@ -32142,7 +32441,8 @@
       },
       "persons": [],
       "socialInteract": [],
-      "artist": "Mellow Cassette"
+      "artist": "Mellow Cassette",
+      "feedArtist": "Mellow Cassette"
     },
     {
       "guid": "dad87a37-5527-42d6-9bd5-c644f1e8c72b",
@@ -32610,7 +32910,8 @@
       "socialInteract": [],
       "artist": "The Johner Boys",
       "publisherFeedGuid": "bd040774-1dd6-42c6-98ce-01d327697a1d",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/bd040774-1dd6-42c6-98ce-01d327697a1d"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/bd040774-1dd6-42c6-98ce-01d327697a1d",
+      "feedArtist": "The Johner Boys"
     },
     {
       "guid": "4e14fda6-21d3-49cf-af94-83320fb5bacf",
@@ -33878,7 +34179,8 @@
       },
       "persons": [],
       "socialInteract": [],
-      "artist": "CityBeach"
+      "artist": "CityBeach",
+      "feedArtist": "CityBeach"
     },
     {
       "guid": "b4c57108-b130-4fe2-87d8-147972ea459a",
@@ -34437,7 +34739,8 @@
           "img": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/album-500.jpg"
         }
       ],
-      "socialInteract": []
+      "socialInteract": [],
+      "feedArtist": "Jimmy V"
     },
     {
       "guid": "740d21fb-c699-48fc-a149-f17d9b7f4b5c",
@@ -35095,7 +35398,8 @@
       },
       "persons": [],
       "socialInteract": [],
-      "artist": "The Doerfels"
+      "artist": "The Doerfels",
+      "feedArtist": "The Doerfels"
     },
     {
       "guid": "10163da1-76f7-4e3c-9db6-9d3223356438",
@@ -35498,7 +35802,8 @@
       },
       "persons": [],
       "socialInteract": [],
-      "artist": "Nate Johnivan"
+      "artist": "Nate Johnivan",
+      "feedArtist": "Nate Johnivan"
     },
     {
       "guid": "2a1995ec-29e6-4b2f-8608-cacf11150e27",
@@ -36264,7 +36569,8 @@
         ]
       },
       "persons": [],
-      "socialInteract": []
+      "socialInteract": [],
+      "feedArtist": "Kurtisdrums"
     },
     {
       "guid": "e4c08267-af06-4228-b174-872411989ec6",
@@ -37755,7 +38061,8 @@
       "persons": [],
       "socialInteract": [],
       "publisherFeedGuid": "d4c49f2e-0b50-4a5e-8101-7543d68e032f",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/d4c49f2e-0b50-4a5e-8101-7543d68e032f"
+      "publisherFeedUrl": "https://wavlake.com/feed/artist/d4c49f2e-0b50-4a5e-8101-7543d68e032f",
+      "feedArtist": "Ryan Fonda"
     },
     {
       "guid": "0b8cf338-f5c4-4148-b7de-18062bc60859",
@@ -37808,7 +38115,8 @@
         ]
       },
       "persons": [],
-      "socialInteract": []
+      "socialInteract": [],
+      "feedArtist": "Death by Lions"
     },
     {
       "guid": "a907cbb1-599b-498a-a78b-810a2f5b3fc6",
@@ -38370,7 +38678,8 @@
         }
       ],
       "socialInteract": [],
-      "artist": "Middle Season"
+      "artist": "Middle Season",
+      "feedArtist": "Middle Season"
     },
     {
       "guid": "c73f8c97-eab7-40ec-b830-caa81791319f",
@@ -38868,7 +39177,8 @@
       },
       "persons": [],
       "socialInteract": [],
-      "artist": "The Doerfels"
+      "artist": "The Doerfels",
+      "feedArtist": "The Doerfels"
     },
     {
       "guid": "47a43a40-2b23-48b6-8af0-acdad3242a17",
@@ -38931,7 +39241,8 @@
       },
       "persons": [],
       "socialInteract": [],
-      "artist": "Jdog"
+      "artist": "Jdog",
+      "feedArtist": "Jdog"
     },
     {
       "guid": "5cebf09a-a546-4fc2-a3df-93c9e584037f",
@@ -38985,7 +39296,8 @@
       },
       "persons": [],
       "socialInteract": [],
-      "artist": "Nate Johnivan"
+      "artist": "Nate Johnivan",
+      "feedArtist": "Nate Johnivan"
     },
     {
       "guid": "7c8bc1ab-6501-475b-b2c2-29f0f01fc54c",
@@ -39369,7 +39681,8 @@
       },
       "persons": [],
       "socialInteract": [],
-      "artist": "Nate Johnivan"
+      "artist": "Nate Johnivan",
+      "feedArtist": "Nate Johnivan"
     },
     {
       "guid": "72896974-239e-4aca-b0f5-d2c023e8ee08",
@@ -39440,7 +39753,8 @@
         ]
       },
       "persons": [],
-      "socialInteract": []
+      "socialInteract": [],
+      "feedArtist": "CityBeach"
     },
     {
       "guid": "ddc734d2-4e76-4b74-911a-543a1acde6e3",
@@ -39511,7 +39825,8 @@
         ]
       },
       "persons": [],
-      "socialInteract": []
+      "socialInteract": [],
+      "feedArtist": "CityBeach"
     },
     {
       "guid": "c2374b40-d47f-42db-9e44-c2b027bf2066",
@@ -39673,7 +39988,8 @@
       },
       "persons": [],
       "socialInteract": [],
-      "artist": "Nate Johnivan"
+      "artist": "Nate Johnivan",
+      "feedArtist": "Nate Johnivan"
     },
     {
       "guid": "6a274ad1-86ce-43c0-b035-b15a32254f04",
@@ -40396,7 +40712,8 @@
       },
       "persons": [],
       "socialInteract": [],
-      "artist": "Jdog"
+      "artist": "Jdog",
+      "feedArtist": "Jdog"
     },
     {
       "guid": "26f02048-6655-4869-be34-c25f7fa05266",
@@ -40584,7 +40901,8 @@
           "img": "https://www.doerfelverse.com/art/ben-doerfel.png"
         }
       ],
-      "socialInteract": []
+      "socialInteract": [],
+      "feedArtist": "Ben Doerfel"
     },
     {
       "guid": "8c3ccbb2-b751-4e43-95a9-24c049d36a75",
@@ -40952,7 +41270,8 @@
         ]
       },
       "persons": [],
-      "socialInteract": []
+      "socialInteract": [],
+      "feedArtist": "Ben Doerfel"
     },
     {
       "guid": "d1526d24-382c-4355-9267-602f28de564f",
@@ -41564,7 +41883,8 @@
         ]
       },
       "persons": [],
-      "socialInteract": []
+      "socialInteract": [],
+      "feedArtist": "Kurtisdrums"
     },
     {
       "guid": "5f03c036-e554-41c5-8b66-58280fda71f2",
@@ -41707,7 +42027,8 @@
         ]
       },
       "persons": [],
-      "socialInteract": []
+      "socialInteract": [],
+      "feedArtist": "Kurtisdrums"
     },
     {
       "guid": "a16dce9e-8175-483a-9c27-f858e41401fe",
@@ -42032,7 +42353,8 @@
         ]
       },
       "persons": [],
-      "socialInteract": []
+      "socialInteract": [],
+      "feedArtist": "Kurtisdrums"
     },
     {
       "guid": "b48e37ce-214d-4aef-aac4-99069e9ed4e5",
@@ -42764,7 +43086,8 @@
       },
       "persons": [],
       "socialInteract": [],
-      "artist": "Nate Johnivan"
+      "artist": "Nate Johnivan",
+      "feedArtist": "Nate Johnivan"
     },
     {
       "guid": "e095904c-496b-4927-94b6-1f5881f57d5b",
@@ -43299,7 +43622,7 @@
       "feedTitle": "Fight!",
       "feedDescription": "Written and Recorded by Nate Johnivan in 2020.  \r\nSome Special Guests: \r\nDustin Posthuma: Some guitar layers throughout. \r\nNeil Edbrook: Mixed Red V. Blue and added some Backup Vocals",
       "feedImage": "",
-      "feedArtist": "",
+      "feedArtist": "Nate Johnivan",
       "published": "Mon, 11 Mar 2024 17:55:38 GMT",
       "duration": "",
       "explicit": false,
@@ -43334,7 +43657,7 @@
       "feedTitle": "Fight!",
       "feedDescription": "Written and Recorded by Nate Johnivan in 2020.  \r\nSome Special Guests: \r\nDustin Posthuma: Some guitar layers throughout. \r\nNeil Edbrook: Mixed Red V. Blue and added some Backup Vocals",
       "feedImage": "",
-      "feedArtist": "",
+      "feedArtist": "Nate Johnivan",
       "published": "Mon, 11 Mar 2024 17:56:37 GMT",
       "duration": "",
       "explicit": false,
@@ -43369,7 +43692,7 @@
       "feedTitle": "Fight!",
       "feedDescription": "Written and Recorded by Nate Johnivan in 2020.  \r\nSome Special Guests: \r\nDustin Posthuma: Some guitar layers throughout. \r\nNeil Edbrook: Mixed Red V. Blue and added some Backup Vocals",
       "feedImage": "",
-      "feedArtist": "",
+      "feedArtist": "Nate Johnivan",
       "published": "Mon, 11 Mar 2024 17:56:05 GMT",
       "duration": "",
       "explicit": false,
@@ -43404,7 +43727,7 @@
       "feedTitle": "Fight!",
       "feedDescription": "Written and Recorded by Nate Johnivan in 2020.  \r\nSome Special Guests: \r\nDustin Posthuma: Some guitar layers throughout. \r\nNeil Edbrook: Mixed Red V. Blue and added some Backup Vocals",
       "feedImage": "",
-      "feedArtist": "",
+      "feedArtist": "Nate Johnivan",
       "published": "Mon, 11 Mar 2024 17:57:31 GMT",
       "duration": "",
       "explicit": false,
@@ -43439,7 +43762,7 @@
       "feedTitle": "Fight!",
       "feedDescription": "Written and Recorded by Nate Johnivan in 2020.  \r\nSome Special Guests: \r\nDustin Posthuma: Some guitar layers throughout. \r\nNeil Edbrook: Mixed Red V. Blue and added some Backup Vocals",
       "feedImage": "",
-      "feedArtist": "",
+      "feedArtist": "Nate Johnivan",
       "published": "Mon, 11 Mar 2024 17:58:39 GMT",
       "duration": "",
       "explicit": false,
@@ -43474,7 +43797,7 @@
       "feedTitle": "Fight!",
       "feedDescription": "Written and Recorded by Nate Johnivan in 2020.  \r\nSome Special Guests: \r\nDustin Posthuma: Some guitar layers throughout. \r\nNeil Edbrook: Mixed Red V. Blue and added some Backup Vocals",
       "feedImage": "",
-      "feedArtist": "",
+      "feedArtist": "Nate Johnivan",
       "published": "Mon, 11 Mar 2024 17:55:07 GMT",
       "duration": "",
       "explicit": false,
@@ -43824,7 +44147,7 @@
       "feedTitle": "Tinderbox",
       "feedDescription": "Written, Performed and Recorded by Nate Johnivan in 2022.\nExcept for the track with my mom on it.  That's her.",
       "feedImage": "",
-      "feedArtist": "",
+      "feedArtist": "Nate Johnivan",
       "published": "Thu, 26 Jan 2023 15:12:51 GMT",
       "duration": "",
       "explicit": false,
@@ -43859,7 +44182,7 @@
       "feedTitle": "Tinderbox",
       "feedDescription": "Written, Performed and Recorded by Nate Johnivan in 2022.\nExcept for the track with my mom on it.  That's her.",
       "feedImage": "",
-      "feedArtist": "",
+      "feedArtist": "Nate Johnivan",
       "published": "Thu, 26 Jan 2023 15:15:39 GMT",
       "duration": "",
       "explicit": false,
@@ -43894,7 +44217,7 @@
       "feedTitle": "Tinderbox",
       "feedDescription": "Written, Performed and Recorded by Nate Johnivan in 2022.\nExcept for the track with my mom on it.  That's her.",
       "feedImage": "",
-      "feedArtist": "",
+      "feedArtist": "Nate Johnivan",
       "published": "Thu, 26 Jan 2023 15:16:45 GMT",
       "duration": "",
       "explicit": false,
@@ -43929,7 +44252,7 @@
       "feedTitle": "Tinderbox",
       "feedDescription": "Written, Performed and Recorded by Nate Johnivan in 2022.\nExcept for the track with my mom on it.  That's her.",
       "feedImage": "",
-      "feedArtist": "",
+      "feedArtist": "Nate Johnivan",
       "published": "Thu, 26 Jan 2023 15:17:54 GMT",
       "duration": "",
       "explicit": false,
@@ -43964,7 +44287,7 @@
       "feedTitle": "Tinderbox",
       "feedDescription": "Written, Performed and Recorded by Nate Johnivan in 2022.\nExcept for the track with my mom on it.  That's her.",
       "feedImage": "",
-      "feedArtist": "",
+      "feedArtist": "Nate Johnivan",
       "published": "Thu, 26 Jan 2023 15:20:24 GMT",
       "duration": "",
       "explicit": false,
@@ -43999,7 +44322,7 @@
       "feedTitle": "Tinderbox",
       "feedDescription": "Written, Performed and Recorded by Nate Johnivan in 2022.\nExcept for the track with my mom on it.  That's her.",
       "feedImage": "",
-      "feedArtist": "",
+      "feedArtist": "Nate Johnivan",
       "published": "Thu, 26 Jan 2023 15:19:45 GMT",
       "duration": "",
       "explicit": false,
@@ -44034,7 +44357,7 @@
       "feedTitle": "Tinderbox",
       "feedDescription": "Written, Performed and Recorded by Nate Johnivan in 2022.\nExcept for the track with my mom on it.  That's her.",
       "feedImage": "",
-      "feedArtist": "",
+      "feedArtist": "Nate Johnivan",
       "published": "Thu, 26 Jan 2023 15:13:33 GMT",
       "duration": "",
       "explicit": false,
@@ -44069,7 +44392,7 @@
       "feedTitle": "Tinderbox",
       "feedDescription": "Written, Performed and Recorded by Nate Johnivan in 2022.\nExcept for the track with my mom on it.  That's her.",
       "feedImage": "",
-      "feedArtist": "",
+      "feedArtist": "Nate Johnivan",
       "published": "Thu, 26 Jan 2023 15:14:59 GMT",
       "duration": "",
       "explicit": false,
@@ -44104,7 +44427,7 @@
       "feedTitle": "Tinderbox",
       "feedDescription": "Written, Performed and Recorded by Nate Johnivan in 2022.\nExcept for the track with my mom on it.  That's her.",
       "feedImage": "",
-      "feedArtist": "",
+      "feedArtist": "Nate Johnivan",
       "published": "Thu, 26 Jan 2023 15:16:14 GMT",
       "duration": "",
       "explicit": false,
@@ -44139,7 +44462,7 @@
       "feedTitle": "Tinderbox",
       "feedDescription": "Written, Performed and Recorded by Nate Johnivan in 2022.\nExcept for the track with my mom on it.  That's her.",
       "feedImage": "",
-      "feedArtist": "",
+      "feedArtist": "Nate Johnivan",
       "published": "Thu, 26 Jan 2023 15:19:11 GMT",
       "duration": "",
       "explicit": false,
@@ -44174,7 +44497,7 @@
       "feedTitle": "Tinderbox",
       "feedDescription": "Written, Performed and Recorded by Nate Johnivan in 2022.\nExcept for the track with my mom on it.  That's her.",
       "feedImage": "",
-      "feedArtist": "",
+      "feedArtist": "Nate Johnivan",
       "published": "Wed, 03 Apr 2024 18:48:11 GMT",
       "duration": "",
       "explicit": false,
@@ -44209,7 +44532,7 @@
       "feedTitle": "Tinderbox",
       "feedDescription": "Written, Performed and Recorded by Nate Johnivan in 2022.\nExcept for the track with my mom on it.  That's her.",
       "feedImage": "",
-      "feedArtist": "",
+      "feedArtist": "Nate Johnivan",
       "published": "Thu, 26 Jan 2023 15:17:24 GMT",
       "duration": "",
       "explicit": false,
@@ -44244,7 +44567,7 @@
       "feedTitle": "Tinderbox",
       "feedDescription": "Written, Performed and Recorded by Nate Johnivan in 2022.\nExcept for the track with my mom on it.  That's her.",
       "feedImage": "",
-      "feedArtist": "",
+      "feedArtist": "Nate Johnivan",
       "published": "Thu, 26 Jan 2023 15:14:31 GMT",
       "duration": "",
       "explicit": false,
@@ -49795,6 +50118,986 @@
       "albumTitle": "Daydream feat. Transviolet",
       "artist": "",
       "isMusic": true
+    },
+    {
+      "title": "Memphis Anymore",
+      "subtitle": "",
+      "summary": "",
+      "itemGuid": {
+        "_": "096d7ff4-f140-459b-8f9d-f79ae28b4409",
+        "isPermaLink": "false"
+      },
+      "feedGuid": "ae75be8f-3f8a-4fd6-89a0-042c606fc3f9",
+      "feedUrl": "https://wavlake.com/feed/music/ae75be8f-3f8a-4fd6-89a0-042c606fc3f9",
+      "feedTitle": "Memphis Anymore",
+      "feedDescription": "Written by Karli Chayne & Jessica Lynne Witty. \r\nRelease date: 4/1/2022",
+      "feedImage": "",
+      "feedArtist": "",
+      "published": "Wed, 23 Aug 2023 18:30:09 GMT",
+      "duration": "",
+      "explicit": false,
+      "keywords": [],
+      "categories": [
+        {
+          "text": "Country",
+          "category": {
+            "text": "Contemporary Country"
+          }
+        }
+      ],
+      "enclosureUrl": "https://op3.dev/e,pg=ff08cc7e-cad8-5126-b1dd-9feef56ff27f/https://d12wklypp119aj.cloudfront.net/track/096d7ff4-f140-459b-8f9d-f79ae28b4409.mp3",
+      "enclosureType": "audio/mpeg",
+      "enclosureLength": "3768737",
+      "image": "",
+      "trackNumber": 1,
+      "albumTitle": "Memphis Anymore",
+      "artist": "",
+      "isMusic": true
+    },
+    {
+      "title": "Christmas (Baby Please Come Home)",
+      "subtitle": "",
+      "summary": "",
+      "itemGuid": {
+        "_": "5d865b45-e091-458e-ac82-a443ed274a40",
+        "isPermaLink": "false"
+      },
+      "feedGuid": "e954a4c4-69d2-4ac3-8b86-fe5469f6c9df",
+      "feedUrl": "https://wavlake.com/feed/music/e954a4c4-69d2-4ac3-8b86-fe5469f6c9df",
+      "feedTitle": "Yuletide In My Doublewide",
+      "feedDescription": "Release date: 11/1/2018",
+      "feedImage": "",
+      "feedArtist": "",
+      "published": "Thu, 31 Aug 2023 19:10:45 GMT",
+      "duration": "",
+      "explicit": false,
+      "keywords": [],
+      "categories": [
+        {
+          "text": "Holiday",
+          "category": {
+            "text": "Christmas"
+          }
+        }
+      ],
+      "enclosureUrl": "https://op3.dev/e,pg=d141d44a-28ae-5308-82e4-d4781918a2f4/https://d12wklypp119aj.cloudfront.net/track/5d865b45-e091-458e-ac82-a443ed274a40.mp3",
+      "enclosureType": "audio/mpeg",
+      "enclosureLength": "3061132",
+      "image": "",
+      "trackNumber": 1,
+      "albumTitle": "Yuletide In My Doublewide",
+      "artist": "",
+      "isMusic": true
+    },
+    {
+      "title": "Christmas On The Road",
+      "subtitle": "",
+      "summary": "",
+      "itemGuid": {
+        "_": "6af03468-ced3-4cef-830f-a64ede0f8f8a",
+        "isPermaLink": "false"
+      },
+      "feedGuid": "e954a4c4-69d2-4ac3-8b86-fe5469f6c9df",
+      "feedUrl": "https://wavlake.com/feed/music/e954a4c4-69d2-4ac3-8b86-fe5469f6c9df",
+      "feedTitle": "Yuletide In My Doublewide",
+      "feedDescription": "Release date: 11/1/2018",
+      "feedImage": "",
+      "feedArtist": "",
+      "published": "Thu, 31 Aug 2023 19:16:45 GMT",
+      "duration": "",
+      "explicit": false,
+      "keywords": [],
+      "categories": [
+        {
+          "text": "Holiday",
+          "category": {
+            "text": "Christmas"
+          }
+        }
+      ],
+      "enclosureUrl": "https://op3.dev/e,pg=d141d44a-28ae-5308-82e4-d4781918a2f4/https://d12wklypp119aj.cloudfront.net/track/6af03468-ced3-4cef-830f-a64ede0f8f8a.mp3",
+      "enclosureType": "audio/mpeg",
+      "enclosureLength": "3280560",
+      "image": "",
+      "trackNumber": 2,
+      "albumTitle": "Yuletide In My Doublewide",
+      "artist": "",
+      "isMusic": true
+    },
+    {
+      "title": "Yuletide In My Doublewide",
+      "subtitle": "",
+      "summary": "",
+      "itemGuid": {
+        "_": "b8709353-4c30-4aa6-86d2-ce744c85e59b",
+        "isPermaLink": "false"
+      },
+      "feedGuid": "e954a4c4-69d2-4ac3-8b86-fe5469f6c9df",
+      "feedUrl": "https://wavlake.com/feed/music/e954a4c4-69d2-4ac3-8b86-fe5469f6c9df",
+      "feedTitle": "Yuletide In My Doublewide",
+      "feedDescription": "Release date: 11/1/2018",
+      "feedImage": "",
+      "feedArtist": "",
+      "published": "Thu, 31 Aug 2023 19:24:22 GMT",
+      "duration": "",
+      "explicit": false,
+      "keywords": [],
+      "categories": [
+        {
+          "text": "Holiday",
+          "category": {
+            "text": "Christmas"
+          }
+        }
+      ],
+      "enclosureUrl": "https://op3.dev/e,pg=d141d44a-28ae-5308-82e4-d4781918a2f4/https://d12wklypp119aj.cloudfront.net/track/b8709353-4c30-4aa6-86d2-ce744c85e59b.mp3",
+      "enclosureType": "audio/mpeg",
+      "enclosureLength": "3761213",
+      "image": "",
+      "trackNumber": 3,
+      "albumTitle": "Yuletide In My Doublewide",
+      "artist": "",
+      "isMusic": true
+    },
+    {
+      "title": "White Christmas (feat. Bob Witty)",
+      "subtitle": "",
+      "summary": "",
+      "itemGuid": {
+        "_": "177cd7a5-b07c-4dee-a19d-a2ca25b72005",
+        "isPermaLink": "false"
+      },
+      "feedGuid": "e954a4c4-69d2-4ac3-8b86-fe5469f6c9df",
+      "feedUrl": "https://wavlake.com/feed/music/e954a4c4-69d2-4ac3-8b86-fe5469f6c9df",
+      "feedTitle": "Yuletide In My Doublewide",
+      "feedDescription": "Release date: 11/1/2018",
+      "feedImage": "",
+      "feedArtist": "",
+      "published": "Thu, 31 Aug 2023 19:42:27 GMT",
+      "duration": "",
+      "explicit": false,
+      "keywords": [],
+      "categories": [
+        {
+          "text": "Holiday",
+          "category": {
+            "text": "Christmas"
+          }
+        }
+      ],
+      "enclosureUrl": "https://op3.dev/e,pg=d141d44a-28ae-5308-82e4-d4781918a2f4/https://d12wklypp119aj.cloudfront.net/track/177cd7a5-b07c-4dee-a19d-a2ca25b72005.mp3",
+      "enclosureType": "audio/mpeg",
+      "enclosureLength": "3976044",
+      "image": "",
+      "trackNumber": 4,
+      "albumTitle": "Yuletide In My Doublewide",
+      "artist": "",
+      "isMusic": true
+    },
+    {
+      "title": "Over And Over Again",
+      "subtitle": "",
+      "summary": "",
+      "itemGuid": {
+        "_": "251adfcf-d3a3-4d76-9999-21e8cce95b13",
+        "isPermaLink": "false"
+      },
+      "feedGuid": "2ea35552-2a85-491c-8bbd-adeb25550cef",
+      "feedUrl": "https://wavlake.com/feed/music/2ea35552-2a85-491c-8bbd-adeb25550cef",
+      "feedTitle": "Over And Over Again",
+      "feedDescription": "Written by Jessica Lynne Witty & Don Ellis Gatlin\r\nRelease date: 8/26/2022",
+      "feedImage": "",
+      "feedArtist": "",
+      "published": "Wed, 23 Aug 2023 18:31:45 GMT",
+      "duration": "",
+      "explicit": false,
+      "keywords": [],
+      "categories": [
+        {
+          "text": "Country",
+          "category": {
+            "text": "Americana"
+          }
+        }
+      ],
+      "enclosureUrl": "https://op3.dev/e,pg=da996e10-dc3d-57d7-933d-30325aa0111d/https://d12wklypp119aj.cloudfront.net/track/251adfcf-d3a3-4d76-9999-21e8cce95b13.mp3",
+      "enclosureType": "audio/mpeg",
+      "enclosureLength": "4426186",
+      "image": "",
+      "trackNumber": 1,
+      "albumTitle": "Over And Over Again",
+      "artist": "",
+      "isMusic": true
+    },
+    {
+      "title": "Hanging Strings",
+      "subtitle": "",
+      "summary": "",
+      "itemGuid": {
+        "_": "f0d2fb39-7cca-403c-97e8-bdfb288ac004",
+        "isPermaLink": "false"
+      },
+      "feedGuid": "19803acd-4989-4482-86f7-030ad1533dd8",
+      "feedUrl": "https://wavlake.com/feed/music/19803acd-4989-4482-86f7-030ad1533dd8",
+      "feedTitle": "Hanging Strings",
+      "feedDescription": "Written By Miles Fonda , Produced By Ryan Fonda",
+      "feedImage": "",
+      "feedArtist": "",
+      "published": "Sun, 03 Dec 2023 17:41:57 GMT",
+      "duration": "",
+      "explicit": false,
+      "keywords": [],
+      "categories": [
+        {
+          "text": "Singer/Songwriter",
+          "category": {
+            "text": "Contemporary Singer/Songwriter"
+          }
+        }
+      ],
+      "enclosureUrl": "https://op3.dev/e,pg=f6a88f0e-5cbe-5bde-a7e8-7617c5b9628c/https://d12wklypp119aj.cloudfront.net/track/f0d2fb39-7cca-403c-97e8-bdfb288ac004.mp3",
+      "enclosureType": "audio/mpeg",
+      "enclosureLength": "3586608",
+      "image": "",
+      "trackNumber": 1,
+      "albumTitle": "Hanging Strings",
+      "artist": "",
+      "isMusic": true
+    },
+    {
+      "title": "Unsound Existence (feat. CityBeach)",
+      "subtitle": "",
+      "summary": "",
+      "itemGuid": {
+        "_": "0b4eccf7-c56d-41ad-8962-94ddbee43e72",
+        "isPermaLink": "false"
+      },
+      "feedGuid": "f25b2449-b06c-423a-88c4-58c5900ef30d",
+      "feedUrl": "https://wavlake.com/feed/music/f25b2449-b06c-423a-88c4-58c5900ef30d",
+      "feedTitle": "Unsound Existence (feat. CityBeach)",
+      "feedDescription": "Ryan Fonda, Edward Doerfel, Tj Doerfel",
+      "feedImage": "",
+      "feedArtist": "",
+      "published": "Mon, 22 Jan 2024 04:03:49 GMT",
+      "duration": "",
+      "explicit": false,
+      "keywords": [],
+      "categories": [
+        {
+          "text": "Singer/Songwriter",
+          "category": {
+            "text": "Alternative Folk"
+          }
+        }
+      ],
+      "enclosureUrl": "https://op3.dev/e,pg=830104af-379d-557c-bb2f-241a23264d79/https://d12wklypp119aj.cloudfront.net/track/0b4eccf7-c56d-41ad-8962-94ddbee43e72.mp3",
+      "enclosureType": "audio/mpeg",
+      "enclosureLength": "7424891",
+      "image": "",
+      "trackNumber": 1,
+      "albumTitle": "Unsound Existence (feat. CityBeach)",
+      "artist": "",
+      "isMusic": true
+    },
+    {
+      "title": "Cast Away",
+      "subtitle": "",
+      "summary": "",
+      "itemGuid": {
+        "_": "88fe4629-eebb-4f50-bf8c-6990b4d81538",
+        "isPermaLink": "false"
+      },
+      "feedGuid": "0113fc6a-a0db-4bd2-8837-a7a5c996a69e",
+      "feedUrl": "https://wavlake.com/feed/music/0113fc6a-a0db-4bd2-8837-a7a5c996a69e",
+      "feedTitle": "Cast Away",
+      "feedDescription": "Ryan Fonda wrote and produced.",
+      "feedImage": "",
+      "feedArtist": "",
+      "published": "Wed, 02 Aug 2023 21:12:35 GMT",
+      "duration": "",
+      "explicit": false,
+      "keywords": [],
+      "categories": [
+        {
+          "text": "Pop",
+          "category": {
+            "text": "Pop/Rock"
+          }
+        }
+      ],
+      "enclosureUrl": "https://op3.dev/e,pg=77c66d60-dcd4-5a2d-87a3-18bff48bff84/https://d12wklypp119aj.cloudfront.net/track/88fe4629-eebb-4f50-bf8c-6990b4d81538.mp3",
+      "enclosureType": "audio/mpeg",
+      "enclosureLength": "3654801",
+      "image": "",
+      "trackNumber": 1,
+      "albumTitle": "Cast Away",
+      "artist": "",
+      "isMusic": true
+    },
+    {
+      "title": "Smokestacks",
+      "subtitle": "",
+      "summary": "",
+      "itemGuid": {
+        "_": "52007112-2772-42f9-957a-a93eaeedb222",
+        "isPermaLink": "false"
+      },
+      "feedGuid": "328f61b9-20b1-4338-9e2a-b437abc39f7b",
+      "feedUrl": "https://wavlake.com/feed/music/328f61b9-20b1-4338-9e2a-b437abc39f7b",
+      "feedTitle": "Smokestacks",
+      "feedDescription": "Smokestacks",
+      "feedImage": "",
+      "feedArtist": "",
+      "published": "Tue, 14 Nov 2023 02:29:06 GMT",
+      "duration": "",
+      "explicit": false,
+      "keywords": [],
+      "categories": [
+        {
+          "text": "Alternative",
+          "category": {
+            "text": "Alternative Rock"
+          }
+        }
+      ],
+      "enclosureUrl": "https://op3.dev/e,pg=dea01a9d-a024-5b13-84aa-b157304cd3bc/https://d12wklypp119aj.cloudfront.net/track/52007112-2772-42f9-957a-a93eaeedb222.mp3",
+      "enclosureType": "audio/mpeg",
+      "enclosureLength": "4627307",
+      "image": "",
+      "trackNumber": 1,
+      "albumTitle": "Smokestacks",
+      "artist": "",
+      "isMusic": true
+    },
+    {
+      "title": "Bourbon at Dawn",
+      "subtitle": "",
+      "summary": "",
+      "itemGuid": {
+        "_": "8d9ee740-55d9-4eb8-a52d-b9c090e24c60",
+        "isPermaLink": "false"
+      },
+      "feedGuid": "49fdff1d-7c8e-4908-9a75-2edc4ba60fef",
+      "feedUrl": "https://wavlake.com/feed/music/49fdff1d-7c8e-4908-9a75-2edc4ba60fef",
+      "feedTitle": "Bourbon at Dawn",
+      "feedDescription": "Good times, great vibes. \"Bourbon at Dawn\" is a summer jam that kicks off the party and keeps it going. Inspired by double entendre cocktail names and paying homage to some of America's favorite bar songs, this tune is good humored, witty, and carefree. Capturing the energy of a fun night out, the country rock instrumentation gives this hi-res studio production a warm, live performance feel\r\n\r\nWritten and Performed by Sara Jade\r\nProduced, mixed and master by John Kennedy",
+      "feedImage": "",
+      "feedArtist": "",
+      "published": "Tue, 31 Oct 2023 03:12:28 GMT",
+      "duration": "",
+      "explicit": false,
+      "keywords": [],
+      "categories": [
+        {
+          "text": "Country",
+          "category": {
+            "text": "Americana"
+          }
+        }
+      ],
+      "enclosureUrl": "https://op3.dev/e,pg=8e57173c-0dda-59d7-aeff-db1fb196ae77/https://d12wklypp119aj.cloudfront.net/track/8d9ee740-55d9-4eb8-a52d-b9c090e24c60.mp3",
+      "enclosureType": "audio/mpeg",
+      "enclosureLength": "4816584",
+      "image": "",
+      "trackNumber": 1,
+      "albumTitle": "Bourbon at Dawn",
+      "artist": "",
+      "isMusic": true
+    },
+    {
+      "title": "Jacoma",
+      "subtitle": "",
+      "summary": "",
+      "itemGuid": {
+        "_": "d9376418-f32b-4897-9b26-d291eccb38d8",
+        "isPermaLink": "false"
+      },
+      "feedGuid": "1f6b5b3e-2a8f-403f-92a1-e632bc1b2b43",
+      "feedUrl": "https://wavlake.com/feed/music/1f6b5b3e-2a8f-403f-92a1-e632bc1b2b43",
+      "feedTitle": "Jacoma",
+      "feedDescription": "Nashville produced Americana ballad with traditional country instrumentation, powerful vocal performance and well woven poetry. \"Jacoma\" (hard \"J\") earned the artist a place in the International Songwriting Competition Semifinals for the Americana category and a San Diego Music Award nomination.\r\nWritten and Performed by Sara Jade\r\nProduced by John Kennedy",
+      "feedImage": "",
+      "feedArtist": "",
+      "published": "Wed, 08 Nov 2023 18:32:51 GMT",
+      "duration": "",
+      "explicit": false,
+      "keywords": [],
+      "categories": [
+        {
+          "text": "Country",
+          "category": {
+            "text": "Americana"
+          }
+        }
+      ],
+      "enclosureUrl": "https://op3.dev/e,pg=6f59f470-6287-56de-9cdc-3098fe3982d7/https://d12wklypp119aj.cloudfront.net/track/d9376418-f32b-4897-9b26-d291eccb38d8.mp3",
+      "enclosureType": "audio/mpeg",
+      "enclosureLength": "6417744",
+      "image": "",
+      "trackNumber": 1,
+      "albumTitle": "Jacoma",
+      "artist": "",
+      "isMusic": true
+    },
+    {
+      "title": "Wait Destiny",
+      "subtitle": "",
+      "summary": "",
+      "itemGuid": {
+        "_": "e646b30a-2007-4086-b35b-58570c33c159",
+        "isPermaLink": "false"
+      },
+      "feedGuid": "699644a5-a5b4-4c2d-ad70-e90977e60c34",
+      "feedUrl": "https://wavlake.com/feed/music/699644a5-a5b4-4c2d-ad70-e90977e60c34",
+      "feedTitle": "Wait Destiny ",
+      "feedDescription": "Destiny waits for no man, but will it wait for Sara Jade? The answers can come in mysterious ways... Like when you are at a crosswalk in Madrid, Spain, thinking about your dreams, and you misread a Walt Disney logo as \"Wait Destiny\"! A trick of the mind? Or a message? Whatever the case, inspiration struck Sara Jade!\n\n\"Wait Destiny\" is an elevating Nu Disco track enriched with funk bass, transcendent soundscapes and dance appeal. Reimagined from it's 2020 debut on YouTube, Sara Jade has turned up the rhythmic heat with heavy hitting dance drums and is hailing the mothership with rich choral harmonies. Cleverly layered instrumentation gives the listener plenty of melodic ear candy to sink their teeth into on replay so that each listen feels fresh. ",
+      "feedImage": "",
+      "feedArtist": "",
+      "published": "Sat, 08 Jul 2023 17:41:00 GMT",
+      "duration": "",
+      "explicit": false,
+      "keywords": [],
+      "categories": [
+        {
+          "text": "null",
+          "category": {
+            "text": "null"
+          }
+        }
+      ],
+      "enclosureUrl": "https://op3.dev/e,pg=45874e17-fdfb-5693-a817-5e584da20e5b/https://d12wklypp119aj.cloudfront.net/track/e646b30a-2007-4086-b35b-58570c33c159.mp3",
+      "enclosureType": "audio/mpeg",
+      "enclosureLength": "2502103",
+      "image": "",
+      "trackNumber": 1,
+      "albumTitle": "Wait Destiny ",
+      "artist": "",
+      "isMusic": true
+    },
+    {
+      "title": "All Apology",
+      "subtitle": "",
+      "summary": "",
+      "itemGuid": {
+        "_": "7786d671-a9c3-40b6-91a0-36cd81bf6966",
+        "isPermaLink": "false"
+      },
+      "feedGuid": "af09e07f-a8d5-436f-a20d-d1a16ae4f737",
+      "feedUrl": "https://wavlake.com/feed/music/af09e07f-a8d5-436f-a20d-d1a16ae4f737",
+      "feedTitle": "All Apology",
+      "feedDescription": "Meditative and moody like a cup of coffee on a rainy day, \"All Apology\" is a stripped down piano vocal track with acoustic intimacy. Reflective lyrics balanced with warm instrumental and vocal delivery\nWritten and performed by Sara Jade\nMixing and Mastering Engineer François Michaud of Wild Horse Studio",
+      "feedImage": "",
+      "feedArtist": "",
+      "published": "Wed, 29 Nov 2023 23:49:41 GMT",
+      "duration": "",
+      "explicit": false,
+      "keywords": [],
+      "categories": [
+        {
+          "text": "Singer/Songwriter",
+          "category": {
+            "text": "Contemporary Singer/Songwriter"
+          }
+        }
+      ],
+      "enclosureUrl": "https://op3.dev/e,pg=cb8db388-8070-5c98-8086-b4f850e25429/https://d12wklypp119aj.cloudfront.net/track/7786d671-a9c3-40b6-91a0-36cd81bf6966.mp3",
+      "enclosureType": "audio/mpeg",
+      "enclosureLength": "4122109",
+      "image": "",
+      "trackNumber": 1,
+      "albumTitle": "All Apology",
+      "artist": "",
+      "isMusic": true
+    },
+    {
+      "title": "Never Knew",
+      "subtitle": "",
+      "summary": "",
+      "itemGuid": {
+        "_": "97e522d3-3a49-42cd-a58e-787e27dcaf3d",
+        "isPermaLink": "false"
+      },
+      "feedGuid": "741110cf-41e7-4105-a725-2cb8272fa819",
+      "feedUrl": "https://wavlake.com/feed/music/741110cf-41e7-4105-a725-2cb8272fa819",
+      "feedTitle": "Never Knew",
+      "feedDescription": "Soulful acoustic piano ballad. Evocative, reflective and intimate. \nWritten and performed by Sara Jade \nFeaturing Jessie Lark on Piano (Check Jessie Lark's music out on WavLake too!)",
+      "feedImage": "",
+      "feedArtist": "",
+      "published": "Tue, 12 Dec 2023 20:36:10 GMT",
+      "duration": "",
+      "explicit": false,
+      "keywords": [],
+      "categories": [
+        {
+          "text": "Singer/Songwriter",
+          "category": {
+            "text": "Contemporary Singer/Songwriter"
+          }
+        }
+      ],
+      "enclosureUrl": "https://op3.dev/e,pg=81208dd6-4dfb-5bc0-800a-b78d47b29c2c/https://d12wklypp119aj.cloudfront.net/track/97e522d3-3a49-42cd-a58e-787e27dcaf3d.mp3",
+      "enclosureType": "audio/mpeg",
+      "enclosureLength": "4268424",
+      "image": "",
+      "trackNumber": 1,
+      "albumTitle": "Never Knew",
+      "artist": "",
+      "isMusic": true
+    },
+    {
+      "title": "Swallow Me Whole",
+      "subtitle": "",
+      "summary": "",
+      "itemGuid": {
+        "_": "a9cb5ece-f139-43c3-8b48-eb0aa8d7a0da",
+        "isPermaLink": "false"
+      },
+      "feedGuid": "6d22d9b2-2526-4533-8aa4-51f79c5048ef",
+      "feedUrl": "https://wavlake.com/feed/music/6d22d9b2-2526-4533-8aa4-51f79c5048ef",
+      "feedTitle": "Swallow Me Whole",
+      "feedDescription": "Acoustic chill with a poetic intrigue. \"Swallow Me Whole\" is inspired by artists like Hozier and Damien Rice, blending comforting finger-picked guitar rhythms with contemporary melodies and intimate vocal delivery. Written and Performed by Sara Jade and Matt Kreuder\r\nMixing and Mastering by François Michaud of Wild Horse Studio",
+      "feedImage": "",
+      "feedArtist": "",
+      "published": "Mon, 18 Dec 2023 19:13:29 GMT",
+      "duration": "",
+      "explicit": false,
+      "keywords": [],
+      "categories": [
+        {
+          "text": "Singer/Songwriter",
+          "category": {
+            "text": "Contemporary Folk"
+          }
+        }
+      ],
+      "enclosureUrl": "https://op3.dev/e,pg=c20ed66b-eaab-5f16-b4d5-2ceb16338734/https://d12wklypp119aj.cloudfront.net/track/a9cb5ece-f139-43c3-8b48-eb0aa8d7a0da.mp3",
+      "enclosureType": "audio/mpeg",
+      "enclosureLength": "1864277",
+      "image": "",
+      "trackNumber": 1,
+      "albumTitle": "Swallow Me Whole",
+      "artist": "",
+      "isMusic": true
+    },
+    {
+      "title": "Carnival (Live recording)",
+      "subtitle": "",
+      "summary": "",
+      "itemGuid": {
+        "_": "24480f65-beea-4466-924c-fa9f038c060a",
+        "isPermaLink": "false"
+      },
+      "feedGuid": "f2b0f910-2605-466c-a43a-04268c227df0",
+      "feedUrl": "https://wavlake.com/feed/music/f2b0f910-2605-466c-a43a-04268c227df0",
+      "feedTitle": "Carnival (Live from Culture Shock)",
+      "feedDescription": "Live recording from NOSTR PHX Culture Shock 2.17.24 Streamed on Tunestr.io ",
+      "feedImage": "",
+      "feedArtist": "",
+      "published": "Tue, 19 Mar 2024 20:09:24 GMT",
+      "duration": "",
+      "explicit": false,
+      "keywords": [],
+      "categories": [
+        {
+          "text": "Singer/Songwriter",
+          "category": {
+            "text": "Folk-Rock"
+          }
+        }
+      ],
+      "enclosureUrl": "https://op3.dev/e,pg=9906bb7d-2516-5945-893d-8e9897973cd3/https://d12wklypp119aj.cloudfront.net/track/24480f65-beea-4466-924c-fa9f038c060a.mp3",
+      "enclosureType": "audio/mpeg",
+      "enclosureLength": "4500720",
+      "image": "",
+      "trackNumber": 1,
+      "albumTitle": "Carnival (Live from Culture Shock)",
+      "artist": "",
+      "isMusic": true
+    },
+    {
+      "title": "Singin' Woman",
+      "subtitle": "",
+      "summary": "",
+      "itemGuid": {
+        "_": "b321c3a7-06e6-4fad-b50f-24d8de949789",
+        "isPermaLink": "false"
+      },
+      "feedGuid": "54f3aca3-52e0-4859-bb89-b44458a6e204",
+      "feedUrl": "https://wavlake.com/feed/music/54f3aca3-52e0-4859-bb89-b44458a6e204",
+      "feedTitle": "Singin' Woman",
+      "feedDescription": "Written by Sara Jade and performed by Sara Jade featuring Jessie Lark and Elizabeth Bowersox \r\nProduced, Mixed and Mastered by John Kennedy\r\nFun Girl Power Jammer! \r\n",
+      "feedImage": "",
+      "feedArtist": "",
+      "published": "Sat, 30 Mar 2024 21:50:40 GMT",
+      "duration": "",
+      "explicit": false,
+      "keywords": [],
+      "categories": [
+        {
+          "text": "Country",
+          "category": {
+            "text": "Americana"
+          }
+        }
+      ],
+      "enclosureUrl": "https://op3.dev/e,pg=30ecd74c-3754-540a-aa80-b5474fb7c965/https://d12wklypp119aj.cloudfront.net/track/b321c3a7-06e6-4fad-b50f-24d8de949789.mp3",
+      "enclosureType": "audio/mpeg",
+      "enclosureLength": "5037840",
+      "image": "",
+      "trackNumber": 1,
+      "albumTitle": "Singin' Woman",
+      "artist": "",
+      "isMusic": true
+    },
+    {
+      "title": "Hippies Raised a Cowgirl",
+      "subtitle": "",
+      "summary": "",
+      "itemGuid": {
+        "_": "e405efcf-698d-4356-8ab0-34e1d1385cc1",
+        "isPermaLink": "false"
+      },
+      "feedGuid": "4a2f5171-74ab-4e57-a9c0-269ebe6a3cc8",
+      "feedUrl": "https://wavlake.com/feed/music/4a2f5171-74ab-4e57-a9c0-269ebe6a3cc8",
+      "feedTitle": "Hippies Raised a Cowgirl",
+      "feedDescription": "Written and produced by Sara Jade and Tumbleweed, Electric Guitar - Sam Choate, Organ - Felipe Ribeiro, Drums - Pedro Pardal, Bass - August Christman",
+      "feedImage": "",
+      "feedArtist": "",
+      "published": "Fri, 02 May 2025 00:50:02 GMT",
+      "duration": "",
+      "explicit": false,
+      "keywords": [],
+      "categories": [
+        {
+          "text": "Country",
+          "category": {
+            "text": "Americana"
+          }
+        }
+      ],
+      "enclosureUrl": "https://op3.dev/e,pg=d126bfe6-c1a8-55ca-8ca1-85332e67ade5/https://d12wklypp119aj.cloudfront.net/track/e405efcf-698d-4356-8ab0-34e1d1385cc1.mp3",
+      "enclosureType": "audio/mpeg",
+      "enclosureLength": "4560024",
+      "image": "",
+      "trackNumber": 1,
+      "albumTitle": "Hippies Raised a Cowgirl",
+      "artist": "",
+      "isMusic": true
+    },
+    {
+      "title": "Love Me One Last Time",
+      "subtitle": "",
+      "summary": "",
+      "itemGuid": {
+        "_": "3cf50531-e6ec-4b28-b83b-a341f5989372",
+        "isPermaLink": "false"
+      },
+      "feedGuid": "8eb33dc5-f08f-41b0-8cdb-1f21257236f3",
+      "feedUrl": "https://wavlake.com/feed/music/8eb33dc5-f08f-41b0-8cdb-1f21257236f3",
+      "feedTitle": "Love Me One Last Time",
+      "feedDescription": "Love Me One Last Time",
+      "feedImage": "",
+      "feedArtist": "",
+      "published": "Fri, 25 Aug 2023 19:22:53 GMT",
+      "duration": "",
+      "explicit": false,
+      "keywords": [],
+      "categories": [
+        {
+          "text": "Pop",
+          "category": {
+            "text": "Soft Rock"
+          }
+        }
+      ],
+      "enclosureUrl": "https://op3.dev/e,pg=507e13e4-9e15-579e-afb8-e32b960edd9b/https://d12wklypp119aj.cloudfront.net/track/3cf50531-e6ec-4b28-b83b-a341f5989372.mp3",
+      "enclosureType": "audio/mpeg",
+      "enclosureLength": "2931564",
+      "image": "",
+      "trackNumber": 1,
+      "albumTitle": "Love Me One Last Time",
+      "artist": "",
+      "isMusic": true
+    },
+    {
+      "title": "Dumbfounded",
+      "subtitle": "",
+      "summary": "",
+      "itemGuid": {
+        "_": "16755d0c-03b7-4d0f-80b0-16a7fdcc0e75",
+        "isPermaLink": "false"
+      },
+      "feedGuid": "21cedfec-5453-4d6a-89c8-328752b486ee",
+      "feedUrl": "https://wavlake.com/feed/music/21cedfec-5453-4d6a-89c8-328752b486ee",
+      "feedTitle": "Dumbfounded",
+      "feedDescription": "Written and Produced by bennyjeans",
+      "feedImage": "",
+      "feedArtist": "",
+      "published": "Fri, 25 Aug 2023 19:27:43 GMT",
+      "duration": "",
+      "explicit": false,
+      "keywords": [],
+      "categories": [
+        {
+          "text": "Pop",
+          "category": {
+            "text": "Indie Pop"
+          }
+        }
+      ],
+      "enclosureUrl": "https://op3.dev/e,pg=b1277b88-69e4-53b6-a7f3-e0b2477f69a0/https://d12wklypp119aj.cloudfront.net/track/16755d0c-03b7-4d0f-80b0-16a7fdcc0e75.mp3",
+      "enclosureType": "audio/mpeg",
+      "enclosureLength": "2228139",
+      "image": "",
+      "trackNumber": 1,
+      "albumTitle": "Dumbfounded",
+      "artist": "",
+      "isMusic": true
+    },
+    {
+      "title": "Not Getting Better",
+      "subtitle": "",
+      "summary": "",
+      "itemGuid": {
+        "_": "10640082-4872-41dc-b7e2-9b237b089bba",
+        "isPermaLink": "false"
+      },
+      "feedGuid": "9d97e5fc-d011-4028-b2fe-51a17482eb6d",
+      "feedUrl": "https://wavlake.com/feed/music/9d97e5fc-d011-4028-b2fe-51a17482eb6d",
+      "feedTitle": "Not Getting Better",
+      "feedDescription": "Not Getting Better",
+      "feedImage": "",
+      "feedArtist": "",
+      "published": "Fri, 25 Aug 2023 19:18:33 GMT",
+      "duration": "",
+      "explicit": false,
+      "keywords": [],
+      "categories": [
+        {
+          "text": "Alternative",
+          "category": {
+            "text": "Indie Rock"
+          }
+        }
+      ],
+      "enclosureUrl": "https://op3.dev/e,pg=8a6a1753-bd6d-5876-9ea1-30bb168746c4/https://d12wklypp119aj.cloudfront.net/track/10640082-4872-41dc-b7e2-9b237b089bba.mp3",
+      "enclosureType": "audio/mpeg",
+      "enclosureLength": "2085615",
+      "image": "",
+      "trackNumber": 1,
+      "albumTitle": "Not Getting Better",
+      "artist": "",
+      "isMusic": true
+    },
+    {
+      "title": "Headspace",
+      "subtitle": "",
+      "summary": "",
+      "itemGuid": {
+        "_": "07cb01df-b6fc-4b70-9e45-16cc964e6f0e",
+        "isPermaLink": "false"
+      },
+      "feedGuid": "a0c0f339-bacc-45a1-aea5-1384468c7b9a",
+      "feedUrl": "https://wavlake.com/feed/music/a0c0f339-bacc-45a1-aea5-1384468c7b9a",
+      "feedTitle": "Headspace",
+      "feedDescription": "Headspace",
+      "feedImage": "",
+      "feedArtist": "",
+      "published": "Fri, 25 Aug 2023 19:01:33 GMT",
+      "duration": "",
+      "explicit": false,
+      "keywords": [],
+      "categories": [
+        {
+          "text": "Alternative",
+          "category": {
+            "text": "New Wave"
+          }
+        }
+      ],
+      "enclosureUrl": "https://op3.dev/e,pg=d85346a6-d269-5ea2-be71-33172fb91cbb/https://d12wklypp119aj.cloudfront.net/track/07cb01df-b6fc-4b70-9e45-16cc964e6f0e.mp3",
+      "enclosureType": "audio/mpeg",
+      "enclosureLength": "3284322",
+      "image": "",
+      "trackNumber": 1,
+      "albumTitle": "Headspace",
+      "artist": "",
+      "isMusic": true
+    },
+    {
+      "title": "you don't need me",
+      "subtitle": "",
+      "summary": "",
+      "itemGuid": {
+        "_": "55ad4fb7-c05b-4616-b3b7-b03a8fe2dc2c",
+        "isPermaLink": "false"
+      },
+      "feedGuid": "00bcaba4-6e91-471f-bb1c-e03950f6ad1d",
+      "feedUrl": "https://wavlake.com/feed/music/00bcaba4-6e91-471f-bb1c-e03950f6ad1d",
+      "feedTitle": "you don't need me",
+      "feedDescription": "you don't need me",
+      "feedImage": "",
+      "feedArtist": "",
+      "published": "Fri, 21 Apr 2023 19:24:24 GMT",
+      "duration": "",
+      "explicit": false,
+      "keywords": [],
+      "categories": [
+        {
+          "text": "null",
+          "category": {
+            "text": "null"
+          }
+        }
+      ],
+      "enclosureUrl": "https://op3.dev/e,pg=1e01827d-ada3-5a85-abc9-fdcc027fbd98/https://d12wklypp119aj.cloudfront.net/track/55ad4fb7-c05b-4616-b3b7-b03a8fe2dc2c.mp3",
+      "enclosureType": "audio/mpeg",
+      "enclosureLength": "3257507",
+      "image": "",
+      "trackNumber": 1,
+      "albumTitle": "you don't need me",
+      "artist": "",
+      "isMusic": true
+    },
+    {
+      "title": "WHY (did you do this to me)",
+      "subtitle": "",
+      "summary": "",
+      "itemGuid": {
+        "_": "0fff4168-0576-4289-abd9-c37b278df12c",
+        "isPermaLink": "false"
+      },
+      "feedGuid": "5917663e-8d6e-45be-a364-01dfcdd26b4f",
+      "feedUrl": "https://wavlake.com/feed/music/5917663e-8d6e-45be-a364-01dfcdd26b4f",
+      "feedTitle": "WHY (did you do this to me)",
+      "feedDescription": "WHY (did you do this to me)",
+      "feedImage": "",
+      "feedArtist": "",
+      "published": "Fri, 21 Apr 2023 19:44:20 GMT",
+      "duration": "",
+      "explicit": false,
+      "keywords": [],
+      "categories": [
+        {
+          "text": "null",
+          "category": {
+            "text": "null"
+          }
+        }
+      ],
+      "enclosureUrl": "https://op3.dev/e,pg=25de7384-5134-545b-8069-c67c9523f851/https://d12wklypp119aj.cloudfront.net/track/0fff4168-0576-4289-abd9-c37b278df12c.mp3",
+      "enclosureType": "audio/mpeg",
+      "enclosureLength": "3217403",
+      "image": "",
+      "trackNumber": 1,
+      "albumTitle": "WHY (did you do this to me)",
+      "artist": "",
+      "isMusic": true
+    },
+    {
+      "title": "Swallow Me Whole - Live Sing-Along (Culture Shock NOSTR PHX '24)",
+      "subtitle": "",
+      "summary": "",
+      "itemGuid": {
+        "_": "0e9893ca-b029-4a09-a298-9c174e3d50e9",
+        "isPermaLink": "false"
+      },
+      "feedGuid": "92734bdb-617b-4f3b-af4a-86b50108c261",
+      "feedUrl": "https://wavlake.com/feed/music/92734bdb-617b-4f3b-af4a-86b50108c261",
+      "feedTitle": "Swallow Me Whole (Live from Culture Shock)",
+      "feedDescription": "Special 100k day release of all of our voices in unison singing \"Swallow Me Whole\" live from Culture Shock NOSTR PHX in February of 2024! Mixed by Sam Means and sung with Orange and Purple Hearts of love!",
+      "feedImage": "",
+      "feedArtist": "",
+      "published": "Thu, 05 Dec 2024 18:29:24 GMT",
+      "duration": "",
+      "explicit": false,
+      "keywords": [],
+      "categories": [
+        {
+          "text": "Singer/Songwriter",
+          "category": {
+            "text": "Contemporary Singer/Songwriter"
+          }
+        }
+      ],
+      "enclosureUrl": "https://op3.dev/e,pg=3e2b4e09-4ce4-5721-95cf-06d2e9eed1d8/https://d12wklypp119aj.cloudfront.net/track/0e9893ca-b029-4a09-a298-9c174e3d50e9.mp3",
+      "enclosureType": "audio/mpeg",
+      "enclosureLength": "4131264",
+      "image": "",
+      "trackNumber": 1,
+      "albumTitle": "Swallow Me Whole (Live from Culture Shock)",
+      "artist": "",
+      "isMusic": true
+    },
+    {
+      "title": "Just Say It feat. Helen Tess",
+      "subtitle": "",
+      "summary": "",
+      "itemGuid": {
+        "_": "82c1e083-f629-44c4-aa7a-1474e3f55e21",
+        "isPermaLink": "false"
+      },
+      "feedGuid": "532c9b78-2099-4ee4-ac98-742157f01fd0",
+      "feedUrl": "https://wavlake.com/feed/music/532c9b78-2099-4ee4-ac98-742157f01fd0",
+      "feedTitle": "Just Say It feat. Helen Tess",
+      "feedDescription": "Produced by Charlie Crown",
+      "feedImage": "",
+      "feedArtist": "",
+      "published": "Mon, 26 Feb 2024 22:39:45 GMT",
+      "duration": "",
+      "explicit": false,
+      "keywords": [],
+      "categories": [
+        {
+          "text": "Dance/EDM",
+          "category": {
+            "text": "null"
+          }
+        }
+      ],
+      "enclosureUrl": "https://op3.dev/e,pg=8cf6a57e-0d58-5985-be24-aec60a10ff05/https://d12wklypp119aj.cloudfront.net/track/82c1e083-f629-44c4-aa7a-1474e3f55e21.mp3",
+      "enclosureType": "audio/mpeg",
+      "enclosureLength": "3635040",
+      "image": "",
+      "trackNumber": 1,
+      "albumTitle": "Just Say It feat. Helen Tess",
+      "artist": "",
+      "isMusic": true
+    },
+    {
+      "title": "Brutal (feat. Kyle Reynolds)",
+      "subtitle": "",
+      "summary": "",
+      "itemGuid": {
+        "_": "6be29867-f7d1-4744-9df9-af29157949b0",
+        "isPermaLink": "false"
+      },
+      "feedGuid": "a437c62e-23d4-4368-ba34-9f6b75ee5d5c",
+      "feedUrl": "https://wavlake.com/feed/music/a437c62e-23d4-4368-ba34-9f6b75ee5d5c",
+      "feedTitle": "Brutal (feat. Kyle Reynolds)",
+      "feedDescription": "Produced by Charlie Crown",
+      "feedImage": "",
+      "feedArtist": "",
+      "published": "Sun, 24 Mar 2024 21:20:42 GMT",
+      "duration": "",
+      "explicit": false,
+      "keywords": [],
+      "categories": [
+        {
+          "text": "Dance/EDM",
+          "category": {
+            "text": "null"
+          }
+        }
+      ],
+      "enclosureUrl": "https://op3.dev/e,pg=60fb6025-a484-5e45-b613-187124a2c26b/https://d12wklypp119aj.cloudfront.net/track/6be29867-f7d1-4744-9df9-af29157949b0.mp3",
+      "enclosureType": "audio/mpeg",
+      "enclosureLength": "4096032",
+      "image": "",
+      "trackNumber": 1,
+      "albumTitle": "Brutal (feat. Kyle Reynolds)",
+      "artist": "",
+      "isMusic": true
     }
   ],
   "episodes": [],
@@ -49808,7 +51111,7 @@
   "metadata": {
     "version": "1.0.0",
     "lastUpdated": "2025-08-13T22:18:21.151Z",
-    "totalTracks": 939,
+    "totalTracks": 967,
     "totalEpisodes": 0,
     "totalFeeds": 0,
     "totalExtractions": 0,
@@ -49817,7 +51120,7 @@
     "publisherMappingsFound": 153,
     "lastNateAlbumUpdate": "2025-08-17T23:24:26.274Z",
     "nateAlbumsAdded": 85,
-    "lastPriorityPublishersUpdate": "2025-08-17T23:31:24.276Z",
-    "priorityPublishersTracksAdded": 56
+    "lastPriorityPublishersUpdate": "2025-08-17T23:43:51.835Z",
+    "priorityPublishersTracksAdded": 3
   }
 }

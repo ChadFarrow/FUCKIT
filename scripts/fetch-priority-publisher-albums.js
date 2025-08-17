@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const xml2js = require('xml2js');
+const crypto = require('crypto');
 
 // Load existing music tracks to check what we already have
 function loadExistingTracks() {
@@ -24,6 +25,43 @@ function loadMissingPublishersAnalysis() {
   }
   
   return JSON.parse(fs.readFileSync(analysisPath, 'utf8'));
+}
+
+// Load API credentials
+function loadApiCredentials() {
+  const envPath = path.join(__dirname, '../.env.local');
+  if (!fs.existsSync(envPath)) {
+    console.error('❌ .env.local file not found');
+    return null;
+  }
+  
+  const envContent = fs.readFileSync(envPath, 'utf8');
+  const lines = envContent.split('\n');
+  const credentials = {};
+  
+  lines.forEach(line => {
+    if (line.includes('=')) {
+      const [key, value] = line.split('=');
+      credentials[key.trim()] = value.trim();
+    }
+  });
+  
+  return credentials;
+}
+
+// Generate Podcast Index API headers
+function generatePodcastIndexHeaders(apiKey, apiSecret) {
+  const apiHeaderTime = Math.floor(Date.now() / 1000);
+  const hash = crypto.createHash('sha1');
+  hash.update(apiKey + apiSecret + apiHeaderTime);
+  const hashedCredentials = hash.digest('hex');
+  
+  return {
+    'User-Agent': 'FUCKIT-music-app',
+    'X-Auth-Date': apiHeaderTime.toString(),
+    'X-Auth-Key': apiKey,
+    'Authorization': hashedCredentials
+  };
 }
 
 // Parse XML to extract track info
@@ -89,56 +127,74 @@ async function fetchPublisherFeed(publisherUrl) {
   }
 }
 
-// Fetch and parse individual album feed
-async function fetchAlbumFeed(albumInfo) {
-  const feedUrl = albumInfo.feedUrl || `https://wavlake.com/feed/music/${albumInfo.guid}`;
-  
+// Fetch album feed using Podcast Index API
+async function fetchAlbumFeedViaAPI(albumInfo, apiCredentials) {
   try {
-    console.log(`📡 Fetching album: ${albumInfo.albumTitle} (${albumInfo.guid})`);
-    const response = await fetch(feedUrl);
+    console.log(`📡 Fetching album via API: ${albumInfo.albumTitle} (${albumInfo.guid})`);
+    
+    const headers = generatePodcastIndexHeaders(
+      apiCredentials.PODCAST_INDEX_API_KEY,
+      apiCredentials.PODCAST_INDEX_API_SECRET
+    );
+    
+    // Try to get the feed by GUID first
+    let response = await fetch(`https://api.podcastindex.org/api/1.0/podcasts/byguid?guid=${albumInfo.guid}`, {
+      headers
+    });
+    
     if (!response.ok) {
-      console.log(`❌ Failed to fetch ${feedUrl}: ${response.status}`);
+      console.log(`❌ Failed to fetch feed by GUID: ${response.status}`);
       return null;
     }
     
-    const xmlText = await response.text();
-    const parsed = await parseXMLString(xmlText);
-    
-    if (!parsed?.rss?.channel) {
-      console.log(`⚠️  Invalid RSS structure for ${albumInfo.guid}`);
+    const data = await response.json();
+    if (!data.feed) {
+      console.log(`⚠️  No feed found for GUID ${albumInfo.guid}`);
       return null;
     }
     
-    const channel = parsed.rss.channel;
-    const items = Array.isArray(channel.item) ? channel.item : (channel.item ? [channel.item] : []);
+    const feed = data.feed;
     
-    const tracks = items.map((item, index) => ({
-      title: item.title || '',
-      subtitle: item.subtitle || '',
-      summary: item.summary || item.description || '',
-      itemGuid: item.guid || '',
+    // Now get the episodes for this feed
+    const episodesResponse = await fetch(`https://api.podcastindex.org/api/1.0/episodes/byfeedid?id=${feed.id}&max=100`, {
+      headers
+    });
+    
+    if (!episodesResponse.ok) {
+      console.log(`❌ Failed to fetch episodes: ${episodesResponse.status}`);
+      return null;
+    }
+    
+    const episodesData = await episodesResponse.json();
+    const episodes = episodesData.items || [];
+    
+    const tracks = episodes.map((episode, index) => ({
+      title: episode.title || '',
+      subtitle: episode.subtitle || '',
+      summary: episode.summary || episode.description || '',
+      itemGuid: episode.guid || '',
       feedGuid: albumInfo.guid,
-      feedUrl: feedUrl,
-      feedTitle: channel.title || albumInfo.albumTitle,
-      feedDescription: channel.description || '',
-      feedImage: channel.image?.url || channel.itunesImage || '',
-      feedArtist: channel.itunesAuthor || '',
-      published: item.pubdate || '',
-      duration: item.itunesduration || '',
-      explicit: item.itunesexplicit === 'yes',
-      keywords: item.ituneskeywords ? item.ituneskeywords.split(',').map(k => k.trim()) : [],
-      categories: channel.category ? (Array.isArray(channel.category) ? channel.category : [channel.category]) : [],
-      enclosureUrl: item.enclosure?.url || '',
-      enclosureType: item.enclosure?.type || '',
-      enclosureLength: item.enclosure?.length || '',
-      image: item.itunesImage || channel.itunesImage || '',
+      feedUrl: feed.url || albumInfo.feedUrl,
+      feedTitle: feed.title || albumInfo.albumTitle,
+      feedDescription: feed.description || '',
+      feedImage: feed.image || '',
+      feedArtist: feed.author || feed.itunesAuthor || '',
+      published: episode.datePublished ? new Date(episode.datePublished * 1000).toISOString() : '',
+      duration: episode.duration || '',
+      explicit: episode.explicit === 1,
+      keywords: feed.categories ? Object.values(feed.categories).flat() : [],
+      categories: feed.categories ? Object.values(feed.categories).flat() : [],
+      enclosureUrl: episode.enclosureUrl || '',
+      enclosureType: episode.enclosureType || '',
+      enclosureLength: episode.enclosureLength || '',
+      image: episode.image || feed.image || '',
       trackNumber: index + 1,
-      albumTitle: channel.title || albumInfo.albumTitle,
-      artist: item.itunesAuthor || channel.itunesAuthor || '',
+      albumTitle: feed.title || albumInfo.albumTitle,
+      artist: episode.author || feed.author || feed.itunesAuthor || '',
       isMusic: true
     }));
     
-    console.log(`✅ Found ${tracks.length} tracks in "${channel.title}"`);
+    console.log(`✅ Found ${tracks.length} tracks in "${feed.title}"`);
     return tracks;
     
   } catch (error) {
@@ -151,6 +207,12 @@ async function fetchAlbumFeed(albumInfo) {
 async function fetchPriorityPublisherAlbums(maxPublishers = 3, maxAlbumsPerPublisher = 10) {
   const analysis = loadMissingPublishersAnalysis();
   if (!analysis) return;
+  
+  const apiCredentials = loadApiCredentials();
+  if (!apiCredentials || !apiCredentials.PODCAST_INDEX_API_KEY) {
+    console.error('❌ Podcast Index API credentials not found');
+    return;
+  }
   
   const existingTracks = loadExistingTracks();
   const existingAlbumGuids = new Set(existingTracks.map(track => track.feedGuid));
@@ -189,20 +251,26 @@ async function fetchPriorityPublisherAlbums(maxPublishers = 3, maxAlbumsPerPubli
       processed++;
       console.log(`  [${processed}/${albumsToFetch.length}] ${albumInfo.albumTitle}`);
       
-      const tracks = await fetchAlbumFeed(albumInfo);
+      const tracks = await fetchAlbumFeedViaAPI(albumInfo, apiCredentials);
       if (tracks && tracks.length > 0) {
         allNewTracks.push(...tracks);
         console.log(`  ✅ Added ${tracks.length} tracks`);
       }
       
-      // Rate limiting
+      // Rate limiting - increased wait time
       if (processed < albumsToFetch.length) {
-        console.log('  ⏱️  Waiting 1 second...');
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        console.log('  ⏱️  Waiting 3 seconds...');
+        await new Promise(resolve => setTimeout(resolve, 3000));
       }
     }
     
     console.log(`📊 Total tracks added for ${publisher.name}: ${allNewTracks.filter(track => track.feedArtist === publisher.name || track.artist === publisher.name).length}`);
+    
+    // Rate limiting between publishers
+    if (i < topPublishers.length - 1) {
+      console.log('⏱️  Waiting 5 seconds before next publisher...');
+      await new Promise(resolve => setTimeout(resolve, 5000));
+    }
   }
   
   if (allNewTracks.length === 0) {
