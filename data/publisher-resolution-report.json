@@ -1,0 +1,21 @@
+{
+  "timestamp": "2025-08-22T16:43:50.824Z",
+  "summary": {
+    "totalTracks": 868,
+    "processed": 868,
+    "successful": 865,
+    "errors": 3,
+    "skipped": 0,
+    "rateLimited": 0
+  },
+  "statistics": {
+    "tracksWithPublisher": 865,
+    "tracksWithoutPublisher": 3,
+    "publisherCoverage": "99.7%"
+  },
+  "feedAnalysis": {
+    "totalFeeds": 406,
+    "feedsWithPublishers": 403,
+    "feedsWithoutPublishers": 3
+  }
+}

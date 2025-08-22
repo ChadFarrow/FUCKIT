@@ -1,0 +1,143 @@
+{
+  "timestamp": "2025-08-22T17:37:07.962Z",
+  "summary": {
+    "totalTracks": 868,
+    "fileSizeMB": "2.01",
+    "overallHealth": "87.5"
+  },
+  "coverage": {
+    "audioUrl": 640,
+    "duration": 804,
+    "imageUrl": 640,
+    "publisher": 865,
+    "artist": 742,
+    "title": 868,
+    "feedUrl": 868,
+    "itemGuid": 558,
+    "feedGuid": 868
+  },
+  "issues": {
+    "noAudio": 228,
+    "noDuration": 64,
+    "noArtwork": 228,
+    "noPublisher": 3,
+    "noArtist": 126,
+    "noTitle": 0,
+    "noFeedUrl": 0,
+    "noItemGuid": 310,
+    "noFeedGuid": 0
+  },
+  "feedSources": {
+    "wavlake.com": 430,
+    "www.wavlake.com": 112,
+    "www.doerfelverse.com": 86,
+    "headstarts.uk": 4,
+    "static.staticsave.com": 6,
+    "feeds.rssblue.com": 32,
+    "files.heycitizen.xyz": 25,
+    "music.behindthesch3m3s.com": 58,
+    "music.jimmyv4v.com": 20,
+    "feed.bowlafterbowl.com": 1,
+    "jimmiebratcher.s3.us-west-1.amazonaws.com": 3,
+    "www.sirtjthewrathful.com": 31,
+    "feed.justcast.com": 21,
+    "annipowellmusic.com": 1,
+    "player.wavlake.com": 1,
+    "lunaticfriend.s3.us-west-1.amazonaws.com": 1,
+    "www.thisisjdog.com": 6,
+    "sirtjthewrathful.com": 1,
+    "www.leuenbergmusic.com": 1,
+    "www.whitetriangles.com": 5,
+    "hogstory.net": 16,
+    "ableandthewolf.com": 7
+  },
+  "topPublishers": {
+    "Nate Johnivan": 86,
+    "The Doerfels": 50,
+    "Jessica Lynne Witty": 43,
+    "Ryan Fonda": 35,
+    "Sara Jade": 33,
+    "The Satellite Skirmish": 32,
+    "Herbivore": 31,
+    "Theo Katzman": 27,
+    "HeyCitizen": 25,
+    "Robert Willey": 21,
+    "Kurtisdrums": 20,
+    "bennyjeans": 18,
+    "Fletcher and Blaney": 16,
+    "FM Rodeo": 13,
+    "Jimmy V": 13
+  },
+  "sampleIssues": {
+    "noAudio": [
+      {
+        "title": "Don't Worry, You Still Have Time To Ruin It - Demo",
+        "artist": "Don't Worry, You Still Have Time To Ruin It",
+        "publisher": "Nate Johnivan"
+      },
+      {
+        "title": "Don't Fall Out Of Love With Me Just Yet",
+        "artist": "Jessica Lynne Witty",
+        "publisher": "Jessica Lynne Witty"
+      },
+      {
+        "title": "It's A Matter Of When (teat. Don Ellis Gatlin)",
+        "artist": "Jessica Lynne Witty",
+        "publisher": "Jessica Lynne Witty"
+      },
+      {
+        "title": "Bad Idea (feat. Bill Maier)",
+        "artist": "Jessica Lynne Witty",
+        "publisher": "Jessica Lynne Witty"
+      },
+      {
+        "title": "It Don't Feel Like Christmas (feat. Paul Sawtelle)",
+        "artist": "",
+        "publisher": "Jessica Lynne Witty"
+      },
+      {
+        "title": "Cut'N'Curl",
+        "artist": "",
+        "publisher": "Jessica Lynne Witty"
+      },
+      {
+        "title": "Ain't That A Shame",
+        "artist": "",
+        "publisher": "Jessica Lynne Witty"
+      },
+      {
+        "title": "Singin' Country",
+        "artist": "",
+        "publisher": "Jessica Lynne Witty"
+      },
+      {
+        "title": "Fallen Angels Don't Fly",
+        "artist": "",
+        "publisher": "Jessica Lynne Witty"
+      },
+      {
+        "title": "Sleepin' Beaut",
+        "artist": "",
+        "publisher": "Herbivore"
+      }
+    ],
+    "noPublisher": [
+      {
+        "title": "Electro Gin",
+        "artist": "Tom Ramires"
+      },
+      {
+        "title": "ReBoot",
+        "artist": "Cantus Machina"
+      },
+      {
+        "title": "Street tranquility",
+        "artist": "ZirafySound"
+      }
+    ]
+  },
+  "recommendations": [
+    "Re-run Wavlake resolution for 228 tracks missing audio URLs",
+    "Manual review needed for 3 tracks missing publishers"
+  ]
+}

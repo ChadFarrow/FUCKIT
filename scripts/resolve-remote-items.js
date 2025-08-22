@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 /**
- * Resolve Missing Audio URLs
+ * Resolve Remote Items
  * 
- * This script attempts to resolve missing audio URLs for tracks in the music database
- * by using the Podcast Index API to look up episode information.
+ * This script processes tracks that were added via podcast:remoteItem format
+ * and resolves their missing metadata using the Podcast Index API.
  */
 
 const fs = require('fs');
@@ -35,7 +35,7 @@ const DATA_DIR = path.join(__dirname, '../data');
 const MUSIC_TRACKS_PATH = path.join(DATA_DIR, 'music-tracks.json');
 const BACKUP_DIR = path.join(DATA_DIR, 'backups');
 
-console.log('🎵 Resolving Missing Audio URLs\n');
+console.log('🔗 Resolving Remote Items and Missing Metadata\n');
 
 // Ensure backup directory exists
 if (!fs.existsSync(BACKUP_DIR)) {
@@ -44,7 +44,7 @@ if (!fs.existsSync(BACKUP_DIR)) {
 
 // Create backup
 const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-const backupPath = path.join(BACKUP_DIR, `music-tracks-backup-audio-fix-${timestamp}.json`);
+const backupPath = path.join(BACKUP_DIR, `music-tracks-backup-remote-resolve-${timestamp}.json`);
 fs.copyFileSync(MUSIC_TRACKS_PATH, backupPath);
 console.log(`✅ Created backup: ${backupPath}`);
 
@@ -61,17 +61,23 @@ try {
 
 const musicTracks = musicData.musicTracks || musicData;
 
-// Find tracks with missing audio URLs
-const tracksNeedingAudio = musicTracks.filter(track => 
-  !track.audioUrl || track.audioUrl.trim() === ''
+// Categorize tracks
+const tracksWithFullMetadata = musicTracks.filter(track => 
+  track.itemGuid && track.itemGuid._ && track.feedGuid && track.audioUrl
 );
 
-console.log(`🎵 Tracks needing audio URLs: ${tracksNeedingAudio.length}`);
+const tracksWithPartialMetadata = musicTracks.filter(track => 
+  track.feedGuid && (!track.itemGuid || !track.itemGuid._ || !track.audioUrl)
+);
 
-if (tracksNeedingAudio.length === 0) {
-  console.log('✅ All tracks already have audio URLs!');
-  process.exit(0);
-}
+const tracksMissingMetadata = musicTracks.filter(track => 
+  !track.feedGuid || (!track.itemGuid && !track.audioUrl)
+);
+
+console.log(`📊 Track Analysis:`);
+console.log(`   ✅ Full metadata: ${tracksWithFullMetadata.length}`);
+console.log(`   ⚠️  Partial metadata: ${tracksWithPartialMetadata.length}`);
+console.log(`   ❌ Missing metadata: ${tracksMissingMetadata.length}`);
 
 // Podcast Index API authentication
 function createAuthHeaders() {
@@ -87,8 +93,9 @@ function createAuthHeaders() {
   };
 }
 
-// Cache for feed lookups
+// Cache for API calls
 const feedCache = new Map();
+const episodeCache = new Map();
 
 // Get feed information from Podcast Index
 async function getFeedInfo(feedGuid) {
@@ -110,6 +117,7 @@ async function getFeedInfo(feedGuid) {
         feedTitle: data.feed.title,
         feedUrl: data.feed.url,
         feedImage: data.feed.image,
+        feedArtist: data.feed.author || data.feed.ownerName,
         episodeCount: data.feed.episodeCount || 0
       };
     } else {
@@ -127,6 +135,11 @@ async function getFeedInfo(feedGuid) {
 
 // Get episode information from Podcast Index
 async function getEpisodeInfo(feedId, itemGuid) {
+  const cacheKey = `${feedId}-${itemGuid}`;
+  if (episodeCache.has(cacheKey)) {
+    return episodeCache.get(cacheKey);
+  }
+  
   try {
     const headers = createAuthHeaders();
     const url = `https://api.podcastindex.org/api/1.0/episodes/byguid?guid=${encodeURIComponent(itemGuid)}`;
@@ -134,25 +147,32 @@ async function getEpisodeInfo(feedId, itemGuid) {
     const response = await fetch(url, { headers });
     const data = await response.json();
     
+    let result;
     if (data.status === 'true' && data.episode) {
-      return {
+      result = {
         title: data.episode.title,
         description: data.episode.description,
         audioUrl: data.episode.enclosureUrl,
         duration: data.episode.duration,
         published: data.episode.datePublished,
-        image: data.episode.image
+        image: data.episode.image,
+        explicit: data.episode.explicit || false
       };
     } else {
-      return { error: 'Episode not found' };
+      result = { error: 'Episode not found' };
     }
+    
+    episodeCache.set(cacheKey, result);
+    return result;
   } catch (error) {
-    return { error: error.message };
+    const result = { error: error.message };
+    episodeCache.set(cacheKey, result);
+    return result;
   }
 }
 
-// Process tracks in batches
-async function processTracksInBatches(tracks, batchSize = 10) {
+// Process tracks with partial metadata
+async function processPartialMetadataTracks(tracks, batchSize = 10) {
   const results = {
     success: 0,
     failed: 0,
@@ -160,7 +180,7 @@ async function processTracksInBatches(tracks, batchSize = 10) {
     errors: []
   };
   
-  console.log(`\n🔄 Processing ${tracks.length} tracks in batches of ${batchSize}...`);
+  console.log(`\n🔄 Processing ${tracks.length} tracks with partial metadata...`);
   
   for (let i = 0; i < tracks.length; i += batchSize) {
     const batch = tracks.slice(i, i + batchSize);
@@ -168,8 +188,8 @@ async function processTracksInBatches(tracks, batchSize = 10) {
     
     for (const track of batch) {
       try {
-        if (!track.itemGuid || !track.itemGuid._ || !track.feedGuid) {
-          console.log(`   ⏭️  Skipping track without GUIDs: ${track.title || 'No title'}`);
+        if (!track.feedGuid) {
+          console.log(`   ⏭️  Skipping track without feedGuid: ${track.title || 'No title'}`);
           results.skipped++;
           continue;
         }
@@ -183,22 +203,41 @@ async function processTracksInBatches(tracks, batchSize = 10) {
           continue;
         }
         
-        // Get episode info
-        const episodeInfo = await getEpisodeInfo(feedInfo.feedId, track.itemGuid._);
-        if (episodeInfo.error) {
-          console.log(`   ❌ Episode error for ${track.title || 'No title'}: ${episodeInfo.error}`);
-          results.failed++;
-          results.errors.push(`Episode error for ${track.title}: ${episodeInfo.error}`);
-          continue;
+        // Update track with feed information
+        if (feedInfo.feedTitle && !track.feedTitle) {
+          track.feedTitle = feedInfo.feedTitle;
+        }
+        if (feedInfo.feedUrl && !track.feedUrl) {
+          track.feedUrl = feedInfo.feedUrl;
+        }
+        if (feedInfo.feedImage && !track.image) {
+          track.image = feedInfo.feedImage;
+        }
+        if (feedInfo.feedArtist && !track.artist) {
+          track.artist = feedInfo.feedArtist;
         }
         
-        // Update track with resolved information
-        if (episodeInfo.audioUrl) {
-          track.audioUrl = episodeInfo.audioUrl;
-          console.log(`   ✅ Resolved audio URL for: ${track.title || 'No title'}`);
-          results.success++;
+        // If we have an itemGuid, try to get episode info
+        if (track.itemGuid && track.itemGuid._) {
+          const episodeInfo = await getEpisodeInfo(feedInfo.feedId, track.itemGuid._);
+          if (!episodeInfo.error) {
+            if (episodeInfo.audioUrl && !track.audioUrl) {
+              track.audioUrl = episodeInfo.audioUrl;
+            }
+            if (episodeInfo.duration && !track.duration) {
+              track.duration = episodeInfo.duration;
+            }
+            if (episodeInfo.image && !track.image) {
+              track.image = episodeInfo.image;
+            }
+            console.log(`   ✅ Updated metadata for: ${track.title || 'No title'}`);
+            results.success++;
+          } else {
+            console.log(`   ⚠️  Episode not found for: ${track.title || 'No title'}`);
+            results.failed++;
+          }
         } else {
-          console.log(`   ⚠️  No audio URL found for: ${track.title || 'No title'}`);
+          console.log(`   ⚠️  No itemGuid for: ${track.title || 'No title'}`);
           results.failed++;
         }
         
@@ -227,11 +266,13 @@ async function processTracksInBatches(tracks, batchSize = 10) {
 // Main execution
 async function main() {
   try {
-    const results = await processTracksInBatches(tracksNeedingAudio);
+    console.log(`\n🎯 Focus: Processing ${tracksWithPartialMetadata.length} tracks with partial metadata`);
+    
+    const results = await processPartialMetadataTracks(tracksWithPartialMetadata);
     
     console.log('\n📊 Final Results:');
-    console.log(`   ✅ Successfully resolved: ${results.success}`);
-    console.log(`   ❌ Failed to resolve: ${results.failed}`);
+    console.log(`   ✅ Successfully updated: ${results.success}`);
+    console.log(`   ❌ Failed to update: ${results.failed}`);
     console.log(`   ⏭️  Skipped: ${results.skipped}`);
     
     if (results.errors.length > 0) {
@@ -252,17 +293,29 @@ async function main() {
     fs.writeFileSync(MUSIC_TRACKS_PATH, JSON.stringify(finalData, null, 2));
     
     // Save detailed report
-    const reportPath = path.join(DATA_DIR, `audio-resolution-report-${timestamp}.json`);
+    const reportPath = path.join(DATA_DIR, `remote-items-resolution-report-${timestamp}.json`);
     const report = {
       timestamp: new Date().toISOString(),
       totalTracks: musicTracks.length,
-      tracksNeedingAudio: tracksNeedingAudio.length,
+      tracksWithFullMetadata: tracksWithFullMetadata.length,
+      tracksWithPartialMetadata: tracksWithPartialMetadata.length,
+      tracksMissingMetadata: tracksMissingMetadata.length,
       results: results
     };
     fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
     
     console.log(`\n💾 Final data saved to ${MUSIC_TRACKS_PATH}`);
     console.log(`📋 Detailed report saved to ${reportPath}`);
+    
+    // Show updated statistics
+    const updatedTracksWithAudio = musicTracks.filter(track => track.audioUrl);
+    const updatedTracksWithArtwork = musicTracks.filter(track => track.image);
+    const updatedTracksWithArtist = musicTracks.filter(track => track.artist);
+    
+    console.log(`\n📈 Updated Statistics:`);
+    console.log(`   🎵 Tracks with audio URLs: ${updatedTracksWithAudio.length}/${musicTracks.length}`);
+    console.log(`   🖼️  Tracks with artwork: ${updatedTracksWithArtwork.length}/${musicTracks.length}`);
+    console.log(`   👤 Tracks with artist: ${updatedTracksWithArtist.length}/${musicTracks.length}`);
     
     console.log(`\n💡 Next steps:`);
     console.log(`   • Run: node scripts/fetch-missing-publishers.js (add publisher info)`);

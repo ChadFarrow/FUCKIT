@@ -1,0 +1,17 @@
+{
+  "timestamp": "2025-08-22T16:30:35.514Z",
+  "summary": {
+    "totalTracks": 868,
+    "processed": 868,
+    "successful": 640,
+    "errors": 4,
+    "skipped": 224,
+    "rateLimited": 10
+  },
+  "statistics": {
+    "tracksWithAudioUrls": 640,
+    "tracksWithArtwork": 640,
+    "tracksWithArtist": 742
+  },
+  "errors": []
+}

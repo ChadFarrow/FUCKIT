@@ -1,0 +1,51 @@
+{
+  "timestamp": "2025-08-22T15:37:29.965Z",
+  "totalGuids": 412,
+  "testedGuids": 10,
+  "results": {
+    "valid": [],
+    "invalid": [
+      {
+        "guid": "d3145292-bf71-415f-a841-7f5c9a9466e1",
+        "error": "No feeds match this guid."
+      },
+      {
+        "guid": "b337bd2b-46c5-4bd0-a57f-f93bca81ebea",
+        "error": "No feeds match this guid."
+      },
+      {
+        "guid": "dbec0da2-f2a0-43e1-b76c-8779ebf595a8",
+        "error": "No feeds match this guid."
+      },
+      {
+        "guid": "105198e7-c419-4bf3-b099-c968a0821f6f",
+        "error": "No feeds match this guid."
+      },
+      {
+        "guid": "4e3cd92d-d36b-42d5-8333-824901160fac",
+        "error": "No feeds match this guid."
+      },
+      {
+        "guid": "802fd4e4-6d5b-4003-a204-27cd0c536811",
+        "error": "No feeds match this guid."
+      },
+      {
+        "guid": "286ed5e4-381a-4a6c-abb8-926df3149afe",
+        "error": "No feeds match this guid."
+      },
+      {
+        "guid": "2c37e787-e3c6-46d3-b3c1-7a0eea63f3e1",
+        "error": "No feeds match this guid."
+      },
+      {
+        "guid": "ad40401b-def9-4c89-b2e5-f47b67254d65",
+        "error": "No feeds match this guid."
+      },
+      {
+        "guid": "ba843b13-bd09-4964-944b-cd64678edac7",
+        "error": "No feeds match this guid."
+      }
+    ]
+  },
+  "successRate": 0
+}

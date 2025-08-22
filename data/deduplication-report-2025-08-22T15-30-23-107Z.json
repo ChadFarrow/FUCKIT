@@ -1,0 +1,584 @@
+{
+  "timestamp": "2025-08-22T15:30:23.124Z",
+  "originalCount": 964,
+  "finalCount": 868,
+  "duplicatesRemoved": 96,
+  "duplicates": [
+    {
+      "title": "Carnival (Live recording)",
+      "artist": "Sara Jade",
+      "duplicateIndex": 178,
+      "originalIndex": 122
+    },
+    {
+      "title": "Singin' Woman",
+      "artist": "Sara Jade",
+      "duplicateIndex": 185,
+      "originalIndex": 123
+    },
+    {
+      "title": "Swallow Me Whole - Live Sing-Along (Culture Shock NOSTR PHX '24)",
+      "artist": "Sara Jade",
+      "duplicateIndex": 227,
+      "originalIndex": 131
+    },
+    {
+      "title": "Catacomb",
+      "artist": "Local Zero",
+      "duplicateIndex": 354,
+      "originalIndex": 168
+    },
+    {
+      "title": "Drip Fed Internet Blues",
+      "artist": "Longy",
+      "duplicateIndex": 405,
+      "originalIndex": 235
+    },
+    {
+      "title": "Back Road",
+      "artist": "Nate Johnivan",
+      "duplicateIndex": 471,
+      "originalIndex": 383
+    },
+    {
+      "title": "Mom",
+      "artist": "Nate Johnivan",
+      "duplicateIndex": 475,
+      "originalIndex": 441
+    },
+    {
+      "title": "Late",
+      "artist": "Nate Johnivan",
+      "duplicateIndex": 476,
+      "originalIndex": 388
+    },
+    {
+      "title": "Mouth to Mouth",
+      "artist": "Nate Johnivan",
+      "duplicateIndex": 477,
+      "originalIndex": 376
+    },
+    {
+      "title": "Stranger Things",
+      "artist": "Nate Johnivan",
+      "duplicateIndex": 479,
+      "originalIndex": 216
+    },
+    {
+      "title": "We Promise We'll Buy It",
+      "artist": "Nate Johnivan",
+      "duplicateIndex": 480,
+      "originalIndex": 320
+    },
+    {
+      "title": "Lost Summer",
+      "artist": "Ollie",
+      "duplicateIndex": 535,
+      "originalIndex": 159
+    },
+    {
+      "title": "Through The Mic",
+      "artist": "Elijah Lied",
+      "duplicateIndex": 537,
+      "originalIndex": 155
+    },
+    {
+      "title": "Luv Song 4 U",
+      "artist": "HeyCitizen",
+      "duplicateIndex": 538,
+      "originalIndex": 172
+    },
+    {
+      "title": "Inside Out",
+      "artist": "Middle Season",
+      "duplicateIndex": 539,
+      "originalIndex": 169
+    },
+    {
+      "title": "Trailer",
+      "artist": "The Satellite Skirmish",
+      "duplicateIndex": 540,
+      "originalIndex": 198
+    },
+    {
+      "title": "Going Gold",
+      "artist": "The Greensands",
+      "duplicateIndex": 542,
+      "originalIndex": 153
+    },
+    {
+      "title": "Breathe",
+      "artist": "The Greensands",
+      "duplicateIndex": 543,
+      "originalIndex": 188
+    },
+    {
+      "title": "Long As You're Loving Me",
+      "artist": "The Doerfels",
+      "duplicateIndex": 549,
+      "originalIndex": 190
+    },
+    {
+      "title": "Emma Rose",
+      "artist": "Ben Doerfel",
+      "duplicateIndex": 550,
+      "originalIndex": 175
+    },
+    {
+      "title": "What A Friend",
+      "artist": "Ben Doerfel",
+      "duplicateIndex": 558,
+      "originalIndex": 403
+    },
+    {
+      "title": "Pulls Me Up",
+      "artist": "Ben Doerfel",
+      "duplicateIndex": 559,
+      "originalIndex": 410
+    },
+    {
+      "title": "The Poet Barfly - Demo",
+      "artist": "Nate Johnivan",
+      "duplicateIndex": 587,
+      "originalIndex": 531
+    },
+    {
+      "title": "Love Like Yours",
+      "artist": "The Doerfels",
+      "duplicateIndex": 612,
+      "originalIndex": 261
+    },
+    {
+      "title": "They Don't Know",
+      "artist": "The Doerfels",
+      "duplicateIndex": 615,
+      "originalIndex": 242
+    },
+    {
+      "title": "Still A Man",
+      "artist": "The Doerfels",
+      "duplicateIndex": 649,
+      "originalIndex": 314
+    },
+    {
+      "title": "Love Like Yours",
+      "artist": "The Doerfels",
+      "duplicateIndex": 652,
+      "originalIndex": 261
+    },
+    {
+      "title": "Worth Fighting For",
+      "artist": "The Doerfels",
+      "duplicateIndex": 653,
+      "originalIndex": 616
+    },
+    {
+      "title": "First Saw (Feat. ImKidKid)",
+      "artist": "Kurtisdrums",
+      "duplicateIndex": 668,
+      "originalIndex": 332
+    },
+    {
+      "title": "HEARTBREAK",
+      "artist": "The Doerfels",
+      "duplicateIndex": 679,
+      "originalIndex": 374
+    },
+    {
+      "title": "They Don't Know",
+      "artist": "The Doerfels",
+      "duplicateIndex": 681,
+      "originalIndex": 242
+    },
+    {
+      "title": "4am 4ever",
+      "artist": "Kurtisdrums",
+      "duplicateIndex": 682,
+      "originalIndex": 428
+    },
+    {
+      "title": "Charlie",
+      "artist": "Kurtisdrums",
+      "duplicateIndex": 686,
+      "originalIndex": 421
+    },
+    {
+      "title": "Kurtisdrums Plays Drums",
+      "artist": "Kurtisdrums",
+      "duplicateIndex": 688,
+      "originalIndex": 423
+    },
+    {
+      "title": "So Far Away",
+      "artist": "The Doerfels",
+      "duplicateIndex": 692,
+      "originalIndex": 252
+    },
+    {
+      "title": "Don't Forget Me",
+      "artist": "The Doerfels",
+      "duplicateIndex": 693,
+      "originalIndex": 310
+    },
+    {
+      "title": "Bloodshot Lies",
+      "artist": "The Doerfels",
+      "duplicateIndex": 694,
+      "originalIndex": 432
+    },
+    {
+      "title": "Thunder",
+      "artist": "The Johner Boys",
+      "duplicateIndex": 744,
+      "originalIndex": 276
+    },
+    {
+      "title": "Calibrating Broadcast​.​.​.",
+      "artist": "Mellow Cassette",
+      "duplicateIndex": 747,
+      "originalIndex": 267
+    },
+    {
+      "title": "Radio Brigade",
+      "artist": "Mellow Cassette",
+      "duplicateIndex": 748,
+      "originalIndex": 268
+    },
+    {
+      "title": "Possible",
+      "artist": "The Doerfels",
+      "duplicateIndex": 755,
+      "originalIndex": 642
+    },
+    {
+      "title": "St. Joan",
+      "artist": "R.O. Shapiro",
+      "duplicateIndex": 758,
+      "originalIndex": 222
+    },
+    {
+      "title": "Analysis Paralysis",
+      "artist": "Nate Johnivan",
+      "duplicateIndex": 762,
+      "originalIndex": 478
+    },
+    {
+      "title": "Autumn",
+      "artist": "CityBeach",
+      "duplicateIndex": 763,
+      "originalIndex": 295
+    },
+    {
+      "title": "How to Be a Badass",
+      "artist": "Cole Hansen",
+      "duplicateIndex": 767,
+      "originalIndex": 298
+    },
+    {
+      "title": "You vs. Grief",
+      "artist": "Nate Johnivan",
+      "duplicateIndex": 776,
+      "originalIndex": 457
+    },
+    {
+      "title": "United States of America vs. Everyone",
+      "artist": "Nate Johnivan",
+      "duplicateIndex": 777,
+      "originalIndex": 456
+    },
+    {
+      "title": "Truth vs. Fiction",
+      "artist": "Nate Johnivan",
+      "duplicateIndex": 778,
+      "originalIndex": 454
+    },
+    {
+      "title": "Red vs. Blue",
+      "artist": "Nate Johnivan",
+      "duplicateIndex": 779,
+      "originalIndex": 455
+    },
+    {
+      "title": "Hiding vs. Bad News",
+      "artist": "Nate Johnivan",
+      "duplicateIndex": 780,
+      "originalIndex": 453
+    },
+    {
+      "title": "Child vs. Divorce",
+      "artist": "Nate Johnivan",
+      "duplicateIndex": 781,
+      "originalIndex": 458
+    },
+    {
+      "title": "it can be erased",
+      "artist": "Nate Johnivan",
+      "duplicateIndex": 783,
+      "originalIndex": 481
+    },
+    {
+      "title": "Phatty The Grasshopper",
+      "artist": "The Doerfels",
+      "duplicateIndex": 787,
+      "originalIndex": 311
+    },
+    {
+      "title": "Day in the Sun",
+      "artist": "Jimmy V",
+      "duplicateIndex": 788,
+      "originalIndex": 304
+    },
+    {
+      "title": "Sweet time",
+      "artist": "Jimmy V",
+      "duplicateIndex": 798,
+      "originalIndex": 248
+    },
+    {
+      "title": "Swallow Me Whole (EP Track)",
+      "artist": "Sara Jade",
+      "duplicateIndex": 799,
+      "originalIndex": 179
+    },
+    {
+      "title": "Hell of a Season (Acoustic Rendition)",
+      "artist": "Sara Jade",
+      "duplicateIndex": 802,
+      "originalIndex": 180
+    },
+    {
+      "title": "Never Knew (featuring Jessie Lark)",
+      "artist": "Sara Jade",
+      "duplicateIndex": 803,
+      "originalIndex": 182
+    },
+    {
+      "title": "It's Christmastime Again!",
+      "artist": "HeyCitizen",
+      "duplicateIndex": 805,
+      "originalIndex": 230
+    },
+    {
+      "title": "Smokestacks",
+      "artist": "Herbivore",
+      "duplicateIndex": 816,
+      "originalIndex": 115
+    },
+    {
+      "title": "So Far Away",
+      "artist": "The Doerfels",
+      "duplicateIndex": 825,
+      "originalIndex": 252
+    },
+    {
+      "title": "Let Go (What's holding you back)",
+      "artist": "Middle Season",
+      "duplicateIndex": 827,
+      "originalIndex": 366
+    },
+    {
+      "title": "Once Had A Girl",
+      "artist": "Jdog",
+      "duplicateIndex": 834,
+      "originalIndex": 375
+    },
+    {
+      "title": "Emo Creeper",
+      "artist": "Jdog",
+      "duplicateIndex": 835,
+      "originalIndex": 400
+    },
+    {
+      "title": "Bad Idea (feat. Bill Maier)",
+      "artist": "Jessica Lynne Witty",
+      "duplicateIndex": 853,
+      "originalIndex": 11
+    },
+    {
+      "title": "Bold",
+      "artist": "Jessica Lynne Witty",
+      "duplicateIndex": 854,
+      "originalIndex": 1
+    },
+    {
+      "title": "Hail Mary",
+      "artist": "Jessica Lynne Witty",
+      "duplicateIndex": 855,
+      "originalIndex": 2
+    },
+    {
+      "title": "It's A Matter Of When (teat. Don Ellis Gatlin)",
+      "artist": "Jessica Lynne Witty",
+      "duplicateIndex": 856,
+      "originalIndex": 9
+    },
+    {
+      "title": "These Boots Are Made For Walkin'",
+      "artist": "Jessica Lynne Witty",
+      "duplicateIndex": 857,
+      "originalIndex": 8
+    },
+    {
+      "title": "Crazy On The Outside",
+      "artist": "Jessica Lynne Witty",
+      "duplicateIndex": 859,
+      "originalIndex": 6
+    },
+    {
+      "title": "Don't Fall Out Of Love With Me Just Yet",
+      "artist": "Jessica Lynne Witty",
+      "duplicateIndex": 860,
+      "originalIndex": 5
+    },
+    {
+      "title": "Bad Idea (feat. Bill Maier)",
+      "artist": "Jessica Lynne Witty",
+      "duplicateIndex": 861,
+      "originalIndex": 11
+    },
+    {
+      "title": "It Made Me Me",
+      "artist": "Jessica Lynne Witty",
+      "duplicateIndex": 862,
+      "originalIndex": 4
+    },
+    {
+      "title": "Wildfire",
+      "artist": "Jessica Lynne Witty",
+      "duplicateIndex": 863,
+      "originalIndex": 12
+    },
+    {
+      "title": "Bad Habit",
+      "artist": "Jessica Lynne Witty",
+      "duplicateIndex": 864,
+      "originalIndex": 3
+    },
+    {
+      "title": "Dance With The Devil",
+      "artist": "Jessica Lynne Witty",
+      "duplicateIndex": 865,
+      "originalIndex": 10
+    },
+    {
+      "title": "TOMORROW",
+      "artist": "CityBeach",
+      "duplicateIndex": 886,
+      "originalIndex": 424
+    },
+    {
+      "title": "You",
+      "artist": "CityBeach",
+      "duplicateIndex": 888,
+      "originalIndex": 384
+    },
+    {
+      "title": "Safe",
+      "artist": "CityBeach",
+      "duplicateIndex": 889,
+      "originalIndex": 385
+    },
+    {
+      "title": "Walk & Wonder",
+      "artist": "Ryan Fonda",
+      "duplicateIndex": 893,
+      "originalIndex": 356
+    },
+    {
+      "title": "Don't Leave Me Lonely",
+      "artist": "Late Night Special",
+      "duplicateIndex": 901,
+      "originalIndex": 379
+    },
+    {
+      "title": "Density",
+      "artist": "Nate Johnivan",
+      "duplicateIndex": 918,
+      "originalIndex": 472
+    },
+    {
+      "title": "Creatives",
+      "artist": "Nate Johnivan",
+      "duplicateIndex": 919,
+      "originalIndex": 473
+    },
+    {
+      "title": "Mouth to Mouth",
+      "artist": "Nate Johnivan",
+      "duplicateIndex": 920,
+      "originalIndex": 376
+    },
+    {
+      "title": "Analysis Paralysis",
+      "artist": "Nate Johnivan",
+      "duplicateIndex": 921,
+      "originalIndex": 478
+    },
+    {
+      "title": "Back Road",
+      "artist": "Nate Johnivan",
+      "duplicateIndex": 922,
+      "originalIndex": 383
+    },
+    {
+      "title": "Stranger Things",
+      "artist": "Nate Johnivan",
+      "duplicateIndex": 923,
+      "originalIndex": 216
+    },
+    {
+      "title": "Sar Chasm",
+      "artist": "Nate Johnivan",
+      "duplicateIndex": 924,
+      "originalIndex": 470
+    },
+    {
+      "title": "Late",
+      "artist": "Nate Johnivan",
+      "duplicateIndex": 925,
+      "originalIndex": 388
+    },
+    {
+      "title": "Surrounded",
+      "artist": "Nate Johnivan",
+      "duplicateIndex": 926,
+      "originalIndex": 469
+    },
+    {
+      "title": "Mom",
+      "artist": "Nate Johnivan",
+      "duplicateIndex": 927,
+      "originalIndex": 441
+    },
+    {
+      "title": "We Promise We'll Buy It",
+      "artist": "Nate Johnivan",
+      "duplicateIndex": 928,
+      "originalIndex": 320
+    },
+    {
+      "title": "Bad People",
+      "artist": "Nate Johnivan",
+      "duplicateIndex": 929,
+      "originalIndex": 474
+    },
+    {
+      "title": "Time",
+      "artist": "Nate Johnivan",
+      "duplicateIndex": 930,
+      "originalIndex": 468
+    },
+    {
+      "title": "Speed Limit Years",
+      "artist": "Robert Willey",
+      "duplicateIndex": 949,
+      "originalIndex": 305
+    },
+    {
+      "title": "You Can Only Be So Cosmic",
+      "artist": "Robert Willey",
+      "duplicateIndex": 950,
+      "originalIndex": 404
+    }
+  ]
+}
