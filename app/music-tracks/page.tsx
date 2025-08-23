@@ -67,10 +67,10 @@ export default function MusicSegmentsPage() {
           <div className="p-3 bg-green-500/20 rounded-xl">
             <Zap className="w-8 h-8 text-green-400" />
           </div>
-          <div>
-            <h1 className="text-4xl font-bold">Music Discovery</h1>
-            <p className="text-green-400 text-lg">Value for Value Music Segments</p>
-          </div>
+                  <div>
+          <h1 className="text-4xl font-bold">Music Discovery</h1>
+          <p className="text-green-400 text-lg">Value for Value Music Segments & Remote Items</p>
+        </div>
         </div>
         
         <p className="text-gray-400 max-w-4xl mb-6">
@@ -149,13 +149,13 @@ export default function MusicSegmentsPage() {
         <ITDVPlaylistAlbum />
       </div>
 
-      {/* Unified Music Segment List - Temporarily disabled due to error */}
-      {/* <V4VMusicTrackList 
+      {/* Unified Music Segment List - Now showing all tracks including remote items */}
+      <V4VMusicTrackList 
         initialFeedUrls={feedUrls}
         onPlayTrack={handlePlaySegment}
         showDatabaseStats={true}
         autoExtract={false}
-      /> */}
+      />
 
       {/* V4V Information Panel */}
       <div className="mt-12 bg-gradient-to-r from-green-500/10 to-blue-500/10 border border-green-500/20 rounded-xl p-6">
