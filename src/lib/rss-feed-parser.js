@@ -180,6 +180,39 @@ class PodcastIndexRSSParser {
     }
   }
 
+  async searchMusic(query, options = {}) {
+    try {
+      const headers = this.generateAuthHeaders(this.apiKey, this.apiSecret);
+      const params = new URLSearchParams({
+        q: query,
+        max: options.max || 20,
+        ...options
+      });
+      
+      const url = `${this.baseUrl}/search/music/byterm?${params}`;
+      
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: headers
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.status !== 'true') {
+        throw new Error('Music search failed or API error');
+      }
+
+      return data.feeds || [];
+    } catch (error) {
+      console.error('Error searching music:', error);
+      throw error;
+    }
+  }
+
   async getEpisodesByFeedId(feedId, options = {}) {
     try {
       const headers = this.generateAuthHeaders(this.apiKey, this.apiSecret);
