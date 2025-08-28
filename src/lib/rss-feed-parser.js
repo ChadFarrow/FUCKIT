@@ -18,7 +18,7 @@ class PodcastIndexRSSParser {
           ['podcast:medium', 'medium'],
           ['podcast:person', 'person'],
           ['podcast:location', 'location'],
-          ['podcast:remoteItem', 'remoteItem']
+          ['podcast:remoteItem', 'remoteItem', { keepArray: true }]
         ],
         item: [
           ['podcast:transcript', 'transcript'],
@@ -29,7 +29,7 @@ class PodcastIndexRSSParser {
           ['podcast:season', 'season'],
           ['podcast:episode', 'episode'],
           ['podcast:value', 'value'],
-          ['podcast:remoteItem', 'remoteItem']
+          ['podcast:remoteItem', 'remoteItem', { keepArray: true }]
         ]
       }
     });
@@ -448,6 +448,77 @@ class PodcastIndexRSSParser {
       });
     } catch (error) {
       console.error('Error resolving all remote items:', error);
+      throw error;
+    }
+  }
+
+  async getRemoteItemsFromURL(feedUrl) {
+    try {
+      const rssFeed = await this.fetchAndParseFeed(feedUrl);
+      
+      const remoteItems = [];
+      
+      // Check feed-level remote items
+      if (rssFeed.metadata.remoteItem) {
+        const parsed = this.parseRemoteItem(rssFeed.metadata.remoteItem);
+        if (parsed) {
+          remoteItems.push(...parsed.map(item => ({ ...item, location: 'feed' })));
+        }
+      }
+      
+      // Check item-level remote items
+      rssFeed.items.forEach((item, index) => {
+        if (item.remoteItem) {
+          const parsed = this.parseRemoteItem(item.remoteItem);
+          if (parsed) {
+            remoteItems.push(...parsed.map(remoteItem => ({
+              ...remoteItem,
+              location: 'item',
+              itemIndex: index,
+              itemTitle: item.title,
+              itemGuid: item.guid
+            })));
+          }
+        }
+      });
+      
+      return remoteItems;
+    } catch (error) {
+      console.error('Error getting remote items from URL:', error);
+      throw error;
+    }
+  }
+
+  async extractRemoteItemsManually(feedUrl) {
+    try {
+      const response = await fetch(feedUrl);
+      const xmlText = await response.text();
+      
+      const remoteItems = [];
+      const remoteItemMatches = xmlText.match(/<podcast:remoteItem[^>]*>/g);
+      
+      if (remoteItemMatches) {
+        remoteItemMatches.forEach(match => {
+          const feedGuidMatch = match.match(/feedGuid="([^"]+)"/);
+          const itemGuidMatch = match.match(/itemGuid="([^"]+)"/);
+          const feedUrlMatch = match.match(/feedUrl="([^"]+)"/);
+          const mediumMatch = match.match(/medium="([^"]+)"/);
+          
+          if (feedGuidMatch && itemGuidMatch) {
+            remoteItems.push({
+              feedGuid: feedGuidMatch[1],
+              itemGuid: itemGuidMatch[1],
+              feedUrl: feedUrlMatch ? feedUrlMatch[1] : null,
+              medium: mediumMatch ? mediumMatch[1] : null,
+              location: 'feed'
+            });
+          }
+        });
+      }
+      
+      return remoteItems;
+    } catch (error) {
+      console.error('Error extracting remote items manually:', error);
       throw error;
     }
   }
