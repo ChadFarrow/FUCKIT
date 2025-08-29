@@ -349,13 +349,6 @@ export async function GET(request: Request) {
     const musicAlbumGroups = new Map<string, any>();
     
     cachedMusicTracks.forEach((track: any) => {
-      // Filter out HGH reference tracks - they shouldn't appear as albums on the site
-      if (track.source && track.source.includes('HGH Featured Track') ||
-          track.feedTitle && track.feedTitle.includes('Music Reference from Homegrown Hits') ||
-          track.feedArtist && track.feedArtist.includes('Homegrown Hits Music Reference')) {
-        return; // Skip HGH reference tracks
-      }
-      
       const key = track.feedGuid || 'unknown';
       if (!musicAlbumGroups.has(key)) {
         musicAlbumGroups.set(key, {
@@ -395,6 +388,12 @@ export async function GET(request: Request) {
       // Skip if this feed URL is already in parsed feeds (to avoid duplicates)
       const isDuplicate = albums.some((album: any) => album.feedUrl === group.feedUrl);
       if (isDuplicate) return null;
+      
+      // Filter out HGH reference album - don't show as browsable album on site
+      if (group.feedTitle && group.feedTitle.includes('Music Reference from Homegrown Hits')) {
+        console.log(`🚫 Filtering out HGH reference album: "${group.feedTitle}"`);
+        return null;
+      }
       
       // Create album from music track group
       const firstTrack = group.tracks[0];
