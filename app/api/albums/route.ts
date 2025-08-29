@@ -10,7 +10,7 @@ let cachedData: any = null;
 let cachedMusicTracks: any = null;
 let cachedHGHSongs: any = null;
 let cachedProcessedAlbums: any = null; // Cache processed albums - cleared for deduplication
-const PROCESSED_CACHE_VERSION = 'v2-dedup'; // Increment to invalidate cache when logic changes
+const PROCESSED_CACHE_VERSION = 'v3-filter-hgh'; // Increment to invalidate cache when logic changes
 let cacheTimestamp = 0;
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
@@ -349,6 +349,13 @@ export async function GET(request: Request) {
     const musicAlbumGroups = new Map<string, any>();
     
     cachedMusicTracks.forEach((track: any) => {
+      // Filter out HGH reference tracks - they shouldn't appear as albums on the site
+      if (track.source && track.source.includes('HGH Featured Track') ||
+          track.feedTitle && track.feedTitle.includes('Music Reference from Homegrown Hits') ||
+          track.feedArtist && track.feedArtist.includes('Homegrown Hits Music Reference')) {
+        return; // Skip HGH reference tracks
+      }
+      
       const key = track.feedGuid || 'unknown';
       if (!musicAlbumGroups.has(key)) {
         musicAlbumGroups.set(key, {

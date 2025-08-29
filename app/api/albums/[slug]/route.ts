@@ -59,6 +59,13 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
     const musicAlbumGroups = new Map<string, any>();
     
     musicTracksData.forEach((track: any) => {
+      // Filter out HGH reference tracks - they shouldn't appear as albums on the site
+      if (track.source && track.source.includes('HGH Featured Track') ||
+          track.feedTitle && track.feedTitle.includes('Music Reference from Homegrown Hits') ||
+          track.feedArtist && track.feedArtist.includes('Homegrown Hits Music Reference')) {
+        return; // Skip HGH reference tracks
+      }
+      
       const key = track.feedGuid || 'unknown';
       if (!musicAlbumGroups.has(key)) {
         musicAlbumGroups.set(key, {
