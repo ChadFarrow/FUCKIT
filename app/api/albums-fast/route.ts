@@ -7,6 +7,17 @@ let cachedAlbums: any = null;
 let cacheTimestamp = 0;
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
+// Force cache refresh if cache file is newer than our cached data
+function shouldForceRefresh(cachePath: string): boolean {
+  try {
+    const stats = fs.statSync(cachePath);
+    const fileModified = stats.mtime.getTime();
+    return fileModified > cacheTimestamp;
+  } catch {
+    return false;
+  }
+}
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -15,12 +26,13 @@ export async function GET(request: Request) {
     const filter = searchParams.get('filter') || 'all'; // albums, eps, singles, all
     
     const now = Date.now();
-    const shouldRefreshCache = !cachedAlbums || (now - cacheTimestamp) > CACHE_DURATION;
+    const apiCachePath = path.join(process.cwd(), 'data', 'albums-api-cache.json');
+    const shouldRefreshCache = !cachedAlbums || 
+                              (now - cacheTimestamp) > CACHE_DURATION ||
+                              shouldForceRefresh(apiCachePath);
     
     if (shouldRefreshCache) {
       console.log('🚀 Loading optimized album cache...');
-      
-      const apiCachePath = path.join(process.cwd(), 'data', 'albums-api-cache.json');
       
       if (!fs.existsSync(apiCachePath)) {
         console.error('❌ Optimized cache not found. Please run: node scripts/create-optimized-cache.js');
@@ -98,7 +110,7 @@ export async function GET(request: Request) {
       source: 'optimized-cache'
     }, {
       headers: {
-        'Cache-Control': 'public, max-age=300, s-maxage=300, stale-while-revalidate=600',
+        'Cache-Control': 'public, max-age=60, s-maxage=60, stale-while-revalidate=120',
         'Content-Type': 'application/json',
         'X-Cache-Source': 'optimized-albums-cache',
         'ETag': `"${cacheTimestamp}-${totalCount}"`
