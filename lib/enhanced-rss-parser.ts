@@ -1,6 +1,6 @@
 import { RSSParser, RSSAlbum } from './rss-parser';
 import { createRSSParser } from '../src/lib/rss-parser-config.js';
-import { PodcastIndexRSSParser } from '../src/lib/rss-feed-parser.js';
+import PodcastIndexRSSParser from '../src/lib/rss-feed-parser.js';
 
 /**
  * Enhanced RSS Parser Integration Layer
