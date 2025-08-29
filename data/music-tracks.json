@@ -3917,7 +3917,7 @@
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/e954a4c4-69d2-4ac3-8b86-fe5469f6c9df.jpg",
       "feedArtist": "Yuletide In My Doublewide",
       "published": "Thu, 31 Aug 2023 19:10:45 GMT",
-      "duration": 180,
+      "duration": 191,
       "explicit": false,
       "keywords": [],
       "categories": [
@@ -4163,7 +4163,7 @@
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/e954a4c4-69d2-4ac3-8b86-fe5469f6c9df.jpg",
       "feedArtist": "Yuletide In My Doublewide",
       "published": "Thu, 31 Aug 2023 19:42:27 GMT",
-      "duration": 180,
+      "duration": 248,
       "explicit": false,
       "keywords": [],
       "categories": [
@@ -5438,7 +5438,7 @@
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/00bcaba4-6e91-471f-bb1c-e03950f6ad1d.jpg",
       "feedArtist": "you don't need me",
       "published": "Fri, 21 Apr 2023 19:24:24 GMT",
-      "duration": 180,
+      "duration": 203,
       "explicit": false,
       "keywords": [],
       "categories": [
@@ -5524,7 +5524,7 @@
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/5917663e-8d6e-45be-a364-01dfcdd26b4f.jpg",
       "feedArtist": "WHY (did you do this to me)",
       "published": "Fri, 21 Apr 2023 19:44:20 GMT",
-      "duration": 180,
+      "duration": 201,
       "explicit": false,
       "keywords": [],
       "categories": [
@@ -5710,7 +5710,7 @@
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/532c9b78-2099-4ee4-ac98-742157f01fd0.jpg",
       "feedArtist": "Just Say It feat. Helen Tess",
       "published": "Mon, 26 Feb 2024 22:39:45 GMT",
-      "duration": 180,
+      "duration": 150,
       "explicit": false,
       "keywords": [],
       "categories": [
@@ -5796,7 +5796,7 @@
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/a437c62e-23d4-4368-ba34-9f6b75ee5d5c.jpg",
       "feedArtist": "Brutal (feat. Kyle Reynolds)",
       "published": "Sun, 24 Mar 2024 21:20:42 GMT",
-      "duration": 180,
+      "duration": 175,
       "explicit": false,
       "keywords": [],
       "categories": [
@@ -27051,7 +27051,7 @@
       "enclosureUrl": "https://d12wklypp119aj.cloudfront.net/track/bce6c2f3-c7eb-4dd2-8a51-11df4f2bccd7.mp3",
       "enclosureType": "audio/mpeg",
       "enclosureLength": 2826991,
-      "duration": 180,
+      "duration": 176,
       "explicit": 0,
       "episode": null,
       "episodeType": "full",
@@ -27282,7 +27282,7 @@
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/0ed13237-aca9-446f-9a03-de1a2d9331a3.jpg",
       "feedArtist": "Nate Johnivan",
       "published": "Mon, 11 Mar 2024 17:55:38 GMT",
-      "duration": 180,
+      "duration": 213,
       "explicit": false,
       "keywords": [],
       "categories": [
@@ -28040,7 +28040,7 @@
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/8c8f8133-7ef1-4b72-a641-4e1a6a44d626.jpg",
       "feedArtist": "Fake Love - Demo",
       "published": "Mon, 21 Oct 2024 12:14:39 GMT",
-      "duration": 180,
+      "duration": 243,
       "explicit": false,
       "keywords": [],
       "categories": [
@@ -28680,7 +28680,7 @@
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/65d6530c-22a8-4be3-9fed-0a0ea4e74d72.jpg",
       "feedArtist": "The Kid, The Dad, The Mom And The Tiny Window (The Whole Story)",
       "published": "Wed, 10 Jul 2024 17:19:03 GMT",
-      "duration": 180,
+      "duration": 723,
       "explicit": false,
       "keywords": [],
       "categories": [
@@ -29129,7 +29129,7 @@
       "feedImage": "https://d12wklypp119aj.cloudfront.net/image/f6bbce4b-4d7a-42ba-9464-6a870b4a387e.jpg",
       "feedArtist": "The Poet Barfly - Demo",
       "published": "Tue, 31 Dec 2024 13:49:49 GMT",
-      "duration": 180,
+      "duration": 190,
       "explicit": false,
       "keywords": [],
       "categories": [
@@ -42288,96 +42288,6 @@
       "publisher": "Jimmy V",
       "artwork": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/Real_World-Jimmy_V-500.jpg",
       "guid": "a035a073-9c00-5f76-9bf5-cb8845aa8096",
-      "guidGenerated": true,
-      "guidGeneratedAt": "2025-08-29T01:18:54.897Z",
-      "guidGeneratedMethod": "deterministic-hash"
-    },
-    {
-      "id": "track-799",
-      "feedGuid": "dbad52b9-6253-4a9b-bfab-246b9e839815",
-      "itemGuid": "fabc3e64-e470-4f97-bf4a-3957e481e23b",
-      "feedUrl": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/jimmy_v-jimmy_v_collection-rss.xml",
-      "feedTitle": "Jimmy V - Music",
-      "title": "Pour Me Some Water",
-      "artist": "Jimmy V -",
-      "album": "Jimmy V - Music",
-      "description": "<p>Pour Me Some Water Written, recorded and produced by Jimmy V Jimmyv4v.com</p>",
-      "duration": 190,
-      "enclosureUrl": "https://op3.dev/e/ipfspodcasting.net/e/music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/Pour_Me_Some_Water.mp3",
-      "enclosureType": "audio/mpeg",
-      "pubDate": "Wed, 03 Jan 2024 22:13:23 GMT",
-      "image": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/Pour_Me_Some_Water-500.jpg",
-      "value": {
-        "model": {
-          "type": "lightning",
-          "method": "keysend"
-        },
-        "destinations": [
-          {
-            "name": "Jimmy V - Musicianship & Hosting",
-            "type": "node",
-            "address": "03b6f613e88bd874177c28c6ad83b3baba43c4c656f56be1f8df84669556054b79",
-            "split": 85,
-            "customKey": "906608",
-            "customValue": "01dIRsYB86CoEkZ4yUubfh"
-          },
-          {
-            "name": "Kolomona - Sir Libre - LightningThrashes.com - Tech help",
-            "type": "node",
-            "address": "030a58b8653d32b99200a2334cfe913e51dc7d155aa0116c176657a4f1722677a3",
-            "split": 5,
-            "customKey": "696969",
-            "customValue": "912ezE5oAMbMPuxCiHq8"
-          },
-          {
-            "name": "Podcasting 2.0 Dave Jones & Adam Curry for making all this possible",
-            "type": "node",
-            "address": "03ae9f91a0cb8ff43840e3c322c4c61f019d8c1c3cea15a25cfc425ac605e61a4a",
-            "split": 3
-          },
-          {
-            "name": "Steven Bell for musicsideproject.com and much much more",
-            "type": "node",
-            "address": "030a58b8653d32b99200a2334cfe913e51dc7d155aa0116c176657a4f1722677a3",
-            "split": 3,
-            "customKey": "696969",
-            "customValue": "UzrnTK2oEHR55gw7Djmb"
-          },
-          {
-            "name": "IPFSPodcasting.net for Cameron and all the IPFS nodes' bandwidth",
-            "type": "node",
-            "address": "028eb5be336f7fdf2a4e40c57ff55d3d5d71277bb4197ea14957f756bff249e623",
-            "split": 2
-          },
-          {
-            "name": "Fountain Boostbot",
-            "type": "node",
-            "address": "03b6f613e88bd874177c28c6ad83b3baba43c4c656f56be1f8df84669556054b79",
-            "split": 1,
-            "customKey": "906608",
-            "customValue": "01arpnAY9hHWR1ihl8YyUr"
-          },
-          {
-            "name": "op3.dev for amazing free stats",
-            "type": "node",
-            "address": "030a58b8653d32b99200a2334cfe913e51dc7d155aa0116c176657a4f1722677a3",
-            "split": 1,
-            "customKey": "696969",
-            "customValue": "x3VXZtbcfIBVLIUqzWKV"
-          }
-        ]
-      },
-      "resolvedFrom": "direct-feed-fetch",
-      "resolvedAt": "2025-08-13T22:12:43.826Z",
-      "addedAt": "2025-08-13T22:12:43.845Z",
-      "feedImage": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/album-1000.jpg",
-      "feedArtist": "Jimmy V",
-      "index": 797,
-      "audioUrl": "https://op3.dev/e/ipfspodcasting.net/e/music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/Sweet_Time-Jimmy_V.mp3",
-      "imageUrl": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/album-1000.jpg",
-      "publisher": "Jimmy V",
-      "artwork": "https://music.jimmyv4v.com/bands/jimmy-v/jimmy-v-collection/Pour_Me_Some_Water-500.jpg",
-      "guid": "958727f4-a46d-5448-8a17-ff556a238df9",
       "guidGenerated": true,
       "guidGeneratedAt": "2025-08-29T01:18:54.897Z",
       "guidGeneratedMethod": "deterministic-hash"
@@ -78247,7 +78157,7 @@
       "feedImage": "https://www.doerfelverse.com/art/dfbv2.png",
       "guid": "f9683d28-70df-4112-95c4-490c0383c3c9",
       "enclosureUrl": "https://www.doerfelverse.com/tracks/01-hyssop-branches.mp3",
-      "duration": 180,
+      "duration": 276,
       "image": "https://www.doerfelverse.com/art/dfbv2.png",
       "datePublished": 1756497575,
       "explicit": false,
@@ -78262,7 +78172,7 @@
       "feedImage": "https://www.doerfelverse.com/art/dfbv2.png",
       "guid": "cddd92c4-a897-49a0-8bfb-e03e2fa34fe5",
       "enclosureUrl": "https://www.doerfelverse.com/tracks/02-blues-you-never-lose.mp3",
-      "duration": 180,
+      "duration": 169,
       "image": "https://www.doerfelverse.com/art/dfbv2.png",
       "datePublished": 1756497575,
       "explicit": false,
@@ -78277,7 +78187,7 @@
       "feedImage": "https://www.doerfelverse.com/art/dfbv2.png",
       "guid": "d60032f3-ce45-45c4-81fc-26ff0394a248",
       "enclosureUrl": "https://www.doerfelverse.com/tracks/03-bipolar.mp3",
-      "duration": 180,
+      "duration": 168,
       "image": "https://www.doerfelverse.com/art/dfbv2.png",
       "datePublished": 1756497575,
       "explicit": false,
@@ -78292,7 +78202,7 @@
       "feedImage": "https://www.doerfelverse.com/art/dfbv2.png",
       "guid": "849d3c8b-2e0a-4b69-ad25-8237540827ab",
       "enclosureUrl": "https://www.doerfelverse.com/tracks/04-the-chocolate-song.mp3",
-      "duration": 180,
+      "duration": 218,
       "image": "https://www.doerfelverse.com/art/dfbv2.png",
       "datePublished": 1756497575,
       "explicit": false,
@@ -78307,7 +78217,7 @@
       "feedImage": "https://www.doerfelverse.com/art/dfbv2.png",
       "guid": "73189a5f-7265-4778-9f0e-9524494338e0",
       "enclosureUrl": "https://www.doerfelverse.com/tracks/05-the-last-time.mp3",
-      "duration": 180,
+      "duration": 305,
       "image": "https://www.doerfelverse.com/art/dfbv2.png",
       "datePublished": 1756497575,
       "explicit": false,
@@ -78322,7 +78232,7 @@
       "feedImage": "https://www.doerfelverse.com/art/dfbv2.png",
       "guid": "7592d5b6-832d-47ae-bc91-0380ec3bd33f",
       "enclosureUrl": "https://www.doerfelverse.com/tracks/06-dead-time.mp3",
-      "duration": 180,
+      "duration": 280,
       "image": "https://www.doerfelverse.com/art/dfbv2.png",
       "datePublished": 1756497575,
       "explicit": false,
@@ -78337,7 +78247,7 @@
       "feedImage": "https://www.doerfelverse.com/art/dfbv2.png",
       "guid": "9dd6c1ef-0b92-47e9-ba54-3cc284ffdcbc",
       "enclosureUrl": "https://www.doerfelverse.com/tracks/07-what-im-looking-for.mp3",
-      "duration": 180,
+      "duration": 237,
       "image": "https://www.doerfelverse.com/art/dfbv2.png",
       "datePublished": 1756497575,
       "explicit": false,
@@ -78352,7 +78262,7 @@
       "feedImage": "https://www.doerfelverse.com/art/dfbv2.png",
       "guid": "a12d4410-03e0-44fd-bc8b-890760541a93",
       "enclosureUrl": "https://www.doerfelverse.com/tracks/08-crvp.mp3",
-      "duration": 180,
+      "duration": 229,
       "image": "https://www.doerfelverse.com/art/dfbv2.png",
       "datePublished": 1756497575,
       "explicit": false,
@@ -78367,7 +78277,7 @@
       "feedImage": "https://www.doerfelverse.com/art/dfbv2.png",
       "guid": "cefb5a94-44c9-4d17-93c0-de6830d27d50",
       "enclosureUrl": "https://www.doerfelverse.com/tracks/09-the-guitar-song.mp3",
-      "duration": 180,
+      "duration": 145,
       "image": "https://www.doerfelverse.com/art/dfbv2.png",
       "datePublished": 1756497575,
       "explicit": false,
@@ -78849,7 +78759,7 @@
   "analytics": [],
   "metadata": {
     "version": "1.0.0",
-    "lastUpdated": "2025-08-29T20:00:29.132Z",
+    "lastUpdated": "2025-08-29T20:08:21.292Z",
     "totalTracks": 1261,
     "totalEpisodes": 0,
     "totalFeeds": 0,
@@ -79054,6 +78964,18 @@
       "feedsUpdated": 12,
       "feedsFailed": 5,
       "note": "Targeted refresh of problematic feeds"
+    },
+    "jimmyVDuplicateFix": {
+      "date": "2025-08-29T20:06:46.955Z",
+      "removedTracks": 1,
+      "note": "Removed duplicate \"Pour Me Some Water\" track from Jimmy V - Music album"
+    },
+    "durationUpdate": {
+      "date": "2025-08-29T20:08:21.292Z",
+      "updatedTracks": 21,
+      "failedFeeds": 0,
+      "processedFeeds": 12,
+      "note": "Updated placeholder 180s durations with real RSS feed data"
     }
   }
 }
