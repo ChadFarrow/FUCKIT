@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { MusicTrackParser } from '@/lib/music-track-parser';
 import { V4VResolver } from '@/lib/v4v-resolver';
+import { enhancedMusicService } from '@/lib/enhanced-music-service';
 import { promises as fs } from 'fs';
 import path from 'path';
 
@@ -116,22 +117,44 @@ export async function GET(request: NextRequest) {
       );
     }
     
-    // Handle local database request
+    // Handle local database request with enhanced service
     if (feedUrl === 'local://database') {
-      console.log('🎵 Loading tracks from local database');
+      console.log('🎵 Loading tracks from local database using enhanced service');
       try {
-        const fs = require('fs').promises;
-        const path = require('path');
+        // Use enhanced music service for unified track access
+        const enhancedOnly = searchParams.get('enhanced') === 'true';
         
-        const dataPath = path.join(process.cwd(), 'data', 'music-tracks.json');
-        const data = await fs.readFile(dataPath, 'utf8');
-        const musicData = JSON.parse(data);
+        if (enhancedOnly) {
+          // Get only enhanced tracks
+          const allUnifiedTracks = await enhancedMusicService.getUnifiedMusicTracks();
+          const enhancedTracks = allUnifiedTracks.filter(track => track.enhancement?.enhanced);
+          
+          // Apply pagination
+          const paginatedTracks = enhancedTracks.slice(offset, offset + limit);
+          
+          return NextResponse.json({
+            success: true,
+            data: {
+              tracks: paginatedTracks,
+              relatedFeeds: [],
+              metadata: {
+                totalTracks: enhancedTracks.length,
+                returnedTracks: paginatedTracks.length,
+                offset,
+                limit,
+                source: 'enhanced-database'
+              }
+            },
+            message: `Successfully loaded ${paginatedTracks.length} enhanced tracks from database (${offset + 1}-${offset + paginatedTracks.length} of ${enhancedTracks.length})`
+          });
+        }
         
-        let allTracks = musicData.musicTracks || [];
+        // Get unified tracks (enhanced + legacy)
+        let allTracks = await enhancedMusicService.getUnifiedMusicTracks();
         
-        // Handle V4V resolution for database tracks if requested
+        // Handle V4V resolution for unified tracks if requested
         if (resolveV4V) {
-          console.log('🔍 Checking database tracks for V4V resolution...');
+          console.log('🔍 Checking unified database tracks for V4V resolution...');
           
           // Clear V4V cache if requested
           if (clearV4VCache) {
@@ -139,60 +162,74 @@ export async function GET(request: NextRequest) {
             V4VResolver.clearCache();
           }
           
-          // Find tracks that need V4V resolution
-          const v4vTracks = allTracks.filter((track: any) => 
-            track.valueForValue?.feedGuid && 
-            track.valueForValue?.itemGuid && 
-            (!track.valueForValue?.resolved || clearV4VCache)
-          );
+          // Find tracks that need V4V resolution (checking both legacy and enhanced formats)
+          const v4vTracks = allTracks.filter((track: any) => {
+            // Check legacy V4V format
+            const legacyV4V = track.valueForValue?.feedGuid && track.valueForValue?.itemGuid && 
+              (!track.valueForValue?.resolved || clearV4VCache);
+            
+            // Check enhanced V4V format
+            const enhancedV4V = track.enhancedMetadata?.valueForValue?.enabled && 
+              track.feedGuid && track.itemGuid?._; 
+            
+            return legacyV4V || enhancedV4V;
+          });
           
           if (v4vTracks.length > 0) {
-            console.log(`📡 Resolving ${v4vTracks.length} V4V tracks from database${clearV4VCache ? ' (forced re-resolution)' : ''}...`);
+            console.log(`📡 Resolving ${v4vTracks.length} V4V tracks from unified database${clearV4VCache ? ' (forced re-resolution)' : ''}...`);
             
             // Prepare batch resolution
             const tracksToResolve = v4vTracks.map((track: any) => ({
-              feedGuid: track.valueForValue.feedGuid,
-              itemGuid: track.valueForValue.itemGuid
-            }));
+              feedGuid: track.valueForValue?.feedGuid || track.feedGuid,
+              itemGuid: track.valueForValue?.itemGuid || track.itemGuid?._
+            })).filter(item => item.feedGuid && item.itemGuid);
             
-            // Resolve in batch
-            const resolutionResults = await V4VResolver.resolveBatch(tracksToResolve);
-            
-            // Apply resolved data to tracks
-            let resolvedCount = 0;
-            allTracks.forEach((track: any) => {
-              if (track.valueForValue?.feedGuid && track.valueForValue?.itemGuid) {
-                const key = `${track.valueForValue.feedGuid}:${track.valueForValue.itemGuid}`;
-                const resolution = resolutionResults.get(key);
+            if (tracksToResolve.length > 0) {
+              // Resolve in batch
+              const resolutionResults = await V4VResolver.resolveBatch(tracksToResolve);
+              
+              // Apply resolved data to tracks
+              let resolvedCount = 0;
+              allTracks.forEach((track: any) => {
+                const feedGuid = track.valueForValue?.feedGuid || track.feedGuid;
+                const itemGuid = track.valueForValue?.itemGuid || track.itemGuid?._;
                 
-                if (resolution?.success) {
-                  track.valueForValue.resolvedTitle = resolution.title;
-                  track.valueForValue.resolvedArtist = resolution.artist;
-                  track.valueForValue.resolvedImage = resolution.image;
-                  track.valueForValue.resolvedAudioUrl = resolution.audioUrl;
-                  track.valueForValue.resolvedDuration = resolution.duration;
-                  track.valueForValue.resolved = true;
-                  track.valueForValue.lastResolved = new Date().toISOString();
-                  resolvedCount++;
+                if (feedGuid && itemGuid) {
+                  const key = `${feedGuid}:${itemGuid}`;
+                  const resolution = resolutionResults.get(key);
+                  
+                  if (resolution?.success) {
+                    // Update legacy V4V format if present
+                    if (track.valueForValue) {
+                      track.valueForValue.resolvedTitle = resolution.title;
+                      track.valueForValue.resolvedArtist = resolution.artist;
+                      track.valueForValue.resolvedImage = resolution.image;
+                      track.valueForValue.resolvedAudioUrl = resolution.audioUrl;
+                      track.valueForValue.resolvedDuration = resolution.duration;
+                      track.valueForValue.resolved = true;
+                      track.valueForValue.lastResolved = new Date().toISOString();
+                    }
+                    
+                    // Update enhanced metadata if present
+                    if (track.enhancedMetadata) {
+                      track.enhancedMetadata.audioUrl = track.enhancedMetadata.audioUrl || resolution.audioUrl;
+                      if (track.enhancedMetadata.valueForValue) {
+                        track.enhancedMetadata.valueForValue.resolvedData = {
+                          title: resolution.title,
+                          artist: resolution.artist,
+                          audioUrl: resolution.audioUrl,
+                          duration: resolution.duration,
+                          image: resolution.image
+                        };
+                      }
+                    }
+                    
+                    resolvedCount++;
+                  }
                 }
-              }
-            });
-            
-            console.log(`✅ Successfully resolved ${resolvedCount} V4V tracks`);
-            
-            // Save updated tracks back to database if any were resolved
-            if (resolvedCount > 0 && saveToDatabase) {
-              console.log('💾 Saving updated V4V resolutions to database...');
-              const updatedData = {
-                ...musicData,
-                musicTracks: allTracks,
-                metadata: {
-                  ...musicData.metadata,
-                  lastUpdated: new Date().toISOString()
-                }
-              };
-              await fs.writeFile(dataPath, JSON.stringify(updatedData, null, 2));
-              console.log('✅ Database updated with V4V resolutions');
+              });
+              
+              console.log(`✅ Successfully resolved ${resolvedCount} V4V tracks from unified database`);
             }
           }
         }
@@ -200,20 +237,31 @@ export async function GET(request: NextRequest) {
         // Apply pagination
         const paginatedTracks = allTracks.slice(offset, offset + limit);
         
+        // Get enhanced database stats for metadata
+        const databaseStats = await enhancedMusicService.getDatabaseStats();
+        
         return NextResponse.json({
           success: true,
           data: {
             tracks: paginatedTracks,
             relatedFeeds: [],
             metadata: {
-              ...musicData.metadata,
               totalTracks: allTracks.length,
               returnedTracks: paginatedTracks.length,
               offset,
-              limit
+              limit,
+              source: 'unified-database',
+              enhancementStats: {
+                enhancedTracks: databaseStats.enhancedTracks,
+                legacyTracks: databaseStats.legacyTracks,
+                enhancementRate: databaseStats.enhancementRate,
+                valueForValueTracks: databaseStats.valueForValueTracks,
+                tracksWithAudio: databaseStats.tracksWithAudio
+              },
+              lastUpdated: new Date().toISOString()
             }
           },
-          message: `Successfully loaded ${paginatedTracks.length} tracks from local database (${offset + 1}-${offset + paginatedTracks.length} of ${allTracks.length})`
+          message: `Successfully loaded ${paginatedTracks.length} unified tracks from database (${offset + 1}-${offset + paginatedTracks.length} of ${allTracks.length})`
         });
       } catch (error) {
         console.error('Failed to load local database:', error);
@@ -388,8 +436,42 @@ export async function GET(request: NextRequest) {
     // If no database tracks or force refresh requested, parse from RSS feed
     console.log(`📡 ${forceRefresh ? 'Force refresh requested' : 'No database tracks found'}, parsing RSS feed...`);
     
-    // Extract music tracks from the feed
-    const result = await MusicTrackParser.extractMusicTracks(feedUrl);
+    // Check if enhanced parsing is requested
+    const useEnhanced = searchParams.get('useEnhanced') === 'true';
+    
+    let result;
+    if (useEnhanced) {
+      console.log('🚀 Using enhanced RSS parser with Podcast Index integration...');
+      try {
+        // Import enhanced RSS parser
+        const { enhancedRSSParser } = await import('@/lib/enhanced-rss-parser');
+        
+        // Parse with enhanced capabilities
+        const enhancedResult = await enhancedRSSParser.parseAlbumFeed(feedUrl, {
+          useEnhanced: true,
+          includePodcastIndex: true,
+          resolveRemoteItems: true,
+          extractValueForValue: true
+        });
+        
+        // Convert to compatible format if needed
+        if (enhancedResult) {
+          result = {
+            tracks: enhancedResult.tracks || [],
+            relatedFeeds: []
+          };
+          console.log(`✅ Enhanced parsing extracted ${result.tracks.length} tracks`);
+        } else {
+          throw new Error('Enhanced parsing returned null');
+        }
+      } catch (enhancedError) {
+        console.warn('Enhanced parsing failed, falling back to legacy parser:', enhancedError);
+        result = await MusicTrackParser.extractMusicTracks(feedUrl);
+      }
+    } else {
+      // Use legacy parser
+      result = await MusicTrackParser.extractMusicTracks(feedUrl);
+    }
     
     // Check if we should resolve V4V tracks
     if (resolveV4V) {
@@ -449,18 +531,24 @@ export async function GET(request: NextRequest) {
       await saveTracksToDatabase(result.tracks, feedUrl);
     }
     
-    // Cache the result
-    setCache(cacheKey, {
+    // Prepare response data with enhanced metadata
+    const responseData = {
       success: true,
-      data: result,
-      message: `Successfully extracted ${result.tracks.length} music tracks and found ${result.relatedFeeds.length} related feeds`
-    });
+      data: {
+        ...result,
+        metadata: {
+          ...result.metadata,
+          parser: useEnhanced ? 'enhanced-rss-parser' : 'legacy-parser',
+          enhanced: useEnhanced
+        }
+      },
+      message: `Successfully extracted ${result.tracks.length} music tracks using ${useEnhanced ? 'enhanced' : 'legacy'} parser and found ${result.relatedFeeds.length} related feeds`
+    };
     
-    return NextResponse.json({
-      success: true,
-      data: result,
-      message: `Successfully extracted ${result.tracks.length} music tracks and found ${result.relatedFeeds.length} related feeds`
-    });
+    // Cache the result
+    setCache(cacheKey, responseData);
+    
+    return NextResponse.json(responseData);
     
   } catch (error) {
     console.error('Music track extraction failed:', error);
