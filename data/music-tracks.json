@@ -31266,63 +31266,6 @@
       "guidGeneratedMethod": "deterministic-hash"
     },
     {
-      "id": "track-599",
-      "feedGuid": "028e9f67-e0fc-558f-b598-25f06179cea3",
-      "itemGuid": "712e550c-3fbc-41e7-8285-ab4f7a3eab3b",
-      "feedUrl": "https://wavlake.com/feed/music/6f724ceb-0688-40d5-a93f-4d0b6ec1c797",
-      "feedTitle": "Be the Wheel",
-      "title": "Nobody Loves You Like Your Mother",
-      "artist": "Theo Katzman",
-      "album": "Be the Wheel",
-      "description": "",
-      "duration": 306,
-      "enclosureUrl": "https://op3.dev/e,pg=028e9f67-e0fc-558f-b598-25f06179cea3/https://d12wklypp119aj.cloudfront.net/track/712e550c-3fbc-41e7-8285-ab4f7a3eab3b.mp3",
-      "enclosureType": "audio/mpeg",
-      "pubDate": "Wed, 27 Nov 2024 07:35:41 GMT",
-      "image": "https://d12wklypp119aj.cloudfront.net/image/6f724ceb-0688-40d5-a93f-4d0b6ec1c797.jpg",
-      "value": {
-        "model": {
-          "type": "lightning",
-          "method": "keysend"
-        },
-        "destinations": [
-          {
-            "name": "Theo Katzman via Wavlake",
-            "type": "node",
-            "address": "02682b7c86f474d082fa9d274c3751291225448468691784c6f112187de975a8c2",
-            "split": 100,
-            "customKey": "16180339",
-            "customValue": "712e550c-3fbc-41e7-8285-ab4f7a3eab3b"
-          },
-          {
-            "name": "Podcastindex.org",
-            "address": "03ae9f91a0cb8ff43840e3c322c4c61f019d8c1c3cea15a25cfc425ac605e61a4a",
-            "type": "node",
-            "fee": true,
-            "split": 1
-          }
-        ]
-      },
-      "resolvedFrom": "complete-album-fetch",
-      "resolvedAt": "2025-08-13T22:18:08.240Z",
-      "addedAt": "2025-08-13T22:18:08.245Z",
-      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/6f724ceb-0688-40d5-a93f-4d0b6ec1c797.jpg",
-      "publisherFeedGuid": "09954f14-c5a7-4680-90f4-0869243b9c26",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/09954f14-c5a7-4680-90f4-0869243b9c26",
-      "index": 597,
-      "audioUrl": "https://op3.dev/e,pg=028e9f67-e0fc-558f-b598-25f06179cea3/https://d12wklypp119aj.cloudfront.net/track/19de5d71-4a1b-4db0-aee1-1de9661b33da.mp3",
-      "imageUrl": "https://d12wklypp119aj.cloudfront.net/image/6f724ceb-0688-40d5-a93f-4d0b6ec1c797.jpg",
-      "publisher": "Theo Katzman",
-      "artwork": "https://d12wklypp119aj.cloudfront.net/image/6f724ceb-0688-40d5-a93f-4d0b6ec1c797.jpg",
-      "feedArtist": "Be the Wheel",
-      "fixedAt": "2025-08-29T00:59:47.305Z",
-      "fixMethod": "enhanced-rss-parsing",
-      "guid": "ff09574e-0c37-5667-97f9-446a93113e9f",
-      "guidGenerated": true,
-      "guidGeneratedAt": "2025-08-29T01:18:54.896Z",
-      "guidGeneratedMethod": "deterministic-hash"
-    },
-    {
       "id": "track-610",
       "feedGuid": "4ab3741a-4a10-5631-a026-a9d0eb62fe11",
       "itemGuid": "709d8ac1-e914-4d68-9740-7b4480adaadc",
@@ -32178,60 +32121,6 @@
       "extractionMethod": "feed-title",
       "extractionPattern": "Album/Feed Title",
       "guid": "7ed81e7a-d7ed-5203-816e-7cc19fd1d7b5",
-      "guidGenerated": true,
-      "guidGeneratedAt": "2025-08-29T01:18:54.896Z",
-      "guidGeneratedMethod": "deterministic-hash"
-    },
-    {
-      "id": "track-621",
-      "feedGuid": "https://wavlake.com/feed/music/5a07b3f1-8249-45a1-b40a-630797dc4941",
-      "itemGuid": "aad6e3b1-6589-4e22-b8ca-521f3d888263",
-      "feedUrl": "https://wavlake.com/feed/music/5a07b3f1-8249-45a1-b40a-630797dc4941",
-      "feedTitle": "Birdfeeder (EP)",
-      "title": "Grey's Birthday",
-      "artist": "Big Awesome",
-      "album": "Birdfeeder (EP)",
-      "duration": 138,
-      "enclosureUrl": "https://op3.dev/e,pg=6fc2ad98-d4a8-5d70-9c68-62e9efc1209c/https://d12wklypp119aj.cloudfront.net/track/aad6e3b1-6589-4e22-b8ca-521f3d888263.mp3",
-      "enclosureType": "audio/mpeg",
-      "pubDate": "Thu, 07 Nov 2024 05:21:17 GMT",
-      "image": "https://d12wklypp119aj.cloudfront.net/image/5a07b3f1-8249-45a1-b40a-630797dc4941.jpg",
-      "value": {
-        "$": {
-          "type": "lightning",
-          "method": "keysend"
-        },
-        "podcast:valueRecipient": {
-          "$": {
-            "name": "Big Awesome via Wavlake",
-            "type": "node",
-            "address": "02682b7c86f474d082fa9d274c3751291225448468691784c6f112187de975a8c2",
-            "customKey": "16180339",
-            "customValue": "aad6e3b1-6589-4e22-b8ca-521f3d888263",
-            "split": "100"
-          }
-        }
-      },
-      "resolvedFrom": "direct-feed-fetch",
-      "resolvedAt": "2025-08-13T21:31:10.955Z",
-      "addedAt": "2025-08-13T21:31:10.956Z",
-      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/5a07b3f1-8249-45a1-b40a-630797dc4941.jpg",
-      "publisherFeedGuid": "93fbacab-bbbb-4de4-863a-8adeb9fc4782",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/93fbacab-bbbb-4de4-863a-8adeb9fc4782",
-      "index": 619,
-      "publisher": "Big Awesome",
-      "artwork": "/stablekraft-rocket.png",
-      "artworkSource": {
-        "method": "main-page-background",
-        "reason": "using site's main background image as placeholder",
-        "originalType": "default",
-        "assignedDate": "2025-08-26T23:26:52.751Z",
-        "note": "Main page background used for consistent branding"
-      },
-      "feedArtist": "Birdfeeder (EP)",
-      "fixedAt": "2025-08-29T00:59:47.343Z",
-      "fixMethod": "enhanced-rss-parsing",
-      "guid": "66cb5248-6956-5eec-8339-18b940230456",
       "guidGenerated": true,
       "guidGeneratedAt": "2025-08-29T01:18:54.896Z",
       "guidGeneratedMethod": "deterministic-hash"
@@ -46716,7 +46605,9 @@
       "guidRestored": true,
       "guidRestoredAt": "2025-08-29T01:21:24.113Z",
       "guidRestoredFrom": "podcast-index-itemGuid",
-      "originalGeneratedGuid": "3c87052a-aabb-5e7e-a17c-d13aebed33bf"
+      "originalGeneratedGuid": "3c87052a-aabb-5e7e-a17c-d13aebed33bf",
+      "feedImage": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg",
+      "image": "https://files.heycitizen.xyz/Songs/Albums/The-Heycitizen-Experience/The-Heycitizen-Experience.jpg"
     },
     {
       "feedGuid": "69daacd1-1e22-574c-a296-601298837db6",
@@ -46779,7 +46670,9 @@
       "guidRestored": true,
       "guidRestoredAt": "2025-08-29T01:21:24.113Z",
       "guidRestoredFrom": "podcast-index-itemGuid",
-      "originalGeneratedGuid": "be0dfa03-3fb8-5cfc-8156-ac31e17dff84"
+      "originalGeneratedGuid": "be0dfa03-3fb8-5cfc-8156-ac31e17dff84",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/ef437ae2-c7f1-449b-84ee-fba14daabd02.jpg",
+      "image": "https://d12wklypp119aj.cloudfront.net/image/ef437ae2-c7f1-449b-84ee-fba14daabd02.jpg"
     },
     {
       "feedGuid": "08604071-83cc-5810-bec2-bea0f0cd0033",
@@ -46839,7 +46732,9 @@
       "guidRestored": true,
       "guidRestoredAt": "2025-08-29T01:21:24.113Z",
       "guidRestoredFrom": "podcast-index-itemGuid",
-      "originalGeneratedGuid": "4ed9f5d0-fc4b-52d0-a17f-df1a3cdf4576"
+      "originalGeneratedGuid": "4ed9f5d0-fc4b-52d0-a17f-df1a3cdf4576",
+      "feedImage": "https://www.doerfelverse.com/art/ben-doerfel-red.png",
+      "image": "https://www.doerfelverse.com/art/ben-doerfel-red.png"
     },
     {
       "feedGuid": "70b4915d-0c0b-5f7a-9980-82831d2a9ba2",
@@ -46898,7 +46793,9 @@
       "guidRestored": true,
       "guidRestoredAt": "2025-08-29T01:21:24.113Z",
       "guidRestoredFrom": "podcast-index-itemGuid",
-      "originalGeneratedGuid": "6b8eb0bb-c193-5d98-8757-e4a8197f62af"
+      "originalGeneratedGuid": "6b8eb0bb-c193-5d98-8757-e4a8197f62af",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/0a131404-899f-4a7d-a2f3-3dbb61622887.jpg",
+      "image": "https://d12wklypp119aj.cloudfront.net/image/0a131404-899f-4a7d-a2f3-3dbb61622887.jpg"
     },
     {
       "feedGuid": "2b62ef49-fcff-523c-b81a-0a7dde2b0609",
@@ -46958,7 +46855,9 @@
       "guidRestored": true,
       "guidRestoredAt": "2025-08-29T01:21:24.113Z",
       "guidRestoredFrom": "podcast-index-itemGuid",
-      "originalGeneratedGuid": "72b66836-7443-5d44-a7bc-7357d9c30999"
+      "originalGeneratedGuid": "72b66836-7443-5d44-a7bc-7357d9c30999",
+      "feedImage": "https://www.doerfelverse.com/art/carol-of-the-bells.png",
+      "image": "https://www.doerfelverse.com/art/carol-of-the-bells.png"
     },
     {
       "feedGuid": "6065ec4d-ff03-5ce6-9cae-2e9fa0d49268",
@@ -47021,7 +46920,9 @@
       "guidRestored": true,
       "guidRestoredAt": "2025-08-29T01:21:24.113Z",
       "guidRestoredFrom": "podcast-index-itemGuid",
-      "originalGeneratedGuid": "77b428f1-c854-5094-a4da-66027c36161e"
+      "originalGeneratedGuid": "77b428f1-c854-5094-a4da-66027c36161e",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/9659ff5c-6599-41b0-98ad-61bc8a3a2b8b.jpg",
+      "image": "https://d12wklypp119aj.cloudfront.net/image/9659ff5c-6599-41b0-98ad-61bc8a3a2b8b.jpg"
     },
     {
       "feedGuid": "537df90e-0cc4-535b-84d0-dcb3ca87f1f8",
@@ -47864,7 +47765,9 @@
       "guidRestored": true,
       "guidRestoredAt": "2025-08-29T01:21:24.113Z",
       "guidRestoredFrom": "podcast-index-itemGuid",
-      "originalGeneratedGuid": "aeea4fd4-1896-5381-a05c-155ece1786e7"
+      "originalGeneratedGuid": "aeea4fd4-1896-5381-a05c-155ece1786e7",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/15788e70-df50-4961-9b53-ef4d09453152.jpg",
+      "image": "https://d12wklypp119aj.cloudfront.net/image/15788e70-df50-4961-9b53-ef4d09453152.jpg"
     },
     {
       "feedGuid": "2c7c9f5f-a6d1-5fdf-8208-185d437fc83d",
@@ -48002,7 +47905,9 @@
       "guid": "799ee3bc-13ac-5b8f-8c1b-6eebc63d09f7",
       "guidGenerated": true,
       "guidGeneratedAt": "2025-08-29T01:18:54.899Z",
-      "guidGeneratedMethod": "deterministic-hash"
+      "guidGeneratedMethod": "deterministic-hash",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/0a131404-899f-4a7d-a2f3-3dbb61622887.jpg",
+      "image": "https://d12wklypp119aj.cloudfront.net/image/0a131404-899f-4a7d-a2f3-3dbb61622887.jpg"
     },
     {
       "id": "remote-70b4915d-0c0b-5f7a-9980-82831d2a9ba2-f70e73",
@@ -48055,7 +47960,9 @@
       "guid": "6d75bc45-6202-5993-9eb0-5ba5bde37297",
       "guidGenerated": true,
       "guidGeneratedAt": "2025-08-29T01:18:54.899Z",
-      "guidGeneratedMethod": "deterministic-hash"
+      "guidGeneratedMethod": "deterministic-hash",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/0a131404-899f-4a7d-a2f3-3dbb61622887.jpg",
+      "image": "https://d12wklypp119aj.cloudfront.net/image/0a131404-899f-4a7d-a2f3-3dbb61622887.jpg"
     },
     {
       "id": "remote-70b4915d-0c0b-5f7a-9980-82831d2a9ba2-b94711",
@@ -48108,7 +48015,9 @@
       "guid": "ad4ea8c1-0372-55a6-83ae-ff06348fb4a2",
       "guidGenerated": true,
       "guidGeneratedAt": "2025-08-29T01:18:54.899Z",
-      "guidGeneratedMethod": "deterministic-hash"
+      "guidGeneratedMethod": "deterministic-hash",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/0a131404-899f-4a7d-a2f3-3dbb61622887.jpg",
+      "image": "https://d12wklypp119aj.cloudfront.net/image/0a131404-899f-4a7d-a2f3-3dbb61622887.jpg"
     },
     {
       "id": "remote-70b4915d-0c0b-5f7a-9980-82831d2a9ba2-08a0bc",
@@ -48161,7 +48070,9 @@
       "guid": "0dbcd892-1598-5f7a-8579-e21c1a6c8a4c",
       "guidGenerated": true,
       "guidGeneratedAt": "2025-08-29T01:18:54.899Z",
-      "guidGeneratedMethod": "deterministic-hash"
+      "guidGeneratedMethod": "deterministic-hash",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/0a131404-899f-4a7d-a2f3-3dbb61622887.jpg",
+      "image": "https://d12wklypp119aj.cloudfront.net/image/0a131404-899f-4a7d-a2f3-3dbb61622887.jpg"
     },
     {
       "id": "remote-65af69db-7dcf-5c95-bf27-7526a6dbce35-6e827f",
@@ -78649,6 +78560,246 @@
       "datePublished": 1756498356,
       "explicit": false,
       "source": "Ultimate Album RSS Refresh"
+    },
+    {
+      "title": "Grey's Birthday",
+      "feedTitle": "Birdfeeder (EP)",
+      "feedArtist": "Big Awesome",
+      "feedUrl": "https://wavlake.com/feed/music/5a07b3f1-8249-45a1-b40a-630797dc4941",
+      "feedGuid": "https://wavlake.com/feed/music/5a07b3f1-8249-45a1-b40a-630797dc4941",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/5a07b3f1-8249-45a1-b40a-630797dc4941.jpg",
+      "guid": "aad6e3b1-6589-4e22-b8ca-521f3d888263",
+      "enclosureUrl": "https://op3.dev/e,pg=6fc2ad98-d4a8-5d70-9c68-62e9efc1209c/https://d12wklypp119aj.cloudfront.net/track/aad6e3b1-6589-4e22-b8ca-521f3d888263.mp3",
+      "duration": 138,
+      "description": "",
+      "image": "https://d12wklypp119aj.cloudfront.net/image/5a07b3f1-8249-45a1-b40a-630797dc4941.jpg",
+      "datePublished": 1756499132,
+      "explicit": false,
+      "source": "Birdfeeder EP RSS Refresh"
+    },
+    {
+      "title": "Birdfeeder",
+      "feedTitle": "Birdfeeder (EP)",
+      "feedArtist": "Big Awesome",
+      "feedUrl": "https://wavlake.com/feed/music/5a07b3f1-8249-45a1-b40a-630797dc4941",
+      "feedGuid": "https://wavlake.com/feed/music/5a07b3f1-8249-45a1-b40a-630797dc4941",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/5a07b3f1-8249-45a1-b40a-630797dc4941.jpg",
+      "guid": "016509b9-44f8-4dbc-af80-c740ddf8ebbf",
+      "enclosureUrl": "https://op3.dev/e,pg=6fc2ad98-d4a8-5d70-9c68-62e9efc1209c/https://d12wklypp119aj.cloudfront.net/track/016509b9-44f8-4dbc-af80-c740ddf8ebbf.mp3",
+      "duration": 152,
+      "description": "",
+      "image": "https://d12wklypp119aj.cloudfront.net/image/5a07b3f1-8249-45a1-b40a-630797dc4941.jpg",
+      "datePublished": 1756499132,
+      "explicit": false,
+      "source": "Birdfeeder EP RSS Refresh"
+    },
+    {
+      "title": "Drawing a Line in the Sand",
+      "feedTitle": "Birdfeeder (EP)",
+      "feedArtist": "Big Awesome",
+      "feedUrl": "https://wavlake.com/feed/music/5a07b3f1-8249-45a1-b40a-630797dc4941",
+      "feedGuid": "https://wavlake.com/feed/music/5a07b3f1-8249-45a1-b40a-630797dc4941",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/5a07b3f1-8249-45a1-b40a-630797dc4941.jpg",
+      "guid": "3c52eba0-d437-423e-bcf9-079edcafbf18",
+      "enclosureUrl": "https://op3.dev/e,pg=6fc2ad98-d4a8-5d70-9c68-62e9efc1209c/https://d12wklypp119aj.cloudfront.net/track/3c52eba0-d437-423e-bcf9-079edcafbf18.mp3",
+      "duration": 184,
+      "description": "",
+      "image": "https://d12wklypp119aj.cloudfront.net/image/5a07b3f1-8249-45a1-b40a-630797dc4941.jpg",
+      "datePublished": 1756499132,
+      "explicit": false,
+      "source": "Birdfeeder EP RSS Refresh"
+    },
+    {
+      "title": "Living With Love",
+      "feedTitle": "Birdfeeder (EP)",
+      "feedArtist": "Big Awesome",
+      "feedUrl": "https://wavlake.com/feed/music/5a07b3f1-8249-45a1-b40a-630797dc4941",
+      "feedGuid": "https://wavlake.com/feed/music/5a07b3f1-8249-45a1-b40a-630797dc4941",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/5a07b3f1-8249-45a1-b40a-630797dc4941.jpg",
+      "guid": "5a840925-6d63-4d4f-acc9-7e59c04eb76c",
+      "enclosureUrl": "https://op3.dev/e,pg=6fc2ad98-d4a8-5d70-9c68-62e9efc1209c/https://d12wklypp119aj.cloudfront.net/track/5a840925-6d63-4d4f-acc9-7e59c04eb76c.mp3",
+      "duration": 148,
+      "description": "",
+      "image": "https://d12wklypp119aj.cloudfront.net/image/5a07b3f1-8249-45a1-b40a-630797dc4941.jpg",
+      "datePublished": 1756499132,
+      "explicit": false,
+      "source": "Birdfeeder EP RSS Refresh"
+    },
+    {
+      "title": "5-Watt Rock",
+      "feedTitle": "Be the Wheel",
+      "feedArtist": "Theo Katzman",
+      "feedUrl": "https://wavlake.com/feed/music/6f724ceb-0688-40d5-a93f-4d0b6ec1c797",
+      "feedGuid": "028e9f67-e0fc-558f-b598-25f06179cea3",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/6f724ceb-0688-40d5-a93f-4d0b6ec1c797.jpg",
+      "guid": "19de5d71-4a1b-4db0-aee1-1de9661b33da",
+      "enclosureUrl": "https://op3.dev/e,pg=028e9f67-e0fc-558f-b598-25f06179cea3/https://d12wklypp119aj.cloudfront.net/track/19de5d71-4a1b-4db0-aee1-1de9661b33da.mp3",
+      "duration": 194,
+      "description": "",
+      "image": "https://d12wklypp119aj.cloudfront.net/image/6f724ceb-0688-40d5-a93f-4d0b6ec1c797.jpg",
+      "datePublished": 1756499194,
+      "explicit": false,
+      "source": "Be the Wheel RSS Refresh"
+    },
+    {
+      "title": "Desperate Times",
+      "feedTitle": "Be the Wheel",
+      "feedArtist": "Theo Katzman",
+      "feedUrl": "https://wavlake.com/feed/music/6f724ceb-0688-40d5-a93f-4d0b6ec1c797",
+      "feedGuid": "028e9f67-e0fc-558f-b598-25f06179cea3",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/6f724ceb-0688-40d5-a93f-4d0b6ec1c797.jpg",
+      "guid": "fa29ae8b-d924-4bdd-99ee-ed2caf7bc1ee",
+      "enclosureUrl": "https://op3.dev/e,pg=028e9f67-e0fc-558f-b598-25f06179cea3/https://d12wklypp119aj.cloudfront.net/track/fa29ae8b-d924-4bdd-99ee-ed2caf7bc1ee.mp3",
+      "duration": 274,
+      "description": "",
+      "image": "https://d12wklypp119aj.cloudfront.net/image/6f724ceb-0688-40d5-a93f-4d0b6ec1c797.jpg",
+      "datePublished": 1756499194,
+      "explicit": false,
+      "source": "Be the Wheel RSS Refresh"
+    },
+    {
+      "title": "Nobody Loves You Like Your Mother",
+      "feedTitle": "Be the Wheel",
+      "feedArtist": "Theo Katzman",
+      "feedUrl": "https://wavlake.com/feed/music/6f724ceb-0688-40d5-a93f-4d0b6ec1c797",
+      "feedGuid": "028e9f67-e0fc-558f-b598-25f06179cea3",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/6f724ceb-0688-40d5-a93f-4d0b6ec1c797.jpg",
+      "guid": "712e550c-3fbc-41e7-8285-ab4f7a3eab3b",
+      "enclosureUrl": "https://op3.dev/e,pg=028e9f67-e0fc-558f-b598-25f06179cea3/https://d12wklypp119aj.cloudfront.net/track/712e550c-3fbc-41e7-8285-ab4f7a3eab3b.mp3",
+      "duration": 306,
+      "description": "",
+      "image": "https://d12wklypp119aj.cloudfront.net/image/6f724ceb-0688-40d5-a93f-4d0b6ec1c797.jpg",
+      "datePublished": 1756499194,
+      "explicit": false,
+      "source": "Be the Wheel RSS Refresh"
+    },
+    {
+      "title": "Be the Wheel",
+      "feedTitle": "Be the Wheel",
+      "feedArtist": "Theo Katzman",
+      "feedUrl": "https://wavlake.com/feed/music/6f724ceb-0688-40d5-a93f-4d0b6ec1c797",
+      "feedGuid": "028e9f67-e0fc-558f-b598-25f06179cea3",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/6f724ceb-0688-40d5-a93f-4d0b6ec1c797.jpg",
+      "guid": "aa84108f-3222-4215-ae82-f39f6afc8742",
+      "enclosureUrl": "https://op3.dev/e,pg=028e9f67-e0fc-558f-b598-25f06179cea3/https://d12wklypp119aj.cloudfront.net/track/aa84108f-3222-4215-ae82-f39f6afc8742.mp3",
+      "duration": 227,
+      "description": "",
+      "image": "https://d12wklypp119aj.cloudfront.net/image/6f724ceb-0688-40d5-a93f-4d0b6ec1c797.jpg",
+      "datePublished": 1756499194,
+      "explicit": false,
+      "source": "Be the Wheel RSS Refresh"
+    },
+    {
+      "title": "Hit the Target",
+      "feedTitle": "Be the Wheel",
+      "feedArtist": "Theo Katzman",
+      "feedUrl": "https://wavlake.com/feed/music/6f724ceb-0688-40d5-a93f-4d0b6ec1c797",
+      "feedGuid": "028e9f67-e0fc-558f-b598-25f06179cea3",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/6f724ceb-0688-40d5-a93f-4d0b6ec1c797.jpg",
+      "guid": "043cc65f-2846-4853-a59f-2140362d0421",
+      "enclosureUrl": "https://op3.dev/e,pg=028e9f67-e0fc-558f-b598-25f06179cea3/https://d12wklypp119aj.cloudfront.net/track/043cc65f-2846-4853-a59f-2140362d0421.mp3",
+      "duration": 167,
+      "description": "",
+      "image": "https://d12wklypp119aj.cloudfront.net/image/6f724ceb-0688-40d5-a93f-4d0b6ec1c797.jpg",
+      "datePublished": 1756499194,
+      "explicit": false,
+      "source": "Be the Wheel RSS Refresh"
+    },
+    {
+      "title": "The Only Chance We Have",
+      "feedTitle": "Be the Wheel",
+      "feedArtist": "Theo Katzman",
+      "feedUrl": "https://wavlake.com/feed/music/6f724ceb-0688-40d5-a93f-4d0b6ec1c797",
+      "feedGuid": "028e9f67-e0fc-558f-b598-25f06179cea3",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/6f724ceb-0688-40d5-a93f-4d0b6ec1c797.jpg",
+      "guid": "11c5f1f7-af64-4d95-b04a-350f16eb992e",
+      "enclosureUrl": "https://op3.dev/e,pg=028e9f67-e0fc-558f-b598-25f06179cea3/https://d12wklypp119aj.cloudfront.net/track/11c5f1f7-af64-4d95-b04a-350f16eb992e.mp3",
+      "duration": 222,
+      "description": "",
+      "image": "https://d12wklypp119aj.cloudfront.net/image/6f724ceb-0688-40d5-a93f-4d0b6ec1c797.jpg",
+      "datePublished": 1756499194,
+      "explicit": false,
+      "source": "Be the Wheel RSS Refresh"
+    },
+    {
+      "title": "You Gotta Go Through Me",
+      "feedTitle": "Be the Wheel",
+      "feedArtist": "Theo Katzman",
+      "feedUrl": "https://wavlake.com/feed/music/6f724ceb-0688-40d5-a93f-4d0b6ec1c797",
+      "feedGuid": "028e9f67-e0fc-558f-b598-25f06179cea3",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/6f724ceb-0688-40d5-a93f-4d0b6ec1c797.jpg",
+      "guid": "48c5a1a8-1d19-4d0b-b13f-90e20c46c845",
+      "enclosureUrl": "https://op3.dev/e,pg=028e9f67-e0fc-558f-b598-25f06179cea3/https://d12wklypp119aj.cloudfront.net/track/48c5a1a8-1d19-4d0b-b13f-90e20c46c845.mp3",
+      "duration": 297,
+      "description": "",
+      "image": "https://d12wklypp119aj.cloudfront.net/image/6f724ceb-0688-40d5-a93f-4d0b6ec1c797.jpg",
+      "datePublished": 1756499194,
+      "explicit": false,
+      "source": "Be the Wheel RSS Refresh"
+    },
+    {
+      "title": "She's In My Shoe",
+      "feedTitle": "Be the Wheel",
+      "feedArtist": "Theo Katzman",
+      "feedUrl": "https://wavlake.com/feed/music/6f724ceb-0688-40d5-a93f-4d0b6ec1c797",
+      "feedGuid": "028e9f67-e0fc-558f-b598-25f06179cea3",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/6f724ceb-0688-40d5-a93f-4d0b6ec1c797.jpg",
+      "guid": "ad5f10c0-c904-42f8-b9b8-1150cd5c2fca",
+      "enclosureUrl": "https://op3.dev/e,pg=028e9f67-e0fc-558f-b598-25f06179cea3/https://d12wklypp119aj.cloudfront.net/track/ad5f10c0-c904-42f8-b9b8-1150cd5c2fca.mp3",
+      "duration": 256,
+      "description": "",
+      "image": "https://d12wklypp119aj.cloudfront.net/image/6f724ceb-0688-40d5-a93f-4d0b6ec1c797.jpg",
+      "datePublished": 1756499194,
+      "explicit": false,
+      "source": "Be the Wheel RSS Refresh"
+    },
+    {
+      "title": "Smiling In Your Sleep",
+      "feedTitle": "Be the Wheel",
+      "feedArtist": "Theo Katzman",
+      "feedUrl": "https://wavlake.com/feed/music/6f724ceb-0688-40d5-a93f-4d0b6ec1c797",
+      "feedGuid": "028e9f67-e0fc-558f-b598-25f06179cea3",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/6f724ceb-0688-40d5-a93f-4d0b6ec1c797.jpg",
+      "guid": "c1218d4c-51c6-4d12-8fa5-aa99d0131bf4",
+      "enclosureUrl": "https://op3.dev/e,pg=028e9f67-e0fc-558f-b598-25f06179cea3/https://d12wklypp119aj.cloudfront.net/track/c1218d4c-51c6-4d12-8fa5-aa99d0131bf4.mp3",
+      "duration": 324,
+      "description": "",
+      "image": "https://d12wklypp119aj.cloudfront.net/image/6f724ceb-0688-40d5-a93f-4d0b6ec1c797.jpg",
+      "datePublished": 1756499194,
+      "explicit": false,
+      "source": "Be the Wheel RSS Refresh"
+    },
+    {
+      "title": "That's the Life",
+      "feedTitle": "Be the Wheel",
+      "feedArtist": "Theo Katzman",
+      "feedUrl": "https://wavlake.com/feed/music/6f724ceb-0688-40d5-a93f-4d0b6ec1c797",
+      "feedGuid": "028e9f67-e0fc-558f-b598-25f06179cea3",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/6f724ceb-0688-40d5-a93f-4d0b6ec1c797.jpg",
+      "guid": "f6ee3774-c452-4e25-b8f4-c8330ff00f43",
+      "enclosureUrl": "https://op3.dev/e,pg=028e9f67-e0fc-558f-b598-25f06179cea3/https://d12wklypp119aj.cloudfront.net/track/f6ee3774-c452-4e25-b8f4-c8330ff00f43.mp3",
+      "duration": 219,
+      "description": "",
+      "image": "https://d12wklypp119aj.cloudfront.net/image/6f724ceb-0688-40d5-a93f-4d0b6ec1c797.jpg",
+      "datePublished": 1756499194,
+      "explicit": false,
+      "source": "Be the Wheel RSS Refresh"
+    },
+    {
+      "title": "Corn Does Grow",
+      "feedTitle": "Be the Wheel",
+      "feedArtist": "Theo Katzman",
+      "feedUrl": "https://wavlake.com/feed/music/6f724ceb-0688-40d5-a93f-4d0b6ec1c797",
+      "feedGuid": "028e9f67-e0fc-558f-b598-25f06179cea3",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/6f724ceb-0688-40d5-a93f-4d0b6ec1c797.jpg",
+      "guid": "55fef4ea-d3d6-4b58-98e8-444d5fb9a068",
+      "enclosureUrl": "https://op3.dev/e,pg=028e9f67-e0fc-558f-b598-25f06179cea3/https://d12wklypp119aj.cloudfront.net/track/55fef4ea-d3d6-4b58-98e8-444d5fb9a068.mp3",
+      "duration": 225,
+      "description": "",
+      "image": "https://d12wklypp119aj.cloudfront.net/image/6f724ceb-0688-40d5-a93f-4d0b6ec1c797.jpg",
+      "datePublished": 1756499194,
+      "explicit": false,
+      "source": "Be the Wheel RSS Refresh"
     }
   ],
   "episodes": [],
@@ -78661,7 +78812,7 @@
   "analytics": [],
   "metadata": {
     "version": "1.0.0",
-    "lastUpdated": "2025-08-29T20:17:44.626Z",
+    "lastUpdated": "2025-08-29T20:26:34.295Z",
     "totalTracks": 1261,
     "totalEpisodes": 0,
     "totalFeeds": 0,
@@ -78891,6 +79042,26 @@
       "tracksUpdated": 12,
       "feedsProcessed": 3,
       "note": "Fixed missing artwork for albums showing placeholders"
+    },
+    "comprehensiveArtworkFix": {
+      "date": "2025-08-29T20:24:29.824Z",
+      "tracksUpdated": 11,
+      "albumsProcessed": 3,
+      "note": "Comprehensive fix for placeholder artwork issues"
+    },
+    "birdfeederEPRefresh": {
+      "date": "2025-08-29T20:25:32.055Z",
+      "feedUrl": "https://wavlake.com/feed/music/5a07b3f1-8249-45a1-b40a-630797dc4941",
+      "removedTracks": 1,
+      "addedTracks": 4,
+      "note": "Refreshed Birdfeeder EP with current RSS feed data"
+    },
+    "beTheWheelRefresh": {
+      "date": "2025-08-29T20:26:34.296Z",
+      "feedUrl": "https://wavlake.com/feed/music/6f724ceb-0688-40d5-a93f-4d0b6ec1c797",
+      "removedTracks": 1,
+      "addedTracks": 11,
+      "note": "Refreshed Be the Wheel album with current RSS feed data"
     }
   }
 }
