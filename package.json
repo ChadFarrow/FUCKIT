@@ -29,7 +29,9 @@
     "check-artwork": "node scripts/check-all-artwork-comprehensive.js",
     "fix-artwork": "node scripts/fix-all-album-artwork.js",
     "check-albums": "./scripts/check-album-issues.sh",
-    "test-rss-parser": "node scripts/test-rss-parser.js"
+    "test-rss-parser": "node scripts/test-rss-parser.js",
+    "reparse-database": "node scripts/reparse-main-branch-database.js",
+    "reparse-database-robust": "node scripts/reparse-database-robust.js"
   },
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",
