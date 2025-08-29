@@ -1,189 +1,6 @@
 {
   "musicTracks": [
     {
-      "title": "Don't Worry, You Still Have Time To Ruin It - Demo",
-      "subtitle": "",
-      "summary": "",
-      "itemGuid": {
-        "_": "f049d460-6c57-47f9-8ddf-32a32f0011d9",
-        "isPermaLink": "false"
-      },
-      "feedGuid": "d3145292-bf71-415f-a841-7f5c9a9466e1",
-      "feedUrl": "https://wavlake.com/feed/music/d3145292-bf71-415f-a841-7f5c9a9466e1",
-      "feedTitle": "Don't Worry, You Still Have Time To Ruin It - Demo",
-      "feedDescription": "I dunno man... Was just trying something different and this came out.  Gotta say I really like it.",
-      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/d3145292-bf71-415f-a841-7f5c9a9466e1.jpg",
-      "feedArtist": "Don't Worry, You Still Have Time To Ruin It - Demo",
-      "published": "Thu, 19 Sep 2024 20:19:01 GMT",
-      "duration": 189,
-      "explicit": false,
-      "keywords": [],
-      "categories": [
-        {
-          "text": "Pop",
-          "category": {
-            "text": "Indie Pop"
-          }
-        }
-      ],
-      "enclosureUrl": "https://op3.dev/e,pg=2474622f-b28e-5cad-82d8-ab785da84486/https://d12wklypp119aj.cloudfront.net/track/f049d460-6c57-47f9-8ddf-32a32f0011d9.mp3",
-      "enclosureType": "audio/mpeg",
-      "enclosureLength": "4627367",
-      "image": "https://d12wklypp119aj.cloudfront.net/image/d3145292-bf71-415f-a841-7f5c9a9466e1.jpg",
-      "trackNumber": 1,
-      "albumTitle": "Don't Worry, You Still Have Time To Ruin It - Demo",
-      "artist": "Nate Johnivan",
-      "isMusic": true,
-      "id": "track-1",
-      "addedAt": "2025-08-22T15:00:11.866Z",
-      "publisherFeedGuid": "aa909244-7555-4b52-ad88-7233860c6fb4",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/aa909244-7555-4b52-ad88-7233860c6fb4",
-      "album": "Don't Worry, You Still Have Time To Ruin It - Demo",
-      "index": 0,
-      "publisher": "Nate Johnivan",
-      "sourceType": "remote-item",
-      "guidFormat": "wavlake-uuid-v4",
-      "resolutionStatus": "resolved",
-      "addedDate": "2025-08-23T03:11:54.178Z",
-      "lastModified": "2025-08-23T03:04:25.239Z",
-      "modificationHistory": [
-        {
-          "date": "2025-08-23T02:35:17.921Z",
-          "action": "enhanced-metadata",
-          "description": "Added comprehensive placeholder data and tracking information"
-        },
-        {
-          "date": "2025-08-23T03:04:25.239Z",
-          "action": "metadata-resolved",
-          "description": "Resolved from Wavlake RSS feed: https://wavlake.com/feed/music/d3145292-bf71-415f-a841-7f5c9a9466e1",
-          "source": "wavlake-rss-parallel",
-          "metadata": {
-            "title": null,
-            "artist": "Nate Johnivan",
-            "album": null,
-            "duration": "00:03:09",
-            "artworkUrl": "https://d12wklypp119aj.cloudfront.net/image/d3145292-bf71-415f-a841-7f5c9a9466e1.jpg",
-            "audioUrl": "https://op3.dev/e,pg=2474622f-b28e-5cad-82d8-ab785da84486/https://d12wklypp119aj.cloudfront.net/track/f049d460-6c57-47f9-8ddf-32a32f0011d9.mp3"
-          }
-        }
-      ],
-      "resolutionNotes": [
-        "Track needs metadata resolution from Wavlake RSS feeds",
-        "GUID format: Wavlake-specific UUID v4 (not Podcast Index compatible)",
-        "Future resolution: Parse Wavlake RSS feeds for title, artist, duration, artwork"
-      ],
-      "fullyEnhanced": true,
-      "artworkUrl": "https://d12wklypp119aj.cloudfront.net/image/d3145292-bf71-415f-a841-7f5c9a9466e1.jpg",
-      "audioUrl": "https://op3.dev/e,pg=2474622f-b28e-5cad-82d8-ab785da84486/https://d12wklypp119aj.cloudfront.net/track/f049d460-6c57-47f9-8ddf-32a32f0011d9.mp3",
-      "datePublished": "2025-08-23T03:11:54.178Z",
-      "pubDate": "2025-08-23T03:11:54.178Z",
-      "artwork": "/stablekraft-rocket.png",
-      "artworkSource": {
-        "method": "main-page-background",
-        "reason": "using site's main background image as placeholder",
-        "originalType": "default",
-        "assignedDate": "2025-08-26T23:26:52.749Z",
-        "note": "Main page background used for consistent branding"
-      },
-      "fixedAt": "2025-08-29T00:57:11.175Z",
-      "fixMethod": "enhanced-rss-parsing",
-      "guid": "667c75c5-389a-5910-90fb-39abe76570b6",
-      "guidGenerated": true,
-      "guidGeneratedAt": "2025-08-29T01:18:54.894Z",
-      "guidGeneratedMethod": "deterministic-hash"
-    },
-    {
-      "title": "Bold",
-      "subtitle": "",
-      "summary": "",
-      "itemGuid": {
-        "_": "f6057edc-cb16-462c-af78-0852e62a3c7f",
-        "isPermaLink": "false"
-      },
-      "feedGuid": "b337bd2b-46c5-4bd0-a57f-f93bca81ebea",
-      "feedUrl": "https://wavlake.com/feed/music/b337bd2b-46c5-4bd0-a57f-f93bca81ebea",
-      "feedTitle": "Take The Lead",
-      "feedDescription": "Release date: 11/5/2021",
-      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/b337bd2b-46c5-4bd0-a57f-f93bca81ebea.jpg",
-      "feedArtist": "Take The Lead",
-      "published": "Wed, 23 Aug 2023 18:18:04 GMT",
-      "duration": 234,
-      "explicit": false,
-      "keywords": [],
-      "categories": [
-        {
-          "text": "Country",
-          "category": {
-            "text": "Americana"
-          }
-        }
-      ],
-      "enclosureUrl": "https://op3.dev/e,pg=7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93/https://d12wklypp119aj.cloudfront.net/track/f6057edc-cb16-462c-af78-0852e62a3c7f.mp3",
-      "enclosureType": "audio/mpeg",
-      "enclosureLength": "3744077",
-      "image": "https://d12wklypp119aj.cloudfront.net/image/b337bd2b-46c5-4bd0-a57f-f93bca81ebea.jpg",
-      "trackNumber": 1,
-      "albumTitle": "Take The Lead",
-      "artist": "Jessica Lynne Witty",
-      "isMusic": true,
-      "id": "track-2",
-      "addedAt": "2025-08-22T15:00:11.866Z",
-      "album": "Take The Lead",
-      "index": 1,
-      "audioUrl": "https://op3.dev/e,pg=7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93/https://d12wklypp119aj.cloudfront.net/track/f6057edc-cb16-462c-af78-0852e62a3c7f.mp3",
-      "imageUrl": "https://d12wklypp119aj.cloudfront.net/image/b337bd2b-46c5-4bd0-a57f-f93bca81ebea.jpg",
-      "publisher": "Jessica Lynne Witty",
-      "sourceType": "remote-item",
-      "guidFormat": "wavlake-uuid-v4",
-      "resolutionStatus": "resolved",
-      "addedDate": "2025-08-23T03:11:54.178Z",
-      "lastModified": "2025-08-23T03:04:25.304Z",
-      "modificationHistory": [
-        {
-          "date": "2025-08-23T02:35:17.921Z",
-          "action": "enhanced-metadata",
-          "description": "Added comprehensive placeholder data and tracking information"
-        },
-        {
-          "date": "2025-08-23T03:04:25.304Z",
-          "action": "metadata-resolved",
-          "description": "Resolved from Wavlake RSS feed: https://wavlake.com/feed/music/b337bd2b-46c5-4bd0-a57f-f93bca81ebea",
-          "source": "wavlake-rss-parallel",
-          "metadata": {
-            "title": null,
-            "artist": "Jessica Lynne Witty",
-            "album": null,
-            "duration": "00:03:54",
-            "artworkUrl": "https://d12wklypp119aj.cloudfront.net/image/b337bd2b-46c5-4bd0-a57f-f93bca81ebea.jpg",
-            "audioUrl": "https://op3.dev/e,pg=7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93/https://d12wklypp119aj.cloudfront.net/track/f6057edc-cb16-462c-af78-0852e62a3c7f.mp3"
-          }
-        }
-      ],
-      "resolutionNotes": [
-        "Track needs metadata resolution from Wavlake RSS feeds",
-        "GUID format: Wavlake-specific UUID v4 (not Podcast Index compatible)",
-        "Future resolution: Parse Wavlake RSS feeds for title, artist, duration, artwork"
-      ],
-      "fullyEnhanced": true,
-      "artworkUrl": "https://d12wklypp119aj.cloudfront.net/image/b337bd2b-46c5-4bd0-a57f-f93bca81ebea.jpg",
-      "datePublished": "2025-08-23T03:11:54.178Z",
-      "pubDate": "2025-08-23T03:11:54.178Z",
-      "artwork": "/stablekraft-rocket.png",
-      "artworkSource": {
-        "method": "main-page-background",
-        "reason": "using site's main background image as placeholder",
-        "originalType": "default",
-        "assignedDate": "2025-08-26T23:26:52.750Z",
-        "note": "Main page background used for consistent branding"
-      },
-      "fixedAt": "2025-08-29T00:57:11.173Z",
-      "fixMethod": "enhanced-rss-parsing",
-      "guid": "96afc256-5dd3-51c3-9fdf-f4870e74dc26",
-      "guidGenerated": true,
-      "guidGeneratedAt": "2025-08-29T01:18:54.894Z",
-      "guidGeneratedMethod": "deterministic-hash"
-    },
-    {
       "title": "Headed South",
       "subtitle": "",
       "summary": "",
@@ -630,734 +447,6 @@
       "guid": "b1794f34-98a0-5d5f-99c7-e6a4bfb6baa5",
       "guidGenerated": true,
       "guidGeneratedAt": "2025-08-29T01:18:54.894Z",
-      "guidGeneratedMethod": "deterministic-hash"
-    },
-    {
-      "title": "Singin' Country",
-      "subtitle": "",
-      "summary": "",
-      "itemGuid": {
-        "_": "1dd8845e-5b5f-4c0f-a9a3-eb1cfdb76bd2",
-        "isPermaLink": "false"
-      },
-      "feedGuid": "286ed5e4-381a-4a6c-abb8-926df3149afe",
-      "feedUrl": "https://wavlake.com/feed/music/286ed5e4-381a-4a6c-abb8-926df3149afe",
-      "feedTitle": "Singin' Country",
-      "feedDescription": "Written by Jessica Lynne Witty. Release date: 4/16/2011",
-      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/286ed5e4-381a-4a6c-abb8-926df3149afe.jpg",
-      "feedArtist": "Singin' Country",
-      "published": "Thu, 31 Aug 2023 18:41:57 GMT",
-      "duration": 171,
-      "explicit": false,
-      "keywords": [],
-      "categories": [
-        {
-          "text": "Country",
-          "category": {
-            "text": "Americana"
-          }
-        }
-      ],
-      "enclosureUrl": "https://op3.dev/e,pg=3708cde4-e4bd-513a-ad59-92f5c4fb8db2/https://d12wklypp119aj.cloudfront.net/track/1dd8845e-5b5f-4c0f-a9a3-eb1cfdb76bd2.mp3",
-      "enclosureType": "audio/mpeg",
-      "enclosureLength": "2745154",
-      "image": "https://d12wklypp119aj.cloudfront.net/image/286ed5e4-381a-4a6c-abb8-926df3149afe.jpg",
-      "trackNumber": 1,
-      "albumTitle": "Singin' Country",
-      "artist": "Jessica Lynne Witty",
-      "isMusic": true,
-      "id": "track-28",
-      "addedAt": "2025-08-22T15:00:11.866Z",
-      "album": "Singin' Country",
-      "publisher": "Jessica Lynne Witty",
-      "sourceType": "remote-item",
-      "guidFormat": "wavlake-uuid-v4",
-      "resolutionStatus": "resolved",
-      "addedDate": "2025-08-23T03:11:54.178Z",
-      "lastModified": "2025-08-23T03:04:25.239Z",
-      "modificationHistory": [
-        {
-          "date": "2025-08-23T02:35:17.921Z",
-          "action": "enhanced-metadata",
-          "description": "Added comprehensive placeholder data and tracking information"
-        },
-        {
-          "date": "2025-08-23T03:04:25.239Z",
-          "action": "metadata-resolved",
-          "description": "Resolved from Wavlake RSS feed: https://wavlake.com/feed/music/286ed5e4-381a-4a6c-abb8-926df3149afe",
-          "source": "wavlake-rss-parallel",
-          "metadata": {
-            "title": null,
-            "artist": "Jessica Lynne Witty",
-            "album": null,
-            "duration": "00:02:51",
-            "artworkUrl": "https://d12wklypp119aj.cloudfront.net/image/286ed5e4-381a-4a6c-abb8-926df3149afe.jpg",
-            "audioUrl": "https://op3.dev/e,pg=3708cde4-e4bd-513a-ad59-92f5c4fb8db2/https://d12wklypp119aj.cloudfront.net/track/1dd8845e-5b5f-4c0f-a9a3-eb1cfdb76bd2.mp3"
-          }
-        }
-      ],
-      "resolutionNotes": [
-        "Track needs metadata resolution from Wavlake RSS feeds",
-        "GUID format: Wavlake-specific UUID v4 (not Podcast Index compatible)",
-        "Future resolution: Parse Wavlake RSS feeds for title, artist, duration, artwork"
-      ],
-      "fullyEnhanced": true,
-      "artworkUrl": "https://d12wklypp119aj.cloudfront.net/image/286ed5e4-381a-4a6c-abb8-926df3149afe.jpg",
-      "audioUrl": "https://op3.dev/e,pg=3708cde4-e4bd-513a-ad59-92f5c4fb8db2/https://d12wklypp119aj.cloudfront.net/track/1dd8845e-5b5f-4c0f-a9a3-eb1cfdb76bd2.mp3",
-      "datePublished": "2025-08-23T03:11:54.178Z",
-      "pubDate": "2025-08-23T03:11:54.178Z",
-      "artwork": "/stablekraft-rocket.png",
-      "artworkSource": {
-        "method": "main-page-background",
-        "reason": "using site's main background image as placeholder",
-        "originalType": "country",
-        "assignedDate": "2025-08-26T23:26:52.751Z",
-        "note": "Main page background used for consistent branding"
-      },
-      "fixedAt": "2025-08-29T00:57:11.259Z",
-      "fixMethod": "enhanced-rss-parsing",
-      "guid": "35cc3671-e9ec-5e3c-bcb0-4dda22cf677a",
-      "guidGenerated": true,
-      "guidGeneratedAt": "2025-08-29T01:18:54.894Z",
-      "guidGeneratedMethod": "deterministic-hash"
-    },
-    {
-      "title": "Fallen Angels Don't Fly",
-      "subtitle": "",
-      "summary": "",
-      "itemGuid": {
-        "_": "15f84142-458e-42ae-a944-dd30d8314869",
-        "isPermaLink": "false"
-      },
-      "feedGuid": "2c37e787-e3c6-46d3-b3c1-7a0eea63f3e1",
-      "feedUrl": "https://wavlake.com/feed/music/2c37e787-e3c6-46d3-b3c1-7a0eea63f3e1",
-      "feedTitle": "Fallen Angels Don't Fly",
-      "feedDescription": "Written by Jessica Lynne Witty. Release date: 11/19/2011",
-      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/2c37e787-e3c6-46d3-b3c1-7a0eea63f3e1.jpg",
-      "feedArtist": "Fallen Angels Don't Fly",
-      "published": "Thu, 31 Aug 2023 18:53:41 GMT",
-      "duration": 267,
-      "explicit": false,
-      "keywords": [],
-      "categories": [
-        {
-          "text": "Country",
-          "category": {
-            "text": "Contemporary Country"
-          }
-        }
-      ],
-      "enclosureUrl": "https://op3.dev/e,pg=4519aebd-5563-5ce4-9abe-7caded56eed0/https://d12wklypp119aj.cloudfront.net/track/15f84142-458e-42ae-a944-dd30d8314869.mp3",
-      "enclosureType": "audio/mpeg",
-      "enclosureLength": "4279901",
-      "image": "https://d12wklypp119aj.cloudfront.net/image/2c37e787-e3c6-46d3-b3c1-7a0eea63f3e1.jpg",
-      "trackNumber": 1,
-      "albumTitle": "Fallen Angels Don't Fly",
-      "artist": "Jessica Lynne Witty",
-      "isMusic": true,
-      "id": "track-29",
-      "addedAt": "2025-08-22T15:00:11.866Z",
-      "album": "Fallen Angels Don't Fly",
-      "publisher": "Jessica Lynne Witty",
-      "sourceType": "remote-item",
-      "guidFormat": "wavlake-uuid-v4",
-      "resolutionStatus": "resolved",
-      "addedDate": "2025-08-23T03:11:54.178Z",
-      "lastModified": "2025-08-23T03:04:25.261Z",
-      "modificationHistory": [
-        {
-          "date": "2025-08-23T02:35:17.921Z",
-          "action": "enhanced-metadata",
-          "description": "Added comprehensive placeholder data and tracking information"
-        },
-        {
-          "date": "2025-08-23T03:04:25.261Z",
-          "action": "metadata-resolved",
-          "description": "Resolved from Wavlake RSS feed: https://wavlake.com/feed/music/2c37e787-e3c6-46d3-b3c1-7a0eea63f3e1",
-          "source": "wavlake-rss-parallel",
-          "metadata": {
-            "title": null,
-            "artist": "Jessica Lynne Witty",
-            "album": null,
-            "duration": "00:04:27",
-            "artworkUrl": "https://d12wklypp119aj.cloudfront.net/image/2c37e787-e3c6-46d3-b3c1-7a0eea63f3e1.jpg",
-            "audioUrl": "https://op3.dev/e,pg=4519aebd-5563-5ce4-9abe-7caded56eed0/https://d12wklypp119aj.cloudfront.net/track/15f84142-458e-42ae-a944-dd30d8314869.mp3"
-          }
-        }
-      ],
-      "resolutionNotes": [
-        "Track needs metadata resolution from Wavlake RSS feeds",
-        "GUID format: Wavlake-specific UUID v4 (not Podcast Index compatible)",
-        "Future resolution: Parse Wavlake RSS feeds for title, artist, duration, artwork"
-      ],
-      "fullyEnhanced": true,
-      "artworkUrl": "https://d12wklypp119aj.cloudfront.net/image/2c37e787-e3c6-46d3-b3c1-7a0eea63f3e1.jpg",
-      "audioUrl": "https://op3.dev/e,pg=4519aebd-5563-5ce4-9abe-7caded56eed0/https://d12wklypp119aj.cloudfront.net/track/15f84142-458e-42ae-a944-dd30d8314869.mp3",
-      "datePublished": "2025-08-23T03:11:54.178Z",
-      "pubDate": "2025-08-23T03:11:54.178Z",
-      "artwork": "/stablekraft-rocket.png",
-      "artworkSource": {
-        "method": "main-page-background",
-        "reason": "using site's main background image as placeholder",
-        "originalType": "default",
-        "assignedDate": "2025-08-26T23:26:52.751Z",
-        "note": "Main page background used for consistent branding"
-      },
-      "fixedAt": "2025-08-29T00:57:11.345Z",
-      "fixMethod": "enhanced-rss-parsing",
-      "guid": "e7a416d0-5807-57fc-a7de-b1c114e90c1d",
-      "guidGenerated": true,
-      "guidGeneratedAt": "2025-08-29T01:18:54.894Z",
-      "guidGeneratedMethod": "deterministic-hash"
-    },
-    {
-      "title": "My My My",
-      "subtitle": "",
-      "summary": "",
-      "itemGuid": {
-        "_": "08352fbb-a781-4dfb-910c-47753ec1c324",
-        "isPermaLink": "false"
-      },
-      "feedGuid": "ad40401b-def9-4c89-b2e5-f47b67254d65",
-      "feedUrl": "https://wavlake.com/feed/music/ad40401b-def9-4c89-b2e5-f47b67254d65",
-      "feedTitle": "My My My",
-      "feedDescription": "Written by Jessica Lynne Witty. \r\nRelease date: 7/17/2015",
-      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/ad40401b-def9-4c89-b2e5-f47b67254d65.jpg",
-      "feedArtist": "My My My",
-      "published": "Wed, 23 Aug 2023 18:38:53 GMT",
-      "duration": 250,
-      "explicit": false,
-      "keywords": [],
-      "categories": [
-        {
-          "text": "Country",
-          "category": {
-            "text": "Contemporary Country"
-          }
-        }
-      ],
-      "enclosureUrl": "https://op3.dev/e,pg=f41ddac5-15ce-5ff4-bc1e-3a16d98731a1/https://d12wklypp119aj.cloudfront.net/track/08352fbb-a781-4dfb-910c-47753ec1c324.mp3",
-      "enclosureType": "audio/mpeg",
-      "enclosureLength": "4002376",
-      "image": "https://d12wklypp119aj.cloudfront.net/image/ad40401b-def9-4c89-b2e5-f47b67254d65.jpg",
-      "trackNumber": 1,
-      "albumTitle": "My My My",
-      "artist": "Jessica Lynne Witty",
-      "isMusic": true,
-      "id": "track-30",
-      "addedAt": "2025-08-22T15:00:11.866Z",
-      "album": "My My My",
-      "audioUrl": "https://op3.dev/e,pg=f41ddac5-15ce-5ff4-bc1e-3a16d98731a1/https://d12wklypp119aj.cloudfront.net/track/08352fbb-a781-4dfb-910c-47753ec1c324.mp3",
-      "imageUrl": "https://d12wklypp119aj.cloudfront.net/image/ad40401b-def9-4c89-b2e5-f47b67254d65.jpg",
-      "publisher": "Jessica Lynne Witty",
-      "sourceType": "remote-item",
-      "guidFormat": "wavlake-uuid-v4",
-      "resolutionStatus": "resolved",
-      "addedDate": "2025-08-23T03:11:54.178Z",
-      "lastModified": "2025-08-23T03:04:25.239Z",
-      "modificationHistory": [
-        {
-          "date": "2025-08-23T02:35:17.921Z",
-          "action": "enhanced-metadata",
-          "description": "Added comprehensive placeholder data and tracking information"
-        },
-        {
-          "date": "2025-08-23T03:04:25.239Z",
-          "action": "metadata-resolved",
-          "description": "Resolved from Wavlake RSS feed: https://wavlake.com/feed/music/ad40401b-def9-4c89-b2e5-f47b67254d65",
-          "source": "wavlake-rss-parallel",
-          "metadata": {
-            "title": null,
-            "artist": "Jessica Lynne Witty",
-            "album": null,
-            "duration": "00:04:10",
-            "artworkUrl": "https://d12wklypp119aj.cloudfront.net/image/ad40401b-def9-4c89-b2e5-f47b67254d65.jpg",
-            "audioUrl": "https://op3.dev/e,pg=f41ddac5-15ce-5ff4-bc1e-3a16d98731a1/https://d12wklypp119aj.cloudfront.net/track/08352fbb-a781-4dfb-910c-47753ec1c324.mp3"
-          }
-        }
-      ],
-      "resolutionNotes": [
-        "Track needs metadata resolution from Wavlake RSS feeds",
-        "GUID format: Wavlake-specific UUID v4 (not Podcast Index compatible)",
-        "Future resolution: Parse Wavlake RSS feeds for title, artist, duration, artwork"
-      ],
-      "fullyEnhanced": true,
-      "artworkUrl": "https://d12wklypp119aj.cloudfront.net/image/ad40401b-def9-4c89-b2e5-f47b67254d65.jpg",
-      "datePublished": "2025-08-23T03:11:54.178Z",
-      "pubDate": "2025-08-23T03:11:54.178Z",
-      "artwork": "/stablekraft-rocket.png",
-      "artworkSource": {
-        "method": "main-page-background",
-        "reason": "using site's main background image as placeholder",
-        "originalType": "default",
-        "assignedDate": "2025-08-26T23:26:52.751Z",
-        "note": "Main page background used for consistent branding"
-      },
-      "fixedAt": "2025-08-29T00:57:12.503Z",
-      "fixMethod": "enhanced-rss-parsing",
-      "guid": "bb624660-2eae-5522-b3eb-65f06cc159c7",
-      "guidGenerated": true,
-      "guidGeneratedAt": "2025-08-29T01:18:54.894Z",
-      "guidGeneratedMethod": "deterministic-hash"
-    },
-    {
-      "title": "Fighting My Way ",
-      "subtitle": "",
-      "summary": "",
-      "itemGuid": {
-        "_": "448317db-14f3-4377-8d04-5b5130401f88",
-        "isPermaLink": "false"
-      },
-      "feedGuid": "ba843b13-bd09-4964-944b-cd64678edac7",
-      "feedUrl": "https://wavlake.com/feed/music/ba843b13-bd09-4964-944b-cd64678edac7",
-      "feedTitle": "Fighting My Way ",
-      "feedDescription": "Written & Produced By Ryan Fonda",
-      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/ba843b13-bd09-4964-944b-cd64678edac7.jpg",
-      "feedArtist": "Fighting My Way ",
-      "published": "Thu, 10 Aug 2023 17:00:46 GMT",
-      "duration": 229,
-      "explicit": false,
-      "keywords": [],
-      "categories": [
-        {
-          "text": "Pop",
-          "category": {
-            "text": "null"
-          }
-        }
-      ],
-      "enclosureUrl": "https://op3.dev/e,pg=d2cfef1f-ee87-50d7-9e03-c53ac0260e2f/https://d12wklypp119aj.cloudfront.net/track/448317db-14f3-4377-8d04-5b5130401f88.mp3",
-      "enclosureType": "audio/mpeg",
-      "enclosureLength": "3678039",
-      "image": "https://d12wklypp119aj.cloudfront.net/image/ba843b13-bd09-4964-944b-cd64678edac7.jpg",
-      "trackNumber": 1,
-      "albumTitle": "Fighting My Way ",
-      "artist": "Ryan Fonda",
-      "isMusic": true,
-      "id": "track-31",
-      "addedAt": "2025-08-22T15:00:11.866Z",
-      "publisherFeedGuid": "d4c49f2e-0b50-4a5e-8101-7543d68e032f",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/d4c49f2e-0b50-4a5e-8101-7543d68e032f",
-      "album": "Fighting My Way ",
-      "audioUrl": "https://op3.dev/e,pg=d2cfef1f-ee87-50d7-9e03-c53ac0260e2f/https://d12wklypp119aj.cloudfront.net/track/448317db-14f3-4377-8d04-5b5130401f88.mp3",
-      "imageUrl": "https://d12wklypp119aj.cloudfront.net/image/ba843b13-bd09-4964-944b-cd64678edac7.jpg",
-      "publisher": "Ryan Fonda",
-      "sourceType": "remote-item",
-      "guidFormat": "wavlake-uuid-v4",
-      "resolutionStatus": "resolved",
-      "addedDate": "2025-08-23T03:11:54.178Z",
-      "lastModified": "2025-08-23T03:04:25.420Z",
-      "modificationHistory": [
-        {
-          "date": "2025-08-23T02:35:17.921Z",
-          "action": "enhanced-metadata",
-          "description": "Added comprehensive placeholder data and tracking information"
-        },
-        {
-          "date": "2025-08-23T03:04:25.420Z",
-          "action": "metadata-resolved",
-          "description": "Resolved from Wavlake RSS feed: https://wavlake.com/feed/music/ba843b13-bd09-4964-944b-cd64678edac7",
-          "source": "wavlake-rss-parallel",
-          "metadata": {
-            "title": null,
-            "artist": "Ryan Fonda",
-            "album": null,
-            "duration": "00:03:49",
-            "artworkUrl": "https://d12wklypp119aj.cloudfront.net/image/ba843b13-bd09-4964-944b-cd64678edac7.jpg",
-            "audioUrl": "https://op3.dev/e,pg=d2cfef1f-ee87-50d7-9e03-c53ac0260e2f/https://d12wklypp119aj.cloudfront.net/track/448317db-14f3-4377-8d04-5b5130401f88.mp3"
-          }
-        }
-      ],
-      "resolutionNotes": [
-        "Track needs metadata resolution from Wavlake RSS feeds",
-        "GUID format: Wavlake-specific UUID v4 (not Podcast Index compatible)",
-        "Future resolution: Parse Wavlake RSS feeds for title, artist, duration, artwork"
-      ],
-      "fullyEnhanced": true,
-      "artworkUrl": "https://d12wklypp119aj.cloudfront.net/image/ba843b13-bd09-4964-944b-cd64678edac7.jpg",
-      "datePublished": "2025-08-23T03:11:54.178Z",
-      "pubDate": "2025-08-23T03:11:54.178Z",
-      "artwork": "/stablekraft-rocket.png",
-      "artworkSource": {
-        "method": "main-page-background",
-        "reason": "using site's main background image as placeholder",
-        "originalType": "default",
-        "assignedDate": "2025-08-26T23:26:52.751Z",
-        "note": "Main page background used for consistent branding"
-      },
-      "fixedAt": "2025-08-29T00:57:12.511Z",
-      "fixMethod": "enhanced-rss-parsing",
-      "guid": "9cf54cb7-638e-503e-adb7-d2923539d289",
-      "guidGenerated": true,
-      "guidGeneratedAt": "2025-08-29T01:18:54.894Z",
-      "guidGeneratedMethod": "deterministic-hash"
-    },
-    {
-      "title": "Alone",
-      "subtitle": "",
-      "summary": "",
-      "itemGuid": {
-        "_": "06062219-39b2-407c-8dce-5a24db09dfba",
-        "isPermaLink": "false"
-      },
-      "feedGuid": "dd86f305-1766-4cae-a989-56ea9d09dff9",
-      "feedUrl": "https://wavlake.com/feed/music/dd86f305-1766-4cae-a989-56ea9d09dff9",
-      "feedTitle": "Alone",
-      "feedDescription": "Written & Produced By Ryan Fonda",
-      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/dd86f305-1766-4cae-a989-56ea9d09dff9.jpg",
-      "feedArtist": "Alone",
-      "published": "Thu, 10 Aug 2023 17:24:25 GMT",
-      "duration": 181,
-      "explicit": false,
-      "keywords": [],
-      "categories": [
-        {
-          "text": "Rock",
-          "category": {
-            "text": "null"
-          }
-        }
-      ],
-      "enclosureUrl": "https://op3.dev/e,pg=eb7207b6-8f9d-5aa6-8ebf-3b1ac4551f01/https://d12wklypp119aj.cloudfront.net/track/06062219-39b2-407c-8dce-5a24db09dfba.mp3",
-      "enclosureType": "audio/mpeg",
-      "enclosureLength": "2898546",
-      "image": "https://d12wklypp119aj.cloudfront.net/image/dd86f305-1766-4cae-a989-56ea9d09dff9.jpg",
-      "trackNumber": 1,
-      "albumTitle": "Alone",
-      "artist": "Ryan Fonda",
-      "isMusic": true,
-      "id": "track-32",
-      "addedAt": "2025-08-22T15:00:11.866Z",
-      "publisherFeedGuid": "d4c49f2e-0b50-4a5e-8101-7543d68e032f",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/d4c49f2e-0b50-4a5e-8101-7543d68e032f",
-      "album": "Alone",
-      "audioUrl": "https://op3.dev/e,pg=eb7207b6-8f9d-5aa6-8ebf-3b1ac4551f01/https://d12wklypp119aj.cloudfront.net/track/06062219-39b2-407c-8dce-5a24db09dfba.mp3",
-      "imageUrl": "https://d12wklypp119aj.cloudfront.net/image/dd86f305-1766-4cae-a989-56ea9d09dff9.jpg",
-      "publisher": "Ryan Fonda",
-      "sourceType": "remote-item",
-      "guidFormat": "wavlake-uuid-v4",
-      "resolutionStatus": "resolved",
-      "addedDate": "2025-08-23T03:11:54.178Z",
-      "lastModified": "2025-08-23T03:04:25.315Z",
-      "modificationHistory": [
-        {
-          "date": "2025-08-23T02:35:17.921Z",
-          "action": "enhanced-metadata",
-          "description": "Added comprehensive placeholder data and tracking information"
-        },
-        {
-          "date": "2025-08-23T03:04:25.315Z",
-          "action": "metadata-resolved",
-          "description": "Resolved from Wavlake RSS feed: https://wavlake.com/feed/music/dd86f305-1766-4cae-a989-56ea9d09dff9",
-          "source": "wavlake-rss-parallel",
-          "metadata": {
-            "title": null,
-            "artist": "Ryan Fonda",
-            "album": null,
-            "duration": "00:03:01",
-            "artworkUrl": "https://d12wklypp119aj.cloudfront.net/image/dd86f305-1766-4cae-a989-56ea9d09dff9.jpg",
-            "audioUrl": "https://op3.dev/e,pg=eb7207b6-8f9d-5aa6-8ebf-3b1ac4551f01/https://d12wklypp119aj.cloudfront.net/track/06062219-39b2-407c-8dce-5a24db09dfba.mp3"
-          }
-        }
-      ],
-      "resolutionNotes": [
-        "Track needs metadata resolution from Wavlake RSS feeds",
-        "GUID format: Wavlake-specific UUID v4 (not Podcast Index compatible)",
-        "Future resolution: Parse Wavlake RSS feeds for title, artist, duration, artwork"
-      ],
-      "fullyEnhanced": true,
-      "artworkUrl": "https://d12wklypp119aj.cloudfront.net/image/dd86f305-1766-4cae-a989-56ea9d09dff9.jpg",
-      "datePublished": "2025-08-23T03:11:54.178Z",
-      "pubDate": "2025-08-23T03:11:54.178Z",
-      "artwork": "/stablekraft-rocket.png",
-      "artworkSource": {
-        "method": "main-page-background",
-        "reason": "using site's main background image as placeholder",
-        "originalType": "default",
-        "assignedDate": "2025-08-26T23:26:52.751Z",
-        "note": "Main page background used for consistent branding"
-      },
-      "fixedAt": "2025-08-29T00:57:12.514Z",
-      "fixMethod": "enhanced-rss-parsing",
-      "guid": "2487a393-1d86-5926-a6dc-2f36446e3528",
-      "guidGenerated": true,
-      "guidGeneratedAt": "2025-08-29T01:18:54.894Z",
-      "guidGeneratedMethod": "deterministic-hash"
-    },
-    {
-      "title": "Only A Call Away",
-      "subtitle": "",
-      "summary": "",
-      "itemGuid": {
-        "_": "d186993b-5230-43a2-aefb-418d79e03c6a",
-        "isPermaLink": "false"
-      },
-      "feedGuid": "e6a50ff6-8e1b-445f-a9ef-21096af86e49",
-      "feedUrl": "https://wavlake.com/feed/music/e6a50ff6-8e1b-445f-a9ef-21096af86e49",
-      "feedTitle": "Only A Call Away",
-      "feedDescription": "Written By Ryan & Seth Fonda",
-      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/e6a50ff6-8e1b-445f-a9ef-21096af86e49.jpg",
-      "feedArtist": "Only A Call Away",
-      "published": "Fri, 29 Sep 2023 21:59:29 GMT",
-      "duration": 245,
-      "explicit": false,
-      "keywords": [],
-      "categories": [
-        {
-          "text": "Singer/Songwriter",
-          "category": {
-            "text": "Contemporary Singer/Songwriter"
-          }
-        }
-      ],
-      "enclosureUrl": "https://op3.dev/e,pg=65cd72e4-fc7b-595d-baee-6c35feba420a/https://d12wklypp119aj.cloudfront.net/track/d186993b-5230-43a2-aefb-418d79e03c6a.mp3",
-      "enclosureType": "audio/mpeg",
-      "enclosureLength": "5406748",
-      "image": "https://d12wklypp119aj.cloudfront.net/image/e6a50ff6-8e1b-445f-a9ef-21096af86e49.jpg",
-      "trackNumber": 1,
-      "albumTitle": "Only A Call Away",
-      "artist": "Ryan Fonda",
-      "isMusic": true,
-      "id": "track-33",
-      "addedAt": "2025-08-22T15:00:11.866Z",
-      "publisherFeedGuid": "d4c49f2e-0b50-4a5e-8101-7543d68e032f",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/d4c49f2e-0b50-4a5e-8101-7543d68e032f",
-      "album": "Only A Call Away",
-      "audioUrl": "https://op3.dev/e,pg=65cd72e4-fc7b-595d-baee-6c35feba420a/https://d12wklypp119aj.cloudfront.net/track/d186993b-5230-43a2-aefb-418d79e03c6a.mp3",
-      "imageUrl": "https://d12wklypp119aj.cloudfront.net/image/e6a50ff6-8e1b-445f-a9ef-21096af86e49.jpg",
-      "publisher": "Ryan Fonda",
-      "sourceType": "remote-item",
-      "guidFormat": "wavlake-uuid-v4",
-      "resolutionStatus": "resolved",
-      "addedDate": "2025-08-23T03:11:54.178Z",
-      "lastModified": "2025-08-23T03:04:25.297Z",
-      "modificationHistory": [
-        {
-          "date": "2025-08-23T02:35:17.921Z",
-          "action": "enhanced-metadata",
-          "description": "Added comprehensive placeholder data and tracking information"
-        },
-        {
-          "date": "2025-08-23T03:04:25.297Z",
-          "action": "metadata-resolved",
-          "description": "Resolved from Wavlake RSS feed: https://wavlake.com/feed/music/e6a50ff6-8e1b-445f-a9ef-21096af86e49",
-          "source": "wavlake-rss-parallel",
-          "metadata": {
-            "title": null,
-            "artist": "Ryan Fonda",
-            "album": null,
-            "duration": "00:04:05",
-            "artworkUrl": "https://d12wklypp119aj.cloudfront.net/image/e6a50ff6-8e1b-445f-a9ef-21096af86e49.jpg",
-            "audioUrl": "https://op3.dev/e,pg=65cd72e4-fc7b-595d-baee-6c35feba420a/https://d12wklypp119aj.cloudfront.net/track/d186993b-5230-43a2-aefb-418d79e03c6a.mp3"
-          }
-        }
-      ],
-      "resolutionNotes": [
-        "Track needs metadata resolution from Wavlake RSS feeds",
-        "GUID format: Wavlake-specific UUID v4 (not Podcast Index compatible)",
-        "Future resolution: Parse Wavlake RSS feeds for title, artist, duration, artwork"
-      ],
-      "fullyEnhanced": true,
-      "artworkUrl": "https://d12wklypp119aj.cloudfront.net/image/e6a50ff6-8e1b-445f-a9ef-21096af86e49.jpg",
-      "datePublished": "2025-08-23T03:11:54.178Z",
-      "pubDate": "2025-08-23T03:11:54.178Z",
-      "artwork": "/stablekraft-rocket.png",
-      "artworkSource": {
-        "method": "main-page-background",
-        "reason": "using site's main background image as placeholder",
-        "originalType": "default",
-        "assignedDate": "2025-08-26T23:26:52.751Z",
-        "note": "Main page background used for consistent branding"
-      },
-      "fixedAt": "2025-08-29T00:57:12.499Z",
-      "fixMethod": "enhanced-rss-parsing",
-      "guid": "bedc817a-c008-5f4c-b8be-31c5f38dd9d0",
-      "guidGenerated": true,
-      "guidGeneratedAt": "2025-08-29T01:18:54.894Z",
-      "guidGeneratedMethod": "deterministic-hash"
-    },
-    {
-      "title": "Utah Snow",
-      "subtitle": "",
-      "summary": "",
-      "itemGuid": {
-        "_": "1006e0ad-dc79-4a48-8d50-011efaa4f36e",
-        "isPermaLink": "false"
-      },
-      "feedGuid": "f4bebaac-91d0-4485-83ea-1441bfcf6c48",
-      "feedUrl": "https://wavlake.com/feed/music/f4bebaac-91d0-4485-83ea-1441bfcf6c48",
-      "feedTitle": "Utah Snow",
-      "feedDescription": "Written & Produced By Ryan Fonda",
-      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/f4bebaac-91d0-4485-83ea-1441bfcf6c48.jpg",
-      "feedArtist": "Utah Snow",
-      "published": "Sun, 03 Dec 2023 01:08:47 GMT",
-      "duration": 175,
-      "explicit": false,
-      "keywords": [],
-      "categories": [
-        {
-          "text": "Singer/Songwriter",
-          "category": {
-            "text": "Contemporary Singer/Songwriter"
-          }
-        }
-      ],
-      "enclosureUrl": "https://op3.dev/e,pg=b7842bf4-143a-51fc-be80-552e09b672ef/https://d12wklypp119aj.cloudfront.net/track/1006e0ad-dc79-4a48-8d50-011efaa4f36e.mp3",
-      "enclosureType": "audio/mpeg",
-      "enclosureLength": "3909984",
-      "image": "https://d12wklypp119aj.cloudfront.net/image/f4bebaac-91d0-4485-83ea-1441bfcf6c48.jpg",
-      "trackNumber": 1,
-      "albumTitle": "Utah Snow",
-      "artist": "Ryan Fonda",
-      "isMusic": true,
-      "id": "track-34",
-      "addedAt": "2025-08-22T15:00:11.866Z",
-      "publisherFeedGuid": "d4c49f2e-0b50-4a5e-8101-7543d68e032f",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/d4c49f2e-0b50-4a5e-8101-7543d68e032f",
-      "album": "Utah Snow",
-      "audioUrl": "https://op3.dev/e,pg=b7842bf4-143a-51fc-be80-552e09b672ef/https://d12wklypp119aj.cloudfront.net/track/1006e0ad-dc79-4a48-8d50-011efaa4f36e.mp3",
-      "imageUrl": "https://d12wklypp119aj.cloudfront.net/image/f4bebaac-91d0-4485-83ea-1441bfcf6c48.jpg",
-      "publisher": "Ryan Fonda",
-      "sourceType": "remote-item",
-      "guidFormat": "wavlake-uuid-v4",
-      "resolutionStatus": "resolved",
-      "addedDate": "2025-08-23T03:11:54.178Z",
-      "lastModified": "2025-08-23T03:04:25.231Z",
-      "modificationHistory": [
-        {
-          "date": "2025-08-23T02:35:17.921Z",
-          "action": "enhanced-metadata",
-          "description": "Added comprehensive placeholder data and tracking information"
-        },
-        {
-          "date": "2025-08-23T03:04:25.231Z",
-          "action": "metadata-resolved",
-          "description": "Resolved from Wavlake RSS feed: https://wavlake.com/feed/music/f4bebaac-91d0-4485-83ea-1441bfcf6c48",
-          "source": "wavlake-rss-parallel",
-          "metadata": {
-            "title": null,
-            "artist": "Ryan Fonda",
-            "album": null,
-            "duration": "00:02:55",
-            "artworkUrl": "https://d12wklypp119aj.cloudfront.net/image/f4bebaac-91d0-4485-83ea-1441bfcf6c48.jpg",
-            "audioUrl": "https://op3.dev/e,pg=b7842bf4-143a-51fc-be80-552e09b672ef/https://d12wklypp119aj.cloudfront.net/track/1006e0ad-dc79-4a48-8d50-011efaa4f36e.mp3"
-          }
-        }
-      ],
-      "resolutionNotes": [
-        "Track needs metadata resolution from Wavlake RSS feeds",
-        "GUID format: Wavlake-specific UUID v4 (not Podcast Index compatible)",
-        "Future resolution: Parse Wavlake RSS feeds for title, artist, duration, artwork"
-      ],
-      "fullyEnhanced": true,
-      "artworkUrl": "https://d12wklypp119aj.cloudfront.net/image/f4bebaac-91d0-4485-83ea-1441bfcf6c48.jpg",
-      "datePublished": "2025-08-23T03:11:54.178Z",
-      "pubDate": "2025-08-23T03:11:54.178Z",
-      "artwork": "/stablekraft-rocket.png",
-      "artworkSource": {
-        "method": "main-page-background",
-        "reason": "using site's main background image as placeholder",
-        "originalType": "default",
-        "assignedDate": "2025-08-26T23:26:52.751Z",
-        "note": "Main page background used for consistent branding"
-      },
-      "fixedAt": "2025-08-29T00:57:12.507Z",
-      "fixMethod": "enhanced-rss-parsing",
-      "guid": "865ba3b3-35c7-5b3a-9bf7-fde47592c666",
-      "guidGenerated": true,
-      "guidGeneratedAt": "2025-08-29T01:18:54.894Z",
-      "guidGeneratedMethod": "deterministic-hash"
-    },
-    {
-      "title": "Cast Away Remix",
-      "subtitle": "",
-      "summary": "",
-      "itemGuid": {
-        "_": "40fb6d0b-2d3c-4436-bbcf-7ecef9ace5ca",
-        "isPermaLink": "false"
-      },
-      "feedGuid": "c277887f-425d-41ac-8632-1ec46dd65ab0",
-      "feedUrl": "https://wavlake.com/feed/music/c277887f-425d-41ac-8632-1ec46dd65ab0",
-      "feedTitle": "Cast Away Remix",
-      "feedDescription": "Written & Produced By Ryan Fonda",
-      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/c277887f-425d-41ac-8632-1ec46dd65ab0.jpg",
-      "feedArtist": "Cast Away Remix",
-      "published": "Fri, 08 Dec 2023 21:47:23 GMT",
-      "duration": 227,
-      "explicit": false,
-      "keywords": [],
-      "categories": [
-        {
-          "text": "Pop",
-          "category": {
-            "text": "Teen Pop"
-          }
-        }
-      ],
-      "enclosureUrl": "https://op3.dev/e,pg=0249f11d-bb04-5797-bf1c-bc66ccf513a4/https://d12wklypp119aj.cloudfront.net/track/40fb6d0b-2d3c-4436-bbcf-7ecef9ace5ca.mp3",
-      "enclosureType": "audio/mpeg",
-      "enclosureLength": "5932771",
-      "image": "https://d12wklypp119aj.cloudfront.net/image/c277887f-425d-41ac-8632-1ec46dd65ab0.jpg",
-      "trackNumber": 1,
-      "albumTitle": "Cast Away Remix",
-      "artist": "Ryan Fonda",
-      "isMusic": true,
-      "id": "track-35",
-      "addedAt": "2025-08-22T15:00:11.866Z",
-      "publisherFeedGuid": "d4c49f2e-0b50-4a5e-8101-7543d68e032f",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/d4c49f2e-0b50-4a5e-8101-7543d68e032f",
-      "album": "Cast Away Remix",
-      "audioUrl": "https://op3.dev/e,pg=0249f11d-bb04-5797-bf1c-bc66ccf513a4/https://d12wklypp119aj.cloudfront.net/track/40fb6d0b-2d3c-4436-bbcf-7ecef9ace5ca.mp3",
-      "imageUrl": "https://d12wklypp119aj.cloudfront.net/image/c277887f-425d-41ac-8632-1ec46dd65ab0.jpg",
-      "publisher": "Ryan Fonda",
-      "sourceType": "remote-item",
-      "guidFormat": "wavlake-uuid-v4",
-      "resolutionStatus": "resolved",
-      "addedDate": "2025-08-23T03:11:54.178Z",
-      "lastModified": "2025-08-23T03:04:27.323Z",
-      "modificationHistory": [
-        {
-          "date": "2025-08-23T02:35:17.921Z",
-          "action": "enhanced-metadata",
-          "description": "Added comprehensive placeholder data and tracking information"
-        },
-        {
-          "date": "2025-08-23T03:04:27.323Z",
-          "action": "metadata-resolved",
-          "description": "Resolved from Wavlake RSS feed: https://wavlake.com/feed/music/c277887f-425d-41ac-8632-1ec46dd65ab0",
-          "source": "wavlake-rss-parallel",
-          "metadata": {
-            "title": null,
-            "artist": "Ryan Fonda",
-            "album": null,
-            "duration": "00:03:47",
-            "artworkUrl": "https://d12wklypp119aj.cloudfront.net/image/c277887f-425d-41ac-8632-1ec46dd65ab0.jpg",
-            "audioUrl": "https://op3.dev/e,pg=0249f11d-bb04-5797-bf1c-bc66ccf513a4/https://d12wklypp119aj.cloudfront.net/track/40fb6d0b-2d3c-4436-bbcf-7ecef9ace5ca.mp3"
-          }
-        }
-      ],
-      "resolutionNotes": [
-        "Track needs metadata resolution from Wavlake RSS feeds",
-        "GUID format: Wavlake-specific UUID v4 (not Podcast Index compatible)",
-        "Future resolution: Parse Wavlake RSS feeds for title, artist, duration, artwork"
-      ],
-      "fullyEnhanced": true,
-      "artworkUrl": "https://d12wklypp119aj.cloudfront.net/image/c277887f-425d-41ac-8632-1ec46dd65ab0.jpg",
-      "datePublished": "2025-08-23T03:11:54.178Z",
-      "pubDate": "2025-08-23T03:11:54.178Z",
-      "artwork": "/stablekraft-rocket.png",
-      "artworkSource": {
-        "method": "main-page-background",
-        "reason": "using site's main background image as placeholder",
-        "originalType": "default",
-        "assignedDate": "2025-08-26T23:26:52.751Z",
-        "note": "Main page background used for consistent branding"
-      },
-      "fixedAt": "2025-08-29T00:57:13.626Z",
-      "fixMethod": "enhanced-rss-parsing",
-      "guid": "132b1325-324e-5aa8-86a9-5d2f3de7102f",
-      "guidGenerated": true,
-      "guidGeneratedAt": "2025-08-29T01:18:54.895Z",
       "guidGeneratedMethod": "deterministic-hash"
     },
     {
@@ -23130,73 +22219,6 @@
       "extractionPattern": "Album/Feed Title"
     },
     {
-      "guid": "c42441cf-ff48-4e8c-8ee5-5632f2ac2721",
-      "episodeGuid": "7c3ff17b-5950-4be9-a0e8-fdce4ca30402",
-      "feedGuid": "6782774c-17e1-5f60-821f-93a9d5296da7",
-      "feedUrl": "https://www.wavlake.com/feed/adace4b8-07e2-4235-8a19-109460ee9e0a",
-      "feedTitle": "Jawbone",
-      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/adace4b8-07e2-4235-8a19-109460ee9e0a.jpg",
-      "title": "When Your Gun Is Loaded",
-      "description": "",
-      "datePublished": 1678277194,
-      "datePublishedPretty": "March 08, 2023 6:06am",
-      "dateCrawled": 1702943757,
-      "enclosureUrl": "https://d12wklypp119aj.cloudfront.net/track/7c3ff17b-5950-4be9-a0e8-fdce4ca30402.mp3",
-      "enclosureType": "audio/mpeg",
-      "enclosureLength": 3399626,
-      "duration": 267,
-      "explicit": 0,
-      "episode": null,
-      "episodeType": "full",
-      "season": null,
-      "image": "https://d12wklypp119aj.cloudfront.net/image/adace4b8-07e2-4235-8a19-109460ee9e0a.jpg",
-      "feedItunesId": null,
-      "itunesId": null,
-      "link": "https://www.wavlake.com/album/adace4b8-07e2-4235-8a19-109460ee9e0a",
-      "chapters": null,
-      "transcript": null,
-      "value": {
-        "model": "lightning",
-        "suggested": 0,
-        "destinations": [
-          {
-            "name": "Jawbone via Wavlake",
-            "type": "node",
-            "address": "036057de949c308f3f0116a3b993d4cf3de35dc312f11c961ac4f81ac78512fd7e",
-            "split": 100,
-            "fee": false,
-            "customKey": "16180339",
-            "customValue": "7c3ff17b-5950-4be9-a0e8-fdce4ca30402"
-          },
-          {
-            "name": "Podcastindex.org",
-            "type": "node",
-            "address": "03ae9f91a0cb8ff43840e3c322c4c61f019d8c1c3cea15a25cfc425ac605e61a4a",
-            "split": 1,
-            "fee": true,
-            "customKey": null,
-            "customValue": null
-          }
-        ]
-      },
-      "persons": [],
-      "socialInteract": [],
-      "publisherFeedGuid": "30a27f81-8928-4288-a25a-4c28a2545eaa",
-      "publisherFeedUrl": "https://wavlake.com/feed/artist/30a27f81-8928-4288-a25a-4c28a2545eaa",
-      "id": "track-372",
-      "addedAt": "2025-08-22T15:00:11.865Z",
-      "album": "Jawbone",
-      "artist": "Jawbone",
-      "audioUrl": "https://op3.dev/e,pg=6782774c-17e1-5f60-821f-93a9d5296da7/https://d12wklypp119aj.cloudfront.net/track/e042f5b7-405c-4d3c-9cb0-84e861c5f52d.mp3",
-      "imageUrl": "https://d12wklypp119aj.cloudfront.net/image/adace4b8-07e2-4235-8a19-109460ee9e0a.jpg",
-      "publisher": "Jawbone",
-      "artwork": "https://d12wklypp119aj.cloudfront.net/image/adace4b8-07e2-4235-8a19-109460ee9e0a.jpg",
-      "feedId": 6422305,
-      "feedArtist": "Jawbone",
-      "fixedAt": "2025-08-29T00:59:03.587Z",
-      "fixMethod": "enhanced-rss-parsing"
-    },
-    {
       "guid": "7c49dc1e-f6bf-4bdc-832a-00cb3ea86803",
       "episodeGuid": "32cd383d-f0c3-4b4d-8243-37816e234c81",
       "feedGuid": "0e346ae4-651a-52ca-a916-512c32e23d0b",
@@ -38647,211 +37669,6 @@
       "guidGeneratedMethod": "deterministic-hash"
     },
     {
-      "id": "track-701",
-      "feedGuid": "https://www.doerfelverse.com/feeds/dfbv2.xml",
-      "itemGuid": "f9683d28-70df-4112-95c4-490c0383c3c9",
-      "feedUrl": "https://www.doerfelverse.com/feeds/dfbv2.xml",
-      "feedTitle": "DFB Volume 2",
-      "title": "Hyssop Branches",
-      "artist": "Doerfel Family Bluegrass",
-      "album": "DFB Volume 2",
-      "description": "Written by Miles Fonda",
-      "duration": "276",
-      "enclosureUrl": "https://www.doerfelverse.com/tracks/01-hyssop-branches.mp3",
-      "enclosureType": "audio/mpeg",
-      "pubDate": "Mon, 26 Aug 2024 00:00:16 +0000",
-      "image": "https://www.doerfelverse.com/art/dfbv2.png",
-      "value": {
-        "$": {
-          "type": "lightning",
-          "method": "keysend",
-          "suggested": "0.00000005000"
-        },
-        "podcast:valueRecipient": [
-          {
-            "$": {
-              "type": "node",
-              "name": "Doerfel-Node",
-              "address": "031ce2f133b570edf1c776e571e27d22a715dc6ea73956f0e79f4272d81d9dc0d5",
-              "split": "85"
-            }
-          },
-          {
-            "$": {
-              "type": "node",
-              "name": "Miles Fonda's son Kaden",
-              "address": "031ce2f133b570edf1c776e571e27d22a715dc6ea73956f0e79f4272d81d9dc0d5",
-              "customKey": "696969",
-              "customValue": "7",
-              "split": "15"
-            }
-          },
-          {
-            "$": {
-              "name": "Sovereign Feeds",
-              "address": "steven@curiohoster.com",
-              "type": "lnaddress",
-              "fee": "true",
-              "split": "5"
-            }
-          }
-        ]
-      },
-      "resolvedFrom": "direct-feed-fetch",
-      "resolvedAt": "2025-08-13T21:31:19.272Z",
-      "addedAt": "2025-08-13T21:31:19.273Z",
-      "feedImage": "https://www.doerfelverse.com/art/dfbv2.png",
-      "feedArtist": "Doerfel Family Bluegrass",
-      "publisherFeedGuid": "doerfelverse-publisher",
-      "publisherFeedUrl": "https://www.doerfelverse.com/feeds/publisher.xml",
-      "index": 699,
-      "audioUrl": "https://www.doerfelverse.com/tracks/01-hyssop-branches.mp3",
-      "imageUrl": "https://www.doerfelverse.com/art/dfbv2.png",
-      "publisher": "Doerfel Family Bluegrass",
-      "artwork": "/stablekraft-rocket.png",
-      "artworkSource": {
-        "method": "main-page-background",
-        "reason": "using site's main background image as placeholder",
-        "originalType": "default",
-        "assignedDate": "2025-08-26T23:26:52.751Z",
-        "note": "Main page background used for consistent branding"
-      },
-      "guid": "59904265-638b-552b-b901-828f40becf21",
-      "guidGenerated": true,
-      "guidGeneratedAt": "2025-08-29T01:18:54.896Z",
-      "guidGeneratedMethod": "deterministic-hash"
-    },
-    {
-      "id": "track-702",
-      "feedGuid": "https://www.doerfelverse.com/feeds/dfbv2.xml",
-      "itemGuid": "d60032f3-ce45-45c4-81fc-26ff0394a248",
-      "feedUrl": "https://www.doerfelverse.com/feeds/dfbv2.xml",
-      "feedTitle": "DFB Volume 2",
-      "title": "Bipolar",
-      "artist": "Doerfel Family Bluegrass",
-      "album": "DFB Volume 2",
-      "description": "Written by Tom Mindte",
-      "duration": "276",
-      "enclosureUrl": "https://www.doerfelverse.com/tracks/03-bipolar.mp3",
-      "enclosureType": "audio/mpeg",
-      "pubDate": "Sun, 25 Aug 2024 23:58:16 +0000",
-      "image": "https://www.doerfelverse.com/art/dfbv2.png",
-      "value": {
-        "$": {
-          "type": "lightning",
-          "method": "keysend",
-          "suggested": "0.00000005000"
-        },
-        "podcast:valueRecipient": [
-          {
-            "$": {
-              "type": "node",
-              "name": "Doerfel-Node",
-              "address": "031ce2f133b570edf1c776e571e27d22a715dc6ea73956f0e79f4272d81d9dc0d5",
-              "split": "100"
-            }
-          },
-          {
-            "$": {
-              "name": "Sovereign Feeds",
-              "address": "steven@curiohoster.com",
-              "type": "lnaddress",
-              "fee": "true",
-              "split": "5"
-            }
-          }
-        ]
-      },
-      "resolvedFrom": "direct-feed-fetch",
-      "resolvedAt": "2025-08-13T21:31:21.972Z",
-      "addedAt": "2025-08-13T21:31:21.972Z",
-      "feedImage": "https://www.doerfelverse.com/art/dfbv2.png",
-      "feedArtist": "Doerfel Family Bluegrass",
-      "publisherFeedGuid": "doerfelverse-publisher",
-      "publisherFeedUrl": "https://www.doerfelverse.com/feeds/publisher.xml",
-      "index": 700,
-      "audioUrl": "https://www.doerfelverse.com/tracks/01-hyssop-branches.mp3",
-      "imageUrl": "https://www.doerfelverse.com/art/dfbv2.png",
-      "publisher": "Doerfel Family Bluegrass",
-      "artwork": "/stablekraft-rocket.png",
-      "artworkSource": {
-        "method": "main-page-background",
-        "reason": "using site's main background image as placeholder",
-        "originalType": "default",
-        "assignedDate": "2025-08-26T23:26:52.751Z",
-        "note": "Main page background used for consistent branding"
-      },
-      "guid": "15f77557-199f-535b-8d95-ebae16f903c1",
-      "guidGenerated": true,
-      "guidGeneratedAt": "2025-08-29T01:18:54.896Z",
-      "guidGeneratedMethod": "deterministic-hash"
-    },
-    {
-      "id": "track-703",
-      "feedGuid": "https://www.doerfelverse.com/feeds/dfbv2.xml",
-      "itemGuid": "a12d4410-03e0-44fd-bc8b-890760541a93",
-      "feedUrl": "https://www.doerfelverse.com/feeds/dfbv2.xml",
-      "feedTitle": "DFB Volume 2",
-      "title": "C.R.V.P.",
-      "artist": "Doerfel Family Bluegrass",
-      "album": "DFB Volume 2",
-      "description": "Written by TJ Doerfel",
-      "duration": "276",
-      "enclosureUrl": "https://www.doerfelverse.com/tracks/08-crvp.mp3",
-      "enclosureType": "audio/mpeg",
-      "pubDate": "Sun, 25 Aug 2024 23:53:16 +0000",
-      "image": "https://www.doerfelverse.com/art/dfbv2.png",
-      "value": {
-        "$": {
-          "type": "lightning",
-          "method": "keysend",
-          "suggested": "0.00000005000"
-        },
-        "podcast:valueRecipient": [
-          {
-            "$": {
-              "type": "node",
-              "name": "Doerfel-Node",
-              "address": "031ce2f133b570edf1c776e571e27d22a715dc6ea73956f0e79f4272d81d9dc0d5",
-              "split": "100"
-            }
-          },
-          {
-            "$": {
-              "name": "Sovereign Feeds",
-              "address": "steven@curiohoster.com",
-              "type": "lnaddress",
-              "fee": "true",
-              "split": "5"
-            }
-          }
-        ]
-      },
-      "resolvedFrom": "direct-feed-fetch",
-      "resolvedAt": "2025-08-13T21:31:24.706Z",
-      "addedAt": "2025-08-13T21:31:24.707Z",
-      "feedImage": "https://www.doerfelverse.com/art/dfbv2.png",
-      "feedArtist": "Doerfel Family Bluegrass",
-      "publisherFeedGuid": "doerfelverse-publisher",
-      "publisherFeedUrl": "https://www.doerfelverse.com/feeds/publisher.xml",
-      "index": 701,
-      "audioUrl": "https://www.doerfelverse.com/tracks/01-hyssop-branches.mp3",
-      "imageUrl": "https://www.doerfelverse.com/art/dfbv2.png",
-      "publisher": "Doerfel Family Bluegrass",
-      "artwork": "/stablekraft-rocket.png",
-      "artworkSource": {
-        "method": "main-page-background",
-        "reason": "using site's main background image as placeholder",
-        "originalType": "default",
-        "assignedDate": "2025-08-26T23:26:52.751Z",
-        "note": "Main page background used for consistent branding"
-      },
-      "guid": "0a6efd0d-6e8c-592c-9d0d-01fb75633142",
-      "guidGenerated": true,
-      "guidGeneratedAt": "2025-08-29T01:18:54.896Z",
-      "guidGeneratedMethod": "deterministic-hash"
-    },
-    {
       "id": "track-704",
       "feedGuid": "187f22db-79cb-5ac4-aa60-54e424e3915e",
       "itemGuid": "17313b1e-3585-4bfa-9fb4-288636b84313",
@@ -49404,91 +48221,6 @@
       "originalGeneratedGuid": "fd72202d-073b-5ddd-84fd-cdab3c2839ef"
     },
     {
-      "feedGuid": "6782774c-17e1-5f60-821f-93a9d5296da7",
-      "itemGuid": {
-        "_": "ff5a733d-3d01-4d33-b481-04fe3406c204"
-      },
-      "title": "Leave No Traces",
-      "artist": "Jawbone",
-      "source": "podcast:remoteItem - Batch 13)",
-      "addedDate": "2025-08-23T03:11:54.178Z",
-      "album": "Jawbone",
-      "sourceType": "remote-item",
-      "guidFormat": "wavlake-uuid-v4",
-      "resolutionStatus": "failed",
-      "lastModified": "2025-08-23T03:06:53.913Z",
-      "modificationHistory": [
-        {
-          "date": "2025-08-23T02:35:01.928Z",
-          "action": "enhanced-metadata",
-          "description": "Added placeholder titles, artist info, and enhanced tracking"
-        },
-        {
-          "date": "2025-08-23T02:35:17.921Z",
-          "action": "enhanced-metadata",
-          "description": "Added comprehensive placeholder data and tracking information"
-        },
-        {
-          "date": "2025-08-23T03:06:53.913Z",
-          "action": "resolution-failed",
-          "description": "Feed not accessible: https://wavlake.com/feed/music/6782774c-17e1-5f60-821f-93a9d5296da7",
-          "reason": "Feed does not exist or is inaccessible"
-        }
-      ],
-      "resolutionNotes": [
-        "Track needs metadata resolution from Wavlake RSS feeds",
-        "GUID format: Wavlake-specific UUID v4 (not Podcast Index compatible)",
-        "Future resolution: Parse Wavlake RSS feeds for title, artist, duration, artwork"
-      ],
-      "enhanced": true,
-      "fullyEnhanced": true,
-      "datePublished": "2025-08-23T03:11:54.178Z",
-      "pubDate": "2023-03-08T12:04:22.000Z",
-      "artwork": "https://d12wklypp119aj.cloudfront.net/image/adace4b8-07e2-4235-8a19-109460ee9e0a.jpg",
-      "audioUrl": "https://d12wklypp119aj.cloudfront.net/track/ff5a733d-3d01-4d33-b481-04fe3406c204.mp3",
-      "duration": 269,
-      "description": "Jawbone",
-      "episodeId": 15565791664,
-      "feedId": 6422305,
-      "feedTitle": "Jawbone",
-      "feedUrl": "https://www.wavlake.com/feed/adace4b8-07e2-4235-8a19-109460ee9e0a",
-      "feedAuthor": "Jawbone",
-      "explicit": 0,
-      "episodeType": "full",
-      "value": {
-        "model": {
-          "type": "lightning",
-          "method": "keysend"
-        },
-        "destinations": [
-          {
-            "name": "Jawbone via Wavlake",
-            "type": "node",
-            "address": "036057de949c308f3f0116a3b993d4cf3de35dc312f11c961ac4f81ac78512fd7e",
-            "split": 100,
-            "customKey": "16180339",
-            "customValue": "ff5a733d-3d01-4d33-b481-04fe3406c204"
-          },
-          {
-            "name": "Podcastindex.org",
-            "address": "03ae9f91a0cb8ff43840e3c322c4c61f019d8c1c3cea15a25cfc425ac605e61a4a",
-            "type": "node",
-            "fee": true,
-            "split": 1
-          }
-        ]
-      },
-      "feedArtist": "Jawbone",
-      "fixedAt": "2025-08-29T00:59:03.587Z",
-      "fixMethod": "enhanced-rss-parsing",
-      "guid": "ff5a733d-3d01-4d33-b481-04fe3406c204",
-      "guidGenerated": false,
-      "guidRestored": true,
-      "guidRestoredAt": "2025-08-29T01:21:24.113Z",
-      "guidRestoredFrom": "podcast-index-itemGuid",
-      "originalGeneratedGuid": "85b79c3d-79bf-5e91-b901-0bba2b400e30"
-    },
-    {
       "feedGuid": "d5f5de7c-41c8-535a-9143-20418ac19231",
       "itemGuid": {
         "_": "0de1e1bf-308c-48cf-9182-e14f281bc790"
@@ -50237,59 +48969,6 @@
       "fixedAt": "2025-08-29T00:59:58.632Z",
       "fixMethod": "enhanced-rss-parsing",
       "guid": "73117b98-32f7-5426-ba92-fc455303c21d",
-      "guidGenerated": true,
-      "guidGeneratedAt": "2025-08-29T01:18:54.899Z",
-      "guidGeneratedMethod": "deterministic-hash"
-    },
-    {
-      "id": "remote-6782774c-17e1-5f60-821f-93a9d5296da7-ff5a73",
-      "title": "Leave No Traces",
-      "artist": "Jawbone",
-      "album": "Jawbone",
-      "artwork": "https://d12wklypp119aj.cloudfront.net/image/adace4b8-07e2-4235-8a19-109460ee9e0a.jpg",
-      "audioUrl": "https://d12wklypp119aj.cloudfront.net/track/ff5a733d-3d01-4d33-b481-04fe3406c204.mp3",
-      "duration": 269,
-      "feedGuid": "6782774c-17e1-5f60-821f-93a9d5296da7",
-      "itemGuid": "ff5a733d-3d01-4d33-b481-04fe3406c204",
-      "publisherFeed": "IAM Music Playlist",
-      "addedDate": "2025-08-26T22:16:57.501Z",
-      "pubDate": "2023-03-08T12:04:22.000Z",
-      "description": "Jawbone",
-      "source": "IAM Playlist Import",
-      "episodeId": 15565791664,
-      "feedId": 6422305,
-      "feedTitle": "Jawbone",
-      "feedUrl": "https://www.wavlake.com/feed/adace4b8-07e2-4235-8a19-109460ee9e0a",
-      "feedAuthor": "Jawbone",
-      "explicit": 0,
-      "episodeType": "full",
-      "value": {
-        "model": {
-          "type": "lightning",
-          "method": "keysend"
-        },
-        "destinations": [
-          {
-            "name": "Jawbone via Wavlake",
-            "type": "node",
-            "address": "036057de949c308f3f0116a3b993d4cf3de35dc312f11c961ac4f81ac78512fd7e",
-            "split": 100,
-            "customKey": "16180339",
-            "customValue": "ff5a733d-3d01-4d33-b481-04fe3406c204"
-          },
-          {
-            "name": "Podcastindex.org",
-            "address": "03ae9f91a0cb8ff43840e3c322c4c61f019d8c1c3cea15a25cfc425ac605e61a4a",
-            "type": "node",
-            "fee": true,
-            "split": 1
-          }
-        ]
-      },
-      "feedArtist": "Jawbone",
-      "fixedAt": "2025-08-29T00:59:03.587Z",
-      "fixMethod": "enhanced-rss-parsing",
-      "guid": "95f21abb-d61e-50fc-ac8f-3ce657c63117",
       "guidGenerated": true,
       "guidGeneratedAt": "2025-08-29T01:18:54.899Z",
       "guidGeneratedMethod": "deterministic-hash"
@@ -79558,6 +78237,606 @@
       "datePublished": 1756496416,
       "explicit": false,
       "source": "RSS Feed Refresh"
+    },
+    {
+      "title": "Hyssop Branches",
+      "feedTitle": "DFB Volume 2",
+      "feedArtist": "Doerfel Family Bluegrass",
+      "feedUrl": "https://www.doerfelverse.com/feeds/dfbv2.xml",
+      "feedGuid": "6bf3785f-e053-57f4-9f70-261ee5e3747f",
+      "feedImage": "https://www.doerfelverse.com/art/dfbv2.png",
+      "guid": "f9683d28-70df-4112-95c4-490c0383c3c9",
+      "enclosureUrl": "https://www.doerfelverse.com/tracks/01-hyssop-branches.mp3",
+      "duration": 180,
+      "image": "https://www.doerfelverse.com/art/dfbv2.png",
+      "datePublished": 1756497575,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "Blues You Never Lose",
+      "feedTitle": "DFB Volume 2",
+      "feedArtist": "Doerfel Family Bluegrass",
+      "feedUrl": "https://www.doerfelverse.com/feeds/dfbv2.xml",
+      "feedGuid": "6bf3785f-e053-57f4-9f70-261ee5e3747f",
+      "feedImage": "https://www.doerfelverse.com/art/dfbv2.png",
+      "guid": "cddd92c4-a897-49a0-8bfb-e03e2fa34fe5",
+      "enclosureUrl": "https://www.doerfelverse.com/tracks/02-blues-you-never-lose.mp3",
+      "duration": 180,
+      "image": "https://www.doerfelverse.com/art/dfbv2.png",
+      "datePublished": 1756497575,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "Bipolar",
+      "feedTitle": "DFB Volume 2",
+      "feedArtist": "Doerfel Family Bluegrass",
+      "feedUrl": "https://www.doerfelverse.com/feeds/dfbv2.xml",
+      "feedGuid": "6bf3785f-e053-57f4-9f70-261ee5e3747f",
+      "feedImage": "https://www.doerfelverse.com/art/dfbv2.png",
+      "guid": "d60032f3-ce45-45c4-81fc-26ff0394a248",
+      "enclosureUrl": "https://www.doerfelverse.com/tracks/03-bipolar.mp3",
+      "duration": 180,
+      "image": "https://www.doerfelverse.com/art/dfbv2.png",
+      "datePublished": 1756497575,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "The Chocolate Song",
+      "feedTitle": "DFB Volume 2",
+      "feedArtist": "Doerfel Family Bluegrass",
+      "feedUrl": "https://www.doerfelverse.com/feeds/dfbv2.xml",
+      "feedGuid": "6bf3785f-e053-57f4-9f70-261ee5e3747f",
+      "feedImage": "https://www.doerfelverse.com/art/dfbv2.png",
+      "guid": "849d3c8b-2e0a-4b69-ad25-8237540827ab",
+      "enclosureUrl": "https://www.doerfelverse.com/tracks/04-the-chocolate-song.mp3",
+      "duration": 180,
+      "image": "https://www.doerfelverse.com/art/dfbv2.png",
+      "datePublished": 1756497575,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "The Last Time",
+      "feedTitle": "DFB Volume 2",
+      "feedArtist": "Doerfel Family Bluegrass",
+      "feedUrl": "https://www.doerfelverse.com/feeds/dfbv2.xml",
+      "feedGuid": "6bf3785f-e053-57f4-9f70-261ee5e3747f",
+      "feedImage": "https://www.doerfelverse.com/art/dfbv2.png",
+      "guid": "73189a5f-7265-4778-9f0e-9524494338e0",
+      "enclosureUrl": "https://www.doerfelverse.com/tracks/05-the-last-time.mp3",
+      "duration": 180,
+      "image": "https://www.doerfelverse.com/art/dfbv2.png",
+      "datePublished": 1756497575,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "Dead Time",
+      "feedTitle": "DFB Volume 2",
+      "feedArtist": "Doerfel Family Bluegrass",
+      "feedUrl": "https://www.doerfelverse.com/feeds/dfbv2.xml",
+      "feedGuid": "6bf3785f-e053-57f4-9f70-261ee5e3747f",
+      "feedImage": "https://www.doerfelverse.com/art/dfbv2.png",
+      "guid": "7592d5b6-832d-47ae-bc91-0380ec3bd33f",
+      "enclosureUrl": "https://www.doerfelverse.com/tracks/06-dead-time.mp3",
+      "duration": 180,
+      "image": "https://www.doerfelverse.com/art/dfbv2.png",
+      "datePublished": 1756497575,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "What I'm Looking For",
+      "feedTitle": "DFB Volume 2",
+      "feedArtist": "Doerfel Family Bluegrass",
+      "feedUrl": "https://www.doerfelverse.com/feeds/dfbv2.xml",
+      "feedGuid": "6bf3785f-e053-57f4-9f70-261ee5e3747f",
+      "feedImage": "https://www.doerfelverse.com/art/dfbv2.png",
+      "guid": "9dd6c1ef-0b92-47e9-ba54-3cc284ffdcbc",
+      "enclosureUrl": "https://www.doerfelverse.com/tracks/07-what-im-looking-for.mp3",
+      "duration": 180,
+      "image": "https://www.doerfelverse.com/art/dfbv2.png",
+      "datePublished": 1756497575,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "C.R.V.P.",
+      "feedTitle": "DFB Volume 2",
+      "feedArtist": "Doerfel Family Bluegrass",
+      "feedUrl": "https://www.doerfelverse.com/feeds/dfbv2.xml",
+      "feedGuid": "6bf3785f-e053-57f4-9f70-261ee5e3747f",
+      "feedImage": "https://www.doerfelverse.com/art/dfbv2.png",
+      "guid": "a12d4410-03e0-44fd-bc8b-890760541a93",
+      "enclosureUrl": "https://www.doerfelverse.com/tracks/08-crvp.mp3",
+      "duration": 180,
+      "image": "https://www.doerfelverse.com/art/dfbv2.png",
+      "datePublished": 1756497575,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "The Guitar Song",
+      "feedTitle": "DFB Volume 2",
+      "feedArtist": "Doerfel Family Bluegrass",
+      "feedUrl": "https://www.doerfelverse.com/feeds/dfbv2.xml",
+      "feedGuid": "6bf3785f-e053-57f4-9f70-261ee5e3747f",
+      "feedImage": "https://www.doerfelverse.com/art/dfbv2.png",
+      "guid": "cefb5a94-44c9-4d17-93c0-de6830d27d50",
+      "enclosureUrl": "https://www.doerfelverse.com/tracks/09-the-guitar-song.mp3",
+      "duration": 180,
+      "image": "https://www.doerfelverse.com/art/dfbv2.png",
+      "datePublished": 1756497575,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "Get What You Deserve",
+      "feedTitle": "Jawbone",
+      "feedArtist": "Jawbone",
+      "feedUrl": "https://www.wavlake.com/feed/adace4b8-07e2-4235-8a19-109460ee9e0a",
+      "feedGuid": "6782774c-17e1-5f60-821f-93a9d5296da7",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/adace4b8-07e2-4235-8a19-109460ee9e0a.jpg",
+      "guid": "e042f5b7-405c-4d3c-9cb0-84e861c5f52d",
+      "enclosureUrl": "https://op3.dev/e,pg=6782774c-17e1-5f60-821f-93a9d5296da7/https://d12wklypp119aj.cloudfront.net/track/e042f5b7-405c-4d3c-9cb0-84e861c5f52d.mp3",
+      "duration": 267,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/adace4b8-07e2-4235-8a19-109460ee9e0a.jpg",
+      "datePublished": 1756497584,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "Bet On Yesterday",
+      "feedTitle": "Jawbone",
+      "feedArtist": "Jawbone",
+      "feedUrl": "https://www.wavlake.com/feed/adace4b8-07e2-4235-8a19-109460ee9e0a",
+      "feedGuid": "6782774c-17e1-5f60-821f-93a9d5296da7",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/adace4b8-07e2-4235-8a19-109460ee9e0a.jpg",
+      "guid": "68d3400b-6527-4b3d-a995-d5fd6a628a47",
+      "enclosureUrl": "https://op3.dev/e,pg=6782774c-17e1-5f60-821f-93a9d5296da7/https://d12wklypp119aj.cloudfront.net/track/68d3400b-6527-4b3d-a995-d5fd6a628a47.mp3",
+      "duration": 311,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/adace4b8-07e2-4235-8a19-109460ee9e0a.jpg",
+      "datePublished": 1756497584,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "Big Old Smoke",
+      "feedTitle": "Jawbone",
+      "feedArtist": "Jawbone",
+      "feedUrl": "https://www.wavlake.com/feed/adace4b8-07e2-4235-8a19-109460ee9e0a",
+      "feedGuid": "6782774c-17e1-5f60-821f-93a9d5296da7",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/adace4b8-07e2-4235-8a19-109460ee9e0a.jpg",
+      "guid": "e26581cc-fc31-46af-a75e-bc8c59c91460",
+      "enclosureUrl": "https://op3.dev/e,pg=6782774c-17e1-5f60-821f-93a9d5296da7/https://d12wklypp119aj.cloudfront.net/track/e26581cc-fc31-46af-a75e-bc8c59c91460.mp3",
+      "duration": 187,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/adace4b8-07e2-4235-8a19-109460ee9e0a.jpg",
+      "datePublished": 1756497584,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "2 Billion Heart Beats",
+      "feedTitle": "Jawbone",
+      "feedArtist": "Jawbone",
+      "feedUrl": "https://www.wavlake.com/feed/adace4b8-07e2-4235-8a19-109460ee9e0a",
+      "feedGuid": "6782774c-17e1-5f60-821f-93a9d5296da7",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/adace4b8-07e2-4235-8a19-109460ee9e0a.jpg",
+      "guid": "b633c26e-24ea-480b-bf9d-29606e1b6f2b",
+      "enclosureUrl": "https://op3.dev/e,pg=6782774c-17e1-5f60-821f-93a9d5296da7/https://d12wklypp119aj.cloudfront.net/track/b633c26e-24ea-480b-bf9d-29606e1b6f2b.mp3",
+      "duration": 294,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/adace4b8-07e2-4235-8a19-109460ee9e0a.jpg",
+      "datePublished": 1756497584,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "The Years Used To Mean So Much",
+      "feedTitle": "Jawbone",
+      "feedArtist": "Jawbone",
+      "feedUrl": "https://www.wavlake.com/feed/adace4b8-07e2-4235-8a19-109460ee9e0a",
+      "feedGuid": "6782774c-17e1-5f60-821f-93a9d5296da7",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/adace4b8-07e2-4235-8a19-109460ee9e0a.jpg",
+      "guid": "b6630113-04bf-479c-a866-56f7e5d942fa",
+      "enclosureUrl": "https://op3.dev/e,pg=6782774c-17e1-5f60-821f-93a9d5296da7/https://d12wklypp119aj.cloudfront.net/track/b6630113-04bf-479c-a866-56f7e5d942fa.mp3",
+      "duration": 267,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/adace4b8-07e2-4235-8a19-109460ee9e0a.jpg",
+      "datePublished": 1756497584,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "Sit Round The Table",
+      "feedTitle": "Jawbone",
+      "feedArtist": "Jawbone",
+      "feedUrl": "https://www.wavlake.com/feed/adace4b8-07e2-4235-8a19-109460ee9e0a",
+      "feedGuid": "6782774c-17e1-5f60-821f-93a9d5296da7",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/adace4b8-07e2-4235-8a19-109460ee9e0a.jpg",
+      "guid": "c9775d41-cfc6-4d3a-8ce5-c0970cd3f23a",
+      "enclosureUrl": "https://op3.dev/e,pg=6782774c-17e1-5f60-821f-93a9d5296da7/https://d12wklypp119aj.cloudfront.net/track/c9775d41-cfc6-4d3a-8ce5-c0970cd3f23a.mp3",
+      "duration": 346,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/adace4b8-07e2-4235-8a19-109460ee9e0a.jpg",
+      "datePublished": 1756497584,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "Rolling On The Underground",
+      "feedTitle": "Jawbone",
+      "feedArtist": "Jawbone",
+      "feedUrl": "https://www.wavlake.com/feed/adace4b8-07e2-4235-8a19-109460ee9e0a",
+      "feedGuid": "6782774c-17e1-5f60-821f-93a9d5296da7",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/adace4b8-07e2-4235-8a19-109460ee9e0a.jpg",
+      "guid": "612eb261-f507-43b4-b986-3500dc5fa776",
+      "enclosureUrl": "https://op3.dev/e,pg=6782774c-17e1-5f60-821f-93a9d5296da7/https://d12wklypp119aj.cloudfront.net/track/612eb261-f507-43b4-b986-3500dc5fa776.mp3",
+      "duration": 221,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/adace4b8-07e2-4235-8a19-109460ee9e0a.jpg",
+      "datePublished": 1756497584,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "When Your Gun Is Loaded",
+      "feedTitle": "Jawbone",
+      "feedArtist": "Jawbone",
+      "feedUrl": "https://www.wavlake.com/feed/adace4b8-07e2-4235-8a19-109460ee9e0a",
+      "feedGuid": "6782774c-17e1-5f60-821f-93a9d5296da7",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/adace4b8-07e2-4235-8a19-109460ee9e0a.jpg",
+      "guid": "7c3ff17b-5950-4be9-a0e8-fdce4ca30402",
+      "enclosureUrl": "https://op3.dev/e,pg=6782774c-17e1-5f60-821f-93a9d5296da7/https://d12wklypp119aj.cloudfront.net/track/7c3ff17b-5950-4be9-a0e8-fdce4ca30402.mp3",
+      "duration": 212,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/adace4b8-07e2-4235-8a19-109460ee9e0a.jpg",
+      "datePublished": 1756497584,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "Family Man",
+      "feedTitle": "Jawbone",
+      "feedArtist": "Jawbone",
+      "feedUrl": "https://www.wavlake.com/feed/adace4b8-07e2-4235-8a19-109460ee9e0a",
+      "feedGuid": "6782774c-17e1-5f60-821f-93a9d5296da7",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/adace4b8-07e2-4235-8a19-109460ee9e0a.jpg",
+      "guid": "f700ac24-5159-4ee6-a398-b8ac9917979f",
+      "enclosureUrl": "https://op3.dev/e,pg=6782774c-17e1-5f60-821f-93a9d5296da7/https://d12wklypp119aj.cloudfront.net/track/f700ac24-5159-4ee6-a398-b8ac9917979f.mp3",
+      "duration": 279,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/adace4b8-07e2-4235-8a19-109460ee9e0a.jpg",
+      "datePublished": 1756497584,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "Leave No Traces",
+      "feedTitle": "Jawbone",
+      "feedArtist": "Jawbone",
+      "feedUrl": "https://www.wavlake.com/feed/adace4b8-07e2-4235-8a19-109460ee9e0a",
+      "feedGuid": "6782774c-17e1-5f60-821f-93a9d5296da7",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/adace4b8-07e2-4235-8a19-109460ee9e0a.jpg",
+      "guid": "ff5a733d-3d01-4d33-b481-04fe3406c204",
+      "enclosureUrl": "https://op3.dev/e,pg=6782774c-17e1-5f60-821f-93a9d5296da7/https://d12wklypp119aj.cloudfront.net/track/ff5a733d-3d01-4d33-b481-04fe3406c204.mp3",
+      "duration": 269,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/adace4b8-07e2-4235-8a19-109460ee9e0a.jpg",
+      "datePublished": 1756497584,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "Don't Worry, You Still Have Time To Ruin It - Demo",
+      "feedTitle": "Don't Worry, You Still Have Time To Ruin It - Demo",
+      "feedArtist": "Nate Johnivan",
+      "feedUrl": "https://wavlake.com/feed/music/d3145292-bf71-415f-a841-7f5c9a9466e1",
+      "feedGuid": "2474622f-b28e-5cad-82d8-ab785da84486",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/d3145292-bf71-415f-a841-7f5c9a9466e1.jpg",
+      "guid": "f049d460-6c57-47f9-8ddf-32a32f0011d9",
+      "enclosureUrl": "https://op3.dev/e,pg=2474622f-b28e-5cad-82d8-ab785da84486/https://d12wklypp119aj.cloudfront.net/track/f049d460-6c57-47f9-8ddf-32a32f0011d9.mp3",
+      "duration": 189,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/d3145292-bf71-415f-a841-7f5c9a9466e1.jpg",
+      "datePublished": 1756497585,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "Bold",
+      "feedTitle": "Take The Lead",
+      "feedArtist": "Jessica Lynne Witty",
+      "feedUrl": "https://wavlake.com/feed/music/b337bd2b-46c5-4bd0-a57f-f93bca81ebea",
+      "feedGuid": "7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/b337bd2b-46c5-4bd0-a57f-f93bca81ebea.jpg",
+      "guid": "f6057edc-cb16-462c-af78-0852e62a3c7f",
+      "enclosureUrl": "https://op3.dev/e,pg=7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93/https://d12wklypp119aj.cloudfront.net/track/f6057edc-cb16-462c-af78-0852e62a3c7f.mp3",
+      "duration": 234,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/b337bd2b-46c5-4bd0-a57f-f93bca81ebea.jpg",
+      "datePublished": 1756497587,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "Hail Mary",
+      "feedTitle": "Take The Lead",
+      "feedArtist": "Jessica Lynne Witty",
+      "feedUrl": "https://wavlake.com/feed/music/b337bd2b-46c5-4bd0-a57f-f93bca81ebea",
+      "feedGuid": "7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/b337bd2b-46c5-4bd0-a57f-f93bca81ebea.jpg",
+      "guid": "bbe5db05-921d-4fe6-8449-ef362e69edda",
+      "enclosureUrl": "https://op3.dev/e,pg=7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93/https://d12wklypp119aj.cloudfront.net/track/bbe5db05-921d-4fe6-8449-ef362e69edda.mp3",
+      "duration": 166,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/b337bd2b-46c5-4bd0-a57f-f93bca81ebea.jpg",
+      "datePublished": 1756497587,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "Bad Habit",
+      "feedTitle": "Take The Lead",
+      "feedArtist": "Jessica Lynne Witty",
+      "feedUrl": "https://wavlake.com/feed/music/b337bd2b-46c5-4bd0-a57f-f93bca81ebea",
+      "feedGuid": "7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/b337bd2b-46c5-4bd0-a57f-f93bca81ebea.jpg",
+      "guid": "833fe4d4-598b-456a-9029-833669203a33",
+      "enclosureUrl": "https://op3.dev/e,pg=7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93/https://d12wklypp119aj.cloudfront.net/track/833fe4d4-598b-456a-9029-833669203a33.mp3",
+      "duration": 219,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/b337bd2b-46c5-4bd0-a57f-f93bca81ebea.jpg",
+      "datePublished": 1756497587,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "It Made Me Me",
+      "feedTitle": "Take The Lead",
+      "feedArtist": "Jessica Lynne Witty",
+      "feedUrl": "https://wavlake.com/feed/music/b337bd2b-46c5-4bd0-a57f-f93bca81ebea",
+      "feedGuid": "7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/b337bd2b-46c5-4bd0-a57f-f93bca81ebea.jpg",
+      "guid": "16576253-2911-4d68-8b26-4954425017e8",
+      "enclosureUrl": "https://op3.dev/e,pg=7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93/https://d12wklypp119aj.cloudfront.net/track/16576253-2911-4d68-8b26-4954425017e8.mp3",
+      "duration": 209,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/b337bd2b-46c5-4bd0-a57f-f93bca81ebea.jpg",
+      "datePublished": 1756497587,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "Don't Fall Out Of Love With Me Just Yet",
+      "feedTitle": "Take The Lead",
+      "feedArtist": "Jessica Lynne Witty",
+      "feedUrl": "https://wavlake.com/feed/music/b337bd2b-46c5-4bd0-a57f-f93bca81ebea",
+      "feedGuid": "7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/b337bd2b-46c5-4bd0-a57f-f93bca81ebea.jpg",
+      "guid": "27faa2ea-300b-48da-b722-1d5ef6aa132d",
+      "enclosureUrl": "https://op3.dev/e,pg=7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93/https://d12wklypp119aj.cloudfront.net/track/27faa2ea-300b-48da-b722-1d5ef6aa132d.mp3",
+      "duration": 161,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/b337bd2b-46c5-4bd0-a57f-f93bca81ebea.jpg",
+      "datePublished": 1756497587,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "Crazy On The Outside",
+      "feedTitle": "Take The Lead",
+      "feedArtist": "Jessica Lynne Witty",
+      "feedUrl": "https://wavlake.com/feed/music/b337bd2b-46c5-4bd0-a57f-f93bca81ebea",
+      "feedGuid": "7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/b337bd2b-46c5-4bd0-a57f-f93bca81ebea.jpg",
+      "guid": "0399be2f-232d-4f7c-b0a8-a359468bad26",
+      "enclosureUrl": "https://op3.dev/e,pg=7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93/https://d12wklypp119aj.cloudfront.net/track/0399be2f-232d-4f7c-b0a8-a359468bad26.mp3",
+      "duration": 197,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/b337bd2b-46c5-4bd0-a57f-f93bca81ebea.jpg",
+      "datePublished": 1756497587,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "Beer Run",
+      "feedTitle": "Take The Lead",
+      "feedArtist": "Jessica Lynne Witty",
+      "feedUrl": "https://wavlake.com/feed/music/b337bd2b-46c5-4bd0-a57f-f93bca81ebea",
+      "feedGuid": "7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/b337bd2b-46c5-4bd0-a57f-f93bca81ebea.jpg",
+      "guid": "3a5a784f-642f-41ab-b552-8c710415b8c6",
+      "enclosureUrl": "https://op3.dev/e,pg=7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93/https://d12wklypp119aj.cloudfront.net/track/3a5a784f-642f-41ab-b552-8c710415b8c6.mp3",
+      "duration": 217,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/b337bd2b-46c5-4bd0-a57f-f93bca81ebea.jpg",
+      "datePublished": 1756497587,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "These Boots Are Made For Walkin'",
+      "feedTitle": "Take The Lead",
+      "feedArtist": "Jessica Lynne Witty",
+      "feedUrl": "https://wavlake.com/feed/music/b337bd2b-46c5-4bd0-a57f-f93bca81ebea",
+      "feedGuid": "7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/b337bd2b-46c5-4bd0-a57f-f93bca81ebea.jpg",
+      "guid": "fcf02550-a439-4c52-9d54-fd7ca91271b2",
+      "enclosureUrl": "https://op3.dev/e,pg=7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93/https://d12wklypp119aj.cloudfront.net/track/fcf02550-a439-4c52-9d54-fd7ca91271b2.mp3",
+      "duration": 153,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/b337bd2b-46c5-4bd0-a57f-f93bca81ebea.jpg",
+      "datePublished": 1756497587,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "It's A Matter Of When (teat. Don Ellis Gatlin)",
+      "feedTitle": "Take The Lead",
+      "feedArtist": "Jessica Lynne Witty",
+      "feedUrl": "https://wavlake.com/feed/music/b337bd2b-46c5-4bd0-a57f-f93bca81ebea",
+      "feedGuid": "7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/b337bd2b-46c5-4bd0-a57f-f93bca81ebea.jpg",
+      "guid": "e0376678-59a3-4d07-a667-1b0228c58d99",
+      "enclosureUrl": "https://op3.dev/e,pg=7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93/https://d12wklypp119aj.cloudfront.net/track/e0376678-59a3-4d07-a667-1b0228c58d99.mp3",
+      "duration": 162,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/b337bd2b-46c5-4bd0-a57f-f93bca81ebea.jpg",
+      "datePublished": 1756497587,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "Dance With The Devil",
+      "feedTitle": "Take The Lead",
+      "feedArtist": "Jessica Lynne Witty",
+      "feedUrl": "https://wavlake.com/feed/music/b337bd2b-46c5-4bd0-a57f-f93bca81ebea",
+      "feedGuid": "7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/b337bd2b-46c5-4bd0-a57f-f93bca81ebea.jpg",
+      "guid": "123305e4-5101-423c-b240-14bd609238c4",
+      "enclosureUrl": "https://op3.dev/e,pg=7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93/https://d12wklypp119aj.cloudfront.net/track/123305e4-5101-423c-b240-14bd609238c4.mp3",
+      "duration": 244,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/b337bd2b-46c5-4bd0-a57f-f93bca81ebea.jpg",
+      "datePublished": 1756497587,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "Bad Idea (feat. Bill Maier)",
+      "feedTitle": "Take The Lead",
+      "feedArtist": "Jessica Lynne Witty",
+      "feedUrl": "https://wavlake.com/feed/music/b337bd2b-46c5-4bd0-a57f-f93bca81ebea",
+      "feedGuid": "7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/b337bd2b-46c5-4bd0-a57f-f93bca81ebea.jpg",
+      "guid": "b22d20d9-307a-44d3-b037-f40770b1b5a7",
+      "enclosureUrl": "https://op3.dev/e,pg=7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93/https://d12wklypp119aj.cloudfront.net/track/b22d20d9-307a-44d3-b037-f40770b1b5a7.mp3",
+      "duration": 144,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/b337bd2b-46c5-4bd0-a57f-f93bca81ebea.jpg",
+      "datePublished": 1756497587,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "Wildfire",
+      "feedTitle": "Take The Lead",
+      "feedArtist": "Jessica Lynne Witty",
+      "feedUrl": "https://wavlake.com/feed/music/b337bd2b-46c5-4bd0-a57f-f93bca81ebea",
+      "feedGuid": "7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/b337bd2b-46c5-4bd0-a57f-f93bca81ebea.jpg",
+      "guid": "14aed09b-4f0f-405e-9f41-c70df1bf20a4",
+      "enclosureUrl": "https://op3.dev/e,pg=7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93/https://d12wklypp119aj.cloudfront.net/track/14aed09b-4f0f-405e-9f41-c70df1bf20a4.mp3",
+      "duration": 177,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/b337bd2b-46c5-4bd0-a57f-f93bca81ebea.jpg",
+      "datePublished": 1756497587,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "Singin' Country",
+      "feedTitle": "Singin' Country",
+      "feedArtist": "Jessica Lynne Witty",
+      "feedUrl": "https://wavlake.com/feed/music/286ed5e4-381a-4a6c-abb8-926df3149afe",
+      "feedGuid": "3708cde4-e4bd-513a-ad59-92f5c4fb8db2",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/286ed5e4-381a-4a6c-abb8-926df3149afe.jpg",
+      "guid": "1dd8845e-5b5f-4c0f-a9a3-eb1cfdb76bd2",
+      "enclosureUrl": "https://op3.dev/e,pg=3708cde4-e4bd-513a-ad59-92f5c4fb8db2/https://d12wklypp119aj.cloudfront.net/track/1dd8845e-5b5f-4c0f-a9a3-eb1cfdb76bd2.mp3",
+      "duration": 171,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/286ed5e4-381a-4a6c-abb8-926df3149afe.jpg",
+      "datePublished": 1756497588,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "Fallen Angels Don't Fly",
+      "feedTitle": "Fallen Angels Don't Fly",
+      "feedArtist": "Jessica Lynne Witty",
+      "feedUrl": "https://wavlake.com/feed/music/2c37e787-e3c6-46d3-b3c1-7a0eea63f3e1",
+      "feedGuid": "4519aebd-5563-5ce4-9abe-7caded56eed0",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/2c37e787-e3c6-46d3-b3c1-7a0eea63f3e1.jpg",
+      "guid": "15f84142-458e-42ae-a944-dd30d8314869",
+      "enclosureUrl": "https://op3.dev/e,pg=4519aebd-5563-5ce4-9abe-7caded56eed0/https://d12wklypp119aj.cloudfront.net/track/15f84142-458e-42ae-a944-dd30d8314869.mp3",
+      "duration": 267,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/2c37e787-e3c6-46d3-b3c1-7a0eea63f3e1.jpg",
+      "datePublished": 1756497589,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "My My My",
+      "feedTitle": "My My My",
+      "feedArtist": "Jessica Lynne Witty",
+      "feedUrl": "https://wavlake.com/feed/music/ad40401b-def9-4c89-b2e5-f47b67254d65",
+      "feedGuid": "f41ddac5-15ce-5ff4-bc1e-3a16d98731a1",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/ad40401b-def9-4c89-b2e5-f47b67254d65.jpg",
+      "guid": "08352fbb-a781-4dfb-910c-47753ec1c324",
+      "enclosureUrl": "https://op3.dev/e,pg=f41ddac5-15ce-5ff4-bc1e-3a16d98731a1/https://d12wklypp119aj.cloudfront.net/track/08352fbb-a781-4dfb-910c-47753ec1c324.mp3",
+      "duration": 250,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/ad40401b-def9-4c89-b2e5-f47b67254d65.jpg",
+      "datePublished": 1756497591,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "Fighting My Way",
+      "feedTitle": "Fighting My Way",
+      "feedArtist": "Ryan Fonda",
+      "feedUrl": "https://wavlake.com/feed/music/ba843b13-bd09-4964-944b-cd64678edac7",
+      "feedGuid": "d2cfef1f-ee87-50d7-9e03-c53ac0260e2f",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/ba843b13-bd09-4964-944b-cd64678edac7.jpg",
+      "guid": "448317db-14f3-4377-8d04-5b5130401f88",
+      "enclosureUrl": "https://op3.dev/e,pg=d2cfef1f-ee87-50d7-9e03-c53ac0260e2f/https://d12wklypp119aj.cloudfront.net/track/448317db-14f3-4377-8d04-5b5130401f88.mp3",
+      "duration": 229,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/ba843b13-bd09-4964-944b-cd64678edac7.jpg",
+      "datePublished": 1756497594,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "Alone",
+      "feedTitle": "Alone",
+      "feedArtist": "Ryan Fonda",
+      "feedUrl": "https://wavlake.com/feed/music/dd86f305-1766-4cae-a989-56ea9d09dff9",
+      "feedGuid": "eb7207b6-8f9d-5aa6-8ebf-3b1ac4551f01",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/dd86f305-1766-4cae-a989-56ea9d09dff9.jpg",
+      "guid": "06062219-39b2-407c-8dce-5a24db09dfba",
+      "enclosureUrl": "https://op3.dev/e,pg=eb7207b6-8f9d-5aa6-8ebf-3b1ac4551f01/https://d12wklypp119aj.cloudfront.net/track/06062219-39b2-407c-8dce-5a24db09dfba.mp3",
+      "duration": 181,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/dd86f305-1766-4cae-a989-56ea9d09dff9.jpg",
+      "datePublished": 1756497599,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "Only A Call Away",
+      "feedTitle": "Only A Call Away",
+      "feedArtist": "Ryan Fonda",
+      "feedUrl": "https://wavlake.com/feed/music/e6a50ff6-8e1b-445f-a9ef-21096af86e49",
+      "feedGuid": "65cd72e4-fc7b-595d-baee-6c35feba420a",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/e6a50ff6-8e1b-445f-a9ef-21096af86e49.jpg",
+      "guid": "d186993b-5230-43a2-aefb-418d79e03c6a",
+      "enclosureUrl": "https://op3.dev/e,pg=65cd72e4-fc7b-595d-baee-6c35feba420a/https://d12wklypp119aj.cloudfront.net/track/d186993b-5230-43a2-aefb-418d79e03c6a.mp3",
+      "duration": 245,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/e6a50ff6-8e1b-445f-a9ef-21096af86e49.jpg",
+      "datePublished": 1756497604,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "Utah Snow",
+      "feedTitle": "Utah Snow",
+      "feedArtist": "Ryan Fonda",
+      "feedUrl": "https://wavlake.com/feed/music/f4bebaac-91d0-4485-83ea-1441bfcf6c48",
+      "feedGuid": "b7842bf4-143a-51fc-be80-552e09b672ef",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/f4bebaac-91d0-4485-83ea-1441bfcf6c48.jpg",
+      "guid": "1006e0ad-dc79-4a48-8d50-011efaa4f36e",
+      "enclosureUrl": "https://op3.dev/e,pg=b7842bf4-143a-51fc-be80-552e09b672ef/https://d12wklypp119aj.cloudfront.net/track/1006e0ad-dc79-4a48-8d50-011efaa4f36e.mp3",
+      "duration": 175,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/f4bebaac-91d0-4485-83ea-1441bfcf6c48.jpg",
+      "datePublished": 1756497610,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
+    },
+    {
+      "title": "Cast Away Remix",
+      "feedTitle": "Cast Away Remix",
+      "feedArtist": "Ryan Fonda",
+      "feedUrl": "https://wavlake.com/feed/music/c277887f-425d-41ac-8632-1ec46dd65ab0",
+      "feedGuid": "0249f11d-bb04-5797-bf1c-bc66ccf513a4",
+      "feedImage": "https://d12wklypp119aj.cloudfront.net/image/c277887f-425d-41ac-8632-1ec46dd65ab0.jpg",
+      "guid": "40fb6d0b-2d3c-4436-bbcf-7ecef9ace5ca",
+      "enclosureUrl": "https://op3.dev/e,pg=0249f11d-bb04-5797-bf1c-bc66ccf513a4/https://d12wklypp119aj.cloudfront.net/track/40fb6d0b-2d3c-4436-bbcf-7ecef9ace5ca.mp3",
+      "duration": 227,
+      "image": "https://d12wklypp119aj.cloudfront.net/image/c277887f-425d-41ac-8632-1ec46dd65ab0.jpg",
+      "datePublished": 1756497628,
+      "explicit": false,
+      "source": "Targeted Feed Refresh"
     }
   ],
   "episodes": [],
@@ -79570,7 +78849,7 @@
   "analytics": [],
   "metadata": {
     "version": "1.0.0",
-    "lastUpdated": "2025-08-29T19:45:30.050Z",
+    "lastUpdated": "2025-08-29T20:00:29.132Z",
     "totalTracks": 1261,
     "totalEpisodes": 0,
     "totalFeeds": 0,
@@ -79761,6 +79040,20 @@
       "originalCount": 1802,
       "finalCount": 1555,
       "note": "Removed duplicate album-title tracks and tracks without URLs"
+    },
+    "dfbVolume2Refresh": {
+      "date": "2025-08-29T19:54:03.474Z",
+      "feedUrl": "https://www.doerfelverse.com/feeds/dfbv2.xml",
+      "removedTracks": 3,
+      "addedTracks": 9,
+      "note": "Refreshed DFB Volume 2 album with current RSS feed data"
+    },
+    "targetedRefresh": {
+      "date": "2025-08-29T20:00:29.132Z",
+      "feedsProcessed": 17,
+      "feedsUpdated": 12,
+      "feedsFailed": 5,
+      "note": "Targeted refresh of problematic feeds"
     }
   }
 }
