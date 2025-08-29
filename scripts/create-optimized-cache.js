@@ -9,13 +9,25 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-function generateAlbumSlug(title) {
-  return title
+function generateAlbumSlug(title, artist) {
+  const cleanTitle = title
     .toLowerCase()
     .replace(/[^\w\s-]/g, '') // Remove special characters
     .replace(/\s+/g, '-') // Replace spaces with hyphens
     .replace(/-+/g, '-') // Replace multiple hyphens with single
     .trim();
+  
+  if (artist && artist !== 'Unknown Artist') {
+    const cleanArtist = artist
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .trim();
+    return `${cleanArtist}-${cleanTitle}`;
+  }
+  
+  return cleanTitle;
 }
 
 async function createOptimizedCache() {
@@ -72,7 +84,12 @@ async function createOptimizedCache() {
                 'Homegrown Hits Vol. I': 'Various Artists'
             };
             
-            let artist = artistMappings[albumTitle] || group.feedArtist || 'Unknown Artist';
+            let artist = artistMappings[albumTitle] || 
+                        firstTrack.artist || 
+                        firstTrack.feedArtist || 
+                        group.feedArtist || 
+                        firstTrack.publisher ||
+                        'Unknown Artist';
             
             // Deduplicate tracks within album
             const uniqueTracks = group.tracks.filter((track, index, array) => {
@@ -90,7 +107,7 @@ async function createOptimizedCache() {
             });
             
             return {
-                id: generateAlbumSlug(albumTitle),
+                id: generateAlbumSlug(albumTitle, artist),
                 title: albumTitle,
                 artist: artist,
                 description: firstTrack.description || '',
@@ -104,7 +121,7 @@ async function createOptimizedCache() {
                     trackNumber: index + 1,
                     explicit: track.explicit || false
                 })),
-                feedId: group.feedGuid || `music-${generateAlbumSlug(albumTitle)}`,
+                feedId: group.feedGuid || `music-${generateAlbumSlug(albumTitle, artist)}`,
                 feedUrl: group.feedUrl || '',
                 lastUpdated: new Date().toISOString()
             };
