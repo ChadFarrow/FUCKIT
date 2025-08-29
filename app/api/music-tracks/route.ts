@@ -533,12 +533,13 @@ export async function GET(request: NextRequest) {
     }
     
     // Prepare response data with enhanced metadata
+    const existingMetadata = ('metadata' in result ? result.metadata : {}) as Record<string, any>;
     const responseData = {
       success: true,
       data: {
         ...result,
         metadata: {
-          ...('metadata' in result ? result.metadata : {}),
+          ...existingMetadata,
           parser: useEnhanced ? 'enhanced-rss-parser' : 'legacy-parser',
           enhanced: useEnhanced
         }
