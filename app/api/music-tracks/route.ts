@@ -538,7 +538,7 @@ export async function GET(request: NextRequest) {
       data: {
         ...result,
         metadata: {
-          ...result.metadata,
+          ...('metadata' in result ? result.metadata : {}),
           parser: useEnhanced ? 'enhanced-rss-parser' : 'legacy-parser',
           enhanced: useEnhanced
         }
