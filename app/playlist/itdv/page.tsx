@@ -130,10 +130,8 @@ export default function ITDVPlaylistPage() {
     setCacheStatus(null);
     
     try {
-      // Force fetch from RSS feed and update database with V4V resolution
-      const feedUrl = 'https://www.doerfelverse.com/feeds/intothedoerfelverse.xml';
-      const encodedFeedUrl = encodeURIComponent(feedUrl);
-      const response = await fetch(`/api/music-tracks?feedUrl=${encodedFeedUrl}&forceRefresh=true&saveToDatabase=true&resolveV4V=true&clearV4VCache=true&limit=1000`);
+      // Force refresh all doerfelverse.com tracks from database
+      const response = await fetch(`/api/music-tracks?feedUrl=local://database&forceRefresh=true&resolveV4V=true&limit=1000`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -186,24 +184,25 @@ export default function ITDVPlaylistPage() {
   const loadMainFeedTracks = async () => {
     console.log('🎵 Loading tracks from persistent storage...');
     
-    // Always load from local database with high limit to get all tracks, ensuring V4V data is resolved
-    const response = await fetch('/api/music-tracks?feedUrl=local://database&limit=1000&resolveV4V=true');
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+    try {
+      // Always load from local database with high limit to get all tracks, ensuring V4V data is resolved
+      const response = await fetch('/api/music-tracks?feedUrl=local://database&limit=1000&resolveV4V=true');
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
     
     const data = await response.json();
     
     if (data.success && data.data.tracks) {
       console.log(`📦 Loaded ${data.data.tracks.length} tracks from persistent storage`);
       
-      // Filter tracks for main feed only
+      // Filter tracks for Doerfel-verse domain (any doerfelverse.com feeds)
       const mainFeedTracks = data.data.tracks.filter((track: any) => 
-        track.feedUrl === 'https://www.doerfelverse.com/feeds/intothedoerfelverse.xml'
+        track.feedUrl && track.feedUrl.includes('doerfelverse.com')
       );
       
-      console.log(`📊 Filtered to ${mainFeedTracks.length} tracks from main feed`);
+      console.log(`📊 Filtered to ${mainFeedTracks.length} tracks from doerfelverse.com feeds`);
       
       const formattedTracks = mainFeedTracks.map((track: any, index: number) => {
         // Debug log first few tracks to see V4V data
@@ -270,7 +269,12 @@ export default function ITDVPlaylistPage() {
     } else {
       throw new Error('No tracks found in persistent storage');
     }
-  };
+  } catch (error) {
+    console.error('Failed to load main feed tracks:', error);
+    setError(error instanceof Error ? error.message : 'Failed to load main feed tracks');
+    setLoading(false);
+  }
+};
 
   const loadCompleteCatalog = async () => {
     console.log('🎵 Loading complete catalog...');
