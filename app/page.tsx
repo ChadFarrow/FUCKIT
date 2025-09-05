@@ -401,9 +401,12 @@ export default function HomePage() {
         // Remove cache busting for better performance
       });
       
+      console.log(`🌐 Fetching: /api/albums?${params}`);
       const response = await fetch(`/api/albums?${params}`);
       
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`❌ API Error: ${response.status} ${response.statusText}`, errorText);
         throw new Error(`Failed to fetch albums: ${response.status} ${response.statusText}`);
       }
       
@@ -467,7 +470,8 @@ export default function HomePage() {
       
     } catch (err) {
       const errorMessage = getErrorMessage(err);
-      setError(`Error loading album data: ${errorMessage}`);
+      console.error('❌ Error loading main feed tracks:', err);
+      setError(`Error loading main feed tracks: ${errorMessage}`);
       toast.error(`Failed to load albums: ${errorMessage}`);
       return [];
     } finally {
