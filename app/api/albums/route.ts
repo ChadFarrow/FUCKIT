@@ -10,7 +10,7 @@ let cachedData: any = null;
 let cachedMusicTracks: any = null;
 let cachedHGHSongs: any = null;
 let cachedProcessedAlbums: any = null; // Cache processed albums - cleared for deduplication
-const PROCESSED_CACHE_VERSION = 'v3-filter-hgh'; // Increment to invalidate cache when logic changes
+const PROCESSED_CACHE_VERSION = 'v4-playlists'; // Increment to invalidate cache when logic changes
 let cacheTimestamp = 0;
 const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes - longer cache for better performance
 
@@ -347,9 +347,11 @@ export async function GET(request: Request) {
     console.log('🎵 Adding albums from music-tracks.json...');
     
     // Group music tracks by feedGuid to create albums
+    // Group all music tracks by feedGuid (treating all tracks the same)
     const musicAlbumGroups = new Map<string, any>();
     
     cachedMusicTracks.forEach((track: any) => {
+      // Group all tracks by feedGuid regardless of source
       const key = track.feedGuid || 'unknown';
       if (!musicAlbumGroups.has(key)) {
         musicAlbumGroups.set(key, {
