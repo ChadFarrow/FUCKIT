@@ -1,0 +1,83 @@
+{
+  "summary": {
+    "totalTracks": 5,
+    "resolved": 0,
+    "failed": 5,
+    "statusBreakdown": {
+      "podcast_no_feed_id": 5
+    }
+  },
+  "results": [
+    {
+      "status": "podcast_no_feed_id",
+      "error": "Podcast found but no feed ID",
+      "feedGuid": "54c84531-b98d-6529-d922-5235b579008b",
+      "itemGuid": "c0ac555d-962d-4203-73a9-00dcee35c4c1",
+      "podcastData": {
+        "status": "true",
+        "query": {
+          "guid": "54c84531-b98d-6529-d922-5235b579008b"
+        },
+        "feed": [],
+        "description": "No feeds match this guid."
+      }
+    },
+    {
+      "status": "podcast_no_feed_id",
+      "error": "Podcast found but no feed ID",
+      "feedGuid": "80eec020-5fa3-6f98-2d9e-644cc211743d",
+      "itemGuid": "8da9d0a4-4505-fa43-0ee0-79f27f846cae",
+      "podcastData": {
+        "status": "true",
+        "query": {
+          "guid": "80eec020-5fa3-6f98-2d9e-644cc211743d"
+        },
+        "feed": [],
+        "description": "No feeds match this guid."
+      }
+    },
+    {
+      "status": "podcast_no_feed_id",
+      "error": "Podcast found but no feed ID",
+      "feedGuid": "acd2ebc8-1e4b-93e9-3ecb-5df4367b4028",
+      "itemGuid": "f55038b7-053a-db4c-eb99-7e83333509f4",
+      "podcastData": {
+        "status": "true",
+        "query": {
+          "guid": "acd2ebc8-1e4b-93e9-3ecb-5df4367b4028"
+        },
+        "feed": [],
+        "description": "No feeds match this guid."
+      }
+    },
+    {
+      "status": "podcast_no_feed_id",
+      "error": "Podcast found but no feed ID",
+      "feedGuid": "993ff68c-b53f-cfa9-754f-5f76529455ca",
+      "itemGuid": "9bf6d23f-cb8d-78da-fb73-6494836b7c69",
+      "podcastData": {
+        "status": "true",
+        "query": {
+          "guid": "993ff68c-b53f-cfa9-754f-5f76529455ca"
+        },
+        "feed": [],
+        "description": "No feeds match this guid."
+      }
+    },
+    {
+      "status": "podcast_no_feed_id",
+      "error": "Podcast found but no feed ID",
+      "feedGuid": "66094344-5e26-5dfc-c295-78d14f785e5a",
+      "itemGuid": "14b0c10b-d40f-3e42-e782-9e34f84831dc",
+      "podcastData": {
+        "status": "true",
+        "query": {
+          "guid": "66094344-5e26-5dfc-c295-78d14f785e5a"
+        },
+        "feed": [],
+        "description": "No feeds match this guid."
+      }
+    }
+  ],
+  "timestamp": "2025-08-27T00:19:45.328Z"
+}

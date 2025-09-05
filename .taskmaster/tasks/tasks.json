@@ -694,7 +694,7 @@
         "description": "Identify the causes of slow initial load and implement fixes to reduce TTFB and LCP.",
         "details": "- Profile Next.js server/API routes for bottlenecks (heavy synchronous work, uncached fetches)\n- Audit client bundles (large deps, unused components) and enable code-splitting where needed\n- Add caching (HTTP/CDN) for stable resources (artwork, feeds)\n- Optimize image delivery (next/image, sizes, preloads)\n- Track metrics with simple RUM logging",
         "testStrategy": "Measure before/after: Lighthouse (mobile), Web Vitals (LCP, CLS, FID), and server timing. Target >30% LCP improvement.",
-        "status": "in-progress",
+        "status": "done",
         "dependencies": [],
         "priority": "high",
         "subtasks": []
@@ -705,7 +705,7 @@
         "description": "Expose the Homegrown Hits (HGH) playlist in the site with navigation, listing, and playback.",
         "details": "- Add HGH playlist page/route mirroring ITDV playlist capabilities (filters, search, playback)\n- Hook up HGH data source and value resolution\n- Include in navigation and sitemap",
         "testStrategy": "Open HGH page, verify tracks load, filters work, and playback uses resolved audio URLs.",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "high",
         "subtasks": []
@@ -768,7 +768,7 @@
     ],
     "metadata": {
       "created": "2025-08-01T21:46:44.417Z",
-      "updated": "2025-08-17T20:08:30.261Z",
+      "updated": "2025-09-05T00:57:40.045Z",
       "description": "Music track extraction feature development"
     }
   },

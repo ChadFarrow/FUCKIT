@@ -1,0 +1,22 @@
+{
+  "potentialFeeds": [
+    "https://raw.githubusercontent.com/ChadFarrow/ITDV-music-playlist/refs/heads/main/docs/HGH-playlist-art.webp"
+  ],
+  "byDomain": {
+    "homegrownhits.xyz": [
+      "https://homegrownhits.xyz"
+    ],
+    "raw.githubusercontent.com": [
+      "https://raw.githubusercontent.com/ChadFarrow/ITDV-music-playlist/refs/heads/main/docs/HGH-playlist-art.webp"
+    ]
+  },
+  "byExtension": {
+    "/": [
+      "https://homegrownhits.xyz"
+    ],
+    "webp": [
+      "https://raw.githubusercontent.com/ChadFarrow/ITDV-music-playlist/refs/heads/main/docs/HGH-playlist-art.webp"
+    ]
+  },
+  "timestamp": "2025-08-27T00:28:37.137Z"
+}

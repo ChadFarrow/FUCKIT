@@ -68,13 +68,7 @@ const LoadingSkeleton = ({ count = 6 }: { count?: number }) => (
 import type { FilterType, ViewType, SortType } from '@/components/ControlsBar';
 // RSS feed configuration - CDN removed, using original URLs directly
 
-// Temporarily disable error logger to prevent recursion
-// const logger = createErrorLogger('MainPage');
-
 // Development logging utility - disabled for performance
-const isDev = process.env.NODE_ENV === 'development';
-const isVerbose = process.env.NEXT_PUBLIC_LOG_LEVEL === 'verbose';
-
 const devLog = (...args: any[]) => {
   // Disabled for performance
 };
@@ -120,8 +114,8 @@ export default function HomePage() {
   const [totalAlbums, setTotalAlbums] = useState(0);
   const [displayedAlbums, setDisplayedAlbums] = useState<RSSAlbum[]>([]);
   const [hasMoreAlbums, setHasMoreAlbums] = useState(true);
-  const ALBUMS_PER_PAGE = 0; // Load all albums for accurate sidebar counting
-  const API_VERSION = 'v2'; // Increment to bust cache when API changes
+  const ALBUMS_PER_PAGE = 24; // Load 24 albums per page for better performance
+  const API_VERSION = 'v4'; // Increment to bust cache when API changes - v4 fixes publisher stats
   
   // HGH filter removed - no longer needed
   
@@ -192,8 +186,25 @@ export default function HomePage() {
     
     hasLoadedRef.current = true;
     
-    // Only clear cache if it's stale (older than 5 minutes)
+    // Clear ALL old cache versions to prevent stale data issues
     if (typeof window !== 'undefined') {
+      // Clear any old cache versions (pre-v4)
+      const keysToRemove: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && (key.includes('cachedAlbums_') || key.includes('albumsCacheTimestamp_'))) {
+          // Only keep current version cache
+          if (!key.includes(`_${API_VERSION}`)) {
+            keysToRemove.push(key);
+          }
+        }
+      }
+      keysToRemove.forEach(key => {
+        console.log('🗑️ Removing old cache:', key);
+        localStorage.removeItem(key);
+      });
+
+      // Also clear current cache if it's stale (older than 5 minutes)
       const timestamp = localStorage.getItem(`albumsCacheTimestamp_${ALBUMS_PER_PAGE}_${API_VERSION}`);
       if (timestamp) {
         const age = Date.now() - parseInt(timestamp);
@@ -240,11 +251,11 @@ export default function HomePage() {
       const startIndex = (currentPage - 1) * ALBUMS_PER_PAGE;
       const pageAlbums = await loadAlbumsData('all', ALBUMS_PER_PAGE, startIndex, activeFilter);
       
-      // Set albums directly
+      // Set albums directly - show first 8 immediately, then rest
       setCriticalAlbums(pageAlbums.slice(0, 8));
       setEnhancedAlbums(pageAlbums);
       setDisplayedAlbums(pageAlbums);
-      setHasMoreAlbums(pageAlbums.length === ALBUMS_PER_PAGE && totalCount > ALBUMS_PER_PAGE);
+      setHasMoreAlbums(totalCount > ALBUMS_PER_PAGE);
       setIsCriticalLoaded(true);
       setIsEnhancedLoaded(true);
       setLoadingProgress(100);
@@ -279,7 +290,8 @@ export default function HomePage() {
         setCurrentPage(nextPage);
         
         // Check if there are more albums to load
-        setHasMoreAlbums(newAlbums.length === ALBUMS_PER_PAGE && (startIndex + newAlbums.length) < totalAlbums);
+        const totalLoaded = displayedAlbums.length + newAlbums.length;
+        setHasMoreAlbums(totalLoaded < totalAlbums);
       } else {
         setHasMoreAlbums(false);
       }
@@ -346,7 +358,7 @@ export default function HomePage() {
       setCriticalAlbums(pageAlbums.slice(0, 8));
       setEnhancedAlbums(pageAlbums);
       setDisplayedAlbums(pageAlbums);
-      setHasMoreAlbums(pageAlbums.length === ALBUMS_PER_PAGE && totalCount > ALBUMS_PER_PAGE);
+      setHasMoreAlbums(totalCount > ALBUMS_PER_PAGE);
       setIsCriticalLoaded(true);
       setIsEnhancedLoaded(true);
       
@@ -440,11 +452,12 @@ export default function HomePage() {
         rssAlbums = rssAlbums.slice(0, limit);
       }
       
-      // Cache only the main 'all' request for performance
-      if (typeof window !== 'undefined' && loadTier === 'all' && offset === 0) {
+      // Cache only the main 'all' request for performance - but only if we have publisher stats
+      if (typeof window !== 'undefined' && loadTier === 'all' && offset === 0 && filter === 'all' && publisherStatsFromAPI.length > 0) {
         try {
           localStorage.setItem(`cachedAlbums_${ALBUMS_PER_PAGE}_${API_VERSION}`, JSON.stringify(rssAlbums));
           localStorage.setItem(`albumsCacheTimestamp_${ALBUMS_PER_PAGE}_${API_VERSION}`, Date.now().toString());
+          console.log(`💾 Cached ${rssAlbums.length} albums with ${publisherStatsFromAPI.length} publisher stats`);
         } catch (error) {
           console.warn('⚠️ Failed to cache albums:', error);
         }
@@ -837,6 +850,28 @@ export default function HomePage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
                 </svg>
                 <span className="text-sm text-gray-300">Doerfel-Verse Music Catalog</span>
+              </Link>
+
+              <Link 
+                href="/playlist/hgh" 
+                className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800/50 transition-colors text-gray-300"
+                onClick={() => setIsSidebarOpen(false)}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                </svg>
+                <span className="text-sm text-gray-300">Homegrown Hits Playlist</span>
+              </Link>
+
+              <Link 
+                href="/playlist/index" 
+                className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800/50 transition-colors text-gray-300"
+                onClick={() => setIsSidebarOpen(false)}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                </svg>
+                <span className="text-sm text-gray-300">All Playlists</span>
               </Link>
             </div>
 

@@ -1,0 +1,49 @@
+{
+  "timestamp": "2025-08-23T01:55:12.725Z",
+  "totalMissing": 8,
+  "added": 0,
+  "failed": 8,
+  "addedTracks": [],
+  "failedTracks": [
+    {
+      "feedGuid": "95e5f9d8-35e3-51f5-a269-ba1df36b4bd8",
+      "itemGuid": "d79f242f-0651-4b12-be79-c2bac234cfde",
+      "error": "HTTP 404: Not Found"
+    },
+    {
+      "feedGuid": "5a95f9d8-35e3-51f5-a269-ba1df36b4bd8",
+      "itemGuid": "7c823adf-1e53-4df1-98c0-979da81ec916",
+      "error": "HTTP 404: Not Found"
+    },
+    {
+      "feedGuid": "5a95f9d8-35e3-51f5-a269-ba1df36b4bd8",
+      "itemGuid": "822d7113-eab2-4857-82d2-cc0c1a52ce2b",
+      "error": "HTTP 404: Not Found"
+    },
+    {
+      "feedGuid": "5a95f9d8-35e3-51f5-a269-ba1df36b4bd8",
+      "itemGuid": "24d8aa8b-317c-4f03-86d2-65c454370fb8",
+      "error": "HTTP 404: Not Found"
+    },
+    {
+      "feedGuid": "95e5f9d8-35e3-51f5-a269-ba1df36b4bd8",
+      "itemGuid": "bfe9ed47-ac2a-4fc6-be19-6ab94f75c4c4",
+      "error": "HTTP 404: Not Found"
+    },
+    {
+      "feedGuid": "95e5f9d8-35e3-51f5-a269-ba1df36b4bd8",
+      "itemGuid": "3587c342-cd4a-481c-838c-de242e5beb0b",
+      "error": "HTTP 404: Not Found"
+    },
+    {
+      "feedGuid": "7a0735a7-c2d2-5e2c-ad5a-8586a62bfc93",
+      "itemGuid": "3a5a784f-642f-41ab-b552-8c710415b8c6",
+      "error": "HTTP 404: Not Found"
+    },
+    {
+      "feedGuid": "d13eab76-a4c4-5e4b-a0fb-25ed1386bc51",
+      "itemGuid": "58cf0bcf-bf66-46a1-8759-314def6d76e5",
+      "error": "HTTP 404: Not Found"
+    }
+  ]
+}

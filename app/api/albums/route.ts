@@ -12,7 +12,7 @@ let cachedHGHSongs: any = null;
 let cachedProcessedAlbums: any = null; // Cache processed albums - cleared for deduplication
 const PROCESSED_CACHE_VERSION = 'v3-filter-hgh'; // Increment to invalidate cache when logic changes
 let cacheTimestamp = 0;
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes - longer cache for better performance
 
 export async function GET(request: Request) {
   try {
@@ -101,9 +101,10 @@ export async function GET(request: Request) {
         lastUpdated: new Date(cacheTimestamp).toISOString()
       }, {
         headers: {
-          'Cache-Control': 'public, max-age=300, s-maxage=300, stale-while-revalidate=600',
+          'Cache-Control': 'public, max-age=1800, s-maxage=3600, stale-while-revalidate=86400',
           'Content-Type': 'application/json',
-          'ETag': `"${cacheTimestamp}-${totalCount}"`
+          'ETag': `"${cacheTimestamp}-${totalCount}-${offset}-${limit}"`,
+          'X-Total-Count': totalCount.toString()
         }
       });
     }
