@@ -114,7 +114,7 @@ export default function HomePage() {
   const [totalAlbums, setTotalAlbums] = useState(0);
   const [displayedAlbums, setDisplayedAlbums] = useState<RSSAlbum[]>([]);
   const [hasMoreAlbums, setHasMoreAlbums] = useState(true);
-  const ALBUMS_PER_PAGE = 24; // Load 24 albums per page for better performance
+  const ALBUMS_PER_PAGE = 12; // Load 12 albums per page for faster initial load
   const API_VERSION = 'v4'; // Increment to bust cache when API changes - v4 fixes publisher stats
   
   // HGH filter removed - no longer needed
@@ -251,8 +251,8 @@ export default function HomePage() {
       const startIndex = (currentPage - 1) * ALBUMS_PER_PAGE;
       const pageAlbums = await loadAlbumsData('all', ALBUMS_PER_PAGE, startIndex, activeFilter);
       
-      // Set albums directly - show first 8 immediately, then rest
-      setCriticalAlbums(pageAlbums.slice(0, 8));
+      // Set albums directly - show first 6 immediately, then rest
+      setCriticalAlbums(pageAlbums.slice(0, 6));
       setEnhancedAlbums(pageAlbums);
       setDisplayedAlbums(pageAlbums);
       setHasMoreAlbums(totalCount > ALBUMS_PER_PAGE);
@@ -355,7 +355,7 @@ export default function HomePage() {
       // Load first page with new filter
       const pageAlbums = await loadAlbumsData('all', ALBUMS_PER_PAGE, 0, newFilter);
       
-      setCriticalAlbums(pageAlbums.slice(0, 8));
+      setCriticalAlbums(pageAlbums.slice(0, 6));
       setEnhancedAlbums(pageAlbums);
       setDisplayedAlbums(pageAlbums);
       setHasMoreAlbums(totalCount > ALBUMS_PER_PAGE);
@@ -865,6 +865,17 @@ export default function HomePage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
                 </svg>
                 <span className="text-sm text-gray-300">Homegrown Hits Playlist</span>
+              </Link>
+
+              <Link 
+                href="/playlist/upbeats" 
+                className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800/50 transition-colors text-gray-300"
+                onClick={() => setIsSidebarOpen(false)}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                </svg>
+                <span className="text-sm text-gray-300">UpBEATs Music Playlist</span>
               </Link>
 
               <Link 

@@ -312,27 +312,14 @@ export default function CDNImage({
     if (src.startsWith('data:')) {
       imageSrc = src;
     }
-    // Use proxy for all external URLs to avoid CORS and loading issues
+    // Only use proxy for known problematic URLs, try direct loading first
     else if (src && (
-      src.includes('cloudfront.net') ||
-      src.includes('doerfelverse.com') ||
-      src.includes('ableandthewolf.com') ||
-      src.includes('thisisjdog.com') ||
       src.includes('static.wixstatic.com') ||
-      src.includes('music.behindthesch3m3s.com') ||
-      src.includes('f4.bcbits.com') ||
-      (!src.includes('re.podtards.com') && !src.includes('/api/') && src.startsWith('http'))
+      src.includes('f4.bcbits.com')
     )) {
       imageSrc = `/api/proxy-image?url=${encodeURIComponent(src)}`;
-    } else if (isClient && isMobile) {
-      // For mobile, if it's an external URL, use proxy immediately
-      if (src && !src.includes('re.podtards.com') && !src.includes('/api/')) {
-        imageSrc = `/api/proxy-image?url=${encodeURIComponent(src)}`;
-      } else {
-        // For internal URLs, use as-is or with light optimization
-        imageSrc = getOptimizedUrl(src, dims.width, dims.height);
-      }
     } else {
+      // Try direct loading first for better performance
       imageSrc = getOptimizedUrl(src, dims.width, dims.height);
     }
     
