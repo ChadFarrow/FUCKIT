@@ -6,7 +6,7 @@
     "dev": "next dev",
     "prebuild": "echo 'Skipping auto-version update for deployment'",
     "build": "next build",
-    "postbuild": "echo '✅ Build complete with auto-versioned PWA'",
+    "postbuild": "npm run db:generate",
     "start": "next start",
     "lint": "next lint",
     "dev-setup": "node scripts/dev-setup.js",
@@ -31,7 +31,14 @@
     "check-albums": "./scripts/check-album-issues.sh",
     "test-rss-parser": "node scripts/test-rss-parser.js",
     "reparse-database": "node scripts/reparse-main-branch-database.js",
-    "reparse-database-robust": "node scripts/reparse-database-robust.js"
+    "reparse-database-robust": "node scripts/reparse-database-robust.js",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:migrate:dev": "prisma migrate dev",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio",
+    "db:reset": "prisma migrate reset",
+    "migrate-to-db": "ts-node scripts/migrate-to-database.ts"
   },
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",
@@ -69,12 +76,15 @@
     "@capacitor/android": "^7.4.2",
     "@capacitor/cli": "^7.4.2",
     "@capacitor/core": "^7.4.2",
+    "@prisma/client": "^6.16.2",
     "@types/colorthief": "^2.6.0",
     "@types/xml2js": "^0.4.14",
     "eslint": "^8",
     "eslint-config-next": "^14.0.4",
     "ignore-loader": "^0.1.2",
-    "task-master-ai": "^0.22.0"
+    "prisma": "^6.16.2",
+    "task-master-ai": "^0.22.0",
+    "ts-node": "^10.9.2"
   },
   "buildTime": "2025-07-30T00:17:52.716Z"
 }

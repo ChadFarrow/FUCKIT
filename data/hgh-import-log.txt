@@ -1,0 +1,2011 @@
+[dotenv@17.2.0] injecting env (2) from .env.local (tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`)
+✅ Created backup: /Users/chad-mini/Vibe/apps/FUCKIT/data/music-tracks.json.backup-hgh-new-1757104239158
+
+📋 Playlist: Homegrown Hits Music Playlist
+🆔 Playlist GUID: 8aad8bd9-0eac-4bfe-b290-6c73f7148155
+🎵 Total tracks: 1178
+
+✅ Created new HGH playlist entry
+
+[1/1178] Fetching 1f53e56a-691a-5417-b442-06ce365d9db6/b706ac3b-13b2-458a-9887-9a31bc39f2b0...
+  ⚠️ Failed to fetch 1f53e56a-691a-5417-b442-06ce365d9db6/b706ac3b-13b2-458a-9887-9a31bc39f2b0: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[2/1178] Fetching cf66e15e-301b-595b-bad3-0b94c90cca95/https://f.strangetextures.com/@connector/episodes/audreys-kitchen...
+  ⚠️ Failed to fetch cf66e15e-301b-595b-bad3-0b94c90cca95/https://f.strangetextures.com/@connector/episodes/audreys-kitchen: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[3/1178] Track already exists: Ani Ohevet
+[4/1178] Track already exists: Twice
+[5/1178] Track already exists: Black Train
+[6/1178] Fetching 351f57f2-79ba-5d30-a247-0f1680352e1f/11931644-b0ea-494d-9267-d0175f4397ca...
+  ⚠️ Failed to fetch 351f57f2-79ba-5d30-a247-0f1680352e1f/11931644-b0ea-494d-9267-d0175f4397ca: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[7/1178] Fetching 0653114c-dd08-5f36-863d-009d56bccb8d/13303d38-fbcf-41b6-8414-dd6c4875ffbe...
+  ⚠️ Failed to fetch 0653114c-dd08-5f36-863d-009d56bccb8d/13303d38-fbcf-41b6-8414-dd6c4875ffbe: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[8/1178] Fetching 63fb0d8e-793f-5033-bbb4-39a836e3da76/c66c68e5-af03-425d-897c-2640b5df69c9...
+  ⚠️ Failed to fetch 63fb0d8e-793f-5033-bbb4-39a836e3da76/c66c68e5-af03-425d-897c-2640b5df69c9: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[9/1178] Fetching 92fc540c-79ce-55b5-9dd8-b5bad9f94d7a/0e277804-32c5-5698-bc41-469f0453cdc6...
+  ⚠️ Failed to fetch 92fc540c-79ce-55b5-9dd8-b5bad9f94d7a/0e277804-32c5-5698-bc41-469f0453cdc6: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[10/1178] Track already exists: Scam On
+[11/1178] Fetching 8b41f7f4-2cc3-5a03-90f5-6c54e92bc96b/0702b25c-3760-45ad-84aa-21a14df69da1...
+  ⚠️ Failed to fetch 8b41f7f4-2cc3-5a03-90f5-6c54e92bc96b/0702b25c-3760-45ad-84aa-21a14df69da1: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[12/1178] Track already exists: SuBrErO (Part I)
+[13/1178] Track already exists: sUbReRo (Part 2)
+[14/1178] Track already exists: SuBrErO (Part 3)
+[15/1178] Track already exists: Rice and Beaner (ft. Cactus Man)
+[16/1178] Fetching 8b41f7f4-2cc3-5a03-90f5-6c54e92bc96b/bbb7cc17-607a-4853-a8af-cdcba54590db...
+  ⚠️ Failed to fetch 8b41f7f4-2cc3-5a03-90f5-6c54e92bc96b/bbb7cc17-607a-4853-a8af-cdcba54590db: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[17/1178] Fetching 8b41f7f4-2cc3-5a03-90f5-6c54e92bc96b/b4b57187-ec97-49b1-a70b-91ab9cfdcba5...
+  ⚠️ Failed to fetch 8b41f7f4-2cc3-5a03-90f5-6c54e92bc96b/b4b57187-ec97-49b1-a70b-91ab9cfdcba5: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[18/1178] Fetching 8b41f7f4-2cc3-5a03-90f5-6c54e92bc96b/b1d0471d-c9dc-4dfe-8c66-1593143c8142...
+  ⚠️ Failed to fetch 8b41f7f4-2cc3-5a03-90f5-6c54e92bc96b/b1d0471d-c9dc-4dfe-8c66-1593143c8142: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[19/1178] Track already exists: A Boofy Movie
+[20/1178] Track already exists: All Salsa No Chips (ft. The Wolf)
+[21/1178] Fetching 8b41f7f4-2cc3-5a03-90f5-6c54e92bc96b/717539ae-3d71-4528-8e1b-c8f7c1adda19...
+  ⚠️ Failed to fetch 8b41f7f4-2cc3-5a03-90f5-6c54e92bc96b/717539ae-3d71-4528-8e1b-c8f7c1adda19: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[22/1178] Fetching 8b41f7f4-2cc3-5a03-90f5-6c54e92bc96b/e269613d-d2db-4356-8754-6e863ae34fa9...
+  ⚠️ Failed to fetch 8b41f7f4-2cc3-5a03-90f5-6c54e92bc96b/e269613d-d2db-4356-8754-6e863ae34fa9: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[23/1178] Fetching 8b41f7f4-2cc3-5a03-90f5-6c54e92bc96b/961a4f73-6545-47ca-b59c-12cfbaa368c3...
+  ⚠️ Failed to fetch 8b41f7f4-2cc3-5a03-90f5-6c54e92bc96b/961a4f73-6545-47ca-b59c-12cfbaa368c3: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[24/1178] Track already exists: Chalupis
+[25/1178] Fetching d67ffeaa-d4cc-5c76-9616-f839aa1b48f3/bd8cd4e7-0637-4313-b43b-dbfda82e8c53...
+  ⚠️ Failed to fetch d67ffeaa-d4cc-5c76-9616-f839aa1b48f3/bd8cd4e7-0637-4313-b43b-dbfda82e8c53: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[26/1178] Fetching 3074902b-b2dc-5877-bfc3-30f5df0fbe6a/c59c7ffe-3847-4d55-ac27-5a1c1fbe6140...
+  ⚠️ Failed to fetch 3074902b-b2dc-5877-bfc3-30f5df0fbe6a/c59c7ffe-3847-4d55-ac27-5a1c1fbe6140: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[27/1178] Track already exists: Die From Love
+[28/1178] Fetching 114f4140-ac60-57fe-a48f-252962024675/0bf52815-7d82-4e8d-926c-51d54dad8922...
+  ⚠️ Failed to fetch 114f4140-ac60-57fe-a48f-252962024675/0bf52815-7d82-4e8d-926c-51d54dad8922: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[29/1178] Fetching 7a4afbd5-72ab-518c-9da3-bc6280f601ba/https://f.strangetextures.com/@endless/episodes/giant-coma-flow...
+  ⚠️ Failed to fetch 7a4afbd5-72ab-518c-9da3-bc6280f601ba/https://f.strangetextures.com/@endless/episodes/giant-coma-flow: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[30/1178] Fetching 63fb0d8e-793f-5033-bbb4-39a836e3da76/8ad4c591-fc78-4e8d-b83d-283b6fd58497...
+  ⚠️ Failed to fetch 63fb0d8e-793f-5033-bbb4-39a836e3da76/8ad4c591-fc78-4e8d-b83d-283b6fd58497: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[31/1178] Track already exists: No Way Back
+[32/1178] Fetching 6c431a3e-7482-524e-86b3-3754d042ecf2/9da2dcf1-a82f-49f1-9467-34eca72a7929...
+  ⚠️ Failed to fetch 6c431a3e-7482-524e-86b3-3754d042ecf2/9da2dcf1-a82f-49f1-9467-34eca72a7929: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[33/1178] Track already exists: Run To Safer Ground (single) - HEIDI J MASTERS
+[34/1178] Track already exists: Selfish
+[35/1178] Fetching f79efc89-1629-52c4-af91-1d2440a57782/f6c7cb2e-2e95-4408-a20b-1f20ffa07786...
+  ⚠️ Failed to fetch f79efc89-1629-52c4-af91-1d2440a57782/f6c7cb2e-2e95-4408-a20b-1f20ffa07786: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[36/1178] Fetching 6c277321-9d2c-5cd2-98b1-f49efcea0602/8b850466-1a23-4298-b14c-a1099816e9a6...
+  ⚠️ Failed to fetch 6c277321-9d2c-5cd2-98b1-f49efcea0602/8b850466-1a23-4298-b14c-a1099816e9a6: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[37/1178] Fetching 351f57f2-79ba-5d30-a247-0f1680352e1f/6ecca2e4-f5f3-4234-a75a-1e35d7b987d2...
+  ⚠️ Failed to fetch 351f57f2-79ba-5d30-a247-0f1680352e1f/6ecca2e4-f5f3-4234-a75a-1e35d7b987d2: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[38/1178] Fetching 26d34388-83a3-5fe3-94eb-be4d0008449/bd15f03c-8e7d-5e38-bddd-249e0b5760c7...
+  ⚠️ Failed to fetch 26d34388-83a3-5fe3-94eb-be4d0008449/bd15f03c-8e7d-5e38-bddd-249e0b5760c7: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[39/1178] Fetching d946d837-3b03-5e5d-9c89-b2b75558b829/004d733c-e48d-556a-b267-ecfbfa9cc88b...
+  ⚠️ Failed to fetch d946d837-3b03-5e5d-9c89-b2b75558b829/004d733c-e48d-556a-b267-ecfbfa9cc88b: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[40/1178] Fetching 726cfda1-f992-5468-8a0b-b0b9f83dee3c/4932cd6e-d6de-4c93-a2e0-a4d42bd4c9ed...
+  ⚠️ Failed to fetch 726cfda1-f992-5468-8a0b-b0b9f83dee3c/4932cd6e-d6de-4c93-a2e0-a4d42bd4c9ed: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[41/1178] Fetching afc5df5b-bfce-5843-802d-3c074b06e969/8b51f93d-a81e-4eef-b340-b04de8f6e80e...
+  ⚠️ Failed to fetch afc5df5b-bfce-5843-802d-3c074b06e969/8b51f93d-a81e-4eef-b340-b04de8f6e80e: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[42/1178] Fetching a1077af6-602b-5daf-957b-68a65a03cad1/8ec41aed-2072-4562-ad11-2ffa9169d3ab...
+  ⚠️ Failed to fetch a1077af6-602b-5daf-957b-68a65a03cad1/8ec41aed-2072-4562-ad11-2ffa9169d3ab: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[43/1178] Fetching b67e9472-19fb-5d66-8369-fdb8661f8c62/https://f.strangetextures.com/@aoe/episodes/peat-moss...
+  ⚠️ Failed to fetch b67e9472-19fb-5d66-8369-fdb8661f8c62/https://f.strangetextures.com/@aoe/episodes/peat-moss: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[44/1178] Track already exists: Hold Onto Me
+[45/1178] Track already exists: Autistic Girl
+[46/1178] Fetching 791338e2-77bc-579e-8c7c-4c996cf73305/f4cc32b4-0e1e-45a1-a6fb-64e7f8d0e0a2...
+  ⚠️ Failed to fetch 791338e2-77bc-579e-8c7c-4c996cf73305/f4cc32b4-0e1e-45a1-a6fb-64e7f8d0e0a2: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[47/1178] Track already exists: The Final Bloody Sonnet
+[48/1178] Fetching 63fb0d8e-793f-5033-bbb4-39a836e3da76/c7e92c50-486a-46c0-bf56-4a930a0ecfda...
+  ⚠️ Failed to fetch 63fb0d8e-793f-5033-bbb4-39a836e3da76/c7e92c50-486a-46c0-bf56-4a930a0ecfda: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[49/1178] Fetching c989830b-49a1-572f-9f0e-0fec994a6d5a/ebe13a73-a250-48ce-b94a-7e1efdaf712b...
+  ⚠️ Failed to fetch c989830b-49a1-572f-9f0e-0fec994a6d5a/ebe13a73-a250-48ce-b94a-7e1efdaf712b: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[50/1178] Track already exists: To the Mountain
+[51/1178] Fetching 40a62d8e-4cf7-59ad-8480-6413a180524f/https://f.strangetextures.com/@hc/episodes/between-cogs...
+  ⚠️ Failed to fetch 40a62d8e-4cf7-59ad-8480-6413a180524f/https://f.strangetextures.com/@hc/episodes/between-cogs: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[52/1178] Fetching c39decf9-973e-564f-b741-0ad2985b3b1c/bbe49151-d3bb-453c-88ea-97b681704882...
+  ⚠️ Failed to fetch c39decf9-973e-564f-b741-0ad2985b3b1c/bbe49151-d3bb-453c-88ea-97b681704882: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[53/1178] Fetching d6b85f98-6d7a-5eca-b288-dafae4381a1d/8e9881a4-fefd-471e-9932-5340499028b2...
+  ⚠️ Failed to fetch d6b85f98-6d7a-5eca-b288-dafae4381a1d/8e9881a4-fefd-471e-9932-5340499028b2: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[54/1178] Fetching 351f57f2-79ba-5d30-a247-0f1680352e1f/192526ec-7468-43fb-b8d1-de60793f7620...
+  ⚠️ Failed to fetch 351f57f2-79ba-5d30-a247-0f1680352e1f/192526ec-7468-43fb-b8d1-de60793f7620: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[55/1178] Fetching 4d20454b-d686-523b-a43a-0cb2c7034e63/5a885815-6752-5612-b96b-4964b95b86ae...
+  ⚠️ Failed to fetch 4d20454b-d686-523b-a43a-0cb2c7034e63/5a885815-6752-5612-b96b-4964b95b86ae: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[56/1178] Fetching 5c87b91a-2141-590b-ab19-93e8a6f2d885/422df864-a9cb-4c05-a12c-1c895864c4c3...
+  ⚠️ Failed to fetch 5c87b91a-2141-590b-ab19-93e8a6f2d885/422df864-a9cb-4c05-a12c-1c895864c4c3: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[57/1178] Fetching 63fb0d8e-793f-5033-bbb4-39a836e3da76/44e8a232-7e85-437c-9a6f-75c4bba35cae...
+  ⚠️ Failed to fetch 63fb0d8e-793f-5033-bbb4-39a836e3da76/44e8a232-7e85-437c-9a6f-75c4bba35cae: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[58/1178] Track already exists: Space
+[59/1178] Fetching 0653114c-dd08-5f36-863d-009d56bccb8d/b0407496-c2c6-4703-8d7e-3e4ca6d4e651...
+  ⚠️ Failed to fetch 0653114c-dd08-5f36-863d-009d56bccb8d/b0407496-c2c6-4703-8d7e-3e4ca6d4e651: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[60/1178] Fetching 86f9ba78-7c4a-5bd2-a382-c6a88e9a96a0/1e5cea5b-050c-4ac2-8ce1-6867f10e169c...
+  ⚠️ Failed to fetch 86f9ba78-7c4a-5bd2-a382-c6a88e9a96a0/1e5cea5b-050c-4ac2-8ce1-6867f10e169c: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[61/1178] Track already exists: NOW! That's What I Call Value!
+[62/1178] Fetching a0e2112b-1972-4ae2-84b5-c70df89bd909/1ae5633e-44c4-458b-b338-5f3578d035fe...
+  ⚠️ Failed to fetch a0e2112b-1972-4ae2-84b5-c70df89bd909/1ae5633e-44c4-458b-b338-5f3578d035fe: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[63/1178] Track already exists: St. Petersburg
+[64/1178] Track already exists: Salvation
+[65/1178] Track already exists: Time Is Just A Word
+[66/1178] Fetching 5f6bd882-bd60-4474-99e1-f268256100d9/b2f729f8-cc21-5614-87a9-7900869f81f5...
+  ⚠️ Failed to fetch 5f6bd882-bd60-4474-99e1-f268256100d9/b2f729f8-cc21-5614-87a9-7900869f81f5: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[67/1178] Fetching a2d2e313-9cbd-5169-b89c-ab07b33ecc33/1c8b3ce3-45b6-4f7e-b5d6-10568e3328e4...
+  ⚠️ Failed to fetch a2d2e313-9cbd-5169-b89c-ab07b33ecc33/1c8b3ce3-45b6-4f7e-b5d6-10568e3328e4: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[68/1178] Fetching 63fb0d8e-793f-5033-bbb4-39a836e3da76/fa16dd94-074c-48fa-ae6a-3a5466c86846...
+  ⚠️ Failed to fetch 63fb0d8e-793f-5033-bbb4-39a836e3da76/fa16dd94-074c-48fa-ae6a-3a5466c86846: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[69/1178] Track already exists: Yellowhammer
+[70/1178] Track already exists: All In All The Time
+[71/1178] Track already exists: Sun Ray
+[72/1178] Track already exists: Lore and Legend
+[73/1178] Fetching 749c442d-5d43-50b0-9f7a-0f5cbf0a218a/a67ef200-b887-4a79-acfe-d11ec1367851...
+  ⚠️ Failed to fetch 749c442d-5d43-50b0-9f7a-0f5cbf0a218a/a67ef200-b887-4a79-acfe-d11ec1367851: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[74/1178] Fetching ab7db89d-9602-5b8d-bba8-42855b20c13c/f260aee4-63ba-431a-aef0-f24cd84ba59b...
+  ⚠️ Failed to fetch ab7db89d-9602-5b8d-bba8-42855b20c13c/f260aee4-63ba-431a-aef0-f24cd84ba59b: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[75/1178] Track already exists: World Trade Center
+[76/1178] Fetching 5c87b91a-2141-590b-ab19-93e8a6f2d885/9efc6dba-e926-45d5-8be4-cec731b73ce1...
+  ⚠️ Failed to fetch 5c87b91a-2141-590b-ab19-93e8a6f2d885/9efc6dba-e926-45d5-8be4-cec731b73ce1: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[77/1178] Fetching d6b85f98-6d7a-5eca-b288-dafae4381a1d/da78944a-7993-47c1-8e63-0f8147085b63...
+  ⚠️ Failed to fetch d6b85f98-6d7a-5eca-b288-dafae4381a1d/da78944a-7993-47c1-8e63-0f8147085b63: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[78/1178] Track already exists: Wish Pigs Had Wings - A Pink Floyd Medley
+[79/1178] Fetching 227754a0-691f-5b2d-a685-aac2df167fdc/c9a40504-9058-48d6-b862-24e845bfae5d...
+  ⚠️ Failed to fetch 227754a0-691f-5b2d-a685-aac2df167fdc/c9a40504-9058-48d6-b862-24e845bfae5d: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[80/1178] Fetching 262a48c2-502d-5c09-add4-76a86056876d/be32eeee-d955-5fce-98ce-66acdabdf647...
+  ⚠️ Failed to fetch 262a48c2-502d-5c09-add4-76a86056876d/be32eeee-d955-5fce-98ce-66acdabdf647: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[81/1178] Fetching 5f6bd882-bd60-4474-99e1-f268256100d9/0f18285e-a2f6-5cea-8367-21d73343f45a...
+  ⚠️ Failed to fetch 5f6bd882-bd60-4474-99e1-f268256100d9/0f18285e-a2f6-5cea-8367-21d73343f45a: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[82/1178] Track already exists: Unresolved Track
+[83/1178] Track already exists: Love On The Radio (early edit)
+[84/1178] Fetching 0d5a8efb-e132-5f1b-9ab4-3fd0644dbb30/0d21cb26-005c-4972-82e9-aeb278148433...
+  ⚠️ Failed to fetch 0d5a8efb-e132-5f1b-9ab4-3fd0644dbb30/0d21cb26-005c-4972-82e9-aeb278148433: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[85/1178] Track already exists: The End of an Era
+[86/1178] Fetching 0653114c-dd08-5f36-863d-009d56bccb8d/90764ef9-8a0c-44f4-8c49-280ab7d52b98...
+  ⚠️ Failed to fetch 0653114c-dd08-5f36-863d-009d56bccb8d/90764ef9-8a0c-44f4-8c49-280ab7d52b98: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[87/1178] Track already exists: Swimming At Midnight
+[88/1178] Track already exists: Cold Fusion Reborn
+[89/1178] Track already exists: Willow Brown (ft. Scream Mail)
+[90/1178] Track already exists: To be in Nashville
+[91/1178] Track already exists: Killer
+[92/1178] Track already exists: Track 1223
+[93/1178] Track already exists: Come Around
+[94/1178] Track already exists: Boostagrams
+[95/1178] Fetching 63fb0d8e-793f-5033-bbb4-39a836e3da76/6b40622d-b2f0-4af0-8f93-66e714173bd8...
+  ⚠️ Failed to fetch 63fb0d8e-793f-5033-bbb4-39a836e3da76/6b40622d-b2f0-4af0-8f93-66e714173bd8: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[96/1178] Fetching d6b85f98-6d7a-5eca-b288-dafae4381a1d/e8595afe-4c1a-44ad-825d-05095cbc49b2...
+  ⚠️ Failed to fetch d6b85f98-6d7a-5eca-b288-dafae4381a1d/e8595afe-4c1a-44ad-825d-05095cbc49b2: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[97/1178] Fetching 1df430e3-20f6-595e-9af2-8f9d5123c19b/a4dcc7a9-914d-483a-818e-393d0d555342...
+  ⚠️ Failed to fetch 1df430e3-20f6-595e-9af2-8f9d5123c19b/a4dcc7a9-914d-483a-818e-393d0d555342: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[98/1178] Fetching 19835a35-b7d1-5fee-8d67-a89d996098e1/67901b2c-8e7e-4dde-b669-2dcf67f1b05b...
+  ⚠️ Failed to fetch 19835a35-b7d1-5fee-8d67-a89d996098e1/67901b2c-8e7e-4dde-b669-2dcf67f1b05b: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[99/1178] Track already exists: Ripples to the Sea
+[100/1178] Fetching c2095619-a9d0-5e7c-80e1-59e520ce55d3/86ed8bba-ea38-40af-9f75-b55e98011535...
+  ⚠️ Failed to fetch c2095619-a9d0-5e7c-80e1-59e520ce55d3/86ed8bba-ea38-40af-9f75-b55e98011535: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[101/1178] Track already exists: Sunny
+[102/1178] Fetching 05b0141e-c90d-5ce4-9e49-274dd5029339/904e9cb1-d9b5-4166-a352-4f8523e84b9a...
+  ⚠️ Failed to fetch 05b0141e-c90d-5ce4-9e49-274dd5029339/904e9cb1-d9b5-4166-a352-4f8523e84b9a: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[103/1178] Fetching d6b85f98-6d7a-5eca-b288-dafae4381a1d/d7289c3c-c018-43fe-b4db-0917560383a2...
+  ⚠️ Failed to fetch d6b85f98-6d7a-5eca-b288-dafae4381a1d/d7289c3c-c018-43fe-b4db-0917560383a2: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[104/1178] Fetching 99a14604-f38b-5e9d-8679-9314d1207cd4/e90b915a-8773-4bdd-b8be-9eaea52cb99f...
+  ⚠️ Failed to fetch 99a14604-f38b-5e9d-8679-9314d1207cd4/e90b915a-8773-4bdd-b8be-9eaea52cb99f: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[105/1178] Fetching 19835a35-b7d1-5fee-8d67-a89d996098e1/106dfa1b-5af6-40c7-bea6-e062383342a2...
+  ⚠️ Failed to fetch 19835a35-b7d1-5fee-8d67-a89d996098e1/106dfa1b-5af6-40c7-bea6-e062383342a2: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[106/1178] Fetching dbad52b9-6253-4a9b-bfab-246b9e839815/13b9faaa-357e-4626-9e83-820bcef1cd8e...
+  ⚠️ Failed to fetch dbad52b9-6253-4a9b-bfab-246b9e839815/13b9faaa-357e-4626-9e83-820bcef1cd8e: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[107/1178] Track already exists: Twang Peaks
+[108/1178] Fetching d6b85f98-6d7a-5eca-b288-dafae4381a1d/20aaba6e-aac2-4340-9420-895596238ae9...
+  ⚠️ Failed to fetch d6b85f98-6d7a-5eca-b288-dafae4381a1d/20aaba6e-aac2-4340-9420-895596238ae9: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[109/1178] Fetching 5c87b91a-2141-590b-ab19-93e8a6f2d885/54068d9d-0798-42a6-bf40-597d88dbd5f2...
+  ⚠️ Failed to fetch 5c87b91a-2141-590b-ab19-93e8a6f2d885/54068d9d-0798-42a6-bf40-597d88dbd5f2: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[110/1178] Track already exists: Dark
+[111/1178] Fetching 0d6c245c-4b25-571c-8c7d-6a7e0d219427/5555c343-ed25-4e3a-9add-a53dc25e09cc...
+  ⚠️ Failed to fetch 0d6c245c-4b25-571c-8c7d-6a7e0d219427/5555c343-ed25-4e3a-9add-a53dc25e09cc: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[112/1178] Fetching 75d02f1d-604c-5d31-a9e6-5a3da0ae591e/f3c7eb4b-415a-467c-9f2b-f4ef34044e2a...
+  ⚠️ Failed to fetch 75d02f1d-604c-5d31-a9e6-5a3da0ae591e/f3c7eb4b-415a-467c-9f2b-f4ef34044e2a: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[113/1178] Fetching a599fabe-6b73-58f3-88b8-a7b78a2976b5/660c8516-ba38-480a-9ce7-e70a17427842...
+  ⚠️ Failed to fetch a599fabe-6b73-58f3-88b8-a7b78a2976b5/660c8516-ba38-480a-9ce7-e70a17427842: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[114/1178] Track already exists: Numb
+[115/1178] Track already exists: Here I Am (At Last!)
+[116/1178] Fetching 67711885-4a77-514e-ae6d-6ef3afaad41d/6778c920-dc98-5e9d-9748-344f75eecf3d...
+  ⚠️ Failed to fetch 67711885-4a77-514e-ae6d-6ef3afaad41d/6778c920-dc98-5e9d-9748-344f75eecf3d: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[117/1178] Track already exists: Gold Rush
+[118/1178] Fetching 92bb13ad-3ba7-5537-bf9a-893e311f4dbd/486a3ae6-1ba3-457d-8bd0-66ef8aefdcc1...
+  ⚠️ Failed to fetch 92bb13ad-3ba7-5537-bf9a-893e311f4dbd/486a3ae6-1ba3-457d-8bd0-66ef8aefdcc1: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[119/1178] Track already exists: Self Destruct
+[120/1178] Fetching 57676ff4-82f4-589f-b8e7-d20e50e2dff9/5e197c04-7446-424f-89ae-68b9863601db...
+  ⚠️ Failed to fetch 57676ff4-82f4-589f-b8e7-d20e50e2dff9/5e197c04-7446-424f-89ae-68b9863601db: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[121/1178] Fetching 9906942b-7b18-5ad1-b2ac-57e2cf26c63d/844c6167-28f8-5a59-8b32-9b85789cf919...
+  ⚠️ Failed to fetch 9906942b-7b18-5ad1-b2ac-57e2cf26c63d/844c6167-28f8-5a59-8b32-9b85789cf919: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[122/1178] Fetching 03682fbc-b8e7-505e-b5d2-8cb0f32ff2cf/9d4389c6-5e6d-5f45-bbd7-d49e43f6414b...
+  ⚠️ Failed to fetch 03682fbc-b8e7-505e-b5d2-8cb0f32ff2cf/9d4389c6-5e6d-5f45-bbd7-d49e43f6414b: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[123/1178] Fetching 89606593-efe1-5981-9fae-25eeb51e6cc0/8627e0b8-567a-48fe-814f-42864a8a95fa...
+  ⚠️ Failed to fetch 89606593-efe1-5981-9fae-25eeb51e6cc0/8627e0b8-567a-48fe-814f-42864a8a95fa: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[124/1178] Track already exists: Storm Coming
+[125/1178] Fetching 4f8daef6-bdc9-5996-9c0a-0d05d49207ad/e7a58ca2-7a24-4087-b3ad-ededaf116356...
+  ⚠️ Failed to fetch 4f8daef6-bdc9-5996-9c0a-0d05d49207ad/e7a58ca2-7a24-4087-b3ad-ededaf116356: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[126/1178] Fetching 99a14604-f38b-5e9d-8679-9314d1207cd4/86460cfa-0217-47d7-ba88-7179df615415...
+  ⚠️ Failed to fetch 99a14604-f38b-5e9d-8679-9314d1207cd4/86460cfa-0217-47d7-ba88-7179df615415: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[127/1178] Track already exists: Red
+[128/1178] Fetching d6fe0d1c-bd8d-552b-ac66-cce620391810/cf8a54a4-5cc2-4263-9ee2-a8d99697578a...
+  ⚠️ Failed to fetch d6fe0d1c-bd8d-552b-ac66-cce620391810/cf8a54a4-5cc2-4263-9ee2-a8d99697578a: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[129/1178] Fetching 5a95f9d8-35e3-51f5-a269-ba1df36b4bd8/91db4cd2-b87e-447e-8a54-b3d227a32e27...
+  ⚠️ Failed to fetch 5a95f9d8-35e3-51f5-a269-ba1df36b4bd8/91db4cd2-b87e-447e-8a54-b3d227a32e27: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[130/1178] Fetching 791338e2-77bc-579e-8c7c-4c996cf73305/19670162-a9cd-43f2-bc95-6354f218852a...
+  ⚠️ Failed to fetch 791338e2-77bc-579e-8c7c-4c996cf73305/19670162-a9cd-43f2-bc95-6354f218852a: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[131/1178] Fetching c3ab3195-5b16-58fa-9e4a-d22dd48a8e7a/1efc1077-135e-4577-8a81-949a586db096...
+  ⚠️ Failed to fetch c3ab3195-5b16-58fa-9e4a-d22dd48a8e7a/1efc1077-135e-4577-8a81-949a586db096: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[132/1178] Fetching ef5db97e-a5f3-5375-96a5-ea4749b3e8c3/6df7104c-52d1-11f0-9baf-00155df8a13c...
+  ⚠️ Failed to fetch ef5db97e-a5f3-5375-96a5-ea4749b3e8c3/6df7104c-52d1-11f0-9baf-00155df8a13c: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[133/1178] Track already exists: Unresolved Track
+[134/1178] Track already exists: Hardware Store Lady
+[135/1178] Track already exists: The Endtro
+[136/1178] Fetching d00c6009-bc6f-5366-a2b0-2b47a6495d2f/f4397a4a-4cab-50ac-b385-e2e2f4fbf3c2...
+  ⚠️ Failed to fetch d00c6009-bc6f-5366-a2b0-2b47a6495d2f/f4397a4a-4cab-50ac-b385-e2e2f4fbf3c2: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[137/1178] Track already exists: The Platform
+[138/1178] Fetching 75f0b434-19dc-5959-9920-0fb5304be61b/5f926d76-3ff5-49d9-8f22-2a6eccd86b1a...
+  ⚠️ Failed to fetch 75f0b434-19dc-5959-9920-0fb5304be61b/5f926d76-3ff5-49d9-8f22-2a6eccd86b1a: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[139/1178] Fetching afc5df5b-bfce-5843-802d-3c074b06e969/0cb8a38b-4792-4fdf-91e4-baa476a838cf...
+  ⚠️ Failed to fetch afc5df5b-bfce-5843-802d-3c074b06e969/0cb8a38b-4792-4fdf-91e4-baa476a838cf: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[140/1178] Fetching 5c2ab722-886e-5d6f-a268-f52802852e94/a3873960-8873-4a9e-a381-cc2741050714...
+  ⚠️ Failed to fetch 5c2ab722-886e-5d6f-a268-f52802852e94/a3873960-8873-4a9e-a381-cc2741050714: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[141/1178] Fetching 5c2ab722-886e-5d6f-a268-f52802852e94/380806bc-4aae-4a36-b46c-7ca85a96113a...
+  ⚠️ Failed to fetch 5c2ab722-886e-5d6f-a268-f52802852e94/380806bc-4aae-4a36-b46c-7ca85a96113a: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[142/1178] Track already exists: You Are Free
+[143/1178] Fetching 791338e2-77bc-579e-8c7c-4c996cf73305/9932733f-4821-4ce4-b4ec-36ad5f4f5f04...
+  ⚠️ Failed to fetch 791338e2-77bc-579e-8c7c-4c996cf73305/9932733f-4821-4ce4-b4ec-36ad5f4f5f04: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[144/1178] Fetching f77a481c-36bc-5677-b07a-1b8c3b3ae81a/76cd1a87-531d-4710-b629-09352d3477a5...
+  ⚠️ Failed to fetch f77a481c-36bc-5677-b07a-1b8c3b3ae81a/76cd1a87-531d-4710-b629-09352d3477a5: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[145/1178] Fetching d577b6cd-8c41-548b-abba-60e1502a94df/https://justcast.com/shows/44721/audioposts/1246521...
+  ⚠️ Failed to fetch d577b6cd-8c41-548b-abba-60e1502a94df/https://justcast.com/shows/44721/audioposts/1246521: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[146/1178] Track already exists: Empath Eyes - Apathy
+[147/1178] Fetching d298970a-19e2-592d-9737-16c9e3008d30/b38244c6-db77-466d-b792-d652c4ba1d63...
+  ⚠️ Failed to fetch d298970a-19e2-592d-9737-16c9e3008d30/b38244c6-db77-466d-b792-d652c4ba1d63: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[148/1178] Track already exists: White Suit Gold Rings
+[149/1178] Fetching 61676a69-5bab-57a9-8326-7fe68a572649/10511049-0835-4391-a755-f107f250245d...
+  ⚠️ Failed to fetch 61676a69-5bab-57a9-8326-7fe68a572649/10511049-0835-4391-a755-f107f250245d: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[150/1178] Track already exists: Packin' A Rod (The Fiends)
+[151/1178] Track already exists: Stay Awhile
+[152/1178] Track already exists: Thanks for the Pussy Last Night
+[153/1178] Fetching c42a0900-c20e-59a2-a13b-c23b5c04e11f/2b4d8f9e-315c-42e5-9075-7e113392e340...
+  ⚠️ Failed to fetch c42a0900-c20e-59a2-a13b-c23b5c04e11f/2b4d8f9e-315c-42e5-9075-7e113392e340: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[154/1178] Track already exists: Grace Like an Anchor
+[155/1178] Track already exists: Nowhere Anywhere
+[156/1178] Track already exists: Joyride
+[157/1178] Fetching 69c634ad-afea-5826-ad9a-8e1f06d6470b/45cb0eb4-baaa-4925-9de6-80dfa57205f4...
+  ⚠️ Failed to fetch 69c634ad-afea-5826-ad9a-8e1f06d6470b/45cb0eb4-baaa-4925-9de6-80dfa57205f4: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[158/1178] Fetching fc815bcf-3639-5395-ba7d-fa217ec93d32/bc060c02-581b-4a79-8b4c-3408015e7dfc...
+  ⚠️ Failed to fetch fc815bcf-3639-5395-ba7d-fa217ec93d32/bc060c02-581b-4a79-8b4c-3408015e7dfc: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[159/1178] Track already exists: ZZXX
+[160/1178] Track already exists: Maze
+[161/1178] Track already exists: Montgomery Station
+[162/1178] Fetching a2d2e313-9cbd-5169-b89c-ab07b33ecc33/9ff8f18b-cc79-474c-a3e9-2948113b8bf5...
+  ⚠️ Failed to fetch a2d2e313-9cbd-5169-b89c-ab07b33ecc33/9ff8f18b-cc79-474c-a3e9-2948113b8bf5: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[163/1178] Track already exists: The Inner Voice
+[164/1178] Fetching 2b6d971f-562e-510e-ad40-272cb3962c8b/da04652e-8d3e-4720-9434-0455b930ea52...
+  ⚠️ Failed to fetch 2b6d971f-562e-510e-ad40-272cb3962c8b/da04652e-8d3e-4720-9434-0455b930ea52: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[165/1178] Fetching b328828c-9ba0-5b1d-be33-4cce51968ae1/d047262b-072e-4527-aa87-fab9e4e44848...
+  ⚠️ Failed to fetch b328828c-9ba0-5b1d-be33-4cce51968ae1/d047262b-072e-4527-aa87-fab9e4e44848: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[166/1178] Fetching 4c08a49f-de9c-5de0-861f-972abb11f4f8/aaf938e7-eb35-46e8-8db0-af2086055e6e...
+  ⚠️ Failed to fetch 4c08a49f-de9c-5de0-861f-972abb11f4f8/aaf938e7-eb35-46e8-8db0-af2086055e6e: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[167/1178] Track already exists: Autistic Girl
+[168/1178] Fetching f842b7c8-9f12-54f2-a0b8-4f95c63dad4c/ec6d696b-a580-5fdd-9049-a977501cb012...
+  ⚠️ Failed to fetch f842b7c8-9f12-54f2-a0b8-4f95c63dad4c/ec6d696b-a580-5fdd-9049-a977501cb012: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[169/1178] Fetching a71b097b-4cf0-5e74-b6a9-1271373bb396/a45376c3-c8b3-4173-80c4-4cdfa266e0db...
+  ⚠️ Failed to fetch a71b097b-4cf0-5e74-b6a9-1271373bb396/a45376c3-c8b3-4173-80c4-4cdfa266e0db: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[170/1178] Track already exists: One (Ambivalence)
+[171/1178] Track already exists: Unresolved Track
+[172/1178] Fetching afc5df5b-bfce-5843-802d-3c074b06e969/26646655-b89d-4871-9d5d-9e3b82b9f382...
+  ⚠️ Failed to fetch afc5df5b-bfce-5843-802d-3c074b06e969/26646655-b89d-4871-9d5d-9e3b82b9f382: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[173/1178] Track already exists: Disco Swag - single
+[174/1178] Fetching f21daf71-4c7b-5fe1-82c6-3a1c2a48c764/c47651c1-714b-4ba5-8d29-ce113423adfd...
+  ⚠️ Failed to fetch f21daf71-4c7b-5fe1-82c6-3a1c2a48c764/c47651c1-714b-4ba5-8d29-ce113423adfd: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[175/1178] Fetching 05eaeb68-1d19-5f15-afb6-06aeba50381b/c4c83125-4a86-48ae-a0bc-e2700ba2439c...
+  ⚠️ Failed to fetch 05eaeb68-1d19-5f15-afb6-06aeba50381b/c4c83125-4a86-48ae-a0bc-e2700ba2439c: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[176/1178] Track already exists: A Boofy Movie
+[177/1178] Track already exists: Unresolved Track
+[178/1178] Track already exists: Hit Me Like Sugar
+[179/1178] Fetching ab7db89d-9602-5b8d-bba8-42855b20c13c/25d90391-deed-4bf2-9c42-48de4b3bdc01...
+  ⚠️ Failed to fetch ab7db89d-9602-5b8d-bba8-42855b20c13c/25d90391-deed-4bf2-9c42-48de4b3bdc01: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[180/1178] Fetching c3fb85f3-e45b-5927-b8b9-8aab074f3da3/512d8b86-770b-4b03-bbba-02e17583b912...
+  ⚠️ Failed to fetch c3fb85f3-e45b-5927-b8b9-8aab074f3da3/512d8b86-770b-4b03-bbba-02e17583b912: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[181/1178] Track already exists: Unresolved Track
+[182/1178] Track already exists: Ugly Side
+[183/1178] Fetching b95514f8-0087-5777-a4a8-e0e44cb0233d/7c2790eb-759f-43c3-bf98-3d78442a787b...
+  ⚠️ Failed to fetch b95514f8-0087-5777-a4a8-e0e44cb0233d/7c2790eb-759f-43c3-bf98-3d78442a787b: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[184/1178] Fetching 63fb0d8e-793f-5033-bbb4-39a836e3da76/87e02ef5-b7a7-4f2a-8201-389d8f37184a...
+  ⚠️ Failed to fetch 63fb0d8e-793f-5033-bbb4-39a836e3da76/87e02ef5-b7a7-4f2a-8201-389d8f37184a: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[185/1178] Track already exists: Poor Richard
+[186/1178] Track already exists: Starbound
+[187/1178] Track already exists: Love On The Radio (early edit)
+[188/1178] Track already exists: Live for Tomorrow
+[189/1178] Fetching 3c87f137-9507-5bc6-858f-825eeb3988cd/4eec9e5d-181b-48ce-8eed-e17df00d2ae5...
+  ⚠️ Failed to fetch 3c87f137-9507-5bc6-858f-825eeb3988cd/4eec9e5d-181b-48ce-8eed-e17df00d2ae5: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[190/1178] Track already exists: Unresolved Track
+[191/1178] Track already exists: Have Fun.
+[192/1178] Track already exists: The Ether
+[193/1178] Track already exists: Shadow Man
+[194/1178] Track already exists: Unresolved Track
+[195/1178] Track already exists: Avon
+[196/1178] Fetching 67711885-4a77-514e-ae6d-6ef3afaad41d/f3850ee5-d10a-5bcf-8f83-75e682231d78...
+  ⚠️ Failed to fetch 67711885-4a77-514e-ae6d-6ef3afaad41d/f3850ee5-d10a-5bcf-8f83-75e682231d78: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[197/1178] Fetching c3ab3195-5b16-58fa-9e4a-d22dd48a8e7a/04c02bc0-f725-4c5c-86e9-7480c098aa7d...
+  ⚠️ Failed to fetch c3ab3195-5b16-58fa-9e4a-d22dd48a8e7a/04c02bc0-f725-4c5c-86e9-7480c098aa7d: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[198/1178] Fetching ef5db97e-a5f3-5375-96a5-ea4749b3e8c3/d4802b69-e780-4f20-9393-08498f875257...
+  ⚠️ Failed to fetch ef5db97e-a5f3-5375-96a5-ea4749b3e8c3/d4802b69-e780-4f20-9393-08498f875257: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[199/1178] Fetching ead3a19b-cfc1-57f2-a5ed-c95d2bc15676/06d1e960-9d4d-4167-af87-8b14a344bc7e...
+  ⚠️ Failed to fetch ead3a19b-cfc1-57f2-a5ed-c95d2bc15676/06d1e960-9d4d-4167-af87-8b14a344bc7e: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[200/1178] Track already exists: Porkchops Fried
+[201/1178] Track already exists: HD Cable
+[202/1178] Track already exists: Unresolved Track
+[203/1178] Fetching 3b20c1d7-6000-570f-8748-a4aab5a43921/0702b25c-3760-45ad-84aa-21a14df69da1...
+  ⚠️ Failed to fetch 3b20c1d7-6000-570f-8748-a4aab5a43921/0702b25c-3760-45ad-84aa-21a14df69da1: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[204/1178] Fetching 3b20c1d7-6000-570f-8748-a4aab5a43921/d7849f35-0e00-4a43-997b-9b416d0dd571...
+  ⚠️ Failed to fetch 3b20c1d7-6000-570f-8748-a4aab5a43921/d7849f35-0e00-4a43-997b-9b416d0dd571: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[205/1178] Fetching 31b7a861-a636-501c-b29a-4100231145f0/8555ac1f-64a7-47bf-9954-54047d043d77...
+  ⚠️ Failed to fetch 31b7a861-a636-501c-b29a-4100231145f0/8555ac1f-64a7-47bf-9954-54047d043d77: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[206/1178] Track already exists: Spencer covers Lean On Me by Bill Withers
+[207/1178] Track already exists: Boogie Stillin'
+[208/1178] Track already exists: Unresolved Track
+[209/1178] Fetching 1dc549bf-c1ef-5a30-813f-a2918d37b38d/f5f51623-49f7-4c8d-ad7a-e1bafa10bab8...
+  ⚠️ Failed to fetch 1dc549bf-c1ef-5a30-813f-a2918d37b38d/f5f51623-49f7-4c8d-ad7a-e1bafa10bab8: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[210/1178] Track already exists: The Lightning
+[211/1178] Track already exists: Unresolved Track
+[212/1178] Track already exists: Womp Womp Womp Womp
+[213/1178] Fetching d70b0052-0121-5bfc-a1ac-3a8ebb7615f3/de6befd1-0967-42f1-adc2-370630b4aa73...
+  ⚠️ Failed to fetch d70b0052-0121-5bfc-a1ac-3a8ebb7615f3/de6befd1-0967-42f1-adc2-370630b4aa73: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[214/1178] Track already exists: Far Over The Misty Mountains Cold
+[215/1178] Track already exists: Words Like Poison
+[216/1178] Fetching 4af40257-b2eb-502a-aee3-0b0349e9d8bd/616d3245-2429-49b7-a5a5-ae283dcf1a91...
+  ⚠️ Failed to fetch 4af40257-b2eb-502a-aee3-0b0349e9d8bd/616d3245-2429-49b7-a5a5-ae283dcf1a91: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[217/1178] Fetching 970cd229-dd92-5ba9-9356-00cd23c261f4/27c735f0-23b9-4f47-9d33-12687e90e75a...
+  ⚠️ Failed to fetch 970cd229-dd92-5ba9-9356-00cd23c261f4/27c735f0-23b9-4f47-9d33-12687e90e75a: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[218/1178] Track already exists: Unresolved Track
+[219/1178] Track already exists: Unresolved Track
+[220/1178] Track already exists: Spencer covers Furr by Blitzen Trapper
+[221/1178] Track already exists: Maze
+[222/1178] Fetching 680882f9-f371-5eeb-bd90-6767d528854f/ebcfae31-765f-4f0e-ba44-324e6c541a5a...
+  ⚠️ Failed to fetch 680882f9-f371-5eeb-bd90-6767d528854f/ebcfae31-765f-4f0e-ba44-324e6c541a5a: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[223/1178] Fetching ef5db97e-a5f3-5375-96a5-ea4749b3e8c3/172b24c0-2c4c-11f0-b8a6-00163ea40dc1...
+  ⚠️ Failed to fetch ef5db97e-a5f3-5375-96a5-ea4749b3e8c3/172b24c0-2c4c-11f0-b8a6-00163ea40dc1: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[224/1178] Track already exists: Death by Convenience
+[225/1178] Track already exists: Peso Much (SciFunk Version)
+[226/1178] Fetching 89606593-efe1-5981-9fae-25eeb51e6cc0/00f847a4-a205-47a6-8467-756353c8e9a0...
+  ⚠️ Failed to fetch 89606593-efe1-5981-9fae-25eeb51e6cc0/00f847a4-a205-47a6-8467-756353c8e9a0: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[227/1178] Track already exists: M0mma(take one)
+[228/1178] Fetching 57676ff4-82f4-589f-b8e7-d20e50e2dff9/3d700dd4-10b2-43fb-ac1c-14ce4adf1e97...
+  ⚠️ Failed to fetch 57676ff4-82f4-589f-b8e7-d20e50e2dff9/3d700dd4-10b2-43fb-ac1c-14ce4adf1e97: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[229/1178] Fetching 04e812f9-1993-5aa1-9ab5-a9cf0cd81e82/a0dbecf2-dd83-4a38-8995-de60b73043ce...
+  ⚠️ Failed to fetch 04e812f9-1993-5aa1-9ab5-a9cf0cd81e82/a0dbecf2-dd83-4a38-8995-de60b73043ce: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[230/1178] Fetching d67fbf49-8e94-5a7b-8cae-e006f7512213/37142da4-04e2-5dd7-9a9e-8f28b2078524...
+  ⚠️ Failed to fetch d67fbf49-8e94-5a7b-8cae-e006f7512213/37142da4-04e2-5dd7-9a9e-8f28b2078524: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[231/1178] Fetching 67711885-4a77-514e-ae6d-6ef3afaad41d/5001c285-14c8-57c3-8811-d1de724e4791...
+  ⚠️ Failed to fetch 67711885-4a77-514e-ae6d-6ef3afaad41d/5001c285-14c8-57c3-8811-d1de724e4791: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[232/1178] Track already exists: Will of Man
+[233/1178] Fetching 67711885-4a77-514e-ae6d-6ef3afaad41d/a864ee34-a28b-5b82-831e-34611c4607f2...
+  ⚠️ Failed to fetch 67711885-4a77-514e-ae6d-6ef3afaad41d/a864ee34-a28b-5b82-831e-34611c4607f2: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[234/1178] Track already exists: The Beating
+[235/1178] Fetching 2cfd7dfd-19e1-545b-b3f3-8465d5d1d362/d7309d40-5c4a-4221-9eea-9a1a43984077...
+  ⚠️ Failed to fetch 2cfd7dfd-19e1-545b-b3f3-8465d5d1d362/d7309d40-5c4a-4221-9eea-9a1a43984077: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[236/1178] Fetching 879febfc-538d-5c10-a34e-a9de5a7666ca/6c8e4899-2a54-5eaf-bc63-73ad91e097cf...
+  ⚠️ Failed to fetch 879febfc-538d-5c10-a34e-a9de5a7666ca/6c8e4899-2a54-5eaf-bc63-73ad91e097cf: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[237/1178] Fetching c3ab3195-5b16-58fa-9e4a-d22dd48a8e7a/ed3a7002-338c-403c-9905-52fcbe81a3c2...
+  ⚠️ Failed to fetch c3ab3195-5b16-58fa-9e4a-d22dd48a8e7a/ed3a7002-338c-403c-9905-52fcbe81a3c2: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[238/1178] Track already exists: Time of Reality
+[239/1178] Track already exists: Delirium
+[240/1178] Track already exists: More Sleep
+[241/1178] Track already exists: Breathe Me In
+[242/1178] Track already exists: You
+[243/1178] Track already exists: NakamoTool - Right In Two
+[244/1178] Track already exists: Boostagrams
+[245/1178] Track already exists: I Have the Brains
+[246/1178] Track already exists: Laundry
+[247/1178] Fetching 7d092391-4608-5117-a7db-86fedb490ac4/dc6ea8b6-0054-5383-84de-5a622a7f7ca1...
+  ⚠️ Failed to fetch 7d092391-4608-5117-a7db-86fedb490ac4/dc6ea8b6-0054-5383-84de-5a622a7f7ca1: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[248/1178] Fetching 2cfd7dfd-19e1-545b-b3f3-8465d5d1d362/8e3c9028-3f96-4042-8629-1e040c63cc52...
+  ⚠️ Failed to fetch 2cfd7dfd-19e1-545b-b3f3-8465d5d1d362/8e3c9028-3f96-4042-8629-1e040c63cc52: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[249/1178] Track already exists: Lummox
+[250/1178] Fetching f2fbe36c-c244-5274-9ca4-3d1e7d001d27/365deede-d530-48bf-9fec-4df6f374c134...
+  ⚠️ Failed to fetch f2fbe36c-c244-5274-9ca4-3d1e7d001d27/365deede-d530-48bf-9fec-4df6f374c134: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[251/1178] Track already exists: Nothing at All
+[252/1178] Fetching 55e08e3a-4b9f-5579-a976-0997b06470ee/602c6822-ec69-4f68-b0a0-62b5fb218815...
+  ⚠️ Failed to fetch 55e08e3a-4b9f-5579-a976-0997b06470ee/602c6822-ec69-4f68-b0a0-62b5fb218815: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[253/1178] Fetching afc5df5b-bfce-5843-802d-3c074b06e969/82199f7a-374c-4374-9428-81a59aacf937...
+  ⚠️ Failed to fetch afc5df5b-bfce-5843-802d-3c074b06e969/82199f7a-374c-4374-9428-81a59aacf937: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[254/1178] Fetching 49ec73c9-abe2-5a65-83d6-f7152b919df7/a643528b-d1ff-4d5d-bee7-552008d8a048...
+  ⚠️ Failed to fetch 49ec73c9-abe2-5a65-83d6-f7152b919df7/a643528b-d1ff-4d5d-bee7-552008d8a048: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[255/1178] Fetching c989830b-49a1-572f-9f0e-0fec994a6d5a/637a08f6-049f-4610-9308-73f50ae423cf...
+  ⚠️ Failed to fetch c989830b-49a1-572f-9f0e-0fec994a6d5a/637a08f6-049f-4610-9308-73f50ae423cf: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[256/1178] Track already exists: Suzy Brown
+[257/1178] Track already exists: Thomas
+[258/1178] Fetching e3f5fea2-77e3-5d07-a6cf-d482d9e63dd1/a1aef61b-57e9-4f2e-937b-d78119b4b44c...
+  ⚠️ Failed to fetch e3f5fea2-77e3-5d07-a6cf-d482d9e63dd1/a1aef61b-57e9-4f2e-937b-d78119b4b44c: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[259/1178] Fetching 7b7949ca-5019-5814-aa53-d4b14bd15a6d/655333c2-be52-46e4-a1d5-c0f76dc9ab43...
+  ⚠️ Failed to fetch 7b7949ca-5019-5814-aa53-d4b14bd15a6d/655333c2-be52-46e4-a1d5-c0f76dc9ab43: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[260/1178] Fetching a22aefb0-fd07-5bba-862b-ceb35ea04146/268727de-b9ea-4eb9-a095-16981f323034...
+  ⚠️ Failed to fetch a22aefb0-fd07-5bba-862b-ceb35ea04146/268727de-b9ea-4eb9-a095-16981f323034: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[261/1178] Fetching 671612fb-9039-5189-9d4b-0fd9df2093dd/2afdf896-9bde-52eb-9659-5cfe51a9be57...
+  ⚠️ Failed to fetch 671612fb-9039-5189-9d4b-0fd9df2093dd/2afdf896-9bde-52eb-9659-5cfe51a9be57: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[262/1178] Fetching 2cfd7dfd-19e1-545b-b3f3-8465d5d1d362/aca7f7ed-a53d-4625-81cf-964204e1d5ed...
+  ⚠️ Failed to fetch 2cfd7dfd-19e1-545b-b3f3-8465d5d1d362/aca7f7ed-a53d-4625-81cf-964204e1d5ed: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[263/1178] Track already exists: The Last Dance
+[264/1178] Track already exists: Dopesick
+[265/1178] Fetching af99d1b4-e10e-503f-8321-8d748bdc76f8/bbc05e47-3415-4e20-a61d-2579bb5836a3...
+  ⚠️ Failed to fetch af99d1b4-e10e-503f-8321-8d748bdc76f8/bbc05e47-3415-4e20-a61d-2579bb5836a3: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[266/1178] Track already exists: Unresolved Track
+[267/1178] Track already exists: Kick It
+[268/1178] Track already exists: You Name It
+[269/1178] Track already exists: Sweet Anxiety
+[270/1178] Track already exists: All the lies
+[271/1178] Track already exists: In Hell There Is A Sea Of Wasted Loads
+[272/1178] Track already exists: Looking For Some Clit
+[273/1178] Track already exists: Growing in the Bushes
+[274/1178] Track already exists: THE BANJO
+[275/1178] Track already exists: The Way She Rolls
+[276/1178] Track already exists: St Annes Reel
+[277/1178] Track already exists: Not To Worry
+[278/1178] Track already exists: Unresolved Track
+[279/1178] Fetching 66162162-76b3-54c2-b519-096ccd887a6f/472ff5a2-bac4-46bb-9372-6b2a58bad2ab...
+  ⚠️ Failed to fetch 66162162-76b3-54c2-b519-096ccd887a6f/472ff5a2-bac4-46bb-9372-6b2a58bad2ab: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[280/1178] Fetching bf7dd502-5f87-5937-8c50-4c8a863024d0/ff0efa84-eb00-42be-8790-672d8cb316bb...
+  ⚠️ Failed to fetch bf7dd502-5f87-5937-8c50-4c8a863024d0/ff0efa84-eb00-42be-8790-672d8cb316bb: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[281/1178] Track already exists: Satoshi Streamer
+[282/1178] Track already exists: Redemption
+[283/1178] Fetching f002a096-086e-48bb-8672-036b717d80ee/1ba72b21-95b7-4a78-8798-ef832eb30027...
+  ⚠️ Failed to fetch f002a096-086e-48bb-8672-036b717d80ee/1ba72b21-95b7-4a78-8798-ef832eb30027: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[284/1178] Fetching 041b07a8-22e4-557e-9649-9eaf849b6317/ea0c7bc9-7df2-4957-a1a3-71690ff776b9...
+  ⚠️ Failed to fetch 041b07a8-22e4-557e-9649-9eaf849b6317/ea0c7bc9-7df2-4957-a1a3-71690ff776b9: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[285/1178] Track already exists: How Bout You?
+[286/1178] Fetching 2a3a5f81-8325-521b-b168-07ff09b15435/e9adf140-05df-40c0-9e77-87cde47a8c49...
+  ⚠️ Failed to fetch 2a3a5f81-8325-521b-b168-07ff09b15435/e9adf140-05df-40c0-9e77-87cde47a8c49: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[287/1178] Fetching da7e0384-f2f1-5b35-a2f3-3b8723eb2aaa/7aadf5a0-3f34-4895-bbae-285246292992...
+  ⚠️ Failed to fetch da7e0384-f2f1-5b35-a2f3-3b8723eb2aaa/7aadf5a0-3f34-4895-bbae-285246292992: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[288/1178] Track already exists: Fist Fight Fuck
+[289/1178] Fetching https://feed.justcast.com/shows/true-blue/audioposts.rss/https://justcast.com/shows/44721/audioposts/1246092...
+  ⚠️ Failed to fetch https://feed.justcast.com/shows/true-blue/audioposts.rss/https://justcast.com/shows/44721/audioposts/1246092: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[290/1178] Fetching af99d1b4-e10e-503f-8321-8d748bdc76f8/12ea54cf-d11d-4e92-aabc-45c77084e052...
+  ⚠️ Failed to fetch af99d1b4-e10e-503f-8321-8d748bdc76f8/12ea54cf-d11d-4e92-aabc-45c77084e052: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[291/1178] Track already exists: Revelation of the Method
+[292/1178] Track already exists: Hide Without Delay
+[293/1178] Track already exists: sUbReRo (Part 2)
+[294/1178] Track already exists: SuBrErO (Part 3)
+[295/1178] Track already exists: Doseedu
+[296/1178] Track already exists: Maps of Home
+[297/1178] Fetching ef5db97e-a5f3-5375-96a5-ea4749b3e8c3/bf93db72-1589-11f0-a2e1-00163ea40dc1...
+  ⚠️ Failed to fetch ef5db97e-a5f3-5375-96a5-ea4749b3e8c3/bf93db72-1589-11f0-a2e1-00163ea40dc1: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[298/1178] Track already exists: Bestlegs
+[299/1178] Track already exists: HD Cable
+[300/1178] Fetching 99a14604-f38b-5e9d-8679-9314d1207cd4/66c912b0-355b-4d89-8dba-6310d71f927f...
+  ⚠️ Failed to fetch 99a14604-f38b-5e9d-8679-9314d1207cd4/66c912b0-355b-4d89-8dba-6310d71f927f: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[301/1178] Fetching 5097caa0-8182-51ba-bbd2-20d294bf2f9a/6b457dc9-ad08-4563-ad5f-c9ed9a3cf63e...
+  ⚠️ Failed to fetch 5097caa0-8182-51ba-bbd2-20d294bf2f9a/6b457dc9-ad08-4563-ad5f-c9ed9a3cf63e: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[302/1178] Track already exists: Runaway
+[303/1178] Track already exists: Expecting the Worst
+[304/1178] Fetching 25a4975b-071c-5416-b7d4-88bd9f578a54/e9855e04-b7e2-47d0-ba98-ceab807dbe4a...
+  ⚠️ Failed to fetch 25a4975b-071c-5416-b7d4-88bd9f578a54/e9855e04-b7e2-47d0-ba98-ceab807dbe4a: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[305/1178] Fetching ead3a19b-cfc1-57f2-a5ed-c95d2bc15676/eab749b0-60f5-4b9e-9b2d-b0b68faec695...
+  ⚠️ Failed to fetch ead3a19b-cfc1-57f2-a5ed-c95d2bc15676/eab749b0-60f5-4b9e-9b2d-b0b68faec695: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[306/1178] Fetching 6df28ecd-8029-59a3-a771-48f37f71e19a/d5b04c4f-981d-495d-aecf-d8ad27ee59da...
+  ⚠️ Failed to fetch 6df28ecd-8029-59a3-a771-48f37f71e19a/d5b04c4f-981d-495d-aecf-d8ad27ee59da: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[307/1178] Track already exists: The Itch
+[308/1178] Track already exists: imagine
+[309/1178] Fetching 62d41c72-d06c-49e4-bb1f-e59f32c3a397/834d0cc0-667c-4534-913c-26258b7c9254...
+  ⚠️ Failed to fetch 62d41c72-d06c-49e4-bb1f-e59f32c3a397/834d0cc0-667c-4534-913c-26258b7c9254: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[310/1178] Track already exists: Witness through Glass
+[311/1178] Track already exists: Golden Years
+[312/1178] Track already exists: SuBrErO (Part I)
+[313/1178] Track already exists: Filthy Hands
+[314/1178] Track already exists: Radio
+[315/1178] Fetching 680882f9-f371-5eeb-bd90-6767d528854f/18ed0d43-f2bd-4dde-92ed-5127bb435edb...
+  ⚠️ Failed to fetch 680882f9-f371-5eeb-bd90-6767d528854f/18ed0d43-f2bd-4dde-92ed-5127bb435edb: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[316/1178] Track already exists: WHATHAVEIBECOME
+[317/1178] Track already exists: Long Road (ft. Gibby Stites)
+[318/1178] Fetching bb910a55-b2fe-561f-97a5-134db76c8cbc/7a723cc2-918f-4b91-8d33-aefdfcd74d67...
+  ⚠️ Failed to fetch bb910a55-b2fe-561f-97a5-134db76c8cbc/7a723cc2-918f-4b91-8d33-aefdfcd74d67: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[319/1178] Fetching c39decf9-973e-564f-b741-0ad2985b3b1c/2853f702-c1b5-4fd1-8e30-ad1c36453f33...
+  ⚠️ Failed to fetch c39decf9-973e-564f-b741-0ad2985b3b1c/2853f702-c1b5-4fd1-8e30-ad1c36453f33: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[320/1178] Track already exists: Beauty
+[321/1178] Fetching f42a64ed-a330-563d-a4b0-f6343ef6ffd7/68a84c03-80f6-4bc9-9bdf-f285d7fc2b9c...
+  ⚠️ Failed to fetch f42a64ed-a330-563d-a4b0-f6343ef6ffd7/68a84c03-80f6-4bc9-9bdf-f285d7fc2b9c: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[322/1178] Track already exists: Bitcoin - Open Up Your Mind (Brrreadfan)
+[323/1178] Track already exists: Sunset Boulevard
+[324/1178] Track already exists: Erase Today Today
+[325/1178] Track already exists: Ugly Side
+[326/1178] Fetching c989830b-49a1-572f-9f0e-0fec994a6d5a/85900ac5-24eb-491f-84b4-d86dcfdefecf...
+  ⚠️ Failed to fetch c989830b-49a1-572f-9f0e-0fec994a6d5a/85900ac5-24eb-491f-84b4-d86dcfdefecf: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[327/1178] Track already exists: Unresolved Track
+[328/1178] Track already exists: Unresolved Track
+[329/1178] Track already exists: January Shock
+[330/1178] Track already exists: Nowhere Anywhere
+[331/1178] Fetching c989830b-49a1-572f-9f0e-0fec994a6d5a/383025bd-c323-42dc-83ea-898f7b33a00c...
+  ⚠️ Failed to fetch c989830b-49a1-572f-9f0e-0fec994a6d5a/383025bd-c323-42dc-83ea-898f7b33a00c: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[332/1178] Track already exists: Way to Go
+[333/1178] Fetching c989830b-49a1-572f-9f0e-0fec994a6d5a/4687219d-ab63-4bec-924f-7c25414ef4e8...
+  ⚠️ Failed to fetch c989830b-49a1-572f-9f0e-0fec994a6d5a/4687219d-ab63-4bec-924f-7c25414ef4e8: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[334/1178] Track already exists: Remembered in a Song
+[335/1178] Fetching 0a8495bd-9b8f-5e6b-b522-f5b986d5faac/4a534a2f-4fd6-44c6-9a0c-2ee928c168a6...
+  ⚠️ Failed to fetch 0a8495bd-9b8f-5e6b-b522-f5b986d5faac/4a534a2f-4fd6-44c6-9a0c-2ee928c168a6: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[336/1178] Track already exists: Radio
+[337/1178] Fetching 2b62ef49-fcff-523c-b81a-0a7dde2b0609/bbc9bfe3-3db1-400b-9ff0-613f57899614...
+  ⚠️ Failed to fetch 2b62ef49-fcff-523c-b81a-0a7dde2b0609/bbc9bfe3-3db1-400b-9ff0-613f57899614: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[338/1178] Track already exists: Paralelni Polis
+[339/1178] Track already exists: Kerouac
+[340/1178] Track already exists: Unresolved Track
+[341/1178] Track already exists: Breathe Me In
+[342/1178] Track already exists: The Devil Never Change
+[343/1178] Fetching 749c442d-5d43-50b0-9f7a-0f5cbf0a218a/8a182756-116f-439c-95d7-cd0946c10be9...
+  ⚠️ Failed to fetch 749c442d-5d43-50b0-9f7a-0f5cbf0a218a/8a182756-116f-439c-95d7-cd0946c10be9: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[344/1178] Track already exists: Pie
+[345/1178] Track already exists: Get Away
+[346/1178] Track already exists: Alternative to What/Sob Story
+[347/1178] Track already exists: Cube Funk
+[348/1178] Track already exists: Where Does the Time Go (Prelude)
+[349/1178] Track already exists: Winds of Change
+[350/1178] Fetching 15ef0e58-49e5-500c-92d6-8e4802599314/4a03038f-e23a-4cc6-8ef0-dff9c1184055...
+  ⚠️ Failed to fetch 15ef0e58-49e5-500c-92d6-8e4802599314/4a03038f-e23a-4cc6-8ef0-dff9c1184055: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[351/1178] Track already exists: Sweet Dreams (live)
+[352/1178] Track already exists: Nowhere Anywhere
+[353/1178] Track already exists: Edge of the Glens
+[354/1178] Fetching 826666ad-c321-5431-987f-5921d90d1b2f/e3dba488-48bd-46c8-847d-b33419b9ab56...
+  ⚠️ Failed to fetch 826666ad-c321-5431-987f-5921d90d1b2f/e3dba488-48bd-46c8-847d-b33419b9ab56: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[355/1178] Track already exists: Suzy Brown
+[356/1178] Track already exists: Selfish Habits
+[357/1178] Fetching 90412406-f04d-44a2-a33b-8c87e137c291/b14fe324-40de-4b8e-95db-4678d3d72356...
+  ⚠️ Failed to fetch 90412406-f04d-44a2-a33b-8c87e137c291/b14fe324-40de-4b8e-95db-4678d3d72356: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[358/1178] Track already exists: At the Helm of Despair
+[359/1178] Fetching 0d5a8efb-e132-5f1b-9ab4-3fd0644dbb30/eccb8000-2b1f-4f1c-9cd8-0327da121e48...
+  ⚠️ Failed to fetch 0d5a8efb-e132-5f1b-9ab4-3fd0644dbb30/eccb8000-2b1f-4f1c-9cd8-0327da121e48: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[360/1178] Track already exists: Unresolved Track
+[361/1178] Track already exists: Somebody Stop Me
+[362/1178] Fetching 3d92b2f6-4aac-5f24-bffe-2536eb579286/99be8093-e25a-4b1e-9b21-ebd44fbc8f00...
+  ⚠️ Failed to fetch 3d92b2f6-4aac-5f24-bffe-2536eb579286/99be8093-e25a-4b1e-9b21-ebd44fbc8f00: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[363/1178] Fetching 04e812f9-1993-5aa1-9ab5-a9cf0cd81e82/56a979f5-a2ab-48d6-8e3f-6c8131004a25...
+  ⚠️ Failed to fetch 04e812f9-1993-5aa1-9ab5-a9cf0cd81e82/56a979f5-a2ab-48d6-8e3f-6c8131004a25: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[364/1178] Track already exists: Playing God
+[365/1178] Track already exists: Inertia
+[366/1178] Track already exists: Mountains of the Living Dead
+[367/1178] Fetching 08604071-83cc-5810-bec2-bea0f0cd0033/bb9c21e4-6c98-44b9-bf0b-125d244bd013...
+  ⚠️ Failed to fetch 08604071-83cc-5810-bec2-bea0f0cd0033/bb9c21e4-6c98-44b9-bf0b-125d244bd013: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[368/1178] Track already exists: Unresolved Track
+[369/1178] Track already exists: Terrible Fight
+[370/1178] Track already exists: no return
+[371/1178] Track already exists: Unresolved Track
+[372/1178] Track already exists: Burn
+[373/1178] Fetching 20db775c-e233-5388-bbd3-5bc7a2e1c166/d5dabff7-fb84-5e24-b041-85aa2ce731b3...
+  ⚠️ Failed to fetch 20db775c-e233-5388-bbd3-5bc7a2e1c166/d5dabff7-fb84-5e24-b041-85aa2ce731b3: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[374/1178] Fetching d3915c44-f8c7-5fa7-9d82-d0c5a85ff2a0/81953271-1e99-5ec3-b347-2fbddb5f56ca...
+  ⚠️ Failed to fetch d3915c44-f8c7-5fa7-9d82-d0c5a85ff2a0/81953271-1e99-5ec3-b347-2fbddb5f56ca: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[375/1178] Track already exists: Samsara
+[376/1178] Fetching a07dc3e7-5afb-5721-9f9c-f6d6f5781d2f/118fc2d4-a24d-4677-a8c6-72816f1bb276...
+  ⚠️ Failed to fetch a07dc3e7-5afb-5721-9f9c-f6d6f5781d2f/118fc2d4-a24d-4677-a8c6-72816f1bb276: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[377/1178] Fetching 6fde038d-3585-5d28-93e5-aabe48fd7fa6/1f78d51e-62a9-45ce-87dc-3c1b5b3ae642...
+  ⚠️ Failed to fetch 6fde038d-3585-5d28-93e5-aabe48fd7fa6/1f78d51e-62a9-45ce-87dc-3c1b5b3ae642: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[378/1178] Fetching 6fde038d-3585-5d28-93e5-aabe48fd7fa6/f7172a6c-be54-4776-b8a8-50b27130d5e9...
+  ⚠️ Failed to fetch 6fde038d-3585-5d28-93e5-aabe48fd7fa6/f7172a6c-be54-4776-b8a8-50b27130d5e9: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[379/1178] Fetching d577b6cd-8c41-548b-abba-60e1502a94df/https://justcast.com/shows/44721/audioposts/1246518...
+  ⚠️ Failed to fetch d577b6cd-8c41-548b-abba-60e1502a94df/https://justcast.com/shows/44721/audioposts/1246518: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[380/1178] Track already exists: Way to Go
+[381/1178] Track already exists: Daydreams
+[382/1178] Fetching 25a4975b-071c-5416-b7d4-88bd9f578a54/b4f5275e-7797-4193-adcc-f5534c2c6d83...
+  ⚠️ Failed to fetch 25a4975b-071c-5416-b7d4-88bd9f578a54/b4f5275e-7797-4193-adcc-f5534c2c6d83: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[383/1178] Track already exists: Fifty to One
+[384/1178] Track already exists: Love On The Radio (early edit)
+[385/1178] Track already exists: What Love Is
+[386/1178] Track already exists: Sweet Cheeks
+[387/1178] Track already exists: Let's Be True
+[388/1178] Track already exists: Lovin You Forever
+[389/1178] Fetching 3db6aa74-e382-588c-b4ac-8a237f941515/bb8e82d4-3d26-47b3-86b3-cad123c75101...
+  ⚠️ Failed to fetch 3db6aa74-e382-588c-b4ac-8a237f941515/bb8e82d4-3d26-47b3-86b3-cad123c75101: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[390/1178] Fetching c39decf9-973e-564f-b741-0ad2985b3b1c/f233a26d-78e7-423a-9de2-e0ca8ed5dfbc...
+  ⚠️ Failed to fetch c39decf9-973e-564f-b741-0ad2985b3b1c/f233a26d-78e7-423a-9de2-e0ca8ed5dfbc: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[391/1178] Track already exists: Next to You
+[392/1178] Track already exists: Unresolved Track
+[393/1178] Track already exists: Stay Awhile
+[394/1178] Track already exists: Like Wine
+[395/1178] Track already exists: Altar of my Balls
+[396/1178] Track already exists: Thanks for the Pussy Last Night
+[397/1178] Track already exists: Everyone Peg Your Jeans
+[398/1178] Track already exists: How Bout You?
+[399/1178] Track already exists: Borneo
+[400/1178] Track already exists: Ugly Side
+[401/1178] Track already exists: Friend or a Stranger
+[402/1178] Track already exists: Crop Circles
+[403/1178] Fetching 879febfc-538d-5c10-a34e-a9de5a7666ca/09cba742-2991-5978-8fe9-b4530b930599...
+  ⚠️ Failed to fetch 879febfc-538d-5c10-a34e-a9de5a7666ca/09cba742-2991-5978-8fe9-b4530b930599: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[404/1178] Fetching 9e2c9377-40d6-5e26-a019-4052910936f6/5dc2a79f-7e78-4f1e-a386-b7b0573137dd...
+  ⚠️ Failed to fetch 9e2c9377-40d6-5e26-a019-4052910936f6/5dc2a79f-7e78-4f1e-a386-b7b0573137dd: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[405/1178] Track already exists: Frostwork
+[406/1178] Fetching fb469712-af8e-57c9-b533-ddaebd452ab2/5b154641-1058-4cc9-9d13-c2d53abd7b25...
+  ⚠️ Failed to fetch fb469712-af8e-57c9-b533-ddaebd452ab2/5b154641-1058-4cc9-9d13-c2d53abd7b25: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[407/1178] Track already exists: I Don't Wanna Be Here
+[408/1178] Track already exists: Katerina
+[409/1178] Track already exists: Penis in the Ocean
+[410/1178] Track already exists: Unresolved Track
+[411/1178] Track already exists: Nobody Cares
+[412/1178] Fetching b1d0471d-c9dc-4dfe-8c66-1593143c8142/9691e33a-4222-4178-9748-6064f4db30af...
+  ⚠️ Failed to fetch b1d0471d-c9dc-4dfe-8c66-1593143c8142/9691e33a-4222-4178-9748-6064f4db30af: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[413/1178] Fetching 1f53e56a-691a-5417-b442-06ce365d9db6/46b1de26-0a7b-44a1-aec5-d9c48366dbe6...
+  ⚠️ Failed to fetch 1f53e56a-691a-5417-b442-06ce365d9db6/46b1de26-0a7b-44a1-aec5-d9c48366dbe6: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[414/1178] Track already exists: January Shock
+[415/1178] Track already exists: Unresolved Track
+[416/1178] Fetching dc8be3c9-00cf-5c8d-8db5-717b25118a8b/g97h3245-2429-49b7-a5a5-ae283dcf1a96...
+  ⚠️ Failed to fetch dc8be3c9-00cf-5c8d-8db5-717b25118a8b/g97h3245-2429-49b7-a5a5-ae283dcf1a96: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[417/1178] Track already exists: Pay The Bills
+[418/1178] Track already exists: The HeyCitizen Experience - Love Song 4 U
+[419/1178] Track already exists: Little Glutton Miss Dreams
+[420/1178] Track already exists: Brain Rage
+[421/1178] Track already exists: Now I Know
+[422/1178] Track already exists: All Salsa No Chips (lo-fi version)
+[423/1178] Track already exists: Acetaminophen
+[424/1178] Track already exists: Track 1430
+[425/1178] Track already exists: Big Brutha
+[426/1178] Track already exists: Altar of my Balls
+[427/1178] Track already exists: Just to be a Dick
+[428/1178] Fetching d4bd6713-ce91-5420-97d9-f6cbb68687c6/737958a6-9d6c-44df-ae35-db190bcc5ddc...
+  ⚠️ Failed to fetch d4bd6713-ce91-5420-97d9-f6cbb68687c6/737958a6-9d6c-44df-ae35-db190bcc5ddc: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[429/1178] Track already exists: $2 Holla - Baby Don't Love Me
+[430/1178] Fetching 99a14604-f38b-5e9d-8679-9314d1207cd4/02f5de9c-3e64-4df5-ac27-03fb6ac612bb...
+  ⚠️ Failed to fetch 99a14604-f38b-5e9d-8679-9314d1207cd4/02f5de9c-3e64-4df5-ac27-03fb6ac612bb: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[431/1178] Track already exists: Penis in the Ocean
+[432/1178] Track already exists: Mike Epting - Seven Days To God
+[433/1178] Fetching 9b5fd385-f87d-5173-a641-5cdc3982d92e/e3fb15db-8b2d-42aa-9e62-8a1041a09664...
+  ⚠️ Failed to fetch 9b5fd385-f87d-5173-a641-5cdc3982d92e/e3fb15db-8b2d-42aa-9e62-8a1041a09664: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[434/1178] Fetching 471d1db8-40d3-5dec-8eca-6e654b3b05e5/5ddbf66f-6d8a-429e-b308-b4e9ba60fa22...
+  ⚠️ Failed to fetch 471d1db8-40d3-5dec-8eca-6e654b3b05e5/5ddbf66f-6d8a-429e-b308-b4e9ba60fa22: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[435/1178] Track already exists: Tax Me
+[436/1178] Fetching 9e72a512-c678-5621-8fd6-dfc7cd11a846/a4ccb8f5-9ffa-4586-92a7-ba39f32542c3...
+  ⚠️ Failed to fetch 9e72a512-c678-5621-8fd6-dfc7cd11a846/a4ccb8f5-9ffa-4586-92a7-ba39f32542c3: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[437/1178] Track already exists: Montgomery Station
+[438/1178] Track already exists: Digital Mass
+[439/1178] Fetching 700d1414-c005-5f43-8488-68c80d09bf6a/1ea05b4d-5481-4daa-a01a-d72e66383120...
+  ⚠️ Failed to fetch 700d1414-c005-5f43-8488-68c80d09bf6a/1ea05b4d-5481-4daa-a01a-d72e66383120: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[440/1178] Track already exists: Bloodshot Lies(Acoustic)
+[441/1178] Track already exists: Alright
+[442/1178] Fetching 3db6aa74-e382-588c-b4ac-8a237f941515/4bf32eff-fd0f-42f1-996c-5ef5bcec7b92...
+  ⚠️ Failed to fetch 3db6aa74-e382-588c-b4ac-8a237f941515/4bf32eff-fd0f-42f1-996c-5ef5bcec7b92: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[443/1178] Track already exists: Unresolved Track
+[444/1178] Track already exists: New Religion
+[445/1178] Fetching b4f3fd99-e435-5b3b-93bf-ace17e7177d7/cf5290a4-9bc8-4a87-b26c-197626075cc9...
+  ⚠️ Failed to fetch b4f3fd99-e435-5b3b-93bf-ace17e7177d7/cf5290a4-9bc8-4a87-b26c-197626075cc9: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[446/1178] Track already exists: The Helicopter View
+[447/1178] Fetching df430c13-2dae-5aef-8b0d-728148bd3587/081e64e3-2d6d-42e5-aedf-228b22accaad...
+  ⚠️ Failed to fetch df430c13-2dae-5aef-8b0d-728148bd3587/081e64e3-2d6d-42e5-aedf-228b22accaad: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[448/1178] Track already exists: The Way She Rolls
+[449/1178] Track already exists: Unresolved Track
+[450/1178] Fetching 114f4140-ac60-57fe-a48f-252962024675/fffba93e-f474-4c2c-98e4-cf45203aad48...
+  ⚠️ Failed to fetch 114f4140-ac60-57fe-a48f-252962024675/fffba93e-f474-4c2c-98e4-cf45203aad48: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[451/1178] Track already exists: Unresolved Track
+[452/1178] Fetching 2a3a5f81-8325-521b-b168-07ff09b15435/625f39c8-1403-48a1-9725-6ba6278c13ca...
+  ⚠️ Failed to fetch 2a3a5f81-8325-521b-b168-07ff09b15435/625f39c8-1403-48a1-9725-6ba6278c13ca: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[453/1178] Fetching 2a3a5f81-8325-521b-b168-07ff09b15435/6a824445-7436-41fc-a4a9-6eb39e1a4b34...
+  ⚠️ Failed to fetch 2a3a5f81-8325-521b-b168-07ff09b15435/6a824445-7436-41fc-a4a9-6eb39e1a4b34: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[454/1178] Fetching ef5db97e-a5f3-5375-96a5-ea4749b3e8c3/0f4d1b50-b8d4-11ef-b199-00163ea40dc1...
+  ⚠️ Failed to fetch ef5db97e-a5f3-5375-96a5-ea4749b3e8c3/0f4d1b50-b8d4-11ef-b199-00163ea40dc1: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[455/1178] Track already exists: Vibrations abound
+[456/1178] Track already exists: Hell's Gonna Be a Lot More Fun
+[457/1178] Track already exists: Burn Myself
+[458/1178] Fetching dc8be3c9-00cf-5c8d-8db5-717b25118a8b/e95f3245-2429-49b7-a5a5-ae283dcf1a94...
+  ⚠️ Failed to fetch dc8be3c9-00cf-5c8d-8db5-717b25118a8b/e95f3245-2429-49b7-a5a5-ae283dcf1a94: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[459/1178] Track already exists: Dirge
+[460/1178] Track already exists: Kerouac
+[461/1178] Track already exists: Nevermind
+[462/1178] Track already exists: Montréal
+[463/1178] Track already exists: Practice
+[464/1178] Track already exists: Drama
+[465/1178] Fetching 29397cc2-4bd3-583e-93b8-9f5aebc3d22b/4a3f40dc-6b13-4679-8404-9f067bb39adc...
+  ⚠️ Failed to fetch 29397cc2-4bd3-583e-93b8-9f5aebc3d22b/4a3f40dc-6b13-4679-8404-9f067bb39adc: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[466/1178] Track already exists: Trust in Life
+[467/1178] Fetching 15ef0e58-49e5-500c-92d6-8e4802599314/c8a07950-f08f-4456-8c38-30b5ab53d1c7...
+  ⚠️ Failed to fetch 15ef0e58-49e5-500c-92d6-8e4802599314/c8a07950-f08f-4456-8c38-30b5ab53d1c7: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[468/1178] Fetching bedc43eb-bace-5d9d-902c-ea444897d6fa/a7ffcbc5-01ef-4d9e-a1be-ecc45d67376c...
+  ⚠️ Failed to fetch bedc43eb-bace-5d9d-902c-ea444897d6fa/a7ffcbc5-01ef-4d9e-a1be-ecc45d67376c: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[469/1178] Track already exists: Bacon Is On My Mind
+[470/1178] Track already exists: Spars, Tea & Jams
+[471/1178] Track already exists: HBD ANYWAY
+[472/1178] Fetching 879febfc-538d-5c10-a34e-a9de5a7666ca/e810d24e-3149-540a-a9a8-289e3212ef4e...
+  ⚠️ Failed to fetch 879febfc-538d-5c10-a34e-a9de5a7666ca/e810d24e-3149-540a-a9a8-289e3212ef4e: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[473/1178] Track already exists: Slight Curiosity
+[474/1178] Track already exists: Bloworld
+[475/1178] Track already exists: Pie
+[476/1178] Track already exists: Unresolved Track
+[477/1178] Fetching 72f2cafd-0535-5089-a2ff-6a54e396d30e/20fb6e8e-1548-46b8-842c-aea761ce295d...
+  ⚠️ Failed to fetch 72f2cafd-0535-5089-a2ff-6a54e396d30e/20fb6e8e-1548-46b8-842c-aea761ce295d: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[478/1178] Track already exists: Morning Light
+[479/1178] Track already exists: Unresolved Track
+[480/1178] Fetching d46367eb-be3c-548a-9c27-fbf1dcf27f30/08ddd646-7adb-49b6-b6df-fbc684622926...
+  ⚠️ Failed to fetch d46367eb-be3c-548a-9c27-fbf1dcf27f30/08ddd646-7adb-49b6-b6df-fbc684622926: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[481/1178] Track already exists: Carol Of The Bells
+[482/1178] Track already exists: Man! It's Christmas
+[483/1178] Track already exists: My Man Hates Christmas
+[484/1178] Fetching d6d051f1-16e4-5131-a2f5-c89570a37f8e/2063b2cb-5c47-4b79-af7d-2928e6a63dc2...
+  ⚠️ Failed to fetch d6d051f1-16e4-5131-a2f5-c89570a37f8e/2063b2cb-5c47-4b79-af7d-2928e6a63dc2: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[485/1178] Track already exists: First Married Christmas Remix for CityBeach
+[486/1178] Fetching 187f22db-79cb-5ac4-aa60-54e424e3915e/83b608cb-fbb8-4cc4-895e-bd1cf2b08ae3...
+  ⚠️ Failed to fetch 187f22db-79cb-5ac4-aa60-54e424e3915e/83b608cb-fbb8-4cc4-895e-bd1cf2b08ae3: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[487/1178] Track already exists: O Come All Ye Faithful
+[488/1178] Track already exists: We Three Kings of Orient Are
+[489/1178] Track already exists: Merry Christmix
+[490/1178] Fetching 3d92b2f6-4aac-5f24-bffe-2536eb579286/4b0bc998-db1d-4366-97ab-e3d338c658a7...
+  ⚠️ Failed to fetch 3d92b2f6-4aac-5f24-bffe-2536eb579286/4b0bc998-db1d-4366-97ab-e3d338c658a7: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[491/1178] Fetching 67239977-9d57-5fb2-937d-0c3987fb5c5a/7543ee2c-4306-55b1-85b7-264027df49de...
+  ⚠️ Failed to fetch 67239977-9d57-5fb2-937d-0c3987fb5c5a/7543ee2c-4306-55b1-85b7-264027df49de: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[492/1178] Fetching 61514864-0b81-5de1-9067-05e3205ce859/1ca53abb-7583-50bc-b969-e539f1bfecba...
+  ⚠️ Failed to fetch 61514864-0b81-5de1-9067-05e3205ce859/1ca53abb-7583-50bc-b969-e539f1bfecba: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[493/1178] Track already exists: Fight Me
+[494/1178] Fetching b12d3157-1fbd-5afb-b7c8-aa2a4e00ff03/6da125ba-a720-5d0a-ba94-cd591607935a...
+  ⚠️ Failed to fetch b12d3157-1fbd-5afb-b7c8-aa2a4e00ff03/6da125ba-a720-5d0a-ba94-cd591607935a: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[495/1178] Track already exists: The Platform (lofi beats mix)
+[496/1178] Track already exists: Kandy Kane
+[497/1178] Track already exists: Check Your Pockets
+[498/1178] Track already exists: Unresolved Track
+[499/1178] Track already exists: no return
+[500/1178] Track already exists: The Fun Has Left The Poison
+[501/1178] Track already exists: Unresolved Track
+[502/1178] Track already exists: Age of Reason
+[503/1178] Track already exists: Feeling Bout You
+[504/1178] Track already exists: Your Chance
+[505/1178] Track already exists: So Intersectional
+[506/1178] Track already exists: Unresolved Track
+[507/1178] Track already exists: One Christmas
+[508/1178] Track already exists: Unresolved Track
+[509/1178] Track already exists: Unresolved Track
+[510/1178] Track already exists: My Man Hates Christmas
+[511/1178] Track already exists: Medicine
+[512/1178] Track already exists: Unresolved Track
+[513/1178] Track already exists: Lockstep
+[514/1178] Track already exists: Trust in Life
+[515/1178] Fetching dbad52b9-6253-4a9b-bfab-246b9e839815/fabc3e64-e470-4f97-bf4a-3957e481e23b...
+  ⚠️ Failed to fetch dbad52b9-6253-4a9b-bfab-246b9e839815/fabc3e64-e470-4f97-bf4a-3957e481e23b: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[516/1178] Track already exists: Marrow
+[517/1178] Track already exists: Too Many Pieces
+[518/1178] Track already exists: Numb
+[519/1178] Track already exists: I Love You, Taylor Duncan
+[520/1178] Track already exists: Far From Home (English)
+[521/1178] Track already exists: Cherokee Shuffle
+[522/1178] Track already exists: Unresolved Track
+[523/1178] Track already exists: The Inner Voice
+[524/1178] Fetching acddbb03-064b-5098-87ca-9b146beb12e8/d6df67e4-75cb-4621-9310-71ed32772591...
+  ⚠️ Failed to fetch acddbb03-064b-5098-87ca-9b146beb12e8/d6df67e4-75cb-4621-9310-71ed32772591: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[525/1178] Track already exists: One Christmas
+[526/1178] Track already exists: Unresolved Track
+[527/1178] Fetching bf99e8c3-1f97-558d-bc1d-a4bda04027f7/4dc672cf-9faf-4627-8329-577b89cdfe23...
+  ⚠️ Failed to fetch bf99e8c3-1f97-558d-bc1d-a4bda04027f7/4dc672cf-9faf-4627-8329-577b89cdfe23: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[528/1178] Track already exists: Titicaca
+[529/1178] Fetching 2b62ef49-fcff-523c-b81a-0a7dde2b0609/d62bfa8f-657f-4a9c-ab13-eaf933286547...
+  ⚠️ Failed to fetch 2b62ef49-fcff-523c-b81a-0a7dde2b0609/d62bfa8f-657f-4a9c-ab13-eaf933286547: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[530/1178] Fetching 3db6aa74-e382-588c-b4ac-8a237f941515/36d3103e-e0e2-4cf9-ad27-074fc2079946...
+  ⚠️ Failed to fetch 3db6aa74-e382-588c-b4ac-8a237f941515/36d3103e-e0e2-4cf9-ad27-074fc2079946: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[531/1178] Fetching 05b0141e-c90d-5ce4-9e49-274dd5029339/1bf89a20-a6d6-4292-aeae-75a32054749c...
+  ⚠️ Failed to fetch 05b0141e-c90d-5ce4-9e49-274dd5029339/1bf89a20-a6d6-4292-aeae-75a32054749c: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[532/1178] Track already exists: Unresolved Track
+[533/1178] Fetching 8b4358f8-1c21-5977-8674-d21113719ccf/d4331b84-2027-4a87-9120-bc7b167ee28c...
+  ⚠️ Failed to fetch 8b4358f8-1c21-5977-8674-d21113719ccf/d4331b84-2027-4a87-9120-bc7b167ee28c: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[534/1178] Fetching 86f9ba78-7c4a-5bd2-a382-c6a88e9a96a0/16e84f15-af1f-474f-9af1-19ba0fc6a589...
+  ⚠️ Failed to fetch 86f9ba78-7c4a-5bd2-a382-c6a88e9a96a0/16e84f15-af1f-474f-9af1-19ba0fc6a589: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[535/1178] Track already exists: Joyride
+[536/1178] Track already exists: Unresolved Track
+[537/1178] Track already exists: Good Girls
+[538/1178] Track already exists: NOW! That's What I Call Value!
+[539/1178] Track already exists: Unresolved Track
+[540/1178] Track already exists: Love Drunk
+[541/1178] Track already exists: Everyone Peg Your Jeans
+[542/1178] Track already exists: Stay Awhile
+[543/1178] Track already exists: Pie
+[544/1178] Track already exists: Unresolved Track
+[545/1178] Fetching c1a77b15-2e9c-5c88-9332-57d709a864c6/9b1d7fe4-e2f7-4008-af0a-2eea2bf6ad27...
+  ⚠️ Failed to fetch c1a77b15-2e9c-5c88-9332-57d709a864c6/9b1d7fe4-e2f7-4008-af0a-2eea2bf6ad27: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[546/1178] Track already exists: Sharpshooter
+[547/1178] Fetching 29397cc2-4bd3-583e-93b8-9f5aebc3d22b/6da3cb0b-bb33-480b-b9c6-da83f8e11391...
+  ⚠️ Failed to fetch 29397cc2-4bd3-583e-93b8-9f5aebc3d22b/6da3cb0b-bb33-480b-b9c6-da83f8e11391: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[548/1178] Track already exists: Blood Perfume
+[549/1178] Track already exists: Unresolved Track
+[550/1178] Track already exists: Pitiful
+[551/1178] Track already exists: Willow Brown (ft. Scream Mail)
+[552/1178] Track already exists: One Christmas
+[553/1178] Track already exists: The Platform
+[554/1178] Track already exists: Unresolved Track
+[555/1178] Track already exists: Unresolved Track
+[556/1178] Track already exists: Like Wine
+[557/1178] Track already exists: White Suit Gold Rings
+[558/1178] Track already exists: Lady Neptune
+[559/1178] Track already exists: Unresolved Track
+[560/1178] Track already exists: When I'm Here
+[561/1178] Fetching ef5db97e-a5f3-5375-96a5-ea4749b3e8c3/149856c8-b001-11ef-8062-00163ea40dc1...
+  ⚠️ Failed to fetch ef5db97e-a5f3-5375-96a5-ea4749b3e8c3/149856c8-b001-11ef-8062-00163ea40dc1: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[562/1178] Track already exists: All Salsa No Chips (ft. The Wolf)
+[563/1178] Track already exists: Love On The Radio (early edit)
+[564/1178] Fetching b9c92d07-c0ab-5712-b8e1-05f5e4992e3e/5d580bab-8a4a-4cfd-8644-304238c94830...
+  ⚠️ Failed to fetch b9c92d07-c0ab-5712-b8e1-05f5e4992e3e/5d580bab-8a4a-4cfd-8644-304238c94830: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[565/1178] Fetching 86f9ba78-7c4a-5bd2-a382-c6a88e9a96a0/7f523624-222e-42f3-a6c1-4399e9d5b6a0...
+  ⚠️ Failed to fetch 86f9ba78-7c4a-5bd2-a382-c6a88e9a96a0/7f523624-222e-42f3-a6c1-4399e9d5b6a0: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[566/1178] Fetching ca8c1e63-1e3a-5e7c-9cc8-ef9291f67255/de3f36bc-3270-5dba-94e0-fc9160d6b609...
+  ⚠️ Failed to fetch ca8c1e63-1e3a-5e7c-9cc8-ef9291f67255/de3f36bc-3270-5dba-94e0-fc9160d6b609: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[567/1178] Track already exists: Stompt
+[568/1178] Fetching d5e73072-64a2-56a3-9dcd-4a00bfe561d5/a59ad002-0eb1-4a67-9951-82529683a6a3...
+  ⚠️ Failed to fetch d5e73072-64a2-56a3-9dcd-4a00bfe561d5/a59ad002-0eb1-4a67-9951-82529683a6a3: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[569/1178] Fetching ef5db97e-a5f3-5375-96a5-ea4749b3e8c3/3673fe7e-a826-11ef-8cf2-00163ea40dc1...
+  ⚠️ Failed to fetch ef5db97e-a5f3-5375-96a5-ea4749b3e8c3/3673fe7e-a826-11ef-8cf2-00163ea40dc1: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[570/1178] Fetching 5eec058a-5e25-597a-a713-f88b166dc2e1/https://www.bitpunk.fm/@bitpunkfm_unwound/episodes/relationship-markets-vs-effecient-markets...
+  ⚠️ Failed to fetch 5eec058a-5e25-597a-a713-f88b166dc2e1/https://www.bitpunk.fm/@bitpunkfm_unwound/episodes/relationship-markets-vs-effecient-markets: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[571/1178] Track already exists: A Boofy Movie
+[572/1178] Track already exists: Scenic Route
+[573/1178] Fetching 7153bbb0-b8c4-521f-80c0-cef62d8ef67b/405be9f7-684f-54b8-9035-009111f1933f...
+  ⚠️ Failed to fetch 7153bbb0-b8c4-521f-80c0-cef62d8ef67b/405be9f7-684f-54b8-9035-009111f1933f: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[574/1178] Track already exists: Unresolved Track
+[575/1178] Track already exists: Wildwood Flower
+[576/1178] Track already exists: Things Like This
+[577/1178] Fetching f4d63bc4-de49-5697-9a8f-75dc9521b1e5/f9de095d-3061-459c-ba21-0bdf2be62ff9...
+  ⚠️ Failed to fetch f4d63bc4-de49-5697-9a8f-75dc9521b1e5/f9de095d-3061-459c-ba21-0bdf2be62ff9: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[578/1178] Track already exists: Milves in Teslas
+[579/1178] Track already exists: Slight Curiosity
+[580/1178] Track already exists: Secrets
+[581/1178] Fetching da7e0384-f2f1-5b35-a2f3-3b8723eb2aaa/38ae2dd1-9ea6-4a72-a910-a99a78b83249...
+  ⚠️ Failed to fetch da7e0384-f2f1-5b35-a2f3-3b8723eb2aaa/38ae2dd1-9ea6-4a72-a910-a99a78b83249: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[582/1178] Fetching ef5db97e-a5f3-5375-96a5-ea4749b3e8c3/61f5d9c6-a1e8-11ef-841e-00163ea40dc1...
+  ⚠️ Failed to fetch ef5db97e-a5f3-5375-96a5-ea4749b3e8c3/61f5d9c6-a1e8-11ef-841e-00163ea40dc1: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[583/1178] Track already exists: Unresolved Track
+[584/1178] Track already exists: Speed Metal Hell
+[585/1178] Track already exists: I Like a Lot
+[586/1178] Fetching 05b0141e-c90d-5ce4-9e49-274dd5029339/9af75b89-38e1-4edf-ba5b-8354728b0c4d...
+  ⚠️ Failed to fetch 05b0141e-c90d-5ce4-9e49-274dd5029339/9af75b89-38e1-4edf-ba5b-8354728b0c4d: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[587/1178] Fetching ef5db97e-a5f3-5375-96a5-ea4749b3e8c3/a05461b7-a768-46e8-996c-4dd8c36d78b1...
+  ⚠️ Failed to fetch ef5db97e-a5f3-5375-96a5-ea4749b3e8c3/a05461b7-a768-46e8-996c-4dd8c36d78b1: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[588/1178] Track already exists: Unresolved Track
+[589/1178] Track already exists: Unresolved Track
+[590/1178] Fetching a1ddf2a4-6466-5af4-95ff-5ead7361e02a/7b8d13c5-3dff-4190-a09c-dc38d63678eb...
+  ⚠️ Failed to fetch a1ddf2a4-6466-5af4-95ff-5ead7361e02a/7b8d13c5-3dff-4190-a09c-dc38d63678eb: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[591/1178] Track already exists: Unresolved Track
+[592/1178] Fetching bd545026-4fb5-5cfe-af64-1f6f1d14dd9c/90a038ac-7058-5f0f-885d-3c797c1657b9...
+  ⚠️ Failed to fetch bd545026-4fb5-5cfe-af64-1f6f1d14dd9c/90a038ac-7058-5f0f-885d-3c797c1657b9: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[593/1178] Fetching f4d63bc4-de49-5697-9a8f-75dc9521b1e5/fe8869d4-a409-4462-bf3f-08272e3136cd...
+  ⚠️ Failed to fetch f4d63bc4-de49-5697-9a8f-75dc9521b1e5/fe8869d4-a409-4462-bf3f-08272e3136cd: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[594/1178] Track already exists: Unresolved Track
+[595/1178] Track already exists: Unresolved Track
+[596/1178] Track already exists: Hell and Back Again
+[597/1178] Fetching bedc43eb-bace-5d9d-902c-ea444897d6fa/197349ee-b140-41c0-8105-c4ebdf191bbb...
+  ⚠️ Failed to fetch bedc43eb-bace-5d9d-902c-ea444897d6fa/197349ee-b140-41c0-8105-c4ebdf191bbb: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[598/1178] Fetching 07e882cc-690e-544f-bccb-799730b4f3a9/a01f64a3-025a-5f95-8bf7-7a99f7a65bc4...
+  ⚠️ Failed to fetch 07e882cc-690e-544f-bccb-799730b4f3a9/a01f64a3-025a-5f95-8bf7-7a99f7a65bc4: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[599/1178] Fetching 2b62ef49-fcff-523c-b81a-0a7dde2b0609/3aaaebf8-e10f-4058-82af-509b4a61689f...
+  ⚠️ Failed to fetch 2b62ef49-fcff-523c-b81a-0a7dde2b0609/3aaaebf8-e10f-4058-82af-509b4a61689f: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[600/1178] Track already exists: Monkey Love
+[601/1178] Track already exists: The End of an Era
+[602/1178] Track already exists: Blood Perfume
+[603/1178] Fetching 4d20454b-d686-523b-a43a-0cb2c7034e63/2b3b6b73-56d4-53bf-8cde-b858ecefb6df...
+  ⚠️ Failed to fetch 4d20454b-d686-523b-a43a-0cb2c7034e63/2b3b6b73-56d4-53bf-8cde-b858ecefb6df: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[604/1178] Track already exists: Willow Brown (ft. Scream Mail)
+[605/1178] Track already exists: Unresolved Track
+[606/1178] Track already exists: Unresolved Track
+[607/1178] Track already exists: Joyride
+[608/1178] Track already exists: Unresolved Track
+[609/1178] Track already exists: Unresolved Track
+[610/1178] Track already exists: Unresolved Track
+[611/1178] Track already exists: Unresolved Track
+[612/1178] Track already exists: Unresolved Track
+[613/1178] Track already exists: Unresolved Track
+[614/1178] Track already exists: Unresolved Track
+[615/1178] Track already exists: Unresolved Track
+[616/1178] Track already exists: Unresolved Track
+[617/1178] Track already exists: Unresolved Track
+[618/1178] Track already exists: AssLip
+[619/1178] Track already exists: Make It
+[620/1178] Fetching 2d3bb7af-65fe-5704-bb6e-0e6dde51e748/288e4d72-d7ab-4520-8741-5c31b5c1de78...
+  ⚠️ Failed to fetch 2d3bb7af-65fe-5704-bb6e-0e6dde51e748/288e4d72-d7ab-4520-8741-5c31b5c1de78: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[621/1178] Fetching c39decf9-973e-564f-b741-0ad2985b3b1c/572ba54e-3c57-43c7-930d-b8231531d2de...
+  ⚠️ Failed to fetch c39decf9-973e-564f-b741-0ad2985b3b1c/572ba54e-3c57-43c7-930d-b8231531d2de: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[622/1178] Fetching ef5db97e-a5f3-5375-96a5-ea4749b3e8c3/af52d61a-50e8-43e6-855c-3c3b7678695c...
+  ⚠️ Failed to fetch ef5db97e-a5f3-5375-96a5-ea4749b3e8c3/af52d61a-50e8-43e6-855c-3c3b7678695c: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[623/1178] Track already exists: Wayfaring Stranger
+[624/1178] Fetching 15256154-ef10-564a-8e94-feff542d31d4/486f3bee-2a0f-44bc-9c48-fed522902f42...
+  ⚠️ Failed to fetch 15256154-ef10-564a-8e94-feff542d31d4/486f3bee-2a0f-44bc-9c48-fed522902f42: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[625/1178] Fetching 90412406-f04d-44a2-a33b-8c87e137c291/f050666a-3575-497c-9d4e-034a0a40c591...
+  ⚠️ Failed to fetch 90412406-f04d-44a2-a33b-8c87e137c291/f050666a-3575-497c-9d4e-034a0a40c591: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[626/1178] Track already exists: Nuclear Attack
+[627/1178] Fetching ef5db97e-a5f3-5375-96a5-ea4749b3e8c3/95b9ec68-b9fe-41dd-b0c6-5f2318ee940d...
+  ⚠️ Failed to fetch ef5db97e-a5f3-5375-96a5-ea4749b3e8c3/95b9ec68-b9fe-41dd-b0c6-5f2318ee940d: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[628/1178] Fetching d4bd6713-ce91-5420-97d9-f6cbb68687c6/da2bcbad-0888-47ad-bd74-d1f7c148b368...
+  ⚠️ Failed to fetch d4bd6713-ce91-5420-97d9-f6cbb68687c6/da2bcbad-0888-47ad-bd74-d1f7c148b368: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[629/1178] Track already exists: Unresolved Track
+[630/1178] Track already exists: Sensitive Guy
+[631/1178] Track already exists: Porkchops Fried
+[632/1178] Fetching 0d6c245c-4b25-571c-8c7d-6a7e0d219427/21b862cc-4902-44e0-ba2f-c37417105787...
+  ⚠️ Failed to fetch 0d6c245c-4b25-571c-8c7d-6a7e0d219427/21b862cc-4902-44e0-ba2f-c37417105787: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[633/1178] Track already exists: Unresolved Track
+[634/1178] Track already exists: Unresolved Track
+[635/1178] Fetching 8d619a60-e5c0-56d3-a69e-8ebaefc74b98/90292fd3-e558-5b91-a09b-8da92d060e62...
+  ⚠️ Failed to fetch 8d619a60-e5c0-56d3-a69e-8ebaefc74b98/90292fd3-e558-5b91-a09b-8da92d060e62: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[636/1178] Fetching 731ff971-87e7-51a4-bb9f-ba95cdc3c785/31fe3928-0d2e-5f17-9b3d-79b2a4f1d8ff...
+  ⚠️ Failed to fetch 731ff971-87e7-51a4-bb9f-ba95cdc3c785/31fe3928-0d2e-5f17-9b3d-79b2a4f1d8ff: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[637/1178] Track already exists: Unresolved Track
+[638/1178] Track already exists: Unresolved Track
+[639/1178] Fetching a1ddf2a4-6466-5af4-95ff-5ead7361e02a/c42493b8-e6a3-44bd-8f75-35623f6af4b8...
+  ⚠️ Failed to fetch a1ddf2a4-6466-5af4-95ff-5ead7361e02a/c42493b8-e6a3-44bd-8f75-35623f6af4b8: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[640/1178] Track already exists: Disco Swag
+[641/1178] Fetching bedc43eb-bace-5d9d-902c-ea444897d6fa/c0d59ec6-87e6-46ff-967d-b5d588fce0d5...
+  ⚠️ Failed to fetch bedc43eb-bace-5d9d-902c-ea444897d6fa/c0d59ec6-87e6-46ff-967d-b5d588fce0d5: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[642/1178] Fetching 62ec5dbe-781e-5335-9787-710a72d519a7/f602f026-a45e-5ef3-9d85-16e86d9b5c94...
+  ⚠️ Failed to fetch 62ec5dbe-781e-5335-9787-710a72d519a7/f602f026-a45e-5ef3-9d85-16e86d9b5c94: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[643/1178] Fetching 869cea42-46c1-5c6e-8383-408ac9718622/bb340cd4-9706-42ce-820e-45d517b08859...
+  ⚠️ Failed to fetch 869cea42-46c1-5c6e-8383-408ac9718622/bb340cd4-9706-42ce-820e-45d517b08859: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[644/1178] Track already exists: Pitiful
+[645/1178] Track already exists: Loneliness
+[646/1178] Track already exists: Man or Machine
+[647/1178] Track already exists: Hardware Store Lady (lofi beats mix)
+[648/1178] Fetching 57676ff4-82f4-589f-b8e7-d20e50e2dff9/fb02b5c8-228c-43f2-b0d9-b2167d54a214...
+  ⚠️ Failed to fetch 57676ff4-82f4-589f-b8e7-d20e50e2dff9/fb02b5c8-228c-43f2-b0d9-b2167d54a214: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[649/1178] Track already exists: The End of an Era
+[650/1178] Fetching 1c8447ce-05d6-511c-bd72-6f30e58a7b3d/e6af02e0-9ec4-51f9-bcab-13c3a19613d2...
+  ⚠️ Failed to fetch 1c8447ce-05d6-511c-bd72-6f30e58a7b3d/e6af02e0-9ec4-51f9-bcab-13c3a19613d2: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[651/1178] Fetching 78a0f2e4-c466-5efb-aef6-b5f21c83d4b9/aaa20f26-7fef-5e2e-9ce3-7542667b2d22...
+  ⚠️ Failed to fetch 78a0f2e4-c466-5efb-aef6-b5f21c83d4b9/aaa20f26-7fef-5e2e-9ce3-7542667b2d22: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[652/1178] Track already exists: Ordinary
+[653/1178] Track already exists: Time Flies
+[654/1178] Fetching 9e72a512-c678-5621-8fd6-dfc7cd11a846/6e54f05d-062c-4039-b876-bbd0a1e83412...
+  ⚠️ Failed to fetch 9e72a512-c678-5621-8fd6-dfc7cd11a846/6e54f05d-062c-4039-b876-bbd0a1e83412: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[655/1178] Track already exists: Lost Soul
+[656/1178] Track already exists: Beauty
+[657/1178] Fetching e7928a82-6bc1-5363-879b-a324992239dd/488e0333-63a1-4d62-9a69-4668f705c832...
+  ⚠️ Failed to fetch e7928a82-6bc1-5363-879b-a324992239dd/488e0333-63a1-4d62-9a69-4668f705c832: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[658/1178] Fetching 9e72a512-c678-5621-8fd6-dfc7cd11a846/75f849ff-b522-4505-a455-b8ff65db4aaa...
+  ⚠️ Failed to fetch 9e72a512-c678-5621-8fd6-dfc7cd11a846/75f849ff-b522-4505-a455-b8ff65db4aaa: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[659/1178] Track already exists: Good Girls
+[660/1178] Track already exists: Unresolved Track
+[661/1178] Fetching 117c5f6a-ace0-5384-9c71-51fd22b875e5/65d50c03-0e72-508b-915b-5447e12c8998...
+  ⚠️ Failed to fetch 117c5f6a-ace0-5384-9c71-51fd22b875e5/65d50c03-0e72-508b-915b-5447e12c8998: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[662/1178] Fetching e08ba325-55ca-5375-9e49-f86922b97a1e/19a0a43f-63d1-48a1-af79-e9de2c3c854e...
+  ⚠️ Failed to fetch e08ba325-55ca-5375-9e49-f86922b97a1e/19a0a43f-63d1-48a1-af79-e9de2c3c854e: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[663/1178] Track already exists: Trouble
+[664/1178] Track already exists: Unresolved Track
+[665/1178] Track already exists: Everyone Peg Your Jeans
+[666/1178] Fetching c39decf9-973e-564f-b741-0ad2985b3b1c/c7c78888-ba24-4852-9763-2f21e66340ca...
+  ⚠️ Failed to fetch c39decf9-973e-564f-b741-0ad2985b3b1c/c7c78888-ba24-4852-9763-2f21e66340ca: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[667/1178] Track already exists: Lady Neptune
+[668/1178] Track already exists: NakamoTool - Right In Two
+[669/1178] Track already exists: The Platform (lofi beats mix)
+[670/1178] Track already exists: Altar of my Balls
+[671/1178] Track already exists: Willow Brown (ft. Scream Mail)
+[672/1178] Track already exists: Gawktober
+[673/1178] Track already exists: Unresolved Track
+[674/1178] Track already exists: Let Me Count the Ways
+[675/1178] Fetching 1c7218cb-f7af-5ca6-9ceb-79c775973fd9/0b132cb6-359e-4815-a524-3b37b56f6ff7...
+  ⚠️ Failed to fetch 1c7218cb-f7af-5ca6-9ceb-79c775973fd9/0b132cb6-359e-4815-a524-3b37b56f6ff7: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[676/1178] Track already exists: Radiant
+[677/1178] Track already exists: Empath Eyes - Giving Up The Ghost
+[678/1178] Track already exists: Milves in Teslas (lofi beats mix)
+[679/1178] Track already exists: Mosquito Mystery
+[680/1178] Track already exists: Hometown Scenery
+[681/1178] Fetching e8c436f7-232e-529d-8354-64540a77b2d8/wobblegrooverecordschriswenskesinglesburndownthecornfieldftmorphland...
+  ⚠️ Failed to fetch e8c436f7-232e-529d-8354-64540a77b2d8/wobblegrooverecordschriswenskesinglesburndownthecornfieldftmorphland: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[682/1178] Track already exists: Stay Awhile
+[683/1178] Track already exists: Boogie Stillin'
+[684/1178] Fetching 6f5204ae-5dd2-509e-ade8-e6ddf7826837/071d1047-612f-5f52-b433-27e505fcebdf...
+  ⚠️ Failed to fetch 6f5204ae-5dd2-509e-ade8-e6ddf7826837/071d1047-612f-5f52-b433-27e505fcebdf: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[685/1178] Track already exists: Seasonal Drifting
+[686/1178] Track already exists: Mana
+[687/1178] Track already exists: Orphans
+[688/1178] Track already exists: Stay Awhile (reprise)
+[689/1178] Fetching 7d092391-4608-5117-a7db-86fedb490ac4/f7449550-36ec-54bf-ba91-44bd1fd0f80a...
+  ⚠️ Failed to fetch 7d092391-4608-5117-a7db-86fedb490ac4/f7449550-36ec-54bf-ba91-44bd1fd0f80a: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[690/1178] Track already exists: Mexico
+[691/1178] Fetching af99d1b4-e10e-503f-8321-8d748bdc76f8/3a623e57-db36-4c48-ab5f-06120b8e381a...
+  ⚠️ Failed to fetch af99d1b4-e10e-503f-8321-8d748bdc76f8/3a623e57-db36-4c48-ab5f-06120b8e381a: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[692/1178] Track already exists: Unresolved Track
+[693/1178] Track already exists: To be in Nashville
+[694/1178] Track already exists: Let's Be True
+[695/1178] Track already exists: Don't need no money
+[696/1178] Track already exists: Railway Station
+[697/1178] Track already exists: Lightwork Orange
+[698/1178] Track already exists: Unresolved Track
+[699/1178] Track already exists: Just Like It Never Happened
+[700/1178] Track already exists: Outlasted Motion
+[701/1178] Track already exists: Unresolved Track
+[702/1178] Fetching 1f53e56a-691a-5417-b442-06ce365d9db6/3a1d48dc-a156-419e-a453-179674d226b2...
+  ⚠️ Failed to fetch 1f53e56a-691a-5417-b442-06ce365d9db6/3a1d48dc-a156-419e-a453-179674d226b2: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[703/1178] Fetching 4f8daef6-bdc9-5996-9c0a-0d05d49207ad/8a8ab8b2-7ab4-4858-bd09-5f0556467ca8...
+  ⚠️ Failed to fetch 4f8daef6-bdc9-5996-9c0a-0d05d49207ad/8a8ab8b2-7ab4-4858-bd09-5f0556467ca8: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[704/1178] Track already exists: Your Call
+[705/1178] Track already exists: To be in Nashville
+[706/1178] Track already exists: Can't Hold Me Down
+[707/1178] Track already exists: Crop Circles
+[708/1178] Track already exists: Cold Fusion Reborn
+[709/1178] Fetching 6f7eae59-1f44-57a5-ad80-230276a79e4/7a66b1a0-ab75-59dc-a236-1111c42204d8...
+  ⚠️ Failed to fetch 6f7eae59-1f44-57a5-ad80-230276a79e4/7a66b1a0-ab75-59dc-a236-1111c42204d8: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[710/1178] Track already exists: Hot Foot
+[711/1178] Fetching 3db6aa74-e382-588c-b4ac-8a237f941515/731e0ffe-e07d-4426-aae5-0cce8dcf6b03...
+  ⚠️ Failed to fetch 3db6aa74-e382-588c-b4ac-8a237f941515/731e0ffe-e07d-4426-aae5-0cce8dcf6b03: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[712/1178] Track already exists: Unresolved Track
+[713/1178] Track already exists: Start Smashing the Day Out
+[714/1178] Fetching 680882f9-f371-5eeb-bd90-6767d528854f/8fb11ed6-9f55-4ac5-a8d1-2438a997c4d6...
+  ⚠️ Failed to fetch 680882f9-f371-5eeb-bd90-6767d528854f/8fb11ed6-9f55-4ac5-a8d1-2438a997c4d6: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[715/1178] Fetching e45c294a-64f4-5c42-b452-47d6b92091b4/1cb2cca3-dac2-432f-8485-15435a9aa9cc...
+  ⚠️ Failed to fetch e45c294a-64f4-5c42-b452-47d6b92091b4/1cb2cca3-dac2-432f-8485-15435a9aa9cc: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[716/1178] Fetching 3319d99e-23cc-5334-8b5c-594282bb2a0d/f77411cd-dcf3-54e0-9d09-49051db7b655...
+  ⚠️ Failed to fetch 3319d99e-23cc-5334-8b5c-594282bb2a0d/f77411cd-dcf3-54e0-9d09-49051db7b655: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[717/1178] Track already exists: Mushroom Tower Audio
+[718/1178] Track already exists: Afro Bob
+[719/1178] Fetching ead3a19b-cfc1-57f2-a5ed-c95d2bc15676/c14d393c-1fb2-4dc9-949a-1e6eecba2235...
+  ⚠️ Failed to fetch ead3a19b-cfc1-57f2-a5ed-c95d2bc15676/c14d393c-1fb2-4dc9-949a-1e6eecba2235: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[720/1178] Track already exists: Kiss Me Always
+[721/1178] Track already exists: Unresolved Track
+[722/1178] Track already exists: Keep Searching
+[723/1178] Track already exists: Thanks for the Pussy Last Night
+[724/1178] Track already exists: The Platform
+[725/1178] Track already exists: When I'm Here
+[726/1178] Track already exists: Unresolved Track
+[727/1178] Fetching c39decf9-973e-564f-b741-0ad2985b3b1c/23c507cf-a832-475d-bba9-a49808d2fa61...
+  ⚠️ Failed to fetch c39decf9-973e-564f-b741-0ad2985b3b1c/23c507cf-a832-475d-bba9-a49808d2fa61: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[728/1178] Track already exists: I'm Coming Home Today
+[729/1178] Track already exists: Unresolved Track
+[730/1178] Fetching 90412406-f04d-44a2-a33b-8c87e137c291/1bc8bce2-b862-4245-b331-16dd0c9e5c04...
+  ⚠️ Failed to fetch 90412406-f04d-44a2-a33b-8c87e137c291/1bc8bce2-b862-4245-b331-16dd0c9e5c04: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[731/1178] Track already exists: Like Wine
+[732/1178] Track already exists: That Duck
+[733/1178] Track already exists: White Suit Gold Rings
+[734/1178] Track already exists: NOW! That's What I Call Value!
+[735/1178] Track already exists: Unresolved Track
+[736/1178] Track already exists: Unresolved Track
+[737/1178] Track already exists: No Hands  (Single)
+[738/1178] Track already exists: Unresolved Track
+[739/1178] Track already exists: Control
+[740/1178] Track already exists: Dusty Old Man
+[741/1178] Track already exists: Home Sweet Home
+[742/1178] Track already exists: Dopesick
+[743/1178] Fetching 8b4358f8-1c21-5977-8674-d21113719ccf/a812d716-bb76-4a33-8d9d-c5e52172bd8e...
+  ⚠️ Failed to fetch 8b4358f8-1c21-5977-8674-d21113719ccf/a812d716-bb76-4a33-8d9d-c5e52172bd8e: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[744/1178] Track already exists: Montgomery Station
+[745/1178] Track already exists: LUVV Muscle
+[746/1178] Fetching 0d5a8efb-e132-5f1b-9ab4-3fd0644dbb30/882462d7-58a0-441c-937c-d5966a74d126...
+  ⚠️ Failed to fetch 0d5a8efb-e132-5f1b-9ab4-3fd0644dbb30/882462d7-58a0-441c-937c-d5966a74d126: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[747/1178] Track already exists: Baby Bed Bugs
+[748/1178] Fetching 7b7949ca-5019-5814-aa53-d4b14bd15a6d/4f874e93-5416-41e1-a0f0-30cb76851f7a...
+  ⚠️ Failed to fetch 7b7949ca-5019-5814-aa53-d4b14bd15a6d/4f874e93-5416-41e1-a0f0-30cb76851f7a: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[749/1178] Track already exists: Pour Over
+[750/1178] Track already exists: Fat Cat Catepillar
+[751/1178] Track already exists: Wim Wenders Wins
+[752/1178] Fetching a22aefb0-fd07-5bba-862b-ceb35ea04146/3c4ad70e-d03c-40c5-b1b4-9de1bcc88f30...
+  ⚠️ Failed to fetch a22aefb0-fd07-5bba-862b-ceb35ea04146/3c4ad70e-d03c-40c5-b1b4-9de1bcc88f30: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[753/1178] Fetching bd3985d4-89ea-506f-82a2-82e98835025b/b9a28cfe-5f2c-4977-8c2e-873bd6ed02d8...
+  ⚠️ Failed to fetch bd3985d4-89ea-506f-82a2-82e98835025b/b9a28cfe-5f2c-4977-8c2e-873bd6ed02d8: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[754/1178] Track already exists: Unresolved Track
+[755/1178] Fetching 2c5f77fe-25d9-5a2d-97ef-236718c627df/c5071214-ba27-4327-ae0b-4769fc9cac06...
+  ⚠️ Failed to fetch 2c5f77fe-25d9-5a2d-97ef-236718c627df/c5071214-ba27-4327-ae0b-4769fc9cac06: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[756/1178] Track already exists: Possible
+[757/1178] Fetching 55681259-eba9-54ea-b550-e8bb1f5881d7/83e26fea-d00c-5be8-b1e0-3e67de3de7ec...
+  ⚠️ Failed to fetch 55681259-eba9-54ea-b550-e8bb1f5881d7/83e26fea-d00c-5be8-b1e0-3e67de3de7ec: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[758/1178] Track already exists: Unresolved Track
+[759/1178] Fetching 57f9cceb-e727-5dba-87a5-e2168a4cf729/706295d1-5eae-5ca8-b518-0890a5db340f...
+  ⚠️ Failed to fetch 57f9cceb-e727-5dba-87a5-e2168a4cf729/706295d1-5eae-5ca8-b518-0890a5db340f: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[760/1178] Track already exists: Unresolved Track
+[761/1178] Track already exists: Hearts Provide
+[762/1178] Fetching e64ef270-728d-51f0-8052-9fed4883f662/e2b5de07-0310-497b-b73a-74e504ade9c4...
+  ⚠️ Failed to fetch e64ef270-728d-51f0-8052-9fed4883f662/e2b5de07-0310-497b-b73a-74e504ade9c4: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[763/1178] Track already exists: The Platform
+[764/1178] Track already exists: Joyride
+[765/1178] Track already exists: Unresolved Track
+[766/1178] Fetching 99a14604-f38b-5e9d-8679-9314d1207cd4/6dbd199a-524c-41c4-a016-201a46cee93a...
+  ⚠️ Failed to fetch 99a14604-f38b-5e9d-8679-9314d1207cd4/6dbd199a-524c-41c4-a016-201a46cee93a: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[767/1178] Fetching 671612fb-9039-5189-9d4b-0fd9df2093dd/a566e8ed-563e-551a-a6f3-3170394f9022...
+  ⚠️ Failed to fetch 671612fb-9039-5189-9d4b-0fd9df2093dd/a566e8ed-563e-551a-a6f3-3170394f9022: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[768/1178] Track already exists: Momma Bear
+[769/1178] Track already exists: The Devil Never Change
+[770/1178] Track already exists: Titicaca
+[771/1178] Track already exists: How Bout You?
+[772/1178] Track already exists: Boostagrams
+[773/1178] Track already exists: Lady Neptune
+[774/1178] Track already exists: Nocturnal
+[775/1178] Track already exists: Spirit In The Future
+[776/1178] Track already exists: Vices
+[777/1178] Track already exists: Vertigo
+[778/1178] Track already exists: Love Drunk
+[779/1178] Track already exists: Knight in Shining Armor
+[780/1178] Fetching a543e50f-141d-5079-9d23-3a5b0b2ef6ba/e074df5a-552b-5d01-ba44-8979cc390342...
+  ⚠️ Failed to fetch a543e50f-141d-5079-9d23-3a5b0b2ef6ba/e074df5a-552b-5d01-ba44-8979cc390342: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[781/1178] Track already exists: Best Worst Love
+[782/1178] Track already exists: Unresolved Track
+[783/1178] Track already exists: Straight to Hell
+[784/1178] Track already exists: Come Around
+[785/1178] Track already exists: Boostagrams
+[786/1178] Track already exists: Bad Little Seed
+[787/1178] Track already exists: Unresolved Track
+[788/1178] Track already exists: Pie
+[789/1178] Track already exists: Blood Perfume
+[790/1178] Track already exists: Sharpshooter
+[791/1178] Track already exists: Lady Neptune
+[792/1178] Track already exists: wordswordswords
+[793/1178] Track already exists: Fight Me
+[794/1178] Track already exists: Don't Feel Bad
+[795/1178] Track already exists: Stay Dead
+[796/1178] Track already exists: I'll Picture You
+[797/1178] Track already exists: World Trade Center
+[798/1178] Track already exists: Hold Steady
+[799/1178] Track already exists: Burning the Night
+[800/1178] Track already exists: White Suit Gold Rings
+[801/1178] Track already exists: Unresolved Track
+[802/1178] Track already exists: Campfire Remedy
+[803/1178] Fetching 84971935-1bbe-5b4b-9ce2-7de5008b9f30/98aee17e-a23d-4df3-84a3-9f5a9c66fe07...
+  ⚠️ Failed to fetch 84971935-1bbe-5b4b-9ce2-7de5008b9f30/98aee17e-a23d-4df3-84a3-9f5a9c66fe07: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[804/1178] Track already exists: Altar of my Balls
+[805/1178] Track already exists: I'm Coming Home Today
+[806/1178] Track already exists: Sunny
+[807/1178] Fetching 4acd54ad-f4f3-5b4f-9dbb-e1655932cbad/9daf5771-b0d0-525f-9100-7ab581447860...
+  ⚠️ Failed to fetch 4acd54ad-f4f3-5b4f-9dbb-e1655932cbad/9daf5771-b0d0-525f-9100-7ab581447860: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[808/1178] Track already exists: H8M3
+[809/1178] Fetching 06128d12-2f8a-569c-b791-0cdb37acab27/https://justcast.com/shows/44719/audioposts/1245710...
+  ⚠️ Failed to fetch 06128d12-2f8a-569c-b791-0cdb37acab27/https://justcast.com/shows/44719/audioposts/1245710: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[810/1178] Track already exists: Unresolved Track
+[811/1178] Fetching f4d63bc4-de49-5697-9a8f-75dc9521b1e5/df586f45-fb96-4936-a845-e330733e9b87...
+  ⚠️ Failed to fetch f4d63bc4-de49-5697-9a8f-75dc9521b1e5/df586f45-fb96-4936-a845-e330733e9b87: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[812/1178] Fetching ead3a19b-cfc1-57f2-a5ed-c95d2bc15676/7ee5acb9-75cf-44fd-ac9b-aff130f16c36...
+  ⚠️ Failed to fetch ead3a19b-cfc1-57f2-a5ed-c95d2bc15676/7ee5acb9-75cf-44fd-ac9b-aff130f16c36: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[813/1178] Track already exists: Nocturnal
+[814/1178] Fetching 4acd54ad-f4f3-5b4f-9dbb-e1655932cbad/a419d7db-4e9b-59b3-8761-4f229bcd4926...
+  ⚠️ Failed to fetch 4acd54ad-f4f3-5b4f-9dbb-e1655932cbad/a419d7db-4e9b-59b3-8761-4f229bcd4926: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[815/1178] Fetching db4f967f-4c56-5602-9442-daf318deb3b3/3cbe6a17-0bae-5b07-8f4c-ed12fbeba205...
+  ⚠️ Failed to fetch db4f967f-4c56-5602-9442-daf318deb3b3/3cbe6a17-0bae-5b07-8f4c-ed12fbeba205: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[816/1178] Track already exists: Breakaway (demo)
+[817/1178] Track already exists: Unresolved Track
+[818/1178] Fetching dbb54e62-6809-5e7f-82a1-ecae9b14ef57/https://www.haciendoelsueco.com/?p=1844...
+  ⚠️ Failed to fetch dbb54e62-6809-5e7f-82a1-ecae9b14ef57/https://www.haciendoelsueco.com/?p=1844: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[819/1178] Fetching 93f427fc-b634-5ba0-94df-3c646771d06e/f702ba2f-dae1-5323-b315-3753dc53a092...
+  ⚠️ Failed to fetch 93f427fc-b634-5ba0-94df-3c646771d06e/f702ba2f-dae1-5323-b315-3753dc53a092: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[820/1178] Track already exists: The Way She Rolls
+[821/1178] Track already exists: Something In The Water
+[822/1178] Track already exists: Get Away
+[823/1178] Fetching 170d741f-4fa7-5476-8295-036240bd63b4/88593e10-e833-59ca-bd0f-369f6e28a602...
+  ⚠️ Failed to fetch 170d741f-4fa7-5476-8295-036240bd63b4/88593e10-e833-59ca-bd0f-369f6e28a602: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[824/1178] Fetching 3d92b2f6-4aac-5f24-bffe-2536eb579286/f7139b7b-e64f-4f26-ae3c-dd632a6f8ee4...
+  ⚠️ Failed to fetch 3d92b2f6-4aac-5f24-bffe-2536eb579286/f7139b7b-e64f-4f26-ae3c-dd632a6f8ee4: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[825/1178] Fetching 68beab02-1caf-5eae-b471-78c230b0fe90/12f41daa-c8da-5ac7-af4f-86bfbcb2546c...
+  ⚠️ Failed to fetch 68beab02-1caf-5eae-b471-78c230b0fe90/12f41daa-c8da-5ac7-af4f-86bfbcb2546c: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[826/1178] Track already exists: Montgomery Station
+[827/1178] Track already exists: Sell it to my Soul
+[828/1178] Track already exists: Closer to Somewhere
+[829/1178] Track already exists: Chocolates
+[830/1178] Track already exists: Red Light
+[831/1178] Track already exists: Unresolved Track
+[832/1178] Track already exists: My Susceptible Heart
+[833/1178] Track already exists: This Pain I've Grown
+[834/1178] Track already exists: Church of the Universe
+[835/1178] Track already exists: Einsemd
+[836/1178] Track already exists: Back to Front
+[837/1178] Track already exists: The Game
+[838/1178] Track already exists: Unresolved Track
+[839/1178] Track already exists: Cosmodrome
+[840/1178] Track already exists: Penis in the Ocean
+[841/1178] Track already exists: Like Wine
+[842/1178] Track already exists: So Many Years
+[843/1178] Track already exists: Unresolved Track
+[844/1178] Track already exists: Touch
+[845/1178] Fetching 8455f6fc-d0b8-5c6e-9a47-95e545be3edc/75319033-080e-5353-b0da-ceb0853feacc...
+  ⚠️ Failed to fetch 8455f6fc-d0b8-5c6e-9a47-95e545be3edc/75319033-080e-5353-b0da-ceb0853feacc: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[846/1178] Track already exists: Tired of Dreaming
+[847/1178] Track already exists: Unresolved Track
+[848/1178] Track already exists: Hardware Store Lady
+[849/1178] Track already exists: No Ordinary Man
+[850/1178] Fetching c1068f73-172c-5ece-916f-dbf9791c3c76/6f3daa09-11a2-59ee-b37f-de7346fcbb29...
+  ⚠️ Failed to fetch c1068f73-172c-5ece-916f-dbf9791c3c76/6f3daa09-11a2-59ee-b37f-de7346fcbb29: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[851/1178] Track already exists: Frail - Mellow Cassette
+[852/1178] Fetching 41bc935a-e6b0-563f-851a-47f46fb35ce8/ea58fe62-28ea-4e91-ace6-60158791609b...
+  ⚠️ Failed to fetch 41bc935a-e6b0-563f-851a-47f46fb35ce8/ea58fe62-28ea-4e91-ace6-60158791609b: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[853/1178] Track already exists: Stand in Line
+[854/1178] Track already exists: Track 1852
+[855/1178] Fetching afc5df5b-bfce-5843-802d-3c074b06e969/4e400ad4-e038-4baf-aed7-599b6cb33a31...
+  ⚠️ Failed to fetch afc5df5b-bfce-5843-802d-3c074b06e969/4e400ad4-e038-4baf-aed7-599b6cb33a31: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[856/1178] Fetching 8495efa9-543a-5c50-b856-f09d3d57872b/37ae1267-8f09-485c-99aa-66eab8590cac...
+  ⚠️ Failed to fetch 8495efa9-543a-5c50-b856-f09d3d57872b/37ae1267-8f09-485c-99aa-66eab8590cac: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[857/1178] Fetching 07121659-17cc-5e3e-b754-b9a1de54b325/bcc54aec-2cf5-5a43-bb1f-904e11a4a89c...
+  ⚠️ Failed to fetch 07121659-17cc-5e3e-b754-b9a1de54b325/bcc54aec-2cf5-5a43-bb1f-904e11a4a89c: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[858/1178] Track already exists: Free Software Song Remix
+[859/1178] Track already exists: She Doesn't Know Anything About God
+[860/1178] Track already exists: Unresolved Track
+[861/1178] Track already exists: Leave It Alone
+[862/1178] Fetching d3b9a1b6-9767-5289-9a60-b0ac80d2cae2/54194c9c-484a-4981-9053-8e1fb16dc0d1...
+  ⚠️ Failed to fetch d3b9a1b6-9767-5289-9a60-b0ac80d2cae2/54194c9c-484a-4981-9053-8e1fb16dc0d1: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[863/1178] Fetching e64ef270-728d-51f0-8052-9fed4883f662/256ce104-542d-423f-acf2-2b866d4b2ccf...
+  ⚠️ Failed to fetch e64ef270-728d-51f0-8052-9fed4883f662/256ce104-542d-423f-acf2-2b866d4b2ccf: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[864/1178] Track already exists: Good Girls
+[865/1178] Track already exists: Day Dreaming
+[866/1178] Fetching 5f6bd882-bd60-4474-99e1-f268256100d9/6d637b5d-3d9d-4237-979f-4ca1caefdf51...
+  ⚠️ Failed to fetch 5f6bd882-bd60-4474-99e1-f268256100d9/6d637b5d-3d9d-4237-979f-4ca1caefdf51: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[867/1178] Track already exists: Sweet Cheeks
+[868/1178] Track already exists: Medicine
+[869/1178] Track already exists: Really Great Day
+[870/1178] Fetching 48ad9b64-d3a8-5719-b452-9ae85e57ab54/https://justcast.com/shows/44720/audioposts/1245718...
+  ⚠️ Failed to fetch 48ad9b64-d3a8-5719-b452-9ae85e57ab54/https://justcast.com/shows/44720/audioposts/1245718: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[871/1178] Track already exists: Unresolved Track
+[872/1178] Track already exists: Titicaca
+[873/1178] Track already exists: NOW! That's What I Call Value!
+[874/1178] Fetching 1f53e56a-691a-5417-b442-06ce365d9db6/9a74d9bb-0f2f-4563-8f66-6385027c56ae...
+  ⚠️ Failed to fetch 1f53e56a-691a-5417-b442-06ce365d9db6/9a74d9bb-0f2f-4563-8f66-6385027c56ae: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[875/1178] Track already exists: Unresolved Track
+[876/1178] Track already exists: Self Destruct
+[877/1178] Track already exists: Incogneetus
+[878/1178] Track already exists: Keep Searching
+[879/1178] Track already exists: Way In My Life
+[880/1178] Fetching 19835a35-b7d1-5fee-8d67-a89d996098e/5ef00183-a0a3-4a06-916b-a7d4fe1b8e3d...
+  ⚠️ Failed to fetch 19835a35-b7d1-5fee-8d67-a89d996098e/5ef00183-a0a3-4a06-916b-a7d4fe1b8e3d: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[881/1178] Track already exists: Look What You Put Me Through
+[882/1178] Track already exists: Unresolved Track
+[883/1178] Track already exists: I Need a Little
+[884/1178] Track already exists: Hit Me Like Sugar
+[885/1178] Fetching 57676ff4-82f4-589f-b8e7-d20e50e2dff9/98446e33-2090-46c5-b884-f488fe749ef5...
+  ⚠️ Failed to fetch 57676ff4-82f4-589f-b8e7-d20e50e2dff9/98446e33-2090-46c5-b884-f488fe749ef5: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[886/1178] Fetching b27c1f56-dff1-5fdd-bdee-a00e50c4c3f1/f8757397-4f62-4dd7-82ca-03fabe7045a5...
+  ⚠️ Failed to fetch b27c1f56-dff1-5fdd-bdee-a00e50c4c3f1/f8757397-4f62-4dd7-82ca-03fabe7045a5: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[887/1178] Track already exists: Unresolved Track
+[888/1178] Track already exists: Leave It Alone
+[889/1178] Track already exists: Little Glutton Miss Dreams
+[890/1178] Track already exists: Unresolved Track
+[891/1178] Track already exists: Looking For Some Clit
+[892/1178] Track already exists: Sharpshooter
+[893/1178] Fetching 5f6bd882-bd60-4474-99e1-f268256100d9/a402cb4a-c020-5af5-9566-fdb4a8210293...
+  ⚠️ Failed to fetch 5f6bd882-bd60-4474-99e1-f268256100d9/a402cb4a-c020-5af5-9566-fdb4a8210293: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[894/1178] Track already exists: Long Road (ft. Gibby Stites)
+[895/1178] Fetching e745b541-8bc1-42b5-9d2d-5c3a67817d47/33387257-7e7e-4754-ba1b-d77b1bd2552e...
+  ⚠️ Failed to fetch e745b541-8bc1-42b5-9d2d-5c3a67817d47/33387257-7e7e-4754-ba1b-d77b1bd2552e: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[896/1178] Track already exists: Makin' Beans
+[897/1178] Track already exists: Someone Else
+[898/1178] Track already exists: Breathe
+[899/1178] Track already exists: 3 Way
+[900/1178] Track already exists: Heart to Heart
+[901/1178] Track already exists: Unresolved Track
+[902/1178] Track already exists: Raskolnikov
+[903/1178] Track already exists: The Beating
+[904/1178] Track already exists: Unresolved Track
+[905/1178] Track already exists: Hardware Store Lady
+[906/1178] Track already exists: Your Call
+[907/1178] Track already exists: The Bunny and the Coyote
+[908/1178] Track already exists: Private Spies
+[909/1178] Fetching 05b75483-9f5b-5236-bd66-69e9d3e1b995/f47070a4-df2e-4b30-9b38-8c9f59a0fa0f...
+  ⚠️ Failed to fetch 05b75483-9f5b-5236-bd66-69e9d3e1b995/f47070a4-df2e-4b30-9b38-8c9f59a0fa0f: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[910/1178] Track already exists: Pitiful
+[911/1178] Track already exists: Lifting the Veil
+[912/1178] Track already exists: Diaper In the Road (Rolled Up Mix)
+[913/1178] Fetching 6debe2b2-7fc2-5571-9ade-5965b1bf958f/0ddd7200-71fc-528f-834c-7877d8198571...
+  ⚠️ Failed to fetch 6debe2b2-7fc2-5571-9ade-5965b1bf958f/0ddd7200-71fc-528f-834c-7877d8198571: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[914/1178] Fetching e7667356-3830-56c2-b0dd-7ca9cf5d48d5/bd6ab9f0-cfa0-439e-b2a5-d8e4c45bc790...
+  ⚠️ Failed to fetch e7667356-3830-56c2-b0dd-7ca9cf5d48d5/bd6ab9f0-cfa0-439e-b2a5-d8e4c45bc790: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[915/1178] Track already exists: Unresolved Track
+[916/1178] Track already exists: Play
+[917/1178] Track already exists: Unresolved Track
+[918/1178] Track already exists: Breathe
+[919/1178] Track already exists: Self Under Siege
+[920/1178] Track already exists: Unresolved Track
+[921/1178] Fetching 8b4358f8-1c21-5977-8674-d21113719ccf/af152125-a28b-4642-8222-002eabf340cd...
+  ⚠️ Failed to fetch 8b4358f8-1c21-5977-8674-d21113719ccf/af152125-a28b-4642-8222-002eabf340cd: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[922/1178] Fetching 962b4cdd-1d7e-521a-a6cf-9df4b88c870a/aedcf494-4128-4ebb-b00d-d048a6382c1e...
+  ⚠️ Failed to fetch 962b4cdd-1d7e-521a-a6cf-9df4b88c870a/aedcf494-4128-4ebb-b00d-d048a6382c1e: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[923/1178] Track already exists: Track 1879
+[924/1178] Track already exists: Blueprint
+[925/1178] Fetching fb469712-af8e-57c9-b533-ddaebd452ab2/1468bec2-2c8e-4d01-b904-390297f7f17f...
+  ⚠️ Failed to fetch fb469712-af8e-57c9-b533-ddaebd452ab2/1468bec2-2c8e-4d01-b904-390297f7f17f: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[926/1178] Track already exists: Thought Crime Division
+[927/1178] Track already exists: Pie
+[928/1178] Track already exists: Unresolved Track
+[929/1178] Track already exists: Unresolved Track
+[930/1178] Fetching bf99e8c3-1f97-558d-bc1d-a4bda04027f7/ec2cdebc-d918-4b36-9017-62d844ee8a31...
+  ⚠️ Failed to fetch bf99e8c3-1f97-558d-bc1d-a4bda04027f7/ec2cdebc-d918-4b36-9017-62d844ee8a31: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[931/1178] Track already exists: Alley
+[932/1178] Track already exists: Storm Coming
+[933/1178] Track already exists: All Things Are Born of Woman
+[934/1178] Fetching 3f555699-58b1-5250-be0f-07c7cedd177a/52795ac6-7c69-4fbe-bf88-614d475bea62...
+  ⚠️ Failed to fetch 3f555699-58b1-5250-be0f-07c7cedd177a/52795ac6-7c69-4fbe-bf88-614d475bea62: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[935/1178] Track already exists: Campfire Remedy
+[936/1178] Fetching 62d41c72-d06c-49e4-bb1f-e59f32c3a397/dfc92d02-812f-427a-abc9-e36bd27264e1...
+  ⚠️ Failed to fetch 62d41c72-d06c-49e4-bb1f-e59f32c3a397/dfc92d02-812f-427a-abc9-e36bd27264e1: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[937/1178] Fetching 659f95a4-1291-5e03-ab86-2deac518f652/1333ba00-5ecc-4cc9-bc84-286a7a296491...
+  ⚠️ Failed to fetch 659f95a4-1291-5e03-ab86-2deac518f652/1333ba00-5ecc-4cc9-bc84-286a7a296491: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[938/1178] Fetching b24216f8-1565-50f7-9263-35ebf8429b63/02355bdc-cd04-4faa-bf2a-acd8cfc1905e...
+  ⚠️ Failed to fetch b24216f8-1565-50f7-9263-35ebf8429b63/02355bdc-cd04-4faa-bf2a-acd8cfc1905e: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[939/1178] Track already exists: Winds of Change
+[940/1178] Track already exists: Terrible Fight
+[941/1178] Track already exists: Fight Me
+[942/1178] Fetching 065db8dc-7311-5ca0-abb6-85f2b0c6a8a0/8a2f2862-15d8-4077-a359-71cb7819ee97...
+  ⚠️ Failed to fetch 065db8dc-7311-5ca0-abb6-85f2b0c6a8a0/8a2f2862-15d8-4077-a359-71cb7819ee97: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[943/1178] Fetching bf7dd502-5f87-5937-8c50-4c8a863024d0/6010acfe-bbd9-44b5-919b-76846be2753b...
+  ⚠️ Failed to fetch bf7dd502-5f87-5937-8c50-4c8a863024d0/6010acfe-bbd9-44b5-919b-76846be2753b: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[944/1178] Track already exists: Unresolved Track
+[945/1178] Track already exists: Vices
+[946/1178] Fetching df8b984e-56b6-55f3-852f-18e3ec6e8bc4/06cf19e5-5211-4cf5-9a1a-436858f7ac50...
+  ⚠️ Failed to fetch df8b984e-56b6-55f3-852f-18e3ec6e8bc4/06cf19e5-5211-4cf5-9a1a-436858f7ac50: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[947/1178] Track already exists: Alandace
+[948/1178] Fetching 2a23c51f-e057-5f38-9fb1-2f426ecbe13f/85109114-40b2-4c4a-be1e-c463e67f4e80...
+  ⚠️ Failed to fetch 2a23c51f-e057-5f38-9fb1-2f426ecbe13f/85109114-40b2-4c4a-be1e-c463e67f4e80: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[949/1178] Track already exists: the cover up
+[950/1178] Fetching 5d904e7c-cdec-5bd4-950d-11a68cad5750/dbfb6860-57bd-41be-96c2-4bb34f78d1f6...
+  ⚠️ Failed to fetch 5d904e7c-cdec-5bd4-950d-11a68cad5750/dbfb6860-57bd-41be-96c2-4bb34f78d1f6: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[951/1178] Track already exists: Beyond the Hills
+[952/1178] Track already exists: Dogs
+[953/1178] Track already exists: Thanks for the Pussy Last Night
+[954/1178] Track already exists: The Platform
+[955/1178] Track already exists: Stairway to Seven
+[956/1178] Track already exists: Dagger Hammer
+[957/1178] Track already exists: Spacemen
+[958/1178] Track already exists: Sergio's Serenade
+[959/1178] Fetching 92bb13ad-3ba7-5537-bf9a-893e311f4dbd/1a04e304-5f43-4122-a565-f2b71f56952f...
+  ⚠️ Failed to fetch 92bb13ad-3ba7-5537-bf9a-893e311f4dbd/1a04e304-5f43-4122-a565-f2b71f56952f: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[960/1178] Fetching bf7dd502-5f87-5937-8c50-4c8a863024d0/518dd879-0bae-4a38-8c56-4f666b0fa054...
+  ⚠️ Failed to fetch bf7dd502-5f87-5937-8c50-4c8a863024d0/518dd879-0bae-4a38-8c56-4f666b0fa054: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[961/1178] Fetching cb28401c-716a-51df-8de5-e90527546a12/5a885815-6752-5612-b96b-4964b95b86ae...
+  ⚠️ Failed to fetch cb28401c-716a-51df-8de5-e90527546a12/5a885815-6752-5612-b96b-4964b95b86ae: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[962/1178] Fetching ac3e102d-5cb8-58d0-b37a-3f7cb2d47094/068aefee-1eab-44d9-95c5-101c6e0e296d...
+  ⚠️ Failed to fetch ac3e102d-5cb8-58d0-b37a-3f7cb2d47094/068aefee-1eab-44d9-95c5-101c6e0e296d: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[963/1178] Fetching 75d02f1d-604c-5d31-a9e6-5a3da0ae591e/266dab45-83d0-47aa-9b24-72ce57c48003...
+  ⚠️ Failed to fetch 75d02f1d-604c-5d31-a9e6-5a3da0ae591e/266dab45-83d0-47aa-9b24-72ce57c48003: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[964/1178] Fetching 76e1f55c-1a5b-55a0-b1da-039e2aa72f6a/606b9e12-cd67-4d25-8e72-7377e5d5181f...
+  ⚠️ Failed to fetch 76e1f55c-1a5b-55a0-b1da-039e2aa72f6a/606b9e12-cd67-4d25-8e72-7377e5d5181f: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[965/1178] Track already exists: Rapping in Tongues
+[966/1178] Track already exists: Sooo Sick
+[967/1178] Fetching 1bb0f289-877b-5460-ab92-f8e25a2d4c89/83b90204-2b30-4954-b273-f1ae5053c0ed...
+  ⚠️ Failed to fetch 1bb0f289-877b-5460-ab92-f8e25a2d4c89/83b90204-2b30-4954-b273-f1ae5053c0ed: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[968/1178] Track already exists: Kiss Me Always
+[969/1178] Track already exists: So It Goes
+[970/1178] Track already exists: The Fun Has Left The Poison
+[971/1178] Track already exists: One (Ambivalence)
+[972/1178] Fetching 43e7328c-9299-51b2-95fd-cd822976b500/e5d62fab-4684-410a-a714-3d3fc5dae999...
+  ⚠️ Failed to fetch 43e7328c-9299-51b2-95fd-cd822976b500/e5d62fab-4684-410a-a714-3d3fc5dae999: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[973/1178] Track already exists: Unresolved Track
+[974/1178] Fetching 5888ede6-1656-43cb-9c4a-50c05abcc2a0/31cb107e-e699-4821-a1a0-91f8ecb9b413...
+  ⚠️ Failed to fetch 5888ede6-1656-43cb-9c4a-50c05abcc2a0/31cb107e-e699-4821-a1a0-91f8ecb9b413: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[975/1178] Track already exists: Lonesome Love
+[976/1178] Track already exists: Unresolved Track
+[977/1178] Track already exists: Unresolved Track
+[978/1178] Track already exists: Baby, not so rough!
+[979/1178] Track already exists: Without You
+[980/1178] Track already exists: Like Wine
+[981/1178] Track already exists: Stay Awhile
+[982/1178] Track already exists: Stay Awhile (reprise)
+[983/1178] Track already exists: Bad Little Seed
+[984/1178] Track already exists: Everyone Peg Your Jeans
+[985/1178] Track already exists: Thelma Sue
+[986/1178] Track already exists: Hey Love!
+[987/1178] Fetching b8b6971e-403e-568f-a4e6-7aa2b45e50d4/72a3b402-8491-4cd9-823e-a621fd81b86f...
+  ⚠️ Failed to fetch b8b6971e-403e-568f-a4e6-7aa2b45e50d4/72a3b402-8491-4cd9-823e-a621fd81b86f: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[988/1178] Track already exists: Unresolved Track
+[989/1178] Track already exists: Jeff Across The Street
+[990/1178] Track already exists: Unresolved Track
+[991/1178] Fetching 69c634ad-afea-5826-ad9a-8e1f06d6470b/7ffba461-4860-4603-aaa6-69923f0d7e56...
+  ⚠️ Failed to fetch 69c634ad-afea-5826-ad9a-8e1f06d6470b/7ffba461-4860-4603-aaa6-69923f0d7e56: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[992/1178] Track already exists: Momma Bear
+[993/1178] Fetching f1b387a7-78ba-5d76-88dd-f47b34bc3eff/c881c7ac-ed36-54fb-81d3-06309bf12e23...
+  ⚠️ Failed to fetch f1b387a7-78ba-5d76-88dd-f47b34bc3eff/c881c7ac-ed36-54fb-81d3-06309bf12e23: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[994/1178] Track already exists: Packets
+[995/1178] Track already exists: White Suit Gold Rings
+[996/1178] Track already exists: Sharpshooter
+[997/1178] Track already exists: Unresolved Track
+[998/1178] Fetching 6103c2d0-47ac-5bde-8dce-69189d5b4b72/aff7ce2e-c4d6-5bc4-a4c1-c2f0b9192e3a...
+  ⚠️ Failed to fetch 6103c2d0-47ac-5bde-8dce-69189d5b4b72/aff7ce2e-c4d6-5bc4-a4c1-c2f0b9192e3a: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[999/1178] Fetching 3997b916-fd64-5820-955f-57d5274b76cb/1c23d568-ea3e-4824-bc44-b34adbcbe7c1...
+  ⚠️ Failed to fetch 3997b916-fd64-5820-955f-57d5274b76cb/1c23d568-ea3e-4824-bc44-b34adbcbe7c1: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1000/1178] Track already exists: Unresolved Track
+[1001/1178] Track already exists: That Duck
+[1002/1178] Track already exists: Track 2474
+[1003/1178] Track already exists: Unresolved Track
+[1004/1178] Track already exists: Unresolved Track
+[1005/1178] Track already exists: Unresolved Track
+[1006/1178] Track already exists: Unresolved Track
+[1007/1178] Track already exists: Unresolved Track
+[1008/1178] Track already exists: Unresolved Track
+[1009/1178] Fetching 8b4358f8-1c21-5977-8674-d21113719ccf/9a5b8fe7-979d-4703-b110-271de1627dda...
+  ⚠️ Failed to fetch 8b4358f8-1c21-5977-8674-d21113719ccf/9a5b8fe7-979d-4703-b110-271de1627dda: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1010/1178] Fetching 00addc23-7769-5471-bb9a-c0acb6f27437/dc1f26d2-bc70-45e9-ac13-e85dfdef133c...
+  ⚠️ Failed to fetch 00addc23-7769-5471-bb9a-c0acb6f27437/dc1f26d2-bc70-45e9-ac13-e85dfdef133c: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1011/1178] Track already exists: Unresolved Track
+[1012/1178] Fetching f21daf71-4c7b-5fe1-82c6-3a1c2a48c764/7816f0e2-da0d-4d2e-9440-b7d10094b497...
+  ⚠️ Failed to fetch f21daf71-4c7b-5fe1-82c6-3a1c2a48c764/7816f0e2-da0d-4d2e-9440-b7d10094b497: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1013/1178] Fetching b27c1f56-dff1-5fdd-bdee-a00e50c4c3f1/92f09452-7012-45c8-b921-5e4fa52fc3e2...
+  ⚠️ Failed to fetch b27c1f56-dff1-5fdd-bdee-a00e50c4c3f1/92f09452-7012-45c8-b921-5e4fa52fc3e2: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1014/1178] Fetching 3d92b2f6-4aac-5f24-bffe-2536eb579286/bda485d5-7c17-4b02-bd1a-5ded3132a61a...
+  ⚠️ Failed to fetch 3d92b2f6-4aac-5f24-bffe-2536eb579286/bda485d5-7c17-4b02-bd1a-5ded3132a61a: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1015/1178] Track already exists: Pie
+[1016/1178] Track already exists: Unresolved Track
+[1017/1178] Fetching 0d5a8efb-e132-5f1b-9ab4-3fd0644dbb30/e905da50-0665-4a44-a9fa-d1ceeac85763...
+  ⚠️ Failed to fetch 0d5a8efb-e132-5f1b-9ab4-3fd0644dbb30/e905da50-0665-4a44-a9fa-d1ceeac85763: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1018/1178] Fetching 1e683ce1-0af5-50ac-9fbd-668519174391/5c8e3b28-30c9-47ba-b253-54b2f33904f5...
+  ⚠️ Failed to fetch 1e683ce1-0af5-50ac-9fbd-668519174391/5c8e3b28-30c9-47ba-b253-54b2f33904f5: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1019/1178] Fetching bedc43eb-bace-5d9d-902c-ea444897d6fa/87dc9c67-ecf0-4088-89db-35a9d7e92e14...
+  ⚠️ Failed to fetch bedc43eb-bace-5d9d-902c-ea444897d6fa/87dc9c67-ecf0-4088-89db-35a9d7e92e14: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1020/1178] Fetching 2b62ef49-fcff-523c-b81a-0a7dde2b0609/50bc5e8f-050f-4f23-9255-96ec361059df...
+  ⚠️ Failed to fetch 2b62ef49-fcff-523c-b81a-0a7dde2b0609/50bc5e8f-050f-4f23-9255-96ec361059df: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1021/1178] Track already exists: Track 1879
+[1022/1178] Track already exists: Borneo
+[1023/1178] Fetching 659f95a4-1291-5e03-ab86-2deac518f652/7470d39e-6a8a-4356-9349-b9887d0970be...
+  ⚠️ Failed to fetch 659f95a4-1291-5e03-ab86-2deac518f652/7470d39e-6a8a-4356-9349-b9887d0970be: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1024/1178] Track already exists: Track 2478
+[1025/1178] Track already exists: Chokedaddy
+[1026/1178] Track already exists: You Name It
+[1027/1178] Track already exists: Bloworld
+[1028/1178] Fetching cb123fdd-2c91-5af4-a1aa-fd4e0f992696/cd4c37d0-ef9f-4165-97a2-dabc31b03257...
+  ⚠️ Failed to fetch cb123fdd-2c91-5af4-a1aa-fd4e0f992696/cd4c37d0-ef9f-4165-97a2-dabc31b03257: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1029/1178] Fetching 3db6aa74-e382-588c-b4ac-8a237f941515/a6339d04-8ac9-46ad-ba12-ab06109e74cb...
+  ⚠️ Failed to fetch 3db6aa74-e382-588c-b4ac-8a237f941515/a6339d04-8ac9-46ad-ba12-ab06109e74cb: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1030/1178] Track already exists: Pleasure Hound
+[1031/1178] Fetching 6bffeda5-d838-5537-acb1-459b360e0b6f/83bb5f3b-e34d-45f7-b720-fc91df41d747...
+  ⚠️ Failed to fetch 6bffeda5-d838-5537-acb1-459b360e0b6f/83bb5f3b-e34d-45f7-b720-fc91df41d747: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1032/1178] Fetching 6b111f5d-3cc8-5af7-8640-152ca2f5c031/dac3e9e8-953a-41ff-a764-79522629a715...
+  ⚠️ Failed to fetch 6b111f5d-3cc8-5af7-8640-152ca2f5c031/dac3e9e8-953a-41ff-a764-79522629a715: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1033/1178] Track already exists: Unresolved Track
+[1034/1178] Track already exists: Packets
+[1035/1178] Track already exists: DEEP END
+[1036/1178] Fetching a94f5cc9-8c58-55fc-91fe-a324087a655b/https://podcastindex.org/podcast/4148683#5...
+  ⚠️ Failed to fetch a94f5cc9-8c58-55fc-91fe-a324087a655b/https://podcastindex.org/podcast/4148683#5: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1037/1178] Fetching bdcd7a0e-8cd3-5260-be61-3d3976013eea/55375344-9f4d-593b-b90c-c7e3335ff6d8...
+  ⚠️ Failed to fetch bdcd7a0e-8cd3-5260-be61-3d3976013eea/55375344-9f4d-593b-b90c-c7e3335ff6d8: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1038/1178] Fetching 4ebbe8cb-8b26-5de8-92f0-3d8ef9e9ce0f/b9faff5b-c8b9-4638-a9c6-f2d1d6814d7b...
+  ⚠️ Failed to fetch 4ebbe8cb-8b26-5de8-92f0-3d8ef9e9ce0f/b9faff5b-c8b9-4638-a9c6-f2d1d6814d7b: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1039/1178] Fetching 76e1f55c-1a5b-55a0-b1da-039e2aa72f6a/4607a4e3-ea2e-48f5-be3d-f45796f267e8...
+  ⚠️ Failed to fetch 76e1f55c-1a5b-55a0-b1da-039e2aa72f6a/4607a4e3-ea2e-48f5-be3d-f45796f267e8: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1040/1178] Track already exists: Call Me Medley
+[1041/1178] Fetching ead3a19b-cfc1-57f2-a5ed-c95d2bc15676/6bd9b5f1-d5fa-42b3-88e3-e5b557fb2231...
+  ⚠️ Failed to fetch ead3a19b-cfc1-57f2-a5ed-c95d2bc15676/6bd9b5f1-d5fa-42b3-88e3-e5b557fb2231: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1042/1178] Track already exists: Unresolved Track
+[1043/1178] Track already exists: Unresolved Track
+[1044/1178] Track already exists: Tell Me I Have More
+[1045/1178] Track already exists: Track 2540
+[1046/1178] Track already exists: This Drinks On Me
+[1047/1178] Track already exists: Unresolved Track
+[1048/1178] Track already exists: Ring-a-Ding-Ding
+[1049/1178] Track already exists: Disco Lasers
+[1050/1178] Track already exists: Unresolved Track
+[1051/1178] Fetching 483dde8e-7e94-59a7-8eb0-2b0dc64a87bd/c17f0010-9461-47fe-b1f4-5775e2040b1e...
+  ⚠️ Failed to fetch 483dde8e-7e94-59a7-8eb0-2b0dc64a87bd/c17f0010-9461-47fe-b1f4-5775e2040b1e: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1052/1178] Track already exists: Lady Neptune
+[1053/1178] Fetching ac3e102d-5cb8-58d0-b37a-3f7cb2d47094/51fc5025-7044-42be-bda1-e564e91afe37...
+  ⚠️ Failed to fetch ac3e102d-5cb8-58d0-b37a-3f7cb2d47094/51fc5025-7044-42be-bda1-e564e91afe37: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1054/1178] Track already exists: Unresolved Track
+[1055/1178] Fetching d6d051f1-16e4-5131-a2f5-c89570a37f8e/26415954-0f0d-4301-8e64-5a53cecafa10...
+  ⚠️ Failed to fetch d6d051f1-16e4-5131-a2f5-c89570a37f8e/26415954-0f0d-4301-8e64-5a53cecafa10: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1056/1178] Fetching 2269829e-8a1d-5f5e-bf61-cd7090d3f174/2573b3d4-d636-4c66-94b1-5426969847ca...
+  ⚠️ Failed to fetch 2269829e-8a1d-5f5e-bf61-cd7090d3f174/2573b3d4-d636-4c66-94b1-5426969847ca: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1057/1178] Fetching d6d051f1-16e4-5131-a2f5-c89570a37f8e/063b2cb-5c47-4b79-af7d-2928e6a63dc2...
+  ⚠️ Failed to fetch d6d051f1-16e4-5131-a2f5-c89570a37f8e/063b2cb-5c47-4b79-af7d-2928e6a63dc2: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1058/1178] Track already exists: O Holy Night
+[1059/1178] Fetching 2269829e-8a1d-5f5e-bf61-cd7090d3f174/b1a86d43-ff8a-486f-91b3-529940311553...
+  ⚠️ Failed to fetch 2269829e-8a1d-5f5e-bf61-cd7090d3f174/b1a86d43-ff8a-486f-91b3-529940311553: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1060/1178] Track already exists: First Married Christmas
+[1061/1178] Track already exists: One Christmas
+[1062/1178] Fetching d6d051f1-16e4-5131-a2f5-c89570a37f8e/7ffb1914-a84f-409a-b00c-fe5b3fc6d7e9...
+  ⚠️ Failed to fetch d6d051f1-16e4-5131-a2f5-c89570a37f8e/7ffb1914-a84f-409a-b00c-fe5b3fc6d7e9: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1063/1178] Fetching c461bbea-3818-5b5b-a565-599f0f5be5e3/91f5c71e-7030-4abc-8fa8-0f11d0b8fa47...
+  ⚠️ Failed to fetch c461bbea-3818-5b5b-a565-599f0f5be5e3/91f5c71e-7030-4abc-8fa8-0f11d0b8fa47: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1064/1178] Fetching 023a1b78-0e85-5adf-ae61-4f2ef59f9c71/1b3f01e1-0ad8-52b5-bd6b-ccb9a8c7b347...
+  ⚠️ Failed to fetch 023a1b78-0e85-5adf-ae61-4f2ef59f9c71/1b3f01e1-0ad8-52b5-bd6b-ccb9a8c7b347: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1065/1178] Track already exists: Unresolved Track
+[1066/1178] Track already exists: This Christmas
+[1067/1178] Track already exists: O Come, All Ye Faithful
+[1068/1178] Track already exists: 1941
+[1069/1178] Track already exists: Unresolved Track
+[1070/1178] Track already exists: Unresolved Track
+[1071/1178] Track already exists: Faded - Namo Maitri (Alan Walker)
+[1072/1178] Track already exists: Man! It's Christmas
+[1073/1178] Fetching 2d418249-453a-5714-8abc-5b657570b641/bowlafterbowl.podbean.com/8dd80e58-f34e-315d-96b1-5c5091b9887f...
+  ⚠️ Failed to fetch 2d418249-453a-5714-8abc-5b657570b641/bowlafterbowl.podbean.com/8dd80e58-f34e-315d-96b1-5c5091b9887f: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1074/1178] Fetching f2fbe36c-c244-5274-9ca4-3d1e7d001d27/9c4f8b11-2657-48c4-9e11-1058ded40eed...
+  ⚠️ Failed to fetch f2fbe36c-c244-5274-9ca4-3d1e7d001d27/9c4f8b11-2657-48c4-9e11-1058ded40eed: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1075/1178] Track already exists: Monkey Love
+[1076/1178] Track already exists: Late Night TV Lover
+[1077/1178] Track already exists: One Christmas
+[1078/1178] Track already exists: Sailing to Antarctica
+[1079/1178] Track already exists: Bacon Is On My Mind
+[1080/1178] Track already exists: First Married Christmas
+[1081/1178] Track already exists: Unresolved Track
+[1082/1178] Fetching 6e854d2a-ef83-531c-b3a2-58c408e702e0/9c670292-f03f-42d3-a4fb-dc69cf51e0a6...
+  ⚠️ Failed to fetch 6e854d2a-ef83-531c-b3a2-58c408e702e0/9c670292-f03f-42d3-a4fb-dc69cf51e0a6: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1083/1178] Track already exists: Unresolved Track
+[1084/1178] Track already exists: Blood Perfume
+[1085/1178] Track already exists: Love Drunk
+[1086/1178] Track already exists: Superhero in a Small Female Body
+[1087/1178] Track already exists: The Kill
+[1088/1178] Fetching dcbc32a1-8f7c-5d1b-9191-1e36e3e83ae4/5917f6be-093f-4373-9ecf-9b335a7926f8...
+  ⚠️ Failed to fetch dcbc32a1-8f7c-5d1b-9191-1e36e3e83ae4/5917f6be-093f-4373-9ecf-9b335a7926f8: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1089/1178] Track already exists: One Christmas
+[1090/1178] Track already exists: Track 310
+[1091/1178] Track already exists: Unresolved Track
+[1092/1178] Track already exists: Unresolved Track
+[1093/1178] Track already exists: Cold Fusion Reborn
+[1094/1178] Track already exists: Way In My Life
+[1095/1178] Track already exists: Colder Than a Dead Sun
+[1096/1178] Track already exists: I Like a Lot
+[1097/1178] Track already exists: Christian Values
+[1098/1178] Track already exists: Seemed Like a Good Idea (Tweaker Remix)
+[1099/1178] Track already exists: Halcyon
+[1100/1178] Track already exists: Outlasted Motion
+[1101/1178] Track already exists: Unresolved Track
+[1102/1178] Track already exists: Makin' Beans
+[1103/1178] Track already exists: Love Drunk
+[1104/1178] Fetching 962b4cdd-1d7e-521a-a6cf-9df4b88c870a/c0213487-5f21-4d53-a4a4-d08f31c90c2e...
+  ⚠️ Failed to fetch 962b4cdd-1d7e-521a-a6cf-9df4b88c870a/c0213487-5f21-4d53-a4a4-d08f31c90c2e: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1105/1178] Track already exists: Unresolved Track
+[1106/1178] Track already exists: Bloodshot Lies(Acoustic)
+[1107/1178] Track already exists: Unresolved Track
+[1108/1178] Track already exists: Good Girls
+[1109/1178] Track already exists: NOSTALGIC
+[1110/1178] Track already exists: Track 2564
+[1111/1178] Track already exists: Country Badminton
+[1112/1178] Fetching 03f39d9f-1b25-5b35-bc6c-779e2155f106/dbdc2432-6840-4ee4-a6db-da5e63e98e0b...
+  ⚠️ Failed to fetch 03f39d9f-1b25-5b35-bc6c-779e2155f106/dbdc2432-6840-4ee4-a6db-da5e63e98e0b: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1113/1178] Fetching 25916787-3a83-5fde-a68a-9dcf4ffaba5f/dd067a4c-43fe-4e8a-b945-b1053e38fd6d...
+  ⚠️ Failed to fetch 25916787-3a83-5fde-a68a-9dcf4ffaba5f/dd067a4c-43fe-4e8a-b945-b1053e38fd6d: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1114/1178] Track already exists: Panacea
+[1115/1178] Track already exists: Rockstar
+[1116/1178] Track already exists: NOW! That's What I Call Value!
+[1117/1178] Track already exists: Cheap Date
+[1118/1178] Track already exists: The Platform
+[1119/1178] Fetching d972eddd-cef6-5e84-b802-84ebc0f454b5/99c7a4f1-cb30-4601-a0d0-07f29de75977...
+  ⚠️ Failed to fetch d972eddd-cef6-5e84-b802-84ebc0f454b5/99c7a4f1-cb30-4601-a0d0-07f29de75977: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1120/1178] Track already exists: Unresolved Track
+[1121/1178] Track already exists: Here For You
+[1122/1178] Track already exists: Unresolved Track
+[1123/1178] Fetching 7c94197d-0189-55c9-abb0-6dd0b45caeea/http://bobcatindex.us-southeast-1.linodeobjects.com/01_Sunshine.mp3...
+  ⚠️ Failed to fetch 7c94197d-0189-55c9-abb0-6dd0b45caeea/http://bobcatindex.us-southeast-1.linodeobjects.com/01_Sunshine.mp3: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1124/1178] Track already exists: Everyone Peg Your Jeans
+[1125/1178] Fetching b27c1f56-dff1-5fdd-bdee-a00e50c4c3f1/78a357ce-8d57-4635-a66e-1363ed789896...
+  ⚠️ Failed to fetch b27c1f56-dff1-5fdd-bdee-a00e50c4c3f1/78a357ce-8d57-4635-a66e-1363ed789896: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1126/1178] Fetching 9b5fd385-f87d-5173-a641-5cdc3982d92e/97ccdaf7-9f63-4711-a446-b4026f12ffbc...
+  ⚠️ Failed to fetch 9b5fd385-f87d-5173-a641-5cdc3982d92e/97ccdaf7-9f63-4711-a446-b4026f12ffbc: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1127/1178] Fetching 6df28ecd-8029-59a3-a771-48f37f71e19a/3f585f82-b6a3-41ba-ae32-fb1acd2afe03...
+  ⚠️ Failed to fetch 6df28ecd-8029-59a3-a771-48f37f71e19a/3f585f82-b6a3-41ba-ae32-fb1acd2afe03: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1128/1178] Track already exists: Unresolved Track
+[1129/1178] Track already exists: Baby Bed Bugs
+[1130/1178] Fetching e0956f26-8f56-5166-8892-4ce4635862e3/bb11e3bb-0b85-4319-be75-d91c12e34816...
+  ⚠️ Failed to fetch e0956f26-8f56-5166-8892-4ce4635862e3/bb11e3bb-0b85-4319-be75-d91c12e34816: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1131/1178] Track already exists: Milves in Teslas
+[1132/1178] Track already exists: Unresolved Track
+[1133/1178] Fetching 163a7548-9f53-5314-8fd5-8382e7c13805/06978af0-a524-4383-b36e-2c5d68f40349...
+  ⚠️ Failed to fetch 163a7548-9f53-5314-8fd5-8382e7c13805/06978af0-a524-4383-b36e-2c5d68f40349: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1134/1178] Track already exists: Baby, not so rough!
+[1135/1178] Track already exists: Willow Brown (ft. Scream Mail)
+[1136/1178] Track already exists: Devoured
+[1137/1178] Track already exists: Six Feet Down
+[1138/1178] Fetching 3d92b2f6-4aac-5f24-bffe-2536eb579286/54455e07-6319-427f-b549-8b038f909e38...
+  ⚠️ Failed to fetch 3d92b2f6-4aac-5f24-bffe-2536eb579286/54455e07-6319-427f-b549-8b038f909e38: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1139/1178] Track already exists: MoeFactz
+[1140/1178] Fetching 95be9fe7-30ac-40aa-a86c-bded32942a91/b5fb945d-bf94-4828-b75a-0903586b5887...
+  ⚠️ Failed to fetch 95be9fe7-30ac-40aa-a86c-bded32942a91/b5fb945d-bf94-4828-b75a-0903586b5887: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1141/1178] Fetching b12040fe-8aa9-575a-b952-205977d237d7/c1c02ad4-0372-4247-8cde-c7ad7d388237...
+  ⚠️ Failed to fetch b12040fe-8aa9-575a-b952-205977d237d7/c1c02ad4-0372-4247-8cde-c7ad7d388237: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1142/1178] Track already exists: Long Hard Nightstick
+[1143/1178] Track already exists: Unresolved Track
+[1144/1178] Track already exists: Shit Authority
+[1145/1178] Track already exists: Sell it to my Soul
+[1146/1178] Fetching 75d02f1d-604c-5d31-a9e6-5a3da0ae591e/07cb8642-11d2-4981-aec2-2f177c3fc96a...
+  ⚠️ Failed to fetch 75d02f1d-604c-5d31-a9e6-5a3da0ae591e/07cb8642-11d2-4981-aec2-2f177c3fc96a: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1147/1178] Track already exists: Unresolved Track
+[1148/1178] Track already exists: Track 2446
+[1149/1178] Fetching d70b0052-0121-5bfc-a1ac-3a8ebb7615f3/93cded36-95cb-469a-93bf-816f1fa51c05...
+  ⚠️ Failed to fetch d70b0052-0121-5bfc-a1ac-3a8ebb7615f3/93cded36-95cb-469a-93bf-816f1fa51c05: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1150/1178] Fetching 9e2c9377-40d6-5e26-a019-4052910936f6/2173cbfa-7ab4-41a7-aeed-3004705adaaf...
+  ⚠️ Failed to fetch 9e2c9377-40d6-5e26-a019-4052910936f6/2173cbfa-7ab4-41a7-aeed-3004705adaaf: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1151/1178] Track already exists: Pitiful
+[1152/1178] Fetching 55e08e3a-4b9f-5579-a976-0997b06470ee/ac78781e-7254-46a9-b58c-c81d82344895...
+  ⚠️ Failed to fetch 55e08e3a-4b9f-5579-a976-0997b06470ee/ac78781e-7254-46a9-b58c-c81d82344895: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1153/1178] Fetching 680882f9-f371-5eeb-bd90-6767d528854f/0d606916-9651-4d6a-a7ab-c4c2585c7eba...
+  ⚠️ Failed to fetch 680882f9-f371-5eeb-bd90-6767d528854f/0d606916-9651-4d6a-a7ab-c4c2585c7eba: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1154/1178] Track already exists: Unresolved Track
+[1155/1178] Track already exists: Track 667
+[1156/1178] Track already exists: Unresolved Track
+[1157/1178] Fetching 3d92b2f6-4aac-5f24-bffe-2536eb579286/d8371b67-1b2a-4b40-8556-e274e994c667...
+  ⚠️ Failed to fetch 3d92b2f6-4aac-5f24-bffe-2536eb579286/d8371b67-1b2a-4b40-8556-e274e994c667: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1158/1178] Track already exists: Unresolved Track
+[1159/1178] Track already exists: Unresolved Track
+[1160/1178] Track already exists: Gone (ft Lil B, MoeFactz, FM Road Trip)
+[1161/1178] Track already exists: Unresolved Track
+[1162/1178] Track already exists: Gold
+[1163/1178] Track already exists: Track 310
+[1164/1178] Track already exists: Up in the ceiling
+[1165/1178] Track already exists: Unresolved Track
+[1166/1178] Fetching f7d933c8-032a-52e5-9598-e34d833a3e8e/64dc3bca-a8d2-47f8-9a74-fee2066d969a...
+  ⚠️ Failed to fetch f7d933c8-032a-52e5-9598-e34d833a3e8e/64dc3bca-a8d2-47f8-9a74-fee2066d969a: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1167/1178] Track already exists: Unresolved Track
+[1168/1178] Fetching 64ef270-728d-51f0-8052-9fed4883f662/https://www.falsefinish.club/wp-content/uploads/2023/05/10.-Have-Fun._24Bit_Aria_Master_MTC.mp3...
+  ⚠️ Failed to fetch 64ef270-728d-51f0-8052-9fed4883f662/https://www.falsefinish.club/wp-content/uploads/2023/05/10.-Have-Fun._24Bit_Aria_Master_MTC.mp3: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1169/1178] Track already exists: Stay Awhile
+[1170/1178] Track already exists: Girl Like Me (Psycho Mix)
+[1171/1178] Track already exists: White Suit Gold Rings
+[1172/1178] Track already exists: Track 2478
+[1173/1178] Track already exists: Track 2557
+[1174/1178] Fetching 64ef270-728d-51f0-8052-9fed4883f662/https://www.falsefinish.club/wp-content/uploads/2023/05/03.-Rings-of-Saturn_24Bit_Aria_Master_MTC.mp3...
+  ⚠️ Failed to fetch 64ef270-728d-51f0-8052-9fed4883f662/https://www.falsefinish.club/wp-content/uploads/2023/05/03.-Rings-of-Saturn_24Bit_Aria_Master_MTC.mp3: Request failed with status code 400
+  ❌ Failed to resolve, created placeholder
+[1175/1178] Track already exists: Like Wine
+[1176/1178] Track already exists: Unresolved Track
+[1177/1178] Track already exists: Unresolved Track
+[1178/1178] Track already exists: Unresolved Track
+
+==================================================
+📊 Processing Complete!
+==================================================
+Total tracks processed: 1178
+✅ Successfully resolved: 0
+❌ Failed to resolve: 408
+📁 Data saved to: /Users/chad-mini/Vibe/apps/FUCKIT/data/music-tracks.json

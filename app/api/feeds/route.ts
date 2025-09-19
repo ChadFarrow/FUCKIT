@@ -1,117 +1,243 @@
-import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { parseRSSFeedWithSegments } from '@/lib/rss-parser-db';
 
-export async function GET() {
+// GET /api/feeds - List all feeds with optional filters
+export async function GET(request: NextRequest) {
   try {
-    const feedsPath = path.join(process.cwd(), 'data', 'feeds.json');
+    const { searchParams } = new URL(request.url);
+    const type = searchParams.get('type');
+    const status = searchParams.get('status');
+    const priority = searchParams.get('priority');
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '50');
     
-    if (!fs.existsSync(feedsPath)) {
-      console.error('Feeds configuration file not found at:', feedsPath);
-      return NextResponse.json({ 
-        error: 'Feeds configuration not found',
-        timestamp: new Date().toISOString()
-      }, { 
-        status: 404,
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
+    const skip = (page - 1) * limit;
+    
+    const where: any = {};
+    if (type) where.type = type;
+    if (status) where.status = status;
+    if (priority) where.priority = priority;
+    
+    const [feeds, total] = await Promise.all([
+      prisma.feed.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: [
+          { priority: 'asc' },
+          { createdAt: 'desc' }
+        ],
+        include: {
+          _count: {
+            select: { tracks: true }
+          }
         }
-      });
-    }
-
-    // Read file with error handling
-    let feedsData;
-    try {
-      const fileContent = fs.readFileSync(feedsPath, 'utf-8');
-      feedsData = JSON.parse(fileContent);
-    } catch (readError) {
-      console.error('Error reading or parsing feeds.json:', readError);
-      return NextResponse.json({ 
-        error: 'Failed to read feeds configuration',
-        timestamp: new Date().toISOString()
-      }, { 
-        status: 500,
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
-        }
-      });
-    }
+      }),
+      prisma.feed.count({ where })
+    ]);
     
-    // Validate feeds data structure
-    if (!feedsData || !Array.isArray(feedsData.feeds)) {
-      console.error('Invalid feeds data structure:', feedsData);
-      return NextResponse.json({ 
-        error: 'Invalid feeds configuration format',
-        timestamp: new Date().toISOString()
-      }, { 
-        status: 500,
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
-        }
-      });
-    }
-    
-    // Filter active feeds and organize by priority
-    const activeFeeds = feedsData.feeds.filter((feed: any) => feed.status === 'active');
-    
-    const organizedFeeds = {
-      core: activeFeeds.filter((feed: any) => feed.priority === 'core'),
-      extended: activeFeeds.filter((feed: any) => feed.priority === 'extended'),
-      low: activeFeeds.filter((feed: any) => feed.priority === 'low'),
-      publisher: activeFeeds.filter((feed: any) => feed.type === 'publisher'),
-      all: activeFeeds,
-      total: activeFeeds.length,
-      timestamp: new Date().toISOString()
-    };
-
-    return NextResponse.json(organizedFeeds, {
-      status: 200,
-      headers: {
-        'Cache-Control': 'public, max-age=600, s-maxage=600', // Increased to 10 minutes for better performance
-        'Content-Type': 'application/json',
-
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type'
-      },
+    return NextResponse.json({
+      feeds,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit)
+      }
     });
   } catch (error) {
-    console.error('Unexpected error in feeds API:', error);
+    console.error('Error fetching feeds:', error);
     return NextResponse.json(
-      { 
-        error: 'Internal server error',
-        message: process.env.NODE_ENV === 'development' ? (error as Error).message : 'An unexpected error occurred',
-        timestamp: new Date().toISOString()
-      },
-      { 
-        status: 500,
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
-        }
-      }
+      { error: 'Failed to fetch feeds' },
+      { status: 500 }
     );
   }
 }
 
-// Handle OPTIONS requests for CORS
-export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
-      'Pragma': 'no-cache',
-      'Expires': '0'
-    },
-  });
+// POST /api/feeds - Add a new feed and fetch its tracks
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { originalUrl, type = 'album', priority = 'normal', cdnUrl } = body;
+    
+    if (!originalUrl) {
+      return NextResponse.json(
+        { error: 'originalUrl is required' },
+        { status: 400 }
+      );
+    }
+    
+    // Check if feed already exists
+    const existingFeed = await prisma.feed.findUnique({
+      where: { originalUrl }
+    });
+    
+    if (existingFeed) {
+      return NextResponse.json(
+        { error: 'Feed already exists', feed: existingFeed },
+        { status: 409 }
+      );
+    }
+    
+    try {
+      // Parse the RSS feed
+      const parsedFeed = await parseRSSFeedWithSegments(originalUrl);
+      
+      // Create feed in database
+      const feed = await prisma.feed.create({
+        data: {
+          originalUrl,
+          cdnUrl: cdnUrl || originalUrl,
+          type,
+          priority,
+          title: parsedFeed.title,
+          description: parsedFeed.description,
+          artist: parsedFeed.artist,
+          image: parsedFeed.image,
+          language: parsedFeed.language,
+          category: parsedFeed.category,
+          explicit: parsedFeed.explicit,
+          lastFetched: new Date(),
+          status: 'active'
+        }
+      });
+      
+      // Create tracks in database
+      if (parsedFeed.items.length > 0) {
+        const tracksData = parsedFeed.items.map(item => ({
+          feedId: feed.id,
+          guid: item.guid,
+          title: item.title,
+          subtitle: item.subtitle,
+          description: item.description,
+          artist: item.artist,
+          audioUrl: item.audioUrl,
+          duration: item.duration,
+          explicit: item.explicit,
+          image: item.image,
+          publishedAt: item.publishedAt,
+          itunesAuthor: item.itunesAuthor,
+          itunesSummary: item.itunesSummary,
+          itunesImage: item.itunesImage,
+          itunesDuration: item.itunesDuration,
+          itunesKeywords: item.itunesKeywords || [],
+          itunesCategories: item.itunesCategories || [],
+          v4vRecipient: item.v4vRecipient,
+          v4vValue: item.v4vValue,
+          startTime: item.startTime,
+          endTime: item.endTime
+        }));
+        
+        await prisma.track.createMany({
+          data: tracksData,
+          skipDuplicates: true
+        });
+      }
+      
+      // Return feed with track count
+      const feedWithCount = await prisma.feed.findUnique({
+        where: { id: feed.id },
+        include: {
+          _count: {
+            select: { tracks: true }
+          }
+        }
+      });
+      
+      return NextResponse.json({
+        message: 'Feed added successfully',
+        feed: feedWithCount
+      }, { status: 201 });
+      
+    } catch (parseError) {
+      // If parsing fails, still create the feed but mark it as error
+      const errorMessage = parseError instanceof Error ? parseError.message : 'Unknown parsing error';
+      
+      const feed = await prisma.feed.create({
+        data: {
+          originalUrl,
+          cdnUrl: cdnUrl || originalUrl,
+          type,
+          priority,
+          title: originalUrl,
+          status: 'error',
+          lastError: errorMessage
+        }
+      });
+      
+      return NextResponse.json({
+        warning: 'Feed added but parsing failed',
+        feed,
+        error: errorMessage
+      }, { status: 206 });
+    }
+  } catch (error) {
+    console.error('Error adding feed:', error);
+    return NextResponse.json(
+      { error: 'Failed to add feed' },
+      { status: 500 }
+    );
+  }
+}
+
+// PUT /api/feeds - Update a feed
+export async function PUT(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { id, ...updateData } = body;
+    
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Feed ID is required' },
+        { status: 400 }
+      );
+    }
+    
+    const feed = await prisma.feed.update({
+      where: { id },
+      data: updateData
+    });
+    
+    return NextResponse.json({
+      message: 'Feed updated successfully',
+      feed
+    });
+  } catch (error) {
+    console.error('Error updating feed:', error);
+    return NextResponse.json(
+      { error: 'Failed to update feed' },
+      { status: 500 }
+    );
+  }
+}
+
+// DELETE /api/feeds - Delete a feed
+export async function DELETE(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+    
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Feed ID is required' },
+        { status: 400 }
+      );
+    }
+    
+    // Delete feed (tracks will be cascade deleted)
+    await prisma.feed.delete({
+      where: { id }
+    });
+    
+    return NextResponse.json({
+      message: 'Feed deleted successfully'
+    });
+  } catch (error) {
+    console.error('Error deleting feed:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete feed' },
+      { status: 500 }
+    );
+  }
 }
