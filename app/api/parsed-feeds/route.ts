@@ -1,142 +1,137 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-import zlib from 'zlib';
+import { prisma } from '@/lib/prisma';
 
 export async function GET(request: Request) {
   try {
-    const parsedFeedsPath = path.join(process.cwd(), 'data', 'parsed-feeds.json');
+    console.log('🔍 Database Parsed Feeds API: Getting all feeds with metadata');
     
-    if (!fs.existsSync(parsedFeedsPath)) {
-      console.error('Parsed feeds file not found at:', parsedFeedsPath);
-      return NextResponse.json({ 
-        error: 'Parsed feeds not found',
-        timestamp: new Date().toISOString()
-      }, { 
-        status: 404,
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
+    // Get all feeds from database with their tracks
+    const feeds = await prisma.feed.findMany({
+      include: {
+        tracks: {
+          where: {
+            audioUrl: { not: '' }
+          },
+          orderBy: [
+            { publishedAt: 'desc' },
+            { createdAt: 'desc' }
+          ]
         }
-      });
-    }
-
-    // Read file with error handling
-    let parsedFeedsData;
-    try {
-      const fileContent = fs.readFileSync(parsedFeedsPath, 'utf-8');
-      parsedFeedsData = JSON.parse(fileContent);
-    } catch (readError) {
-      console.error('Error reading or parsing parsed-feeds.json:', readError);
-      return NextResponse.json({ 
-        error: 'Failed to read parsed feeds',
-        timestamp: new Date().toISOString()
-      }, { 
-        status: 500,
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
-        }
-      });
-    }
-    
-    // Validate parsed feeds data structure
-    if (!parsedFeedsData || !Array.isArray(parsedFeedsData.feeds)) {
-      console.error('Invalid parsed feeds data structure:', parsedFeedsData);
-      return NextResponse.json({ 
-        error: 'Invalid parsed feeds format',
-        timestamp: new Date().toISOString()
-      }, { 
-        status: 500,
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
-        }
-      });
-    }
-
-    // Enhanced validation and data cleanup
-    const validationWarnings: string[] = [];
-    const validatedFeeds = parsedFeedsData.feeds.map((feed: any) => {
-      // Validate required fields
-      if (!feed.id) {
-        validationWarnings.push(`Feed missing ID: ${feed.originalUrl || 'unknown'}`);
-      }
-      if (!feed.originalUrl) {
-        validationWarnings.push(`Feed missing originalUrl: ${feed.id || 'unknown'}`);
-      }
-      if (!feed.parseStatus) {
-        validationWarnings.push(`Feed missing parseStatus: ${feed.id || 'unknown'}`);
-        feed.parseStatus = 'unknown';
-      }
-
-      // Validate publisher feeds specifically
-      if (feed.type === 'publisher' && feed.parseStatus === 'success') {
-        const publisherItems = feed.parsedData?.publisherItems || feed.parsedData?.remoteItems || [];
-        let validItemsCount = 0;
-        let emptyTitleCount = 0;
-
-        publisherItems.forEach((item: any) => {
-          if (!item.title || item.title.trim() === '') {
-            emptyTitleCount++;
-          } else {
-            validItemsCount++;
-          }
-          
-          // Add feedGuid validation
-          if (!item.feedGuid) {
-            validationWarnings.push(`Publisher item missing feedGuid: ${feed.id}`);
-          }
-        });
-
-        // Add metadata about publisher items
-        feed.metadata = {
-          ...feed.metadata,
-          totalItems: publisherItems.length,
-          validItems: validItemsCount,
-          emptyTitleItems: emptyTitleCount,
-          validationIssues: emptyTitleCount > 0 ? ['empty_titles'] : []
-        };
-
-        if (emptyTitleCount > 0) {
-          validationWarnings.push(`Publisher feed ${feed.id} has ${emptyTitleCount} items with empty titles`);
-        }
-      }
-
-      // Validate album feeds
-      if (feed.type === 'album' && feed.parseStatus === 'success') {
-        const album = feed.parsedData?.album;
-        if (album) {
-          if (!album.title) {
-            validationWarnings.push(`Album missing title: ${feed.id}`);
-          }
-          if (!album.artist) {
-            validationWarnings.push(`Album missing artist: ${feed.id}`);
-          }
-          if (!album.tracks || !Array.isArray(album.tracks)) {
-            validationWarnings.push(`Album missing or invalid tracks: ${feed.id}`);
-          }
-        }
-      }
-
-      return feed;
+      },
+      orderBy: [
+        { priority: 'asc' },
+        { createdAt: 'desc' }
+      ]
     });
-
-    // Update the data with validated feeds
-    parsedFeedsData.feeds = validatedFeeds;
     
+    console.log(`📊 Loaded ${feeds.length} feeds from database for parsed-feeds API`);
+    
+    // Transform database feeds to match the expected parsed-feeds format
+    const transformedFeeds = feeds.map(feed => {
+      const hasValidTracks = feed.tracks.length > 0;
+      const parseStatus = hasValidTracks ? 'success' : (feed.status === 'error' ? 'error' : 'pending');
+      
+      let parsedData: any = {};
+      
+      if (feed.type === 'publisher' && hasValidTracks) {
+        // For publisher feeds, create publisherItems from tracks grouped by album
+        const albumMap = new Map<string, any>();
+        
+        feed.tracks.forEach(track => {
+          const albumKey = track.album || track.title || 'Unknown Album';
+          if (!albumMap.has(albumKey)) {
+            albumMap.set(albumKey, {
+              title: track.album || track.title,
+              artist: track.artist || feed.artist || 'Unknown Artist',
+              feedGuid: feed.id,
+              feedUrl: feed.originalUrl,
+              image: track.image || feed.image,
+              description: track.description || feed.description,
+              trackCount: 0,
+              albumSlug: albumKey.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
+              releaseDate: track.publishedAt || feed.lastFetched || feed.createdAt,
+              explicit: track.explicit || false
+            });
+          }
+          albumMap.get(albumKey)!.trackCount++;
+        });
+        
+        parsedData = {
+          publisherInfo: {
+            title: feed.artist || feed.title,
+            artist: feed.artist,
+            feedGuid: feed.id,
+            image: feed.image,
+            description: feed.description
+          },
+          publisherItems: Array.from(albumMap.values()),
+          itemCount: albumMap.size
+        };
+      } else if (feed.type === 'album' && hasValidTracks) {
+        // For album feeds, create album data
+        const tracks = feed.tracks.map((track, index) => ({
+          title: track.title,
+          duration: track.duration ? 
+            Math.floor(track.duration / 60) + ':' + String(track.duration % 60).padStart(2, '0') : 
+            track.itunesDuration || '0:00',
+          url: track.audioUrl,
+          trackNumber: index + 1,
+          subtitle: track.subtitle || '',
+          summary: track.description || '',
+          image: track.image || feed.image || '',
+          explicit: track.explicit || false,
+          keywords: track.itunesKeywords || []
+        }));
+        
+        parsedData = {
+          album: {
+            id: feed.id,
+            title: feed.title,
+            artist: feed.artist || 'Unknown Artist',
+            description: feed.description || '',
+            coverArt: feed.image || '',
+            releaseDate: feed.lastFetched || feed.createdAt,
+            explicit: tracks.some(t => t.explicit) || feed.explicit,
+            tracks: tracks,
+            feedId: feed.id,
+            feedUrl: feed.originalUrl
+          }
+        };
+      }
+      
+      return {
+        id: feed.id,
+        originalUrl: feed.originalUrl,
+        type: feed.type,
+        parseStatus: parseStatus,
+        lastParsed: feed.lastFetched || feed.updatedAt,
+        parsedData: parsedData,
+        metadata: {
+          totalTracks: feed.tracks.length,
+          validTracks: feed.tracks.filter(t => t.audioUrl && t.audioUrl !== '').length,
+          lastFetched: feed.lastFetched,
+          status: feed.status,
+          priority: feed.priority,
+          validationIssues: []
+        }
+      };
+    });
+    
+    // Create the response data structure to match expected format
+    const parsedFeedsData = {
+      feeds: transformedFeeds,
+      lastGenerated: new Date().toISOString()
+    };
+
     // Add validation summary
     parsedFeedsData.validation = {
       timestamp: new Date().toISOString(),
-      totalFeeds: validatedFeeds.length,
-      successfulFeeds: validatedFeeds.filter((f: any) => f.parseStatus === 'success').length,
-      publisherFeeds: validatedFeeds.filter((f: any) => f.type === 'publisher').length,
-      albumFeeds: validatedFeeds.filter((f: any) => f.type === 'album').length,
-      warningsCount: validationWarnings.length,
-      warnings: process.env.NODE_ENV === 'development' ? validationWarnings : validationWarnings.slice(0, 10)
+      totalFeeds: transformedFeeds.length,
+      successfulFeeds: transformedFeeds.filter((f: any) => f.parseStatus === 'success').length,
+      publisherFeeds: transformedFeeds.filter((f: any) => f.type === 'publisher').length,
+      albumFeeds: transformedFeeds.filter((f: any) => f.type === 'album').length,
+      warningsCount: 0,
+      warnings: []
     };
 
     // Check query parameters for pagination
@@ -163,18 +158,22 @@ export async function GET(request: Request) {
       };
     }
 
+    console.log(`✅ Database Parsed Feeds API: Returning ${responseData.feeds.length} feeds`);
+
     return NextResponse.json(responseData, {
       status: 200,
       headers: {
-        'Cache-Control': 'public, max-age=900, s-maxage=900', // Increased to 15 minutes for better performance
+        'Cache-Control': 'public, max-age=300, s-maxage=600, stale-while-revalidate=1800',
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type'
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'DENY'
       },
     });
   } catch (error) {
-    console.error('Unexpected error in parsed-feeds API:', error);
+    console.error('Unexpected error in database parsed-feeds API:', error);
     return NextResponse.json(
       { 
         error: 'Internal server error',

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import * as fs from 'fs';
-import * as path from 'path';
+import { prisma } from '@/lib/prisma';
+import { generateAlbumSlug } from '@/lib/url-utils';
 
 export async function GET(
   request: Request,
@@ -12,74 +12,40 @@ export async function GET(
     
     console.log(`🔍 Looking for publisher: ${publisherId}`);
     
-    const parsedFeedsPath = path.join(process.cwd(), 'data', 'parsed-feeds.json');
-    
-    if (!fs.existsSync(parsedFeedsPath)) {
-      console.error('Parsed feeds file not found at:', parsedFeedsPath);
-      return NextResponse.json({ 
-        error: 'Parsed feeds not found',
-        timestamp: new Date().toISOString()
-      }, { 
-        status: 404,
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
+    // Get all feeds from database
+    const feeds = await prisma.feed.findMany({
+      where: { status: 'active' },
+      include: {
+        tracks: {
+          where: {
+            audioUrl: { not: '' }
+          },
+          orderBy: [
+            { publishedAt: 'desc' },
+            { createdAt: 'desc' }
+          ]
         }
-      });
-    }
-
-    // Read file with error handling
-    let parsedFeedsData;
-    try {
-      const fileContent = fs.readFileSync(parsedFeedsPath, 'utf-8');
-      parsedFeedsData = JSON.parse(fileContent);
-    } catch (readError) {
-      console.error('Error reading or parsing parsed-feeds.json:', readError);
-      return NextResponse.json({ 
-        error: 'Failed to read parsed feeds',
-        timestamp: new Date().toISOString()
-      }, { 
-        status: 500,
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
-        }
-      });
-    }
+      },
+      orderBy: [
+        { priority: 'asc' },
+        { createdAt: 'desc' }
+      ]
+    });
     
-    // Validate parsed feeds data structure
-    if (!parsedFeedsData || !Array.isArray(parsedFeedsData.feeds)) {
-      console.error('Invalid parsed feeds data structure:', parsedFeedsData);
-      return NextResponse.json({ 
-        error: 'Invalid parsed feeds format',
-        timestamp: new Date().toISOString()
-      }, { 
-        status: 500,
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
-        }
-      });
-    }
+    console.log(`📊 Loaded ${feeds.length} feeds from database for publisher lookup`);
     
-    // Find the specific publisher feed by ID or feedGuid
-    // This matches the logic from the server-side loadPublisherData function
-    const publisherFeed = parsedFeedsData.feeds.find((feed: any) => 
-      feed.type === 'publisher' && 
-      feed.parseStatus === 'success' &&
-      feed.parsedData &&
-      (feed.id === `${publisherId}-publisher` || 
-       (typeof feed.id === 'string' && feed.id.includes(publisherId)) ||
-       (typeof feed.parsedData.publisherInfo?.feedGuid === 'string' && feed.parsedData.publisherInfo.feedGuid.includes(publisherId)) ||
-       feed.parsedData.publisherItems?.some((item: any) => 
-         item.feedGuid && typeof item.feedGuid === 'string' && item.feedGuid.includes(publisherId)
-       ))
-    );
+    // Find feeds that match the publisher ID by artist name or slug
+    const matchingFeeds = feeds.filter(feed => {
+      const feedSlug = generateAlbumSlug(feed.artist || feed.title);
+      const feedId = feed.id.split('-')[0];
+      
+      return feedSlug === publisherId || 
+             feed.artist?.toLowerCase().replace(/\s+/g, '-') === publisherId ||
+             feedId === publisherId ||
+             feed.id.includes(publisherId);
+    });
     
-    if (!publisherFeed) {
+    if (matchingFeeds.length === 0) {
       console.log(`❌ Publisher not found: ${publisherId}`);
       return NextResponse.json({ 
         error: 'Publisher not found',
@@ -95,17 +61,46 @@ export async function GET(
       });
     }
     
-    console.log(`✅ Found publisher: ${publisherFeed.id}`);
+    console.log(`✅ Found ${matchingFeeds.length} feeds for publisher: ${publisherId}`);
+    
+    // Create publisher info from the feeds
+    const primaryFeed = matchingFeeds[0];
+    const totalTracks = matchingFeeds.reduce((sum, feed) => sum + feed.tracks.length, 0);
+    
+    // Create album items from the feeds
+    const publisherItems = matchingFeeds.map(feed => {
+      const albumSlug = generateAlbumSlug(feed.title) + '-' + feed.id.split('-')[0];
+      
+      return {
+        title: feed.title,
+        artist: feed.artist || 'Unknown Artist',
+        feedGuid: feed.id,
+        feedUrl: feed.originalUrl,
+        image: feed.image,
+        description: feed.description,
+        trackCount: feed.tracks.length,
+        albumSlug: albumSlug,
+        releaseDate: feed.lastFetched || feed.createdAt,
+        explicit: feed.explicit
+      };
+    });
     
     const response = {
-      id: publisherFeed.id,
-      title: publisherFeed.title,
-      originalUrl: publisherFeed.originalUrl,
-      parseStatus: publisherFeed.parseStatus,
-      lastParsed: publisherFeed.lastParsed,
-      publisherInfo: publisherFeed.parsedData?.publisherInfo || null,
-      publisherItems: publisherFeed.parsedData?.publisherItems || publisherFeed.parsedData?.publisherInfo?.remoteItems || [],
-      itemCount: (publisherFeed.parsedData?.publisherItems || publisherFeed.parsedData?.publisherInfo?.remoteItems || []).length,
+      id: publisherId,
+      title: primaryFeed.artist || primaryFeed.title,
+      originalUrl: primaryFeed.originalUrl,
+      parseStatus: 'success',
+      lastParsed: new Date().toISOString(),
+      publisherInfo: {
+        title: primaryFeed.artist || primaryFeed.title,
+        artist: primaryFeed.artist,
+        feedGuid: primaryFeed.id,
+        image: primaryFeed.image,
+        description: primaryFeed.description
+      },
+      publisherItems: publisherItems,
+      itemCount: publisherItems.length,
+      totalTracks: totalTracks,
       timestamp: new Date().toISOString()
     };
 

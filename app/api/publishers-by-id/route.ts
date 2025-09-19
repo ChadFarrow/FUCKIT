@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import * as fs from 'fs';
-import * as path from 'path';
+import { prisma } from '@/lib/prisma';
+import { generateAlbumSlug } from '@/lib/url-utils';
 
 export async function GET(request: Request) {
   try {
@@ -14,53 +14,43 @@ export async function GET(request: Request) {
       }, { status: 400 });
     }
     
-    console.log(`🔍 Looking for publisher: ${publisherId}`);
+    console.log(`🔍 Looking for publisher by ID: ${publisherId}`);
     
-    const parsedFeedsPath = path.join(process.cwd(), 'data', 'parsed-feeds.json');
+    // Get all feeds from database
+    const feeds = await prisma.feed.findMany({
+      where: { status: 'active' },
+      include: {
+        tracks: {
+          where: {
+            audioUrl: { not: '' }
+          },
+          orderBy: [
+            { publishedAt: 'desc' },
+            { createdAt: 'desc' }
+          ]
+        }
+      },
+      orderBy: [
+        { priority: 'asc' },
+        { createdAt: 'desc' }
+      ]
+    });
     
-    if (!fs.existsSync(parsedFeedsPath)) {
-      console.error('Parsed feeds file not found at:', parsedFeedsPath);
-      return NextResponse.json({ 
-        error: 'Parsed feeds not found',
-        timestamp: new Date().toISOString()
-      }, { status: 404 });
-    }
-
-    // Read file with error handling
-    let parsedFeedsData;
-    try {
-      const fileContent = fs.readFileSync(parsedFeedsPath, 'utf-8');
-      parsedFeedsData = JSON.parse(fileContent);
-    } catch (readError) {
-      console.error('Error reading or parsing parsed-feeds.json:', readError);
-      return NextResponse.json({ 
-        error: 'Failed to read parsed feeds',
-        timestamp: new Date().toISOString()
-      }, { status: 500 });
-    }
+    console.log(`📊 Loaded ${feeds.length} feeds from database for publisher lookup`);
     
-    // Validate parsed feeds data structure
-    if (!parsedFeedsData || !Array.isArray(parsedFeedsData.feeds)) {
-      console.error('Invalid parsed feeds data structure:', parsedFeedsData);
-      return NextResponse.json({ 
-        error: 'Invalid parsed feeds format',
-        timestamp: new Date().toISOString()
-      }, { status: 500 });
-    }
+    // Find feeds that match the publisher ID by artist name or feed ID
+    const matchingFeeds = feeds.filter(feed => {
+      const feedSlug = generateAlbumSlug(feed.artist || feed.title);
+      const feedId = feed.id.split('-')[0];
+      
+      return feedSlug === publisherId || 
+             feed.artist?.toLowerCase().replace(/\s+/g, '-') === publisherId ||
+             feedId === publisherId ||
+             feed.id.includes(publisherId) ||
+             feed.id === publisherId;
+    });
     
-    // Find the specific publisher feed by ID or feedGuid
-    const publisherFeed = parsedFeedsData.feeds.find((feed: any) => 
-      feed.type === 'publisher' && 
-      feed.parseStatus === 'success' &&
-      feed.parsedData &&
-      (feed.id === publisherId || 
-       (typeof feed.id === 'string' && feed.id.includes(publisherId)) ||
-       feed.parsedData.publisherItems?.some((item: any) => 
-         item.feedGuid && typeof item.feedGuid === 'string' && item.feedGuid.includes(publisherId)
-       ))
-    );
-    
-    if (!publisherFeed) {
+    if (matchingFeeds.length === 0) {
       console.log(`❌ Publisher not found: ${publisherId}`);
       return NextResponse.json({ 
         error: 'Publisher not found',
@@ -69,17 +59,44 @@ export async function GET(request: Request) {
       }, { status: 404 });
     }
     
-    console.log(`✅ Found publisher: ${publisherFeed.id}`);
+    console.log(`✅ Found ${matchingFeeds.length} feeds for publisher: ${publisherId}`);
+    
+    // Create publisher info from the feeds
+    const primaryFeed = matchingFeeds[0];
+    
+    // Create album items from the feeds
+    const publisherItems = matchingFeeds.map(feed => {
+      const albumSlug = generateAlbumSlug(feed.title) + '-' + feed.id.split('-')[0];
+      
+      return {
+        title: feed.title,
+        artist: feed.artist || 'Unknown Artist',
+        feedGuid: feed.id,
+        feedUrl: feed.originalUrl,
+        image: feed.image,
+        description: feed.description,
+        trackCount: feed.tracks.length,
+        albumSlug: albumSlug,
+        releaseDate: feed.lastFetched || feed.createdAt,
+        explicit: feed.explicit
+      };
+    });
     
     const response = {
-      id: publisherFeed.id,
-      title: publisherFeed.title,
-      originalUrl: publisherFeed.originalUrl,
-      parseStatus: publisherFeed.parseStatus,
-      lastParsed: publisherFeed.lastParsed,
-      publisherInfo: publisherFeed.parsedData?.publisherInfo || null,
-      publisherItems: publisherFeed.parsedData?.publisherItems || [],
-      itemCount: publisherFeed.parsedData?.publisherItems?.length || 0,
+      id: publisherId,
+      title: primaryFeed.artist || primaryFeed.title,
+      originalUrl: primaryFeed.originalUrl,
+      parseStatus: 'success',
+      lastParsed: new Date().toISOString(),
+      publisherInfo: {
+        title: primaryFeed.artist || primaryFeed.title,
+        artist: primaryFeed.artist,
+        feedGuid: primaryFeed.id,
+        image: primaryFeed.image,
+        description: primaryFeed.description
+      },
+      publisherItems: publisherItems,
+      itemCount: publisherItems.length,
       timestamp: new Date().toISOString()
     };
 

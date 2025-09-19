@@ -35,34 +35,47 @@ export async function GET(request: Request) {
       feedWhere.id = feedId;
     }
     
-    // Get feeds with their tracks
+    // Get feeds only (without tracks for better performance)
     const feeds = await prisma.feed.findMany({
       where: feedWhere,
-      include: {
-        tracks: {
-          where: {
-            audioUrl: { not: '' } // Only include tracks with audio URLs
-          },
-          orderBy: [
-            { publishedAt: 'desc' },
-            { createdAt: 'desc' }
-          ]
-        }
-      },
       orderBy: [
         { priority: 'asc' },
+        { createdAt: 'desc' }
+      ],
+      take: 200 // Increased limit to ensure all albums are available
+    });
+    
+    // Get tracks for these feeds in a separate, optimized query
+    const tracks = await prisma.track.findMany({
+      where: {
+        audioUrl: { not: '' },
+        feedId: { in: feeds.map(f => f.id) }
+      },
+      orderBy: [
+        { publishedAt: 'desc' },
         { createdAt: 'desc' }
       ]
     });
     
     console.log(`📊 Loaded ${feeds.length} feeds from database`);
     
+    // Group tracks by feed
+    const tracksByFeed = tracks.reduce((acc, track) => {
+      if (!acc[track.feedId]) {
+        acc[track.feedId] = [];
+      }
+      acc[track.feedId].push(track);
+      return acc;
+    }, {} as Record<string, any[]>);
+    
     // Transform feeds into album format
     let albums = feeds.map(feed => {
+      const feedTracks = tracksByFeed[feed.id] || [];
+      
       // Group tracks by album or treat each feed as an album
       const albumMap = new Map<string, any>();
       
-      if (feed.type === 'album' || feed.tracks.length <= 10) {
+      if (feed.type === 'album' || feedTracks.length <= 10) {
         // Treat entire feed as single album
         const albumKey = feed.title;
         albumMap.set(albumKey, {
@@ -70,12 +83,12 @@ export async function GET(request: Request) {
           artist: feed.artist || 'Unknown Artist',
           description: feed.description || '',
           image: feed.image || '',
-          tracks: feed.tracks,
+          tracks: feedTracks,
           feed: feed
         });
       } else {
         // Group tracks by album field or artist
-        feed.tracks.forEach(track => {
+        feedTracks.forEach(track => {
           const albumKey = track.album || track.artist || feed.title;
           
           if (!albumMap.has(albumKey)) {
@@ -130,7 +143,7 @@ export async function GET(request: Request) {
       }
       
       return {
-        id: generateAlbumSlug(album.title),
+        id: generateAlbumSlug(album.title) + '-' + feed.id.split('-')[0],
         title: album.title,
         artist: album.artist,
         description: album.description,
