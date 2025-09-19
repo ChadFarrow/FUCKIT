@@ -5,10 +5,10 @@ import { parseRSSFeedWithSegments } from '@/lib/rss-parser-db';
 // POST /api/feeds/[id]/refresh - Refresh a specific feed
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     
     // Get the feed
     const feed = await prisma.feed.findUnique({
