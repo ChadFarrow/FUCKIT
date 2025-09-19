@@ -120,18 +120,16 @@ export async function GET(request: Request) {
     // Create the response data structure to match expected format
     const parsedFeedsData = {
       feeds: transformedFeeds,
-      lastGenerated: new Date().toISOString()
-    };
-
-    // Add validation summary
-    parsedFeedsData.validation = {
-      timestamp: new Date().toISOString(),
-      totalFeeds: transformedFeeds.length,
-      successfulFeeds: transformedFeeds.filter((f: any) => f.parseStatus === 'success').length,
-      publisherFeeds: transformedFeeds.filter((f: any) => f.type === 'publisher').length,
-      albumFeeds: transformedFeeds.filter((f: any) => f.type === 'album').length,
-      warningsCount: 0,
-      warnings: []
+      lastGenerated: new Date().toISOString(),
+      validation: {
+        timestamp: new Date().toISOString(),
+        totalFeeds: transformedFeeds.length,
+        successfulFeeds: transformedFeeds.filter((f: any) => f.parseStatus === 'success').length,
+        publisherFeeds: transformedFeeds.filter((f: any) => f.type === 'publisher').length,
+        albumFeeds: transformedFeeds.filter((f: any) => f.type === 'album').length,
+        warningsCount: 0,
+        warnings: []
+      }
     };
 
     // Check query parameters for pagination
