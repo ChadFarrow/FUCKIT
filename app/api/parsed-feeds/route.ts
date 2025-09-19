@@ -145,8 +145,9 @@ export async function GET(request: Request) {
       const paginatedFeeds = parsedFeedsData.feeds.slice(offset, offset + limit);
       
       responseData = {
-        ...parsedFeedsData,
         feeds: paginatedFeeds,
+        lastGenerated: parsedFeedsData.lastGenerated,
+        validation: parsedFeedsData.validation,
         pagination: {
           total: totalFeeds,
           limit,
