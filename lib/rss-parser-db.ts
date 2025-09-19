@@ -61,7 +61,7 @@ const parser: Parser<CustomFeed, CustomItem> = new Parser({
       ['itunes:category', 'itunes.categories', { keepArray: true }],
       ['itunes:keywords', 'itunes.keywords'],
       'language'
-    ],
+    ] as any,
     item: [
       ['itunes:author', 'itunes.author'],
       ['itunes:subtitle', 'itunes.subtitle'],
@@ -75,7 +75,7 @@ const parser: Parser<CustomFeed, CustomItem> = new Parser({
       ['podcast:chapters', 'podcast:chapters'],
       ['podcast:value', 'podcast:value'],
       ['podcast:valueTimeSplit', 'podcast:valueTimeSplit']
-    ]
+    ] as any
   }
 });
 

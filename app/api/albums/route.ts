@@ -115,7 +115,7 @@ export async function GET(request: Request) {
       
       // Determine if this is a playlist based on track variety
       const isPlaylist = tracks.length > 1 && 
-        new Set(tracks.map(t => t.artist || album.artist)).size > 1;
+        new Set(tracks.map((t: any) => t.artist || album.artist)).size > 1;
       
       // Create publisher info for artist feeds
       let publisher = null;
@@ -143,7 +143,7 @@ export async function GET(request: Request) {
         feedId: feed.id,
         feedUrl: feed.originalUrl,
         lastUpdated: feed.updatedAt,
-        explicit: tracks.some(t => t.explicit) || feed.explicit
+        explicit: tracks.some((t: any) => t.explicit) || feed.explicit
       };
     });
     

@@ -363,7 +363,7 @@ export default function DatabaseMusicPlayer() {
                         <span className="px-1 py-0.5 text-xs bg-red-500/20 text-red-400 rounded">E</span>
                       )}
                       {track.v4vValue && (
-                        <Zap className="w-4 h-4 text-yellow-400" title="V4V Enabled" />
+                        <Zap className="w-4 h-4 text-yellow-400" />
                       )}
                     </div>
                     <p className="text-sm text-gray-400 truncate">
