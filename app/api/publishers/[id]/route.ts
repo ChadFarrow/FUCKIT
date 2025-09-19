@@ -35,14 +35,29 @@ export async function GET(
     console.log(`📊 Loaded ${feeds.length} feeds from database for publisher lookup`);
     
     // Find feeds that match the publisher ID by artist name or slug
+    // Prioritize exact artist matches over ID matches to avoid confusion
     const matchingFeeds = feeds.filter(feed => {
       const feedSlug = generateAlbumSlug(feed.artist || feed.title);
       const feedId = feed.id.split('-')[0];
       
-      return feedSlug === publisherId || 
-             feed.artist?.toLowerCase().replace(/\s+/g, '-') === publisherId ||
-             feedId === publisherId ||
-             feed.id.includes(publisherId);
+      // First priority: exact artist name or slug match
+      if (feedSlug === publisherId || 
+          feed.artist?.toLowerCase().replace(/\s+/g, '-') === publisherId ||
+          feed.artist?.toLowerCase() === publisherId) {
+        return true;
+      }
+      
+      // Second priority: feed ID matches, but only if artist doesn't conflict
+      // This prevents iroh-album-* feeds with Joe Martin content from matching "iroh"
+      if (feedId === publisherId || feed.id.includes(publisherId)) {
+        // If the publisher ID is "iroh", only match if the artist is actually "IROH"
+        if (publisherId === 'iroh') {
+          return feed.artist?.toLowerCase() === 'iroh';
+        }
+        return true;
+      }
+      
+      return false;
     });
     
     if (matchingFeeds.length === 0) {
