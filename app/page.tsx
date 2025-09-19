@@ -114,8 +114,8 @@ export default function HomePage() {
   const [totalAlbums, setTotalAlbums] = useState(0);
   const [displayedAlbums, setDisplayedAlbums] = useState<RSSAlbum[]>([]);
   const [hasMoreAlbums, setHasMoreAlbums] = useState(true);
-  const ALBUMS_PER_PAGE = 12; // Load 12 albums per page for faster initial load
-  const API_VERSION = 'v4'; // Increment to bust cache when API changes - v4 fixes publisher stats
+  const ALBUMS_PER_PAGE = 50; // Load 50 albums per page for better user experience
+  const API_VERSION = 'v5'; // Increment to bust cache when API changes - v5 increases page size for better UX
   
   // HGH filter removed - no longer needed
   
@@ -251,8 +251,8 @@ export default function HomePage() {
       const startIndex = (currentPage - 1) * ALBUMS_PER_PAGE;
       const pageAlbums = await loadAlbumsData('all', ALBUMS_PER_PAGE, startIndex, activeFilter);
       
-      // Set albums directly - show first 6 immediately, then rest
-      setCriticalAlbums(pageAlbums.slice(0, 6));
+      // Set albums directly - show first 12 immediately, then rest
+      setCriticalAlbums(pageAlbums.slice(0, 12));
       setEnhancedAlbums(pageAlbums);
       setDisplayedAlbums(pageAlbums);
       setHasMoreAlbums(totalCount > ALBUMS_PER_PAGE);
@@ -355,7 +355,7 @@ export default function HomePage() {
       // Load first page with new filter
       const pageAlbums = await loadAlbumsData('all', ALBUMS_PER_PAGE, 0, newFilter);
       
-      setCriticalAlbums(pageAlbums.slice(0, 6));
+      setCriticalAlbums(pageAlbums.slice(0, 12));
       setEnhancedAlbums(pageAlbums);
       setDisplayedAlbums(pageAlbums);
       setHasMoreAlbums(totalCount > ALBUMS_PER_PAGE);
