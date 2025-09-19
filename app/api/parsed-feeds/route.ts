@@ -137,7 +137,17 @@ export async function GET(request: Request) {
     const limit = parseInt(url.searchParams.get('limit') || '0');
     const offset = parseInt(url.searchParams.get('offset') || '0');
     
-    let responseData = parsedFeedsData;
+    // Define the response data type to allow for optional pagination
+    type ResponseData = typeof parsedFeedsData & {
+      pagination?: {
+        total: number;
+        limit: number;
+        offset: number;
+        hasMore: boolean;
+      };
+    };
+    
+    let responseData: ResponseData = parsedFeedsData;
     
     // Apply pagination if requested
     if (limit > 0) {
