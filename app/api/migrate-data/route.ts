@@ -14,7 +14,7 @@ interface ExistingFeed {
   cdnUrl?: string;
 }
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
     console.log('🚀 Starting database migration via API...');
     
@@ -51,8 +51,16 @@ export async function POST() {
     let migratedTracks = 0;
     let errors: string[] = [];
     
-    // Process each feed
-    for (const feedData of existingFeeds.slice(0, 20)) { // Limit to first 20 for initial test
+    // Get batch parameters
+    const { searchParams } = new URL(request.url);
+    const batchSize = parseInt(searchParams.get('batchSize') || '25');
+    const startIndex = parseInt(searchParams.get('startIndex') || '0');
+    const maxBatch = Math.min(startIndex + batchSize, existingFeeds.length);
+    
+    console.log(`📦 Processing batch: feeds ${startIndex}-${maxBatch-1} of ${existingFeeds.length} total`);
+    
+    // Process each feed in the current batch
+    for (const feedData of existingFeeds.slice(startIndex, maxBatch)) {
       try {
         console.log(`📡 Processing feed: ${feedData.title}`);
         
@@ -158,13 +166,20 @@ export async function POST() {
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
     
-    console.log(`✅ Migration complete: ${migratedFeeds} feeds, ${migratedTracks} tracks`);
+    console.log(`✅ Batch migration complete: ${migratedFeeds} feeds, ${migratedTracks} tracks`);
+    
+    const hasMore = maxBatch < existingFeeds.length;
+    const nextStartIndex = hasMore ? maxBatch : null;
     
     return NextResponse.json({
       success: true,
-      message: 'Database migration completed',
+      message: `Batch migration completed (${startIndex}-${maxBatch-1} of ${existingFeeds.length})`,
       feedCount: migratedFeeds,
       trackCount: migratedTracks,
+      totalFeeds: existingFeeds.length,
+      processed: maxBatch,
+      hasMore,
+      nextStartIndex,
       errors: errors.length > 0 ? errors : undefined
     });
     
