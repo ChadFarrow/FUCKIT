@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { parseRSSFeedWithSegments } from '@/lib/rss-parser-db';
 
-// POST /api/feeds/[id]/refresh - Refresh a specific feed
+// POST /api/feeds/[id]/refresh - Refresh a specific feed (Railway fix)
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
