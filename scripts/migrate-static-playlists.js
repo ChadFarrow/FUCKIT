@@ -42,24 +42,24 @@ const staticPlaylists = [
   {
     id: 'top100-music',
     name: 'Top 100 Music',
-    description: 'Curated collection of top music tracks',
-    feedUrl: '',
-    rssUrl: '',
-    image: '',
+    description: 'An hourly Top 100 music playlist from Podcasting 2.0',
+    feedUrl: 'https://stats.podcastindex.org/v4vmusic.rss',
+    rssUrl: 'https://stats.podcastindex.org/v4vmusic.rss',
+    image: 'https://noagendaassets.com/enc/1686340519.979_pcifeedimage.png',
     isPublic: true,
     createdBy: 'system',
-    type: 'curated'
+    type: 'podcast-music'
   },
   {
     id: 'upbeats',
     name: 'UpBEATs',
-    description: 'UpBEATs music playlist',
-    feedUrl: '',
-    rssUrl: '',
-    image: '',
+    description: 'Every music reference from UpBEATs podcast',
+    feedUrl: 'https://feeds.rssblue.com/upbeats',
+    rssUrl: 'https://raw.githubusercontent.com/ChadFarrow/chadf-musicl-playlists/refs/heads/main/docs/upbeats-music-playlist.xml',
+    image: 'https://raw.githubusercontent.com/ChadFarrow/chadf-musicl-playlists/main/docs/UpBEATs-music-playlist.webp',
     isPublic: true,
     createdBy: 'system',
-    type: 'curated'
+    type: 'podcast-music'
   }
 ];
 

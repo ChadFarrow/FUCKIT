@@ -346,6 +346,12 @@ export default function HomePage() {
   const handleFilterChange = async (newFilter: FilterType) => {
     if (newFilter === activeFilter) return; // No change
     
+    // Redirect to playlist page if playlist filter is selected
+    if (newFilter === 'playlist') {
+      router.push('/playlist');
+      return;
+    }
+    
     setActiveFilter(newFilter);
     setCurrentPage(1); // Reset to first page
     setIsLoading(true);
