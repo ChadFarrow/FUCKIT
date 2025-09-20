@@ -57,10 +57,63 @@ async function loadPublisherData(publisherId: string) {
     });
     
     if (!publisherFeed) {
-      console.log(`❌ Publisher not found: ${publisherId}`);
-      console.log(`🔍 Available publishers:`, publisherFeeds.map((f: any) => 
+      console.log(`❌ Publisher not found in static file: ${publisherId}`);
+      console.log(`🔍 Available publishers in static file:`, publisherFeeds.map((f: any) => 
         f.title?.replace('<![CDATA[', '').replace(']]>', '') || 'Unknown'
       ));
+      
+      // Fallback: Try to find publisher in the database via /api/publishers
+      console.log(`🔄 Falling back to /api/publishers for: ${publisherId}`);
+      try {
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 
+                       (process.env.NODE_ENV === 'production' ? 'https://fuckit-production.up.railway.app' : 'http://localhost:3000');
+        
+        const publishersResponse = await fetch(`${baseUrl}/api/publishers`);
+        if (publishersResponse.ok) {
+          const publishersData = await publishersResponse.json();
+          const publishers = publishersData.publishers || [];
+          
+          // Find matching publisher using same logic
+          const matchingPublisher = publishers.find((pub: any) => {
+            const cleanTitle = pub.title?.toLowerCase() || '';
+            const searchId = publisherId.toLowerCase();
+            
+            // Direct match
+            if (cleanTitle === searchId) return true;
+            if (pub.id === publisherId) return true;
+            
+            // Convert hyphens to spaces and compare
+            const slugToTitle = searchId.replace(/-/g, ' ');
+            if (cleanTitle === slugToTitle) return true;
+            
+            // Convert spaces to hyphens and compare
+            const titleToSlug = cleanTitle.replace(/\s+/g, '-');
+            if (titleToSlug === searchId) return true;
+            
+            return false;
+          });
+          
+          if (matchingPublisher) {
+            console.log(`✅ Publisher found in database: ${matchingPublisher.title}`);
+            
+            // Convert database publisher to expected format
+            return {
+              publisherInfo: {
+                name: matchingPublisher.title,
+                description: matchingPublisher.description || `${matchingPublisher.itemCount} releases`,
+                image: matchingPublisher.image,
+                feedUrl: matchingPublisher.originalUrl,
+                feedGuid: matchingPublisher.id
+              },
+              publisherItems: matchingPublisher.albums || [],
+              feedId: matchingPublisher.id
+            };
+          }
+        }
+      } catch (fallbackError) {
+        console.error('Fallback API call failed:', fallbackError);
+      }
+      
       return null;
     }
     
