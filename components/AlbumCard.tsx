@@ -20,9 +20,11 @@ interface AlbumCardProps {
 function AlbumCard({ album, isPlaying = false, onPlay, className = '' }: AlbumCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [shouldLoadImage, setShouldLoadImage] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const { shouldPreventClick } = useScrollDetectionContext();
+  const cardRef = useRef<HTMLDivElement>(null);
 
   // Minimum swipe distance (in px)
   const minSwipeDistance = 50;
@@ -65,6 +67,30 @@ function AlbumCard({ album, isPlaying = false, onPlay, className = '' }: AlbumCa
     setImageLoaded(false);
   }, []);
 
+  // Intersection Observer for lazy loading
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setShouldLoadImage(true);
+            observer.disconnect();
+          }
+        });
+      },
+      {
+        rootMargin: '200px', // Start loading 200px before the image enters viewport
+        threshold: 0.1
+      }
+    );
+
+    if (cardRef.current) {
+      observer.observe(cardRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
   const artworkUrl = useMemo(() => 
     getAlbumArtworkUrl(album.coverArt || '', 'medium'), 
     [album.coverArt]
@@ -80,6 +106,7 @@ function AlbumCard({ album, isPlaying = false, onPlay, className = '' }: AlbumCa
 
   return (
     <Link 
+      ref={cardRef}
       href={albumUrl}
       className={`group relative bg-black/40 backdrop-blur-md rounded-xl border border-gray-700/50 overflow-hidden transition-all duration-300 hover:bg-black/50 hover:border-cyan-400/30 hover:scale-[1.02] active:scale-[0.98] block shadow-lg hover:shadow-xl hover:shadow-cyan-400/10 ${className}`}
       onClick={(e) => {
@@ -113,24 +140,26 @@ function AlbumCard({ album, isPlaying = false, onPlay, className = '' }: AlbumCa
           }
         }}
       >
-        <CDNImage
-          src={artworkUrl}
-          alt={`${album.title} by ${album.artist}`}
-          width={300}
-          height={300}
-          className={`w-full h-full object-cover transition-opacity duration-300 ${
-            imageLoaded ? 'opacity-100' : 'opacity-0'
-          }`}
-          style={{ aspectRatio: '1/1' }}
-          onLoad={handleImageLoad}
-          onError={handleImageError}
-          priority={false}
-          fallbackSrc={album.coverArt || undefined} // Add original URL as fallback
-          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
-        />
+        {shouldLoadImage ? (
+          <CDNImage
+            src={artworkUrl}
+            alt={`${album.title} by ${album.artist}`}
+            width={300}
+            height={300}
+            className={`w-full h-full object-cover transition-opacity duration-300 ${
+              imageLoaded ? 'opacity-100' : 'opacity-0'
+            }`}
+            style={{ aspectRatio: '1/1' }}
+            onLoad={handleImageLoad}
+            onError={handleImageError}
+            priority={false}
+            fallbackSrc={album.coverArt || undefined} // Add original URL as fallback
+            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
+          />
+        ) : null}
         
         {/* Loading placeholder */}
-        {!imageLoaded && !imageError && (
+        {(!shouldLoadImage || (!imageLoaded && !imageError)) && (
           <div className="absolute inset-0 bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
             <Music className="w-8 h-8 text-gray-400 animate-pulse" />
           </div>
