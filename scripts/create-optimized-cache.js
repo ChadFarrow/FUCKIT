@@ -47,10 +47,10 @@ async function createOptimizedCache() {
         title: feed.title,
         artist: feed.artist || feed.title,
         description: feed.description || '',
-        coverArt: feed.coverArt || '',
-        releaseDate: feed.lastUpdated || feed.createdAt,
-        feedUrl: feed.feedUrl,
-        feedGuid: feed.feedGuid,
+        coverArt: feed.image || '',
+        releaseDate: feed.updatedAt || feed.createdAt,
+        feedUrl: feed.originalUrl,
+        feedGuid: feed.id,
         priority: feed.priority,
         tracks: feed.tracks.map(track => ({
           id: track.id,
@@ -71,7 +71,7 @@ async function createOptimizedCache() {
       } else {
         publisherStats.push({
           name: feed.artist || feed.title,
-          feedGuid: feed.feedGuid,
+          feedGuid: feed.id,
           albumCount: 1
         });
       }
