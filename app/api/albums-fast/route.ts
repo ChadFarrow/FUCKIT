@@ -1,20 +1,10 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { prisma } from '@/lib/prisma';
 
-// In-memory cache for better performance
-let cachedAlbums: any = null;
+// In-memory cache for better performance (cache the database results, not files)
+let cachedData: any = null;
 let cacheTimestamp = 0;
-const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
-
-function shouldForceRefresh(cachePath: string): boolean {
-  try {
-    const fileModified = fs.statSync(cachePath).mtime.getTime();
-    return fileModified > cacheTimestamp;
-  } catch {
-    return false;
-  }
-}
+const CACHE_DURATION = 2 * 60 * 1000; // 2 minutes cache for database results
 
 export async function GET(request: Request) {
   try {
@@ -24,59 +14,127 @@ export async function GET(request: Request) {
     const filter = searchParams.get('filter') || 'all'; // albums, eps, singles, all
     
     const now = Date.now();
-    const apiCachePath = path.join(process.cwd(), 'data', 'albums-api-cache.json');
-    const shouldRefreshCache = !cachedAlbums || 
-                              (now - cacheTimestamp) > CACHE_DURATION ||
-                              shouldForceRefresh(apiCachePath);
+    const shouldRefreshCache = !cachedData || (now - cacheTimestamp) > CACHE_DURATION;
+    
+    let feeds;
+    let publisherStats;
     
     if (shouldRefreshCache) {
-      console.log('🚀 Loading optimized album cache...');
+      console.log('🔄 Fetching albums from database...');
       
-      if (!fs.existsSync(apiCachePath)) {
-        console.error('❌ Optimized cache not found. Please run: node scripts/create-optimized-cache.js');
-        return NextResponse.json({
-          error: 'Optimized cache not available',
-          message: 'Please regenerate the album cache'
-        }, { status: 500 });
-      }
+      // Get all active feeds with their tracks directly from database
+      feeds = await prisma.feed.findMany({
+        where: { status: 'active' },
+        include: {
+          tracks: {
+            where: {
+              audioUrl: { not: '' }
+            },
+            orderBy: [
+              { publishedAt: 'desc' },
+              { createdAt: 'desc' }
+            ],
+            take: 50 // Limit tracks per feed for performance
+          },
+          _count: {
+            select: { tracks: true }
+          }
+        },
+        orderBy: [
+          { priority: 'asc' },
+          { createdAt: 'desc' }
+        ]
+      });
       
-      const cacheContent = fs.readFileSync(apiCachePath, 'utf8');
-      cachedAlbums = JSON.parse(cacheContent);
+      // Calculate publisher stats
+      const publisherMap = new Map();
+      feeds.forEach(feed => {
+        const artist = feed.artist || feed.title;
+        if (!publisherMap.has(artist)) {
+          publisherMap.set(artist, 0);
+        }
+        publisherMap.set(artist, publisherMap.get(artist) + 1);
+      });
+      
+      publisherStats = Array.from(publisherMap.entries())
+        .map(([name, count]) => ({ name, albumCount: count }))
+        .sort((a, b) => b.albumCount - a.albumCount);
+      
+      // Cache the results
+      cachedData = { feeds, publisherStats };
       cacheTimestamp = now;
       
-      console.log(`✅ Loaded ${cachedAlbums.albums.length} albums from optimized cache`);
+      console.log(`✅ Loaded ${feeds.length} albums from database`);
     } else {
-      console.log(`⚡ Using cached albums (${cachedAlbums.albums.length} albums)`);
+      console.log(`⚡ Using cached database results (${cachedData.feeds.length} albums)`);
+      feeds = cachedData.feeds;
+      publisherStats = cachedData.publisherStats;
     }
     
+    // Transform feeds into album format for frontend
+    const albums = feeds.map(feed => ({
+      id: feed.id,
+      title: feed.title,
+      artist: feed.artist || feed.title,
+      description: feed.description || '',
+      coverArt: feed.image || '',
+      releaseDate: feed.updatedAt || feed.createdAt,
+      feedUrl: feed.originalUrl,
+      feedGuid: feed.id,
+      priority: feed.priority,
+      tracks: feed.tracks.map(track => ({
+        id: track.id,
+        title: track.title,
+        duration: track.duration || 180,
+        url: track.audioUrl,
+        publishedAt: track.publishedAt,
+        guid: track.guid
+      }))
+    }));
+    
     // Apply filtering
-    let filteredAlbums = cachedAlbums.albums;
+    let filteredAlbums = albums;
     if (filter !== 'all') {
       switch (filter) {
         case 'albums':
-          filteredAlbums = cachedAlbums.albums.filter((album: any) => 
+          filteredAlbums = albums.filter(album => 
             album.tracks && album.tracks.length >= 8
           );
           break;
         case 'eps':
-          filteredAlbums = cachedAlbums.albums.filter((album: any) => 
+          filteredAlbums = albums.filter(album => 
             album.tracks && album.tracks.length >= 3 && album.tracks.length < 8
           );
           break;
         case 'singles':
-          filteredAlbums = cachedAlbums.albums.filter((album: any) => 
+          filteredAlbums = albums.filter(album => 
             album.tracks && album.tracks.length < 3
           );
           break;
       }
     }
     
+    // Sort albums by priority and release date
+    filteredAlbums.sort((a, b) => {
+      const priorityOrder: Record<string, number> = { 
+        'core': 1, 
+        'high': 2, 
+        'normal': 3, 
+        'low': 4 
+      };
+      const aPriority = priorityOrder[a.priority] || 5;
+      const bPriority = priorityOrder[b.priority] || 5;
+      
+      if (aPriority !== bPriority) {
+        return aPriority - bPriority;
+      }
+      
+      return new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime();
+    });
+    
     // Apply pagination
     const totalCount = filteredAlbums.length;
     const paginatedAlbums = filteredAlbums.slice(offset, offset + limit);
-    
-    // Calculate publisher stats
-    const publisherStats = cachedAlbums.publisherStats || [];
     
     return NextResponse.json({
       success: true,
@@ -89,8 +147,9 @@ export async function GET(request: Request) {
         offset,
         limit,
         filter,
-        cached: true,
-        cacheAge: now - cacheTimestamp
+        cached: !shouldRefreshCache,
+        cacheAge: now - cacheTimestamp,
+        source: 'database'
       }
     });
     
@@ -98,7 +157,7 @@ export async function GET(request: Request) {
     console.error('❌ Albums Fast API Error:', error);
     return NextResponse.json({
       error: 'Failed to load albums',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 });
   }
 }
