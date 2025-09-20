@@ -351,21 +351,60 @@ export default function HomePage() {
     setIsLoading(true);
     
     try {
-      // Get new total count with filter
-      const totalCountResponse = await fetch(`/api/albums-fast?limit=1&offset=0&filter=${newFilter}`);
-      const totalCountData = await totalCountResponse.json();
-      const totalCount = totalCountData.totalCount || 0;
-      setTotalAlbums(totalCount);
-      
-      // Load first page with new filter
-      const pageAlbums = await loadAlbumsData('all', ALBUMS_PER_PAGE, 0, newFilter);
-      
-      setCriticalAlbums(pageAlbums.slice(0, 12));
-      setEnhancedAlbums(pageAlbums);
-      setDisplayedAlbums(pageAlbums);
-      setHasMoreAlbums(totalCount > ALBUMS_PER_PAGE);
-      setIsCriticalLoaded(true);
-      setIsEnhancedLoaded(true);
+      if (newFilter === 'artists') {
+        // Load publishers instead of albums
+        const publishersResponse = await fetch('/api/publishers');
+        const publishersData = await publishersResponse.json();
+        const publishers = publishersData.publishers || [];
+        
+        // Convert publishers to album-like format for display
+        const publisherAlbums = publishers.map((publisher: any) => ({
+          id: publisher.id,
+          title: publisher.title,
+          artist: publisher.title,
+          description: publisher.description || `${publisher.itemCount} releases`,
+          coverArt: publisher.image,
+          tracks: Array(publisher.totalTracks).fill(null).map((_, i) => ({
+            id: `track-${i}`,
+            title: `Track ${i + 1}`,
+            duration: '0:00',
+            url: publisher.originalUrl
+          })),
+          releaseDate: new Date().toISOString(),
+          link: `/publisher/${publisher.id}`,
+          feedUrl: publisher.originalUrl,
+          // Mark as publisher card to use different URL generation
+          isPublisherCard: true,
+          publisherUrl: `/publisher/${publisher.id}`,
+          // Add publisher-specific data
+          albumCount: publisher.itemCount,
+          totalTracks: publisher.totalTracks
+        }));
+        
+        setTotalAlbums(publishers.length);
+        setCriticalAlbums(publisherAlbums.slice(0, 12));
+        setEnhancedAlbums(publisherAlbums);
+        setDisplayedAlbums(publisherAlbums);
+        setHasMoreAlbums(false); // Publishers are loaded all at once
+        setIsCriticalLoaded(true);
+        setIsEnhancedLoaded(true);
+      } else {
+        // Get new total count with filter
+        const totalCountResponse = await fetch(`/api/albums-fast?limit=1&offset=0&filter=${newFilter}`);
+        const totalCountData = await totalCountResponse.json();
+        const totalCount = totalCountData.totalCount || 0;
+        setTotalAlbums(totalCount);
+        
+        // Load first page with new filter
+        const pageAlbums = await loadAlbumsData('all', ALBUMS_PER_PAGE, 0, newFilter);
+        
+        setCriticalAlbums(pageAlbums.slice(0, 12));
+        setEnhancedAlbums(pageAlbums);
+        setDisplayedAlbums(pageAlbums);
+        setHasMoreAlbums(totalCount > ALBUMS_PER_PAGE);
+        setIsCriticalLoaded(true);
+        setIsEnhancedLoaded(true);
+      }
       
       // Scroll to top
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1007,7 +1046,7 @@ export default function HomePage() {
                   activeFilter === 'albums' ? 'Albums' :
                   activeFilter === 'eps' ? 'EPs' : 
                   activeFilter === 'singles' ? 'Singles' : 
- 
+                  activeFilter === 'artists' ? 'Artists' :
                   activeFilter === 'playlist' ? 'Playlist' : 'Releases'}
                 className="mb-8"
               />

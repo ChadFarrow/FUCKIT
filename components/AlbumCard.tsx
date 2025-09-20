@@ -72,12 +72,22 @@ function AlbumCard({ album, isPlaying = false, onPlay, className = '' }: AlbumCa
     [album.coverArt]
   );
   
-  // Check if this is a playlist card and use playlistUrl if available
-  const { isPlaylistCard, albumUrl } = useMemo(() => {
+  // Check if this is a playlist card, publisher card, and use appropriate URL
+  const { isPlaylistCard, isPublisherCard, albumUrl } = useMemo(() => {
     const isPlaylistCard = (album as any).isPlaylistCard;
-    const albumUrl = isPlaylistCard ? (album as any).playlistUrl : generateAlbumUrl(album.title);
-    return { isPlaylistCard, albumUrl };
-  }, [album.title, (album as any).isPlaylistCard, (album as any).playlistUrl]);
+    const isPublisherCard = (album as any).isPublisherCard;
+    let albumUrl: string;
+    
+    if (isPublisherCard) {
+      albumUrl = (album as any).publisherUrl || `/publisher/${album.id}`;
+    } else if (isPlaylistCard) {
+      albumUrl = (album as any).playlistUrl;
+    } else {
+      albumUrl = generateAlbumUrl(album.title);
+    }
+    
+    return { isPlaylistCard, isPublisherCard, albumUrl };
+  }, [album.title, album.id, (album as any).isPlaylistCard, (album as any).playlistUrl, (album as any).isPublisherCard, (album as any).publisherUrl]);
   
 
   return (
@@ -87,7 +97,7 @@ function AlbumCard({ album, isPlaying = false, onPlay, className = '' }: AlbumCa
       onClick={(e) => {
         // Navigation handled by Link component
       }}
-      aria-label={`View album details for ${album.title} by ${album.artist}`}
+      aria-label={isPublisherCard ? `View artist page for ${album.title}` : `View album details for ${album.title} by ${album.artist}`}
     >
       {/* Album Artwork */}
       <div 
@@ -193,10 +203,13 @@ function AlbumCard({ album, isPlaying = false, onPlay, className = '' }: AlbumCa
           </button>
         </div>
 
-        {/* Track count badge */}
-        {album.tracks.length > 0 && (
+        {/* Track count badge or album count for publishers */}
+        {(album.tracks.length > 0 || isPublisherCard) && (
           <div className="absolute top-1 right-1 sm:top-2 sm:right-2 bg-black/80 backdrop-blur-sm rounded-full px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs text-white border border-gray-600">
-            {album.tracks.length} {album.tracks.length !== 1 ? 'tracks' : 'track'}
+            {isPublisherCard 
+              ? `${(album as any).albumCount || 0} ${((album as any).albumCount || 0) !== 1 ? 'releases' : 'release'}`
+              : `${album.tracks.length} ${album.tracks.length !== 1 ? 'tracks' : 'track'}`
+            }
           </div>
         )}
 
