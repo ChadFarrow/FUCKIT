@@ -100,6 +100,7 @@ export async function GET(request: Request) {
         title: track.title,
         duration: track.duration || 180,
         url: track.audioUrl,
+        image: track.image,
         publishedAt: track.publishedAt,
         guid: track.guid
       }))
