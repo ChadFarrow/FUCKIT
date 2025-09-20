@@ -67,19 +67,30 @@ function AlbumCard({ album, isPlaying = false, onPlay, className = '' }: AlbumCa
     setImageLoaded(false);
   }, []);
 
-  // Intersection Observer for lazy loading
+  // Progressive loading with staggered delays
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setShouldLoadImage(true);
+            // Get the card's position in the DOM to determine load order
+            const cards = Array.from(document.querySelectorAll('[data-album-card]'));
+            const cardIndex = cards.findIndex(card => card === entry.target);
+            
+            // Stagger image loading: load in batches of 3 with 100ms delays
+            const batchIndex = Math.floor(cardIndex / 3);
+            const delay = batchIndex * 100;
+            
+            setTimeout(() => {
+              setShouldLoadImage(true);
+            }, delay);
+            
             observer.disconnect();
           }
         });
       },
       {
-        rootMargin: '200px', // Start loading 200px before the image enters viewport
+        rootMargin: '300px', // Start loading 300px before viewport
         threshold: 0.1
       }
     );
@@ -92,7 +103,7 @@ function AlbumCard({ album, isPlaying = false, onPlay, className = '' }: AlbumCa
   }, []);
 
   const artworkUrl = useMemo(() => 
-    getAlbumArtworkUrl(album.coverArt || '', 'medium'), 
+    getAlbumArtworkUrl(album.coverArt || '', 'thumbnail'), // Use smaller images for faster loading
     [album.coverArt]
   );
   
@@ -108,6 +119,7 @@ function AlbumCard({ album, isPlaying = false, onPlay, className = '' }: AlbumCa
     <Link 
       ref={cardRef}
       href={albumUrl}
+      data-album-card
       className={`group relative bg-black/40 backdrop-blur-md rounded-xl border border-gray-700/50 overflow-hidden transition-all duration-300 hover:bg-black/50 hover:border-cyan-400/30 hover:scale-[1.02] active:scale-[0.98] block shadow-lg hover:shadow-xl hover:shadow-cyan-400/10 ${className}`}
       onClick={(e) => {
         // Navigation handled by Link component
@@ -144,8 +156,8 @@ function AlbumCard({ album, isPlaying = false, onPlay, className = '' }: AlbumCa
           <CDNImage
             src={artworkUrl}
             alt={`${album.title} by ${album.artist}`}
-            width={300}
-            height={300}
+            width={200}
+            height={200}
             className={`w-full h-full object-cover transition-opacity duration-300 ${
               imageLoaded ? 'opacity-100' : 'opacity-0'
             }`}
@@ -154,7 +166,7 @@ function AlbumCard({ album, isPlaying = false, onPlay, className = '' }: AlbumCa
             onError={handleImageError}
             priority={false}
             fallbackSrc={album.coverArt || undefined} // Add original URL as fallback
-            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
+            sizes="(max-width: 768px) 160px, (max-width: 1200px) 180px, 200px"
           />
         ) : null}
         
