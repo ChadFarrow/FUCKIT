@@ -24,7 +24,7 @@ function AlbumCard({ album, isPlaying = false, onPlay, className = '' }: AlbumCa
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const { shouldPreventClick } = useScrollDetectionContext();
-  const cardRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLAnchorElement>(null);
 
   // Minimum swipe distance (in px)
   const minSwipeDistance = 50;
