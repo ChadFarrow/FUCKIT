@@ -76,6 +76,8 @@ model PlaylistTrack {
   position   Int
   addedBy    String?
   addedAt    DateTime @default(now())
+  
+  playlist   UserPlaylist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
 
   @@unique([playlistId, trackId])
   @@index([playlistId, position])
@@ -90,6 +92,8 @@ model UserPlaylist {
   image       String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  
+  tracks      PlaylistTrack[]
 
   @@index([createdBy])
   @@index([isPublic])

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 
 interface PlaylistItem {
   id: string;
@@ -11,19 +12,11 @@ interface PlaylistItem {
   href: string;
   type: 'web' | 'rss';
   color: string;
+  medium?: 'musicL' | 'podcast';
 }
 
-const playlists: PlaylistItem[] = [
-  {
-    id: 'itdv',
-    title: 'Into The Doerfel-Verse',
-    description: 'Music from Into The Doerfel-Verse podcast episodes',
-    trackCount: 200,
-    episodes: 'Episodes 31-56',
-    href: '/playlist/itdv',
-    type: 'web',
-    color: 'bg-blue-600'
-  },
+// Static playlists - RSS feeds that are musicL compliant
+const staticPlaylists: PlaylistItem[] = [
   {
     id: 'itdv-rss',
     title: 'ITDV RSS Feed',
@@ -32,31 +25,73 @@ const playlists: PlaylistItem[] = [
     episodes: 'Episodes 31-56',
     href: '/playlist/itdv-rss',
     type: 'rss',
-    color: 'bg-green-600'
-  },
-  {
-    id: 'hgh',
-    title: 'Homegrown Hits',
-    description: 'Music from Homegrown Hits podcast',
-    trackCount: 150,
-    episodes: 'Various Episodes',
-    href: '/playlist/hgh',
-    type: 'web',
-    color: 'bg-purple-600'
-  },
-  {
-    id: 'lightning-thrashes',
-    title: 'Lightning Thrashes',
-    description: 'Music from Lightning Thrashes podcast',
-    trackCount: 100,
-    episodes: 'Various Episodes',
-    href: '/playlist/lightning-thrashes',
-    type: 'web',
-    color: 'bg-red-600'
+    color: 'bg-green-600',
+    medium: 'musicL'
   }
 ];
 
-export default function PlaylistIndexPage() {
+function PlaylistContent() {
+  const [playlists, setPlaylists] = useState<PlaylistItem[]>(staticPlaylists);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    loadPlaylists();
+  }, []);
+
+  const loadPlaylists = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch('/api/playlists');
+      if (!response.ok) throw new Error('Failed to load playlists');
+      
+      const data = await response.json();
+      
+      // Transform database playlists to display format
+      const dbPlaylists: PlaylistItem[] = data.data.map((playlist: any) => ({
+        id: playlist.id,
+        title: playlist.name,
+        description: playlist.description,
+        trackCount: playlist.trackCount || 0,
+        episodes: 'Podcasting 2.0 musicL',
+        href: `/playlist/${playlist.id}`,
+        type: 'web' as const,
+        color: getColorForPlaylist(playlist.id),
+        medium: 'musicL' as const
+      }));
+      
+      // Combine database playlists with static RSS feeds
+      setPlaylists([...dbPlaylists, ...staticPlaylists]);
+    } catch (error) {
+      console.error('Error loading playlists:', error);
+      // Fallback to static playlists
+      setPlaylists(staticPlaylists);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getColorForPlaylist = (id: string): string => {
+    const colors = {
+      'itdv': 'bg-blue-600',
+      'hgh': 'bg-purple-600',
+      'lightning-thrashes': 'bg-red-600',
+      'top100-music': 'bg-yellow-600',
+      'upbeats': 'bg-green-600'
+    };
+    return colors[id as keyof typeof colors] || 'bg-gray-600';
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-xl">Loading playlists...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       <div className="container mx-auto px-4 py-8">
@@ -84,6 +119,7 @@ export default function PlaylistIndexPage() {
                     : 'bg-blue-100 text-blue-800'
                 }`}>
                   {playlist.type === 'rss' ? '📡 RSS Feed' : '🌐 Web Player'}
+                  {playlist.medium === 'musicL' && ' 🎵'}
                 </span>
                 <div className={`w-3 h-3 rounded-full ${playlist.color}`}></div>
               </div>
@@ -113,15 +149,15 @@ export default function PlaylistIndexPage() {
           ))}
         </div>
 
-        {/* RSS Feed Information */}
+        {/* Podcasting 2.0 musicL Information */}
         <div className="bg-gray-800 rounded-lg p-6 mb-8">
-          <h2 className="text-2xl font-bold mb-4">About RSS Feeds</h2>
+          <h2 className="text-2xl font-bold mb-4">About Podcasting 2.0 musicL Playlists</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h3 className="font-semibold text-gray-300 mb-2">What are RSS Feeds?</h3>
+              <h3 className="font-semibold text-gray-300 mb-2">What is musicL?</h3>
               <p className="text-sm text-gray-400 mb-4">
-                RSS feeds allow you to subscribe to music playlists in your favorite podcast apps. 
-                They&apos;re compatible with Podcasting 2.0 apps and support Value4Value payments.
+                musicL is a Podcasting 2.0 specification for music playlists. These playlists are 
+                compatible with Podcasting 2.0 apps and support Value4Value payments for artists.
               </p>
               <h3 className="font-semibold text-gray-300 mb-2">Compatible Apps:</h3>
               <ul className="text-sm text-gray-400 space-y-1">
@@ -132,12 +168,13 @@ export default function PlaylistIndexPage() {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold text-gray-300 mb-2">Features:</h3>
+              <h3 className="font-semibold text-gray-300 mb-2">musicL Features:</h3>
               <ul className="text-sm text-gray-400 space-y-1">
                 <li>• Podcasting 2.0 compliant</li>
                 <li>• Value4Value (V4V) support</li>
                 <li>• Cross-feed references</li>
                 <li>• Music track metadata</li>
+                <li>• Direct artist payments</li>
                 <li>• Offline listening</li>
               </ul>
             </div>
@@ -178,4 +215,8 @@ export default function PlaylistIndexPage() {
       </div>
     </div>
   );
+}
+
+export default function PlaylistIndexPage() {
+  return <PlaylistContent />;
 } 

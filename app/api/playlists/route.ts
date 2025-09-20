@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PlaylistManager } from '@/lib/playlist-manager';
+import { prisma } from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
   try {
@@ -32,8 +33,26 @@ export async function GET(request: NextRequest) {
       });
     }
     
-    // Get all playlists
-    const playlists = await PlaylistManager.getAllPlaylists();
+    // Get all playlists from PostgreSQL database
+    console.log('🔍 Fetching playlists from database...');
+    const dbPlaylists = await prisma.userPlaylist.findMany({
+      orderBy: { createdAt: 'asc' }
+    });
+    
+    console.log(`📊 Found ${dbPlaylists.length} playlists in database`);
+    
+    // Transform to match expected format
+    const playlists = dbPlaylists.map(playlist => ({
+      id: playlist.id,
+      name: playlist.name,
+      description: playlist.description,
+      coverImage: playlist.image,
+      isPublic: playlist.isPublic,
+      createdBy: playlist.createdBy,
+      createdAt: playlist.createdAt.toISOString(),
+      updatedAt: playlist.updatedAt.toISOString(),
+      trackCount: 0 // We'll add tracks later
+    }));
     
     return NextResponse.json({
       success: true,
@@ -42,9 +61,12 @@ export async function GET(request: NextRequest) {
     });
     
   } catch (error) {
-    console.error('Failed to get playlists:', error);
+    console.error('❌ Failed to get playlists:', error);
     return NextResponse.json(
-      { error: 'Failed to get playlists' },
+      { 
+        error: 'Failed to get playlists',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }
