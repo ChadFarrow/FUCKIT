@@ -16,7 +16,7 @@ import dynamic from 'next/dynamic';
 
 
 
-// Dynamic imports for heavy components
+// Dynamic imports for heavy components with better loading states
 const AlbumCard = dynamic(() => import('@/components/AlbumCardLazy'), {
   loading: () => (
     <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 animate-pulse">
@@ -25,7 +25,7 @@ const AlbumCard = dynamic(() => import('@/components/AlbumCardLazy'), {
       <div className="h-3 bg-gray-700/50 rounded w-2/3"></div>
     </div>
   ),
-  ssr: true
+  ssr: false // Disable SSR for better performance
 });
 
 const CDNImage = dynamic(() => import('@/components/CDNImageLazy'), {
@@ -48,7 +48,7 @@ const ControlsBar = dynamic(() => import('@/components/ControlsBarLazy'), {
       </div>
     </div>
   ),
-  ssr: true
+  ssr: false // Disable SSR for better performance
 });
 
 // Loading skeleton component for better UX
@@ -115,7 +115,7 @@ export default function HomePage() {
   const [displayedAlbums, setDisplayedAlbums] = useState<RSSAlbum[]>([]);
   const [hasMoreAlbums, setHasMoreAlbums] = useState(true);
   const ALBUMS_PER_PAGE = 50; // Load 50 albums per page for better user experience
-  const API_VERSION = 'v5'; // Increment to bust cache when API changes - v5 increases page size for better UX
+  const API_VERSION = 'v6'; // Increment to bust cache when API changes - v6 optimizes database queries
   
   // HGH filter removed - no longer needed
   
@@ -204,11 +204,11 @@ export default function HomePage() {
         localStorage.removeItem(key);
       });
 
-      // Also clear current cache if it's stale (older than 5 minutes)
+      // Also clear current cache if it's stale (older than 15 minutes for better performance)
       const timestamp = localStorage.getItem(`albumsCacheTimestamp_${ALBUMS_PER_PAGE}_${API_VERSION}`);
       if (timestamp) {
         const age = Date.now() - parseInt(timestamp);
-        if (age > 5 * 60 * 1000) { // 5 minutes
+        if (age > 15 * 60 * 1000) { // 15 minutes - increased for better performance
           localStorage.removeItem(`cachedAlbums_${ALBUMS_PER_PAGE}_${API_VERSION}`);
           localStorage.removeItem(`albumsCacheTimestamp_${ALBUMS_PER_PAGE}_${API_VERSION}`);
         }
@@ -225,8 +225,13 @@ export default function HomePage() {
     // Only start loading background after critical albums are loaded
     if (isCriticalLoaded && !backgroundImageLoaded) {
       const timer = setTimeout(() => {
-        // Background image will be triggered by the img onLoad
-      }, 500); // Small delay after critical content
+        // Load background image after critical content
+        const bgElement = document.getElementById('background-image');
+        if (bgElement) {
+          bgElement.style.opacity = '0.6';
+          setBackgroundImageLoaded(true);
+        }
+      }, 1000); // Delay after critical content loads
       
       return () => clearTimeout(timer);
     }
@@ -242,7 +247,7 @@ export default function HomePage() {
       setLoadingProgress(0);
       
       // Get total count first for pagination with current filter
-      const totalCountResponse = await fetch(`/api/albums?limit=1&offset=0&filter=${activeFilter}`);
+      const totalCountResponse = await fetch(`/api/albums-fast?limit=1&offset=0&filter=${activeFilter}`);
       const totalCountData = await totalCountResponse.json();
       const totalCount = totalCountData.totalCount || 0;
       setTotalAlbums(totalCount);
@@ -347,7 +352,7 @@ export default function HomePage() {
     
     try {
       // Get new total count with filter
-      const totalCountResponse = await fetch(`/api/albums?limit=1&offset=0&filter=${newFilter}`);
+      const totalCountResponse = await fetch(`/api/albums-fast?limit=1&offset=0&filter=${newFilter}`);
       const totalCountData = await totalCountResponse.json();
       const totalCount = totalCountData.totalCount || 0;
       setTotalAlbums(totalCount);
@@ -385,14 +390,14 @@ export default function HomePage() {
         
         if (cached && timestamp) {
           const age = Date.now() - parseInt(timestamp);
-          if (age < 5 * 60 * 1000) { // 5 minutes cache for better performance
+          if (age < 15 * 60 * 1000) { // 15 minutes cache for better performance
             console.log('📦 Using cached albums');
             return JSON.parse(cached);
           }
         }
       }
 
-      // Fetch pre-parsed album data from the new API endpoint with pagination
+      // Fetch pre-parsed album data from the optimized API endpoint with pagination
       const params = new URLSearchParams({
         limit: limit.toString(),
         offset: offset.toString(),
@@ -401,8 +406,8 @@ export default function HomePage() {
         // Remove cache busting for better performance
       });
       
-      console.log(`🌐 Fetching: /api/albums?${params}`);
-      const response = await fetch(`/api/albums?${params}`);
+      console.log(`🌐 Fetching: /api/albums-fast?${params}`);
+      const response = await fetch(`/api/albums-fast?${params}`);
       
       if (!response.ok) {
         const errorText = await response.text();

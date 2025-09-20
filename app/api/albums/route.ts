@@ -35,9 +35,21 @@ export async function GET(request: Request) {
       feedWhere.id = feedId;
     }
     
-    // Get feeds only (without tracks for better performance)
+    // OPTIMIZED: Single query with include for better performance
     const feeds = await prisma.feed.findMany({
       where: feedWhere,
+      include: {
+        tracks: {
+          where: {
+            audioUrl: { not: '' }
+          },
+          orderBy: [
+            { publishedAt: 'desc' },
+            { createdAt: 'desc' }
+          ],
+          take: 50 // Limit tracks per feed for performance
+        }
+      },
       orderBy: [
         { priority: 'asc' },
         { createdAt: 'desc' }
@@ -45,17 +57,8 @@ export async function GET(request: Request) {
       take: 200 // Increased limit to ensure all albums are available
     });
     
-    // Get tracks for these feeds in a separate, optimized query
-    const tracks = await prisma.track.findMany({
-      where: {
-        audioUrl: { not: '' },
-        feedId: { in: feeds.map(f => f.id) }
-      },
-      orderBy: [
-        { publishedAt: 'desc' },
-        { createdAt: 'desc' }
-      ]
-    });
+    // Extract tracks from the included data
+    const tracks = feeds.flatMap(feed => feed.tracks);
     
     console.log(`📊 Loaded ${feeds.length} feeds from database`);
     

@@ -116,9 +116,18 @@ export default function RootLayout({
             <ScrollDetectionProvider>
               <AudioProvider>
                 <div className="min-h-screen relative">
-                  {/* Background Image */}
+                  {/* Background Image - Lazy loaded for better performance */}
                   <div 
                     className="fixed inset-0 z-0"
+                    style={{
+                      background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
+                      opacity: 0.8
+                    }}
+                  />
+                  {/* Background image loads after critical content */}
+                  <div 
+                    className="fixed inset-0 z-0 opacity-0 transition-opacity duration-1000"
+                    id="background-image"
                     style={{
                       background: 'url(/stablekraft-rocket.png) center/contain fixed',
                       backgroundAttachment: 'fixed',

@@ -2,16 +2,14 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
-// Fast albums API using pre-computed cache
+// In-memory cache for better performance
 let cachedAlbums: any = null;
 let cacheTimestamp = 0;
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
 
-// Force cache refresh if cache file is newer than our cached data
 function shouldForceRefresh(cachePath: string): boolean {
   try {
-    const stats = fs.statSync(cachePath);
-    const fileModified = stats.mtime.getTime();
+    const fileModified = fs.statSync(cachePath).mtime.getTime();
     return fileModified > cacheTimestamp;
   } catch {
     return false;
@@ -56,73 +54,51 @@ export async function GET(request: Request) {
     if (filter !== 'all') {
       switch (filter) {
         case 'albums':
-          filteredAlbums = cachedAlbums.albums.filter((album: any) => album.trackCount > 6);
+          filteredAlbums = cachedAlbums.albums.filter((album: any) => 
+            album.tracks && album.tracks.length >= 8
+          );
           break;
         case 'eps':
-          filteredAlbums = cachedAlbums.albums.filter((album: any) => album.trackCount > 1 && album.trackCount <= 6);
+          filteredAlbums = cachedAlbums.albums.filter((album: any) => 
+            album.tracks && album.tracks.length >= 3 && album.tracks.length < 8
+          );
           break;
         case 'singles':
-          filteredAlbums = cachedAlbums.albums.filter((album: any) => album.trackCount === 1);
+          filteredAlbums = cachedAlbums.albums.filter((album: any) => 
+            album.tracks && album.tracks.length < 3
+          );
           break;
-        case 'playlist':
-          // For now, treat as all albums since we don't have podroll data in the cache
-          filteredAlbums = cachedAlbums.albums.filter((album: any) => album.trackCount > 1);
-          break;
-        default:
-          filteredAlbums = cachedAlbums.albums;
       }
     }
     
-    const totalCount = filteredAlbums.length;
-    
     // Apply pagination
-    const paginatedAlbums = limit === 0 
-      ? filteredAlbums.slice(offset) 
-      : filteredAlbums.slice(offset, offset + limit);
+    const totalCount = filteredAlbums.length;
+    const paginatedAlbums = filteredAlbums.slice(offset, offset + limit);
     
-    // Convert to expected format
-    const responseAlbums = paginatedAlbums.map((album: any) => ({
-      id: album.id,
-      title: album.title,
-      artist: album.artist,
-      description: album.description,
-      coverArt: album.coverArt,
-      releaseDate: album.releaseDate,
-      tracks: album.tracks,
-      publisher: null, // Not included in fast cache for performance
-      podroll: null,
-      funding: null,
-      feedId: album.feedId,
-      feedUrl: album.feedUrl,
-      lastUpdated: album.lastUpdated
-    }));
-    
-    console.log(`✅ Fast Albums API: Returning ${paginatedAlbums.length}/${totalCount} albums (filter: ${filter}, offset: ${offset}, limit: ${limit})`);
+    // Calculate publisher stats
+    const publisherStats = cachedAlbums.publisherStats || [];
     
     return NextResponse.json({
-      albums: responseAlbums,
+      success: true,
+      albums: paginatedAlbums,
       totalCount,
-      hasMore: limit === 0 ? false : offset + limit < totalCount,
-      offset,
-      limit,
-      publisherStats: [], // Empty for performance
-      lastUpdated: cachedAlbums.lastUpdated,
-      source: 'optimized-cache'
-    }, {
-      headers: {
-        'Cache-Control': 'public, max-age=60, s-maxage=60, stale-while-revalidate=120',
-        'Content-Type': 'application/json',
-        'X-Cache-Source': 'optimized-albums-cache',
-        'ETag': `"${cacheTimestamp}-${totalCount}"`
+      publisherStats,
+      metadata: {
+        returnedAlbums: paginatedAlbums.length,
+        totalAlbums: totalCount,
+        offset,
+        limit,
+        filter,
+        cached: true,
+        cacheAge: now - cacheTimestamp
       }
     });
-
+    
   } catch (error) {
-    console.error('Error in fast albums API:', error);
-    return NextResponse.json({ 
-      error: 'Internal server error',
-      albums: [], 
-      totalCount: 0 
+    console.error('❌ Albums Fast API Error:', error);
+    return NextResponse.json({
+      error: 'Failed to load albums',
+      message: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 });
   }
 }

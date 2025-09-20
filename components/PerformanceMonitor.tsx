@@ -1,40 +1,64 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function PerformanceMonitor() {
+  const [metrics, setMetrics] = useState<{
+    loadTime: number;
+    domContentLoaded: number;
+    firstContentfulPaint: number;
+    largestContentfulPaint: number;
+  } | null>(null);
+
   useEffect(() => {
-    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'production') {
-      // Monitor Core Web Vitals
-      const observer = new PerformanceObserver((list) => {
-        for (const entry of list.getEntries()) {
-          if (entry.entryType === 'largest-contentful-paint') {
-            console.log('LCP:', entry.startTime);
-          } else if (entry.entryType === 'first-input' && 'duration' in entry) {
-            // First Input Delay is represented by the duration
-            console.log('FID:', entry.duration);
-          } else if (entry.entryType === 'layout-shift' && 'value' in entry) {
-            console.log('CLS:', (entry as any).value);
-          }
-        }
+    if (typeof window === 'undefined') return;
+
+    const measurePerformance = () => {
+      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+      const paintEntries = performance.getEntriesByType('paint');
+      
+      const fcp = paintEntries.find(entry => entry.name === 'first-contentful-paint');
+      const lcp = performance.getEntriesByType('largest-contentful-paint')[0];
+
+      setMetrics({
+        loadTime: navigation.loadEventEnd - navigation.loadEventStart,
+        domContentLoaded: navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
+        firstContentfulPaint: fcp ? fcp.startTime : 0,
+        largestContentfulPaint: lcp ? lcp.startTime : 0,
       });
 
-      try {
-        observer.observe({ entryTypes: ['largest-contentful-paint', 'first-input', 'layout-shift'] });
-      } catch (e) {
-        // Some browsers might not support all entry types
-        console.warn('Performance monitoring not fully supported:', e);
-      }
-
-      // Monitor page load time
-      window.addEventListener('load', () => {
-        const loadTime = performance.now();
-        console.log('Page load time:', loadTime);
+      // Log performance metrics
+      console.log('🚀 Performance Metrics:', {
+        loadTime: `${Math.round(navigation.loadEventEnd - navigation.loadEventStart)}ms`,
+        domContentLoaded: `${Math.round(navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart)}ms`,
+        firstContentfulPaint: fcp ? `${Math.round(fcp.startTime)}ms` : 'N/A',
+        largestContentfulPaint: lcp ? `${Math.round(lcp.startTime)}ms` : 'N/A',
       });
+    };
 
-      return () => observer.disconnect();
+    // Wait for all performance entries to be available
+    if (performance.getEntriesByType('navigation').length > 0) {
+      measurePerformance();
+    } else {
+      window.addEventListener('load', measurePerformance);
     }
+
+    return () => {
+      window.removeEventListener('load', measurePerformance);
+    };
   }, []);
 
-  return null; // This component doesn't render anything
-} 
+  // Only show in development
+  if (process.env.NODE_ENV !== 'development' || !metrics) {
+    return null;
+  }
+
+  return (
+    <div className="fixed bottom-4 right-4 bg-black/80 text-white p-2 rounded text-xs font-mono z-50">
+      <div>Load: {Math.round(metrics.loadTime)}ms</div>
+      <div>DOM: {Math.round(metrics.domContentLoaded)}ms</div>
+      <div>FCP: {Math.round(metrics.firstContentfulPaint)}ms</div>
+      <div>LCP: {Math.round(metrics.largestContentfulPaint)}ms</div>
+    </div>
+  );
+}
