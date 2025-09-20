@@ -128,22 +128,25 @@ export async function GET(request: Request) {
       }
     }
     
-    // Sort albums by priority and release date
+    // Sort albums by format (Albums → EPs → Singles) then alphabetically by title
     filteredAlbums.sort((a, b) => {
-      const priorityOrder: Record<string, number> = { 
-        'core': 1, 
-        'high': 2, 
-        'normal': 3, 
-        'low': 4 
+      // Determine format based on track count
+      const getFormatOrder = (trackCount: number) => {
+        if (trackCount >= 6) return 1; // Albums first
+        if (trackCount >= 2) return 2; // EPs second  
+        return 3; // Singles last
       };
-      const aPriority = priorityOrder[a.priority] || 5;
-      const bPriority = priorityOrder[b.priority] || 5;
       
-      if (aPriority !== bPriority) {
-        return aPriority - bPriority;
+      const aFormatOrder = getFormatOrder(a.tracks?.length || 0);
+      const bFormatOrder = getFormatOrder(b.tracks?.length || 0);
+      
+      // First sort by format
+      if (aFormatOrder !== bFormatOrder) {
+        return aFormatOrder - bFormatOrder;
       }
       
-      return new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime();
+      // Then sort alphabetically by title within each format
+      return a.title.localeCompare(b.title);
     });
     
     // Apply pagination
