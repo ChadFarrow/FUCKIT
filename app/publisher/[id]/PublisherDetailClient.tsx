@@ -8,7 +8,7 @@ import { RSSAlbum, RSSPublisherItem } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { generateAlbumUrl, getPublisherInfo } from '@/lib/url-utils';
 import ControlsBar, { FilterType, ViewType, SortType } from '@/components/ControlsBar';
-import CDNImage from '@/components/CDNImage';
+// Removed CDNImage import for performance - using Next.js Image instead
 import { useAudio } from '@/contexts/AudioContext';
 import { toast } from '@/components/Toast';
 import dataService from '@/lib/data-service';
@@ -496,13 +496,17 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
         {/* Fallback background - use artist image or gradient */}
         {publisherInfo?.coverArt ? (
           <div className="fixed inset-0 z-0">
-            <CDNImage 
+            <Image 
               src={getAlbumArtworkUrl(publisherInfo.coverArt, 'large')} 
               alt={publisherInfo.title || 'Artist background'}
               width={1920}
               height={1080}
               className="w-full h-full object-cover"
               priority
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = getPlaceholderImageUrl('large');
+              }}
             />
             {/* Dark overlay for readability */}
             <div className="absolute inset-0 bg-black/70"></div>
@@ -531,13 +535,17 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
         {/* Fallback background - use artist image or gradient */}
         {publisherInfo?.coverArt ? (
           <div className="fixed inset-0 z-0">
-            <CDNImage 
+            <Image 
               src={getAlbumArtworkUrl(publisherInfo.coverArt, 'large')} 
               alt={publisherInfo.title || 'Artist background'}
               width={1920}
               height={1080}
               className="w-full h-full object-cover"
               priority
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = getPlaceholderImageUrl('large');
+              }}
             />
             {/* Dark overlay for readability */}
             <div className="absolute inset-0 bg-black/70"></div>
@@ -648,13 +656,17 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
       {/* Enhanced Background */}
       {publisherInfo?.coverArt ? (
         <div className="fixed inset-0">
-          <CDNImage 
+          <Image 
             src={getAlbumArtworkUrl(publisherInfo.coverArt, 'large')} 
             alt={publisherInfo.title || "Publisher background"}
             width={1920}
             height={1080}
             className="w-full h-full object-cover"
             priority
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = getPlaceholderImageUrl('large');
+            }}
           />
           {/* Gradient overlay for better readability */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/70 to-black/90"></div>
@@ -681,12 +693,16 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
               {publisherInfo?.avatarArt ? (
                 // Use latest item's artwork for avatar
                 <div className="w-48 h-48 rounded-2xl overflow-hidden shadow-2xl ring-4 ring-white/20">
-                  <CDNImage 
+                  <Image 
                     src={getAlbumArtworkUrl(publisherInfo.avatarArt, 'large')} 
                     alt={publisherInfo.title || "Artist"}
                     width={192}
                     height={192}
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = getPlaceholderImageUrl('large');
+                    }}
                   />
                 </div>
               ) : albums.length > 0 ? (
@@ -701,12 +717,16 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
                   
                   return newestAlbum.coverArt ? (
                     <div className="w-48 h-48 rounded-2xl overflow-hidden shadow-2xl ring-4 ring-white/20">
-                      <CDNImage 
+                      <Image 
                         src={getAlbumArtworkUrl(newestAlbum.coverArt, 'large')} 
                         alt={newestAlbum.title || "Latest Release"}
                         width={192}
                         height={192}
                         className="w-full h-full object-cover"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = getPlaceholderImageUrl('large');
+                        }}
                       />
                     </div>
                   ) : (
@@ -815,12 +835,16 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
                       >
                         <div className="relative aspect-square">
                           {album.coverArt ? (
-                            <CDNImage 
+                            <Image 
                               src={getAlbumArtworkUrl(album.coverArt, 'medium')} 
                               alt={album.title}
                               width={300}
                               height={300}
                               className="w-full h-full object-cover"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.src = getPlaceholderImageUrl('medium');
+                              }}
                             />
                           ) : (
                             <div className="w-full h-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
@@ -872,12 +896,16 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
                       >
                         <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
                           {album.coverArt ? (
-                            <CDNImage 
+                            <Image 
                               src={getAlbumArtworkUrl(album.coverArt, 'thumbnail')} 
                               alt={album.title}
                               width={64}
                               height={64}
                               className="w-full h-full object-cover"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.src = getPlaceholderImageUrl('thumbnail');
+                              }}
                             />
                           ) : (
                             <div className="w-full h-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">

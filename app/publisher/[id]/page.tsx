@@ -37,10 +37,23 @@ async function loadPublisherData(publisherId: string) {
     
     console.log(`🏢 Server-side: Looking for publisher: ${publisherId}`);
     
-    // Try to find publisher by title match (case-insensitive)
+    // Try to find publisher by title match (case-insensitive, handle URL slugs)
     const publisherFeed = publisherFeeds.find((feed: any) => {
       const cleanTitle = feed.title?.replace('<![CDATA[', '').replace(']]>', '').toLowerCase() || '';
-      return cleanTitle === publisherId.toLowerCase();
+      const searchId = publisherId.toLowerCase();
+      
+      // Direct match
+      if (cleanTitle === searchId) return true;
+      
+      // Convert hyphens to spaces and compare (e.g., "the-doerfels" -> "the doerfels")
+      const slugToTitle = searchId.replace(/-/g, ' ');
+      if (cleanTitle === slugToTitle) return true;
+      
+      // Convert spaces to hyphens and compare (e.g., "the doerfels" -> "the-doerfels")
+      const titleToSlug = cleanTitle.replace(/\s+/g, '-');
+      if (titleToSlug === searchId) return true;
+      
+      return false;
     });
     
     if (!publisherFeed) {
