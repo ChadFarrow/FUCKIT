@@ -1,8 +1,21 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { Feed, Track } from '@prisma/client';
+
+interface FeedWithTracks extends Feed {
+  tracks: Track[];
+  _count: {
+    tracks: number;
+  };
+}
+
+interface CachedData {
+  feeds: FeedWithTracks[];
+  publisherStats: Array<{ name: string; albumCount: number }>;
+}
 
 // In-memory cache for better performance (cache the database results, not files)
-let cachedData: any = null;
+let cachedData: CachedData | null = null;
 let cacheTimestamp = 0;
 const CACHE_DURATION = 2 * 60 * 1000; // 2 minutes cache for database results
 
@@ -16,8 +29,8 @@ export async function GET(request: Request) {
     const now = Date.now();
     const shouldRefreshCache = !cachedData || (now - cacheTimestamp) > CACHE_DURATION;
     
-    let feeds;
-    let publisherStats;
+    let feeds: FeedWithTracks[];
+    let publisherStats: Array<{ name: string; albumCount: number }>;
     
     if (shouldRefreshCache) {
       console.log('🔄 Fetching albums from database...');
@@ -66,13 +79,13 @@ export async function GET(request: Request) {
       
       console.log(`✅ Loaded ${feeds.length} albums from database`);
     } else {
-      console.log(`⚡ Using cached database results (${cachedData.feeds.length} albums)`);
-      feeds = cachedData.feeds;
-      publisherStats = cachedData.publisherStats;
+      console.log(`⚡ Using cached database results (${cachedData!.feeds.length} albums)`);
+      feeds = cachedData!.feeds;
+      publisherStats = cachedData!.publisherStats;
     }
     
     // Transform feeds into album format for frontend
-    const albums = feeds.map(feed => ({
+    const albums = feeds.map((feed: FeedWithTracks) => ({
       id: feed.id,
       title: feed.title,
       artist: feed.artist || feed.title,
@@ -82,7 +95,7 @@ export async function GET(request: Request) {
       feedUrl: feed.originalUrl,
       feedGuid: feed.id,
       priority: feed.priority,
-      tracks: feed.tracks.map(track => ({
+      tracks: feed.tracks.map((track: Track) => ({
         id: track.id,
         title: track.title,
         duration: track.duration || 180,
