@@ -130,15 +130,21 @@ export async function GET(request: Request) {
     
     // Sort albums by format (Albums → EPs → Singles) then alphabetically by title
     filteredAlbums.sort((a, b) => {
-      // Determine format based on track count
+      // Get the original feed to check total track count (not just tracks with audio)
+      const aFeed = feeds.find(f => f.id === a.id);
+      const bFeed = feeds.find(f => f.id === b.id);
+      
+      const getTotalTrackCount = (feed: any) => feed?._count?.tracks || 0;
+      
+      // Determine format based on total track count
       const getFormatOrder = (trackCount: number) => {
         if (trackCount >= 6) return 1; // Albums first
         if (trackCount >= 2) return 2; // EPs second  
         return 3; // Singles last
       };
       
-      const aFormatOrder = getFormatOrder(a.tracks?.length || 0);
-      const bFormatOrder = getFormatOrder(b.tracks?.length || 0);
+      const aFormatOrder = getFormatOrder(getTotalTrackCount(aFeed));
+      const bFormatOrder = getFormatOrder(getTotalTrackCount(bFeed));
       
       // First sort by format
       if (aFormatOrder !== bFormatOrder) {
