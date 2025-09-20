@@ -10,7 +10,7 @@ import { generateAlbumUrl, generateAlbumSlug, generatePublisherSlug } from '@/li
 import { useAudio } from '@/contexts/AudioContext';
 import { useScrollDetectionContext } from '@/components/ScrollDetectionProvider';
 import ControlsBar from '@/components/ControlsBar';
-import CDNImage from '@/components/CDNImage';
+// import CDNImage from '@/components/CDNImage'; // Replaced with Next.js Image for performance
 
 interface AlbumDetailClientProps {
   albumTitle: string;
@@ -711,8 +711,8 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum }:
         <div className="flex flex-col gap-6 mb-8">
           {/* Album Art with Play Button Overlay */}
           <div className="relative group mx-auto w-[280px] h-[280px]">
-            <CDNImage 
-              src={album?.coverArt || ''} 
+            <Image 
+              src={getAlbumArtworkUrl(album?.coverArt || '', 'medium')} 
               alt={album.title}
               width={280}
               height={280}
@@ -722,7 +722,12 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum }:
               style={{ objectFit: 'cover' }}
               priority // Always prioritize album art loading
               onLoad={() => setAlbumArtLoaded(true)}
-              onError={() => setAlbumArtLoaded(true)}
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = getPlaceholderImageUrl('medium');
+                setAlbumArtLoaded(true);
+              }}
+              placeholder="empty"
             />
             
             {/* Loading placeholder - show when album art is not loaded */}
@@ -814,12 +819,18 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum }:
             <div className="flex items-center gap-4 mb-4">
               {doerfelsPublisherInfo.image && (
                 <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
-                  <CDNImage
-                    src={doerfelsPublisherInfo.image}
+                  <Image
+                    src={getAlbumArtworkUrl(doerfelsPublisherInfo.image, 'thumbnail')}
                     alt="The Doerfels"
                     width={64}
                     height={64}
                     className="w-full h-full object-cover"
+                    loading="lazy"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = getPlaceholderImageUrl('thumbnail');
+                    }}
+                    placeholder="empty"
                   />
                 </div>
               )}
@@ -897,13 +908,19 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum }:
                 <div className="flex items-center gap-3 min-w-0 flex-1">
                   <div className="relative w-10 h-10 md:w-12 md:h-12 flex-shrink-0 overflow-hidden rounded">
                     {/* Use track-specific artwork if available, fallback to album artwork */}
-                    <CDNImage 
-                      src={track.image || album?.coverArt || ''} 
+                    <Image 
+                      src={getAlbumArtworkUrl(track.image || album?.coverArt || '', 'thumbnail')} 
                       alt={track.title}
                       width={48}
                       height={48}
                       className="w-full h-full object-cover"
                       priority={index < 5} // Priority for first 5 tracks
+                      loading={index < 5 ? 'eager' : 'lazy'}
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = getPlaceholderImageUrl('thumbnail');
+                      }}
+                      placeholder="empty"
                     />
                     {/* Play Button Overlay - On album artwork */}
                     <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity duration-200">
