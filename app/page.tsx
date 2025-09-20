@@ -346,17 +346,71 @@ export default function HomePage() {
   const handleFilterChange = async (newFilter: FilterType) => {
     if (newFilter === activeFilter) return; // No change
     
-    // Redirect to playlist page if playlist filter is selected
-    if (newFilter === 'playlist') {
-      router.push('/playlist');
-      return;
-    }
-    
     setActiveFilter(newFilter);
     setCurrentPage(1); // Reset to first page
     setIsLoading(true);
     
     try {
+      if (newFilter === 'playlist') {
+        // Show available playlists as cards
+        const playlists = [
+          {
+            id: 'hgh-playlist',
+            title: 'Homegrown Hits Music Playlist',
+            artist: 'Various Artists',
+            isPlaylistCard: true,
+            playlistUrl: '/playlist/hgh',
+            description: 'Curated playlist from Homegrown Hits podcast featuring Value4Value independent artists',
+            albumCount: 841, // Total tracks in playlist
+            totalTracks: 841,
+            releaseDate: new Date().toISOString(),
+            coverArt: 'https://raw.githubusercontent.com/ChadFarrow/chadf-musicl-playlists/main/docs/HGH-playlist-art.webp'
+          },
+          {
+            id: 'itdv-playlist',
+            title: 'Into The Doerfel-Verse Music Playlist',
+            artist: 'Various Artists',
+            isPlaylistCard: true,
+            playlistUrl: '/playlist/itdv',
+            description: 'Music from Into The Doerfel-Verse podcast episodes 31-56',
+            albumCount: 200, // From your existing data
+            totalTracks: 200,
+            releaseDate: new Date().toISOString(),
+            coverArt: 'https://www.doerfelverse.com/art/itdvchadf.png'
+          },
+          {
+            id: 'lightning-thrashes-playlist',
+            title: 'Lightning Thrashes Playlist',
+            artist: 'Various Artists',
+            isPlaylistCard: true,
+            playlistUrl: '/playlist/lightning-thrashes',
+            description: 'Music from Lightning Thrashes podcast episodes',
+            albumCount: 60, // Estimated from episodes 001-060
+            totalTracks: 60,
+            releaseDate: new Date().toISOString(),
+            coverArt: '/lightning-thrashes-playlist-art.png' // You may need to add this
+          },
+          {
+            id: 'upbeats-playlist',
+            title: 'UpBEATs Music Playlist',
+            artist: 'Various Artists',
+            isPlaylistCard: true,
+            playlistUrl: '/playlist/upbeats',
+            description: 'Music from UpBEATs podcast episodes',
+            albumCount: 50, // Estimated
+            totalTracks: 50,
+            releaseDate: new Date().toISOString(),
+            coverArt: '/upbeats-playlist-art.png' // You may need to add this
+          }
+        ];
+        
+        setDisplayedAlbums(playlists);
+        setTotalAlbums(playlists.length);
+        setHasMoreAlbums(false);
+        setIsLoading(false);
+        return;
+      }
+      
       if (newFilter === 'artists') {
         // Load publishers instead of albums
         const publishersResponse = await fetch('/api/publishers');
