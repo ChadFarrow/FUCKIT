@@ -32,17 +32,60 @@ let lastNudgeShownAt = 0;
 
 export type SignerOp = 'sign' | 'getPublicKey' | 'encrypt' | 'decrypt' | 'connect';
 
+/**
+ * Human-readable labels for event kinds shown in nudge toasts.
+ * Keeps the "Waiting on Primal to approve X" message specific enough that
+ * users know what they're being asked to sign. Pattern from soapbox-pub/ditto.
+ */
+const KIND_LABELS: Record<number, string> = {
+  0: 'profile update',
+  1: 'post',
+  3: 'contact list update',
+  5: 'deletion',
+  6: 'repost',
+  7: 'reaction',
+  1111: 'comment',
+  1984: 'report',
+  9734: 'zap request',
+  10000: 'mute list update',
+  10001: 'pinned notes update',
+  10002: 'relay list update',
+  10003: 'bookmarks update',
+  10015: 'interests update',
+  22242: 'login',
+  30000: 'user list update',
+  30001: 'favorites update',
+  30078: 'app settings',
+  34139: 'favorites update',
+};
+
 interface NudgeOptions {
   /** Short label for the signer (e.g., 'Primal', 'Amber', 'nsec.app'). */
   signerLabel?: string;
   /** The operation being awaited — used to compose the toast message. */
   op?: SignerOp;
+  /** Event kind (for `op: 'sign'`) — produces a more specific toast label. */
+  kind?: number;
+  /**
+   * Optional callback checked at nudge-fire time. If it returns false we
+   * swap the "Waiting…" message for a "relay unreachable" message so the
+   * user knows the signer never got the request (iOS Safari kills WebSockets
+   * when backgrounded; Primal/Amber never see the signing request and the
+   * generic nudge is misleading).
+   */
+  isBunkerConnected?: () => boolean;
 }
 
-function messageFor(op: SignerOp | undefined, signerLabel: string): string {
+function messageFor(
+  op: SignerOp | undefined,
+  signerLabel: string,
+  kind: number | undefined,
+): string {
   const label = signerLabel || 'your signer';
+  const subject = kind !== undefined ? KIND_LABELS[kind] : undefined;
   switch (op) {
     case 'sign':
+      if (subject) return `Waiting on ${label} to approve ${subject}…`;
       return `Waiting on ${label} to approve signing…`;
     case 'encrypt':
     case 'decrypt':
@@ -54,6 +97,11 @@ function messageFor(op: SignerOp | undefined, signerLabel: string): string {
     default:
       return `Waiting on ${label} — check the app to approve.`;
   }
+}
+
+function unreachableMessageFor(signerLabel: string): string {
+  const label = signerLabel || 'your signer';
+  return `${label} relay unreachable — check your connection and try again.`;
 }
 
 /**
@@ -83,7 +131,15 @@ export async function withSignerNudge<T>(
       const now = Date.now();
       if (now - lastNudgeShownAt < NUDGE_THROTTLE_MS) return;
       lastNudgeShownAt = now;
-      toastId = toast.info(messageFor(options.op, options.signerLabel || ''), {
+      const relayOk = options.isBunkerConnected ? options.isBunkerConnected() : true;
+      const label = options.signerLabel || '';
+      const message = relayOk
+        ? messageFor(options.op, label, options.kind)
+        : unreachableMessageFor(label);
+      // Use warning (orange) when the relay looks dead — it's an actionable problem,
+      // not just a slow signer.
+      const show = relayOk ? toast.info : toast.warning;
+      toastId = show(message, {
         // Long duration: the toast sticks until cleanup() or the user dismisses it
         duration: HARD_TIMEOUT_MS,
       });

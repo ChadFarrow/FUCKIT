@@ -199,6 +199,7 @@ export default function LoginModal({ onClose }: LoginModalProps) {
           publicKey = await withSignerNudge(() => client.getPublicKey(), {
             signerLabel,
             op: 'getPublicKey',
+            isBunkerConnected: () => client.isConnected(),
           });
           clearTimeout(timeoutWarning);
           console.log('✅ LoginModal: Got public key from signer:', publicKey.slice(0, 16) + '...');
@@ -299,6 +300,8 @@ export default function LoginModal({ onClose }: LoginModalProps) {
         signedEvent = await withSignerNudge(() => client.signEvent(event as any), {
           signerLabel,
           op: 'sign',
+          kind: event.kind,
+          isBunkerConnected: () => client.isConnected(),
         });
       } catch (signError) {
         const errorMessage = signError instanceof Error ? signError.message : String(signError);

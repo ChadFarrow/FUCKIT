@@ -97,6 +97,7 @@ class NIP46Signer implements Signer {
     this.pubkey = await withSignerNudge(() => this.client.getPublicKey(), {
       signerLabel: this.signerLabel(),
       op: 'getPublicKey',
+      isBunkerConnected: () => this.client.isConnected(),
     });
     return this.pubkey;
   }
@@ -109,6 +110,8 @@ class NIP46Signer implements Signer {
     return withSignerNudge(() => this.client.signEvent(event), {
       signerLabel: this.signerLabel(),
       op: 'sign',
+      kind: event.kind,
+      isBunkerConnected: () => this.client.isConnected(),
     });
   }
 
