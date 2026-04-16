@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 // Note: nostr-tools functions are imported via @/lib/nostr/keys when needed (lazy-loaded)
 import { fetchAndStoreUserRelays, clearStoredUserRelays } from '@/lib/nostr/nip65';
 import { normalizePubkey } from '@/lib/nostr/normalize';
@@ -124,6 +124,19 @@ export function NostrProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  // Auto-refresh profile data when user is loaded without a displayName.
+  // The login API intentionally returns null profile fields to avoid a slow
+  // relay round-trip during login — this effect backfills them afterward.
+  const profileRefreshAttempted = useRef(false);
+
+  useEffect(() => {
+    if (!isLoading && user && !user.displayName && !profileRefreshAttempted.current) {
+      profileRefreshAttempted.current = true;
+      console.log('🔄 NostrContext: Auto-refreshing profile data from Nostr relays...');
+      refreshUser();
+    }
+  }, [isLoading, user]); // eslint-disable-line react-hooks/exhaustive-deps -- refreshUser is stable for the initial call
+
   // Sync user with server - fetches from Nostr relays first (source of truth)
   const refreshUser = useCallback(async () => {
     if (!user) return;
@@ -141,11 +154,6 @@ export function NostrProvider({ children }: { children: React.ReactNode }) {
       if (response.ok) {
         const data = await response.json();
         if (data.success && data.user) {
-          if (data.user.nostrPubkey) {
-            const { normalizePubkey } = await import('@/lib/nostr/normalize');
-            const hex = normalizePubkey(data.user.nostrPubkey);
-            if (hex) data.user.nostrPubkey = hex;
-          }
           if (data.user.nostrPubkey) {
             const { normalizePubkey } = await import('@/lib/nostr/normalize');
             const hex = normalizePubkey(data.user.nostrPubkey);
