@@ -254,15 +254,30 @@ export async function verifyNIP46Connection(
   });
 
   // If connection object exists but relay is stale (e.g. iOS killed WebSocket),
-  // attempt to re-authenticate before giving up
+  // attempt to re-authenticate.  authenticate() now detects dead relay WebSockets
+  // and forces reconnection via startRelayConnection().
   if (!isConnected && connection) {
-    console.log('🔄 NIP-46: Connection stale, attempting re-authentication...');
+    console.log('🔄 NIP-46: Connection stale, attempting re-authentication (with relay reconnect)...');
     try {
       await nip46Client.authenticate();
       isConnected = nip46Client.isConnected();
       console.log('🔄 NIP-46: Re-authentication result:', { isConnected });
     } catch (err) {
       console.warn('⚠️ NIP-46: Re-authentication failed:', err);
+    }
+
+    // If still not connected, give the relay a moment — the fresh WebSocket may
+    // still be completing the handshake after startRelayConnection returned.
+    if (!isConnected) {
+      console.log('🔄 NIP-46: Still not connected, waiting briefly for relay handshake...');
+      for (let i = 0; i < 10; i++) {
+        await new Promise(resolve => setTimeout(resolve, 200));
+        if (nip46Client.isConnected()) {
+          isConnected = true;
+          console.log('✅ NIP-46: Relay connected after brief wait');
+          break;
+        }
+      }
     }
   }
 

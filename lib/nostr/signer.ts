@@ -282,15 +282,23 @@ export class UnifiedSigner {
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : String(error);
           console.warn('⚠️ UnifiedSigner: Failed to restore NIP-46/nsecBunker connection:', error);
-          
-          // Check if the error is due to p-tag mismatch (old connection)
-          if (errorMessage.includes('Signer public key not available') || 
-              errorMessage.includes('different app pubkey') ||
-              errorMessage.includes('p tag')) {
-            console.warn('⚠️ UnifiedSigner: Detected stale NIP-46/nsecBunker connection. Connection has been cleared. Please reconnect with a fresh QR code.');
+
+          // Only clear the saved connection for authentication / pubkey mismatch
+          // errors (stale connection that can never work again).  Do NOT clear for
+          // temporary relay errors — the saved credentials are still valid and the
+          // next ensureSignerAvailable() / restoreNIP46Connection() call can retry.
+          const isStaleConnectionError =
+            errorMessage.includes('Signer public key not available') ||
+            errorMessage.includes('different app pubkey') ||
+            errorMessage.includes('p tag');
+
+          if (isStaleConnectionError) {
+            console.warn('⚠️ UnifiedSigner: Detected stale NIP-46/nsecBunker connection. Clearing saved connection. Please reconnect with a fresh QR code.');
+            clearNIP46Connection();
+          } else {
+            console.warn('⚠️ UnifiedSigner: Relay connection error (not clearing saved connection — credentials still valid for retry)');
           }
-          
-          clearNIP46Connection();
+
           // Don't fall through - user chose NIP-46/nsecBunker, so don't try NIP-07
           return;
         }

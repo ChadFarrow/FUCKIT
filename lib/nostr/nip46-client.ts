@@ -3619,18 +3619,48 @@ export class NIP46Client {
           }
         }
         
-        // Now ensure relay is connected
+        // Now ensure relay is connected — check actual WebSocket state, not just
+        // the relayClient object.  iOS Safari kills WebSockets when the PWA is
+        // backgrounded; the relayClient object survives but its socket is CLOSED.
+        // In that case we must call startRelayConnection() to create a fresh socket.
         if (this.relayClient) {
-          const connectedRelays = this.relayClient.getConnectedRelays?.() || [];
-          if (connectedRelays.length === 0) {
-            this.debugLog('⏳ NIP-46: Relay not connected yet, waiting briefly...');
-            // Wait up to 3 seconds for relay to connect
-            for (let i = 0; i < 30; i++) {
+          let relayAlive = false;
+
+          // Primary check: ask the relay manager for real WebSocket readyState
+          try {
+            const relayManager = (this.relayClient as any).relayManager;
+            relayAlive = relayManager?.isConnected?.(relayUrl) === true;
+          } catch {
+            // Fall back to the connected-relays list
+            const connectedRelays = this.relayClient.getConnectedRelays?.() || [];
+            relayAlive = connectedRelays.length > 0;
+          }
+
+          if (!relayAlive) {
+            this.debugLog('⏳ NIP-46: Relay not connected, waiting briefly before forcing reconnect...');
+            // Give the existing socket a short chance (e.g. reconnect in progress)
+            for (let i = 0; i < 15; i++) {
               await new Promise(resolve => setTimeout(resolve, 100));
-              const retryRelays = this.relayClient.getConnectedRelays?.() || [];
-              if (retryRelays.length > 0) {
-                this.debugLog('✅ NIP-46: Relay connected');
-                break;
+              try {
+                const rm = (this.relayClient as any).relayManager;
+                if (rm?.isConnected?.(relayUrl) === true) {
+                  relayAlive = true;
+                  this.debugLog('✅ NIP-46: Relay reconnected on its own');
+                  break;
+                }
+              } catch { /* ignore */ }
+            }
+
+            // If still dead after 1.5 s, force a fresh relay connection
+            if (!relayAlive) {
+              this.debugLog('⚠️ NIP-46: Relay WebSocket is dead, forcing reconnection...');
+              try {
+                await this.startRelayConnection(relayUrl);
+                this.debugLog('✅ NIP-46: Relay reconnected via startRelayConnection');
+              } catch (reconnectErr) {
+                console.warn('⚠️ NIP-46: Failed to force-reconnect relay in authenticate():', reconnectErr);
+                // Don't throw — let the caller decide what to do when
+                // isConnected() returns false after we set connected=true below.
               }
             }
           }
