@@ -246,6 +246,7 @@ export async function verifyNIP46Connection(
   let isConnected = nip46Client.isConnected();
   const connection = nip46Client.getConnection();
   const pubkey = nip46Client.getPubkey();
+  let lastReauthError: string | null = null;
 
   console.log('🔍 NIP-46/nsecBunker connection verification:', {
     isConnected,
@@ -263,6 +264,7 @@ export async function verifyNIP46Connection(
       isConnected = nip46Client.isConnected();
       console.log('🔄 NIP-46: Re-authentication result:', { isConnected });
     } catch (err) {
+      lastReauthError = err instanceof Error ? err.message : String(err);
       console.warn('⚠️ NIP-46: Re-authentication failed:', err);
     }
 
@@ -282,9 +284,14 @@ export async function verifyNIP46Connection(
   }
 
   if (!isConnected || !connection) {
+    // Surface the actual underlying failure (e.g. WebSocket handshake timeout,
+    // relay refused) instead of the generic "log out and reconnect" message,
+    // so users and logs can tell whether it's a relay outage or a real auth
+    // problem.
+    const detail = lastReauthError ? ` (${lastReauthError})` : '';
     return {
       success: false,
-      error: 'Connection not established. Please try reconnecting your signer.'
+      error: `Signer connection could not be re-established${detail}. The Nostr relay may be unreachable — please try again, or log out and reconnect your signer.`
     };
   }
 
@@ -371,6 +378,23 @@ export async function ensureSignerAvailable(): Promise<ReconnectResult> {
   const currentUserPubkey = getCurrentUserPubkey();
 
   if (loginType === 'nip46' || loginType === 'nsecbunker' || loginType === 'amber') {
+    // FAST PATH: if the UnifiedSigner already holds an NIP-46 client (just with
+    // a dead WebSocket — common on iOS Safari after backgrounding), try reviving
+    // it via verifyNIP46Connection() before falling back to the localStorage-
+    // based restore. The in-memory client has all connection info (signerUrl,
+    // token, signerAppPubkey) so reconnecting through it is more reliable than
+    // re-reading from storage, and it avoids the misleading "Nostr connection
+    // lost. Please log out and reconnect your signer." error when the saved
+    // connection is technically present but loadNIP46Connection() returns null
+    // (e.g. pubkey-mismatch fallthrough, ITP, etc.).
+    if (signer.getNIP46Client()) {
+      console.log('🔄 Signer reports unavailable but NIP-46 client is in memory — trying to revive it before localStorage restore');
+      const verifyResult = await verifyNIP46Connection(signer);
+      if (verifyResult.success) {
+        return verifyResult;
+      }
+      console.log('⚠️ In-memory NIP-46 client could not be revived, falling back to localStorage restore:', verifyResult.error);
+    }
     return restoreNIP46Connection(signer, currentUserPubkey);
   }
 
