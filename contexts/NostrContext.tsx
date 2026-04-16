@@ -42,6 +42,53 @@ export function NostrProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<NostrUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // iOS/Safari kills WebSockets when the tab is backgrounded. The NIP-46
+  // relay socket is what carries sign_event requests to Primal/Amber/bunker.
+  // Without this handler, tapping a heart or boosting from any page outside
+  // the login modal hits a dead socket and the sign request silently hangs
+  // until the wrapper times out. An equivalent handler already runs inside
+  // LoginModal (useNip46Connection); this one keeps the connection alive
+  // for every other page.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const loginType = user?.loginType;
+    if (loginType !== 'nip46' && loginType !== 'nsecbunker') return;
+
+    const handleVisibilityChange = async () => {
+      if (document.visibilityState !== 'visible') return;
+
+      const { getUnifiedSigner } = await import('@/lib/nostr/signer');
+      const client = getUnifiedSigner().getNIP46Client();
+      if (!client) return;
+
+      const { isIOS } = await import('@/lib/utils/device');
+      const isiOSDevice = isIOS();
+
+      try {
+        const reconnected = await client.checkAndReconnectIfNeeded(isiOSDevice);
+        if (reconnected) {
+          const { toast } = await import('@/components/Toast');
+          toast.success('Signer reconnected', { duration: 2500 });
+        }
+      } catch (err) {
+        console.warn('NIP-46 reconnect attempt failed:', err);
+        const { toast } = await import('@/components/Toast');
+        toast.error('Signer disconnected — tap to retry', {
+          duration: 10_000,
+          action: {
+            label: 'Retry',
+            onClick: () => {
+              client.checkAndReconnectIfNeeded(isiOSDevice).catch(() => {});
+            },
+          },
+        });
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [user?.loginType]);
+
   // Run any favorites sync that was deferred from a login flow. The previous
   // pattern fired sync before window.location.reload(), which aborted the
   // in-flight fetches. Now completeLogin / NIP-46 login sets a localStorage
