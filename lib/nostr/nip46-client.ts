@@ -290,8 +290,11 @@ export class NIP46Client {
         hasSecret: !!bunkerInfo.secret,
       });
 
-      // Use the first relay URL for relay-based communication
-      const relayUrl = bunkerInfo.relays[0];
+      // Amber embeds multiple relays in its bunker:// URIs. Use ALL of them
+      // for subscribe/publish so that if one relay is blocked (e.g. Firefox
+      // blocks relay.primal.net) the connection still succeeds via another.
+      const allBunkerRelays = bunkerInfo.relays;
+      const primaryRelayUrl = allBunkerRelays[0];
 
       // Store connection info
       // Note: bunkerInfo.pubkey is the signer app's pubkey, not the user's Nostr account pubkey
@@ -302,95 +305,97 @@ export class NIP46Client {
         pubkey: '', // Will be fetched via get_public_key
         connected: false,
         signerPubkey: bunkerInfo.pubkey, // Store signer app pubkey separately for targeting messages
-        relayUrl: relayUrl, // Store relay URL separately for actual connection
+        relayUrl: primaryRelayUrl, // Store primary relay URL for getRelayUrl()
+        bunkerRelays: allBunkerRelays, // Store ALL relays for subscribe/publish
       } as any;
 
-      // Use relay-based connection (not direct WebSocket) for mobile signers like Aegis
-      this.debugLog('🔌 NIP-46: Connecting via relay for mobile signer:', relayUrl);
+      // Warn about secretless bunker URIs (Aegis-style) — these require
+      // manual approval in the signer app and are slower to connect.
+      if (!bunkerInfo.secret) {
+        console.warn('⚠️ NIP-46: Bunker URI has no secret= parameter. The signer will need to manually approve the connection request.');
+      }
+
+      // Use relay-based connection (not direct WebSocket) for mobile signers
+      this.debugLog('🔌 NIP-46: Connecting via relay for mobile signer:', allBunkerRelays);
       this.debugLog('🔌 NIP-46: Signer app pubkey:', bunkerInfo.pubkey.slice(0, 16) + '...');
 
-      // First, set up the relay connection and subscription
-      await this.startRelayConnection(relayUrl);
+      // Connect ALL bunker relays in parallel, succeed if ANY opens.
+      // startRelayConnection awaits only the primary relay; backup relays
+      // connect in the background (see Fix 2). For bunker URIs we override
+      // that: we connect all URI relays simultaneously and only require at
+      // least one to open.
+      this.debugLog('🔌 NIP-46: Connecting to all bunker relays in parallel:', allBunkerRelays);
 
-      // IMPORTANT: Wait for subscription to be fully active on the relay
-      // This prevents a race condition where we send the connect request before
-      // the relay is ready to forward responses to us
-      this.debugLog('⏳ NIP-46: Waiting for subscription to be fully active...');
-      await new Promise(resolve => setTimeout(resolve, 1000)); // 1s delay for bunker relay (local bridge needs more setup)
-      this.debugLog('✅ NIP-46: Subscription should now be active on', relayUrl);
+      // Initialize relay client for all bunker relays
+      if (this.relaySubscription) {
+        try { this.relaySubscription(); this.relaySubscription = null; } catch {} // cleanup
+      }
+      if (this.relayClient) {
+        try { await this.relayClient.disconnect(); } catch {} // cleanup
+      }
+      this.relayClient = new NostrClient(allBunkerRelays);
 
-      // Log the app pubkey we're using so user can compare with Aegis
-      const currentAppKeyPair = getOrCreateAppKeyPair();
-      this.debugLog('🔑 NIP-46: Our app pubkey (should match Aegis "Application Pubkey"):', currentAppKeyPair.publicKey);
-
-      // Verify relay connection is actually working
+      // Connect all relays in parallel
+      await this.relayClient.connectToRelays(allBunkerRelays);
       const connectedRelays = this.relayClient?.getConnectedRelays?.() || [];
-      this.debugLog('🔌 NIP-46: Connected relays before sending connect request:', connectedRelays);
-      this.debugLog('🔌 NIP-46: Bunker relay URL:', relayUrl);
-      this.debugLog('🔌 NIP-46: Is bunker relay connected?', connectedRelays.includes(relayUrl));
+      this.debugLog('🔌 NIP-46: Connected bunker relays:', connectedRelays);
 
       if (connectedRelays.length === 0) {
-        console.error('❌ NIP-46: No relays connected! Attempting to reconnect...');
-        await this.relayClient?.connectToRelays([relayUrl]);
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        const reconnectedRelays = this.relayClient?.getConnectedRelays?.() || [];
-        this.debugLog('🔌 NIP-46: Connected relays after reconnection attempt:', reconnectedRelays);
-        if (reconnectedRelays.length === 0) {
-          throw new Error(`Failed to connect to bunker relay: ${relayUrl}`);
-        }
-      } else if (!connectedRelays.includes(relayUrl)) {
-        // Bunker relay not in connected list - try to add it
-        console.warn('⚠️ NIP-46: Bunker relay not in connected list, attempting to connect...');
-        await this.relayClient?.connectToRelays([relayUrl]);
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        const updatedRelays = this.relayClient?.getConnectedRelays?.() || [];
-        this.debugLog('🔌 NIP-46: Updated connected relays:', updatedRelays);
-        if (!updatedRelays.includes(relayUrl)) {
-          console.error('❌ NIP-46: Failed to connect to bunker relay:', relayUrl);
-          throw new Error(`Failed to connect to bunker relay: ${relayUrl}. The relay might be offline or blocking connections.`);
-        }
+        throw new Error(`Failed to connect to any bunker relay. Tried: ${allBunkerRelays.join(', ')}`);
       }
+      this.debugLog(`✅ NIP-46: ${connectedRelays.length}/${allBunkerRelays.length} bunker relays connected`);
+
+      // Set up subscription on ALL connected bunker relays
+      // (startRelayConnection handles subscription setup; we call it with the
+      // primary relay but the relay client already has all relays connected)
+      await this.startRelayConnection(primaryRelayUrl);
+
+      // Log the app pubkey we're using so user can compare with signer
+      const currentAppKeyPair = getOrCreateAppKeyPair();
+      this.debugLog('🔑 NIP-46: Our app pubkey:', currentAppKeyPair.publicKey);
 
       // Track events received after this point
       const eventsBeforeConnect = this.eventCounter;
-      this.debugLog('📊 NIP-46: Events received before connect request:', eventsBeforeConnect);
 
       // For bunker:// URIs, the CLIENT should initiate by sending a 'connect' request
-      // This is different from nostrconnect:// where we wait for the signer to connect
       this.debugLog('📤 NIP-46: Sending connect request to signer (bunker:// flow)...');
       try {
-        // Get app pubkey for the connect request
         const appKeyPair = getOrCreateAppKeyPair();
         const appPubkey = appKeyPair.publicKey;
 
-        // Send connect request per NIP-46 spec:
-        // params[0]: remote_user_pubkey (app's pubkey that wants to connect)
-        // params[1]: secret (optional, from bunker URI)
-        // params[2]: permissions (optional but recommended)
-        // Request permissions for sign_event (kind 22242 for login, kind 1 for notes, kind 7 for reactions)
         const permissions = 'sign_event:22242,sign_event:1,sign_event:7,get_public_key';
         const connectParams = bunkerInfo.secret
           ? [appPubkey, bunkerInfo.secret, permissions]
-          : [appPubkey, '', permissions]; // Empty string for secret if not provided
+          : [appPubkey, '', permissions];
 
         this.debugLog('📤 NIP-46: Connect params:', {
           appPubkey: appPubkey.slice(0, 16) + '...',
-          appPubkeyFull: appPubkey,
           hasSecret: !!bunkerInfo.secret,
-          secret: bunkerInfo.secret || 'none',
           signerPubkey: bunkerInfo.pubkey.slice(0, 16) + '...',
-          signerPubkeyFull: bunkerInfo.pubkey,
-          relayUrl: relayUrl,
-          connectParamsArray: connectParams,
+          relays: allBunkerRelays,
         });
-        this.debugLog('🔑 NIP-46: IMPORTANT - The event will be:');
-        this.debugLog('   - Tagged with p-tag:', bunkerInfo.pubkey);
-        this.debugLog('   - Encrypted to pubkey:', bunkerInfo.pubkey);
-        this.debugLog('   - Signed by OUR app pubkey:', appPubkey);
-        this.debugLog('   - Aegis should respond to events tagged with OUR pubkey:', appPubkey);
-        this.debugLog('   - CHECK: Does Aegis show this pubkey as "Application Pubkey"?');
 
-        const response = await this.sendRequest('connect', connectParams);
+        // For secretless bunker URIs, use a shorter fail-fast timeout (25s)
+        // since the signer must manually approve — if it doesn't respond
+        // quickly, something is wrong.
+        const connectTimeout = bunkerInfo.secret ? undefined : 25000;
+        const connectPromise = this.sendRequest('connect', connectParams);
+
+        let response: any;
+        if (connectTimeout) {
+          response = await Promise.race([
+            connectPromise,
+            new Promise((_, reject) =>
+              setTimeout(() => reject(new Error(
+                `Bunker connection timed out after ${connectTimeout / 1000}s. ` +
+                `This bunker URI has no secret= parameter — the signer app must manually approve. ` +
+                `Check your signer for a pending connection request.`
+              )), connectTimeout)
+            ),
+          ]);
+        } else {
+          response = await connectPromise;
+        }
         this.debugLog('✅ NIP-46: Connect request acknowledged by signer:', response);
 
         // Mark as connected after successful connect
@@ -399,8 +404,7 @@ export class NIP46Client {
           this.connection.connectedAt = Date.now();
         }
 
-        // IMPORTANT: After connect succeeds, immediately fetch the user's pubkey
-        // This is required because connect() just returns "ack", not the pubkey
+        // After connect succeeds, immediately fetch the user's pubkey
         this.debugLog('📤 NIP-46: Now requesting user pubkey via get_public_key...');
         try {
           const userPubkey = await this.sendRequest('get_public_key', []);
@@ -411,32 +415,24 @@ export class NIP46Client {
           }
         } catch (pubkeyError) {
           console.warn('⚠️ NIP-46: Failed to get pubkey after connect:', pubkeyError);
-          // Don't throw - we can try again later in LoginModal
         }
       } catch (connectError) {
         console.warn('⚠️ NIP-46: Connect request failed or timed out:', connectError);
 
-        // Log post-connect diagnostics
         const eventsAfterConnect = this.eventCounter;
         const eventsReceived = eventsAfterConnect - eventsBeforeConnect;
         const postConnectRelays = this.relayClient?.getConnectedRelays?.() || [];
         this.debugLog('📊 NIP-46: Post-connect diagnostics:', {
           eventsReceivedDuringConnect: eventsReceived,
-          totalEventsNow: eventsAfterConnect,
           relaysStillConnected: postConnectRelays,
-          bunkerRelayStillConnected: postConnectRelays.includes(relayUrl),
           lastEventTime: this.lastEventTime > 0 ? `${Math.floor((Date.now() - this.lastEventTime) / 1000)}s ago` : 'never',
-          note: eventsReceived === 0
-            ? '⚠️ NO EVENTS received during connect - subscription may not be working'
-            : `✅ ${eventsReceived} events received during connect`,
         });
 
-        if (!postConnectRelays.includes(relayUrl)) {
-          console.error('❌ NIP-46: Bunker relay disconnected during connect request!');
+        if (postConnectRelays.length === 0) {
+          console.warn('⚠️ NIP-46: All bunker relays disconnected during connect request!');
         }
 
         // Don't throw - the signer might still respond to get_public_key
-        // Some signers don't implement the connect method
       }
     } catch (error) {
       console.error('❌ NIP-46: Failed to parse bunker:// URI:', error);
@@ -680,23 +676,30 @@ export class NIP46Client {
     this.debugLog('⏳ NIP-46: Waiting for connection event from signer...');
 
     // Check if this is a bunker:// connection (has signerPubkey)
-    // Bunker connections (like Aegis) use a local relay bridge that ONLY works with the specified relay
     const isBunkerConnection = !!(this.connection as any).signerPubkey;
 
-    // Get backup relays (will be empty array for bunker connections)
+    // For bunker connections, use ALL relays from the bunker URI.
+    // Amber embeds multiple relays and if the first is blocked (e.g. Firefox
+    // blocks relay.primal.net), subscribing to all gives us a fallback.
+    const allBunkerRelays: string[] = (this.connection as any).bunkerRelays || [];
+
+    // Get backup relays for non-bunker connections
     const { getDefaultRelays } = await import('./relay');
     const defaultRelays = getDefaultRelays();
     const backupRelays = isBunkerConnection ? [] : defaultRelays.filter(url => url !== relayUrl).slice(0, 2);
 
     let subscribeRelays: string[];
-    if (isBunkerConnection) {
-      // For bunker connections, ONLY subscribe to the primary relay
-      // Local relay bridges (Aegis, etc) only work with their specific relay
-      subscribeRelays = [relayUrl];
-      this.debugLog(`✅ NIP-46: Bunker connection - subscribing ONLY to primary relay:`, {
-        primary: relayUrl,
-        note: 'Bunker signers (Aegis) use local relay bridges. Backup relays would not work.',
+    if (isBunkerConnection && allBunkerRelays.length > 0) {
+      // For bunker connections, subscribe to ALL relays from the URI
+      subscribeRelays = allBunkerRelays;
+      this.debugLog(`✅ NIP-46: Bunker connection - subscribing to ALL URI relays:`, {
+        relays: allBunkerRelays,
+        count: allBunkerRelays.length,
       });
+    } else if (isBunkerConnection) {
+      // Fallback for bunker connections without stored relays
+      subscribeRelays = [relayUrl];
+      this.debugLog(`✅ NIP-46: Bunker connection - subscribing to primary relay only:`, relayUrl);
     } else {
       // For other connections (nostrconnect://), subscribe to primary relay AND backup relays
       // This increases the chance of receiving events if relay connectivity is inconsistent
@@ -710,13 +713,12 @@ export class NIP46Client {
       });
     }
     
-    // CRITICAL: Verify primary relay is connected before subscribing
-    // If this relay fails, connection will not work because Amber/Aegis publishes to this relay
-    this.debugLog(`🔌 NIP-46: Connecting to relays:`, subscribeRelays);
+    // Await ONLY the primary relay — this is the critical path for QR display speed.
+    // Backup relays are connected in the background so they don't block the UI.
+    this.debugLog(`🔌 NIP-46: Connecting to primary relay:`, relayUrl);
     try {
-      await this.relayClient.connectToRelays(subscribeRelays);
+      await this.relayClient.connectToRelays([relayUrl]);
       const connectedRelays = this.relayClient.getConnectedRelays();
-      this.debugLog('✅ NIP-46: Connected to relay(s):', connectedRelays);
 
       // Verify the primary relay is actually connected
       if (!connectedRelays.includes(relayUrl)) {
@@ -727,42 +729,30 @@ export class NIP46Client {
       }
 
       this.debugLog(`✅ NIP-46: Primary relay ${relayUrl} is connected and ready`);
-      if (backupRelays.length > 0) {
-        const connectedBackups = backupRelays.filter(url => connectedRelays.includes(url));
-        if (connectedBackups.length > 0) {
-          this.debugLog(`✅ NIP-46: Also connected to ${connectedBackups.length} backup relay(s):`, connectedBackups);
-        } else {
-          console.warn(`⚠️ NIP-46: No backup relays connected, but primary relay is ready`);
-        }
-      }
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : String(err);
       console.error(`❌ NIP-46: Failed to connect to primary relay ${relayUrl}:`, errorMsg);
-      // Provide a helpful error message with suggestions
       const helpMessage = `The relay "${relayUrl}" may be offline or unreachable. Try regenerating your bunker:// URI in your signer app (Aegis/Amber) with a different relay like wss://relay.nsec.app or wss://relay.damus.io`;
       throw new Error(`Failed to connect to relay ${relayUrl}. ${helpMessage}`);
     }
-    
+
+    // Fire backup relay connections in background — don't block QR display
+    if (backupRelays.length > 0) {
+      this.relayClient.connectToRelays(backupRelays).then(() => {
+        const connectedBackups = backupRelays.filter(url =>
+          (this.relayClient?.getConnectedRelays() || []).includes(url)
+        );
+        if (connectedBackups.length > 0) {
+          this.debugLog(`✅ NIP-46: Background-connected ${connectedBackups.length} backup relay(s):`, connectedBackups);
+        }
+      }).catch((err) => {
+        console.warn('⚠️ NIP-46: Backup relay connection failed (non-fatal):', err);
+      });
+    }
+
     // Track subscription start time for debugging
     const subscriptionStartTime = Date.now();
     this.debugLog('📡 NIP-46: Creating subscription at', new Date(subscriptionStartTime).toISOString());
-    
-    // CRITICAL: Ensure relay is configured for reading before subscribing
-    // The relay must be connected with read: true for subscriptions to work
-    // RelayManager.subscribe() filters by read relays, so we need to verify the relay is configured correctly
-    this.debugLog('🔍 NIP-46: Verifying relay configuration for subscription...', {
-      relayUrl,
-      subscribeRelays,
-      hasRelayClient: !!this.relayClient,
-      connectedRelays: this.relayClient?.getConnectedRelays?.() || [],
-      note: 'Relay must be configured with read: true for subscriptions to work',
-    });
-    
-    // Wait for relay to be fully ready before subscribing
-    // Relay is already verified connected by connectToRelays() above, so 500ms is sufficient
-    const subscriptionDelay = isBunkerConnection ? 1000 : 500;
-    this.debugLog(`⏳ NIP-46: Waiting ${subscriptionDelay}ms for relay(s) to be fully ready...`);
-    await new Promise(resolve => setTimeout(resolve, subscriptionDelay));
     
     
     this.subscriptionSetupTime = Date.now();
@@ -2244,14 +2234,14 @@ export class NIP46Client {
           // Store signer's pubkey in signerPubkey field (same as bunker:// connections use)
           (this.connection as any).signerPubkey = event.pubkey;
           this.connection.connected = true; // Mark as connected
-          console.error(`[NIP46-CONNECT] Stored signer's pubkey for event filtering: ${event.pubkey.slice(0, 16)}...`);
+          console.log(`[NIP46-CONNECT] Stored signer's pubkey for event filtering: ${event.pubkey.slice(0, 16)}...`);
           this.debugLog(`🔑 NIP-46: Will only process events from this signer pubkey: ${event.pubkey}`);
         }
 
         // Request public key and wait for it to complete
         // CRITICAL: We need to resolve any pending connect requests with the actual pubkey, not "ack"
         this.sendRequest('get_public_key', []).then((pubkey: string) => {
-          console.error(`[NIP46-SUCCESS] Got public key from Amber: ${pubkey.slice(0, 16)}...`);
+          console.log(`[NIP46-SUCCESS] Got public key from Amber: ${pubkey.slice(0, 16)}...`);
           this.debugLog('🔵 [NIP46Client] Successfully authenticated with Amber pubkey:', pubkey);
           
           // CRITICAL: Make sure we're using the user's pubkey, not Amber's pubkey
@@ -2266,7 +2256,7 @@ export class NIP46Client {
             console.warn(`[NIP46-WARNING] Got pubkey that matches Amber's pubkey (${pubkey.slice(0, 16)}...). This might be correct if the user is using Amber's own account. Proceeding anyway.`);
             // Continue - this might be correct for new Amber accounts
           } else {
-            console.error(`[NIP46-SUCCESS] Using user's pubkey: ${pubkey.slice(0, 16)}... (Amber's pubkey was: ${amberPubkey.slice(0, 16)}...)`);
+            console.log(`[NIP46-SUCCESS] Using user's pubkey: ${pubkey.slice(0, 16)}... (Amber's pubkey was: ${amberPubkey.slice(0, 16)}...)`);
           }
           
           // Store user's pubkey in connection (this replaces Amber's pubkey that was stored temporarily)
@@ -3274,20 +3264,21 @@ export class NIP46Client {
           ].filter(r => r !== primaryRelay); // Remove primary if it's in the backup list
           
           // Check if this is a bunker:// connection (has signerPubkey)
-          // Bunker connections (like Aegis) use a local relay bridge that ONLY works with the specified relay
-          // We must NOT use backup relays for bunker connections
           const isBunkerConnection = !!(this.connection as any).signerPubkey;
+          // For bunker connections, publish to ALL relays from the URI
+          const bunkerRelays: string[] = (this.connection as any).bunkerRelays || [];
 
           let publishRelays: string[];
-          if (method === 'connect' || isBunkerConnection) {
-            // Connect requests OR bunker connections: ONLY primary relay
-            // Bunker signers (Aegis, etc) only listen to their specific relay, not backup relays
+          if (isBunkerConnection && bunkerRelays.length > 0) {
+            // Bunker connections: publish to ALL URI relays for redundancy
+            // If the first relay is blocked (e.g. Firefox blocks relay.primal.net),
+            // the signer will still get the request via another relay.
+            publishRelays = bunkerRelays;
+            this.debugLog('📤 NIP-46: Bunker connection - publishing to ALL URI relays:', bunkerRelays);
+          } else if (method === 'connect' || isBunkerConnection) {
+            // Connect requests or bunker fallback: primary relay only
             publishRelays = [primaryRelay];
-            if (isBunkerConnection) {
-              this.debugLog('📤 NIP-46: Bunker connection - publishing ONLY to primary relay (signer only listens here):', primaryRelay);
-            } else {
-              this.debugLog('📤 NIP-46: Connect request - publishing ONLY to primary relay to avoid rate limits:', primaryRelay);
-            }
+            this.debugLog('📤 NIP-46: Publishing to primary relay only:', primaryRelay);
           } else {
             // Other requests (nostrconnect://): primary + backups for redundancy
             publishRelays = [primaryRelay, ...backupRelays];
@@ -3898,12 +3889,12 @@ export class NIP46Client {
     this.debugLog('✅ [NIP46-SIGN] Proceeding with signEvent - pubkey confirmed:', signerPubkey.slice(0, 16) + '...');
 
     // CRITICAL: Verify we're using the user's pubkey, not Amber's pubkey
-    console.error(`[NIP46-SIGN] Using pubkey for signing: ${signerPubkey.slice(0, 16)}...`);
+    console.log(`[NIP46-SIGN] Using pubkey for signing: ${signerPubkey.slice(0, 16)}...`);
     try {
       const npub = publicKeyToNpub(signerPubkey);
-      console.error(`[NIP46-SIGN] Pubkey converts to npub: ${npub}`);
+      console.log(`[NIP46-SIGN] Pubkey converts to npub: ${npub}`);
     } catch (e) {
-      console.error(`[NIP46-SIGN] Failed to convert pubkey to npub:`, e);
+      console.log(`[NIP46-SIGN] Failed to convert pubkey to npub:`, e);
     }
 
     // Prepare event for signing (without id and sig, but with pubkey for hash calculation)
