@@ -116,14 +116,12 @@ export async function POST(request: NextRequest) {
         },
       });
     } else {
+      // Only update nostrNpub — don't overwrite existing profile data with nulls.
+      // Profile data will be backfilled from Nostr relays by NostrContext.refreshUser().
       user = await prisma.user.update({
         where: { id: user.id },
         data: {
           nostrNpub: calculatedNpub,
-          displayName,
-          avatar,
-          bio,
-          lightningAddress,
           ...(relayList ? { relays: relayList } : {}),
         },
       });
