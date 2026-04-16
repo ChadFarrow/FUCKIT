@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyEvent, getEventHash } from 'nostr-tools';
-import { NostrClient } from '@/lib/nostr/client';
-import { getDefaultRelays } from '@/lib/nostr/relay';
 import { getSessionIdFromRequest } from '@/lib/session-utils';
 import { normalizePubkey } from '@/lib/nostr/normalize';
 import { publicKeyToNpub } from '@/lib/nostr/keys';
@@ -90,26 +88,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    let profileMetadata: any = null;
-    let relayList: string[] | null = null;
-
-    try {
-      const client = new NostrClient(getDefaultRelays());
-      await client.connect();
-
-      profileMetadata = await client.getProfile(hexPubkey);
-      relayList = await client.getRelayList(hexPubkey);
-
-      await client.disconnect();
-    } catch (err) {
-      console.warn('Failed to fetch profile or relays:', err);
-    }
-
-    const displayName = profileMetadata?.name || null;
-    const avatar = profileMetadata?.picture || null;
-    const bio = profileMetadata?.about || null;
-    const lightningAddress =
-      profileMetadata?.lud16 || profileMetadata?.lud06 || null;
+    // Profile fields are set to null here — the client already backfills
+    // profile data via NostrContext after redirect, so the relay round-trip
+    // that used to happen here (~21s) is unnecessary.
+    const displayName = null;
+    const avatar = null;
+    const bio = null;
+    const lightningAddress = null;
+    const relayList: string[] | null = null;
 
     let user = await prisma.user.findUnique({
       where: { nostrPubkey: hexPubkey },

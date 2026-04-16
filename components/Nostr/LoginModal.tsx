@@ -7,7 +7,6 @@ import { getUnifiedSigner } from '@/lib/nostr/signer';
 import { saveNIP46Connection } from '@/lib/nostr/nip46-storage';
 import Nip46Connect from './Nip46Connect';
 import { useNip46Connection } from './hooks';
-import { ensureNostrLoginInitialized } from './NostrLoginInit';
 import {
   preserveWalletConnection,
   prepareLoginEvent,
@@ -92,6 +91,12 @@ export default function LoginModal({ onClose }: LoginModalProps) {
         if (secret) token = decodeURIComponent(secret);
       } catch {
         // Ignore — some URIs don't have a parseable secret param.
+      }
+
+      // Warn about secretless bunker URIs (Aegis-style) — these require
+      // manual approval in the signer app and have a shorter timeout.
+      if (isBunker && !token) {
+        console.warn('⚠️ LoginModal: Bunker URI has no secret= parameter. The signer will need to manually approve.');
       }
 
       const client = new NIP46Client();
@@ -475,10 +480,16 @@ export default function LoginModal({ onClose }: LoginModalProps) {
           console.warn('⚠️ Failed to clear stale connections:', err);
         }
         
-        // Validate connection matches logged-in user before saving
+        // Normalize connection pubkey to the logged-in user's pubkey.
+        // Amber's connect-response comes from its per-session signer key,
+        // not the user's Nostr pubkey. Without this normalization, the
+        // mismatch caused an early-return that skipped saving nostr_user
+        // to localStorage, so the user appeared logged out on reload.
         if (connection && connection.pubkey && connection.pubkey !== loginData.user.nostrPubkey) {
-          console.warn(`⚠️ LoginModal: Connection pubkey (${connection.pubkey.slice(0, 16)}...) doesn't match logged-in user (${loginData.user.nostrPubkey.slice(0, 16)}...). Not saving connection.`);
-        } else {
+          console.log(`ℹ️ LoginModal: Normalizing connection pubkey from ${connection.pubkey.slice(0, 16)}... to logged-in user ${loginData.user.nostrPubkey.slice(0, 16)}...`);
+          connection.pubkey = loginData.user.nostrPubkey;
+        }
+        {
           // Save user data
           localStorage.setItem('nostr_user', JSON.stringify(loginData.user));
           localStorage.setItem('nostr_login_type', loginType);
@@ -613,77 +624,6 @@ export default function LoginModal({ onClose }: LoginModalProps) {
     }
   };
 
-  // nostr-login handler — launches nostr-login's auth UI, then uses polyfilled window.nostr
-  const handleNostrLogin = async () => {
-    try {
-      setIsSubmitting(true);
-      setError(null);
-
-      console.log('🔐 LoginModal: Launching nostr-login auth flow...');
-
-      // Lazy-load nostr-login on first use (avoids slowing every page load
-      // for users who sign in with an extension and never touch this path).
-      await ensureNostrLoginInitialized();
-
-      // Launch nostr-login's auth modal
-      document.dispatchEvent(
-        new CustomEvent('nlLaunch', { detail: 'welcome' })
-      );
-
-      // Wait for nostr-login to complete auth (fires nlAuth event)
-      await new Promise<void>((resolve, reject) => {
-        const timeoutId = setTimeout(() => {
-          document.removeEventListener('nlAuth', handler);
-          reject(new Error('Login timed out. Please try again.'));
-        }, 120000); // 2 minute timeout
-
-        const handler = async (e: Event) => {
-          const detail = (e as CustomEvent).detail;
-          document.removeEventListener('nlAuth', handler);
-          clearTimeout(timeoutId);
-
-          if (detail?.type === 'logout' || !detail) {
-            reject(new Error('Login was cancelled'));
-            return;
-          }
-
-          console.log('✅ nostr-login auth complete, window.nostr is ready');
-
-          try {
-            // window.nostr is now polyfilled by nostr-login
-            // Run the standard challenge/sign/verify flow
-            const { challenge, eventTemplate } = await prepareLoginEvent();
-
-            // Reinitialize the unified signer so it picks up the new window.nostr
-            const signer = getUnifiedSigner();
-            await signer.reinitialize();
-
-            const signedEvent = await signer.signEvent(eventTemplate as any);
-            console.log('✅ LoginModal: Got signed event from nostr-login signer');
-
-            const result = await processSignedLogin(
-              signedEvent, challenge, 'extension', onClose
-            );
-            if (!result.success) {
-              throw new Error(result.error || 'Login failed');
-            }
-            resolve();
-          } catch (signErr) {
-            reject(signErr);
-          }
-        };
-
-        document.addEventListener('nlAuth', handler);
-      });
-    } catch (err) {
-      if (err instanceof Error && err.message !== 'Login was cancelled') {
-        setError(err.message);
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   const modalContent = (
     <div 
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" 
@@ -773,19 +713,6 @@ export default function LoginModal({ onClose }: LoginModalProps) {
               </div>
               <p className="text-xs text-gray-600 ml-9">
                 Scan with the Primal app on your phone.
-              </p>
-            </button>
-            <button
-              onClick={handleNostrLogin}
-              disabled={isSubmitting}
-              className="text-left p-4 rounded-lg border border-gray-200 hover:border-gray-400 hover:shadow-sm transition-all disabled:opacity-50"
-            >
-              <div className="flex items-center gap-3 mb-1">
-                <span className="text-2xl" aria-hidden>⚙️</span>
-                <span className="font-semibold text-gray-900">More options</span>
-              </div>
-              <p className="text-xs text-gray-600 ml-9">
-                Other bunker providers and advanced settings.
               </p>
             </button>
           </div>
