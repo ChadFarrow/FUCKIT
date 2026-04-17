@@ -99,7 +99,8 @@ async function flushQueue() {
     }
 
     const { getUnifiedSigner } = await import('./signer');
-    const { ensureSignerAvailable } = await import('./signer-reconnect');
+    const { ensureSignerAvailable, reconnectSignerManually } = await import('./signer-reconnect');
+    const { toast } = await import('@/components/Toast');
     const signer = getUnifiedSigner();
 
     // Use the same recovery path BoostButton uses (ensureSignerAvailable wraps
@@ -110,6 +111,13 @@ async function flushQueue() {
     const reconnect = await ensureSignerAvailable();
     if (!reconnect.success) {
       console.warn('⚠️ Publish queue: ensureSignerAvailable failed:', reconnect.error);
+      toast.error(reconnect.error || 'Signer unavailable — favorites not synced to Nostr.', {
+        duration: 10000,
+        action: {
+          label: 'Reconnect',
+          onClick: () => { reconnectSignerManually().catch(() => {}); },
+        },
+      });
       items.forEach(item => item.resolve(null));
       flushing = false;
       return;
@@ -134,6 +142,7 @@ async function flushQueue() {
     const successfulConnections = connectionResults.filter(r => r.status === 'fulfilled').length;
     if (successfulConnections === 0 && relayUrls.length > 0) {
       console.warn(`⚠️ Publish queue: Could not connect to any relay (0/${relayUrls.length}). Cooling down ${FAILURE_COOLDOWN_MS / 1000}s.`);
+      toast.error('Could not reach any Nostr relay — favorites not synced.', { duration: 8000 });
       lastFailureTime = Date.now();
       items.forEach(item => item.resolve(null));
       flushing = false;
@@ -141,6 +150,9 @@ async function flushQueue() {
     }
 
     console.log(`📤 Publish queue: flushing ${items.length} item(s) through ${successfulConnections} relay(s)`);
+
+    let signFailures = 0;
+    let publishFailures = 0;
 
     // Sign and publish each event sequentially
     for (let i = 0; i < items.length; i++) {
@@ -169,10 +181,12 @@ async function flushQueue() {
           item.resolve(signedEvent.id);
         } else {
           console.warn(`⚠️ Publish queue: failed to publish ${item.type} event to any relay`);
+          publishFailures++;
           item.resolve(null);
         }
       } catch (error) {
         console.error(`❌ Publish queue: error publishing ${item.type} event:`, error);
+        signFailures++;
         item.resolve(null);
       }
 
@@ -180,6 +194,28 @@ async function flushQueue() {
       if (i < items.length - 1) {
         await new Promise(resolve => setTimeout(resolve, INTER_SIGN_DELAY_MS));
       }
+    }
+
+    if (signFailures > 0) {
+      toast.error(
+        signFailures === items.length
+          ? 'Signer did not respond — favorites not synced to Nostr. Check your signer app.'
+          : `${signFailures} of ${items.length} favorites failed to sign.`,
+        {
+          duration: 10000,
+          action: {
+            label: 'Reconnect',
+            onClick: () => { reconnectSignerManually().catch(() => {}); },
+          },
+        }
+      );
+    } else if (publishFailures > 0) {
+      toast.warning(
+        publishFailures === items.length
+          ? 'Favorites signed but could not be sent to any relay.'
+          : `${publishFailures} of ${items.length} favorites didn't reach a relay.`,
+        { duration: 6000 }
+      );
     }
   } catch (error) {
     console.error('❌ Publish queue: unexpected error during flush:', error);
