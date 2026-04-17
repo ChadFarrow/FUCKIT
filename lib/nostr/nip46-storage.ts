@@ -46,6 +46,22 @@ export function saveNIP46Connection(connection: NIP46Connection): void {
   }
 
   try {
+    // The signer-app pubkey can be stashed under three different property names
+    // depending on the call site:
+    //   - `signerAppPubkey` — canonical (set explicitly by the client save path)
+    //   - `signerPubkey` — how handleRelayEvent stores it from the connect-response
+    //   - `actualSignerAppPubkey` — parallel field also set by connectDirect on restore
+    // Fall through all three so a "re-save" from LoginModal (which hands us the
+    // live connection object without the canonical field) can't wipe the value
+    // written by the earlier in-client save. Without this fallback, a post-login
+    // reload loses the signer pubkey and subsequent sign_event requests are
+    // encrypted to the user's pubkey instead of the signer's — every boost
+    // times out at 120s because the signer can't decrypt.
+    const signerAppPubkey =
+      connection.signerAppPubkey ||
+      (connection as any).signerPubkey ||
+      (connection as any).actualSignerAppPubkey;
+
     const stored: StoredConnection = {
       signerUrl: connection.signerUrl,
       token: connection.token,
@@ -53,7 +69,7 @@ export function saveNIP46Connection(connection: NIP46Connection): void {
       connectedAt: connection.connectedAt || Date.now(),
       expiresAt: Date.now() + TOKEN_EXPIRY_MS,
       relayUrl: connection.relayUrl, // Store relay URL separately for bunker:// connections
-      signerAppPubkey: connection.signerAppPubkey, // Signer service's pubkey (for sign_event targeting)
+      signerAppPubkey, // Signer service's pubkey (for sign_event targeting)
     };
 
     // Store the most recent connection (for backward compatibility)
