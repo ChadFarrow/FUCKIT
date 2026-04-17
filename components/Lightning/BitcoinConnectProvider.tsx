@@ -288,6 +288,7 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
         // Try to get wallet info via getInfo()
         let alias = '';
         let pubkey = '';
+        let advertisedMethods: string[] = [];
 
         try {
           if (provider.getInfo) {
@@ -298,6 +299,7 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
             const info = await provider.getInfo();
             alias = info.node?.alias || '';
             pubkey = info.node?.pubkey || '';
+            advertisedMethods = Array.isArray(info.methods) ? info.methods.map(String) : [];
           }
         } catch (infoError) {
           // Silently handle enable/getInfo failures - wallet may not be unlocked yet
@@ -321,13 +323,27 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
         const supportsBalance = !!provider.getBalance;
         const hasKeysendMethod = !!provider.keysend;
 
-        // Infer keysend capability from provider type instead of probing with a real payment
-        // (probing triggers a payment popup in wallets like Alby extension).
-        // Only trust keysend for wallet types known to support pay_keysend.
-        // Generic NWC wallets (Primal, etc.) expose a keysend method via the
-        // Bitcoin Connect WebLN shim, but the relay may not implement the command.
-        const keysendActuallySupported = hasKeysendMethod &&
-          (type === 'alby' || type === 'alby-hub' || type === 'extension' || type === 'coinos');
+        // Prefer the wallet's own capability advertisement (WebLN GetInfoResponse.methods)
+        // over hardcoded provider-type guessing. NWC wallets populate `methods` with NWC
+        // names ('pay_keysend', 'multi_pay_keysend'); WebLN extensions use 'keysend'.
+        // Falls back to the conservative type whitelist when a wallet returns no methods,
+        // so we don't trust a Primal-style shim that exposes `keysend` without relay support.
+        const methodsAdvertiseKeysend =
+          advertisedMethods.includes('pay_keysend') ||
+          advertisedMethods.includes('multi_pay_keysend') ||
+          advertisedMethods.includes('keysend');
+        const fallbackTypeAllowsKeysend =
+          type === 'alby' || type === 'alby-hub' || type === 'extension' || type === 'coinos';
+        const keysendActuallySupported = hasKeysendMethod && (
+          advertisedMethods.length > 0 ? methodsAdvertiseKeysend : fallbackTypeAllowsKeysend
+        );
+        console.log('🔌 Wallet capabilities:', {
+          providerType: type,
+          hasKeysendMethod,
+          advertisedMethods,
+          methodsAdvertiseKeysend,
+          keysendActuallySupported,
+        });
         setKeysendSupported(keysendActuallySupported);
 
         // Fetch Coinos profile for avatar and username
