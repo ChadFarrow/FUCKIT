@@ -3852,6 +3852,35 @@ export class NIP46Client {
   }
 
   /**
+   * Send a NIP-46 `ping` request with a short timeout to verify the signer
+   * is actually reachable end-to-end (not just that our relay socket is up).
+   *
+   * Resolves on any response — including an error like "unknown method" —
+   * because any reply proves the signer received the event and processed it.
+   * Rejects only on timeout, so callers can fail fast (~5s) instead of
+   * waiting the full 120s sign_event timeout when the signer is offline
+   * (e.g. Primal was killed by iOS and hasn't reconnected its own relay
+   * subscription).
+   */
+  async pingSigner(timeoutMs: number = 5000): Promise<void> {
+    const timeoutPromise = new Promise<void>((_, reject) => {
+      setTimeout(() => reject(new Error(`Signer ping timeout after ${timeoutMs}ms`)), timeoutMs);
+    });
+    const pingPromise = this.sendRequest('ping', []).then(
+      () => undefined,
+      (err: unknown) => {
+        const msg = err instanceof Error ? err.message : String(err);
+        if (msg.toLowerCase().includes('timeout')) {
+          throw err;
+        }
+        // Non-timeout errors (e.g. "unknown method") still prove reachability.
+        return undefined;
+      },
+    );
+    await Promise.race([pingPromise, timeoutPromise]);
+  }
+
+  /**
    * Ensure the relay subscription is active before signing.
    * iOS Safari kills WebSocket connections after ~30s of backgrounding.
    * When the WebSocket dies, the Nostr subscription (REQ) dies with it.

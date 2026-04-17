@@ -311,6 +311,62 @@ export async function verifyNIP46Connection(
 }
 
 /**
+ * User-initiated reconnect. Bypasses the "is available" short-circuit in
+ * ensureSignerAvailable so the user can force a fresh handshake even when
+ * the signer looks fine locally but requests silently time out (classic
+ * iOS PWA + Primal failure where our relay socket reports alive but the
+ * signer's own subscription died). Rebuilds the NIP-46 client from
+ * localStorage when in-memory revival fails.
+ *
+ * Leaves the user record untouched — this is NOT a logout.
+ */
+export async function reconnectSignerManually(): Promise<ReconnectResult> {
+  const signer = getUnifiedSigner();
+  const loginType = getLoginType();
+
+  await signer.ensureInitialized();
+
+  if (loginType === 'nip46' || loginType === 'nsecbunker' || loginType === 'amber') {
+    // Try in-memory revival first — it preserves session state (signerAppPubkey,
+    // bunker relays, rate-limit counters) that localStorage can't reproduce.
+    if (signer.getNIP46Client()) {
+      const verifyResult = await verifyNIP46Connection(signer);
+      if (verifyResult.success) {
+        return verifyResult;
+      }
+      console.log('⚠️ Manual reconnect: in-memory revive failed, falling back to localStorage restore:', verifyResult.error);
+    }
+    const currentUserPubkey = getCurrentUserPubkey();
+    return restoreNIP46Connection(signer, currentUserPubkey);
+  }
+
+  if (loginType === 'nip55') {
+    return restoreNIP55Connection(signer);
+  }
+
+  // For extension/NIP-05, reinit picks up the browser extension again.
+  if (loginType === 'extension' || loginType === 'nip05') {
+    try {
+      await signer.reinitialize();
+      if (signer.isAvailable()) {
+        return { success: true, signerType: signer.getSignerType() || undefined };
+      }
+    } catch (error) {
+      console.warn('⚠️ Manual reconnect: reinit failed:', error);
+    }
+    return {
+      success: false,
+      error: 'No NIP-07 extension available. Please install or enable your Nostr extension.',
+    };
+  }
+
+  return {
+    success: false,
+    error: 'No Nostr signer configured. Please log in.',
+  };
+}
+
+/**
  * Ensure signer is available, attempting reconnection if needed
  * Returns true if signer is available, false otherwise
  */
