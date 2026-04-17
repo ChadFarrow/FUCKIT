@@ -6,6 +6,7 @@ import { useNostr } from '@/contexts/NostrContext';
 import { useUserSettings } from '@/hooks/useUserSettings';
 import { SettingsSection, SettingsRow } from './SettingsLayout';
 import { useRouter } from 'next/navigation';
+import { toast } from '@/components/Toast';
 
 // Lazy load LoginModal
 const LoginModal = dynamic(() => import('@/components/Nostr/LoginModal'), {
@@ -26,6 +27,9 @@ export default function NostrSettings() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [showRelays, setShowRelays] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [isReconnecting, setIsReconnecting] = useState(false);
+
+  const canReconnect = user?.loginType === 'nip46' || user?.loginType === 'nsecbunker';
 
   const handleNip38Toggle = () => {
     updateSettings({ nip38AutoStatus: !settings.nip38AutoStatus });
@@ -40,6 +44,24 @@ export default function NostrSettings() {
       console.error('Logout failed:', error);
     } finally {
       setIsLoggingOut(false);
+    }
+  };
+
+  const handleReconnect = async () => {
+    setIsReconnecting(true);
+    try {
+      const { reconnectSignerManually } = await import('@/lib/nostr/signer-reconnect');
+      const result = await reconnectSignerManually();
+      if (result.success) {
+        toast.success('Signer reconnected');
+      } else {
+        toast.error(result.error || 'Reconnect failed. Please log out and back in.');
+      }
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : String(error);
+      toast.error(`Reconnect failed: ${msg}`);
+    } finally {
+      setIsReconnecting(false);
     }
   };
 
@@ -194,10 +216,20 @@ export default function NostrSettings() {
           </div>
 
           {/* Logout Button - Bottom Right */}
-          <div className="flex justify-end border-t border-gray-700 pt-6">
+          <div className="flex justify-end gap-2 border-t border-gray-700 pt-6">
+            {canReconnect && (
+              <button
+                onClick={handleReconnect}
+                disabled={isReconnecting || isLoggingOut}
+                className="px-3 py-1.5 text-sm bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Rebuild the NIP-46 signer connection without logging out"
+              >
+                {isReconnecting ? 'Reconnecting…' : 'Reconnect signer'}
+              </button>
+            )}
             <button
               onClick={handleLogout}
-              disabled={isLoggingOut}
+              disabled={isLoggingOut || isReconnecting}
               className="px-3 py-1.5 text-sm bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoggingOut ? 'Logging out...' : 'Logout'}

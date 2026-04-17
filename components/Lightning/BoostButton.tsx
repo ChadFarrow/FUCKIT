@@ -11,6 +11,7 @@ import { BoostBoxService } from '@/lib/lightning/boostbox';
 import { ValueSplitsService } from '@/lib/lightning/value-splits';
 import { Zap, Send, X, Mail, Check, ChevronDown, ChevronUp, AlertCircle, Info } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { toast } from '@/components/Toast';
 
 interface BoostButtonProps {
   trackId?: string;
@@ -648,13 +649,31 @@ export function BoostButton({
             setNostrStatus('signing');
             let signedEvent;
             try {
+              // For remote signers (NIP-46), ping first with a short timeout so we
+              // fail fast (~5s) instead of hanging 120s when the signer app was
+              // killed by iOS overnight and isn't listening on the relay. Any
+              // response — even an error — proves reachability.
+              if (signerType === 'nip46' || signerType === 'nsecbunker') {
+                const nip46Client = signer.getNIP46Client();
+                if (nip46Client) {
+                  try {
+                    await nip46Client.pingSigner(5000);
+                    console.log('✅ Boost: Signer ping succeeded, proceeding with signEvent');
+                  } catch (pingErr) {
+                    const pingMsg = pingErr instanceof Error ? pingErr.message : String(pingErr);
+                    console.warn('⚠️ Boost: Signer ping failed, skipping signEvent:', pingMsg);
+                    throw new Error('Signer unreachable. Open your signer app (Primal/Amber) and try again.');
+                  }
+                }
+              }
+
               // Timeout must match NIP-46 relay-based timeout (120s) — Primal and other
               // remote signers route through Nostr relays which can take 40-80+ seconds
               const signPromise = signer.signEvent(noteTemplate as any);
               const timeoutPromise = new Promise((_, reject) =>
                 setTimeout(() => reject(new Error('Signing timeout after 120 seconds')), 120000)
               );
-              
+
               signedEvent = await Promise.race([signPromise, timeoutPromise]) as any;
             } catch (signError) {
               console.error('❌ Boost: Failed to sign event:', signError);
@@ -689,6 +708,34 @@ export function BoostButton({
               }
               setNostrStatus('failed');
               nostrPostingFailed = true;
+
+              // For NIP-46, surface a one-tap Reconnect action so the user doesn't
+              // have to walk to Settings → Reconnect signer themselves.
+              if (signerType === 'nip46' || signerType === 'nsecbunker') {
+                toast.error('Nostr signer not responding.', {
+                  duration: 15000,
+                  action: {
+                    label: 'Reconnect',
+                    onClick: async () => {
+                      const reconnectToastId = toast.info('Reconnecting signer…', { duration: 30000 });
+                      try {
+                        const { reconnectSignerManually } = await import('@/lib/nostr/signer-reconnect');
+                        const result = await reconnectSignerManually();
+                        toast.dismiss(reconnectToastId);
+                        if (result.success) {
+                          toast.success('Signer reconnected — try the boost again.');
+                        } else {
+                          toast.error(result.error || 'Reconnect failed. Please log out and back in.');
+                        }
+                      } catch (err) {
+                        toast.dismiss(reconnectToastId);
+                        const msg = err instanceof Error ? err.message : String(err);
+                        toast.error(`Reconnect failed: ${msg}`);
+                      }
+                    },
+                  },
+                });
+              }
               // Don't return - let execution continue to auto-close the modal
             }
 
