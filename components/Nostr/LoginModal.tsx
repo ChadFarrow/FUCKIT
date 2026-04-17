@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { createPortal } from 'react-dom';
 import { NIP46Client } from '@/lib/nostr/nip46-client';
 import { getUnifiedSigner } from '@/lib/nostr/signer';
@@ -625,8 +626,8 @@ export default function LoginModal({ onClose }: LoginModalProps) {
   };
 
   const modalContent = (
-    <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" 
+    <div
+      className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
       style={{ zIndex: 2147483647 }}
       onClick={(e) => {
         // Close modal when clicking backdrop
@@ -635,23 +636,24 @@ export default function LoginModal({ onClose }: LoginModalProps) {
         }
       }}
     >
-      <div 
-        className="bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-2xl relative max-h-[90vh] overflow-y-auto" 
+      <div
+        className="bg-gray-950 rounded-xl p-6 max-w-md w-full shadow-2xl border border-gray-700 relative max-h-[90vh] overflow-y-auto"
         style={{ zIndex: 2147483647 }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">Sign in with Nostr</h2>
+          <h2 className="text-xl font-bold text-white">Sign in with Nostr</h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-gray-400 hover:text-white transition-colors"
+            aria-label="Close"
           >
             ✕
           </button>
         </div>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+          <div className="mb-4 p-3 bg-red-900/30 border border-red-700/50 text-red-200 rounded-lg text-sm">
             {error}
           </div>
         )}
@@ -663,57 +665,61 @@ export default function LoginModal({ onClose }: LoginModalProps) {
               <button
                 onClick={handleExtensionLogin}
                 disabled={isSubmitting}
-                className="text-left p-4 rounded-lg border border-gray-200 hover:border-blue-400 hover:shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full text-left p-4 rounded-lg bg-gray-800 border border-gray-700 hover:border-stablekraft-teal hover:bg-gray-700/70 transition-all disabled:opacity-50 disabled:cursor-not-allowed group flex items-center gap-3"
               >
-                <div className="flex items-center gap-3 mb-1">
-                  <span className="text-2xl" aria-hidden>🔌</span>
-                  <span className="font-semibold text-gray-900">
+                <span className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-lg bg-blue-500/20 text-xl group-hover:bg-blue-500/30 transition-colors" aria-hidden>🔌</span>
+                <div className="min-w-0 flex-1">
+                  <div className="font-semibold text-white leading-tight">
                     {isSubmitting ? 'Signing in…' : 'Browser Extension'}
-                  </span>
+                  </div>
+                  <p className="text-xs text-gray-300 mt-0.5">
+                    Sign in with Alby, NoStash, nos2x (fastest).
+                  </p>
                 </div>
-                <p className="text-xs text-gray-600 ml-9">
-                  Sign in with Alby, NoStash, nos2x (fastest).
-                </p>
               </button>
             )}
             <button
               onClick={() => { setError(null); setBunkerUri(''); setView('bunker'); }}
               disabled={isSubmitting}
-              className="text-left p-4 rounded-lg border border-gray-200 hover:border-green-400 hover:shadow-sm transition-all disabled:opacity-50"
+              className="w-full text-left p-4 rounded-lg bg-gray-800 border border-gray-700 hover:border-stablekraft-teal hover:bg-gray-700/70 transition-all disabled:opacity-50 group flex items-center gap-3"
             >
-              <div className="flex items-center gap-3 mb-1">
-                <span className="text-2xl" aria-hidden>🔑</span>
-                <span className="font-semibold text-gray-900">Bunker URI</span>
+              <span className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-lg bg-emerald-500/20 text-xl group-hover:bg-emerald-500/30 transition-colors" aria-hidden>🔑</span>
+              <div className="min-w-0 flex-1">
+                <div className="font-semibold text-white leading-tight">Bunker URI</div>
+                <p className="text-xs text-gray-300 mt-0.5">
+                  Paste a <code className="text-stablekraft-teal">bunker://</code> URI from nsec.app, Alby.to, Keycast, Amber, etc.
+                </p>
               </div>
-              <p className="text-xs text-gray-600 ml-9">
-                Paste a <code>bunker://</code> URI from nsec.app, Alby.to, Keycast, Amber, etc.
-              </p>
             </button>
             <button
               onClick={() => { setError(null); setLoginMethod('amber'); setView('amber'); }}
               disabled={isSubmitting}
-              className="text-left p-4 rounded-lg border border-gray-200 hover:border-orange-400 hover:shadow-sm transition-all disabled:opacity-50"
+              className="w-full text-left p-4 rounded-lg bg-gray-800 border border-gray-700 hover:border-stablekraft-teal hover:bg-gray-700/70 transition-all disabled:opacity-50 group flex items-center gap-3"
             >
-              <div className="flex items-center gap-3 mb-1">
-                <span className="text-2xl" aria-hidden>🤖</span>
-                <span className="font-semibold text-gray-900">Amber (Android)</span>
+              <span className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-lg bg-amber-500/10 group-hover:bg-amber-500/20 transition-colors" aria-hidden>
+                <Image src="/amber-logo.png" alt="" width={32} height={32} className="w-8 h-8 object-contain" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="font-semibold text-white leading-tight">Amber (Android)</div>
+                <p className="text-xs text-gray-300 mt-0.5">
+                  Sign in with the Amber app — most popular Android signer.
+                </p>
               </div>
-              <p className="text-xs text-gray-600 ml-9">
-                Sign in with the Amber app — most popular Android signer.
-              </p>
             </button>
             <button
               onClick={() => { setError(null); setLoginMethod('primal'); setView('primal'); }}
               disabled={isSubmitting}
-              className="text-left p-4 rounded-lg border border-gray-200 hover:border-purple-400 hover:shadow-sm transition-all disabled:opacity-50"
+              className="w-full text-left p-4 rounded-lg bg-gray-800 border border-gray-700 hover:border-stablekraft-teal hover:bg-gray-700/70 transition-all disabled:opacity-50 group flex items-center gap-3"
             >
-              <div className="flex items-center gap-3 mb-1">
-                <span className="text-2xl" aria-hidden>📱</span>
-                <span className="font-semibold text-gray-900">Primal (QR code)</span>
+              <span className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-lg overflow-hidden" aria-hidden>
+                <Image src="/primal-logo.png" alt="" width={40} height={40} className="w-10 h-10 object-cover rounded-lg" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="font-semibold text-white leading-tight">Primal (QR code)</div>
+                <p className="text-xs text-gray-300 mt-0.5">
+                  Scan with the Primal app on your phone.
+                </p>
               </div>
-              <p className="text-xs text-gray-600 ml-9">
-                Scan with the Primal app on your phone.
-              </p>
             </button>
           </div>
         )}
@@ -723,11 +729,11 @@ export default function LoginModal({ onClose }: LoginModalProps) {
           <div className="mb-4">
             <button
               onClick={() => { setView('menu'); setError(null); }}
-              className="text-sm text-gray-500 hover:text-gray-700 mb-3 flex items-center gap-1"
+              className="text-sm text-gray-400 hover:text-white mb-3 flex items-center gap-1 transition-colors"
             >
               ← Back
             </button>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
               Paste bunker:// or nostrconnect:// URI
             </label>
             <input
@@ -736,17 +742,17 @@ export default function LoginModal({ onClose }: LoginModalProps) {
               onChange={(e) => setBunkerUri(e.target.value)}
               placeholder="bunker://... or nostrconnect://..."
               disabled={isSubmitting}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:opacity-50 font-mono text-xs mb-2"
+              className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-stablekraft-teal focus:border-transparent disabled:opacity-50 font-mono text-xs mb-2"
               autoFocus
             />
             <button
               onClick={handlePastedUriConnect}
               disabled={isSubmitting || !bunkerUri.trim()}
-              className="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+              className="w-full px-4 py-2 bg-stablekraft-teal text-white rounded-lg hover:bg-stablekraft-teal/90 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors"
             >
               {isSubmitting ? 'Connecting…' : 'Connect'}
             </button>
-            <p className="mt-3 text-xs text-gray-600">
+            <p className="mt-3 text-xs text-gray-400">
               Get a URI from your signer app: open nsec.app, Alby.to, Keycast, or Amber → export/share connection.
             </p>
           </div>
@@ -757,21 +763,21 @@ export default function LoginModal({ onClose }: LoginModalProps) {
           <div className="mb-4">
             <button
               onClick={() => { setView('menu'); setLoginMethod('nostr-login'); cleanupAmberConnection(); setError(null); }}
-              className="text-sm text-gray-500 hover:text-gray-700 mb-3 flex items-center gap-1"
+              className="text-sm text-gray-400 hover:text-white mb-3 flex items-center gap-1 transition-colors"
             >
               ← Back
             </button>
 
             {isInitializingAmber && !showNip46Connect && (
               <div className="mb-4 flex flex-col items-center gap-3 py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
-                <p className="text-sm text-gray-600">Preparing Primal connection…</p>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-stablekraft-teal"></div>
+                <p className="text-sm text-gray-200">Preparing Primal connection…</p>
               </div>
             )}
 
             {amberConnectionError && !showNip46Connect && !isInitializingAmber && (
               <div className="mb-4">
-                <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded mb-3">
+                <div className="p-3 bg-red-900/30 border border-red-700/50 text-red-200 rounded-lg text-sm mb-3">
                   {amberConnectionError}
                 </div>
                 <button
@@ -779,7 +785,7 @@ export default function LoginModal({ onClose }: LoginModalProps) {
                     setAmberConnectionError(null);
                     setAmberConnectionInitialized(false);
                   }}
-                  className="w-full px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+                  className="w-full px-4 py-2 bg-stablekraft-teal text-white rounded-lg hover:bg-stablekraft-teal/90 font-medium transition-colors"
                 >
                   Retry Connection
                 </button>
@@ -810,9 +816,9 @@ export default function LoginModal({ onClose }: LoginModalProps) {
             )}
 
             {!isInitializingAmber && !amberConnectionError && !showNip46Connect && (
-              <div className="mb-4 p-3 bg-purple-50 border border-purple-200 rounded-md">
-                <p className="text-xs text-purple-800">
-                  <strong>Best for iOS:</strong> Primal auto-signs with Full trust and responds near-instantly.
+              <div className="mb-4 p-3 bg-gray-800 border border-gray-700 rounded-lg">
+                <p className="text-sm text-gray-200">
+                  <strong className="text-stablekraft-teal">Best for iOS:</strong> Primal auto-signs with Full trust and responds near-instantly.
                 </p>
               </div>
             )}
@@ -824,21 +830,21 @@ export default function LoginModal({ onClose }: LoginModalProps) {
           <div className="mb-4">
             <button
               onClick={() => { setView('menu'); setLoginMethod('nostr-login'); cleanupAmberConnection(); setError(null); }}
-              className="text-sm text-gray-500 hover:text-gray-700 mb-3 flex items-center gap-1"
+              className="text-sm text-gray-400 hover:text-white mb-3 flex items-center gap-1 transition-colors"
             >
               ← Back
             </button>
 
             {isInitializingAmber && !showNip46Connect && (
               <div className="mb-4 flex flex-col items-center gap-3 py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
-                <p className="text-sm text-gray-600">Preparing Amber connection…</p>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-stablekraft-teal"></div>
+                <p className="text-sm text-gray-200">Preparing Amber connection…</p>
               </div>
             )}
 
             {amberConnectionError && !showNip46Connect && !isInitializingAmber && (
               <div className="mb-4">
-                <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded mb-3">
+                <div className="p-3 bg-red-900/30 border border-red-700/50 text-red-200 rounded-lg text-sm mb-3">
                   {amberConnectionError}
                 </div>
                 <button
@@ -846,7 +852,7 @@ export default function LoginModal({ onClose }: LoginModalProps) {
                     setAmberConnectionError(null);
                     setAmberConnectionInitialized(false);
                   }}
-                  className="w-full px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700"
+                  className="w-full px-4 py-2 bg-stablekraft-teal text-white rounded-lg hover:bg-stablekraft-teal/90 font-medium transition-colors"
                 >
                   Retry Connection
                 </button>
@@ -877,9 +883,9 @@ export default function LoginModal({ onClose }: LoginModalProps) {
             )}
 
             {!isInitializingAmber && !amberConnectionError && !showNip46Connect && (
-              <div className="mb-4 p-3 bg-orange-50 border border-orange-200 rounded-md">
-                <p className="text-xs text-orange-800">
-                  <strong>Best for Android:</strong> Amber is the most popular Android Nostr signer. Tap the button to open Amber, or scan the QR on another device.
+              <div className="mb-4 p-3 bg-gray-800 border border-gray-700 rounded-lg">
+                <p className="text-sm text-gray-200">
+                  <strong className="text-stablekraft-teal">Best for Android:</strong> Amber is the most popular Android Nostr signer. Tap the button to open Amber, or scan the QR on another device.
                 </p>
               </div>
             )}
@@ -890,7 +896,7 @@ export default function LoginModal({ onClose }: LoginModalProps) {
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+            className="flex-1 px-4 py-2 border border-gray-700 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
           >
             Cancel
           </button>

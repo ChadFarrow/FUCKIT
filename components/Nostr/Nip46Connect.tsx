@@ -193,8 +193,8 @@ export default function Nip46Connect({
   return (
     <div className="space-y-4">
       <div className="text-center">
-        <h3 className="text-lg font-semibold mb-2">Connect with {appName}</h3>
-        <p className="text-sm text-gray-600 mb-4">
+        <h3 className="text-lg font-semibold mb-2 text-white">Connect with {appName}</h3>
+        <p className="text-sm text-gray-200 mb-4">
           {isPrimalIOS
             ? 'Tap the button below to open Primal and approve the connection, or copy the link to paste manually'
             : isMobile
@@ -203,9 +203,9 @@ export default function Nip46Connect({
         </p>
       </div>
 
-      {/* QR Code - Desktop only */}
+      {/* QR Code - Desktop only (white bg required for QR contrast) */}
       {!isMobile && (
-        <div className="flex justify-center p-4 bg-white rounded-lg border border-gray-200">
+        <div className="flex justify-center p-4 bg-white rounded-lg">
           <QRCodeSVG
             value={connectionToken}
             size={256}
@@ -218,28 +218,28 @@ export default function Nip46Connect({
       {/* Connection URI - Prominent on mobile, collapsible on desktop */}
       {isMobile ? (
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">Connection Link</label>
+          <label className="block text-sm font-medium text-gray-300">Connection Link</label>
           <div className="flex gap-2">
             <input
               type="text"
               value={connectionToken}
               readOnly
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-sm font-mono text-xs"
+              className="flex-1 px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white font-mono text-xs"
             />
             <button
               onClick={handleCopyToken}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium"
+              className="px-4 py-2 bg-stablekraft-teal hover:bg-stablekraft-teal/90 text-white rounded-lg text-sm font-medium transition-colors"
             >
               Copy
             </button>
           </div>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-400">
             Copy this link and paste it into {appName}&apos;s connection field
           </p>
         </div>
       ) : (
         <details className="group">
-          <summary className="cursor-pointer text-sm text-gray-600 hover:text-gray-800 list-none flex items-center gap-2">
+          <summary className="cursor-pointer text-sm text-gray-400 hover:text-white list-none flex items-center gap-2 transition-colors">
             <span className="transition-transform group-open:rotate-90">▶</span>
             <span>Or copy connection link</span>
           </summary>
@@ -249,16 +249,16 @@ export default function Nip46Connect({
                 type="text"
                 value={connectionToken}
                 readOnly
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-sm font-mono text-xs"
+                className="flex-1 px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white font-mono text-xs"
               />
               <button
                 onClick={handleCopyToken}
-                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-sm"
+                className="px-4 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-600 text-gray-200 rounded-lg text-sm transition-colors"
               >
                 Copy
               </button>
             </div>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-400">
               Paste this in {appName} on your phone to connect
             </p>
           </div>
@@ -271,15 +271,11 @@ export default function Nip46Connect({
           <button
             onClick={handleDeepLink}
             disabled={isConnecting}
-            className={`w-full px-4 py-3 text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed font-medium ${
-              signerApp === 'primal'
-                ? 'bg-purple-600 hover:bg-purple-700'
-                : 'bg-blue-600 hover:bg-blue-700'
-            }`}
+            className="w-full px-4 py-3 bg-stablekraft-teal hover:bg-stablekraft-teal/90 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors"
           >
             {isConnecting ? `Approve in ${appName}, then come back here` : `Sign in with ${appName}`}
           </button>
-          <p className="text-xs text-gray-500 text-center">
+          <p className="text-xs text-gray-400 text-center">
             {isConnecting
               ? `Switch back to this browser after approving`
               : `Opens ${appName} to sign in — you'll come back here after`}
@@ -289,25 +285,25 @@ export default function Nip46Connect({
 
       {/* Connection Status */}
       {connectionStatus === 'connecting' && (
-        <div className="p-4 bg-blue-50 border border-blue-200 rounded-md space-y-3">
+        <div className="p-4 bg-gray-800 border border-gray-700 rounded-lg space-y-3">
           <div className="flex justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-stablekraft-teal"></div>
           </div>
-          <p className="text-sm text-blue-800 text-center font-medium">
+          <p className="text-sm text-white text-center font-medium">
             Waiting for {appName} to connect...
           </p>
-          <p className="text-xs text-blue-600 text-center">
+          <p className="text-xs text-gray-400 text-center">
             {isMobile
               ? `Approve the connection in ${appName}, then switch back to your browser`
               : `Please scan the QR code and approve the connection in ${appName}`}
           </p>
           {isMobile && (
-            <p className="text-xs text-purple-700 text-center font-medium">
+            <p className="text-xs text-stablekraft-teal text-center font-medium">
               After approving, swipe back to this browser tab
             </p>
           )}
           {debugInfo.connectionCheckCount && debugInfo.connectionCheckCount > 10 && (
-            <p className="text-xs text-yellow-700 text-center">
+            <p className="text-xs text-yellow-300 text-center">
               Still waiting... {!isMobile && 'Check the browser console (F12) for details'}
             </p>
           )}
@@ -315,22 +311,22 @@ export default function Nip46Connect({
       )}
 
       {connectionStatus === 'connected' && (
-        <div className="p-3 bg-green-50 border border-green-200 rounded-md">
-          <p className="text-sm text-green-800 text-center">
+        <div className="p-3 bg-green-900/30 border border-green-700/50 rounded-lg">
+          <p className="text-sm text-green-200 text-center">
             ✅ Connected successfully!
           </p>
         </div>
       )}
 
       {connectionStatus === 'error' && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-          <p className="text-sm text-red-800 text-center mb-2">
+        <div className="p-3 bg-red-900/30 border border-red-700/50 rounded-lg">
+          <p className="text-sm text-red-200 text-center mb-2">
             ❌ Connection failed. Please try again.
           </p>
           {errorLog.length > 0 && (
             <button
               onClick={() => setShowErrorLog(!showErrorLog)}
-              className="text-xs text-red-600 hover:text-red-800 underline"
+              className="text-xs text-red-300 hover:text-red-100 underline"
             >
               {showErrorLog ? 'Hide' : 'Show'} error log ({errorLog.length})
             </button>
@@ -371,28 +367,28 @@ export default function Nip46Connect({
 
       {/* Debug Info Panel (development only) */}
       {!isAndroid() && process.env.NODE_ENV !== 'production' && (
-        <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
+        <div className="p-3 bg-gray-800 border border-gray-700 rounded-lg">
           <div className="flex justify-between items-center mb-2">
-            <h4 className="text-sm font-semibold text-blue-900">Debug Info</h4>
+            <h4 className="text-sm font-semibold text-stablekraft-teal">Debug Info</h4>
             <button
               onClick={() => setShowErrorLog(!showErrorLog)}
-              className="text-xs text-blue-600 hover:text-blue-800 underline"
+              className="text-xs text-stablekraft-teal hover:text-white underline transition-colors"
             >
               {showErrorLog ? 'Hide' : 'Show'} error log {errorLog.length > 0 && `(${errorLog.length})`}
             </button>
           </div>
-          <div className="text-xs text-blue-800 space-y-1">
+          <div className="text-xs text-gray-300 space-y-1">
             {debugInfo.relayUrl && (
-              <div>Relay: <span className="font-mono">{debugInfo.relayUrl}</span></div>
+              <div>Relay: <span className="font-mono text-gray-400">{debugInfo.relayUrl}</span></div>
             )}
             {debugInfo.appPubkey && (
-              <div>App Pubkey: <span className="font-mono">{debugInfo.appPubkey}</span></div>
+              <div>App Pubkey: <span className="font-mono text-gray-400">{debugInfo.appPubkey}</span></div>
             )}
             {debugInfo.connectionCheckCount !== undefined && (
               <div>Connection Checks: {debugInfo.connectionCheckCount}</div>
             )}
             {errorLog.length > 0 && (
-              <div className="text-red-600 font-semibold">
+              <div className="text-red-300 font-semibold">
                 ⚠️ {errorLog.length} error(s) logged
               </div>
             )}
@@ -401,10 +397,10 @@ export default function Nip46Connect({
       )}
 
       {/* Instructions */}
-      <div className="p-4 bg-gray-50 border border-gray-200 rounded-md">
-        <h4 className="text-sm font-semibold mb-2">How to connect:</h4>
+      <div className="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 className="text-sm font-semibold mb-2 text-white">How to connect:</h4>
         {signerApp === 'primal' ? (
-          <ol className="text-xs text-gray-600 space-y-1 list-decimal list-inside">
+          <ol className="text-xs text-gray-300 space-y-1 list-decimal list-inside">
             {isMobile ? (
               <>
                 <li>Tap &quot;Sign in with Primal&quot; above</li>
@@ -422,7 +418,7 @@ export default function Nip46Connect({
             )}
           </ol>
         ) : (
-          <ol className="text-xs text-gray-600 space-y-1 list-decimal list-inside">
+          <ol className="text-xs text-gray-300 space-y-1 list-decimal list-inside">
             <li>Open the Amber app on your device</li>
             <li>Go to Settings → Remote Signing (NIP-46) or use the &quot;Connect&quot; option</li>
             {isMobile ? (
@@ -467,7 +463,7 @@ export default function Nip46Connect({
                 alert(`No connection found. Make sure you've approved the connection in ${appName}.`);
               }
             }}
-            className="flex-1 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-sm"
+            className="flex-1 px-4 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-600 text-gray-200 rounded-lg text-sm transition-colors"
           >
             Check Status
           </button>
@@ -477,7 +473,7 @@ export default function Nip46Connect({
               setIsConnecting(false);
               setTimeout(() => onConnected(), 500);
             }}
-            className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium"
+            className="flex-1 px-4 py-2 bg-stablekraft-teal hover:bg-stablekraft-teal/90 text-white rounded-lg text-sm font-medium transition-colors"
           >
             Continue
           </button>
