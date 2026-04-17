@@ -99,29 +99,20 @@ async function flushQueue() {
     }
 
     const { getUnifiedSigner } = await import('./signer');
+    const { ensureSignerAvailable } = await import('./signer-reconnect');
     const signer = getUnifiedSigner();
-    await signer.ensureInitialized();
 
-    if (!signer.isAvailable()) {
-      // Try NIP-55 reconnection
-      const loginType = localStorage.getItem('nostr_login_type');
-      if (loginType === 'nip55') {
-        try {
-          const { NIP55Client } = await import('./nip55-client');
-          const nip55Client = new NIP55Client();
-          await nip55Client.connect();
-          await signer.setNIP55Signer(nip55Client);
-        } catch {
-          console.warn('⚠️ Publish queue: NIP-55 reconnection failed');
-          items.forEach(item => item.resolve(null));
-          flushing = false;
-          return;
-        }
-      } else {
-        items.forEach(item => item.resolve(null));
-        flushing = false;
-        return;
-      }
+    // Use the same recovery path BoostButton uses (ensureSignerAvailable wraps
+    // ensureInitialized + reinitialize + per-loginType restore for NIP-46/55/07).
+    // Without this, a stale singleton (iOS WebSocket killed, page just mounted,
+    // or first-flush race) silently dropped the favorite — boost was fine
+    // because BoostButton already gated on ensureSignerAvailable.
+    const reconnect = await ensureSignerAvailable();
+    if (!reconnect.success) {
+      console.warn('⚠️ Publish queue: ensureSignerAvailable failed:', reconnect.error);
+      items.forEach(item => item.resolve(null));
+      flushing = false;
+      return;
     }
 
     // Collect all relay URLs from queued items
