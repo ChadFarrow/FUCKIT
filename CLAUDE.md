@@ -74,6 +74,8 @@ Key files: `lib/nostr/nip46-client.ts`, `lib/nostr/signer.ts` (NIP46Signer wrapp
 
 **iOS PWA reconnect feedback**: `useNip46Connection`'s `visibilitychange` handler emits `toast.success('Signer reconnected')` on successful reconnect, or an actionable red toast with Retry on failure. No more silent hangs.
 
+**Connection persistence** (`lib/nostr/nip46-storage.ts:48` `saveNIP46Connection`): the signer's app-pubkey is read via a three-way fallback `signerAppPubkey || (connection as any).signerPubkey || (connection as any).actualSignerAppPubkey` because the value gets stashed under different property names by different call sites — `handleRelayEvent` writes `signerPubkey` from the connect-response, `connectDirect` writes `actualSignerAppPubkey` on restore, only the explicit client save path writes the canonical `signerAppPubkey`. `LoginModal` invokes `saveNIP46Connection` twice during login; without the fallback the second save wipes the value and post-reload `sign_event` requests get encrypted with the user's pubkey instead of the signer's → 120s hang on every Primal boost/favorite. Do **not** simplify back to a single field read.
+
 ### Nostr Login Modal (`components/Nostr/LoginModal.tsx`)
 **Card-menu UI** (pattern from `hzrd149/nostrudel`) — no tabs. Cards: Browser Extension (shown only if `window.nostr` detected), Bunker URI (paste `bunker://` / `nostrconnect://`), Primal QR, More options (nostr-login full UI). `view` state: `'menu' | 'bunker' | 'primal'`.
 
@@ -122,6 +124,8 @@ Favoriting saves to DB immediately, queues Nostr publish (500ms debounce). **Alw
 **NIP-01 tag validation**: `createFavoriteEventTemplate` (in `lib/nostr/favorites.ts`) throws if `itemId` is falsy so we never publish events with `["d", null]` tags — strict relays (nsec.app) reject them with "failed to parse envelope". When adding new NIP-51/30001-style parameterized replaceable events, validate all required tag values are non-empty strings at build time, not at publish time.
 
 **Dead-socket filtering** (`RelayManager.publish`): write relays are filtered by `relay.connected !== false` before publishing. Personal NIP-65 relays often accept connect but close the socket before publish runs → nostr-tools throws `SendingOnClosedConnection` synchronously. Each `relay.publish()` is wrapped in `Promise.resolve().then(...)` so any remaining sync throws flow cleanly through `Promise.allSettled` instead of surfacing as unhandled rejections.
+
+**Stale-signer recovery** (`lib/nostr/publish-queue.ts:101` `flushQueue`): routes through `ensureSignerAvailable()` from `signer-reconnect.ts:295` (same wrapper `BoostButton.tsx` uses) instead of a manual `isAvailable() + NIP-55-only` branch. Without this, a stale singleton signer (iOS WebSocket killed during backgrounding, page-mount race, first-flush after reload) silently dropped the favorite — boost was unaffected because it already gated on `ensureSignerAvailable`. Do **not** revert to the manual branch.
 
 ### Favorites Page (`/favorites`)
 Optimistic unfavorite, auto-sync on page load. **Playlist favorites gotcha**: `isPlaylist()` and `playlistImageFallbacks` must use **lowercased feedId**, not the human name. `playlistSlugOverrides` handles ID-to-slug mismatches. Nostr playlist publishing: Kind 34139 addressable event (`d` tag = `stablekraft-favorites`).
