@@ -7,6 +7,11 @@ npm run build        # Build for production
 npm run db:studio    # Open Prisma Studio
 npm run deploy       # Build deployment package (local)
 git push origin main # Deploy to production (Railway auto-deploys from git)
+
+# Android / zapstore (requires JDK 21 + ~/.stablekraft-android.env)
+npm run android:sync                                                                  # Copy web assets into android/
+JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home npm run android:release  # Signed release APK
+zsp publish --skip-certificate-linking                                                # Publish new release to zapstore
 ```
 
 ## Boundaries
@@ -15,6 +20,7 @@ git push origin main # Deploy to production (Railway auto-deploys from git)
 - No `src/` directory — all source lives in `app/`, `lib/`, `components/`, `contexts/`
 - No `deploy-*/` artifacts in the repo — add to `.gitignore` if generated
 - No JSON-file databases — all data is in PostgreSQL via Prisma
+- Android keystore lives at `~/keystores/stablekraft-release.jks`; credentials in gitignored `~/.stablekraft-android.env`. Never commit either. Losing the keystore = losing the ability to ship updates to installed users.
 
 ## Tech Stack
 - Next.js 15 (App Router), React 18, TypeScript, PostgreSQL/Prisma
@@ -43,6 +49,23 @@ When modifying any of those endpoints, check the consumer's expectations in `msp
 **End-to-end verified 2026-04-17**: MSP user triggers "Send Podping" → MSP pushes to msp-podping-service → hivepinger broadcasts `pp_music_update` to Hive → consumer in the same container sees the block ~8–60s later → calls `refresh-by-url` → feed reparsed in Postgres.
 
 **Why the MSP-signer gate on auto-import**: we want strangers' podpings to refresh existing feeds, but not spawn arbitrary new feeds in our DB. Only our own MSP deploys can add feeds without manual `/admin` review.
+
+### Android Distribution (zapstore)
+App is published on [zapstore.dev/apps/app.stablekraft](https://zapstore.dev/apps/app.stablekraft) as a Capacitor 8 WebView wrapping `https://stablekraft.app`. First release 2026-04-18 (v1.0.0). No Next.js/backend code changes per release — the APK just loads the live site.
+
+**Fixed identity (never change):** appId `app.stablekraft`, keystore alias `stablekraft`, cert SHA-256 `27f4191931eeca09382066360f49abe68136be5656fc1429cd0bb952b1aff48e`. Any mismatch breaks updates for installed users.
+
+**Per-release flow:** bump `versionCode`/`versionName` in `android/app/build.gradle:10-11` → build (see Commands) → `gh release create vX.Y.Z android/app/build/outputs/apk/release/app-release.apk --repo ChadFarrow/stablekraft-app` → `zsp publish --skip-certificate-linking` (reads `zapstore.yaml` at repo root).
+
+**Gotchas:**
+- **Capacitor 8 requires JDK 21.** System JDK is 17. Always prefix builds with `JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home` or gradle fails.
+- **`server.url: https://stablekraft.app`** in `capacitor.config.ts` means the APK is a thin shell — a Railway outage makes the app blank. Offline mode would need removing `server.url` and embedding a Next.js static export.
+- **Do NOT propose Bubblewrap/TWA.** That path was torn out in `d40d8029`; always Capacitor WebView.
+- **`zsp` CLI:** use the prebuilt `zsp-X.Y.Z-darwin-arm64` binary from [github.com/zapstore/zsp/releases](https://github.com/zapstore/zsp/releases) → `~/.local/bin/zsp`. Do NOT `go install` — the system Go toolchain is amd64 and produces a Rosetta binary.
+- **Signing during publish:** NIP-07 browser extension requires **5 sequential popup approvals** — easy to time out. Prefer `SIGN_WITH='bunker://…'` with Primal set to Full trust for auto-signing.
+- **`--skip-certificate-linking`** is required on every publish after v1.0.0; the cert-to-Nostr link is one-shot and already done.
+- **`zapstore.yaml` NIP list:** the wizard emits `- 01,` with trailing commas inside each string entry. Hand-fix to `- 01` (integer) before committing, or the published event carries malformed NIPs.
+- **Env file:** keystore credentials live in `~/.stablekraft-android.env` (chmod 600). `STABLEKRAFT_KEY_PASSWORD` = `STABLEKRAFT_KEYSTORE_PASSWORD` because keytool PKCS12 default ties them when `-keypass` is omitted.
 
 ## Key Behaviors
 
