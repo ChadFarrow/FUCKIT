@@ -34,6 +34,10 @@
     "test-add-playlist": "node scripts/test-add-playlist-endpoint.js",
     "reparse-database": "node scripts/reparse-main-branch-database.js",
     "reparse-database-robust": "node scripts/reparse-database-robust.js",
+    "android:sync": "npx cap sync android",
+    "android:icons": "npx @capacitor/assets generate --android --iconBackgroundColor '#1f2937' --splashBackgroundColor '#1f2937'",
+    "android:release": "cd android && ./gradlew assembleRelease",
+    "android:debug": "cd android && ./gradlew assembleDebug",
     "db:generate": "./node_modules/.bin/prisma generate",
     "db:migrate": "./node_modules/.bin/prisma migrate deploy",
     "db:migrate:dev": "./node_modules/.bin/prisma migrate dev",
@@ -96,6 +100,10 @@
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
+    "@capacitor/android": "^8.3.1",
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^8.3.1",
+    "@capacitor/core": "^8.3.1",
     "@next/bundle-analyzer": "^16.0.3",
     "@types/colorthief": "^2.6.1",
     "@types/js-yaml": "^4.0.9",
