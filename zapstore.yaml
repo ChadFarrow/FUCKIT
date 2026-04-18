@@ -1,0 +1,25 @@
+repository: https://github.com/ChadFarrow/stablekraft-app
+description: StableKraft is a Podcasting 2.0 music and podcast aggregator. Stream value-enabled feeds, favorite tracks to Nostr relays, and boost artists with Lightning sats.
+summary: Music & podcast aggregator with Nostr and Lightning
+tags:
+    - music
+    - podcast
+    - nostr
+    - lightning
+    - podcasting-2.0
+license: MIT
+website: stablekraft.app
+icon: https://stablekraft.app/pwa-icon-512.png
+supported_nips:
+    - 01
+    - 04
+    - 07
+    - 19
+    - 44
+    - 46
+    - 51
+    - 57
+    - 65
+metadata_sources:
+    - github
+pubkey: npub177fz5zkm87jdmf0we2nz7mm7uc2e7l64uzqrv6rvdrsg8qkrg7yqx0aaq7
