@@ -1,6 +1,6 @@
 {
   "name": "podcast-music-site",
-  "version": "1.2a555b9363",
+  "version": "1.2a27b53e30",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -96,9 +96,6 @@
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
-    "@capacitor/android": "^7.4.2",
-    "@capacitor/cli": "^7.4.2",
-    "@capacitor/core": "^7.4.2",
     "@next/bundle-analyzer": "^16.0.3",
     "@types/colorthief": "^2.6.1",
     "@types/js-yaml": "^4.0.9",

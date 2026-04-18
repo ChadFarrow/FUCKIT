@@ -23,5 +23,5 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules", "deploy-*", "android-app", "android-twa", "scripts/**/*", "skills/**/*", "capacitor.config.ts"]
+  "exclude": ["node_modules", "deploy-*", "scripts/**/*", "skills/**/*"]
 } 
