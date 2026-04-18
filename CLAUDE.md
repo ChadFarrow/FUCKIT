@@ -30,6 +30,20 @@ git push origin main # Deploy to production (Railway auto-deploys from git)
 ### Daily Workflow (`.github/workflows/refresh-playlists.yml`)
 Runs at 4 AM EST: clears cache -> reparses feeds -> refreshes playlists -> parses publishers -> imports missing albums from publisher feeds (Step 5b via PI API). The `PLAYLISTS` array must include ALL playlist IDs — missing ones won't get nightly processing.
 
+### Podping Consumer Integration (near-real-time feed refresh)
+External service `msp-podping-service` (separate Railway deploy, repo `ChadFarrow/msp-podping-service`) tails the Hive blockchain for `pp_music_*` podpings and calls back into this app. Closes the gap between the 4am batch refresh and when a feed actually updates — typical latency from publisher update to DB reparse is ~1 minute.
+
+Three public endpoints make up the contract (none are auth-gated today):
+- `GET /api/feeds/exists?url=<URL>` or `?guid=<GUID>` → `{ exists: boolean }` — the consumer checks before acting. Blacklisted URLs always return `exists: false` so podpings can't revive removed feeds. Mirrors the URL-variants lookup from `app/api/feeds/refresh-by-url/route.ts:211–219` and reuses `isBlacklistedFeedUrl()` from `lib/feed-exclusions.ts`.
+- `POST /api/feeds/refresh-by-url` with `{ originalUrl }` — consumer calls this when the feed already exists.
+- `POST /api/feeds` with `{ originalUrl, type: 'album' }` — consumer calls this **only** when the podping was signed by our MSP Hive account (`chadf`). Unknown signers + unknown URLs are ignored.
+
+When modifying any of those endpoints, check the consumer's expectations in `msp-podping-service/consumer/src/index.ts` (fields, status codes). If you add an auth requirement, wire a shared-secret env var into the consumer too.
+
+**End-to-end verified 2026-04-17**: MSP user triggers "Send Podping" → MSP pushes to msp-podping-service → hivepinger broadcasts `pp_music_update` to Hive → consumer in the same container sees the block ~8–60s later → calls `refresh-by-url` → feed reparsed in Postgres.
+
+**Why the MSP-signer gate on auto-import**: we want strangers' podpings to refresh existing feeds, but not spawn arbitrary new feeds in our DB. Only our own MSP deploys can add feeds without manual `/admin` review.
+
 ## Key Behaviors
 
 ### Playlist Resolution
