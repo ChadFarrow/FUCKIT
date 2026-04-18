@@ -285,6 +285,17 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
         const { type, name, nwcPubkey } = await detectWalletProviderType();
         setWalletProviderType(type);
 
+        const hasKeysendMethod = !!provider.keysend;
+        const fallbackTypeAllowsKeysend =
+          type === 'alby' || type === 'alby-hub' || type === 'extension' || type === 'coinos';
+
+        // Phase 1: eager synchronous keysend answer before getInfo()'s relay round-trip.
+        // Closes the race where the boost modal opens during the 1–5s NWC get_info window
+        // and the UI banner + lnaddress keysend-fallback gate see keysendSupported === null
+        // even though provider.keysend is already live. Primal (type 'nwc') stays false here
+        // and gets further confirmed false by the methods-array check below.
+        setKeysendSupported(hasKeysendMethod && fallbackTypeAllowsKeysend);
+
         // Try to get wallet info via getInfo()
         let alias = '';
         let pubkey = '';
@@ -321,22 +332,21 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
         }
 
         const supportsBalance = !!provider.getBalance;
-        const hasKeysendMethod = !!provider.keysend;
 
-        // Prefer the wallet's own capability advertisement (WebLN GetInfoResponse.methods)
-        // over hardcoded provider-type guessing. NWC wallets populate `methods` with NWC
-        // names ('pay_keysend', 'multi_pay_keysend'); WebLN extensions use 'keysend'.
-        // Falls back to the conservative type whitelist when a wallet returns no methods,
-        // so we don't trust a Primal-style shim that exposes `keysend` without relay support.
+        // Phase 2: combine both signals. Either a wallet's own capability advertisement
+        // (WebLN GetInfoResponse.methods — NWC uses 'pay_keysend'/'multi_pay_keysend',
+        // extensions use 'keysend') OR the conservative type whitelist is enough to allow
+        // keysend. Using OR instead of "methods overrides" avoids a false negative when a
+        // known-good wallet's methods array is partial/stale (the original methods-first
+        // version in 2a927a60 flipped Alby Hub users to unsupported when get_info omitted
+        // pay_keysend). Primal stays rejected because both signals fail for it (type is
+        // 'nwc', not in whitelist, and its methods array lacks pay_keysend).
         const methodsAdvertiseKeysend =
           advertisedMethods.includes('pay_keysend') ||
           advertisedMethods.includes('multi_pay_keysend') ||
           advertisedMethods.includes('keysend');
-        const fallbackTypeAllowsKeysend =
-          type === 'alby' || type === 'alby-hub' || type === 'extension' || type === 'coinos';
-        const keysendActuallySupported = hasKeysendMethod && (
-          advertisedMethods.length > 0 ? methodsAdvertiseKeysend : fallbackTypeAllowsKeysend
-        );
+        const keysendActuallySupported =
+          hasKeysendMethod && (methodsAdvertiseKeysend || fallbackTypeAllowsKeysend);
         console.log('🔌 Wallet capabilities:', {
           providerType: type,
           hasKeysendMethod,
