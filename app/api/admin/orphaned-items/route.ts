@@ -1,71 +1,45 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-/**
- * GET - Preview orphaned items (feeds/tracks not in any system playlist)
- */
+// Orphan = type='album' AND Track.none(). These are failed/empty album
+// imports left behind by bad fetches, dead URLs, or stale PI API matches.
+// Publishers (no tracks by design), podcasts (standalone episodes), and
+// any album that has ≥1 track are preserved regardless of whether they're
+// referenced by a curated system playlist — the admin can still use the
+// per-feed delete button for one-off cleanup.
+const ORPHAN_WHERE = {
+  type: 'album',
+  Track: { none: {} },
+} as const;
+
 export async function GET() {
   try {
-    // Step 1: Find all feed IDs that have at least one track in a system playlist
-    const feedsWithPlaylistTracks = await prisma.systemPlaylistTrack.findMany({
-      select: {
-        Track: {
-          select: {
-            feedId: true
-          }
-        }
-      }
-    });
-
-    const feedIdsToKeep = [...new Set(
-      feedsWithPlaylistTracks
-        .map(spt => spt.Track?.feedId)
-        .filter((id): id is string => !!id)
-    )];
-
-    console.log(`📋 Found ${feedIdsToKeep.length} feeds with tracks in playlists`);
-
-    // Step 2: Count orphaned feeds
-    const orphanedFeedCount = await prisma.feed.count({
-      where: {
-        id: { notIn: feedIdsToKeep }
-      }
-    });
-
-    // Step 3: Count orphaned tracks (tracks whose feed is orphaned)
-    const orphanedTrackCount = await prisma.track.count({
-      where: {
-        feedId: { notIn: feedIdsToKeep }
-      }
-    });
-
-    // Step 4: Get sample of orphaned feeds for preview (limit 50)
-    const orphanedFeeds = await prisma.feed.findMany({
-      where: {
-        id: { notIn: feedIdsToKeep }
-      },
-      select: {
-        id: true,
-        title: true,
-        artist: true,
-        image: true,
-        type: true,
-        createdAt: true,
-        _count: { select: { Track: true } }
-      },
-      orderBy: { createdAt: 'desc' },
-      take: 50
-    });
-
-    // Step 5: Get total counts for context
-    const totalFeeds = await prisma.feed.count();
-    const totalTracks = await prisma.track.count();
+    const [orphanedFeedCount, totalFeeds, totalTracks, orphanedFeeds] = await Promise.all([
+      prisma.feed.count({ where: ORPHAN_WHERE }),
+      prisma.feed.count(),
+      prisma.track.count(),
+      prisma.feed.findMany({
+        where: ORPHAN_WHERE,
+        select: {
+          id: true,
+          title: true,
+          artist: true,
+          image: true,
+          type: true,
+          originalUrl: true,
+          createdAt: true,
+          _count: { select: { Track: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+        take: 50,
+      }),
+    ]);
 
     return NextResponse.json({
       preview: true,
-      feedsToKeep: feedIdsToKeep.length,
+      feedsToKeep: totalFeeds - orphanedFeedCount,
       orphanedFeeds: orphanedFeedCount,
-      orphanedTracks: orphanedTrackCount,
+      orphanedTracks: 0,
       totalFeeds,
       totalTracks,
       sampleOrphanedFeeds: orphanedFeeds.map(f => ({
@@ -74,9 +48,10 @@ export async function GET() {
         artist: f.artist,
         image: f.image,
         type: f.type,
+        originalUrl: f.originalUrl,
         trackCount: f._count.Track,
-        createdAt: f.createdAt
-      }))
+        createdAt: f.createdAt,
+      })),
     });
 
   } catch (error) {
@@ -88,62 +63,30 @@ export async function GET() {
   }
 }
 
-/**
- * DELETE - Remove orphaned items (feeds/tracks not in any system playlist)
- */
 export async function DELETE() {
   try {
-    // Step 1: Find all feed IDs that have at least one track in a system playlist
-    const feedsWithPlaylistTracks = await prisma.systemPlaylistTrack.findMany({
-      select: {
-        Track: {
-          select: {
-            feedId: true
-          }
-        }
-      }
-    });
-
-    const feedIdsToKeep = [...new Set(
-      feedsWithPlaylistTracks
-        .map(spt => spt.Track?.feedId)
-        .filter((id): id is string => !!id)
-    )];
-
-    console.log(`🔒 Keeping ${feedIdsToKeep.length} feeds with tracks in playlists`);
-
-    // Step 2: Get counts before deletion
-    const orphanedFeedCount = await prisma.feed.count({
-      where: { id: { notIn: feedIdsToKeep } }
-    });
-
-    const orphanedTrackCount = await prisma.track.count({
-      where: { feedId: { notIn: feedIdsToKeep } }
-    });
+    const orphanedFeedCount = await prisma.feed.count({ where: ORPHAN_WHERE });
 
     if (orphanedFeedCount === 0) {
       return NextResponse.json({
         success: true,
         message: 'No orphaned items to delete',
         deletedFeeds: 0,
-        deletedTracks: 0
+        deletedTracks: 0,
       });
     }
 
-    console.log(`🗑️ Deleting ${orphanedFeedCount} orphaned feeds and ${orphanedTrackCount} orphaned tracks...`);
+    console.log(`🗑️ Deleting ${orphanedFeedCount} orphan albums (type='album', zero tracks)`);
 
-    // Step 3: Delete orphaned feeds (tracks cascade automatically due to schema)
-    const deleteResult = await prisma.feed.deleteMany({
-      where: { id: { notIn: feedIdsToKeep } }
-    });
+    const deleteResult = await prisma.feed.deleteMany({ where: ORPHAN_WHERE });
 
-    console.log(`✅ Deleted ${deleteResult.count} feeds`);
+    const remainingFeeds = await prisma.feed.count();
 
     return NextResponse.json({
       success: true,
       deletedFeeds: deleteResult.count,
-      deletedTracks: orphanedTrackCount,
-      remainingFeeds: feedIdsToKeep.length
+      deletedTracks: 0,
+      remainingFeeds,
     });
 
   } catch (error) {

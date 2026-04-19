@@ -116,6 +116,7 @@ export default function AdminPanel() {
       artist: string;
       image?: string;
       type: string;
+      originalUrl?: string;
       trackCount: number;
     }>;
   } | null>(null);
@@ -1321,7 +1322,7 @@ export default function AdminPanel() {
         <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-orange-500/30 p-6 mb-8">
           <h2 className="text-2xl font-semibold mb-4 text-orange-400">Database Cleanup</h2>
           <p className="text-sm text-gray-400 mb-4">
-            Remove feeds and tracks that are NOT referenced by any system playlist. This keeps only items that are part of curated playlists (MMM, SAS, HGH, etc.).
+            Remove album feeds that failed to import (type=album with zero tracks). Publishers, podcasts, and populated albums are preserved regardless of playlist membership — use the per-feed delete button above for one-off cleanup.
           </p>
 
           <div className="space-y-4">
@@ -1424,7 +1425,7 @@ export default function AdminPanel() {
             <div className="bg-white/5 rounded-lg p-4 border border-white/10">
               <h3 className="text-sm font-medium text-gray-300 mb-2">Step 2: Check for Orphaned Items</h3>
               <p className="text-xs text-gray-500 mb-3">
-                Find feeds/tracks not referenced by any system playlist.
+                Find empty album feeds left behind by failed imports.
               </p>
               <button
                 type="button"
@@ -1493,7 +1494,10 @@ export default function AdminPanel() {
                               )}
                               <div className="flex-1 min-w-0">
                                 <p className="text-white truncate">{feed.title}</p>
-                                <p className="text-xs text-gray-400">{feed.artist} - {feed.trackCount} tracks</p>
+                                <p className="text-xs text-gray-400">{feed.artist} — {feed.trackCount} tracks</p>
+                                {feed.originalUrl && (
+                                  <p className="text-[10px] text-gray-500 font-mono truncate">{feed.originalUrl}</p>
+                                )}
                               </div>
                               <span className={`px-2 py-0.5 rounded text-xs ${
                                 feed.type === 'album' ? 'bg-blue-600/20 text-blue-400' :
@@ -1529,7 +1533,7 @@ export default function AdminPanel() {
                   <div className="text-center py-4">
                     <p className="text-green-400 font-medium">Database is clean!</p>
                     <p className="text-sm text-gray-400 mt-1">
-                      All {orphanPreview.totalFeeds} feeds are referenced by system playlists.
+                      No empty album feeds found ({orphanPreview.totalFeeds} feeds total).
                     </p>
                   </div>
                 )}
