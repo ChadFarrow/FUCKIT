@@ -102,6 +102,21 @@ Import feed via `/admin` page (paste RSS URL). Non-Wavlake feeds with `<podcast:
 
 **After import**: Reparse the feed from the admin page to ensure chapters and VTS are populated (the initial import may miss them if the chapters proxy is down).
 
+### Admin Database Cleanup (`/admin`, two-step)
+Under "Database Cleanup": **Step 1 Parse Missing Tracks** → `GET /api/playlist/parse-feeds-stream`, **Step 2 Check for Orphaned Items** → `/api/admin/orphaned-items`.
+
+**Step 1** (`app/api/playlist/parse-feeds-stream/route.ts`): walks feeds with `status='active' AND type != 'publisher' AND Track.none()`, `take: 500`. Do **not** drop the `type != 'publisher'` filter — reclassified publishers never have tracks by design and would reappear every run, exhausting the budget. SSE emits per-feed `feedError`/`feedInfo` events with categorized `reason`: `publisher-via-medium`, `publisher-via-url`, `publisher-no-items`, `rss-fetch-failed`, `rss-zero-items`, `no-url-no-api-match`, `import-failed`, `exception`, `tracks-owned-elsewhere`. AdminPanel renders a collapsible per-feed log with reason-count summary.
+
+**Publisher reclassification has three signals, in order**: (1) PI API `feedData.medium === 'publisher'` from `byguid` — covers RSSBlue, Fountain, phafe; (2) URL shape `^https?://wavlake\.com/feed/artist/<uuid>` — Wavlake tags their XML with `<podcast:medium>publisher</podcast:medium>` but PI API does **not** surface `medium` for those feeds, so URL is the only pre-fetch signal (Wavlake's `/feed/music/` = albums, `/feed/artist/` = publishers by construction); (3) post-RSS `xmlText.includes('<podcast:remoteItem')` when fetch succeeds with zero `<item>` tags. Do **not** remove signal #2 or Wavlake's `HTTP 429` IP-rate-limit on Railway comes back (Wavlake rate-limits after ~50 sequential RSS fetches).
+
+**`parseFeedXML` always returns** `{ episodes, xmlText, fetchError? }` (never null) so the exact HTTP status / exception detail rides through into `feedError.message`. 15s `AbortSignal.timeout` prevents a stalled feed from blocking the batch.
+
+**`tracks-owned-elsewhere` reason** flags the silent-loss case: `Track.guid @unique` combined with an unscoped dedup lookup in `importFeedToDatabase` means an episode whose guid already exists under any other feed takes the "update" branch without re-linking `feedId`. The feed's metadata refreshes and `parsed++` fires, but zero tracks land — the feed reappears next run. A post-import `prisma.track.count({ where: { feedId } })` check catches this and emits the reason with the canonical claimant's feed IDs. Fix tracked in `project_feed_duplicate_dedup.md`.
+
+**Step 2** (`app/api/admin/orphaned-items/route.ts`): orphan = `type='album' AND Track.none()`. That's it. Publishers + podcasts + any album with tracks are preserved regardless of curated-playlist membership. Do **not** revert to the older "not-in-any-system-playlist" definition — that would nuke every publisher, every podcast, and every manually-added album outside the 9 curated playlists. The per-feed delete button on the Add-Feed UI is the right tool for one-off cleanup.
+
+**Preview annotates each orphan with its canonical claimant** (matching title + artist + has tracks): green `→ duplicate of {id}` for safe deletes, red `⚠ no canonical match` for rows that need human review. Roll-up header shows `N safe duplicates · M need review` across the full cohort so the admin sees the split without scrolling the 50-row sample.
+
 ### Search
 - PostgreSQL trigram `similarity()`, flat 0.3 threshold. Do NOT lower below 0.3 — causes false positives.
 - Artist search groups by `LOWER(artist)`. Exact mode: `?fuzzy=false`
