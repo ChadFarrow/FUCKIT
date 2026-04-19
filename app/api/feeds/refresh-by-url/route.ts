@@ -233,6 +233,19 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Guard: if URL + UUID lookup both missed, only allow creation when the
+    // caller explicitly provided customFeedId. This closes a loophole where any
+    // unauthenticated POST to /api/feeds/refresh-by-url could mint a new Feed row
+    // (e.g., a rogue podping consumer bypassing /api/feeds/exists). Callers
+    // without customFeedId (podping consumer, admin "reparse by URL" form) get
+    // 404 and must use POST /api/feeds explicitly to create new feeds.
+    if (!feed && !customFeedId) {
+      return NextResponse.json(
+        { error: 'Feed not found for originalUrl; refresh-by-url does not mint new feeds without an explicit feedId. Use POST /api/feeds to add a new feed.' },
+        { status: 404 }
+      );
+    }
+
     // Parse the RSS feed first (needed whether feed exists or not)
     let parsedFeed;
     try {
@@ -244,8 +257,8 @@ export async function POST(request: NextRequest) {
         message: errorMessage
       }, { status: 400 });
     }
-    
-    // If feed doesn't exist, create it
+
+    // If feed doesn't exist, create it (customFeedId required — see guard above)
     if (!feed) {
       try {
         // Use custom feedId if provided, otherwise generate a random one
