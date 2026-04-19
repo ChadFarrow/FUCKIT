@@ -1,0 +1,63 @@
+name: Refresh Podcasts Targeted
+
+# Runs only during the observed publish windows for curated music podcasts.
+# Saves load vs an always-on hourly reparse — off-window hours are covered
+# by the nightly 4 AM Step 2b and by organic podpings if the host emits.
+#
+# Observed publish windows (verified against DB pubDates 2026-04-19):
+#   UpBeats        — bi-weekly Sundays,  11:00 UTC (EDT) / 12:00 UTC (EST)
+#   Two For Tunestr — weekly Tuesdays,   11:00 UTC (EDT) / 12:00 UTC (EST)
+# Both = 7 AM Eastern year-round; UTC shifts ±1h on DST transitions.
+#
+# Cron schedule covers 11:00–13:59 UTC so both EDT and EST windows plus
+# ~2h of slack for delayed uploads are caught within 30 min. GitHub Actions
+# cron can drift up to ~15 min on free tier — factored in.
+
+on:
+  schedule:
+    # :15 and :45 past 11 / 12 / 13 UTC on Sunday and Tuesday = 6 runs per
+    # publish day × 2 days/week = 12 runs/week per podcast, 24 reparses/week.
+    - cron: '15,45 11,12,13 * * 0,2'
+  workflow_dispatch:
+
+jobs:
+  refresh-podcasts:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Reparse podcasts in publish window
+      run: |
+        BASE_URL="${BASE_URL:-https://stablekraft.app}"
+        DAY_OF_WEEK=$(date -u +%u)  # 1=Mon, 7=Sun
+
+        # Reparse only the podcast(s) whose publish day matches today.
+        # Off-day cron runs do nothing; on-day runs touch just the relevant feed.
+        if [ "$DAY_OF_WEEK" -eq 7 ]; then
+          PODCAST_FEEDS=("3aebb7a8-5942-5ee7-a148-8bdc14f1f3d4")  # UpBeats (Sunday)
+        elif [ "$DAY_OF_WEEK" -eq 2 ]; then
+          PODCAST_FEEDS=("silvie-two-for-tunestr")  # Two For Tunestr (Tuesday)
+        else
+          echo "ℹ️  Not a scheduled publish day (DOW=$DAY_OF_WEEK), skipping"
+          exit 0
+        fi
+
+        echo "🔄 Targeted podcast reparse (${#PODCAST_FEEDS[@]} feed(s)) at $(date -u)"
+
+        for FEED_ID in "${PODCAST_FEEDS[@]}"; do
+          echo "  🔄 Reparsing $FEED_ID..."
+          RESP=$(curl -s -X POST -w "\n%{http_code}" "${BASE_URL}/api/admin/feeds/${FEED_ID}/reparse")
+          HTTP_CODE=$(echo "$RESP" | tail -n1)
+          BODY=$(echo "$RESP" | sed '$d')
+          if [ "$HTTP_CODE" -eq 200 ]; then
+            NEW=$(echo "$BODY" | jq -r '.newTracks // 0' 2>/dev/null || echo "?")
+            TITLE=$(echo "$BODY" | jq -r '.title // "?"' 2>/dev/null || echo "?")
+            echo "  ✓ ${TITLE} reparsed: ${NEW} new episodes"
+          else
+            echo "  ⚠️ Feed $FEED_ID reparse issue (HTTP $HTTP_CODE) - continuing..."
+          fi
+          sleep 2
+        done
+
+        echo "✅ Targeted podcast reparse complete"
+      env:
+        BASE_URL: ${{ secrets.PLAYLIST_BASE_URL || 'https://stablekraft.app' }}
