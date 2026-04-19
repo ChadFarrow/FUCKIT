@@ -357,6 +357,35 @@ export async function GET() {
               feedData = await lookupFeedByGuid(feed.id);
             }
 
+            // Early publisher reclassification: PI API's medium field mirrors
+            // <podcast:medium>publisher</podcast:medium>. Skipping the RSS
+            // fetch here avoids Wavlake's IP-level 429s on publisher feeds.
+            if (feedData?.medium === 'publisher') {
+              try {
+                await prisma.feed.update({
+                  where: { id: feed.id },
+                  data: {
+                    type: 'publisher',
+                    status: 'active',
+                    lastFetched: new Date(),
+                    updatedAt: new Date(),
+                  },
+                });
+                parsed++;
+                send({
+                  type: 'feedInfo',
+                  feedId: feed.id,
+                  feedUrl: feedData.url || feed.originalUrl,
+                  reason: 'publisher-via-medium',
+                  message: 'Reclassified as publisher (PI API medium)',
+                });
+                await new Promise(resolve => setTimeout(resolve, 100));
+                continue;
+              } catch {
+                // Fall through to existing flow
+              }
+            }
+
             let parseResult = null;
             const feedUrl = feedData?.url || feed.originalUrl;
 
