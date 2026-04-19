@@ -1152,7 +1152,7 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
         <div className="container mx-auto px-4 pb-8">
           <div className="flex flex-col lg:flex-row items-start lg:items-end gap-8 mb-12">
             {/* Artist Avatar - Use newest album's artwork */}
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 relative">
               {albumsSortedByDate.length > 0 && albumsSortedByDate[0].coverArt ? (
                 // Use newest album's artwork for avatar
                 <div className="w-48 h-48 rounded-2xl overflow-hidden shadow-2xl ring-4 ring-white/20">
@@ -1189,6 +1189,24 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
                 // Final fallback to gradient
                 <div className="w-48 h-48 rounded-2xl bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center shadow-2xl ring-4 ring-white/20">
                   <Music className="w-20 h-20 text-white/80" />
+                </div>
+              )}
+
+              {/* Publisher Favorite Button - Heart icon in bottom-right corner */}
+              {(initialData?.publisherInfo?.feedGuid || initialData?.feedId) && (
+                <div
+                  className="absolute bottom-2 right-2 z-20"
+                  onClick={(e) => e.stopPropagation()}
+                  onTouchStart={(e) => e.stopPropagation()}
+                >
+                  <div className="bg-black/60 backdrop-blur-sm rounded-full w-9 h-9 flex items-center justify-center pointer-events-auto touch-manipulation hover:bg-black/80 transition-colors">
+                    <FavoriteButton
+                      feedId={initialData?.publisherInfo?.feedGuid || initialData?.feedId}
+                      favoriteType="publisher"
+                      size={20}
+                      className="text-white"
+                    />
+                  </div>
                 </div>
               )}
             </div>
