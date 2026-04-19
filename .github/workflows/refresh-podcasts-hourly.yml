@@ -1,0 +1,49 @@
+name: Refresh Podcasts Hourly
+
+# Catches new episodes for curated music podcasts whose host doesn't emit
+# podpings (e.g. Podhome, which hosts UpBeats). The nightly refresh-playlists
+# workflow still runs Step 2b at 4 AM EST as belt-and-suspenders — this
+# workflow just tightens the window from 24h to ~1h between runs.
+
+on:
+  schedule:
+    # Every hour at :17 UTC — offset from the nightly 9:00 UTC run so they
+    # don't pile up on the same minute. GitHub Actions cron can drift up to
+    # ~15 min on free tier, so :17 buffers the overlap either way.
+    - cron: '17 * * * *'
+  workflow_dispatch: # Manual trigger for testing
+
+jobs:
+  refresh-podcasts:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Reparse curated podcast feeds
+      run: |
+        BASE_URL="${BASE_URL:-https://stablekraft.app}"
+
+        # Keep in sync with refresh-playlists.yml Step 2b. Add any type='podcast'
+        # feed here that needs tighter-than-daily episode freshness.
+        PODCAST_FEEDS=("3aebb7a8-5942-5ee7-a148-8bdc14f1f3d4" "silvie-two-for-tunestr")  # UpBeats, Two For Tunestr
+
+        echo "🔄 Hourly podcast reparse for ${#PODCAST_FEEDS[@]} feeds..."
+
+        for FEED_ID in "${PODCAST_FEEDS[@]}"; do
+          echo "  🔄 Reparsing podcast feed $FEED_ID..."
+          PODCAST_REPARSE=$(curl -s -X POST -w "\n%{http_code}" "${BASE_URL}/api/admin/feeds/${FEED_ID}/reparse")
+          HTTP_CODE=$(echo "$PODCAST_REPARSE" | tail -n1)
+          RESPONSE_BODY=$(echo "$PODCAST_REPARSE" | sed '$d')
+          if [ "$HTTP_CODE" -eq 200 ]; then
+            NEW=$(echo "$RESPONSE_BODY" | jq -r '.newTracks // 0' 2>/dev/null || echo "?")
+            TITLE=$(echo "$RESPONSE_BODY" | jq -r '.title // "?"' 2>/dev/null || echo "?")
+            echo "  ✓ ${TITLE} reparsed: ${NEW} new episodes"
+          else
+            echo "  ⚠️ Podcast feed $FEED_ID reparse had issues (HTTP $HTTP_CODE) - continuing..."
+          fi
+          sleep 2
+        done
+
+        echo ""
+        echo "✅ Hourly podcast reparse completed"
+      env:
+        BASE_URL: ${{ secrets.PLAYLIST_BASE_URL || 'https://stablekraft.app' }}
