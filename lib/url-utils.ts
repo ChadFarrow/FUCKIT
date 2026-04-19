@@ -761,4 +761,15 @@ export function normalizeUrl(urlString: string): string {
     // If URL parsing fails, return as-is
     return urlString;
   }
-} 
+}
+
+/**
+ * Extract a UUID from a URL path, e.g.
+ *   https://serve.podhome.fm/rss/3aebb7a8-5942-5ee7-a148-8bdc14f1f3d4
+ *   → "3aebb7a8-5942-5ee7-a148-8bdc14f1f3d4"
+ * Returns lowercase canonical form or null.
+ */
+export function extractUuidFromUrl(url: string): string | null {
+  const m = url.match(/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})/i);
+  return m ? m[1].toLowerCase() : null;
+}

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { parseRSSFeedWithSegments, calculateTrackOrder, detectTrackMediaType, applyParsedItemFields } from '@/lib/rss-parser-db';
 import { resolvePodcastIndexUrl } from '@/lib/podcast-index-api';
-import { normalizeUrl } from '@/lib/url-utils';
+import { normalizeUrl, extractUuidFromUrl } from '@/lib/url-utils';
 
 interface RemoteItemResult {
   added: number;
@@ -217,6 +217,21 @@ export async function POST(request: NextRequest) {
     let feed = await prisma.feed.findFirst({
       where: { originalUrl: { in: Array.from(urlVariants) } }
     });
+
+    // Fallback: match by UUID embedded in the URL against Feed.guid or Feed.id.
+    // Covers cases where the stored originalUrl uses a different host than the podping
+    // but both route to the same RSS (e.g. feeds.rssblue.com vs serve.podhome.fm/rss/<uuid>).
+    if (!feed) {
+      const extractedUuid = extractUuidFromUrl(resolvedUrl);
+      if (extractedUuid) {
+        feed = await prisma.feed.findFirst({
+          where: { OR: [{ guid: extractedUuid }, { id: extractedUuid }] }
+        });
+        if (feed) {
+          console.log(`🔗 refresh-by-url: matched feed ${feed.id} via uuid-in-URL fallback (${extractedUuid})`);
+        }
+      }
+    }
 
     // Parse the RSS feed first (needed whether feed exists or not)
     let parsedFeed;
