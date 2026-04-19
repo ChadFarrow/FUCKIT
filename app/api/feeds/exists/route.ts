@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { normalizeUrl } from '@/lib/url-utils';
+import { extractUuidFromUrl, normalizeUrl } from '@/lib/url-utils';
 import { isBlacklistedFeedUrl } from '@/lib/feed-exclusions';
 
 export const dynamic = 'force-dynamic';
@@ -39,5 +39,21 @@ export async function GET(request: NextRequest) {
     select: { id: true },
   });
 
-  return NextResponse.json({ exists: Boolean(match) });
+  if (match) return NextResponse.json({ exists: true });
+
+  // Fallback: podpings often carry a different host than the DB's originalUrl for
+  // the same feed (UpBeats DB has feeds.rssblue.com/upbeats, Podhome broadcasts
+  // serve.podhome.fm/rss/<uuid>). Extract the UUID and match against Feed.guid/id.
+  // Mirrors the fallback in POST /api/feeds/refresh-by-url so the consumer's
+  // exists→refresh flow doesn't silently skip on URL mismatch.
+  const extractedUuid = extractUuidFromUrl(rawUrl);
+  if (extractedUuid) {
+    const byGuid = await prisma.feed.findFirst({
+      where: { OR: [{ guid: extractedUuid }, { id: extractedUuid }] },
+      select: { id: true },
+    });
+    if (byGuid) return NextResponse.json({ exists: true });
+  }
+
+  return NextResponse.json({ exists: false });
 }
