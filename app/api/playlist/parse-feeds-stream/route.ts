@@ -404,7 +404,44 @@ export async function GET() {
             }
 
             if (!parseResult || !parseResult.episodes || parseResult.episodes.length === 0) {
+              // Publisher reclassification: 0 items + <podcast:remoteItem> references =
+              // a publisher feed (aggregator). Mirrors POST /api/feeds auto-detect.
+              if (parseResult?.xmlText && parseResult.xmlText.includes('<podcast:remoteItem')) {
+                try {
+                  await prisma.feed.update({
+                    where: { id: feed.id },
+                    data: {
+                      type: 'publisher',
+                      status: 'active',
+                      lastFetched: new Date(),
+                      updatedAt: new Date(),
+                    },
+                  });
+                  parsed++;
+                  send({
+                    type: 'feedInfo',
+                    feedId: feed.id,
+                    feedUrl,
+                    reason: 'publisher-no-items',
+                    message: 'Reclassified as publisher feed',
+                  });
+                  continue;
+                } catch {
+                  // Fall through to generic failure below
+                }
+              }
+
               failed++;
+              const reason = !parseResult
+                ? (feedUrl ? 'rss-fetch-failed' : 'no-url-no-api-match')
+                : 'rss-zero-items';
+              send({
+                type: 'feedError',
+                feedId: feed.id,
+                feedUrl,
+                reason,
+                message: feed.title || null,
+              });
               continue;
             }
 
@@ -427,6 +464,13 @@ export async function GET() {
               totalTracks += importResult.newTracks || 0;
             } else {
               failed++;
+              send({
+                type: 'feedError',
+                feedId: feed.id,
+                feedUrl,
+                reason: 'import-failed',
+                message: feed.title || null,
+              });
             }
 
             // Small delay to avoid rate limiting
@@ -434,6 +478,13 @@ export async function GET() {
 
           } catch (error) {
             failed++;
+            send({
+              type: 'feedError',
+              feedId: feed.id,
+              feedUrl: feed.originalUrl,
+              reason: 'exception',
+              message: error instanceof Error ? error.message : String(error),
+            });
           }
         }
 

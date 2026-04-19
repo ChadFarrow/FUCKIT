@@ -94,6 +94,14 @@ export default function AdminPanel() {
     failed: number;
     totalTracks: number;
   } | null>(null);
+  const [failedFeeds, setFailedFeeds] = useState<Array<{
+    feedId: string;
+    feedUrl: string | null;
+    reason: string;
+    message: string | null;
+    severity: 'error' | 'info';
+  }>>([]);
+  const [showFailedFeeds, setShowFailedFeeds] = useState(false);
   const [checkingOrphans, setCheckingOrphans] = useState(false);
   const [deletingOrphans, setDeletingOrphans] = useState(false);
   const [orphanPreview, setOrphanPreview] = useState<{
@@ -674,6 +682,8 @@ export default function AdminPanel() {
     setParsingMissingTracks(true);
     setParseResult(null);
     setParseProgress(null);
+    setFailedFeeds([]);
+    setShowFailedFeeds(false);
 
     try {
       const response = await fetch('/api/playlist/parse-feeds-stream');
@@ -734,6 +744,20 @@ export default function AdminPanel() {
                   toast.warning(`Found feeds but failed to parse any`);
                 }
                 setOrphanPreview(null);
+              } else if (data.type === 'feedError' || data.type === 'feedInfo') {
+                const severity: 'error' | 'info' = data.type === 'feedInfo' ? 'info' : 'error';
+                setFailedFeeds(prev => [...prev, {
+                  feedId: data.feedId,
+                  feedUrl: data.feedUrl ?? null,
+                  reason: data.reason,
+                  message: data.message ?? null,
+                  severity,
+                }]);
+                if (severity === 'error') {
+                  console.warn(`[parse-feeds] ${data.reason}: ${data.feedId}`, data);
+                } else {
+                  console.info(`[parse-feeds] ${data.reason}: ${data.feedId}`, data);
+                }
               } else if (data.error) {
                 toast.error(data.error);
               }
@@ -1352,6 +1376,46 @@ export default function AdminPanel() {
                   Found {parseResult.total} feeds without tracks.
                   Parsed {parseResult.parsed}, imported {parseResult.totalTracks} tracks.
                   {parseResult.failed > 0 && <span className="text-yellow-400"> ({parseResult.failed} failed)</span>}
+                </div>
+              )}
+              {failedFeeds.length > 0 && (
+                <div className="mt-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowFailedFeeds(v => !v)}
+                    className="text-xs text-gray-300 hover:text-white underline-offset-2 hover:underline"
+                  >
+                    {showFailedFeeds ? 'Hide' : 'Show'} per-feed log ({failedFeeds.length})
+                  </button>
+                  {showFailedFeeds && (
+                    <div className="mt-2 max-h-64 overflow-y-auto rounded bg-black/30 border border-white/10 p-2 space-y-1 font-mono text-[11px]">
+                      {(() => {
+                        const counts = failedFeeds.reduce<Record<string, number>>((acc, f) => {
+                          acc[f.reason] = (acc[f.reason] || 0) + 1;
+                          return acc;
+                        }, {});
+                        return (
+                          <div className="pb-2 mb-2 border-b border-white/10 text-gray-400">
+                            {Object.entries(counts)
+                              .sort(([, a], [, b]) => b - a)
+                              .map(([reason, n]) => `${reason}: ${n}`)
+                              .join(' · ')}
+                          </div>
+                        );
+                      })()}
+                      {failedFeeds.map((f, i) => (
+                        <div
+                          key={`${f.feedId}-${i}`}
+                          className={f.severity === 'info' ? 'text-blue-300' : 'text-yellow-300'}
+                        >
+                          <span className="text-gray-500">[{f.reason}]</span>{' '}
+                          <span>{f.feedId}</span>
+                          {f.feedUrl && <span className="text-gray-500"> — {f.feedUrl}</span>}
+                          {f.message && <span className="text-gray-400"> — {f.message}</span>}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
