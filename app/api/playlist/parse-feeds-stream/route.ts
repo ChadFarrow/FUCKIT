@@ -506,8 +506,40 @@ export async function GET() {
             );
 
             if (importResult) {
-              parsed++;
-              totalTracks += importResult.newTracks || 0;
+              // Silent-loss check: importFeedToDatabase reports trackCount for
+              // every episode it processed (create OR update), but Track.guid
+              // is globally unique — if another feed already owns that guid,
+              // the "update" branch fires without relinking feedId, so this
+              // feed ends up with zero linked tracks despite the "success".
+              const actualLinkedCount = await prisma.track.count({
+                where: { feedId: feed.id },
+              });
+              if ((importResult.trackCount || 0) > 0 && actualLinkedCount === 0) {
+                const episodeGuids = parseResult.episodes
+                  .map((e: any) => e.guid)
+                  .filter((g: any): g is string => !!g);
+                let claimants: string[] = [];
+                if (episodeGuids.length > 0) {
+                  const claimed = await prisma.track.findMany({
+                    where: { guid: { in: episodeGuids } },
+                    select: { feedId: true },
+                    distinct: ['feedId'],
+                    take: 5,
+                  });
+                  claimants = claimed.map(c => c.feedId).filter(id => id !== feed.id);
+                }
+                failed++;
+                send({
+                  type: 'feedError',
+                  feedId: feed.id,
+                  feedUrl,
+                  reason: 'tracks-owned-elsewhere',
+                  message: `${importResult.trackCount} episode(s) already linked to: ${claimants.slice(0, 3).join(', ') || '(unknown)'}${claimants.length > 3 ? ` +${claimants.length - 3} more` : ''}`,
+                });
+              } else {
+                parsed++;
+                totalTracks += importResult.newTracks || 0;
+              }
             } else {
               failed++;
               send({
