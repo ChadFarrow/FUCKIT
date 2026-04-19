@@ -17,6 +17,11 @@ import { hasV4V as checkHasV4V, getV4VRecipients, getPrimaryRecipient, formatVal
 import { prefetchUpcomingTracks, prefetchAudio } from '@/lib/audio-prefetch';
 import { PodcastChapter } from '@/lib/podcast-types';
 
+// Track guids excluded from global shuffle (non-music recap/talk content).
+const SHUFFLE_EXCLUDED_TRACK_GUIDS = new Set<string>([
+  'f475f98b-8ed4-4b06-8038-53727b9100d6', // The Satellite Skirmish: Boost Recap
+]);
+
 /**
  * Detect OP3 boost chapter feeds. OP3 surfaces each boost as a "chapter" so
  * listeners can see who boosted and when. These are informational markers —
@@ -2812,6 +2817,10 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         album.tracks.forEach((track, trackIndex) => {
           // Skip tracks without valid audio URLs
           if (!track.url || track.url === '' || track.url.endsWith('.xml') || track.url.endsWith('/feed')) {
+            skippedTracks++;
+            return;
+          }
+          if (track.guid && SHUFFLE_EXCLUDED_TRACK_GUIDS.has(track.guid)) {
             skippedTracks++;
             return;
           }
