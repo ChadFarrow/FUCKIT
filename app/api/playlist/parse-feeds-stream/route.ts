@@ -357,10 +357,19 @@ export async function GET() {
               feedData = await lookupFeedByGuid(feed.id);
             }
 
-            // Early publisher reclassification: PI API's medium field mirrors
-            // <podcast:medium>publisher</podcast:medium>. Skipping the RSS
-            // fetch here avoids Wavlake's IP-level 429s on publisher feeds.
-            if (feedData?.medium === 'publisher') {
+            // Early publisher reclassification. Two signals:
+            //  1. PI API medium=publisher (RSSBlue/Fountain/most hosts honor this).
+            //  2. Wavlake artist-URL shape. Wavlake tags their XML with
+            //     <podcast:medium>publisher</podcast:medium>, but PI API does
+            //     NOT surface medium for those feeds, so the URL pattern is
+            //     the only signal we have. Wavlake splits /feed/music/ (albums)
+            //     from /feed/artist/ (publishers) by construction, so the shape
+            //     is reliable. Skipping the RSS fetch here avoids Wavlake's
+            //     IP-level 429 rate-limit on Railway.
+            const candidateUrl = feedData?.url || feed.originalUrl;
+            const isWavlakeArtistUrl = typeof candidateUrl === 'string'
+              && /^https?:\/\/wavlake\.com\/feed\/artist\//.test(candidateUrl);
+            if (feedData?.medium === 'publisher' || isWavlakeArtistUrl) {
               try {
                 await prisma.feed.update({
                   where: { id: feed.id },
@@ -372,12 +381,15 @@ export async function GET() {
                   },
                 });
                 parsed++;
+                const viaMedium = feedData?.medium === 'publisher';
                 send({
                   type: 'feedInfo',
                   feedId: feed.id,
-                  feedUrl: feedData.url || feed.originalUrl,
-                  reason: 'publisher-via-medium',
-                  message: 'Reclassified as publisher (PI API medium)',
+                  feedUrl: candidateUrl,
+                  reason: viaMedium ? 'publisher-via-medium' : 'publisher-via-url',
+                  message: viaMedium
+                    ? 'Reclassified as publisher (PI API medium)'
+                    : 'Reclassified as publisher (Wavlake artist URL)',
                 });
                 await new Promise(resolve => setTimeout(resolve, 100));
                 continue;
