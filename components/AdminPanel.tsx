@@ -110,6 +110,8 @@ export default function AdminPanel() {
     orphanedTracks: number;
     totalFeeds: number;
     totalTracks: number;
+    withCanonicalCount?: number;
+    withoutCanonicalCount?: number;
     sampleOrphanedFeeds: Array<{
       id: string;
       title: string;
@@ -118,6 +120,8 @@ export default function AdminPanel() {
       type: string;
       originalUrl?: string;
       trackCount: number;
+      canonicalId?: string | null;
+      canonicalTrackCount?: number;
     }>;
   } | null>(null);
 
@@ -1476,9 +1480,20 @@ export default function AdminPanel() {
                     {/* Sample Orphaned Feeds */}
                     {orphanPreview.sampleOrphanedFeeds.length > 0 && (
                       <div>
-                        <p className="text-sm text-gray-400 mb-2">
+                        <p className="text-sm text-gray-400 mb-1">
                           Sample of feeds to be deleted ({Math.min(50, orphanPreview.orphanedFeeds)} of {orphanPreview.orphanedFeeds}):
                         </p>
+                        {typeof orphanPreview.withCanonicalCount === 'number' && (
+                          <p className="text-xs mb-2">
+                            <span className="text-green-400">{orphanPreview.withCanonicalCount} safe duplicates</span>
+                            {typeof orphanPreview.withoutCanonicalCount === 'number' && orphanPreview.withoutCanonicalCount > 0 && (
+                              <>
+                                {' · '}
+                                <span className="text-red-400">{orphanPreview.withoutCanonicalCount} need review</span>
+                              </>
+                            )}
+                          </p>
+                        )}
                         <div className="max-h-48 overflow-y-auto space-y-2">
                           {orphanPreview.sampleOrphanedFeeds.map((feed) => (
                             <div key={feed.id} className="flex items-center gap-3 bg-white/5 rounded p-2 text-sm">
@@ -1497,6 +1512,15 @@ export default function AdminPanel() {
                                 <p className="text-xs text-gray-400">{feed.artist} — {feed.trackCount} tracks</p>
                                 {feed.originalUrl && (
                                   <p className="text-[10px] text-gray-500 font-mono truncate">{feed.originalUrl}</p>
+                                )}
+                                {feed.canonicalId ? (
+                                  <p className="text-[10px] text-green-400 truncate">
+                                    → duplicate of <span className="font-mono">{feed.canonicalId}</span> ({feed.canonicalTrackCount} tracks)
+                                  </p>
+                                ) : (
+                                  <p className="text-[10px] text-red-400">
+                                    ⚠ no canonical match — review before deleting
+                                  </p>
                                 )}
                               </div>
                               <span className={`px-2 py-0.5 rounded text-xs ${
