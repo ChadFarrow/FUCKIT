@@ -46,6 +46,20 @@ Three public endpoints (none auth-gated today):
 
 When modifying these endpoints, check consumer expectations in `msp-podping-service/consumer/src/index.ts` — if adding auth, wire a shared-secret env var into the consumer too.
 
+**Per-host podping coverage (verified 2026-04-19 via HafSQL scan of last ~3.5y `pp_music_update` + `pp_podcast_update`):** all third-party relays broadcast through Podping Network shared accounts `podping.aaa`–`podping.eee` (Sovereign Feeds and ppwatch both go this route, so the signer doesn't fingerprint the user-facing tool).
+
+| Host | DB feeds | Podping activity | Disposition |
+|---|---:|---|---|
+| `feeds.fountain.fm` | ~149 | **Active**, ~86 pings/30d, 100% of our feeds have been pinged | Auto-refresh via consumer; no action needed |
+| `serve.podhome.fm` | small | **Active** (UpBeats, TFT, etc.) | Auto-refresh; see `refresh-podcasts-targeted.yml` for belt-and-suspenders |
+| `feeds.rssblue.com` | ~135 | Legacy; 10 pings in last 90d, last 2026-02-17 (RSSBlue folded into Fountain) | Historical backfill only; new content migrates to Fountain |
+| `www.wavlake.com` | ~2239 | **Effectively silent** (5 pings ever, last 2024-03) | Nightly refresh only — biggest catalog, zero podping coverage |
+| `music.behindthesch3m3s.com` | ~42 | Silent | Nightly refresh + any `chadf` MSP pushes |
+| `headstarts.uk`, `sunami.app` | few | Only `chadf` MSP self-pushes | MSP pushes + nightly |
+| `cdn.kolomona.com`, `thebearsnare.com` | <10 | Silent | Nightly refresh only |
+
+Implications: Fountain-hosted music gets near-real-time updates automatically. Wavlake (majority of the catalog) and self-hosted music sites rely on the 4 AM nightly reparse — do not promise sub-hour latency for those. If a specific Wavlake album needs prompt refresh, push a `chadf` MSP ping for it.
+
 ### Targeted Podcast Reparse (`.github/workflows/refresh-podcasts-targeted.yml`)
 Every 30 min from 11:00–13:59 UTC on Sundays (UpBeats) and Tuesdays (Two For Tunestr) — the observed publish windows (7 AM Eastern year-round, UTC shifts ±1h on DST). Originally load-bearing because `/api/feeds/exists` missed Podhome podpings for UpBeats (URL mismatch, fixed 2026-04-19); now a belt-and-suspenders safety net for any future mismatch, consumer outage, or Podhome emission gap. Catches new episodes within ~30 min of publish. Day-of-week check inside the workflow means off-day cron ticks early-exit at zero cost. When adding a curated podcast with a predictable publish schedule, update both this file's `PODCAST_FEEDS` array (and day switch if a new weekday) **and** `refresh-playlists.yml` Step 2b.
 
