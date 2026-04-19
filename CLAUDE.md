@@ -37,14 +37,17 @@ zsp publish --skip-certificate-linking                                          
 Runs at 4 AM EST: clears cache → reparses feeds → refreshes playlists → parses publishers → imports missing albums from publisher feeds (Step 5b via PI API). The `PLAYLISTS` array must include ALL playlist IDs — missing ones won't get nightly processing.
 
 ### Podping Consumer Integration
-External service `msp-podping-service` (repo `ChadFarrow/msp-podping-service`) tails Hive for `pp_music_*` podpings and calls back into this app, closing the gap between the 4am batch refresh and actual publisher updates (~1 min latency).
+External service `msp-podping-service` (repo `ChadFarrow/msp-podping-service`) tails Hive for `pp_music_*` **and** `pp_podcast_*` podpings and calls back into this app, closing the gap between the 4am batch refresh and actual publisher updates (~1 min latency). Podcast-medium hosts (Podhome, RSSBlue) typically emit `pp_podcast_*`; keep the filter permissive. Note: Podhome does not emit podpings for all feeds (UpBeats as of 2026-04-19 relies on manual MSP pushes + the scheduled-window cron).
 
 Three public endpoints (none auth-gated today):
 - `GET /api/feeds/exists?url=<URL>` or `?guid=<GUID>` → `{ exists: boolean }`. Blacklisted URLs always return `false` so podpings can't revive removed feeds. Reuses `isBlacklistedFeedUrl()` from `lib/feed-exclusions.ts`.
-- `POST /api/feeds/refresh-by-url` with `{ originalUrl }` — when the feed already exists.
-- `POST /api/feeds` with `{ originalUrl, type: 'album' }` — **only** when signed by our MSP Hive account (`chadf`). Unknown signers + unknown URLs are ignored. **Why:** strangers' podpings can refresh existing feeds, but only our own MSP deploys can spawn new feed records.
+- `POST /api/feeds/refresh-by-url` with `{ originalUrl }` — when the feed already exists. Lookup tries URL variants (normalized + raw + original) first, then falls back to `Feed.guid`/`Feed.id` matched against a UUID extracted from the URL path (`extractUuidFromUrl` in `lib/url-utils.ts`). **Why:** some hosts store and podping-broadcast different URLs for the same feed (UpBeats: DB has `feeds.rssblue.com/upbeats`, podping carries `serve.podhome.fm/rss/<uuid>`) — without this fallback every podping minted an orphan Feed row. Do **not** remove the fallback.
+- `POST /api/feeds` with `{ originalUrl, type: 'album' }` — **only** when signed by our MSP Hive account (`chadf`). Unknown signers + unknown URLs are ignored. **Why:** strangers' podpings can refresh existing feeds, but only our own MSP deploys can spawn new feed records. Signer-gate is enforced client-side in the consumer (`required_posting_auths` check at `consumer/src/index.ts:178`), not in this app — `POST /api/feeds` itself has no auth.
 
 When modifying these endpoints, check consumer expectations in `msp-podping-service/consumer/src/index.ts` — if adding auth, wire a shared-secret env var into the consumer too.
+
+### Targeted Podcast Reparse (`.github/workflows/refresh-podcasts-targeted.yml`)
+Every 30 min from 11:00–13:59 UTC on Sundays (UpBeats) and Tuesdays (Two For Tunestr) — the observed publish windows (7 AM Eastern year-round, UTC shifts ±1h on DST). Complements the 4 AM nightly Step 2b and podping (~1 min). Catches episodes from podping-free hosts within ~30 min. Day-of-week check inside the workflow means off-day cron ticks early-exit at zero cost. When adding a curated podcast with a predictable publish schedule, update both this file's `PODCAST_FEEDS` array (and day switch if a new weekday) **and** `refresh-playlists.yml` Step 2b.
 
 ### Android Distribution (zapstore)
 App is on [zapstore.dev/apps/app.stablekraft](https://zapstore.dev/apps/app.stablekraft) as a Capacitor 8 WebView wrapping `https://stablekraft.app`. No Next.js/backend changes per release — the APK just loads the live site.
@@ -112,6 +115,8 @@ Import via `/admin` (paste RSS URL). Non-Wavlake feeds with `<podcast:medium>pod
 
 **Step 2** (`app/api/admin/orphaned-items/route.ts`): orphan = `type='album' AND Track.none()`. Publishers + podcasts + any album with tracks are preserved regardless of curated-playlist membership. Do **not** revert to the older "not-in-any-system-playlist" definition — it would nuke every publisher, every podcast, and every manually-added album outside the 9 curated playlists. The per-feed delete button on the Add-Feed UI handles one-offs.
 
+**Gap — not caught by Step 2**: `type='publisher'` rows with tracks (the orphan query only targets `type='album'`). Can occur when `refresh-by-url` used to ingest episodes into a broken `feed-error-*` placeholder row before the guid-fallback lookup landed (2026-04-19). Clean up manually with `DELETE /api/feeds?id=<feedId>`. Should be rare post-fix; check with `SELECT id, title, type, _count FROM "Feed" WHERE id LIKE 'feed-error-%' OR id LIKE 'feed-%'` when auditing.
+
 **Preview annotates each orphan with its canonical claimant** (matching title + artist + has tracks): green `→ duplicate of {id}` for safe deletes, red `⚠ no canonical match` for review. Roll-up header shows `N safe duplicates · M need review` across the full cohort (not just the 50-row sample).
 
 ### Search
@@ -128,6 +133,9 @@ Matched by title slug, artist slug, or URL path. Multi-feed support with per-pla
 
 ### Duration Filtering
 Tracks over 2 hours filtered as non-music (silent, no warnings).
+
+### Explicit Flag
+Show-level `album.explicit` uses `feed.explicit ?? false` only (channel `<itunes:explicit>`). Do **not** aggregate from track-level explicit flags — that diverges from Apple Podcasts convention. UpBeats example: channel tag `false` but 2/78 episodes flagged explicit; the previous `tracks.some(t.explicit) || feed.explicit` aggregation wrongly flipped the whole show to explicit. Per-track `explicit` is unchanged; `AlbumDetailClient` renders per-row "E" badges on individual explicit episodes. Call sites: `app/api/albums/[slug]/route.ts:1228,1394`, `app/api/albums/route.ts:499`, `app/api/parsed-feeds/route.ts:112`.
 
 ### NIP-46 Remote Signer (Amber / Primal / bunker)
 Key files: `lib/nostr/nip46-client.ts`, `lib/nostr/signer.ts` (NIP46Signer wrapper), `components/Nostr/hooks/useNip46Connection.ts`, `lib/nostr/signer-nudge.ts`. iOS Safari kills WebSockets after ~30s backgrounded; reconnects on `visibilitychange`. **Primal is the best iOS signer** — auto-signs with Full trust, responds <1s. Debug logging gated behind `localStorage.setItem('nip46_debug', 'true')`.
