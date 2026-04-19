@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { parseRSSFeedWithSegments, calculateTrackOrder } from '@/lib/rss-parser-db';
 import { generateAlbumSlug, normalizeUrl } from '@/lib/url-utils';
-import { isBlacklistedFeedUrl } from '@/lib/feed-exclusions';
+import { isBlacklistedFeedUrl, isPlaylistSourceFeedUrl } from '@/lib/feed-exclusions';
 
 interface RemoteItem {
   feedGuid?: string;
@@ -112,6 +112,12 @@ export async function POST(
 
       if (isBlacklistedFeedUrl(remoteItem.feedUrl)) {
         console.log(`🚫 Skipping blacklisted feed URL: ${remoteItem.feedUrl}`);
+        results.skipped++;
+        continue;
+      }
+
+      if (isPlaylistSourceFeedUrl(remoteItem.feedUrl)) {
+        console.log(`⏭️  Skipping playlist-source feed (admin-only): ${remoteItem.feedUrl}`);
         results.skipped++;
         continue;
       }
