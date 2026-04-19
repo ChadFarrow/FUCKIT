@@ -51,11 +51,11 @@ export async function generateMetadata({
   }
 
   const description = podcastArtist
-    ? `Listen to ${podcastTitle} by ${podcastArtist} on DoerfelVerse`
-    : `Listen to ${podcastTitle} on DoerfelVerse`;
+    ? `Listen to ${podcastTitle} by ${podcastArtist} on StableKraft`
+    : `Listen to ${podcastTitle} on StableKraft`;
 
   return {
-    title: `${podcastTitle} | DoerfelVerse`,
+    title: `${podcastTitle} | StableKraft`,
     description,
     openGraph: {
       title: podcastTitle,

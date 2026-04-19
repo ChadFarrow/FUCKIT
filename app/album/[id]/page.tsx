@@ -116,11 +116,11 @@ export async function generateMetadata({
     }
     const ogImage = trackImage || albumImage;
 
-    const trackDescription = `Listen to ${trackTitle} by ${trackArtist} from ${albumTitle} on DoerfelVerse`;
+    const trackDescription = `Listen to ${trackTitle} by ${trackArtist} from ${albumTitle} on StableKraft`;
     const displayTitle = `${trackTitle} by ${trackArtist}`;
 
     return {
-      title: `${displayTitle} | DoerfelVerse`,
+      title: `${displayTitle} | StableKraft`,
       description: trackDescription,
       openGraph: {
         title: displayTitle,
@@ -139,11 +139,11 @@ export async function generateMetadata({
 
   // Album-level metadata (default)
   const description = albumArtist
-    ? `Listen to ${albumTitle} by ${albumArtist} on DoerfelVerse`
-    : `Listen to ${albumTitle} on DoerfelVerse`;
+    ? `Listen to ${albumTitle} by ${albumArtist} on StableKraft`
+    : `Listen to ${albumTitle} on StableKraft`;
 
   return {
-    title: `${albumTitle} | DoerfelVerse`,
+    title: `${albumTitle} | StableKraft`,
     description,
     openGraph: {
       title: albumTitle,

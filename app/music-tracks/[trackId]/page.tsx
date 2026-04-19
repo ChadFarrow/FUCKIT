@@ -42,11 +42,11 @@ export async function generateMetadata({ params }: { params: Promise<{ trackId: 
 
   // Build description
   const description = trackArtist
-    ? `Listen to "${trackTitle}" by ${trackArtist} on DoerfelVerse`
-    : `Listen to "${trackTitle}" on DoerfelVerse`;
+    ? `Listen to "${trackTitle}" by ${trackArtist} on StableKraft`
+    : `Listen to "${trackTitle}" on StableKraft`;
 
   return {
-    title: `${trackTitle} | DoerfelVerse`,
+    title: `${trackTitle} | StableKraft`,
     description: trackDescription || description,
     openGraph: {
       title: trackTitle,
