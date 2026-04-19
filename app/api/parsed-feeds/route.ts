@@ -109,7 +109,7 @@ export async function GET(request: Request) {
             description: feed.description || '',
             coverArt: feed.image || '',
             releaseDate: feed.lastFetched || feed.createdAt,
-            explicit: tracks.some(t => t.explicit) || feed.explicit,
+            explicit: feed.explicit ?? false,
             tracks: tracks,
             feedId: feed.id,
             feedUrl: feed.originalUrl,

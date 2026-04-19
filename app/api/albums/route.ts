@@ -496,7 +496,7 @@ export async function GET(request: Request) {
         feedUrl: feed.originalUrl,
         feedGuid: feed.guid, // podcast:guid from RSS feed
         lastUpdated: feed.updatedAt,
-        explicit: tracks.some((t: any) => t.explicit) || feed.explicit,
+        explicit: feed.explicit ?? false,
         // V4V data for boosts
         v4vRecipient: v4vRecipient,
         v4vValue: v4vValue

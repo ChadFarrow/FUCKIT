@@ -1225,7 +1225,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
         subtitle: '',
         coverArt: (isValidImageUrl(feed.image) ? feed.image : `/api/placeholder-image?title=${encodeURIComponent(albumTitle)}&artist=${encodeURIComponent(feed.artist || 'Unknown Artist')}`),
         releaseDate: feed.lastFetched || feed.createdAt,
-        explicit: tracks.some((t: any) => t.explicit) || feed.explicit,
+        explicit: feed.explicit ?? false,
         tracks: tracks,
         podroll: isPlaylist ? { enabled: true } : null,
         publisher: await (async () => {
@@ -1391,7 +1391,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
           subtitle: '',
           coverArt: (isValidImageUrl(feed.image) ? feed.image : `/api/placeholder-image?title=${encodeURIComponent(albumTitle)}&artist=${encodeURIComponent(feed.artist || 'Unknown Artist')}`),
           releaseDate: feed.lastFetched || feed.createdAt,
-          explicit: tracks.some((t: any) => t.explicit) || feed.explicit,
+          explicit: feed.explicit ?? false,
           tracks: tracks,
           podroll: isPlaylist ? { enabled: true } : null,
           publisher: await (async () => {
