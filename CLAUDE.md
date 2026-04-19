@@ -74,22 +74,31 @@ Playlists use `<podcast:remoteItem>` with `feedGuid` + `itemGuid`. On `?refresh`
 
 **Feed deduplication pattern**: multi-check dedup (normalized URL, raw URL, feedGuid as ID, feedGuid as GUID column, feedGuid-in-URL substring, then secondary `podcastGuid` check). New feeds get slug-based IDs via `generateAlbumSlug`. When modifying feed import code, follow this pattern — weak dedup causes duplicate entries.
 
-**Podcast type detection**: Non-Wavlake feeds with `<podcast:medium>podcast</podcast:medium>` auto-detect as `type: 'podcast'` on import. Wavlake feeds are excluded from this (they use `medium=podcast` for music). Feeds with `type: 'podcast'` auto-appear under the Podcasts filter and are excluded from the album grid. If mistyped feeds appear, run `POST /api/admin/fix-podcast-types`.
+**Podcast type detection**: Non-Wavlake feeds with `<podcast:medium>podcast</podcast:medium>` auto-detect as `type: 'podcast'` on import. Wavlake feeds are excluded from this (they use `medium=podcast` for music). Feeds with `type: 'podcast'` auto-appear under the Podcasts filter (via a direct `type='podcast'` query that bypasses the blacklist) and are excluded from the album grid. **`POST /api/admin/fix-podcast-types` flips `type: 'podcast'` → `'album'` for any feed NOT in the curated `PODCAST_FEED_IDS`/`PODCAST_FEED_URLS` allowlist** (`lib/podcast-feeds.ts`) — use it to clean up feeds that got misdetected as podcasts, NOT to promote albums to podcasts (use the admin Podcast dropdown for that).
 
 **PI API status gotcha**: `normalizeFeedResponse` in `lib/podcast-index-api.ts` must accept both `status: 'true'` (string) and `status: true` (boolean). Use `data.status !== 'true' && data.status !== true` for rejection checks.
 
 **Podroll exclusion**: `process-remote-items/route.ts` strips `<podcast:podroll>` sections before extracting `<podcast:remoteItem>` tags. Without this, podroll-referenced feeds get imported as albums.
 
-### Feed Blacklist (`lib/feed-exclusions.ts`)
-Central exclusion config: `BLACKLISTED_FEED_IDS`, `BLACKLISTED_FEED_URLS`. Helpers: `isBlacklistedFeedId()`, `isBlacklistedFeedUrl()`.
+### Feed Exclusions (`lib/feed-exclusions.ts`)
+Two lists with different semantics:
+
+- **`BLACKLISTED_FEED_IDS` / `BLACKLISTED_FEED_URLS`** — true bans. Applied everywhere: album grid (`albums-fast`), search, `/api/feeds/exists`, `process-remote-items`, admin bulk-import. Historical use case: `bitpunk-fm-unwound` kept getting auto-imported as an album and polluting the grid. Test feeds (`lnurl-test-*`, `podtards-test`) live here too.
+- **`PLAYLIST_SOURCE_FEED_URLS`** — URLs of the podcast feeds that back curated playlists (B4TS, MMM, HGH, LT, Upbeats, IAM, ITDV, Two For Tunestr). Checked **only** by `process-remote-items` so the nightly playlist refresh can't auto-create feed records for them. Admin-initiated imports (`POST /api/feeds`) never consulted the blacklist anyway, so admin can add any of these as standalone music podcasts via `/admin` without removing the auto-import protection.
+
+Helpers: `isBlacklistedFeedId()`, `isBlacklistedFeedUrl()`, `isPlaylistSourceFeedUrl()`. Do **not** move playlist-source URLs back into the blacklist — the original bug (bab/bitpunkfm auto-listing as albums) is still prevented for true blacklist entries, while admin retains the ability to promote any playlist source into the Podcasts tab.
 
 ### Admin Feed Management (`/admin`)
 Single input handles both add and reparse. Type dropdown (Auto-detect/Album/Publisher/Podcast) next to URL input — use for feeds whose URL doesn't match auto-detect patterns. Auto-detects type from URL (`-pubfeed`, `/publisher`, `/artist/` = publisher). **Server-side fallback**: feeds with 0 items + `<podcast:remoteItem>` references auto-detect as publisher. **GUID collision handling**: if a publisher feed's `podcast:guid` collides with an existing album, the feed is created without GUID rather than failing. **Fixing duplicates**: delete all copies first (`DELETE /api/feeds?id=<feedId>`), then re-add. Initial import (`POST /api/feeds`) saves all parsed fields including chapters, VTS, and V4V via `applyParsedItemFields()` — no reparse needed.
 
-### Adding Music Podcasts (like Upbeats, Two For Tunestr)
+### Adding Music Podcasts (like Upbeats, Two For Tunestr, B4TS)
 Import feed via `/admin` page (paste RSS URL). Non-Wavlake feeds with `<podcast:medium>podcast</podcast:medium>` automatically get `type: 'podcast'`, appear under the Podcasts filter, hide from the album grid, and are searchable — no config file edits needed. `/podcast/[id]` dynamic route handles display, episodes sort newest-first.
 
-**Slug redirects**: If the auto-generated feed ID differs from the desired URL slug (e.g., `silvie-two-for-tunestr` vs `two-for-tunestr`), add mappings to `PODCAST_SLUG_TO_FEED_ID` and `PODCAST_CANONICAL_SLUGS` in `lib/podcast-feeds.ts`.
+**If the feed is also a playlist source** (B4TS, MMM, HGH, LT, Upbeats, IAM, ITDV, Two For Tunestr): it's in `PLAYLIST_SOURCE_FEED_URLS`, which prevents nightly playlist refresh from auto-importing but leaves admin add open. Once imported, register it as a curated podcast to lock in the type and slug: add to **`PODCAST_FEED_IDS`** + **`PODCAST_FEED_URLS`** in `lib/podcast-feeds.ts` so `fix-podcast-types` can't flip it back to album, plus **`PODCAST_SLUGS`** + **`PODCAST_SLUG_TO_FEED_ID`** + **`PODCAST_CANONICAL_SLUGS`** to redirect `/album/<slug>` → `/podcast/<canonical-slug>`.
+
+**If auto-detect misses the type** (feed lacks `medium=podcast`, or you got an album-typed record from a pre-detection import): delete with `DELETE /api/feeds?id=<feedId>` and re-add via `/admin` with the **Podcast** dropdown selected. Deleting and re-adding generates a fresh slug — expect the DB id to change (e.g., `f38e27af-...` → `boo-bury-before-the-sch3m3s`).
+
+**Slug redirects**: If the auto-generated feed ID differs from the desired URL slug (e.g., `silvie-two-for-tunestr` vs `two-for-tunestr`, or `boo-bury-before-the-sch3m3s` vs `before-the-sch3m3s`), add mappings to `PODCAST_SLUG_TO_FEED_ID` and `PODCAST_CANONICAL_SLUGS` in `lib/podcast-feeds.ts`.
 
 **After import**: Reparse the feed from the admin page to ensure chapters and VTS are populated (the initial import may miss them if the chapters proxy is down).
 
