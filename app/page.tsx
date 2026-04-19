@@ -165,7 +165,7 @@ function HomePageContent() {
   // Format-aware loading state (for "all" filter - load all albums before EPs)
   const [formatCounts, setFormatCounts] = useState<{ albums: number; eps: number; singles: number } | null>(null);
   const [currentFormatPhase, setCurrentFormatPhase] = useState<'albums' | 'eps' | 'singles'>('albums');
-  const API_VERSION = 'v11'; // v11: includes chaptersUrl, chapters, valueTimeSplits in track data (so Now Playing chapters work when playing from the grid)
+  const API_VERSION = 'v12'; // v12: server-side Track.status='active' filter (unavailable tracks no longer reach shuffle pool / album pages)
   
   // HGH filter removed - no longer needed
   

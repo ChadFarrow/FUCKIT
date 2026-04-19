@@ -158,7 +158,8 @@ export async function GET(request: Request) {
             v4vValue: true,
             Track: {
               where: {
-                audioUrl: { not: '' }
+                audioUrl: { not: '' },
+                status: 'active'
               },
               select: {
                 id: true,
@@ -187,7 +188,7 @@ export async function GET(request: Request) {
               take: 20 // Most albums have <20 tracks
             },
             _count: {
-              select: { Track: true }
+              select: { Track: { where: { status: 'active' } } }
             }
           },
           orderBy: [
@@ -447,7 +448,7 @@ export async function GET(request: Request) {
               v4vRecipient: true,
               v4vValue: true,
               Track: {
-                where: { audioUrl: { not: '' } },
+                where: { audioUrl: { not: '' }, status: 'active' },
                 select: {
                   id: true,
                   guid: true,
@@ -473,7 +474,7 @@ export async function GET(request: Request) {
                   { createdAt: 'asc' }
                 ]
               },
-              _count: { select: { Track: true } }
+              _count: { select: { Track: { where: { status: 'active' } } } }
             }
           });
           filteredAlbums = podcastFeeds.map((feed: any) => {
