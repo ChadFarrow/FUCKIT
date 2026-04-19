@@ -317,9 +317,10 @@ export async function GET() {
         const unparsedFeeds = await prisma.feed.findMany({
           where: {
             status: 'active',
+            type: { not: 'publisher' },
             Track: { none: {} }
           },
-          take: 200
+          take: 500
         });
 
         send({
