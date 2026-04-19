@@ -51,16 +51,17 @@ async function lookupFeedByGuid(guid: string) {
   }
 }
 
-async function parseFeedXML(feedUrl: string) {
+async function parseFeedXML(feedUrl: string): Promise<{ episodes: any[]; xmlText: string; fetchError?: string }> {
   try {
     const response = await fetch(feedUrl, {
       headers: {
         'User-Agent': 'StableKraft-Feed-Parser/1.0'
-      }
+      },
+      signal: AbortSignal.timeout(15000)
     });
 
     if (!response.ok) {
-      return null;
+      return { episodes: [], xmlText: '', fetchError: `HTTP ${response.status}` };
     }
 
     const xmlText = await response.text();
@@ -110,8 +111,9 @@ async function parseFeedXML(feedUrl: string) {
     return { episodes, xmlText };
 
   } catch (error) {
+    const msg = error instanceof Error ? error.message : String(error);
     console.error(`❌ Error parsing feed ${feedUrl}:`, error);
-    return null;
+    return { episodes: [], xmlText: '', fetchError: `fetch error: ${msg}` };
   }
 }
 
@@ -433,14 +435,16 @@ export async function GET() {
 
               failed++;
               const reason = !parseResult
-                ? (feedUrl ? 'rss-fetch-failed' : 'no-url-no-api-match')
-                : 'rss-zero-items';
+                ? 'no-url-no-api-match'
+                : parseResult.fetchError
+                  ? 'rss-fetch-failed'
+                  : 'rss-zero-items';
               send({
                 type: 'feedError',
                 feedId: feed.id,
                 feedUrl,
                 reason,
-                message: feed.title || null,
+                message: parseResult?.fetchError || feed.title || null,
               });
               continue;
             }
