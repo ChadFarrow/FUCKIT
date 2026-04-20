@@ -169,6 +169,21 @@ async function restoreNIP46Connection(
       }
     }
 
+    // authenticate() short-circuits on a saved pubkey (see nip46-client.ts:3595)
+    // so a successful restore only proves our relay socket is up — not that
+    // the signer app is listening on its end. Ping end-to-end so we don't
+    // hand back a green light that still hangs on the next signEvent.
+    try {
+      await client.pingSigner(5000);
+    } catch (pingErr) {
+      const pingMsg = pingErr instanceof Error ? pingErr.message : String(pingErr);
+      console.warn('⚠️ NIP-46: Signer ping failed after restore:', pingMsg);
+      return {
+        success: false,
+        error: 'Signer not responding. Open your signer app (Primal/Amber) to wake it up, then try again.'
+      };
+    }
+
     console.log('✅ Signer verified available');
     return { success: true, signerType: 'nip46' };
 
@@ -305,6 +320,24 @@ export async function verifyNIP46Connection(
         error: 'Failed to get public key. Please try reconnecting your signer.'
       };
     }
+  }
+
+  // Relay socket alive ≠ signer subscription alive. If the signer app (e.g.
+  // Primal on iOS) was killed while backgrounded, its own relay subscription
+  // is dead even though our WebSocket is happily open. Ping end-to-end so
+  // "Reconnect" only reports success when the signer actually answers —
+  // otherwise the user sees a green toast and then hits a 120s hang on the
+  // next boost/favorite. Any response (including "unknown method") proves
+  // reachability; only a timeout fails.
+  try {
+    await nip46Client.pingSigner(5000);
+  } catch (pingErr) {
+    const pingMsg = pingErr instanceof Error ? pingErr.message : String(pingErr);
+    console.warn('⚠️ NIP-46: Signer ping failed during verify:', pingMsg);
+    return {
+      success: false,
+      error: 'Signer not responding. Open your signer app (Primal/Amber) to wake it up, then try again.'
+    };
   }
 
   return { success: true, signerType: 'nip46' };
