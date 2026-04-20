@@ -42,7 +42,7 @@ jobs:
         echo ""
         echo "📋 Step 2: Reparsing music feeds to detect new tracks..."
 
-        REPARSE_RESPONSE=$(curl -s -X POST -w "\n%{http_code}" "${BASE_URL}/api/admin/reparse-feeds?type=all&maxAgeHours=720&limit=5000")
+        REPARSE_RESPONSE=$(curl -s -X POST -w "\n%{http_code}" "${BASE_URL}/api/admin/reparse-feeds?type=all&maxAgeHours=24&limit=5000")
         HTTP_CODE=$(echo "$REPARSE_RESPONSE" | tail -n1)
         RESPONSE_BODY=$(echo "$REPARSE_RESPONSE" | sed '$d')
 
