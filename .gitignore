@@ -170,6 +170,8 @@ data/cache/
 
 # Generated service worker files
 public/sw.js
+public/fallback-*.js
+public/workbox-*.js
 
 /src/generated/prisma
 
