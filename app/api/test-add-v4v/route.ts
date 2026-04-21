@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { LIGHTNING_CONFIG } from '@/lib/lightning/config';
 
 export async function GET() {
   try {
@@ -22,13 +23,13 @@ export async function GET() {
     const trackUpdates = await prisma.track.updateMany({
       where: { feedId: doerfelsFeed.id },
       data: {
-        v4vRecipient: 'lushnessprecious644398@getalby.com', // Test Lightning Address
+        v4vRecipient: LIGHTNING_CONFIG.platform.lightningAddress,
         v4vValue: {
           recipients: [
             {
               name: 'The Doerfels',
               type: 'lnaddress',
-              address: 'lushnessprecious644398@getalby.com',
+              address: LIGHTNING_CONFIG.platform.lightningAddress,
               split: 100,
               fee: false
             }

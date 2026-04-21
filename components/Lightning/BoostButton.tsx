@@ -1022,7 +1022,7 @@ export function BoostButton({
   // Send 2 sat platform fee metaboost via Lightning Address (LNURL)
   const sendPlatformFeeMetaboost = async (boostboxUrls?: string[]): Promise<void> => {
     const platformFee = LIGHTNING_CONFIG.platform.fee || 2;
-    const platformLightningAddress = 'lushnessprecious644398@getalby.com';
+    const platformLightningAddress = LIGHTNING_CONFIG.platform.lightningAddress;
 
     try {
       const metaboostMessage = `Metaboost for ${trackTitle || 'track'} - Platform fee`;
