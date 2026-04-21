@@ -1,16 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { ApiCache } from '@/lib/api-utils';
 import { parseSearchQuery, buildTsQuery, normalizeQuery, buildFieldFilters } from '@/lib/search-utils';
 import { fuzzySearchTracks, fuzzySearchAlbums, fuzzySearchArtists, calculateThreshold } from '@/lib/fuzzy-search';
 import { searchPlaylists, getPlaylistUrls, getAllPlaylistIds } from '@/lib/playlist/configs';
 import { getBlacklistedFeedIds, BLACKLISTED_FEED_URLS } from '@/lib/feed-exclusions';
+import { CACHE_TTL, getSearchCache } from '@/lib/caches/search-cache';
 
 const prisma = new PrismaClient();
 
-// Initialize cache instance
-const searchCache = new ApiCache();
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const searchCache = getSearchCache();
 
 /**
  * Build full-text search WHERE clause using PostgreSQL ts_rank

@@ -1,30 +1,17 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { Feed, Track } from '@prisma/client';
+import { Track } from '@prisma/client';
 import { getPlaylistUrls, getAllPlaylistIds } from '@/lib/playlist/configs';
 import { getBlacklistedFeedIds, BLACKLISTED_FEED_URLS } from '@/lib/feed-exclusions';
+import {
+  CACHE_DURATION,
+  PLAYLIST_CACHE_DURATION,
+  getAlbumsFastCache,
+  invalidateAlbumsFastCache,
+  type FeedWithTracks,
+} from '@/lib/caches/albums-fast-cache';
 
-interface FeedWithTracks extends Feed {
-  Track: Track[];
-  _count: {
-    Track: number;
-  };
-}
-
-interface CachedData {
-  feeds: FeedWithTracks[];
-  publisherStats: Array<{ name: string; albumCount: number }>;
-}
-
-// In-memory cache for better performance (cache the database results, not files)
-let cachedData: CachedData | null = null;
-let cacheTimestamp = 0;
-const CACHE_DURATION = 15 * 60 * 1000; // 15 minutes cache for database results (increased for performance)
-
-// Separate cache for playlist data to avoid re-fetching playlists every time
-let playlistCache: any[] | null = null;
-let playlistCacheTimestamp = 0;
-const PLAYLIST_CACHE_DURATION = 15 * 60 * 1000; // 15 minutes cache for playlists
+const cache = getAlbumsFastCache();
 
 // Function to get playlist albums
 async function getPlaylistAlbums() {
@@ -32,11 +19,11 @@ async function getPlaylistAlbums() {
     const now = Date.now();
     
     // Check if we have cached playlist data and it's still fresh
-    if (playlistCache && (now - playlistCacheTimestamp) < PLAYLIST_CACHE_DURATION) {
+    if (cache.playlistData && (now - cache.playlistTimestamp) < PLAYLIST_CACHE_DURATION) {
       if (process.env.NODE_ENV === 'development') {
         console.log('⚡ Using cached playlist data');
       }
-      return playlistCache;
+      return cache.playlistData;
     }
     
     if (process.env.NODE_ENV === 'development') {
@@ -74,9 +61,9 @@ async function getPlaylistAlbums() {
       .map((result) => (result as PromiseFulfilledResult<any>).value);
     
     // Cache the results
-    playlistCache = playlistAlbums;
-    playlistCacheTimestamp = now;
-    
+    cache.playlistData = playlistAlbums;
+    cache.playlistTimestamp = now;
+
     if (process.env.NODE_ENV === 'development') {
       console.log(`✅ Cached ${playlistAlbums.length} playlists for fast access`);
     }
@@ -85,7 +72,7 @@ async function getPlaylistAlbums() {
     if (process.env.NODE_ENV === 'development') {
       console.error('Error fetching playlist albums:', error);
     }
-    return playlistCache || []; // Return cached data if available, empty array otherwise
+    return cache.playlistData || []; // Return cached data if available, empty array otherwise
   }
 }
 
@@ -100,8 +87,7 @@ export async function GET(request: Request) {
 
     // Clear cache if refresh requested
     if (forceRefresh) {
-      cachedData = null;
-      cacheTimestamp = 0;
+      invalidateAlbumsFastCache();
       console.log('🔄 Cache cleared due to refresh=true parameter');
     }
 
@@ -123,8 +109,8 @@ export async function GET(request: Request) {
     }
     
     const now = Date.now();
-    const shouldRefreshCache = !cachedData || (now - cacheTimestamp) > CACHE_DURATION;
-    
+    const shouldRefreshCache = !cache.data || (now - cache.timestamp) > CACHE_DURATION;
+
     let feeds: FeedWithTracks[];
     let publisherStats: Array<{ name: string; albumCount: number }>;
     
@@ -199,10 +185,10 @@ export async function GET(request: Request) {
       } catch (queryError) {
         console.error('❌ Database query error:', queryError);
         // Return cached data if available, or empty result
-        if (cachedData && cachedData.feeds.length > 0) {
+        if (cache.data && cache.data.feeds.length > 0) {
           console.log('⚠️ Using cached data due to query error');
-          feeds = cachedData.feeds;
-          publisherStats = cachedData.publisherStats;
+          feeds = cache.data.feeds;
+          publisherStats = cache.data.publisherStats;
         } else {
           throw new Error(`Failed to load feeds: ${queryError instanceof Error ? queryError.message : 'Unknown error'}`);
         }
@@ -238,8 +224,8 @@ export async function GET(request: Request) {
       // This provides fast cache hits for common initial load
       const shouldCache = filter === 'all' && offset === 0 && limit >= 50;
       if (shouldCache) {
-        cachedData = { feeds, publisherStats };
-        cacheTimestamp = now;
+        cache.data = { feeds, publisherStats };
+        cache.timestamp = now;
         if (process.env.NODE_ENV === 'development') {
           console.log(`✅ Loaded and cached ${feeds.length} albums from database`);
         }
@@ -253,10 +239,10 @@ export async function GET(request: Request) {
       // Use cached data - no need for count query since cache has all feeds
       // Use cached data - cache contains all feeds, so we can slice after sorting
       if (process.env.NODE_ENV === 'development') {
-        console.log(`⚡ Using cached database results (${cachedData!.feeds.length} feeds)`);
+        console.log(`⚡ Using cached database results (${cache.data!.feeds.length} feeds)`);
       }
-      feeds = cachedData!.feeds; // Cache contains all feeds, sorted correctly
-      publisherStats = cachedData!.publisherStats;
+      feeds = cache.data!.feeds; // Cache contains all feeds, sorted correctly
+      publisherStats = cache.data!.publisherStats;
     }
     
     // Transform feeds into album format for frontend.
@@ -635,7 +621,7 @@ export async function GET(request: Request) {
         filter,
         sort,
         cached: !shouldRefreshCache,
-        cacheAge: now - cacheTimestamp,
+        cacheAge: now - cache.timestamp,
         source: 'database',
         formatCounts: filter === 'all' ? formatCounts : undefined
       }

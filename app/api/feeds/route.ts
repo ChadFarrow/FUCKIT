@@ -4,6 +4,13 @@ import { parseRSSFeedWithSegments, calculateTrackOrder, detectTrackMediaType, ap
 import { findPublisherFeed } from '@/lib/publisher-detector';
 import { generateAlbumSlug, isValidFeedUrl, normalizeUrl, normalizeArtistName } from '@/lib/url-utils';
 import { resolvePodcastIndexUrl } from '@/lib/podcast-index-api';
+import { invalidateAlbumsFastCache } from '@/lib/caches/albums-fast-cache';
+import { invalidateSearchCache } from '@/lib/caches/search-cache';
+
+function invalidateFeedListCaches(): void {
+  invalidateAlbumsFastCache();
+  invalidateSearchCache();
+}
 
 /**
  * Extract remoteItem tags from publisher feed XML
@@ -759,6 +766,8 @@ export async function POST(request: NextRequest) {
         }
       }
 
+      invalidateFeedListCaches();
+
       return NextResponse.json({
         message: 'Feed added successfully',
         feed: feedWithCount,
@@ -766,11 +775,11 @@ export async function POST(request: NextRequest) {
         importedPublisherFeed,
         linkedAlbums: linkedAlbumsInfo
       }, { status: 201 });
-      
+
     } catch (parseError) {
       // If parsing fails, still create the feed but mark it as error
       const errorMessage = parseError instanceof Error ? parseError.message : 'Unknown parsing error';
-      
+
       const feed = await prisma.feed.create({
         data: {
           id: `feed-error-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -784,7 +793,9 @@ export async function POST(request: NextRequest) {
           updatedAt: new Date()
         }
       });
-      
+
+      invalidateFeedListCaches();
+
       return NextResponse.json({
         warning: 'Feed added but parsing failed',
         feed,
@@ -817,7 +828,9 @@ export async function PUT(request: NextRequest) {
       where: { id },
       data: updateData
     });
-    
+
+    invalidateFeedListCaches();
+
     return NextResponse.json({
       message: 'Feed updated successfully',
       feed
@@ -848,7 +861,9 @@ export async function DELETE(request: NextRequest) {
     await prisma.feed.delete({
       where: { id }
     });
-    
+
+    invalidateFeedListCaches();
+
     return NextResponse.json({
       message: 'Feed deleted successfully'
     });
