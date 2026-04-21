@@ -424,6 +424,7 @@ function AlbumCard({ album, isPlaying = false, onPlay, className = '', linkFilte
         albumName={album.title}
         publisherGuid={(album as any).publisher?.feedGuid}
         publisherUrl={(album as any).publisher?.publisherUrl}
+        persons={(album as any).persons || []}
       />
     )}
   </>

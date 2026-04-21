@@ -143,6 +143,18 @@ export interface ParsedItem {
   chaptersUrl?: string;
   chapters?: Array<{ title: string; startTime: number; endTime?: number; img?: string }>;
   valueTimeSplits?: Array<{ startTime: number; duration: number; remotePercentage: number; remoteItem?: { feedGuid: string; itemGuid: string; medium?: string } }>;
+  persons?: ParsedPerson[];
+}
+
+export interface ParsedPerson {
+  name: string;
+  role?: string;
+  group?: string;
+  href?: string;
+  img?: string;
+  // Nostr public key in npub1... bech32 form. Emitted by MSP on the custom
+  // `npub=` attribute; also recovered from `href="nostr:npub1..."` as a fallback.
+  npub?: string;
 }
 
 import { PodcastChapter, ValueTimeSplit } from '@/lib/podcast-types';
@@ -220,6 +232,80 @@ export function applyParsedItemFields(updateData: any, matchedItem: ParsedItem |
   if (matchedItem.chaptersUrl) updateData.chaptersUrl = matchedItem.chaptersUrl;
   if (matchedItem.chapters) updateData.chapters = matchedItem.chapters;
   if (matchedItem.valueTimeSplits) updateData.valueTimeSplits = matchedItem.valueTimeSplits;
+  if (matchedItem.persons && matchedItem.persons.length > 0) updateData.persons = matchedItem.persons;
+}
+
+// NIP-19 bech32 npub format: 63 chars total, lowercase letters + numbers minus 1/b/i/o
+const NPUB_REGEX = /^npub1[02-9ac-hj-np-z]{58,63}$/i;
+
+function parsePersonAttrs(attrString: string): Record<string, string> {
+  const attrs: Record<string, string> = {};
+  const attrRegex = /([a-zA-Z:][a-zA-Z0-9:_-]*)\s*=\s*"([^"]*)"/g;
+  let m;
+  while ((m = attrRegex.exec(attrString)) !== null) {
+    attrs[m[1].toLowerCase()] = m[2];
+  }
+  return attrs;
+}
+
+// Extract <podcast:person> entries from any XML block (item or channel scope).
+function parsePersonsFromBlock(xmlBlock: string): ParsedPerson[] {
+  const persons: ParsedPerson[] = [];
+  // Matches both self-closing (`<podcast:person …/>`) and open/close forms
+  const regex = /<podcast:person\b([^>]*?)(?:\/>|>([\s\S]*?)<\/podcast:person>)/gi;
+  let match;
+  while ((match = regex.exec(xmlBlock)) !== null) {
+    const attrStr = match[1] || '';
+    const rawContent = (match[2] || '').trim();
+    const attrs = parsePersonAttrs(attrStr);
+    const name = rawContent.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').trim() || attrs.name || '';
+    if (!name && !attrs.npub && !attrs.href) continue;
+    const person: ParsedPerson = { name };
+    if (attrs.role) person.role = attrs.role;
+    if (attrs.group) person.group = attrs.group;
+    if (attrs.href) person.href = attrs.href;
+    if (attrs.img) person.img = attrs.img;
+    let npubCandidate = attrs.npub;
+    if (!npubCandidate && attrs.href && /^nostr:npub1/i.test(attrs.href)) {
+      npubCandidate = attrs.href.replace(/^nostr:/i, '');
+    }
+    if (npubCandidate && NPUB_REGEX.test(npubCandidate)) {
+      person.npub = npubCandidate;
+    }
+    persons.push(person);
+  }
+  return persons;
+}
+
+export function parseItemPersonsFromXML(xmlText: string, itemTitle: string): ParsedPerson[] {
+  try {
+    const itemRegex = /<item[^>]*>([\s\S]*?)<\/item>/g;
+    const items: string[] = [];
+    let itemMatch;
+    while ((itemMatch = itemRegex.exec(xmlText)) !== null) items.push(itemMatch[0]);
+
+    const xmlEncodedTitle = itemTitle.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const escapedTitle = itemTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const escapedXmlTitle = xmlEncodedTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const titleRegex = new RegExp(`<title>(<!\\[CDATA\\[)?${escapedTitle}(\\]\\]>)?</title>`, 'i');
+    const xmlTitleRegex = new RegExp(`<title>(<!\\[CDATA\\[)?${escapedXmlTitle}(\\]\\]>)?</title>`, 'i');
+    const itemContent = items.find(item => titleRegex.test(item) || xmlTitleRegex.test(item));
+    if (!itemContent) return [];
+    return parsePersonsFromBlock(itemContent);
+  } catch {
+    return [];
+  }
+}
+
+export function parseChannelPersonsFromXML(xmlText: string): ParsedPerson[] {
+  try {
+    // Channel block = from opening <channel> up to first <item> (or </channel>)
+    const channelMatch = xmlText.match(/<channel[^>]*>([\s\S]*?)(?=<item\b|<\/channel>)/i);
+    if (!channelMatch) return [];
+    return parsePersonsFromBlock(channelMatch[1] || '');
+  } catch {
+    return [];
+  }
 }
 
 // Helper function to detect media type from MIME type or URL
@@ -1041,9 +1127,15 @@ export async function parseRSSFeed(feedUrl: string): Promise<ParsedFeed> {
         // Parse V4V (Value for Value) information if present
         // First try to parse from the raw XML for this specific item
         const itemV4vData = parseItemV4VFromXML(xmlText, item.title || '');
-        
+
         if (itemV4vData.valueTimeSplits.length > 0) {
           parsedItem.valueTimeSplits = itemV4vData.valueTimeSplits;
+        }
+
+        // Parse <podcast:person> tags (with optional npub attribute) at item level
+        const itemPersons = parseItemPersonsFromXML(xmlText, item.title || '');
+        if (itemPersons.length > 0) {
+          parsedItem.persons = itemPersons;
         }
 
         if (itemV4vData.recipient) {

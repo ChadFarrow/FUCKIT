@@ -9,7 +9,7 @@ import crypto from 'crypto';
 import { prisma } from '@/lib/prisma';
 import { ValueTagParser } from '@/lib/lightning/value-parser';
 import { isValidFeedUrl, normalizeUrl } from '@/lib/url-utils';
-import { calculateTrackOrder, parsePodcastGuidFromXML, fetchChapters } from '@/lib/rss-parser-db';
+import { calculateTrackOrder, parsePodcastGuidFromXML, fetchChapters, parseChannelPersonsFromXML } from '@/lib/rss-parser-db';
 import { decodeHtmlEntities } from '@/lib/decode-entities';
 
 const PODCAST_INDEX_API_KEY = process.env.PODCAST_INDEX_API_KEY;
@@ -248,6 +248,13 @@ export async function importFeedToDatabase(feedData: any, episodes: ParsedEpisod
       console.log(`🔑 Found podcast:guid for feed ${feedId}: ${podcastGuid}`);
     }
 
+    // Parse channel-level <podcast:person> tags (MSP emits npubs here for bands/hosts)
+    const channelPersons = xmlText ? parseChannelPersonsFromXML(xmlText) : [];
+    const channelPersonsData = channelPersons.length > 0 ? channelPersons : null;
+    if (channelPersonsData) {
+      console.log(`👥 Found ${channelPersons.length} channel-level person(s) for feed ${feedId}`);
+    }
+
     // Use upsert to atomically create or update feed (prevents race conditions)
     const feed = await prisma.feed.upsert({
       where: { id: feedId },
@@ -268,7 +275,8 @@ export async function importFeedToDatabase(feedData: any, episodes: ParsedEpisod
         updatedAt: new Date(),
         ...(feedV4vData && { v4vValue: feedV4vData }),
         ...(feedV4vRecipient && { v4vRecipient: feedV4vRecipient }),
-        ...(podcastGuid && { guid: podcastGuid })
+        ...(podcastGuid && { guid: podcastGuid }),
+        ...(channelPersonsData && { persons: channelPersonsData })
       },
       update: {
         // Update existing feed metadata
@@ -284,7 +292,8 @@ export async function importFeedToDatabase(feedData: any, episodes: ParsedEpisod
         updatedAt: new Date(),
         ...(feedV4vData && { v4vValue: feedV4vData }),
         ...(feedV4vRecipient && { v4vRecipient: feedV4vRecipient }),
-        ...(podcastGuid && { guid: podcastGuid })
+        ...(podcastGuid && { guid: podcastGuid }),
+        ...(channelPersonsData && { persons: channelPersonsData })
       }
     });
 

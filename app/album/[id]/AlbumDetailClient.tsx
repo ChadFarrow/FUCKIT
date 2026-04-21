@@ -998,6 +998,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                     albumName={album.title}
                     publisherGuid={album.publisher?.feedGuid}
                     publisherUrl={album.publisher?.feedGuid ? `https://stablekraft.app${generatePublisherUrl({ artist: album.artist, feedGuid: album.publisher.feedGuid })}` : undefined}
+                    persons={(album as any).persons || []}
                     className="flex items-center gap-2 px-6 py-3 text-base"
                   />
                   {extraAlbumActions}
@@ -1282,6 +1283,10 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                             albumName={album.title}
                             publisherGuid={album.publisher?.feedGuid}
                             publisherUrl={album.publisher?.feedGuid ? `https://stablekraft.app${generatePublisherUrl({ artist: album.artist, feedGuid: album.publisher.feedGuid })}` : undefined}
+                            persons={[
+                              ...((track as any).persons || []),
+                              ...((album as any).persons || []),
+                            ]}
                             className="text-xs px-2 py-1"
                           />
                         </div>

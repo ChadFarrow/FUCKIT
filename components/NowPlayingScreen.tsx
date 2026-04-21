@@ -810,6 +810,10 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
           publisherGuid={(currentPlayingAlbum as any).publisher?.feedGuid}
           publisherUrl={(currentPlayingAlbum as any).publisher?.publisherUrl}
           remoteStartTime={activeVTS ? activeVTS.startTime : currentTrack.v4vValue?.remoteStartTime}
+          persons={[
+            ...((currentTrack as any).persons || []),
+            ...((currentPlayingAlbum as any).persons || []),
+          ]}
         />
       )}
     </div>
