@@ -8,10 +8,10 @@ npm run db:studio    # Open Prisma Studio
 npm run deploy       # Build deployment package (local)
 git push origin main # Deploy to production (Railway auto-deploys from git)
 
-# Android / zapstore (requires JDK 21 + ~/.stablekraft-android.env)
+# Android / zapstore (requires JDK 21 + ~/.stablekraft-android.env) — see project_zapstore_distribution.md memory
 npm run android:sync                                                                  # Copy web assets into android/
-JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home npm run android:release  # Signed release APK
-zsp publish --skip-certificate-linking                                                # Publish new release to zapstore
+JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home npm run android:release
+zsp publish --skip-certificate-linking                                                # Publish to zapstore
 ```
 
 ## Boundaries
@@ -20,7 +20,7 @@ zsp publish --skip-certificate-linking                                          
 - No `src/` directory — all source lives in `app/`, `lib/`, `components/`, `contexts/`
 - No `deploy-*/` artifacts in the repo — add to `.gitignore` if generated
 - No JSON-file databases — all data is in PostgreSQL via Prisma
-- Android keystore lives at `~/keystores/stablekraft-release.jks`; credentials in gitignored `~/.stablekraft-android.env`. Never commit either. Losing the keystore = losing the ability to ship updates to installed users.
+- Android keystore at `~/keystores/stablekraft-release.jks`, creds in `~/.stablekraft-android.env` — never commit either. Losing the keystore = losing the ability to ship updates to installed users.
 
 ## Tech Stack
 - Next.js 15 (App Router), React 18, TypeScript, PostgreSQL/Prisma
@@ -37,49 +37,23 @@ zsp publish --skip-certificate-linking                                          
 Runs at 4 AM EST: clears cache → reparses feeds → refreshes playlists → parses publishers → imports missing albums from publisher feeds (Step 5b via PI API). The `PLAYLISTS` array must include ALL playlist IDs — missing ones won't get nightly processing.
 
 ### Podping Consumer Integration
-External service `msp-podping-service` (repo `ChadFarrow/msp-podping-service`) tails Hive for `pp_music_*` and `pp_podcast_*` podpings. For each ping the consumer (`consumer/src/index.ts:handleIri`) calls `/api/feeds/exists`; if the feed exists it calls `/api/feeds/refresh-by-url` **regardless of signer**. Only `/api/feeds` (new-feed minting) is gated to signer=`chadf` (the `fromMsp` check). **Historical gotcha (fixed 2026-04-19):** `/api/feeds/exists` only matched by URL variants, so Podhome podpings for UpBeats — which broadcast `serve.podhome.fm/rss/<uuid>` while the DB stored `feeds.rssblue.com/upbeats` — returned `exists:false` and silently no-op'd. Fix added a uuid-from-URL fallback to Feed.guid/Feed.id, mirroring `refresh-by-url`. **Verified 2026-04-19 via HafSQL:** Podhome emits reliable `pp_podcast_update` for UpBeats and Two For Tunestr within ~1 min of publish (signers `podping.aaa–eee`), so once the fix deploys these should trigger refreshes without a manual nudge. The targeted-reparse cron remains as a belt-and-suspenders safety net.
+External service `msp-podping-service` (repo `ChadFarrow/msp-podping-service`) tails Hive for `pp_music_*` / `pp_podcast_*` podpings. For each ping the consumer (`consumer/src/index.ts:handleIri`) calls `/api/feeds/exists`; if it exists, calls `/api/feeds/refresh-by-url` **regardless of signer**. Only `/api/feeds` (new-feed minting) is gated to signer=`chadf` via `fromMsp` check in the consumer.
 
-Four public endpoints (none auth-gated today):
-- `GET /api/feeds/exists?url=<URL>` or `?guid=<GUID>` → `{ exists: boolean }`. Blacklisted URLs always return `false` so podpings can't revive removed feeds (reuses `isBlacklistedFeedUrl()` from `lib/feed-exclusions.ts`). URL lookup tries normalized + raw variants; on miss, falls back to `extractUuidFromUrl()` → `Feed.guid`/`Feed.id` lookup (same pattern as `refresh-by-url`). Keep these two endpoints' matching logic in sync — divergence caused the Podhome/UpBeats silent-skip bug (see Podping Consumer Integration above).
-- `POST /api/feeds/refresh-by-url` with `{ originalUrl }` — when the feed already exists. Lookup tries URL variants (normalized + raw + original) first, then falls back to `Feed.guid`/`Feed.id` matched against a UUID extracted from the URL path (`extractUuidFromUrl` in `lib/url-utils.ts`). **Why:** some hosts store and podping-broadcast different URLs for the same feed (UpBeats: DB has `feeds.rssblue.com/upbeats`, podping carries `serve.podhome.fm/rss/<uuid>`) — without this fallback every podping minted an orphan Feed row. Do **not** remove the fallback. Called by the consumer for every signer when `/api/feeds/exists` returned true, so it must stay fast and idempotent. **Does NOT mint new feeds** unless the caller passes an explicit `feedId` in the body (guards against rogue consumers / direct unauthed POSTs creating garbage rows) — callers without `feedId` get 404 on lookup miss and must use `POST /api/feeds` to add a new feed. Current callers with `feedId`: the LNURL and Podtards test-feed buttons in `AdminPanel.tsx`.
-- `POST /api/feeds` with `{ originalUrl, type: 'album' }` — **consumer-gated to signer=`chadf`** (only our MSP can mint new feed records). Stranger podpings for unknown URLs silently drop at the consumer's `!exists && fromMsp` branch rather than hitting this endpoint. `POST /api/feeds` itself has no auth — the gate is client-side in `consumer/src/index.ts:handleIri` (`fromMsp = signers[0] === mspAccount`).
-- `GET /api/feeds/opml?type=<album|podcast|publisher>&grouped=<false>` → OPML 2.0 XML of every active, non-blacklisted feed for cross-app import. Filters `BLACKLISTED_FEED_IDS` and `BLACKLISTED_FEED_URLS` (does **not** filter `PLAYLIST_SOURCE_FEED_URLS` — those guard nightly auto-import, not display). 15-min in-memory cache keyed off the full feed list; `type` filter applies in-memory so one cache serves all variants. `?refresh=true` bypasses. Served as `attachment` so browsers download `stablekraft-feeds.opml` directly.
+Four public endpoints (none auth-gated server-side; auth is client-side in the consumer):
+- `GET /api/feeds/exists?url=<URL>` or `?guid=<GUID>` → `{ exists: boolean }`. Blacklisted URLs always return `false` (reuses `isBlacklistedFeedUrl()` from `lib/feed-exclusions.ts`). URL lookup tries normalized + raw variants; on miss, falls back to `extractUuidFromUrl()` → `Feed.guid`/`Feed.id` lookup. **Keep this fallback** — without it, Podhome podpings for UpBeats (broadcasts `serve.podhome.fm/rss/<uuid>` while DB stores `feeds.rssblue.com/upbeats`) silently no-op. Keep matching logic in sync with `refresh-by-url` — divergence caused the Podhome/UpBeats silent-skip bug.
+- `POST /api/feeds/refresh-by-url` with `{ originalUrl }` — same lookup pattern (URL variants → uuid-from-URL fallback). **Does NOT mint new feeds** unless caller passes explicit `feedId` in body (guards against rogue unauthed POSTs creating garbage rows). Must stay fast + idempotent. Current `feedId` callers: LNURL and Podtards test-feed buttons in `AdminPanel.tsx`.
+- `POST /api/feeds` with `{ originalUrl, type: 'album' }` — **consumer-gated to signer=`chadf`** (only our MSP can mint new feed records). Stranger podpings drop at the consumer's `!exists && fromMsp` branch. Server-side has no auth.
+- `GET /api/feeds/opml?type=<album|podcast|publisher>&grouped=<false>` → OPML 2.0 XML of every active, non-blacklisted feed. Filters `BLACKLISTED_FEED_IDS`/`BLACKLISTED_FEED_URLS` (does **not** filter `PLAYLIST_SOURCE_FEED_URLS`). 15-min in-memory cache keyed off full feed list; `type` filter applies in-memory. `?refresh=true` bypasses.
 
 When modifying these endpoints, check consumer expectations in `msp-podping-service/consumer/src/index.ts` — if adding auth, wire a shared-secret env var into the consumer too.
 
-**Per-host podping coverage (verified 2026-04-19 via HafSQL scan of last ~3.5y `pp_music_update` + `pp_podcast_update`):** all third-party relays broadcast through Podping Network shared accounts `podping.aaa`–`podping.eee` (Sovereign Feeds and ppwatch both go this route, so the signer doesn't fingerprint the user-facing tool).
-
-| Host | DB feeds | Podping activity | Disposition |
-|---|---:|---|---|
-| `feeds.fountain.fm` | ~149 | **Active**, ~86 pings/30d, 100% of our feeds have been pinged | Auto-refresh via consumer; no action needed |
-| `serve.podhome.fm` | small | **Active** (UpBeats, TFT, etc.) | Auto-refresh; see `refresh-podcasts-targeted.yml` for belt-and-suspenders |
-| `feeds.rssblue.com` | ~135 | Legacy; 10 pings in last 90d, last 2026-02-17 (RSSBlue folded into Fountain) | Historical backfill only; new content migrates to Fountain |
-| `www.wavlake.com` | ~2239 | **Effectively silent** (5 pings ever, last 2024-03) | Nightly refresh only — biggest catalog, zero podping coverage |
-| `music.behindthesch3m3s.com` | ~42 | Silent | Nightly refresh + any `chadf` MSP pushes |
-| `headstarts.uk`, `sunami.app` | few | Only `chadf` MSP self-pushes | MSP pushes + nightly |
-| `cdn.kolomona.com`, `thebearsnare.com` | <10 | Silent | Nightly refresh only |
-
-Implications: Fountain-hosted music gets near-real-time updates automatically. Wavlake (majority of the catalog) and self-hosted music sites rely on the 4 AM nightly reparse — do not promise sub-hour latency for those. If a specific Wavlake album needs prompt refresh, push a `chadf` MSP ping for it.
+**Host latency summary:** Fountain ≈ real-time via podping; Wavlake + self-hosted music sites = nightly 4 AM reparse only. Full per-host table and HafSQL provenance in `reference_podping_host_coverage.md` memory.
 
 ### Targeted Podcast Reparse (`.github/workflows/refresh-podcasts-targeted.yml`)
-Every 30 min from 11:00–13:59 UTC on Sundays (UpBeats) and Tuesdays (Two For Tunestr) — the observed publish windows (7 AM Eastern year-round, UTC shifts ±1h on DST). Originally load-bearing because `/api/feeds/exists` missed Podhome podpings for UpBeats (URL mismatch, fixed 2026-04-19); now a belt-and-suspenders safety net for any future mismatch, consumer outage, or Podhome emission gap. Catches new episodes within ~30 min of publish. Day-of-week check inside the workflow means off-day cron ticks early-exit at zero cost. When adding a curated podcast with a predictable publish schedule, update both this file's `PODCAST_FEEDS` array (and day switch if a new weekday) **and** `refresh-playlists.yml` Step 2b.
+Every 30 min from 11:00–13:59 UTC on Sundays (UpBeats) and Tuesdays (Two For Tunestr) — the observed publish windows (7 AM Eastern year-round, UTC shifts ±1h on DST). Belt-and-suspenders safety net for consumer outages or Podhome emission gaps; catches new episodes within ~30 min of publish. Day-of-week check inside the workflow means off-day cron ticks early-exit at zero cost. When adding a curated podcast with a predictable publish schedule, update both this file's `PODCAST_FEEDS` array (and day switch if a new weekday) **and** `refresh-playlists.yml` Step 2b.
 
 ### Android Distribution (zapstore)
-App is on [zapstore.dev/apps/app.stablekraft](https://zapstore.dev/apps/app.stablekraft) as a Capacitor 8 WebView wrapping `https://stablekraft.app`. No Next.js/backend changes per release — the APK just loads the live site.
-
-**Fixed identity (never change):** appId `app.stablekraft`, keystore alias `stablekraft`, cert SHA-256 `27f4191931eeca09382066360f49abe68136be5656fc1429cd0bb952b1aff48e`. Any mismatch breaks updates for installed users.
-
-**Per-release flow:** bump `versionCode`/`versionName` in `android/app/build.gradle:10-11` → build (see Commands) → `gh release create vX.Y.Z android/app/build/outputs/apk/release/app-release.apk --repo ChadFarrow/stablekraft-app` → `zsp publish --skip-certificate-linking` (reads `zapstore.yaml` at repo root).
-
-**Gotchas:**
-- **Capacitor 8 requires JDK 21** (system is 17). Always prefix builds with `JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home`.
-- **`server.url` in `capacitor.config.ts`** makes the APK a thin shell — a Railway outage blanks the app. Offline mode would need removing `server.url` and embedding a static export.
-- **Do NOT propose Bubblewrap/TWA.** Torn out; always Capacitor WebView.
-- **`zsp` CLI:** use the prebuilt `zsp-X.Y.Z-darwin-arm64` from [github.com/zapstore/zsp/releases](https://github.com/zapstore/zsp/releases) → `~/.local/bin/zsp`. Do NOT `go install` — system Go is amd64 and produces a Rosetta binary.
-- **Signing:** NIP-07 extension needs 5 sequential popup approvals — easy to time out. Prefer `SIGN_WITH='bunker://…'` with Primal set to Full trust.
-- **`--skip-certificate-linking`** required on every publish after v1.0.0 (cert-to-Nostr link is one-shot, already done).
-- **`zapstore.yaml` NIP list:** wizard emits `- 01,` with trailing commas inside string entries. Hand-fix to `- 01` (integer) or the published event carries malformed NIPs.
-- **Env file:** keystore creds in `~/.stablekraft-android.env` (chmod 600). `STABLEKRAFT_KEY_PASSWORD` = `STABLEKRAFT_KEYSTORE_PASSWORD` (PKCS12 default when `-keypass` is omitted).
+See `project_zapstore_distribution.md` memory for appId, keystore path, cert fingerprint, JDK 21 requirement, `zsp` CLI binary source, per-release flow, and gotchas (Bubblewrap/TWA banned, `--skip-certificate-linking` always, etc.).
 
 ## Key Behaviors
 
@@ -96,45 +70,42 @@ Playlists use `<podcast:remoteItem>` with `feedGuid` + `itemGuid`. On `?refresh`
 
 ### Feed Exclusions (`lib/feed-exclusions.ts`)
 Two lists with different semantics:
+- **`BLACKLISTED_FEED_IDS` / `BLACKLISTED_FEED_URLS`** — true bans. Applied everywhere: album grid, search, `/api/feeds/exists`, `process-remote-items`, admin bulk-import. Includes test feeds (`lnurl-test-*`, `podtards-test`) and repeat-offenders like `bitpunk-fm-unwound`.
+- **`PLAYLIST_SOURCE_FEED_URLS`** — URLs of podcast feeds backing curated playlists (B4TS, MMM, HGH, LT, Upbeats, IAM, ITDV, Two For Tunestr). Checked **only** by `process-remote-items` so nightly playlist refresh can't auto-create feed records for them. Admin-initiated imports (`POST /api/feeds`) never consulted the blacklist anyway.
 
-- **`BLACKLISTED_FEED_IDS` / `BLACKLISTED_FEED_URLS`** — true bans. Applied everywhere: album grid (`albums-fast`), search, `/api/feeds/exists`, `process-remote-items`, admin bulk-import. Historical use case: `bitpunk-fm-unwound` kept getting auto-imported as an album and polluting the grid. Test feeds (`lnurl-test-*`, `podtards-test`) live here too.
-- **`PLAYLIST_SOURCE_FEED_URLS`** — URLs of the podcast feeds backing curated playlists (B4TS, MMM, HGH, LT, Upbeats, IAM, ITDV, Two For Tunestr). Checked **only** by `process-remote-items` so nightly playlist refresh can't auto-create feed records for them. Admin-initiated imports (`POST /api/feeds`) never consulted the blacklist anyway, so admin can still add any of these as standalone music podcasts via `/admin`.
-
-Helpers: `isBlacklistedFeedId()`, `isBlacklistedFeedUrl()`, `isPlaylistSourceFeedUrl()`. Do **not** move playlist-source URLs back into the blacklist — the original bug (bab/bitpunkfm auto-listing as albums) is still prevented for true blacklist entries, while admin retains the ability to promote any playlist source into the Podcasts tab.
+Helpers: `isBlacklistedFeedId()`, `isBlacklistedFeedUrl()`, `isPlaylistSourceFeedUrl()`. Do **not** move playlist-source URLs back into the blacklist — doing so would block admin from promoting any of them into the Podcasts tab.
 
 ### Admin Feed Management (`/admin`)
-Single input handles both add and reparse. Type dropdown (Auto-detect/Album/Publisher/Podcast) — use when URL doesn't match auto-detect patterns. Auto-detects type from URL (`-pubfeed`, `/publisher`, `/artist/` = publisher). **Server-side fallback**: feeds with 0 items + `<podcast:remoteItem>` references auto-detect as publisher. **GUID collision handling**: if a publisher feed's `podcast:guid` collides with an existing album, the feed is created without GUID rather than failing. **Fixing duplicates**: delete all copies first (`DELETE /api/feeds?id=<feedId>`), then re-add. Initial import (`POST /api/feeds`) saves all parsed fields including chapters, VTS, and V4V via `applyParsedItemFields()` — no reparse needed.
+Single input handles both add and reparse. Type dropdown (Auto-detect/Album/Publisher/Podcast) — use when URL doesn't match auto-detect patterns (`-pubfeed`, `/publisher`, `/artist/` = publisher). **Server-side fallback**: feeds with 0 items + `<podcast:remoteItem>` references auto-detect as publisher. **GUID collision handling**: if a publisher feed's `podcast:guid` collides with an existing album, the feed is created without GUID rather than failing. **Fixing duplicates**: delete all copies first (`DELETE /api/feeds?id=<feedId>`), then re-add. Initial import (`POST /api/feeds`) saves all parsed fields including chapters, VTS, and V4V via `applyParsedItemFields()` — no reparse needed.
 
-**Reparse is additive, not authoritative** (`app/api/admin/feeds/[id]/reparse/route.ts:76-171`): it upserts existing tracks by guid (or title+audioUrl) and appends new ones, but never deletes Track rows whose guids have disappeared from upstream. If an artist re-versions their feed XML with new item guids on the same songs (rare — Henrik Flyman hit this in 2026-04 when his op3 `pg=` tag moved from publisher-level to per-album), the old Track rows stick around and album pages show doubles. **Fix ad-hoc, not via tooling**: identify stale rows by cross-checking DB guids vs upstream (`GET /api/tracks?feedId=<id>` → compare to the RSS `<guid>` values), then `DELETE /api/tracks?id=<trackId>` each one. **Track.id format is `${feedId}-${guid}`** (see reparse handler `route.ts:194`), so you can construct the id without a lookup once you have the stale guid. Do not propose adding a stale-track sweep to reparse or a cron job — the user has judged the churn-of-a-rewrite isn't worth it for how rarely this surfaces.
+**Reparse is additive, not authoritative** (`app/api/admin/feeds/[id]/reparse/route.ts`): upserts existing tracks by guid (or title+audioUrl) and appends new ones, but never deletes Track rows whose guids have disappeared from upstream. If an artist re-versions XML with new item guids on the same songs, old Track rows stick around and album pages show doubles. **Fix ad-hoc, not via tooling**: cross-check DB guids vs upstream (`GET /api/tracks?feedId=<id>`), then `DELETE /api/tracks?id=<trackId>` each stale row. **Track.id format is `${feedId}-${guid}`** — construct without a lookup once you have the stale guid. Do not propose adding a stale-track sweep to reparse or a cron job (see `feedback_stale_track_cleanup.md`).
 
 ### Adding Music Podcasts (like Upbeats, Two For Tunestr, B4TS)
-Import via `/admin` (paste RSS URL). Non-Wavlake feeds with `<podcast:medium>podcast</podcast:medium>` automatically get `type: 'podcast'`, appear under the Podcasts filter, hide from the album grid, and are searchable — no config edits needed. `/podcast/[id]` dynamic route handles display, episodes sort newest-first.
+Import via `/admin` (paste RSS URL). Non-Wavlake feeds with `<podcast:medium>podcast</podcast:medium>` automatically get `type: 'podcast'`, appear under the Podcasts filter, hide from the album grid, and are searchable — no config edits needed. `/podcast/[id]` dynamic route handles display.
 
-**If the feed is also a playlist source** (B4TS, MMM, HGH, LT, Upbeats, IAM, ITDV, Two For Tunestr): it's in `PLAYLIST_SOURCE_FEED_URLS`, which blocks nightly auto-import but leaves admin add open. After import, register it as a curated podcast to lock in type and slug: add to **`PODCAST_FEED_IDS`** + **`PODCAST_FEED_URLS`** in `lib/podcast-feeds.ts` so `fix-podcast-types` can't flip it back to album, plus **`PODCAST_SLUGS`** + **`PODCAST_SLUG_TO_FEED_ID`** + **`PODCAST_CANONICAL_SLUGS`** to redirect `/album/<slug>` → `/podcast/<canonical-slug>`.
+**If the feed is also a playlist source** (B4TS, MMM, HGH, LT, Upbeats, IAM, ITDV, Two For Tunestr): it's in `PLAYLIST_SOURCE_FEED_URLS`, which blocks nightly auto-import but leaves admin add open. After import, register it as a curated podcast in `lib/podcast-feeds.ts`: add to `PODCAST_FEED_IDS` + `PODCAST_FEED_URLS` so `fix-podcast-types` can't flip it back to album, plus `PODCAST_SLUGS` + `PODCAST_SLUG_TO_FEED_ID` + `PODCAST_CANONICAL_SLUGS` to redirect `/album/<slug>` → `/podcast/<canonical-slug>`.
 
-**If auto-detect misses the type** (feed lacks `medium=podcast`, or album-typed record from pre-detection import): delete with `DELETE /api/feeds?id=<feedId>` and re-add via `/admin` with the **Podcast** dropdown. Expect the DB id to change (e.g., `f38e27af-...` → `boo-bury-before-the-sch3m3s`).
-
-**Slug redirects**: if the auto-generated feed ID differs from the desired URL slug (e.g., `silvie-two-for-tunestr` vs `two-for-tunestr`), add mappings to `PODCAST_SLUG_TO_FEED_ID` and `PODCAST_CANONICAL_SLUGS` in `lib/podcast-feeds.ts`.
+**Slug redirects**: if the auto-generated feed ID differs from the desired URL slug (e.g., `silvie-two-for-tunestr` vs `two-for-tunestr`), add mappings to `PODCAST_SLUG_TO_FEED_ID` and `PODCAST_CANONICAL_SLUGS`.
 
 **After import**: reparse from the admin page to ensure chapters and VTS are populated (initial import may miss them if the chapters proxy is down).
 
 ### Admin Database Cleanup (`/admin`, two-step)
 **Step 1 Parse Missing Tracks** → `GET /api/playlist/parse-feeds-stream`, **Step 2 Check for Orphaned Items** → `/api/admin/orphaned-items`.
 
-**Step 1** (`app/api/playlist/parse-feeds-stream/route.ts`): walks feeds with `status='active' AND type != 'publisher' AND Track.none()`, `take: 500`. Do **not** drop the `type != 'publisher'` filter — reclassified publishers never have tracks by design and would reappear every run, exhausting the budget. SSE emits per-feed `feedError`/`feedInfo` events with categorized `reason`: `publisher-via-medium`, `publisher-via-url`, `publisher-no-items`, `rss-fetch-failed`, `rss-zero-items`, `no-url-no-api-match`, `import-failed`, `exception`, `tracks-owned-elsewhere`. AdminPanel renders a collapsible per-feed log with reason-count summary. `parseFeedXML` always returns `{ episodes, xmlText, fetchError? }` (never null) so HTTP status / exception detail rides into `feedError.message`; 15s `AbortSignal.timeout` prevents a stalled feed from blocking the batch.
+**Step 1** (`app/api/playlist/parse-feeds-stream/route.ts`): walks feeds with `status='active' AND type != 'publisher' AND Track.none()`, `take: 500`. Do **not** drop the `type != 'publisher'` filter — reclassified publishers never have tracks by design and would reappear every run. SSE emits per-feed `feedError`/`feedInfo` events with categorized `reason` codes; AdminPanel renders a collapsible per-feed log with reason-count summary. `parseFeedXML` always returns `{ episodes, xmlText, fetchError? }` (never null); 15s `AbortSignal.timeout` per feed.
 
 **Publisher reclassification has three signals, in order**:
-1. PI API `feedData.medium === 'publisher'` from `byguid` — covers RSSBlue, Fountain, phafe.
-2. URL shape `^https?://wavlake\.com/feed/artist/<uuid>`. PI API does **not** surface `medium` for Wavlake artist feeds even though their XML carries `<podcast:medium>publisher</podcast:medium>`, so URL is the only pre-fetch signal. Wavlake's `/feed/music/` = albums, `/feed/artist/` = publishers by construction. Do **not** remove this — Wavlake IP-rate-limits Railway (`HTTP 429` after ~50 sequential fetches).
+1. PI API `feedData.medium === 'publisher'` from `byguid` (RSSBlue, Fountain, phafe).
+2. URL shape `^https?://wavlake\.com/feed/artist/<uuid>` — PI API does **not** surface `medium` for Wavlake artist feeds, so URL is the only pre-fetch signal. Wavlake's `/feed/music/` = albums, `/feed/artist/` = publishers by construction. Do **not** remove — Wavlake IP-rate-limits Railway (`HTTP 429` after ~50 sequential fetches).
 3. Post-RSS `xmlText.includes('<podcast:remoteItem')` when fetch succeeds with zero `<item>` tags.
 
 **`tracks-owned-elsewhere` reason** flags silent-loss: `Track.guid @unique` + unscoped dedup in `importFeedToDatabase` means an episode whose guid already exists under another feed falls into the "update" branch without re-linking `feedId` — metadata refreshes and `parsed++` fires, but zero tracks land, so the feed reappears next run. A post-import `prisma.track.count({ where: { feedId } })` check catches this and emits the canonical claimants. Fix tracked in `project_feed_duplicate_dedup.md`.
 
-**Step 2** (`app/api/admin/orphaned-items/route.ts`): orphan = `type='album' AND Track.none()`. Publishers + podcasts + any album with tracks are preserved regardless of curated-playlist membership. Do **not** revert to the older "not-in-any-system-playlist" definition — it would nuke every publisher, every podcast, and every manually-added album outside the 9 curated playlists. The per-feed delete button on the Add-Feed UI handles one-offs.
+**Step 2** (`app/api/admin/orphaned-items/route.ts`): orphan = `type='album' AND Track.none()`. Publishers + podcasts + any album with tracks are preserved regardless of curated-playlist membership. Do **not** revert to the older "not-in-any-system-playlist" definition — it would nuke every publisher, every podcast, and every manually-added album outside the 9 curated playlists.
 
-**Gap — not caught by Step 2**: `type='publisher'` rows with tracks (the orphan query only targets `type='album'`). Can occur when `refresh-by-url` used to ingest episodes into a broken `feed-error-*` placeholder row before the guid-fallback lookup landed (2026-04-19). Clean up manually with `DELETE /api/feeds?id=<feedId>`. Should be rare post-fix; check with `SELECT id, title, type, _count FROM "Feed" WHERE id LIKE 'feed-error-%' OR id LIKE 'feed-%'` when auditing.
+**Preview annotates each orphan with its canonical claimant** (matching title + artist + has tracks): green `→ duplicate of {id}` for safe deletes, red `⚠ no canonical match` for review. Roll-up header shows `N safe duplicates · M need review` across the full cohort.
 
-**Preview annotates each orphan with its canonical claimant** (matching title + artist + has tracks): green `→ duplicate of {id}` for safe deletes, red `⚠ no canonical match` for review. Roll-up header shows `N safe duplicates · M need review` across the full cohort (not just the 50-row sample).
+**Gap — not caught by Step 2**: `type='publisher'` rows with tracks (orphan query only targets `type='album'`). Clean up manually with `DELETE /api/feeds?id=<feedId>` if you spot any.
 
 ### Search
 - PostgreSQL trigram `similarity()`, flat 0.3 threshold. Do NOT lower below 0.3 — causes false positives.
@@ -152,38 +123,30 @@ Matched by title slug, artist slug, or URL path. Multi-feed support with per-pla
 Tracks over 2 hours filtered as non-music (silent, no warnings).
 
 ### Explicit Flag
-Show-level `album.explicit` uses `feed.explicit ?? false` only (channel `<itunes:explicit>`). Do **not** aggregate from track-level explicit flags — that diverges from Apple Podcasts convention. UpBeats example: channel tag `false` but 2/78 episodes flagged explicit; the previous `tracks.some(t.explicit) || feed.explicit` aggregation wrongly flipped the whole show to explicit. Per-track `explicit` is unchanged; `AlbumDetailClient` renders per-row "E" badges on individual explicit episodes. Call sites: `app/api/albums/[slug]/route.ts:1228,1394`, `app/api/albums/route.ts:499`, `app/api/parsed-feeds/route.ts:112`.
+Show-level `album.explicit` uses `feed.explicit ?? false` only (channel `<itunes:explicit>`). Do **not** aggregate from track-level explicit flags — that diverges from Apple Podcasts convention. Per-track `explicit` is unchanged; `AlbumDetailClient` renders per-row "E" badges on individual explicit episodes. Call sites: `app/api/albums/[slug]/route.ts`, `app/api/albums/route.ts`, `app/api/parsed-feeds/route.ts`.
 
 ### NIP-46 Remote Signer (Amber / Primal / bunker)
-Key files: `lib/nostr/nip46-client.ts`, `lib/nostr/signer.ts` (NIP46Signer wrapper), `components/Nostr/hooks/useNip46Connection.ts`, `lib/nostr/signer-nudge.ts`. iOS Safari kills WebSockets after ~30s backgrounded; reconnects on `visibilitychange`. **Primal is the best iOS signer** — auto-signs with Full trust, responds <1s. Debug logging gated behind `localStorage.setItem('nip46_debug', 'true')`.
+Key files: `lib/nostr/nip46-client.ts`, `lib/nostr/signer.ts`, `components/Nostr/hooks/useNip46Connection.ts`, `lib/nostr/signer-nudge.ts`. iOS Safari kills WebSockets after ~30s backgrounded; reconnects on `visibilitychange`. **Primal is the best iOS signer** — auto-signs with Full trust, <1s response. Debug: `localStorage.setItem('nip46_debug', 'true')`.
 
-**Signer nudge toast** (`lib/nostr/signer-nudge.ts`): `withSignerNudge()` wraps `signEvent`/`getPublicKey`, shows dismissable toast after **4s** ("Waiting on Primal to approve…"), hard-fails at **125s** (outside the NIP-46 client's 120s relay-request timeout so the client's richer error surfaces first). `NIP46Signer.signEvent`/`getPublicKey` route through automatically; direct `client.signEvent` callers in `LoginModal` wrap manually. Throttled to 8s.
-
-**iOS PWA reconnect feedback**: `useNip46Connection`'s `visibilitychange` handler emits `toast.success('Signer reconnected')` or a red actionable toast on failure. `NostrProvider` (`contexts/NostrContext.tsx`) has its *own* `visibilitychange` handler that reconnects the NIP-46 relay on every page — the modal-scoped hook only fires while `LoginModal` is mounted, so the provider-scoped handler is what keeps boost/favorite working on `/favorites`, NowPlaying, etc. Do **not** delete it as "redundant".
-
-**Reconnect ordering** (`lib/nostr/signer-reconnect.ts` `ensureSignerAvailable`): try `verifyNIP46Connection()` on the live in-memory client *before* `restoreNIP46Connection()` rebuilds from localStorage. The in-memory client has session state localStorage can't reproduce, and Safari ITP may have cleared storage entirely. `nip46-client.ts:authenticate()` also checks `WebSocket.readyState` via `relayManager.isConnected()` and force-reconnects dead sockets via `startRelayConnection()`. Do **not** invert this ordering or remove the explicit WebSocket-state check.
-
-**Multi-relay bunker URIs** (`lib/nostr/nip46-client.ts`): bunker:// URIs with multiple `relay=` params are subscribed *and* published across all listed relays, not just the first. Survives one-relay blocks (e.g. Firefox blocks `relay.primal.net`). Secretless bunker URIs (Aegis-style) have a 25s fail-fast timeout since they require manual approval. Do **not** simplify back to first-relay-only.
-
-**Pre-sign ping + manual reconnect** (`lib/nostr/nip46-client.ts` `pingSigner`, `lib/nostr/signer-reconnect.ts` `reconnectSignerManually`): relay socket alive ≠ signer subscription alive. If Primal's iOS app was killed overnight, `sign_event` is published into the void and waits the full 120s. `BoostButton.tsx` pings with a 5s timeout before `signEvent`; any response (including "unknown method") = reachable. On ping failure, boost fails fast with a toast whose **Reconnect** action calls `reconnectSignerManually()` — in-memory revive via `verifyNIP46Connection`, falls back to `restoreNIP46Connection` from localStorage, **never touches the user record**. Same helper powers the "Reconnect signer" button in `NostrSettings` (NIP-46 logins only). Do **not** add the ping inside `signEvent` itself — scoping it to boost keeps the extra round-trip off non-boost callers.
-
-**Connection persistence** (`lib/nostr/nip46-storage.ts` `saveNIP46Connection`): the signer's app-pubkey is read via three-way fallback `signerAppPubkey || signerPubkey || actualSignerAppPubkey` because different call sites stash it under different property names. `LoginModal` invokes `saveNIP46Connection` twice during login; without the fallback the second save wipes the value and post-reload `sign_event` gets encrypted with the user's pubkey → 120s hang on every Primal boost/favorite. Do **not** simplify back to a single field read.
+Invariants (do not revert):
+- **Signer nudge** (`withSignerNudge`): toast after 4s, hard-fail at 125s (outside NIP-46 client's 120s timeout so the client's richer error surfaces first). Throttled 8s. `NIP46Signer.signEvent`/`getPublicKey` route through automatically; direct `client.signEvent` callers in `LoginModal` wrap manually.
+- **Reconnect ordering** (`ensureSignerAvailable` in `lib/nostr/signer-reconnect.ts`): try `verifyNIP46Connection()` on the live in-memory client *before* `restoreNIP46Connection()` rebuilds from localStorage. In-memory has session state localStorage can't reproduce; Safari ITP may have cleared storage entirely. `nip46-client.ts:authenticate()` also checks `WebSocket.readyState` and force-reconnects dead sockets.
+- **Multi-relay bunker URIs**: subscribe *and* publish across all listed `relay=` params, not just the first — survives one-relay blocks (e.g. Firefox blocks `relay.primal.net`). Secretless bunker URIs (Aegis) have 25s fail-fast timeout.
+- **Pre-sign ping is boost-scoped** (`BoostButton.tsx` → `pingSigner`, 5s timeout): relay socket alive ≠ signer subscription alive. Do **not** move the ping inside `signEvent` — scoping it to boost keeps the extra round-trip off non-boost callers. Ping failure fails boost fast with a `Reconnect` toast → `reconnectSignerManually()`.
+- **`saveNIP46Connection` three-way pubkey fallback** (`signerAppPubkey || signerPubkey || actualSignerAppPubkey`): `LoginModal` invokes save twice during login; without the fallback the second save wipes the value and post-reload `sign_event` gets encrypted with the wrong pubkey → 120s hang on every Primal boost/favorite.
+- **`NostrProvider` has its own `visibilitychange` handler** (`contexts/NostrContext.tsx`), in addition to `useNip46Connection`'s modal-scoped one. The provider-scoped handler keeps boost/favorite working on `/favorites`, NowPlaying, etc. while the modal is unmounted. Do **not** delete as "redundant".
 
 ### Nostr Login Modal (`components/Nostr/LoginModal.tsx`)
-**Card-menu UI** (pattern from `hzrd149/nostrudel`) — no tabs. Cards: Browser Extension (shown only if `window.nostr` detected), Bunker URI (paste `bunker://` / `nostrconnect://`), Amber (Android), Primal (QR code). `view` state: `'menu' | 'bunker' | 'primal' | 'amber'`. The old "More options (nostr-login)" card was removed in PR #98 (with `noBanner: true` the `<nl-auth>` element never mounts). `NostrLoginInit.tsx` still mounts for session-restore of legacy nostr-login users.
+**Card-menu UI** — no tabs. Cards: Browser Extension (shown only if `window.nostr` detected), Bunker URI (paste `bunker://` / `nostrconnect://`), Amber (Android), Primal (QR code). `view` state: `'menu' | 'bunker' | 'primal' | 'amber'`. `nostr-login` is mounted with `noBanner: true` so `<nl-auth>` never shows; `NostrLoginInit.tsx` still mounts for session-restore of legacy nostr-login users.
 
-**Extension path is fast-path**: `handleExtensionLogin` calls `window.nostr.signEvent(eventTemplate)` **directly**, not through `UnifiedSigner`. Keep this direct path in future UX changes.
-
-**Bunker URI path**: `handlePastedUriConnect` uses a fresh `NIP46Client` + `signer.setNIP46Signer(client)` — bypasses nostr-login entirely. Most reliable iOS PWA path.
-
-**nostr-login is lazy-init**: `NostrLoginInit.tsx` exports `ensureNostrLoginInitialized()` (called on demand) and `<NostrLoginAutoInit />` (mounts in `layout.tsx`, only runs `init()` if user is logged in AND `window.nostr` is absent — session-restore for polyfilled users). Extension and logged-out users pay zero cost. Do **not** reintroduce eager init.
+- **Extension path is fast-path**: `handleExtensionLogin` calls `window.nostr.signEvent(eventTemplate)` **directly**, not through `UnifiedSigner`. Keep this direct path.
+- **Bunker URI path**: `handlePastedUriConnect` uses a fresh `NIP46Client` + `signer.setNIP46Signer(client)` — bypasses nostr-login entirely. Most reliable iOS PWA path.
+- **nostr-login is lazy-init**: `NostrLoginInit.tsx` exports `ensureNostrLoginInitialized()` (called on demand) and `<NostrLoginAutoInit />` (mounts in `layout.tsx`, only runs `init()` if user is logged in AND `window.nostr` is absent). Extension and logged-out users pay zero cost. Do **not** reintroduce eager init.
 
 ### Post-Login Flow (`lib/nostr/auth-utils.ts`)
-Login flows save user data, set `localStorage['nostr_pending_favorites_sync'] = user.id`, close the modal, and reload — no delay. `NostrContext`'s mount effect picks up the flag, runs `syncFavoritesToNostr`, clears it. Running sync pre-reload aborted in-flight fetches when reload fired.
+Login flows save user data, set `localStorage['nostr_pending_favorites_sync'] = user.id`, close the modal, and reload — no delay. `NostrContext`'s mount effect picks up the flag, runs `syncFavoritesToNostr`, clears it. When adding new login paths, call `markFavoritesSyncPending(userId)` instead of firing sync inline.
 
-When adding new login paths, call `markFavoritesSyncPending(userId)` instead of firing sync inline.
-
-**Profile backfill** (`contexts/NostrContext.tsx`): the login route (`app/api/nostr/auth/login/route.ts`) returns `displayName`/`avatar`/`bio`/`lightningAddress` as null to skip a ~21s relay round-trip (login completes in ~20ms). `NostrContext` auto-calls `refreshUser()` on mount whenever `user.displayName` is falsy, fetching the kind-0 profile in the background. Do **not** reintroduce the synchronous profile lookup in the login route — 1000× perf delta was the point of PR #98. Login route also only updates `nostrNpub` on returning users so a fresh login can't wipe previously-fetched profile fields.
+**Profile backfill**: the login route (`app/api/nostr/auth/login/route.ts`) returns `displayName`/`avatar`/`bio`/`lightningAddress` as null to skip a ~21s relay round-trip (login completes in ~20ms). `NostrContext` auto-calls `refreshUser()` on mount whenever `user.displayName` is falsy, fetching kind-0 in the background. Do **not** reintroduce synchronous profile lookup — 1000× perf delta was the point. Login route also only updates `nostrNpub` on returning users so a fresh login can't wipe previously-fetched profile fields.
 
 ### iOS PWA Background Audio (`contexts/AudioContext.tsx`)
 Three-layer strategy: (1) preload at 15s before end, (2) proactive timer at 5s before end, (3) visibility change safety net. `trackEndProcessedRef` prevents double-advance. **Critical**: do not auto-resume if user explicitly paused.
@@ -194,16 +157,14 @@ Three-layer strategy: (1) preload at 15s before end, (2) proactive timer at 5s b
 ### `/api/albums-fast` track fields (critical gotchas)
 Main-grid play button plays tracks straight from this endpoint — fields missing here don't show up on Now Playing.
 
-- **Two Track `select` blocks**: one in the general path (~line 163) and one inside `case 'podcasts'` (~line 451). When adding a field, update **both** (different indentation — naive `replace_all` only hits one).
-- **Must include `chaptersUrl`, `chapters`, `valueTimeSplits`** in both selects and both track-mapping blocks — otherwise chapter ticks/titles and VTS playback silently fail when playing from the grid (works from `/podcast/[id]` because that uses `/api/albums/[slug]` which already selects them).
-- **Bump `API_VERSION` in `app/page.tsx`** whenever the response shape changes — main page caches under `localStorage['cachedAlbums_${N}_${API_VERSION}']` and without a bump, stale field-missing data sticks indefinitely. Comment on the constant when bumping.
-- **Read-path cache stack** (top to bottom — each layer needs its own bust when debugging "feed minted but not visible"):
-  1. **Railway in-memory**, 15 min, in `albums-fast/route.ts`. State lives in `lib/caches/albums-fast-cache.ts` and auto-invalidates on `POST`/`PUT`/`DELETE /api/feeds` via `invalidateAlbumsFastCache()` (same hook also busts the 5-min `searchCache` in `lib/caches/search-cache.ts`). Manual bust: `?refresh=true`. Railway redeploy also clears it.
-  2. **Fastly CDN** (Railway's edge, visible as `x-railway-cdn-edge: fastly/…` in response headers). Respects `Cache-Control: public, s-maxage=60, stale-while-revalidate=120` on the route — staleness caps at ~2 min end-to-end. **Do not raise `s-maxage` back to 900** without a Fastly purge hook; issue #110 traced hours-long invisibility to the old 15+30 min window.
-  3. **Client localStorage** `cachedAlbums_${N}_${API_VERSION}` in `app/page.tsx`. Server invalidation can't reach this — it persists until the user hard-reloads or `API_VERSION` bumps (see the bullet above). Expect a 1-app-load lag after a new feed mints.
-  4. **PWA service worker** (`next-pwa`, `next.config.js`). `/api/*` is **excluded** so API responses are never SW-cached; HTML shells (`/publisher/*`, `/album/*`, `/`) are NetworkFirst with a 1-hour `pages-cache` TTL and a 3s network timeout.
-
-  `POST /api/admin/clear-cache` only clears the `dataService` cache — it does **not** reach any of the four layers above. Reach for `?refresh=true` plus a hard reload if debugging a read-path staleness report. Auto-invalidation + CDN TTL drop added 2026-04-21 (issue #110, commits `4324a838` + `bf374938`).
+- **Two Track `select` blocks** — general path (~line 163) and `case 'podcasts'` (~line 451). When adding a field, update **both** (different indentation — naive `replace_all` only hits one).
+- **Must include `chaptersUrl`, `chapters`, `valueTimeSplits`** in both selects and both track-mapping blocks — otherwise chapter ticks/titles and VTS playback silently fail when playing from the grid.
+- **Bump `API_VERSION` in `app/page.tsx`** whenever the response shape changes — main page caches under `localStorage['cachedAlbums_${N}_${API_VERSION}']` and without a bump, stale field-missing data sticks indefinitely.
+- **Read-path cache stack** (each layer needs its own bust when debugging "feed minted but not visible"):
+  1. **Railway in-memory**, 15 min, in `albums-fast/route.ts`. State in `lib/caches/albums-fast-cache.ts`; auto-invalidates on `POST`/`PUT`/`DELETE /api/feeds` via `invalidateAlbumsFastCache()` (same hook busts the 5-min `searchCache` in `lib/caches/search-cache.ts`). Manual bust: `?refresh=true`.
+  2. **Fastly CDN** (Railway edge, `x-railway-cdn-edge: fastly/…`). Respects `Cache-Control: public, s-maxage=60, stale-while-revalidate=120` — staleness caps at ~2 min. **Do not raise `s-maxage` back to 900** without a Fastly purge hook (issue #110 traced hours-long invisibility to the old 15+30 min window).
+  3. **Client localStorage** `cachedAlbums_${N}_${API_VERSION}` in `app/page.tsx`. Server invalidation can't reach this — persists until hard-reload or `API_VERSION` bump. Expect a 1-app-load lag after a new feed mints.
+  4. **PWA service worker** (`next-pwa`, `next.config.js`). `/api/*` is **excluded** so API responses are never SW-cached; HTML shells are NetworkFirst with 1-hour TTL and 3s network timeout.
 
 ### Adding New Playlists
 Files to modify (9 total):
@@ -222,13 +183,10 @@ Populate: `curl https://stablekraft.app/api/playlist/[id]?refresh`
 ### Nostr Publish Queue & Relay Management
 Favoriting saves to DB immediately, queues Nostr publish (500ms debounce). **Always call `disconnectAll()`** after publishing or WebSocket connections leak. Key files: `lib/nostr/publish-queue.ts`, `lib/nostr/relay.ts`.
 
-**NIP-01 tag validation**: `createFavoriteEventTemplate` (in `lib/nostr/favorites.ts`) throws if `itemId` is falsy so we never publish events with `["d", null]` tags — strict relays (nsec.app) reject them with "failed to parse envelope". When adding new NIP-51/30001-style parameterized replaceable events, validate all required tag values at build time, not publish time.
-
-**Dead-socket filtering** (`RelayManager.publish`): write relays are filtered by `relay.connected !== false` before publishing. Personal NIP-65 relays often accept connect but close the socket before publish runs → nostr-tools throws `SendingOnClosedConnection` synchronously. Each `relay.publish()` is wrapped in `Promise.resolve().then(...)` so any remaining sync throws flow through `Promise.allSettled` instead of surfacing as unhandled rejections.
-
-**Stale-signer recovery** (`lib/nostr/publish-queue.ts` `flushQueue`): routes through `ensureSignerAvailable()` from `signer-reconnect.ts` (same wrapper `BoostButton.tsx` uses) instead of a manual `isAvailable() + NIP-55-only` branch. Without this, a stale singleton signer (iOS WebSocket killed during backgrounding, page-mount race, first-flush after reload) silently dropped the favorite. Do **not** revert to the manual branch.
-
-**Failure toasts** (`lib/nostr/publish-queue.ts` `flushQueue`): `ensureSignerAvailable` failure, zero-relay connectivity, and per-item sign/publish errors all emit `toast.error`/`toast.warning` instead of silent `resolve(null)`. Sign-failure toast includes a `Reconnect` action → `reconnectSignerManually()`. Added after an Amber-on-Android session where "favorites work" reports masked a full-session queue-swallowing failure. Do **not** remove the toasts or revert to silent resolve — the publish queue is the only place where a user-initiated Nostr write can fail invisibly.
+- **NIP-01 tag validation**: `createFavoriteEventTemplate` (in `lib/nostr/favorites.ts`) throws if `itemId` is falsy so we never publish events with `["d", null]` tags — strict relays (nsec.app) reject them. Validate all required tag values at build time, not publish time.
+- **Dead-socket filtering** (`RelayManager.publish`): write relays filtered by `relay.connected !== false` before publishing. Each `relay.publish()` wrapped in `Promise.resolve().then(...)` so sync throws flow through `Promise.allSettled`.
+- **Stale-signer recovery** (`flushQueue`): routes through `ensureSignerAvailable()` from `signer-reconnect.ts` (same wrapper `BoostButton.tsx` uses). Do **not** revert to the manual `isAvailable() + NIP-55-only` branch — it silently dropped favorites on stale singleton signers.
+- **Failure toasts** (`flushQueue`): signer failure, zero-relay connectivity, and per-item sign/publish errors emit `toast.error`/`toast.warning` instead of silent `resolve(null)`. Sign-failure toast has `Reconnect` action → `reconnectSignerManually()`. Do **not** remove — publish queue is the only place user-initiated Nostr writes can fail invisibly.
 
 ### Favorites Page (`/favorites`)
 Optimistic unfavorite, auto-sync on page load. **Playlist favorites gotcha**: `isPlaylist()` and `playlistImageFallbacks` must use **lowercased feedId**, not the human name. `playlistSlugOverrides` handles ID-to-slug mismatches. Nostr playlist publishing: Kind 34139 addressable event (`d` tag = `stablekraft-favorites`).
@@ -242,27 +200,23 @@ Uses `window.history.length`. Do NOT use `document.referrer` — doesn't update 
 ### Lightning Wallet Detection
 **Keysend capability** (`components/Lightning/BitcoinConnectProvider.tsx`): two signals combined with **OR**. Signal A = WebLN `GetInfoResponse.methods` (NWC wallets populate with `pay_keysend`/`multi_pay_keysend`, extensions with `keysend`). Signal B = provider-type whitelist (`alby`/`alby-hub`/`extension`/`coinos`) from `detectWalletProviderType()`. Either is sufficient.
 
-**Why OR, not methods-first**: methods-first falsely rejected Alby Hub users whose `get_info` lacked `pay_keysend` (older hub versions, partial NWC permissions, stale cached responses). OR still picks up Alby Hub via pasted `nwc.generic` URL (type `'nwc'` not in whitelist → rescued by Signal A) and still rejects Primal (type `'nwc'` + methods lacks `pay_keysend` → both signals false). Eager `setKeysendSupported(...)` runs after `detectWalletProviderType` and before `provider.getInfo()` so the UI banner and lnaddress keysend-fallback don't flash `false` during the 1–5s NWC cold-start. Still do NOT probe with a real keysend — triggers a payment popup in Alby extension. `detectWalletProviderType()` in `lib/lightning/wallet-detection.ts` also drives Lightning-address inference and avatar lookup.
+OR (not methods-first) rescues Alby Hub users whose `get_info` lacks `pay_keysend` (older versions, partial NWC permissions, stale cache) while still correctly rejecting Primal (`nwc.primal` exposes `provider.keysend` via WebLN shim but relay doesn't implement `pay_keysend`). Eager `setKeysendSupported(...)` runs after `detectWalletProviderType` and before `provider.getInfo()` so the UI banner and lnaddress keysend-fallback don't flash `false` during 1–5s NWC cold-start. Do NOT probe with a real keysend — triggers payment popup in Alby extension. `detectWalletProviderType()` in `lib/lightning/wallet-detection.ts` also drives Lightning-address inference and avatar lookup. For `connectorType` values see `@getalby/bitcoin-connect/dist/connectors/index.d.ts`.
 
-For `connectorType` values see `@getalby/bitcoin-connect/dist/connectors/index.d.ts`. Primal (`nwc.primal`) exposes `provider.keysend` via WebLN shim but its relay doesn't implement `pay_keysend` — the OR check correctly rejects it.
-
-**Wallet/Nostr are independent** (`components/Lightning/BitcoinConnectProvider.tsx`): Nostr logout does **not** disconnect the Lightning wallet. Prior behavior (wipe wallet + set `wallet_manually_disconnected=true` on every Nostr logout) forced a manual wallet re-pair every time a user logged out of Nostr to reseat a broken NIP-46 signer. Remaining Nostr→wallet interactions (auto-pick-up Alby WebLN on NIP-07 login; `wallet_restore_after_login` Android fix) are *restorative*, not destructive — leave them alone.
+**Wallet/Nostr are independent**: Nostr logout does **not** disconnect the Lightning wallet. Prior behavior (wipe + set `wallet_manually_disconnected=true` on every Nostr logout) forced manual wallet re-pair every time a user logged out to reseat a broken NIP-46 signer. Remaining Nostr→wallet interactions (auto-pick-up Alby WebLN on NIP-07 login; `wallet_restore_after_login` Android fix) are *restorative*, not destructive — leave alone.
 
 ### BoostBox & Helipad (`lib/lightning/boostbox.ts`)
-LNURL payments use [BoostBox](https://tardbox.com) for Podcasting 2.0 boost metadata. Keysend unaffected (uses Helipad TLV). Client-only — always uses `/api/lightning/boostbox` proxy (API key via `BOOSTBOX_API_KEY` env var). Value splits try keysend first; BoostBox called only for LNURL fallback. Fountain.fm addresses skip keysend by design (`isFountain` check).
+LNURL payments use [BoostBox](https://tardbox.com) for Podcasting 2.0 boost metadata. Keysend unaffected (uses Helipad TLV). Client-only — always uses `/api/lightning/boostbox` proxy (API key via `BOOSTBOX_API_KEY`). Value splits try keysend first; BoostBox called only for LNURL fallback. Fountain.fm addresses skip keysend by design (`isFountain` check).
 
-**Feed.guid gotcha**: `feed_guid` in BoostBox comes from `Feed.guid` in DB. If null, reparse the feed.
-
-**Helipad metadata**: built by `buildHelipadMetadata(amount, msg)` in `BoostButton.tsx`, BLIP-0010 spec. Single helper for all payment paths — do NOT duplicate. `name` field omitted from base; `value-splits.ts` sets it per-recipient.
-
-**BoostButton props**: `feedUrl`, `remoteFeedGuid` (must be real GUID, never feed slug/ID), `albumName`, `publisherGuid`, `episodeGuid` (omit for album-level). Do NOT fall back to `feedId` for `remoteFeedGuid` — it's a slug, not a GUID.
+- **Feed.guid gotcha**: `feed_guid` in BoostBox comes from `Feed.guid` in DB. If null, reparse the feed.
+- **Helipad metadata**: built by `buildHelipadMetadata(amount, msg)` in `BoostButton.tsx`, BLIP-0010 spec. Single helper for all payment paths — do NOT duplicate. `name` field omitted from base; `value-splits.ts` sets it per-recipient.
+- **BoostButton props**: `feedUrl`, `remoteFeedGuid` (must be real GUID, never feed slug/ID), `albumName`, `publisherGuid`, `episodeGuid` (omit for album-level). Do NOT fall back to `feedId` for `remoteFeedGuid` — it's a slug, not a GUID.
 
 ### VTS (Value Time Splits) Playback (`components/NowPlayingScreen.tsx`)
 VTS podcasts embed `<podcast:valueTimeSplit>` segments mapping time ranges to different tracks/artists. Features: chapter tick marks on progress bar, per-song favoriting via `remoteItem`, V4V blending (`remotePercentage` splits between song and show recipients, deduped by address, `isHost` flag for grouping). GUID collision detection via `chapterTitle` param to `/api/lightning/value-splits`. When VTS blending produces both song and show recipients, BoostButton shows **Song/Show section headers** sorted track-first.
 
-**VTS extraction** (`lib/rss-parser-db.ts`): `applyParsedItemFields` applies chapters, VTS, and other parsed fields to track data. **VTS remoteItem interface** (`lib/podcast-types.ts`): `feedGuid`, `itemGuid`, `medium`. **XML entity gotcha**: `parseItemV4VFromXML` matches titles against raw XML — titles with `&` (encoded as `&amp;`) need both decoded and XML-encoded matching.
-
-**Chapters fallback**: `fetchChapters()` fetches from `podcast:chapters` URL. If the `reflex.livewire.io` proxy returns 400, it extracts the direct URL from the proxy path (format: `.../chapters/https://actual-url.json`) and retries.
+- **VTS extraction** (`lib/rss-parser-db.ts`): `applyParsedItemFields` applies chapters, VTS, and other parsed fields. **VTS remoteItem interface** (`lib/podcast-types.ts`): `feedGuid`, `itemGuid`, `medium`.
+- **XML entity gotcha**: `parseItemV4VFromXML` matches titles against raw XML — titles with `&` (encoded as `&amp;`) need both decoded and XML-encoded matching.
+- **Chapters fallback**: `fetchChapters()` fetches from `podcast:chapters` URL. If the `reflex.livewire.io` proxy returns 400, it extracts the direct URL from the proxy path (`.../chapters/https://actual-url.json`) and retries.
 
 ### AutoBoost (`contexts/AudioContext.tsx`)
 Two paths gated by `autoBoostEnabled` setting and `autoBoostProcessingRef` mutex:
@@ -272,7 +226,7 @@ Two paths gated by `autoBoostEnabled` setting and `autoBoostProcessingRef` mutex
 **Gap tracking** (`inVtsGapRef`): boosts music segments on gap entry, talk chapters on gap exit. Pre-VTS gaps (intro) tracked on track start. Track-end in a gap boosts via `triggerChapterAutoBoostRef` in `handleEnded`. **Manual seek suppression** (`isManualSeekRef`): chapter skips/progress bar don't trigger autoboost, only natural playback. **iOS foreground recovery**: `visibilitychange`/`pageshow` detect and boost missed segments.
 
 ### Toast API (`components/Toast.tsx`)
-Event-driven via `window.dispatchEvent(new CustomEvent('toast', ...))`. Helpers `toast.success/error/warning/info(message, { duration, action })` return the toast id (string). Use `toast.dismiss(id)` to programmatically remove a toast (used by `signer-nudge.ts` to clear the "Waiting on your signer…" toast the moment signing completes). A dismiss listens for a `toast-dismiss` CustomEvent.
+Event-driven via `window.dispatchEvent(new CustomEvent('toast', ...))`. Helpers `toast.success/error/warning/info(message, { duration, action })` return the toast id (string). Use `toast.dismiss(id)` to programmatically remove a toast (used by `signer-nudge.ts` to clear the "Waiting on your signer…" toast the moment signing completes).
 
 ### Episode/Play Count Markers
 `<podcast:txt purpose="episode">` or `<podcast:txt purpose="playcount">` in XML. Parser decodes XML entities via `decodeXmlEntities()` in `lib/playlist/parser.ts`. Original titles stored in `SystemPlaylistTrack.episodeTitle` — do NOT reverse-engineer from episode IDs (lossy). Refresh: `curl https://stablekraft.app/api/playlist/[id]?refresh`
