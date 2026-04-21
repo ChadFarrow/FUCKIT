@@ -15,6 +15,21 @@ export const BLACKLISTED_FEED_URLS = [
   'https://zine.bitpunk.fm/feeds/bitpunk-fm.xml',
 ];
 
+// Feed URLs that duplicate content already available at a canonical source
+// (e.g. Wavlake mirrors of albums the artist also publishes on their own site).
+// Suppressed from automated re-import paths (Step 5b `import-albums` + podping
+// auto-mint) but NOT hidden from the album grid — admin can still add them
+// manually via /admin if ever needed. Without this list, deleting the duplicate
+// just causes the next 4 AM cron to recreate it from PI API artist search.
+export const DUPLICATE_SOURCE_FEED_URLS = [
+  // Henrik Flyman — canonical feeds at henrikflyman.com
+  'https://wavlake.com/feed/music/9a5340e4-50ca-48c3-9b06-3f6b782b5131',  // A Song For The Voiceless
+  'https://wavlake.com/feed/music/9a218bec-4411-4f93-9caa-f3f84e4ef5f0',  // Authority
+  'https://wavlake.com/feed/music/26822e8f-cc32-4f7b-b760-720cbe2455ff',  // Thorns
+  'https://wavlake.com/feed/music/cca74ee8-67f8-434b-a386-8417e304cdf0',  // Time Waits For No One
+  'https://wavlake.com/feed/music/b7f701d7-5499-48be-8394-fcd633c649bb',  // Dancing With A Ghost
+];
+
 // Feed URLs that back a curated playlist. Not blacklisted (admin can add them as
 // standalone podcasts), but playlist refresh must NOT auto-create feed records
 // for them — otherwise every source podcast would silently appear on the site.
@@ -31,6 +46,7 @@ export const PLAYLIST_SOURCE_FEED_URLS = [
 ];
 
 const normalizedBlacklistedUrls = BLACKLISTED_FEED_URLS.map(normalizeUrl);
+const normalizedDuplicateSourceUrls = DUPLICATE_SOURCE_FEED_URLS.map(normalizeUrl);
 const normalizedPlaylistSourceUrls = PLAYLIST_SOURCE_FEED_URLS.map(normalizeUrl);
 
 export function isBlacklistedFeedId(id: string): boolean {
@@ -40,6 +56,17 @@ export function isBlacklistedFeedId(id: string): boolean {
 export function isBlacklistedFeedUrl(url: string): boolean {
   const normalized = normalizeUrl(url);
   return normalizedBlacklistedUrls.includes(normalized);
+}
+
+export function isDuplicateSourceUrl(url: string): boolean {
+  const normalized = normalizeUrl(url);
+  return normalizedDuplicateSourceUrls.includes(normalized);
+}
+
+// Combined check for automated re-import paths (Step 5b, podping auto-mint).
+// Excludes both outright-banned URLs and duplicate-source mirrors.
+export function isAutoImportSuppressedUrl(url: string): boolean {
+  return isBlacklistedFeedUrl(url) || isDuplicateSourceUrl(url);
 }
 
 export function isPlaylistSourceFeedUrl(url: string): boolean {

@@ -4,6 +4,7 @@ import { generatePodcastIndexHeaders } from '@/lib/podcast-index-api';
 import { getEpisodesFromAPI, parseDuration } from '@/lib/feed-parsing';
 import { calculateTrackOrder } from '@/lib/rss-parser-db';
 import { generateAlbumSlug, normalizeUrl } from '@/lib/url-utils';
+import { isAutoImportSuppressedUrl } from '@/lib/feed-exclusions';
 
 const API_BASE_URL = 'https://api.podcastindex.org/api/1.0';
 
@@ -139,6 +140,15 @@ export async function POST(request: NextRequest) {
           const podcastGuid = piFeed.podcastGuid || '';
 
           try {
+            // Skip URLs explicitly suppressed from auto-import (blacklist or
+            // duplicate-source mirrors). Prevents the 4 AM cron from recreating
+            // feed rows the user has intentionally deleted.
+            if (feedUrl && isAutoImportSuppressedUrl(feedUrl)) {
+              result.skippedDetails.push(`suppressed:${piFeed.title}|${feedUrl}`);
+              result.skipped++;
+              continue;
+            }
+
             // Multi-check dedup: URL, podcastGuid as ID, podcastGuid as guid column
             const conditions: any[] = [];
             if (feedUrl) conditions.push({ originalUrl: feedUrl });
