@@ -241,6 +241,7 @@ model Track {
   persons             Json?
   SystemPlaylistTrack SystemPlaylistTrack[]
   Feed                Feed                  @relation(fields: [feedId], references: [id], onDelete: Cascade)
+  tags                TrackTag[]
 
   @@index([album])
   @@index([artist, album])
@@ -296,4 +297,29 @@ model UserPlaylist {
 
   @@index([createdBy])
   @@index([isPublic])
+}
+
+model Tag {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  count     Int        @default(0)
+  source    String     @default("v4vmusic")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime
+  tracks    TrackTag[]
+
+  @@index([name])
+  @@index([count])
+}
+
+model TrackTag {
+  trackId   String
+  tagId     Int
+  source    String   @default("v4vmusic")
+  createdAt DateTime @default(now())
+  Track     Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  Tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([trackId, tagId])
+  @@index([tagId])
 }

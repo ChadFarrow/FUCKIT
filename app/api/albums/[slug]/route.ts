@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { generateAlbumSlug, getPublisherInfo } from '@/lib/url-utils';
 import { getAllPlaylistIds, getPlaylistUrls, getPlaylistConfig, PLAYLIST_CONFIGS } from '@/lib/playlist/configs';
 import { PODCAST_FEED_IDS, PODCAST_FEED_URLS } from '@/lib/podcast-feeds';
+import { isV4VTagsEnabled } from '@/lib/flags';
 
 const ITDV_PLAYLIST_URL = 'https://raw.githubusercontent.com/ChadFarrow/chadf-musicl-playlists/refs/heads/main/docs/ITDV-music-playlist.xml';
 const HGH_PLAYLIST_URL = 'https://raw.githubusercontent.com/ChadFarrow/chadf-musicl-playlists/refs/heads/main/docs/HGH-music-playlist.xml';
@@ -162,6 +163,7 @@ const TRACK_SELECT_FIELDS = {
   chaptersUrl: true,
   chapters: true,
   valueTimeSplits: true,
+  ...(isV4VTagsEnabled() ? { tags: { select: { Tag: { select: { name: true } } } } } : {}),
 } as const;
 
 // Map a DB track to the API response format
@@ -189,6 +191,7 @@ function mapTrackToResponse(track: any, fallbackImage: string | null, index: num
     chapters: track.chapters || undefined,
     valueTimeSplits: track.valueTimeSplits || undefined,
     publishedAt: track.publishedAt || null,
+    tags: track.tags?.map((tt: any) => tt.Tag.name) || [],
   };
 }
 

@@ -5,6 +5,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import FilterDropdown from '@/components/FilterDropdown';
+import { useFilterDropdown } from '@/components/useFilterDropdown';
 import { RSSAlbum } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { generateAlbumUrl, generatePublisherSlug } from '@/lib/url-utils';
@@ -165,14 +167,26 @@ function HomePageContent() {
   // Format-aware loading state (for "all" filter - load all albums before EPs)
   const [formatCounts, setFormatCounts] = useState<{ albums: number; eps: number; singles: number } | null>(null);
   const [currentFormatPhase, setCurrentFormatPhase] = useState<'albums' | 'eps' | 'singles'>('albums');
-  const API_VERSION = 'v13'; // v13: added persons (podcast:person with npub) on track + feed; consumed for Nostr p-tags on boosts
+  const API_VERSION = 'v14'; // v14: added podcastCategories on feed and v4vmusic tags on track
+
+  // Genre + V4V Music tag filter state — lazy-fetched options live inside the hook.
+  const urlGenre = searchParams?.get('genre') || null;
+  const urlTag = searchParams?.get('tag') || null;
+  const genreFilter = useFilterDropdown({ fetchUrl: '/api/genres', responseKey: 'genres', initial: urlGenre, delayMs: 600 });
+  const tagFilter = useFilterDropdown({ fetchUrl: '/api/tags',   responseKey: 'tags',   initial: urlTag,   delayMs: 800 });
+  const selectedGenre = genreFilter.selected;
+  const selectedTag = tagFilter.selected;
+  // Mutual exclusion: picking one clears the other.
+  const pickGenre = (v: string | null) => { genreFilter.setSelected(v); if (v) tagFilter.setSelected(null); };
+  const pickTag   = (v: string | null) => { tagFilter.setSelected(v);   if (v) genreFilter.setSelected(null); };
   
   // HGH filter removed - no longer needed
   
   // Global audio context
   const { playAlbum: globalPlayAlbum, shuffleAllTracks } = useAudio();
   const hasLoadedRef = useRef(false);
-  const isUpdatingFromUrlRef = useRef(false); // Track if we're updating from URL to avoid loops
+  // Lock: prevents the URL-sync effect from re-firing handleFilterChange while a filter change is already in flight.
+  const isUpdatingFromUrlRef = useRef(false);
   
 
   
@@ -188,7 +202,7 @@ function HomePageContent() {
   const [activeFilter, setActiveFilter] = useState<FilterType>(initialFilter);
 
   // Store handleFilterChange in a ref to avoid dependency issues
-  const handleFilterChangeRef = useRef<((newFilter: FilterType, skipUrlUpdate?: boolean) => Promise<void>) | null>(null);
+  const handleFilterChangeRef = useRef<((newFilter: FilterType, skipUrlUpdate?: boolean, forceReload?: boolean) => Promise<void>) | null>(null);
   
   // Sync filter from URL params when URL changes (e.g., browser back button)
   useEffect(() => {
@@ -275,7 +289,7 @@ function HomePageContent() {
       setCurrentPage(1);
       setHasMoreAlbums(true);
       try {
-        const { albums, totalCount } = await loadAlbumsData('all', ALBUMS_PER_PAGE, 0, activeFilter);
+        const { albums, totalCount } = await loadAlbumsData('all', ALBUMS_PER_PAGE, 0, activeFilter, selectedGenre, selectedTag);
         setDisplayedAlbums(albums);
         setEnhancedAlbums(albums);
         setCriticalAlbums(albums.slice(0, 12));
@@ -336,7 +350,55 @@ function HomePageContent() {
 
 
   // Audio playback is now handled by the global AudioContext
-  
+
+  // (Lazy-fetch of genres + tags and outside-click handling now live in useFilterDropdown + FilterDropdown.)
+
+  // Reload grid + sync URL when genre or tag changes (skip first mount).
+  // Bypasses handleFilterChange's cache layers — fetches fresh and commits state directly.
+  const isGenreTagInitialMountRef = useRef(false);
+  useEffect(() => {
+    if (!isGenreTagInitialMountRef.current) {
+      isGenreTagInitialMountRef.current = true;
+      return;
+    }
+    // Sync to URL
+    const params = new URLSearchParams(searchParams?.toString() || '');
+    if (selectedGenre) params.set('genre', selectedGenre); else params.delete('genre');
+    if (selectedTag) params.set('tag', selectedTag); else params.delete('tag');
+    const qs = params.toString();
+    router.replace(qs ? `/?${qs}` : '/', { scroll: false });
+
+    // Skip reload for filters where genre/tag don't apply
+    if (activeFilter === 'publishers' || activeFilter === 'playlist') return;
+
+    let cancelled = false;
+    setIsLoading(true);
+    setIsFilterLoading(true);
+    (async () => {
+      try {
+        const { albums, totalCount } = await loadAlbumsData('all', ALBUMS_PER_PAGE, 0, activeFilter, selectedGenre, selectedTag);
+        if (cancelled) return;
+        setCurrentPage(1);
+        setDisplayedAlbums(albums);
+        setCriticalAlbums(albums.slice(0, 12));
+        setEnhancedAlbums(albums);
+        setTotalAlbums(totalCount);
+        setHasMoreAlbums(albums.length < totalCount);
+        setIsCriticalLoaded(true);
+        setIsEnhancedLoaded(true);
+      } catch (err) {
+        console.error('genre/tag refresh failed', err);
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+          setIsFilterLoading(false);
+        }
+      }
+    })();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedGenre, selectedTag]);
+
   useEffect(() => {
     // Prevent multiple loads
     if (hasLoadedRef.current) {
@@ -428,7 +490,7 @@ function HomePageContent() {
       // OPTIMIZED: Load albums in single API call (includes totalCount in response)
       // Removed redundant count query - totalCount is now included in albums response
       const startIndex = (currentPage - 1) * ALBUMS_PER_PAGE;
-      const { albums: pageAlbums, totalCount } = await loadAlbumsData('all', ALBUMS_PER_PAGE, startIndex, activeFilter);
+      const { albums: pageAlbums, totalCount } = await loadAlbumsData('all', ALBUMS_PER_PAGE, startIndex, activeFilter, selectedGenre, selectedTag);
       
       // Update total albums count from API response (for pagination)
       setTotalAlbums(totalCount);
@@ -531,7 +593,7 @@ function HomePageContent() {
         }
 
         // Load next page from API (server-side sorted globally: Albums → EPs → Singles)
-        const { albums: newAlbums, totalCount: newTotalCount } = await loadAlbumsData('all', loadLimit, startIndex, activeFilter);
+        const { albums: newAlbums, totalCount: newTotalCount } = await loadAlbumsData('all', loadLimit, startIndex, activeFilter, selectedGenre, selectedTag);
 
         // Update totalAlbums if we got a new total count (should be the same, but ensure consistency)
         if (newTotalCount > 0) {
@@ -608,13 +670,13 @@ function HomePageContent() {
   }, [hasMoreAlbums, isLoading, isEnhancedLoaded, loadMoreAlbums]);
 
   // Handle filter changes - reload data and reset to page 1
-  const handleFilterChange = async (newFilter: FilterType, skipUrlUpdate = false) => {
+  const handleFilterChange = async (newFilter: FilterType, skipUrlUpdate = false, forceReload = false) => {
     if (process.env.NODE_ENV === 'development') {
-      console.log(`🔄 handleFilterChange called with filter: "${newFilter}"`);
+      console.log(`🔄 handleFilterChange called with filter: "${newFilter}" forceReload=${forceReload}`);
     }
 
-    // Check if filter is the same AND we already have data
-    if (newFilter === activeFilter) {
+    // Check if filter is the same AND we already have data (skip when forceReload, e.g. genre/tag change)
+    if (newFilter === activeFilter && !forceReload) {
       const hasData = displayedAlbums.length > 0 || enhancedAlbums.length > 0 || criticalAlbums.length > 0;
       if (hasData) {
         if (process.env.NODE_ENV === 'development') {
@@ -629,6 +691,12 @@ function HomePageContent() {
 
     // Set activeFilter immediately so UI updates right away
     setActiveFilter(newFilter);
+
+    // Genre/Tag don't apply to publishers or playlists — clear them and close the menus.
+    if (newFilter === 'publishers' || newFilter === 'playlist') {
+      if (selectedGenre) genreFilter.setSelected(null);
+      if (selectedTag) tagFilter.setSelected(null);
+    }
 
     // When switching to publishers or playlist, ensure sortType is valid for reduced options
     const optsForFilter = newFilter === 'publishers' ? SORT_OPTIONS_PUBLISHERS : newFilter === 'playlist' ? SORT_OPTIONS_PLAYLIST : null;
@@ -655,8 +723,8 @@ function HomePageContent() {
       router.push(newUrl, { scroll: false });
     }
 
-    // Check cache first
-    const cachedData = filterCache.get(newFilter);
+    // Check cache first (skip when forceReload — e.g. genre/tag changed)
+    const cachedData = forceReload ? null : filterCache.get(newFilter);
     if (cachedData) {
       if (process.env.NODE_ENV === 'development') {
         console.log(`📦 Using cached data for filter: ${newFilter}`);
@@ -708,7 +776,7 @@ function HomePageContent() {
         };
       } else if (newFilter === 'playlist') {
         // Special handling for playlist filter - multiple playlists
-        const { albums: pageAlbums, totalCount } = await loadAlbumsData('all', ALBUMS_PER_PAGE, 0, newFilter);
+        const { albums: pageAlbums, totalCount } = await loadAlbumsData('all', ALBUMS_PER_PAGE, 0, newFilter, selectedGenre, selectedTag);
         
         resultData = {
           albums: pageAlbums,
@@ -717,7 +785,7 @@ function HomePageContent() {
         };
       } else {
         // Single fetch - loadAlbumsData already returns totalCount
-        const { albums: pageAlbums, totalCount } = await loadAlbumsData('all', ALBUMS_PER_PAGE, 0, newFilter);
+        const { albums: pageAlbums, totalCount } = await loadAlbumsData('all', ALBUMS_PER_PAGE, 0, newFilter, selectedGenre, selectedTag);
 
         resultData = {
           albums: pageAlbums,
@@ -761,7 +829,7 @@ function HomePageContent() {
   const totalPages = Math.ceil(totalAlbums / ALBUMS_PER_PAGE);
   const loadedAlbumsCount = displayedAlbums.length;
 
-  const loadAlbumsData = async (loadTier: 'core' | 'extended' | 'lowPriority' | 'all' = 'all', limit: number = 50, offset: number = 0, filter: string = 'all'): Promise<{ albums: RSSAlbum[]; totalCount: number }> => {
+  const loadAlbumsData = async (loadTier: 'core' | 'extended' | 'lowPriority' | 'all' = 'all', limit: number = 50, offset: number = 0, filter: string = 'all', genre: string | null = null, tag: string | null = null): Promise<{ albums: RSSAlbum[]; totalCount: number }> => {
     try {
       // Handle publishers filter separately - don't call albums API for publishers
       if (filter === 'publishers') {
@@ -950,8 +1018,8 @@ function HomePageContent() {
         }
       }
       
-      // Simplified caching - only cache the main 'all' request with no filtering
-      if (typeof window !== 'undefined' && loadTier === 'all' && offset === 0 && filter === 'all' && sortType === 'name-asc') {
+      // Simplified caching - only cache the main 'all' request with no filtering (no genre/tag set either)
+      if (typeof window !== 'undefined' && loadTier === 'all' && offset === 0 && filter === 'all' && sortType === 'name-asc' && !genre && !tag) {
         const cached = localStorage.getItem(`cachedAlbums_${ALBUMS_PER_PAGE}_${API_VERSION}`);
         const timestamp = localStorage.getItem(`albumsCacheTimestamp_${ALBUMS_PER_PAGE}_${API_VERSION}`);
         
@@ -989,6 +1057,8 @@ function HomePageContent() {
       if (sortType !== 'name-asc') {
         params.set('sort', sortType);
       }
+      if (genre) params.set('genre', genre);
+      if (tag) params.set('tag', tag);
       
       if (process.env.NODE_ENV === 'development') {
         console.log(`🌐 Fetching: /api/albums-fast?${params}`);
@@ -1074,8 +1144,8 @@ function HomePageContent() {
         rssAlbums = rssAlbums.slice(0, limit);
       }
       
-      // Cache only the main 'all' request for performance - but only if we have publisher stats
-      if (typeof window !== 'undefined' && loadTier === 'all' && offset === 0 && filter === 'all' && publisherStatsFromAPI.length > 0) {
+      // Cache only the main 'all' request for performance - but only if we have publisher stats and no genre/tag filter
+      if (typeof window !== 'undefined' && loadTier === 'all' && offset === 0 && filter === 'all' && publisherStatsFromAPI.length > 0 && !genre && !tag) {
         try {
           localStorage.setItem(`cachedAlbums_${ALBUMS_PER_PAGE}_${API_VERSION}`, JSON.stringify(rssAlbums));
           localStorage.setItem(`albumsCacheTimestamp_${ALBUMS_PER_PAGE}_${API_VERSION}`, Date.now().toString());
@@ -1519,7 +1589,7 @@ function HomePageContent() {
               </select>
 
               {/* Desktop: Button tabs */}
-              <div className="hidden md:flex gap-1">
+              <div className="hidden md:flex gap-1 items-center">
                 {[
                   { value: 'all', label: 'All' },
                   { value: 'albums', label: 'Albums' },
@@ -1543,6 +1613,25 @@ function HomePageContent() {
                     {filter.label}
                   </button>
                 ))}
+
+                {/* Genre + V4V Music Tag dropdowns — hidden for filters where they don't apply */}
+                {activeFilter !== 'publishers' && activeFilter !== 'playlist' && (
+                  <>
+                    <FilterDropdown
+                      label="Genre"
+                      selected={selectedGenre}
+                      options={genreFilter.options}
+                      onSelect={pickGenre}
+                      className="ml-1"
+                    />
+                    <FilterDropdown
+                      label="Tag"
+                      selected={selectedTag}
+                      options={tagFilter.options}
+                      onSelect={pickTag}
+                    />
+                  </>
+                )}
               </div>
 
               {/* Right side - Action buttons */}

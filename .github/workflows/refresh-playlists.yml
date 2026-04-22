@@ -206,8 +206,28 @@ jobs:
         echo ""
         echo "✅ All playlists updated with newly parsed tracks"
 
+        # Step 7: Ingest crowd-sourced v4vmusic.com tags into local Tag/TrackTag tables.
+        # Non-fatal: v4vmusic outages shouldn't break the playlist refresh.
+        echo ""
+        echo "📋 Step 7: Ingesting v4vmusic.com tags..."
+        TAGS_HEADERS=()
+        if [ -n "${CRON_SECRET}" ]; then
+          TAGS_HEADERS=(-H "Authorization: Bearer ${CRON_SECRET}")
+        fi
+        TAGS_RESPONSE=$(curl -s -w "\n%{http_code}" --max-time 300 "${TAGS_HEADERS[@]}" "${BASE_URL}/api/cron/ingest-v4v-tags")
+        TAGS_HTTP_CODE=$(echo "$TAGS_RESPONSE" | tail -n1)
+        TAGS_BODY=$(echo "$TAGS_RESPONSE" | sed '$d')
+        if [ "$TAGS_HTTP_CODE" -eq 200 ]; then
+          echo "  ✓ v4v tag ingest completed"
+          echo "$TAGS_BODY" | jq '.' || echo "$TAGS_BODY"
+        else
+          echo "  ⚠️ v4v tag ingest returned HTTP $TAGS_HTTP_CODE (non-critical)"
+          echo "$TAGS_BODY"
+        fi
+
         echo ""
         echo "✨ Playlist refresh workflow completed"
       env:
         BASE_URL: ${{ secrets.PLAYLIST_BASE_URL || 'https://stablekraft.app' }}
+        CRON_SECRET: ${{ secrets.CRON_SECRET }}
 

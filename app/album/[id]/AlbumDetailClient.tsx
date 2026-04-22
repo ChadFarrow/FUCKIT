@@ -930,6 +930,28 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
               {album.explicit && <span className="bg-red-600 text-white px-2 py-1 rounded text-xs">EXPLICIT</span>}
             </div>
 
+            {/* V4V Music tags — union across all tracks (read-only chips, link to grid filter) */}
+            {(() => {
+              const tagSet = new Set<string>();
+              (album.tracks || []).forEach((t: any) => (t.tags || []).forEach((name: string) => tagSet.add(name)));
+              const tags = Array.from(tagSet).sort();
+              if (tags.length === 0) return null;
+              return (
+                <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 pt-1">
+                  {tags.map(name => (
+                    <Link
+                      key={name}
+                      href={`/?tag=${encodeURIComponent(name)}`}
+                      className="px-2.5 py-0.5 text-xs rounded-full bg-white/5 border border-white/10 text-white/80 hover:bg-white/10 hover:text-white transition-colors"
+                      title={`Browse ${name}`}
+                    >
+                      #{name}
+                    </Link>
+                  ))}
+                </div>
+              );
+            })()}
+
             {/* Share Button */}
             <div className="flex items-center justify-center lg:justify-start">
               <ShareButton

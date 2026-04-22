@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { Track } from '@prisma/client';
 import { getPlaylistUrls, getAllPlaylistIds } from '@/lib/playlist/configs';
 import { getBlacklistedFeedIds, BLACKLISTED_FEED_URLS } from '@/lib/feed-exclusions';
+import { isV4VTagsEnabled } from '@/lib/flags';
 import {
   CACHE_DURATION,
   PLAYLIST_CACHE_DURATION,
@@ -12,6 +13,31 @@ import {
 } from '@/lib/caches/albums-fast-cache';
 
 const cache = getAlbumsFastCache();
+
+// Shared Track select for the grid (both the general branch and the 'podcasts' case).
+// Keep this in sync at ONE place — the two-block gotcha in CLAUDE.md L160 used to hit here.
+// The v4v tag join is intentionally NOT included: chips render on the album detail page,
+// not the grid, and joining here adds measurable latency (observed 12s spike in dev).
+const ALBUMS_FAST_TRACK_SELECT = {
+  id: true,
+  guid: true,
+  title: true,
+  duration: true,
+  audioUrl: true,
+  image: true,
+  publishedAt: true,
+  v4vRecipient: true,
+  v4vValue: true,
+  startTime: true,
+  endTime: true,
+  trackOrder: true,
+  mediaType: true,
+  alternateEnclosures: true,
+  chaptersUrl: true,
+  chapters: true,
+  valueTimeSplits: true,
+  persons: true,
+} as const;
 
 // Function to get playlist albums
 async function getPlaylistAlbums() {
@@ -83,6 +109,10 @@ export async function GET(request: Request) {
     const offset = parseInt(searchParams.get('offset') || '0');
     const filter = searchParams.get('filter') || 'all'; // albums, eps, singles, all
     const sort = searchParams.get('sort') || 'default'; // Sort order: name-asc, added-desc, year-desc, etc.
+    const genre = searchParams.get('genre') || null; // Genre filter (matches Feed.podcastCategories[])
+    // V4V Music tag feature is gated by env until the add_v4v_tags migration is applied.
+    const v4vTagsEnabled = isV4VTagsEnabled();
+    const tag = v4vTagsEnabled ? (searchParams.get('tag') || null) : null;
     const forceRefresh = searchParams.get('refresh') === 'true'; // Force cache refresh
 
     // Clear cache if refresh requested
@@ -109,23 +139,29 @@ export async function GET(request: Request) {
     }
     
     const now = Date.now();
-    const shouldRefreshCache = !cache.data || (now - cache.timestamp) > CACHE_DURATION;
+    // Skip the in-memory cache when genre/tag filter is applied — DB does the work.
+    const shouldRefreshCache = !cache.data || (now - cache.timestamp) > CACHE_DURATION || !!genre || !!tag;
 
     let feeds: FeedWithTracks[];
     let publisherStats: Array<{ name: string; albumCount: number }>;
-    
+
+    // Build the feed-level where clause once and reuse for both query branches
+    const feedWhere: any = { status: 'active' };
+    if (genre) feedWhere.podcastCategories = { has: genre };
+    if (tag) feedWhere.Track = { some: { tags: { some: { Tag: { name: tag } } } } };
+
     if (shouldRefreshCache) {
       if (process.env.NODE_ENV === 'development') {
-        console.log('🔄 Fetching albums from database...');
+        console.log('🔄 Fetching albums from database...', genre || tag ? `(genre=${genre ?? '-'}, tag=${tag ?? '-'})` : '');
       }
-      
+
       // Load all feeds to maintain global sort order
       // Pagination happens after sorting, not at the database level
-      
+
       try {
         // Fetch feeds with minimal track data (optimized select)
         feeds = await prisma.feed.findMany({
-          where: { status: 'active' },
+          where: feedWhere,
           select: {
             id: true,
             guid: true,
@@ -143,31 +179,13 @@ export async function GET(request: Request) {
             v4vRecipient: true,
             v4vValue: true,
             persons: true,
+            podcastCategories: true,
             Track: {
               where: {
                 audioUrl: { not: '' },
                 status: 'active'
               },
-              select: {
-                id: true,
-                guid: true,
-                title: true,
-                duration: true,
-                audioUrl: true,
-                image: true,
-                publishedAt: true,
-                v4vRecipient: true,
-                v4vValue: true,
-                startTime: true,
-                endTime: true,
-                trackOrder: true,
-                mediaType: true,
-                alternateEnclosures: true,
-                chaptersUrl: true,
-                chapters: true,
-                valueTimeSplits: true,
-                persons: true,
-              },
+              select: ALBUMS_FAST_TRACK_SELECT,
               orderBy: [
                 { trackOrder: 'asc' },
                 { publishedAt: 'asc' },
@@ -183,7 +201,7 @@ export async function GET(request: Request) {
             { priority: 'asc' },
             { createdAt: 'desc' }
           ]
-        }) as FeedWithTracks[];
+        }) as unknown as FeedWithTracks[];
       } catch (queryError) {
         console.error('❌ Database query error:', queryError);
         // Return cached data if available, or empty result
@@ -222,9 +240,9 @@ export async function GET(request: Request) {
         publisherStats = [];
       }
       
-      // Cache the results only for 'all' filter with no pagination (first page)
+      // Cache the results only for 'all' filter with no pagination (first page) and no genre/tag filter
       // This provides fast cache hits for common initial load
-      const shouldCache = filter === 'all' && offset === 0 && limit >= 50;
+      const shouldCache = filter === 'all' && offset === 0 && limit >= 50 && !genre && !tag;
       if (shouldCache) {
         cache.data = { feeds, publisherStats };
         cache.timestamp = now;
@@ -298,6 +316,7 @@ export async function GET(request: Request) {
       v4vRecipient: feed.v4vRecipient || feed.Track?.[0]?.v4vRecipient || null,
       v4vValue: feed.v4vValue || feed.Track?.[0]?.v4vValue || null,
       persons: (feed as any).persons || undefined,
+      podcastCategories: (feed as any).podcastCategories || [],
       // Actual track count from database (tracks array may be limited)
       trackCount: feed._count.Track
     }));
@@ -420,6 +439,8 @@ export async function GET(request: Request) {
             where: {
               status: 'active',
               type: 'podcast',
+              ...(genre ? { podcastCategories: { has: genre } } : {}),
+              ...(tag ? { Track: { some: { tags: { some: { Tag: { name: tag } } } } } } : {}),
             },
             select: {
               id: true,
@@ -438,28 +459,10 @@ export async function GET(request: Request) {
               v4vRecipient: true,
               v4vValue: true,
               persons: true,
+              podcastCategories: true,
               Track: {
                 where: { audioUrl: { not: '' }, status: 'active' },
-                select: {
-                  id: true,
-                  guid: true,
-                  title: true,
-                  duration: true,
-                  audioUrl: true,
-                  image: true,
-                  publishedAt: true,
-                  v4vRecipient: true,
-                  v4vValue: true,
-                  startTime: true,
-                  endTime: true,
-                  trackOrder: true,
-                  mediaType: true,
-                  alternateEnclosures: true,
-                  chaptersUrl: true,
-                  chapters: true,
-                  valueTimeSplits: true,
-                  persons: true,
-                },
+                select: ALBUMS_FAST_TRACK_SELECT,
                 orderBy: [
                   { trackOrder: 'asc' },
                   { publishedAt: 'asc' },
@@ -518,6 +521,7 @@ export async function GET(request: Request) {
             v4vRecipient: feed.v4vRecipient,
             v4vValue: feed.v4vValue,
             persons: (feed as any).persons || undefined,
+            podcastCategories: (feed as any).podcastCategories || [],
           };
           });
           break;
