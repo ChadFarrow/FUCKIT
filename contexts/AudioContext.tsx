@@ -306,7 +306,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
 
       // Build Helipad metadata
       const helipadMetadata: any = {
-        podcast: album.artist || 'Unknown Artist',
+        podcast: track.artist || album.artist || 'Unknown Artist',
         episode: track.title || 'Unknown Track',
         action: 'auto', // Helipad action type 4 = automated boost
         app_name: 'StableKraft',
@@ -2546,7 +2546,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         
         navigator.mediaSession.metadata = new MediaMetadata({
           title: track.title || 'Unknown Track',
-          artist: album.artist || 'Unknown Artist',
+          artist: track.artist || album.artist || 'Unknown Artist',
           album: album.title || 'Unknown Album',
           artwork: artwork
         });
@@ -2574,7 +2574,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         
         console.log('📱 Media session metadata updated:', {
           title: track.title,
-          artist: album.artist,
+          artist: track.artist || album.artist,
           album: album.title,
           originalArtwork: originalArtworkUrl,
           proxiedArtwork: artworkUrl,

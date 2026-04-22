@@ -798,7 +798,7 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
           trackId={currentTrack.id}
           feedId={currentPlayingAlbum.feedId || currentPlayingAlbum.id}
           trackTitle={activeVTS ? (chapters[currentChapterIndex]?.title || currentTrack.title) : currentTrack.title}
-          artistName={vtsV4vData?.artistName || currentPlayingAlbum.artist || 'Unknown Artist'}
+          artistName={vtsV4vData?.artistName || currentTrack.artist || currentPlayingAlbum.artist || 'Unknown Artist'}
           lightningAddress={vtsV4vData?.lightningAddress || getPrimaryRecipient(currentTrack) || getPrimaryRecipient(currentPlayingAlbum)}
           valueSplits={vtsV4vData?.valueSplits || formatValueSplitsForBoost(currentTrack, currentPlayingAlbum.artist) || formatValueSplitsForBoost(currentPlayingAlbum, currentPlayingAlbum.artist) || []}
           autoOpen={true}
