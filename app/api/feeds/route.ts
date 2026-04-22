@@ -6,6 +6,7 @@ import { generateAlbumSlug, isValidFeedUrl, normalizeUrl, normalizeArtistName } 
 import { resolvePodcastIndexUrl } from '@/lib/podcast-index-api';
 import { invalidateAlbumsFastCache } from '@/lib/caches/albums-fast-cache';
 import { invalidateSearchCache } from '@/lib/caches/search-cache';
+import { BLACKLISTED_FEED_IDS, BLACKLISTED_FEED_URLS, isBlacklistedFeedUrl } from '@/lib/feed-exclusions';
 
 function invalidateFeedListCaches(): void {
   invalidateAlbumsFastCache();
@@ -283,6 +284,7 @@ export async function GET(request: NextRequest) {
     const sortBy = searchParams.get('sortBy') || 'priority'; // 'priority' or 'recent'
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '50');
+    const isPublic = searchParams.get('public') === 'true';
 
     const skip = (page - 1) * limit;
 
@@ -290,6 +292,14 @@ export async function GET(request: NextRequest) {
     if (type) where.type = type;
     if (status) where.status = status;
     if (priority) where.priority = priority;
+
+    // Public listing: hide blacklisted feeds (test feeds, banned URLs).
+    // Mirrors what /api/feeds/opml does.
+    if (isPublic) {
+      where.id = { notIn: BLACKLISTED_FEED_IDS };
+      where.originalUrl = { notIn: BLACKLISTED_FEED_URLS.map(normalizeUrl) };
+      if (!status) where.status = 'active';
+    }
 
     // Determine sort order based on sortBy parameter
     const orderBy = sortBy === 'recent'
@@ -310,7 +320,7 @@ export async function GET(request: NextRequest) {
       }),
       prisma.feed.count({ where })
     ]);
-    
+
     return NextResponse.json({
       feeds,
       pagination: {
