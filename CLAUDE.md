@@ -151,6 +151,9 @@ Login flows save user data, set `localStorage['nostr_pending_favorites_sync'] = 
 ### iOS PWA Background Audio (`contexts/AudioContext.tsx`)
 Three-layer strategy: (1) preload at 15s before end, (2) proactive timer at 5s before end, (3) visibility change safety net. `trackEndProcessedRef` prevents double-advance. **Critical**: do not auto-resume if user explicitly paused.
 
+### Fullscreen `NowPlayingScreen` mount
+Mount it **exactly once**, globally, in `app/layout.tsx`. Both the mini-player (`GlobalNowPlayingBar`) and the fullscreen screen are rendered there. Do **not** re-render `<NowPlayingScreen />` in any page component — two instances race on `document.body.style.overflow` inside the scroll-lock `useEffect` (each captures the other's write as the "previous" value), and closing the fullscreen leaves the main page permanently scroll-locked. This was the root cause of the "can't scroll after minimizing player" bug fixed on `main` at `a7b8742c`.
+
 ### Sorting
 `/api/albums-fast` accepts `sort` param (`added-desc`, `added-asc`, `year-desc`, `year-asc`, `name-asc`, `name-desc`, `tracks-desc`, `tracks-asc`). **Do NOT send `sort=name-asc` as default** — bypasses format grouping (Albums → EPs → Singles). Date fields: `Feed.oldestItemPubdate` = release date, `Feed.createdAt` = when added.
 
@@ -165,6 +168,15 @@ Main-grid play button plays tracks straight from this endpoint — fields missin
   2. **Fastly CDN** (Railway edge, `x-railway-cdn-edge: fastly/…`). Respects `Cache-Control: public, s-maxage=60, stale-while-revalidate=120` — staleness caps at ~2 min. **Do not raise `s-maxage` back to 900** without a Fastly purge hook (issue #110 traced hours-long invisibility to the old 15+30 min window).
   3. **Client localStorage** `cachedAlbums_${N}_${API_VERSION}` in `app/page.tsx`. Server invalidation can't reach this — persists until hard-reload or `API_VERSION` bump. Expect a 1-app-load lag after a new feed mints.
   4. **PWA service worker** (`next-pwa`, `next.config.js`). `/api/*` is **excluded** so API responses are never SW-cached; HTML shells are NetworkFirst with 1-hour TTL and 3s network timeout.
+- **Filter semantics**: `?genre=<name>` and `?tag=<name>` apply server-side at the Feed / Track level (`route.ts:150-151`). `?filter=albums|eps|singles` is effectively a no-op server-side — format is applied **client-side** in `app/page.tsx` by track count (Albums ≥6, EPs 2-5, Singles =1). A filter-aware fetch that needs to match what's on-screen (e.g., "Shuffle Rock" on the Albums tab) must narrow the response itself before acting.
+
+### Main page filter bar & `ControlsBar`
+Genre + V4V Music Tag dropdowns and the filter-aware Shuffle button live in `components/ControlsBar.tsx`'s `extraActions` slot (right of the Sort selector, rendered in both mobile and desktop layouts). Hidden for publishers, playlists, and podcasts.
+
+- **Stacking**: ControlsBar root needs `relative z-30` so `FilterDropdown`'s open menu (`absolute z-40`) renders above the album grid rather than behind it.
+- **Overflow trap**: do **not** reintroduce `overflow-x-auto` on the desktop ControlsBar row. CSS coerces a non-visible `overflow-x` into a non-visible `overflow-y`, which clips the dropdown menu that drops below. Filter pills fit without the scroller.
+- **Shuffle is format-aware**: `handleShuffleFilter` in `app/page.tsx` fetches `/api/albums-fast?genre|tag=X&limit=500` (no `filter` param), then narrows client-side to the active format tab before calling `shuffleAlbums()` so the shuffle pool matches what's on-screen.
+- **`shuffleAlbums` vs. `shuffleAllTracks`** (`contexts/AudioContext.tsx`): use `shuffleAlbums(subset)` (line 2916) when you have a specific album array; `shuffleAllTracks()` is reserved for the global top-right shuffle button that spans everything currently loaded.
 
 ### Adding New Playlists
 Files to modify (9 total):
