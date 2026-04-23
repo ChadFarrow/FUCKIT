@@ -51,6 +51,7 @@ interface ControlsBarLazyProps {
   className?: string;
   resultCount?: number;
   resultLabel?: string;
+  extraActions?: any;
 }
 
 export default function ControlsBarLazy(props: ControlsBarLazyProps) {

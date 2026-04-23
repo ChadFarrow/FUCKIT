@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import { Filter, Grid3X3, List, Shuffle } from 'lucide-react';
 
 export type FilterType = 'all' | 'albums' | 'eps' | 'singles' | 'publishers' | 'playlist' | 'videos' | 'podcasts';
@@ -33,6 +34,7 @@ interface ControlsBarProps {
   className?: string;
   resultCount?: number;
   resultLabel?: string;
+  extraActions?: ReactNode;
 }
 
 /** Full sort options for album/EP/single lists (Year and Added = release/feed date). */
@@ -95,9 +97,10 @@ export default function ControlsBar({
   resultCount,
   resultLabel = 'results',
   isFilterLoading = false,
+  extraActions,
 }: ControlsBarProps) {
   return (
-    <div className={`bg-black/70 backdrop-blur-sm rounded-xl border border-gray-700 shadow-lg ${className}`}>
+    <div className={`relative z-30 bg-black/70 backdrop-blur-sm rounded-xl border border-gray-700 shadow-lg ${className}`}>
       {/* Mobile Layout - Stacked */}
       <div className="block sm:hidden">
         {/* First Row - Filters */}
@@ -136,8 +139,8 @@ export default function ControlsBar({
           <div className="flex items-center gap-3 flex-1 min-w-0">
             {/* Sort */}
             {showSort && (
-              <select 
-                value={sortType} 
+              <select
+                value={sortType}
                 onChange={(e) => onSortChange(e.target.value as SortType)}
                 className="bg-gray-800 border border-gray-600 rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:ring-2 focus:ring-stablekraft-teal focus:border-stablekraft-teal transition-all whitespace-nowrap touch-manipulation"
               >
@@ -148,6 +151,8 @@ export default function ControlsBar({
                 ))}
               </select>
             )}
+
+            {extraActions}
 
             {/* Result count */}
             {resultCount !== undefined && (
@@ -202,7 +207,7 @@ export default function ControlsBar({
       </div>
 
       {/* Desktop Layout - Single Row */}
-      <div className="hidden sm:flex items-center gap-3 p-3 sm:p-4 overflow-x-auto">
+      <div className="hidden sm:flex items-center gap-3 p-3 sm:p-4">
         {/* Left side - Filters, Sort, and Result count */}
         <div className="flex items-center gap-3 flex-1 min-w-0">
           {/* Filters */}
@@ -238,8 +243,8 @@ export default function ControlsBar({
 
           {/* Sort */}
           {showSort && (
-            <select 
-              value={sortType} 
+            <select
+              value={sortType}
               onChange={(e) => onSortChange(e.target.value as SortType)}
               className="bg-gray-800 border border-gray-600 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-stablekraft-teal focus:border-stablekraft-teal transition-all whitespace-nowrap touch-manipulation"
             >
@@ -250,6 +255,8 @@ export default function ControlsBar({
               ))}
             </select>
           )}
+
+          {extraActions}
 
           {/* Result count */}
           {resultCount !== undefined && (

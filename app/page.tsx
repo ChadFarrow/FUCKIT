@@ -327,9 +327,20 @@ function HomePageContent() {
       const res = await fetch(`/api/albums-fast?${params}`);
       if (!res.ok) throw new Error(`status ${res.status}`);
       const data = await res.json();
-      const albums = data.albums || [];
+      const rawAlbums: RSSAlbum[] = data.albums || [];
+
+      // Narrow to the active format tab so "Shuffle Rock" on Albums tab doesn't also pull in EPs/singles.
+      const albums = rawAlbums.filter(a => {
+        const count = a.tracks?.length || a.totalTracks || 0;
+        if (activeFilter === 'albums') return count >= 6;
+        if (activeFilter === 'eps') return count >= 2 && count <= 5;
+        if (activeFilter === 'singles') return count === 1;
+        return true; // 'all' + anything else
+      });
+
       if (albums.length === 0) {
-        toast.warning(`No albums found for ${filterValue}`);
+        const scope = activeFilter === 'all' ? 'albums' : activeFilter;
+        toast.warning(`No ${scope} found for ${filterValue}`);
         return;
       }
       const ok = await shuffleAlbums(albums);
@@ -1634,35 +1645,6 @@ function HomePageContent() {
                   </button>
                 ))}
 
-                {/* Genre + V4V Music Tag dropdowns — hidden for filters where they don't apply */}
-                {activeFilter !== 'publishers' && activeFilter !== 'playlist' && (
-                  <>
-                    <FilterDropdown
-                      label="Genre"
-                      selected={selectedGenre}
-                      options={genreFilter.options}
-                      onSelect={pickGenre}
-                      className="ml-1"
-                    />
-                    <FilterDropdown
-                      label="Tag"
-                      selected={selectedTag}
-                      options={tagFilter.options}
-                      onSelect={pickTag}
-                    />
-                    {(selectedGenre || selectedTag) && (
-                      <button
-                        onClick={handleShuffleFilter}
-                        disabled={isShuffleFilterLoading}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-stablekraft-teal hover:bg-stablekraft-orange disabled:opacity-60 text-white text-sm font-medium transition-all shadow ml-1"
-                        title={`Shuffle ${selectedGenre || selectedTag}`}
-                      >
-                        <Shuffle className={`w-3.5 h-3.5 ${isShuffleFilterLoading ? 'animate-spin' : ''}`} />
-                        <span>Shuffle {selectedGenre || selectedTag}</span>
-                      </button>
-                    )}
-                  </>
-                )}
               </div>
 
               {/* Right side - Action buttons */}
@@ -1794,6 +1776,35 @@ function HomePageContent() {
                   showViewToggle={false}
                   showShuffle={false}
                   className="mb-8"
+                  extraActions={
+                    activeFilter !== 'publishers' && activeFilter !== 'playlist' && activeFilter !== 'podcasts' ? (
+                      <>
+                        <FilterDropdown
+                          label="Genre"
+                          selected={selectedGenre}
+                          options={genreFilter.options}
+                          onSelect={pickGenre}
+                        />
+                        <FilterDropdown
+                          label="Tag"
+                          selected={selectedTag}
+                          options={tagFilter.options}
+                          onSelect={pickTag}
+                        />
+                        {(selectedGenre || selectedTag) && (
+                          <button
+                            onClick={handleShuffleFilter}
+                            disabled={isShuffleFilterLoading}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-stablekraft-teal hover:bg-stablekraft-orange disabled:opacity-60 text-white text-sm font-medium transition-all shadow"
+                            title={`Shuffle ${selectedGenre || selectedTag}`}
+                          >
+                            <Shuffle className={`w-3.5 h-3.5 ${isShuffleFilterLoading ? 'animate-spin' : ''}`} />
+                            <span>Shuffle {selectedGenre || selectedTag}</span>
+                          </button>
+                        )}
+                      </>
+                    ) : null
+                  }
                 />
               )}
 
