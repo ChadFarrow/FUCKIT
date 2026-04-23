@@ -28,6 +28,7 @@ export const DUPLICATE_SOURCE_FEED_URLS = [
   'https://wavlake.com/feed/music/26822e8f-cc32-4f7b-b760-720cbe2455ff',  // Thorns
   'https://wavlake.com/feed/music/cca74ee8-67f8-434b-a386-8417e304cdf0',  // Time Waits For No One
   'https://wavlake.com/feed/music/b7f701d7-5499-48be-8394-fcd633c649bb',  // Dancing With A Ghost
+  'https://wavlake.com/feed/music/e0c852e7-a118-46b0-a751-4e42ed6e0b6c',  // Shadowbanned
 ];
 
 // Feed URLs that back a curated playlist. Not blacklisted (admin can add them as
