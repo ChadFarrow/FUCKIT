@@ -16,7 +16,7 @@ import { toast } from '@/components/Toast';
 import dynamic from 'next/dynamic';
 import SearchBar from '@/components/SearchBar';
 import { useScrollDetectionContext } from '@/components/ScrollDetectionProvider';
-import { Play, Pause } from 'lucide-react';
+import { Play, Pause, Shuffle } from 'lucide-react';
 import AppLayout from '@/components/AppLayout';
 import FavoriteButton from '@/components/favorites/FavoriteButton';
 import { SkeletonGrid } from '@/components/SkeletonCard';
@@ -183,7 +183,7 @@ function HomePageContent() {
   // HGH filter removed - no longer needed
   
   // Global audio context
-  const { playAlbum: globalPlayAlbum, shuffleAllTracks } = useAudio();
+  const { playAlbum: globalPlayAlbum, shuffleAllTracks, shuffleAlbums } = useAudio();
   const hasLoadedRef = useRef(false);
   // Lock: prevents the URL-sync effect from re-firing handleFilterChange while a filter change is already in flight.
   const isUpdatingFromUrlRef = useRef(false);
@@ -319,6 +319,34 @@ function HomePageContent() {
       await shuffleAllTracks();
     } catch (error) {
       console.error('Error starting shuffle:', error);
+    }
+  };
+
+  const [isShuffleFilterLoading, setIsShuffleFilterLoading] = useState(false);
+
+  const handleShuffleFilter = async () => {
+    const filterKey: 'genre' | 'tag' | null = selectedGenre ? 'genre' : selectedTag ? 'tag' : null;
+    const filterValue = selectedGenre || selectedTag;
+    if (!filterKey || !filterValue) return;
+
+    setIsShuffleFilterLoading(true);
+    try {
+      const params = new URLSearchParams({ [filterKey]: filterValue, limit: '500' });
+      const res = await fetch(`/api/albums-fast?${params}`);
+      if (!res.ok) throw new Error(`status ${res.status}`);
+      const data = await res.json();
+      const albums = data.albums || [];
+      if (albums.length === 0) {
+        toast.warning(`No albums found for ${filterValue}`);
+        return;
+      }
+      const ok = await shuffleAlbums(albums);
+      if (!ok) toast.warning(`No playable tracks in ${filterValue}`);
+    } catch (err) {
+      console.error('[shuffle-filter] fetch failed', err);
+      toast.error(`Couldn't shuffle ${filterValue}`);
+    } finally {
+      setIsShuffleFilterLoading(false);
     }
   };
 
@@ -1630,6 +1658,17 @@ function HomePageContent() {
                       options={tagFilter.options}
                       onSelect={pickTag}
                     />
+                    {(selectedGenre || selectedTag) && (
+                      <button
+                        onClick={handleShuffleFilter}
+                        disabled={isShuffleFilterLoading}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-stablekraft-teal hover:bg-stablekraft-orange disabled:opacity-60 text-white text-sm font-medium transition-all shadow ml-1"
+                        title={`Shuffle ${selectedGenre || selectedTag}`}
+                      >
+                        <Shuffle className={`w-3.5 h-3.5 ${isShuffleFilterLoading ? 'animate-spin' : ''}`} />
+                        <span>Shuffle {selectedGenre || selectedTag}</span>
+                      </button>
+                    )}
                   </>
                 )}
               </div>
