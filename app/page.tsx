@@ -56,15 +56,7 @@ const ControlsBar = dynamic(() => import('@/components/ControlsBarLazy'), {
   )
 });
 
-// Lazy load the fullscreen Now Playing Screen - only loaded when user opens it
-const NowPlayingScreen = dynamic(() => import('@/components/NowPlayingScreen'), {
-  loading: () => (
-    <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center">
-      <div className="text-white text-lg">Loading...</div>
-    </div>
-  ),
-  ssr: false // Client-side only component
-});
+// NowPlayingScreen is mounted globally in app/layout.tsx — do not import here.
 
 // Loading skeleton component for better UX
 const LoadingSkeleton = ({ count = 6 }: { count?: number }) => (
@@ -151,7 +143,7 @@ function HomePageContent() {
   const [isEnhancedLoaded, setIsEnhancedLoaded] = useState(false);
   const [publisherStats, setPublisherStats] = useState<{ name: string; feedGuid: string; albumCount: number }[]>([]);
   // Removed local nowPlayingOpen state - now managed in AudioContext
-  const { isFullscreenMode, setFullscreenMode } = useAudio();
+  const { setFullscreenMode } = useAudio();
   
   // Performance optimization: Limit rendered albums for better scrolling
   const [visibleAlbumCount, setVisibleAlbumCount] = useState(50);
@@ -2189,12 +2181,7 @@ function HomePageContent() {
 
         {/* Now Playing Bar is now handled by the global AudioContext */}
       </div>
-      
-      {/* Fullscreen Now Playing Screen */}
-      <NowPlayingScreen
-        isOpen={isFullscreenMode}
-        onClose={() => setFullscreenMode(false)}
-      />
+      {/* Fullscreen Now Playing Screen is mounted globally in app/layout.tsx — do not re-render here (two instances race on body scroll-lock) */}
     </div>
     </AppLayout>
   );
