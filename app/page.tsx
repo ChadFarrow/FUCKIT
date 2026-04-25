@@ -137,6 +137,7 @@ function HomePageContent() {
   // Progressive loading states
   const [criticalAlbums, setCriticalAlbums] = useState<RSSAlbum[]>([]);
   const [enhancedAlbums, setEnhancedAlbums] = useState<RSSAlbum[]>([]);
+  const [recentlyAddedAlbums, setRecentlyAddedAlbums] = useState<RSSAlbum[]>([]);
   const [isCriticalLoaded, setIsCriticalLoaded] = useState(false);
   const [isEnhancedLoaded, setIsEnhancedLoaded] = useState(false);
   const [publisherStats, setPublisherStats] = useState<{ name: string; feedGuid: string; albumCount: number }[]>([]);
@@ -328,7 +329,28 @@ function HomePageContent() {
 
 
   // Audio playback is now handled by the global AudioContext
-  
+
+  // Fetch the 12 most recently added feeds for the "Recently Added" home section.
+  // Independent of the main grid (which is name-asc by default), so we always have
+  // the true newest items even when they fall outside the first alphabetical page.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch('/api/albums-fast?limit=12&sort=added-desc&filter=all');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (cancelled) return;
+        setRecentlyAddedAlbums((data.albums || []).slice(0, 12));
+      } catch (err) {
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('Failed to load recently added albums:', err);
+        }
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
   useEffect(() => {
     // Prevent multiple loads
     if (hasLoadedRef.current) {
@@ -1697,6 +1719,22 @@ function HomePageContent() {
               ) : activeFilter === 'all' ? (
                 // Original sectioned layout for "All" filter
                 <>
+                  {/* Recently Added — newest 12 feeds, fetched independently of the main grid */}
+                  {recentlyAddedAlbums.length > 0 && (
+                    <div className="mb-12">
+                      <h2 className="text-2xl font-bold mb-6 text-white">Recently Added</h2>
+                      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+                        {recentlyAddedAlbums.map((album) => (
+                          <AlbumCard
+                            key={`recent-${album.feedId || album.feedGuid || album.title}`}
+                            album={album}
+                            onPlay={playAlbum}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Albums Grid */}
                   {albumsWithMultipleTracks.length > 0 && (
                       <div className="mb-12">
