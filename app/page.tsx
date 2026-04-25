@@ -137,7 +137,6 @@ function HomePageContent() {
   // Progressive loading states
   const [criticalAlbums, setCriticalAlbums] = useState<RSSAlbum[]>([]);
   const [enhancedAlbums, setEnhancedAlbums] = useState<RSSAlbum[]>([]);
-  const [recentlyAddedAlbums, setRecentlyAddedAlbums] = useState<RSSAlbum[]>([]);
   const [isCriticalLoaded, setIsCriticalLoaded] = useState(false);
   const [isEnhancedLoaded, setIsEnhancedLoaded] = useState(false);
   const [publisherStats, setPublisherStats] = useState<{ name: string; feedGuid: string; albumCount: number }[]>([]);
@@ -154,6 +153,8 @@ function HomePageContent() {
   const [displayedAlbums, setDisplayedAlbums] = useState<RSSAlbum[]>([]);
   const [hasMoreAlbums, setHasMoreAlbums] = useState(true);
   const ALBUMS_PER_PAGE = 50; // Load 50 albums per page for better user experience
+  const NEW_FILTER_PAGE_SIZE = 200; // 'new' shows a wider first cohort so historical re-imports roll off faster
+  const pageSizeForFilter = (filter: string) => (filter === 'new' ? NEW_FILTER_PAGE_SIZE : ALBUMS_PER_PAGE);
 
   // Format-aware loading state (for "all" filter - load all albums before EPs)
   const [formatCounts, setFormatCounts] = useState<{ albums: number; eps: number; singles: number } | null>(null);
@@ -173,7 +174,7 @@ function HomePageContent() {
   const [backgroundImageLoaded, setBackgroundImageLoaded] = useState(false);
 
   // Controls state - Initialize from URL params (works on both server and client)
-  const validFilters: FilterType[] = ['all', 'albums', 'eps', 'singles', 'publishers', 'playlist', 'podcasts', 'videos'];
+  const validFilters: FilterType[] = ['all', 'new', 'albums', 'eps', 'singles', 'publishers', 'playlist', 'podcasts', 'videos'];
   const urlFilter = searchParams?.get('filter');
   const initialFilter = (urlFilter && validFilters.includes(urlFilter as FilterType))
     ? (urlFilter as FilterType)
@@ -330,28 +331,6 @@ function HomePageContent() {
 
   // Audio playback is now handled by the global AudioContext
 
-  // Fetch the 12 newest feeds for the "New" home section. Server ranks by
-  // MAX(latest Track.createdAt, Feed.createdAt) so a podcast that just got a new
-  // episode ranks alongside a brand-new album. Lives on a dedicated endpoint
-  // because /api/albums-fast?filter=all strips type='podcast' rows.
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await fetch('/api/feeds/recent?limit=12');
-        if (!res.ok) return;
-        const data = await res.json();
-        if (cancelled) return;
-        setRecentlyAddedAlbums((data.albums || []).slice(0, 12));
-      } catch (err) {
-        if (process.env.NODE_ENV === 'development') {
-          console.warn('Failed to load recent feeds:', err);
-        }
-      }
-    })();
-    return () => { cancelled = true; };
-  }, []);
-
   useEffect(() => {
     // Prevent multiple loads
     if (hasLoadedRef.current) {
@@ -442,8 +421,9 @@ function HomePageContent() {
 
       // OPTIMIZED: Load albums in single API call (includes totalCount in response)
       // Removed redundant count query - totalCount is now included in albums response
-      const startIndex = (currentPage - 1) * ALBUMS_PER_PAGE;
-      const { albums: pageAlbums, totalCount } = await loadAlbumsData('all', ALBUMS_PER_PAGE, startIndex, activeFilter);
+      const pageSize = pageSizeForFilter(activeFilter);
+      const startIndex = (currentPage - 1) * pageSize;
+      const { albums: pageAlbums, totalCount } = await loadAlbumsData('all', pageSize, startIndex, activeFilter);
       
       // Update total albums count from API response (for pagination)
       setTotalAlbums(totalCount);
@@ -455,9 +435,10 @@ function HomePageContent() {
       setDisplayedAlbums(pageAlbums);
       setAlbums(pageAlbums); // Also set the main albums state
       
-      // Use totalCount to correctly determine if there are more albums
-      // If we got a full page (50 albums) and there's more than what we loaded, there are more
-      setHasMoreAlbums(pageAlbums.length >= ALBUMS_PER_PAGE && pageAlbums.length < totalCount);
+      // Use totalCount to correctly determine if there are more albums.
+      // If we got a full page (page size varies by filter) and there's more than what we
+      // loaded, there are more.
+      setHasMoreAlbums(pageAlbums.length >= pageSize && pageAlbums.length < totalCount);
       setIsCriticalLoaded(true);
       setIsEnhancedLoaded(true);
       setLoadingProgress(100);
@@ -511,8 +492,13 @@ function HomePageContent() {
       try {
         // Format-aware loading: For "all" filter, ensure we load all albums before any EPs
         const currentCount = displayedAlbums.length;
-        let startIndex = (nextPage - 1) * ALBUMS_PER_PAGE;
-        let loadLimit = ALBUMS_PER_PAGE;
+        const pageSize = pageSizeForFilter(activeFilter);
+        // 'new' uses a wider page size than other filters (see NEW_FILTER_PAGE_SIZE).
+        // Compute startIndex from the actual loaded count rather than `(nextPage - 1) *
+        // pageSize` so the first→subsequent page transition stays correct under non-
+        // uniform page sizes.
+        let startIndex = activeFilter === 'new' ? currentCount : (nextPage - 1) * pageSize;
+        let loadLimit = pageSize;
 
         // When "all" is selected and we have format counts, enforce format boundaries
         if (activeFilter === 'all' && formatCounts) {
@@ -732,7 +718,7 @@ function HomePageContent() {
         };
       } else {
         // Single fetch - loadAlbumsData already returns totalCount
-        const { albums: pageAlbums, totalCount } = await loadAlbumsData('all', ALBUMS_PER_PAGE, 0, newFilter);
+        const { albums: pageAlbums, totalCount } = await loadAlbumsData('all', pageSizeForFilter(newFilter), 0, newFilter);
 
         resultData = {
           albums: pageAlbums,
@@ -784,6 +770,18 @@ function HomePageContent() {
           console.log(`⚠️ loadAlbumsData called with ${filter} filter - this should be handled by handleFilterChange`);
         }
         return { albums: [], totalCount: 0 }; // Return empty array to prevent showing wrong data
+      }
+
+      // 'new' uses /api/feeds/recent — music-only feeds ordered by Feed.createdAt desc
+      // (when added to the app). Server preserves rank order across pages via offset; do
+      // not apply client-side sortType.
+      if (filter === 'new') {
+        const response = await fetch(`/api/feeds/recent?limit=${limit}&offset=${offset}`);
+        if (!response.ok) {
+          throw new Error(`/api/feeds/recent failed: ${response.status}`);
+        }
+        const data = await response.json();
+        return { albums: data.albums || [], totalCount: data.total || 0 };
       }
 
       // Handle playlist filter separately - use fast endpoint for better performance
@@ -1524,6 +1522,7 @@ function HomePageContent() {
                 className="md:hidden bg-gray-800 text-white px-3 py-2 rounded text-sm border border-gray-600 focus:outline-none focus:border-stablekraft-teal"
               >
                 <option value="all">All</option>
+                <option value="new">New</option>
                 <option value="albums">Albums</option>
                 <option value="eps">EPs</option>
                 <option value="singles">Singles</option>
@@ -1537,6 +1536,7 @@ function HomePageContent() {
               <div className="hidden md:flex gap-1">
                 {[
                   { value: 'all', label: 'All' },
+                  { value: 'new', label: 'New' },
                   { value: 'albums', label: 'Albums' },
                   { value: 'eps', label: 'EPs' },
                   { value: 'singles', label: 'Singles' },
@@ -1656,7 +1656,7 @@ function HomePageContent() {
                 Retry
               </button>
             </div>
-          ) : filteredAlbums.length > 0 ? (
+          ) : filteredAlbums.length > 0 || activeFilter === 'new' ? (
             <div className="max-w-7xl mx-auto">
               
 
@@ -1674,7 +1674,8 @@ function HomePageContent() {
                 </div>
               )}
 
-              {/* Controls Bar - Sort only (other controls in main menu); options vary by filter */}
+              {/* Controls Bar - Sort only (other controls in main menu); options vary by filter.
+                  'new' opts out — server ranks by max-track-or-feed createdAt, client sort wouldn't apply. */}
               {(activeFilter === 'all' || activeFilter === 'albums' || activeFilter === 'eps' || activeFilter === 'singles' || activeFilter === 'publishers' || activeFilter === 'playlist' || activeFilter === 'podcasts') && (
                 <ControlsBar
                   activeFilter={activeFilter}
@@ -1717,25 +1718,26 @@ function HomePageContent() {
                     </div>
                   </div>
                 </div>
+              ) : activeFilter === 'new' ? (
+                // 'New' filter — music-only feeds ordered by Feed.createdAt desc, paginated
+                // via /api/feeds/recent. Render in server order (no client sort) so pages
+                // stitch together correctly as infinite scroll fetches them.
+                filteredAlbums.length > 0 ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+                    {filteredAlbums.map((album) => (
+                      <AlbumCard
+                        key={`new-${album.feedId || album.feedGuid || album.title}`}
+                        album={album}
+                        onPlay={playAlbum}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <SkeletonGrid count={12} />
+                )
               ) : activeFilter === 'all' ? (
                 // Original sectioned layout for "All" filter
                 <>
-                  {/* New — newest 12 feeds by MAX(latest track createdAt, feed createdAt) */}
-                  {recentlyAddedAlbums.length > 0 && (
-                    <div className="mb-12">
-                      <h2 className="text-2xl font-bold mb-6 text-white">New</h2>
-                      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
-                        {recentlyAddedAlbums.map((album) => (
-                          <AlbumCard
-                            key={`recent-${album.feedId || album.feedGuid || album.title}`}
-                            album={album}
-                            onPlay={playAlbum}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
                   {/* Albums Grid */}
                   {albumsWithMultipleTracks.length > 0 && (
                       <div className="mb-12">

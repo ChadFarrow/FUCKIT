@@ -1,85 +1,93 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getPlaylistUrls, getAllPlaylistIds } from '@/lib/playlist/configs';
-import { getBlacklistedFeedIds, BLACKLISTED_FEED_URLS } from '@/lib/feed-exclusions';
+import {
+  getBlacklistedFeedIds,
+  BLACKLISTED_FEED_URLS,
+  isPlaylistSourceFeedUrl,
+  isBowlAfterBowlPodcastEntry,
+} from '@/lib/feed-exclusions';
 
-// Feeds ranked by MAX(latest Track.createdAt, Feed.createdAt) — surfaces both
-// brand-new feed mints and feeds that just got new tracks (e.g., a podcast
-// publishing a new episode). Used by the home page's "New" section.
+// "New" = recently added to the app, ordered by Feed.createdAt desc. NOT release
+// date (oldestItemPubdate) and NOT track activity — re-using an old album just
+// because tracks updated would surface "Lost Cause"-style false-positives that
+// were already in the catalog. createdAt is when the feed record was minted.
 //
-// Includes both type='album' and type='podcast' rows: the whole point of using
-// the track-createdAt signal is catching new episodes on long-running podcast
-// feeds, which the main /api/albums-fast 'all' view filters out by design.
+// Music-only: type='album' feeds. Podcasts excluded entirely (including music-
+// podcasts like Homegrown Hits, Two For Tunestr, MMM, BAB) — users browse those
+// via the Podcasts filter or playlist pages.
 //
-// 3-query plan keeps the dataset traversal light: aggregate once, sort lightweight
-// rows, then heavily fetch only the top N. Computing MAX from a feed.Track[] capped
-// at 20 (albums-fast pattern) is wrong here — that select orders trackOrder asc,
-// so newest tracks on long feeds fall outside the window.
+// Three exclusion layers:
+//   1. type='album' query filter — drops correctly-typed podcasts.
+//   2. PLAYLIST_SOURCE_FEED_URLS — drops curated-playlist source podcasts (HGH,
+//      MMM, etc.) still mis-typed as 'album' in the DB.
+//   3. isBowlAfterBowlPodcastEntry — drops the BAB feed (mis-imported as 'album')
+//      while keeping Bowl Covers (legit music).
+//
+// Pagination via `offset` so the client can infinite-scroll like other filters.
+// We fetch all eligible feeds' metadata once (cheap — id/createdAt/url/title/
+// artist for ~1.7k rows), filter post-hoc, sort, then heavily fetch only the
+// page slice. Filtering must happen post-fetch because the JS-only exclusion
+// rules (URL normalization, BAB title/artist matching) don't translate to
+// Prisma where-clauses.
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const limit = Math.min(parseInt(searchParams.get('limit') || '12'), 50);
+    const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 200);
+    const offset = Math.max(parseInt(searchParams.get('offset') || '0'), 0);
 
-    const [lightFeeds, trackAggs] = await Promise.all([
-      prisma.feed.findMany({
-        where: {
-          status: 'active',
-          type: { in: ['album', 'podcast'] },
-        },
-        select: {
-          id: true,
-          createdAt: true,
-          originalUrl: true,
-        },
-      }),
-      prisma.track.groupBy({
-        by: ['feedId'],
-        where: { status: 'active', audioUrl: { not: '' } },
-        _max: { createdAt: true },
-      }),
-    ]);
-
-    const lastTrackByFeed = new Map<string, number>(
-      trackAggs.map((r) => [
-        r.feedId,
-        r._max.createdAt ? r._max.createdAt.getTime() : 0,
-      ])
-    );
+    const lightFeeds = await prisma.feed.findMany({
+      where: {
+        status: 'active',
+        type: 'album',
+      },
+      select: {
+        id: true,
+        createdAt: true,
+        originalUrl: true,
+        title: true,
+        artist: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
 
     const playlistUrls = new Set(getPlaylistUrls());
     const playlistIds = new Set(getAllPlaylistIds());
     const blacklistedIds = new Set(getBlacklistedFeedIds());
     const blacklistedUrls = new Set(BLACKLISTED_FEED_URLS);
 
-    const ranked = lightFeeds
-      .filter(
-        (f) =>
-          !playlistIds.has(f.id) &&
-          !blacklistedIds.has(f.id) &&
-          (!f.originalUrl || !playlistUrls.has(f.originalUrl)) &&
-          (!f.originalUrl || !blacklistedUrls.has(f.originalUrl))
-      )
-      .map((f) => ({
-        id: f.id,
-        sortKey: Math.max(
-          lastTrackByFeed.get(f.id) ?? 0,
-          new Date(f.createdAt).getTime()
-        ),
-      }))
-      .sort((a, b) => b.sortKey - a.sortKey)
-      .slice(0, limit);
+    // URL exact-match against the playlistUrls/blacklistedUrls Sets is good enough
+    // for those (PI API + admin paths produce stable URLs there). Playlist-source
+    // exclusion uses the normalized helper because curated podcast URLs were
+    // imported through varying paths and string-equality misses casing/trailing
+    // differences (caught Mutton, Mead & Music slipping through).
+    const eligible = lightFeeds.filter(
+      (f) =>
+        !playlistIds.has(f.id) &&
+        !blacklistedIds.has(f.id) &&
+        (!f.originalUrl || !playlistUrls.has(f.originalUrl)) &&
+        (!f.originalUrl || !blacklistedUrls.has(f.originalUrl)) &&
+        (!f.originalUrl || !isPlaylistSourceFeedUrl(f.originalUrl)) &&
+        !isBowlAfterBowlPodcastEntry({
+          id: f.id,
+          title: f.title,
+          artist: f.artist,
+          feedUrl: f.originalUrl,
+        })
+    );
 
-    if (ranked.length === 0) {
+    const total = eligible.length;
+    const pageIds = eligible.slice(offset, offset + limit).map((f) => f.id);
+
+    if (pageIds.length === 0) {
       return NextResponse.json(
-        { albums: [], count: 0 },
+        { albums: [], count: 0, total, hasMore: false },
         { headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120' } }
       );
     }
 
-    const topIds = ranked.map((r) => r.id);
-
     const fullFeeds = await prisma.feed.findMany({
-      where: { id: { in: topIds } },
+      where: { id: { in: pageIds } },
       select: {
         id: true,
         guid: true,
@@ -130,66 +138,53 @@ export async function GET(request: Request) {
 
     const feedById = new Map(fullFeeds.map((f) => [f.id, f]));
 
-    const albums = ranked
-      .map((r) => feedById.get(r.id))
+    const albums = pageIds
+      .map((id) => feedById.get(id))
       .filter((f): f is NonNullable<typeof f> => Boolean(f))
-      .map((feed) => {
-        const isPodcast = feed.type === 'podcast';
-        // Podcasts: episodes newest-first (matches /api/albums-fast podcasts path).
-        const sortedTracks = isPodcast
-          ? [...feed.Track].sort((a, b) => {
-              const da = a.publishedAt ? new Date(a.publishedAt).getTime() : 0;
-              const db = b.publishedAt ? new Date(b.publishedAt).getTime() : 0;
-              return db - da;
-            })
-          : feed.Track;
-        return {
-          id: feed.id,
-          title: feed.title,
-          type: feed.type || 'album',
-          ...(isPodcast ? { isPodcast: true } : {}),
-          artist: feed.artist || feed.title,
-          description: feed.description || '',
-          coverArt: feed.image || '',
-          releaseDate: feed.oldestItemPubdate || feed.createdAt,
-          dateAdded: feed.createdAt,
-          feedUrl: feed.originalUrl,
-          feedGuid: feed.guid || null,
-          feedId: feed.id,
-          remoteFeedGuid: feed.guid || null,
-          guid: feed.Track?.[0]?.guid || feed.id,
-          episodeGuid: feed.Track?.[0]?.guid || feed.id,
-          link: feed.originalUrl,
-          priority: feed.priority,
-          tracks: sortedTracks.map((track) => ({
-            id: track.id,
-            title: track.title,
-            duration: track.duration || 180,
-            url: track.audioUrl,
-            image: track.image,
-            publishedAt: track.publishedAt,
-            guid: track.guid,
-            v4vRecipient: track.v4vRecipient,
-            v4vValue: track.v4vValue,
-            startTime: track.startTime,
-            endTime: track.endTime,
-            mediaType: track.mediaType || 'audio',
-            alternateEnclosures: track.alternateEnclosures,
-            chaptersUrl: track.chaptersUrl || undefined,
-            chapters: track.chapters || undefined,
-            valueTimeSplits: track.valueTimeSplits || undefined,
-            persons: (track as { persons?: unknown }).persons || undefined,
-          })),
-          v4vRecipient: feed.v4vRecipient,
-          v4vValue: feed.v4vValue,
-          persons: (feed as { persons?: unknown }).persons || undefined,
-          trackCount: feed._count?.Track || 0,
-          ...(isPodcast ? { totalTracks: feed._count?.Track || 0 } : {}),
-        };
-      });
+      .map((feed) => ({
+        id: feed.id,
+        title: feed.title,
+        type: feed.type || 'album',
+        artist: feed.artist || feed.title,
+        description: feed.description || '',
+        coverArt: feed.image || '',
+        releaseDate: feed.oldestItemPubdate || feed.createdAt,
+        dateAdded: feed.createdAt,
+        feedUrl: feed.originalUrl,
+        feedGuid: feed.guid || null,
+        feedId: feed.id,
+        remoteFeedGuid: feed.guid || null,
+        guid: feed.Track?.[0]?.guid || feed.id,
+        episodeGuid: feed.Track?.[0]?.guid || feed.id,
+        link: feed.originalUrl,
+        priority: feed.priority,
+        tracks: feed.Track.map((track) => ({
+          id: track.id,
+          title: track.title,
+          duration: track.duration || 180,
+          url: track.audioUrl,
+          image: track.image,
+          publishedAt: track.publishedAt,
+          guid: track.guid,
+          v4vRecipient: track.v4vRecipient,
+          v4vValue: track.v4vValue,
+          startTime: track.startTime,
+          endTime: track.endTime,
+          mediaType: track.mediaType || 'audio',
+          alternateEnclosures: track.alternateEnclosures,
+          chaptersUrl: track.chaptersUrl || undefined,
+          chapters: track.chapters || undefined,
+          valueTimeSplits: track.valueTimeSplits || undefined,
+          persons: (track as { persons?: unknown }).persons || undefined,
+        })),
+        v4vRecipient: feed.v4vRecipient,
+        v4vValue: feed.v4vValue,
+        persons: (feed as { persons?: unknown }).persons || undefined,
+        trackCount: feed._count?.Track || 0,
+      }));
 
     return NextResponse.json(
-      { albums, count: albums.length },
+      { albums, count: albums.length, total, hasMore: offset + albums.length < total },
       {
         headers: {
           'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
@@ -199,7 +194,7 @@ export async function GET(request: Request) {
   } catch (err) {
     console.error('Error in /api/feeds/recent:', err);
     return NextResponse.json(
-      { albums: [], count: 0, error: err instanceof Error ? err.message : 'Unknown error' },
+      { albums: [], count: 0, total: 0, hasMore: false, error: err instanceof Error ? err.message : 'Unknown error' },
       { status: 500 }
     );
   }
