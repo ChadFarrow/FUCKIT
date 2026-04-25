@@ -37,7 +37,8 @@ export const DUPLICATE_SOURCE_FEED_URLS = [
 // Only admin-initiated imports should populate these.
 export const PLAYLIST_SOURCE_FEED_URLS = [
   'https://music.behindthesch3m3s.com/b4ts%20feed/feed.xml',  // B4TS
-  'https://mmmusic-project.ams3.cdn.digitaloceanspaces.com/Mutton_Mead__Music/feed.xml',  // MMM
+  'https://mmmusic-project.ams3.cdn.digitaloceanspaces.com/Mutton_Mead__Music/feed.xml',  // MMM (legacy host)
+  'https://mmmusic.show/podcast/feed.xml',  // MMM (current host)
   'https://feed.homegrownhits.xyz/feed.xml',  // HGH
   'https://sirlibre.com/lightning-thrashes-rss.xml',  // LT
   'https://serve.podhome.fm/rss/3aebb7a8-5942-5ee7-a148-8bdc14f1f3d4',  // Upbeats
@@ -77,4 +78,31 @@ export function isPlaylistSourceFeedUrl(url: string): boolean {
 
 export function getBlacklistedFeedIds(): string[] {
   return [...BLACKLISTED_FEED_IDS];
+}
+
+// Bowl After Bowl is a podcast feed mis-imported as type='album' (slug
+// /album/bowl-after-bowl) but its episodes are spoken-word podcast content.
+// "Bowl Covers" (a derived music feed) is legitimate music — keep it.
+// Used by both /api/albums-fast and /api/feeds/recent so the album grid
+// stays free of the podcast.
+export function isBowlAfterBowlPodcastEntry(entry: {
+  id?: string | null;
+  title?: string | null;
+  artist?: string | null;
+  feedUrl?: string | null;
+}): boolean {
+  const title = (entry.title || '').toLowerCase();
+  const artist = (entry.artist || '').toLowerCase();
+  const feedUrl = (entry.feedUrl || '').toLowerCase();
+
+  // Always keep Bowl Covers (legitimate music content).
+  if (entry.id === 'bowl-covers' || title.includes('bowl covers')) {
+    return false;
+  }
+
+  return (
+    (title.includes('bowl after bowl') && !title.includes('covers')) ||
+    (artist.includes('bowl after bowl') && !title.includes('covers')) ||
+    (feedUrl.includes('bowlafterbowl.com') && !title.includes('covers') && entry.id !== 'bowl-covers')
+  );
 }
