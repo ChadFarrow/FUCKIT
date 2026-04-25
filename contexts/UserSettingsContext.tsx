@@ -1,6 +1,7 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
+import { useNostr } from '@/contexts/NostrContext';
 
 export interface UserSettings {
   // NIP-38 auto-status publishing
@@ -39,8 +40,10 @@ const UserSettingsContext = createContext<UserSettingsContextType | undefined>(u
 const STORAGE_KEY = 'user_settings';
 
 export function UserSettingsProvider({ children }: { children: ReactNode }) {
+  const { user } = useNostr();
   const [settings, setSettings] = useState<UserSettings>(defaultSettings);
   const [isLoaded, setIsLoaded] = useState(false);
+  const lastPubkeyRef = useRef<string | null | undefined>(undefined);
 
   // Load settings from localStorage on mount
   useEffect(() => {
@@ -56,6 +59,23 @@ export function UserSettingsProvider({ children }: { children: ReactNode }) {
       setIsLoaded(true);
     }
   }, []);
+
+  // Reset on identity change so per-account preferences don't bleed across logins on the same device.
+  useEffect(() => {
+    const pubkey = user?.nostrPubkey ?? null;
+    if (lastPubkeyRef.current === undefined) {
+      lastPubkeyRef.current = pubkey;
+      return;
+    }
+    if (lastPubkeyRef.current === pubkey) return;
+    lastPubkeyRef.current = pubkey;
+    setSettings(defaultSettings);
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (error) {
+      console.error('Failed to clear user settings:', error);
+    }
+  }, [user?.nostrPubkey]);
 
   // Save settings to localStorage whenever they change
   useEffect(() => {
