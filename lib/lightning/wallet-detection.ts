@@ -41,14 +41,23 @@ export async function detectWalletProviderType(): Promise<{
     const connectorType = config.connectorType?.toLowerCase() || '';
     const connectorName = config.connectorName || 'Unknown Wallet';
 
-    // Try to extract NWC pubkey from connection string
+    // Try to extract NWC pubkey + relay from connection string
+    // NWC URL format: nostr+walletconnect://<pubkey>?relay=<url>&secret=...
     let nwcPubkey: string | undefined;
-    if ((config as any).nwcUrl) {
-      // NWC URL format: nostr+walletconnect://<pubkey>?relay=...
-      const nwcUrl = (config as any).nwcUrl;
-      const match = nwcUrl.match(/nostr\+walletconnect:\/\/([a-f0-9]+)/i);
-      if (match) {
-        nwcPubkey = match[1];
+    let nwcRelay: string | undefined;
+    const nwcUrl: string | undefined = (config as any).nwcUrl;
+    if (nwcUrl) {
+      const pubkeyMatch = nwcUrl.match(/nostr\+walletconnect:\/\/([a-f0-9]+)/i);
+      if (pubkeyMatch) {
+        nwcPubkey = pubkeyMatch[1];
+      }
+      const relayMatch = nwcUrl.match(/[?&]relay=([^&]+)/i);
+      if (relayMatch) {
+        try {
+          nwcRelay = decodeURIComponent(relayMatch[1]).toLowerCase();
+        } catch {
+          nwcRelay = relayMatch[1].toLowerCase();
+        }
       }
     }
 
@@ -63,6 +72,21 @@ export async function detectWalletProviderType(): Promise<{
       return { type: 'alby', name: 'Alby', nwcPubkey };
     }
     if (connectorType.startsWith('nwc')) {
+      // Bitcoin Connect's "Generic NWC" paste form always returns connectorType
+      // 'nwc.generic' regardless of which wallet's NWC URL was pasted. Inspect the
+      // NWC relay param to disambiguate Alby Hub / Coinos pastes from truly generic
+      // wallets (Primal, etc.) — without this, pasted Alby Hub NWC strings get
+      // treated as plain 'nwc' and the keysend whitelist rejects them, so autoboost
+      // skips keysend even though Alby Hub fully supports it.
+      console.log('🔌 NWC connector detected:', { connectorType, connectorName, nwcRelay });
+      if (nwcRelay) {
+        if (nwcRelay.includes('getalby.com')) {
+          return { type: 'alby-hub', name: 'Alby Hub', nwcPubkey };
+        }
+        if (nwcRelay.includes('coinos.io')) {
+          return { type: 'coinos', name: 'Coinos', nwcPubkey };
+        }
+      }
       return { type: 'nwc', name: connectorName, nwcPubkey };
     }
     if (connectorType.includes('extension')) {
