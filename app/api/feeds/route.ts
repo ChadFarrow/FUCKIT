@@ -115,6 +115,14 @@ async function importMissingAlbums(
       continue;
     }
 
+    // Skip blacklisted URLs — a publisher feed listing them as remoteItems
+    // must not auto-mint album rows.
+    if (isBlacklistedFeedUrl(item.feedUrl)) {
+      console.log(`🚫 Skipping blacklisted album URL from publisher: ${item.feedUrl}`);
+      skipped++;
+      continue;
+    }
+
     try {
       // Check if album already exists by URL or GUID
       const conditions: any[] = [{ originalUrl: item.feedUrl }];
@@ -360,12 +368,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Reject blacklisted URLs before any DB writes. The podping consumer's
+    // !exists && fromMsp branch can otherwise re-mint blacklisted feeds since
+    // /api/feeds/exists also returns false for them.
+    if (isBlacklistedFeedUrl(originalUrl)) {
+      return NextResponse.json(
+        { error: 'Feed URL is blacklisted', originalUrl },
+        { status: 403 }
+      );
+    }
+
     // Resolve Podcast Index web page URLs to actual RSS feed URLs
     let resolvedUrl = originalUrl;
     const piResolution = await resolvePodcastIndexUrl(originalUrl);
     if (piResolution) {
       resolvedUrl = piResolution.feedUrl;
       console.log(`🔄 Resolved Podcast Index URL → ${resolvedUrl}`);
+    }
+
+    // Re-check after PI resolution in case the canonical RSS URL is the
+    // blacklisted one even though the caller passed a podcastindex.org link.
+    if (resolvedUrl !== originalUrl && isBlacklistedFeedUrl(resolvedUrl)) {
+      return NextResponse.json(
+        { error: 'Feed URL is blacklisted', originalUrl: resolvedUrl },
+        { status: 403 }
+      );
     }
 
     const normalizedOriginalUrl = normalizeUrl(resolvedUrl);
