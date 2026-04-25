@@ -330,21 +330,22 @@ function HomePageContent() {
 
   // Audio playback is now handled by the global AudioContext
 
-  // Fetch the 12 most recently added feeds for the "Recently Added" home section.
-  // Independent of the main grid (which is name-asc by default), so we always have
-  // the true newest items even when they fall outside the first alphabetical page.
+  // Fetch the 12 newest feeds for the "New" home section. Server ranks by
+  // MAX(latest Track.createdAt, Feed.createdAt) so a podcast that just got a new
+  // episode ranks alongside a brand-new album. Lives on a dedicated endpoint
+  // because /api/albums-fast?filter=all strips type='podcast' rows.
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch('/api/albums-fast?limit=12&sort=added-desc&filter=all');
+        const res = await fetch('/api/feeds/recent?limit=12');
         if (!res.ok) return;
         const data = await res.json();
         if (cancelled) return;
         setRecentlyAddedAlbums((data.albums || []).slice(0, 12));
       } catch (err) {
         if (process.env.NODE_ENV === 'development') {
-          console.warn('Failed to load recently added albums:', err);
+          console.warn('Failed to load recent feeds:', err);
         }
       }
     })();
@@ -1719,10 +1720,10 @@ function HomePageContent() {
               ) : activeFilter === 'all' ? (
                 // Original sectioned layout for "All" filter
                 <>
-                  {/* Recently Added — newest 12 feeds, fetched independently of the main grid */}
+                  {/* New — newest 12 feeds by MAX(latest track createdAt, feed createdAt) */}
                   {recentlyAddedAlbums.length > 0 && (
                     <div className="mb-12">
-                      <h2 className="text-2xl font-bold mb-6 text-white">Recently Added</h2>
+                      <h2 className="text-2xl font-bold mb-6 text-white">New</h2>
                       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                         {recentlyAddedAlbums.map((album) => (
                           <AlbumCard
