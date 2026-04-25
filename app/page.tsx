@@ -153,8 +153,6 @@ function HomePageContent() {
   const [displayedAlbums, setDisplayedAlbums] = useState<RSSAlbum[]>([]);
   const [hasMoreAlbums, setHasMoreAlbums] = useState(true);
   const ALBUMS_PER_PAGE = 50; // Load 50 albums per page for better user experience
-  const NEW_FILTER_PAGE_SIZE = 200; // 'new' shows a wider first cohort so historical re-imports roll off faster
-  const pageSizeForFilter = (filter: string) => (filter === 'new' ? NEW_FILTER_PAGE_SIZE : ALBUMS_PER_PAGE);
 
   // Format-aware loading state (for "all" filter - load all albums before EPs)
   const [formatCounts, setFormatCounts] = useState<{ albums: number; eps: number; singles: number } | null>(null);
@@ -421,9 +419,8 @@ function HomePageContent() {
 
       // OPTIMIZED: Load albums in single API call (includes totalCount in response)
       // Removed redundant count query - totalCount is now included in albums response
-      const pageSize = pageSizeForFilter(activeFilter);
-      const startIndex = (currentPage - 1) * pageSize;
-      const { albums: pageAlbums, totalCount } = await loadAlbumsData('all', pageSize, startIndex, activeFilter);
+      const startIndex = (currentPage - 1) * ALBUMS_PER_PAGE;
+      const { albums: pageAlbums, totalCount } = await loadAlbumsData('all', ALBUMS_PER_PAGE, startIndex, activeFilter);
       
       // Update total albums count from API response (for pagination)
       setTotalAlbums(totalCount);
@@ -436,9 +433,7 @@ function HomePageContent() {
       setAlbums(pageAlbums); // Also set the main albums state
       
       // Use totalCount to correctly determine if there are more albums.
-      // If we got a full page (page size varies by filter) and there's more than what we
-      // loaded, there are more.
-      setHasMoreAlbums(pageAlbums.length >= pageSize && pageAlbums.length < totalCount);
+      setHasMoreAlbums(pageAlbums.length >= ALBUMS_PER_PAGE && pageAlbums.length < totalCount);
       setIsCriticalLoaded(true);
       setIsEnhancedLoaded(true);
       setLoadingProgress(100);
@@ -492,13 +487,8 @@ function HomePageContent() {
       try {
         // Format-aware loading: For "all" filter, ensure we load all albums before any EPs
         const currentCount = displayedAlbums.length;
-        const pageSize = pageSizeForFilter(activeFilter);
-        // 'new' uses a wider page size than other filters (see NEW_FILTER_PAGE_SIZE).
-        // Compute startIndex from the actual loaded count rather than `(nextPage - 1) *
-        // pageSize` so the first→subsequent page transition stays correct under non-
-        // uniform page sizes.
-        let startIndex = activeFilter === 'new' ? currentCount : (nextPage - 1) * pageSize;
-        let loadLimit = pageSize;
+        let startIndex = (nextPage - 1) * ALBUMS_PER_PAGE;
+        let loadLimit = ALBUMS_PER_PAGE;
 
         // When "all" is selected and we have format counts, enforce format boundaries
         if (activeFilter === 'all' && formatCounts) {
@@ -718,7 +708,7 @@ function HomePageContent() {
         };
       } else {
         // Single fetch - loadAlbumsData already returns totalCount
-        const { albums: pageAlbums, totalCount } = await loadAlbumsData('all', pageSizeForFilter(newFilter), 0, newFilter);
+        const { albums: pageAlbums, totalCount } = await loadAlbumsData('all', ALBUMS_PER_PAGE, 0, newFilter);
 
         resultData = {
           albums: pageAlbums,
