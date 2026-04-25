@@ -71,9 +71,9 @@ Playlists use `<podcast:remoteItem>` with `feedGuid` + `itemGuid`. On `?refresh`
 ### Feed Exclusions (`lib/feed-exclusions.ts`)
 Two lists with different semantics:
 - **`BLACKLISTED_FEED_IDS` / `BLACKLISTED_FEED_URLS`** — true bans. Applied everywhere: album grid, search, `/api/feeds/exists`, `process-remote-items`, admin bulk-import. Includes test feeds (`lnurl-test-*`, `podtards-test`) and repeat-offenders like `bitpunk-fm-unwound`.
-- **`PLAYLIST_SOURCE_FEED_URLS`** — URLs of podcast feeds backing curated playlists (B4TS, MMM, HGH, LT, Upbeats, IAM, ITDV, Two For Tunestr). Checked **only** by `process-remote-items` so nightly playlist refresh can't auto-create feed records for them. Admin-initiated imports (`POST /api/feeds`) never consulted the blacklist anyway.
+- **`PLAYLIST_SOURCE_FEED_URLS`** — URLs of podcast feeds backing curated playlists (B4TS, MMM, HGH, LT, Upbeats, IAM, ITDV, Two For Tunestr). Checked by `process-remote-items` (so nightly playlist refresh can't auto-create feed records for them) and by `/api/feeds/recent` (so the home `'new'` filter doesn't surface music-podcast source feeds). Admin-initiated imports (`POST /api/feeds`) never consulted these. **MMM has two entries** (legacy `mmmusic-project.ams3.cdn.digitaloceanspaces.com` and current `mmmusic.show`) because DB rows reference different hosts — keep both.
 
-Helpers: `isBlacklistedFeedId()`, `isBlacklistedFeedUrl()`, `isPlaylistSourceFeedUrl()`. Do **not** move playlist-source URLs back into the blacklist — doing so would block admin from promoting any of them into the Podcasts tab.
+Helpers: `isBlacklistedFeedId()`, `isBlacklistedFeedUrl()`, `isPlaylistSourceFeedUrl()`, `isBowlAfterBowlPodcastEntry()`. The BAB helper is shared by `/api/albums-fast` and `/api/feeds/recent` to keep the BAB-vs-Bowl-Covers rule in one place — do not re-inline it. Do **not** move playlist-source URLs back into the blacklist — doing so would block admin from promoting any of them into the Podcasts tab.
 
 ### Admin Feed Management (`/admin`)
 Single input handles both add and reparse. Type dropdown (Auto-detect/Album/Publisher/Podcast) — use when URL doesn't match auto-detect patterns (`-pubfeed`, `/publisher`, `/artist/` = publisher). **Server-side fallback**: feeds with 0 items + `<podcast:remoteItem>` references auto-detect as publisher. **GUID collision handling**: if a publisher feed's `podcast:guid` collides with an existing album, the feed is created without GUID rather than failing. **Fixing duplicates**: delete all copies first (`DELETE /api/feeds?id=<feedId>`), then re-add. Initial import (`POST /api/feeds`) saves all parsed fields including chapters, VTS, and V4V via `applyParsedItemFields()` — no reparse needed.
@@ -153,6 +153,13 @@ Three-layer strategy: (1) preload at 15s before end, (2) proactive timer at 5s b
 
 ### Sorting
 `/api/albums-fast` accepts `sort` param (`added-desc`, `added-asc`, `year-desc`, `year-asc`, `name-asc`, `name-desc`, `tracks-desc`, `tracks-asc`). **Do NOT send `sort=name-asc` as default** — bypasses format grouping (Albums → EPs → Singles). Date fields: `Feed.oldestItemPubdate` = release date, `Feed.createdAt` = when added.
+
+### "New" filter (`/api/feeds/recent`)
+Music-only feeds ordered by `Feed.createdAt desc` — recently added to the app, **not** new releases. **Do not** revert the sort to `MAX(latest Track.createdAt, Feed.createdAt)` — re-using an old album whose tracks updated surfaces false-positives already in the catalog (PR #116 originally shipped with that ranking and was changed for exactly this reason).
+
+Three exclusion layers, each catches what the others miss: `where: { type: 'album' }` drops correctly-typed podcasts; `isPlaylistSourceFeedUrl()` drops curated-playlist source podcasts (HGH, MMM, Two For Tunestr) still mis-typed as `'album'`; `isBowlAfterBowlPodcastEntry()` drops BAB while keeping Bowl Covers.
+
+**Page size is 200** (`NEW_FILTER_PAGE_SIZE` in `app/page.tsx`); other filters stay at 50. The wider first cohort makes historical re-import noise (feeds deleted-and-re-imported, resetting `createdAt`) roll off page 1 faster. **Pagination offset**: `loadMoreAlbums` derives the `'new'` startIndex from `displayedAlbums.length`, not `(nextPage - 1) * pageSize`, because the page size differs from `ALBUMS_PER_PAGE`. Follow the same pattern if you add another non-uniform-page filter. **No client sort**: `ControlsBar` is hidden on `'new'` and the render branch in `app/page.tsx` renders `filteredAlbums` directly — server controls rank order.
 
 ### `/api/albums-fast` track fields (critical gotchas)
 Main-grid play button plays tracks straight from this endpoint — fields missing here don't show up on Now Playing.
