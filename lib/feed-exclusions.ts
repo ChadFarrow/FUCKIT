@@ -37,7 +37,8 @@ export const DUPLICATE_SOURCE_FEED_URLS = [
 // Only admin-initiated imports should populate these.
 export const PLAYLIST_SOURCE_FEED_URLS = [
   'https://music.behindthesch3m3s.com/b4ts%20feed/feed.xml',  // B4TS
-  'https://mmmusic-project.ams3.cdn.digitaloceanspaces.com/Mutton_Mead__Music/feed.xml',  // MMM
+  'https://mmmusic-project.ams3.cdn.digitaloceanspaces.com/Mutton_Mead__Music/feed.xml',  // MMM (legacy host)
+  'https://mmmusic.show/podcast/feed.xml',  // MMM (current host)
   'https://feed.homegrownhits.xyz/feed.xml',  // HGH
   'https://sirlibre.com/lightning-thrashes-rss.xml',  // LT
   'https://serve.podhome.fm/rss/3aebb7a8-5942-5ee7-a148-8bdc14f1f3d4',  // Upbeats
