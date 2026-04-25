@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { Track } from '@prisma/client';
 import { getPlaylistUrls, getAllPlaylistIds } from '@/lib/playlist/configs';
-import { getBlacklistedFeedIds, BLACKLISTED_FEED_URLS } from '@/lib/feed-exclusions';
+import { getBlacklistedFeedIds, BLACKLISTED_FEED_URLS, isBowlAfterBowlPodcastEntry } from '@/lib/feed-exclusions';
 import {
   CACHE_DURATION,
   PLAYLIST_CACHE_DURATION,
@@ -302,29 +302,19 @@ export async function GET(request: Request) {
       trackCount: feed._count.Track
     }));
     
-    // Filter out Bowl After Bowl main podcast content but keep music covers
+    // Filter out Bowl After Bowl podcast (mis-imported as type='album') but keep
+    // Bowl Covers (legit music). Shared helper keeps /api/feeds/recent in sync.
     const podcastFilteredAlbums = albums.filter(album => {
-      const albumTitle = album.title?.toLowerCase() || '';
-      const albumArtist = album.artist?.toLowerCase() || '';
-      const feedUrl = album.feedUrl?.toLowerCase() || '';
-
-      // Keep Bowl Covers - these are legitimate music content
-      if (album.id === 'bowl-covers' || albumTitle.includes('bowl covers')) {
-        return true;
-      }
-
-      // Filter out main Bowl After Bowl podcast episodes
-      const isBowlAfterBowlPodcast = (
-        (albumTitle.includes('bowl after bowl') && !albumTitle.includes('covers')) ||
-        (albumArtist.includes('bowl after bowl') && !albumTitle.includes('covers')) ||
-        (feedUrl.includes('bowlafterbowl.com') && !albumTitle.includes('covers') && album.id !== 'bowl-covers')
-      );
-
-      if (isBowlAfterBowlPodcast && process.env.NODE_ENV === 'development') {
+      const isBab = isBowlAfterBowlPodcastEntry({
+        id: album.id,
+        title: album.title,
+        artist: album.artist,
+        feedUrl: album.feedUrl,
+      });
+      if (isBab && process.env.NODE_ENV === 'development') {
         console.log(`🚫 Filtering out Bowl After Bowl podcast: ${album.title} by ${album.artist}`);
       }
-
-      return !isBowlAfterBowlPodcast;
+      return !isBab;
     });
 
     // Filter out unresolved feed GUID placeholders - these have no usable data
