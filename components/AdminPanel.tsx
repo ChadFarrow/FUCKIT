@@ -150,6 +150,22 @@ export default function AdminPanel() {
   const [msoCleaning, setMsoCleaning] = useState<Set<string>>(new Set());
   const [msoPreviewByPublisher, setMsoPreviewByPublisher] = useState<Record<string, { toDelete: CleanupCandidate[]; toKeep: CleanupKept[] }>>({});
 
+  // Artist-name search for adding new music-show-only publishers
+  type MsoSearchResult = {
+    feedUrl: string;
+    feedGuid?: string;
+    title: string;
+    author: string;
+    image: string;
+    medium: string;
+    source: 'pi-publisher' | 'pi-wavlake-artist';
+    existing: { id: string; type: string; musicShowOnly: boolean } | null;
+  };
+  const [msoSearchQuery, setMsoSearchQuery] = useState('');
+  const [msoSearching, setMsoSearching] = useState(false);
+  const [msoSearchResults, setMsoSearchResults] = useState<MsoSearchResult[] | null>(null);
+  const [msoImporting, setMsoImporting] = useState<Set<string>>(new Set());
+
   // Nostr authentication
   const { user: nostrUser, isAuthenticated: isNostrAuthenticated, isLoading: nostrLoading } = useNostr();
 
@@ -384,6 +400,75 @@ export default function AdminPanel() {
       setMsoCleaning(prev => {
         const n = new Set(prev);
         n.delete(id);
+        return n;
+      });
+    }
+  };
+
+  const searchMsoPublisher = async () => {
+    const q = msoSearchQuery.trim();
+    if (q.length < 2) {
+      toast.error('Enter at least 2 characters');
+      return;
+    }
+    setMsoSearching(true);
+    try {
+      const response = await fetch(`/api/admin/music-show-only-publishers/search?q=${encodeURIComponent(q)}`);
+      const data = await response.json();
+      if (!response.ok) {
+        toast.error(data.error || 'Search failed');
+        return;
+      }
+      setMsoSearchResults(data.results || []);
+      if ((data.results || []).length === 0) {
+        toast.info('No publisher feeds found. Try the URL form above.');
+      }
+    } catch (error) {
+      console.error('Error searching publishers:', error);
+      toast.error('Network error during search');
+    } finally {
+      setMsoSearching(false);
+    }
+  };
+
+  const importMsoPublisher = async (result: MsoSearchResult) => {
+    setMsoImporting(prev => new Set(prev).add(result.feedUrl));
+    try {
+      const response = await fetch('/api/admin/music-show-only-publishers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'import',
+          feedUrl: result.feedUrl,
+          feedGuid: result.feedGuid,
+          title: result.title,
+          artist: result.author,
+          image: result.image,
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        toast.error(data.error || 'Import failed');
+        return;
+      }
+      toast.success(data.alreadyExisted ? `Flagged "${data.feed.title}" as music-show-only` : `Added "${data.feed.title}"`);
+      // Reflect in search results so the button switches to "Already imported".
+      setMsoSearchResults(prev => prev?.map(r =>
+        r.feedUrl === result.feedUrl
+          ? { ...r, existing: { id: data.feed.id, type: 'publisher', musicShowOnly: true } }
+          : r
+      ) ?? null);
+      // Refresh main publisher list if it's been loaded.
+      if (msoPublishers) {
+        await fetchMsoPublishers();
+      }
+    } catch (error) {
+      console.error('Error importing publisher:', error);
+      toast.error('Network error during import');
+    } finally {
+      setMsoImporting(prev => {
+        const n = new Set(prev);
+        n.delete(result.feedUrl);
         return n;
       });
     }
@@ -1365,6 +1450,95 @@ export default function AdminPanel() {
             Only albums whose tracks are referenced by a curated music show (HGH, B4TS, MMM, etc.) will be kept.
             Use Preview to see what cleanup would delete, then Run to remove non-played albums.
           </p>
+
+          {/* Artist-name search */}
+          <div className="bg-black/20 rounded-lg border border-white/10 p-4 mb-4">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Find a publisher by artist name
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={msoSearchQuery}
+                onChange={(e) => setMsoSearchQuery(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') searchMsoPublisher(); }}
+                placeholder="Artist name…"
+                className="flex-1 px-3 py-2 bg-black/40 text-white placeholder-gray-500 rounded border border-white/10 focus:border-purple-400 focus:outline-none text-sm"
+              />
+              <button
+                onClick={searchMsoPublisher}
+                disabled={msoSearching || msoSearchQuery.trim().length < 2}
+                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 text-white rounded text-sm transition-colors"
+              >
+                {msoSearching ? 'Searching…' : 'Search'}
+              </button>
+              {msoSearchResults && (
+                <button
+                  onClick={() => { setMsoSearchResults(null); setMsoSearchQuery(''); }}
+                  className="px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded text-sm transition-colors"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+            <p className="text-xs text-gray-500 mt-2">
+              Searches Podcast Index for publisher feeds matching the artist (also picks up Wavlake artist pages).
+              If nothing matches, paste the URL into the &ldquo;Add or Update Feed&rdquo; section above.
+            </p>
+
+            {msoSearchResults && msoSearchResults.length > 0 && (
+              <div className="mt-4 space-y-2">
+                {msoSearchResults.map(r => {
+                  const isImporting = msoImporting.has(r.feedUrl);
+                  const existing = r.existing;
+                  return (
+                    <div key={r.feedUrl} className="bg-white/5 rounded border border-white/10 p-3 flex items-start gap-3">
+                      {r.image && (
+                        <img src={r.image} alt="" className="w-10 h-10 rounded object-cover flex-shrink-0" />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-medium text-white truncate">{r.title}</span>
+                          {r.author && <span className="text-xs text-gray-400 truncate">— {r.author}</span>}
+                          <span className="text-[10px] uppercase bg-gray-700/60 text-gray-300 px-1.5 py-0.5 rounded">
+                            {r.source === 'pi-wavlake-artist' ? 'wavlake' : r.medium}
+                          </span>
+                          {existing?.musicShowOnly && (
+                            <span className="text-[10px] bg-purple-500/30 text-purple-200 px-1.5 py-0.5 rounded">flagged</span>
+                          )}
+                        </div>
+                        <div className="text-xs text-gray-500 mt-1 truncate">{r.feedUrl}</div>
+                      </div>
+                      <div className="flex-shrink-0">
+                        {existing && existing.musicShowOnly ? (
+                          <span className="text-xs text-gray-400">Already flagged</span>
+                        ) : existing ? (
+                          <button
+                            onClick={() => importMsoPublisher(r)}
+                            disabled={isImporting}
+                            className="px-3 py-1.5 bg-purple-600/80 hover:bg-purple-600 disabled:bg-gray-600 text-white rounded text-xs transition-colors"
+                          >
+                            {isImporting ? 'Flagging…' : 'Flag existing'}
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => importMsoPublisher(r)}
+                            disabled={isImporting}
+                            className="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 text-white rounded text-xs transition-colors"
+                          >
+                            {isImporting ? 'Adding…' : 'Add as music-show-only'}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+            {msoSearchResults && msoSearchResults.length === 0 && (
+              <p className="text-sm text-gray-500 mt-3">No publisher feeds found for &ldquo;{msoSearchQuery}&rdquo;.</p>
+            )}
+          </div>
 
           {msoPublishers && msoPublishers.length === 0 && (
             <p className="text-gray-400">No publisher feeds found.</p>

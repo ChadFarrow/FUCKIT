@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { invalidateAlbumsFastCache } from '@/lib/caches/albums-fast-cache';
 import { invalidateSearchCache } from '@/lib/caches/search-cache';
+import { generateAlbumSlug, normalizeUrl, isValidFeedUrl } from '@/lib/url-utils';
+import { isBlacklistedFeedUrl } from '@/lib/feed-exclusions';
 
 function invalidateFeedListCaches(): void {
   invalidateAlbumsFastCache();
@@ -106,19 +108,25 @@ export async function PATCH(request: NextRequest) {
 }
 
 // POST /api/admin/music-show-only-publishers
-// Body: { id: string, action: 'preview' | 'cleanup' }
-//
-// Inspects child album feeds belonging to this publisher and identifies any
-// whose tracks are NOT referenced by a SystemPlaylistTrack. Albums where ≥1
-// track has been played on a curated music show are kept in full.
+// Body forms:
+//   { id: string, action: 'preview' | 'cleanup' }    — inspect/delete non-played albums
+//   { action: 'import', feedUrl: string, title?, artist?, image?, feedGuid? } — create
+//     a publisher Feed pre-flagged as music-show-only. Skips the standard
+//     auto-album-import path entirely.
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { id, action } = body as { id?: string; action?: 'preview' | 'cleanup' };
+    const action = (body as { action?: string }).action;
+
+    if (action === 'import') {
+      return handleImport(body);
+    }
+
+    const { id } = body as { id?: string };
 
     if (!id || (action !== 'preview' && action !== 'cleanup')) {
       return NextResponse.json(
-        { error: 'Body must include { id: string, action: "preview" | "cleanup" }' },
+        { error: 'Body must include { id: string, action: "preview" | "cleanup" } or { action: "import", feedUrl }' },
         { status: 400 }
       );
     }
@@ -216,4 +224,89 @@ export async function POST(request: NextRequest) {
     console.error('Error running music-show-only cleanup:', error);
     return NextResponse.json({ error: 'Failed to run cleanup' }, { status: 500 });
   }
+}
+
+async function handleImport(body: any) {
+  const { feedUrl, title, artist, image, feedGuid } = body as {
+    feedUrl?: string;
+    title?: string;
+    artist?: string;
+    image?: string;
+    feedGuid?: string;
+  };
+
+  if (!feedUrl || !isValidFeedUrl(feedUrl)) {
+    return NextResponse.json(
+      { error: 'Body must include a valid feedUrl' },
+      { status: 400 }
+    );
+  }
+  if (isBlacklistedFeedUrl(feedUrl)) {
+    return NextResponse.json({ error: 'Feed URL is blacklisted' }, { status: 403 });
+  }
+
+  const normalizedUrl = normalizeUrl(feedUrl);
+
+  // Dedup: URL variants, then GUID-as-id, then guid column.
+  const existing = await prisma.feed.findFirst({
+    where: {
+      OR: [
+        { originalUrl: normalizedUrl },
+        { originalUrl: feedUrl },
+        ...(feedGuid ? [{ id: feedGuid }, { guid: feedGuid }] : []),
+      ],
+    },
+  });
+
+  if (existing) {
+    // Promote to publisher + flag if not already.
+    const updates: { type?: string; musicShowOnly?: boolean } = {};
+    if (existing.type !== 'publisher') updates.type = 'publisher';
+    if (!existing.musicShowOnly) updates.musicShowOnly = true;
+    if (Object.keys(updates).length > 0) {
+      await prisma.feed.update({ where: { id: existing.id }, data: updates });
+    }
+    invalidateFeedListCaches();
+    return NextResponse.json({
+      feed: { id: existing.id, title: existing.title, musicShowOnly: true },
+      alreadyExisted: true,
+    });
+  }
+
+  // Generate slug-based ID (same pattern as other publisher imports).
+  const baseSlug = (() => {
+    const parts: string[] = [];
+    if (artist) parts.push(generateAlbumSlug(artist));
+    if (title) parts.push(generateAlbumSlug(title));
+    let slug = parts.join('-');
+    if (!slug || slug.length < 2) slug = `publisher-${Date.now()}`;
+    return slug;
+  })();
+  let feedId = baseSlug;
+  if (await prisma.feed.findUnique({ where: { id: feedId } })) {
+    feedId = `${baseSlug}-${Date.now()}`;
+  }
+
+  const created = await prisma.feed.create({
+    data: {
+      id: feedId,
+      guid: feedGuid || null,
+      originalUrl: normalizedUrl,
+      cdnUrl: normalizedUrl,
+      type: 'publisher',
+      priority: 'normal',
+      title: title || normalizedUrl,
+      artist: artist || null,
+      image: image || null,
+      status: 'active',
+      musicShowOnly: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    select: { id: true, title: true, musicShowOnly: true },
+  });
+
+  invalidateFeedListCaches();
+
+  return NextResponse.json({ feed: created, alreadyExisted: false }, { status: 201 });
 }
