@@ -692,7 +692,7 @@ export async function POST(request: NextRequest) {
 
       // If this is a publisher feed (has no tracks but might have remoteItems), process them
       let remoteItemsResult: RemoteItemResult | null = null;
-      if (updatedFeed && updatedFeed._count.Track === 0) {
+      if (updatedFeed && updatedFeed._count.Track === 0 && !feed.musicShowOnly) {
         console.log(`📡 Feed has 0 tracks, checking for remoteItems...`);
         remoteItemsResult = await processRemoteItems(resolvedUrl, feed.id);
 

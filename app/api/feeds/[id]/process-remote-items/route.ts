@@ -50,6 +50,20 @@ export async function POST(
       );
     }
 
+    // Music-show-only publishers don't auto-import their albums.
+    // Only albums referenced by a curated music show (via the playlist resolver) get tracks.
+    if (publisherFeed.musicShowOnly) {
+      console.log(`🎙️  Skipping album auto-import — publisher "${publisherFeed.title}" is music-show-only`);
+      return NextResponse.json({
+        message: 'Publisher is music-show-only; no albums auto-imported',
+        musicShowOnly: true,
+        remoteItems: [],
+        added: 0,
+        skipped: 0,
+        errors: []
+      });
+    }
+
     console.log(`📡 Fetching publisher feed: ${publisherFeed.originalUrl}`);
 
     // Fetch the publisher feed XML
