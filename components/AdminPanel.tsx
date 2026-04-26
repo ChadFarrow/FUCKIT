@@ -125,6 +125,31 @@ export default function AdminPanel() {
     }>;
   } | null>(null);
 
+  // Music-show-only publishers
+  type MusicShowOnlyPublisher = {
+    id: string;
+    title: string;
+    artist: string | null;
+    originalUrl: string;
+    image: string | null;
+    musicShowOnly: boolean;
+    childAlbums: number;
+    childTracks: number;
+  };
+  type CleanupCandidate = {
+    id: string;
+    title: string;
+    artist: string | null;
+    trackCount: number;
+  };
+  type CleanupKept = CleanupCandidate & { playedTracks: number };
+  const [msoPublishers, setMsoPublishers] = useState<MusicShowOnlyPublisher[] | null>(null);
+  const [msoLoading, setMsoLoading] = useState(false);
+  const [msoToggling, setMsoToggling] = useState<Set<string>>(new Set());
+  const [msoPreviewing, setMsoPreviewing] = useState<Set<string>>(new Set());
+  const [msoCleaning, setMsoCleaning] = useState<Set<string>>(new Set());
+  const [msoPreviewByPublisher, setMsoPreviewByPublisher] = useState<Record<string, { toDelete: CleanupCandidate[]; toKeep: CleanupKept[] }>>({});
+
   // Nostr authentication
   const { user: nostrUser, isAuthenticated: isNostrAuthenticated, isLoading: nostrLoading } = useNostr();
 
@@ -246,6 +271,121 @@ export default function AdminPanel() {
       toast.error('Network error loading recent feeds');
     } finally {
       setLoadingRecent(false);
+    }
+  };
+
+  const fetchMsoPublishers = async () => {
+    setMsoLoading(true);
+    try {
+      const response = await fetch('/api/admin/music-show-only-publishers');
+      const data = await response.json();
+      if (response.ok && Array.isArray(data.publishers)) {
+        setMsoPublishers(data.publishers);
+      } else {
+        toast.error(data.error || 'Failed to load publishers');
+      }
+    } catch (error) {
+      console.error('Error fetching publishers:', error);
+      toast.error('Network error loading publishers');
+    } finally {
+      setMsoLoading(false);
+    }
+  };
+
+  const toggleMusicShowOnly = async (id: string, next: boolean) => {
+    setMsoToggling(prev => new Set(prev).add(id));
+    try {
+      const response = await fetch('/api/admin/music-show-only-publishers', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, musicShowOnly: next }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        toast.error(data.error || 'Failed to update flag');
+        return;
+      }
+      setMsoPublishers(prev => prev?.map(p => p.id === id ? { ...p, musicShowOnly: next } : p) ?? null);
+      toast.success(next ? 'Marked music-show-only' : 'Removed music-show-only flag');
+    } catch (error) {
+      console.error('Error toggling flag:', error);
+      toast.error('Network error updating flag');
+    } finally {
+      setMsoToggling(prev => {
+        const n = new Set(prev);
+        n.delete(id);
+        return n;
+      });
+    }
+  };
+
+  const previewMsoCleanup = async (id: string) => {
+    setMsoPreviewing(prev => new Set(prev).add(id));
+    try {
+      const response = await fetch('/api/admin/music-show-only-publishers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, action: 'preview' }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        toast.error(data.error || 'Failed to preview cleanup');
+        return;
+      }
+      setMsoPreviewByPublisher(prev => ({ ...prev, [id]: { toDelete: data.toDelete, toKeep: data.toKeep } }));
+    } catch (error) {
+      console.error('Error previewing cleanup:', error);
+      toast.error('Network error previewing cleanup');
+    } finally {
+      setMsoPreviewing(prev => {
+        const n = new Set(prev);
+        n.delete(id);
+        return n;
+      });
+    }
+  };
+
+  const runMsoCleanup = async (id: string) => {
+    const preview = msoPreviewByPublisher[id];
+    if (!preview) {
+      toast.error('Run preview first');
+      return;
+    }
+    if (preview.toDelete.length === 0) {
+      toast.info('Nothing to clean up');
+      return;
+    }
+    if (!confirm(`Delete ${preview.toDelete.length} album feed${preview.toDelete.length !== 1 ? 's' : ''} (and their tracks) that aren't on any curated music show?`)) {
+      return;
+    }
+    setMsoCleaning(prev => new Set(prev).add(id));
+    try {
+      const response = await fetch('/api/admin/music-show-only-publishers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, action: 'cleanup' }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        toast.error(data.error || 'Failed to run cleanup');
+        return;
+      }
+      toast.success(`Deleted ${data.deletedAlbums} album${data.deletedAlbums !== 1 ? 's' : ''} (${data.deletedTracks} tracks)`);
+      setMsoPreviewByPublisher(prev => {
+        const n = { ...prev };
+        delete n[id];
+        return n;
+      });
+      await fetchMsoPublishers();
+    } catch (error) {
+      console.error('Error running cleanup:', error);
+      toast.error('Network error running cleanup');
+    } finally {
+      setMsoCleaning(prev => {
+        const n = new Set(prev);
+        n.delete(id);
+        return n;
+      });
     }
   };
 
@@ -1207,6 +1347,130 @@ export default function AdminPanel() {
             )}
           </div>
         )}
+
+        {/* Music-Show-Only Publishers */}
+        <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-purple-500/30 p-6 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-semibold text-purple-300">Music-Show-Only Publishers</h2>
+            <button
+              onClick={fetchMsoPublishers}
+              disabled={msoLoading}
+              className="px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 text-white rounded-lg text-sm transition-colors"
+            >
+              {msoLoading ? 'Loading…' : msoPublishers ? 'Refresh' : 'Load Publishers'}
+            </button>
+          </div>
+          <p className="text-sm text-gray-400 mb-4">
+            Flag a publisher as <strong>music-show-only</strong> to skip auto-importing all of its albums.
+            Only albums whose tracks are referenced by a curated music show (HGH, B4TS, MMM, etc.) will be kept.
+            Use Preview to see what cleanup would delete, then Run to remove non-played albums.
+          </p>
+
+          {msoPublishers && msoPublishers.length === 0 && (
+            <p className="text-gray-400">No publisher feeds found.</p>
+          )}
+
+          {msoPublishers && msoPublishers.length > 0 && (
+            <div className="space-y-3">
+              {msoPublishers.map(pub => {
+                const preview = msoPreviewByPublisher[pub.id];
+                const isToggling = msoToggling.has(pub.id);
+                const isPreviewing = msoPreviewing.has(pub.id);
+                const isCleaning = msoCleaning.has(pub.id);
+                return (
+                  <div key={pub.id} className={`rounded-lg border p-4 ${pub.musicShowOnly ? 'bg-purple-500/10 border-purple-500/40' : 'bg-white/5 border-white/10'}`}>
+                    <div className="flex items-start gap-4">
+                      {pub.image && (
+                        <img src={pub.image} alt="" className="w-12 h-12 rounded object-cover flex-shrink-0" />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-medium text-white truncate">{pub.title}</span>
+                          {pub.artist && <span className="text-sm text-gray-400 truncate">— {pub.artist}</span>}
+                          {pub.musicShowOnly && (
+                            <span className="text-xs bg-purple-500/30 text-purple-200 px-2 py-0.5 rounded">music-show-only</span>
+                          )}
+                        </div>
+                        <div className="text-xs text-gray-500 mt-1 truncate">{pub.originalUrl}</div>
+                        <div className="text-xs text-gray-400 mt-1">
+                          {pub.childAlbums} album{pub.childAlbums !== 1 ? 's' : ''} · {pub.childTracks} track{pub.childTracks !== 1 ? 's' : ''}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <label className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={pub.musicShowOnly}
+                            disabled={isToggling}
+                            onChange={(e) => toggleMusicShowOnly(pub.id, e.target.checked)}
+                            className="w-4 h-4"
+                          />
+                          <span>{isToggling ? 'Saving…' : 'Music-show-only'}</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2 mt-3">
+                      <button
+                        onClick={() => previewMsoCleanup(pub.id)}
+                        disabled={isPreviewing || isCleaning}
+                        className="px-3 py-1.5 bg-blue-600/80 hover:bg-blue-600 disabled:bg-gray-600 text-white rounded text-sm transition-colors"
+                      >
+                        {isPreviewing ? 'Previewing…' : 'Preview cleanup'}
+                      </button>
+                      {preview && (
+                        <button
+                          onClick={() => runMsoCleanup(pub.id)}
+                          disabled={isCleaning || preview.toDelete.length === 0}
+                          className="px-3 py-1.5 bg-red-600/80 hover:bg-red-600 disabled:bg-gray-600 text-white rounded text-sm transition-colors"
+                        >
+                          {isCleaning ? 'Deleting…' : `Delete ${preview.toDelete.length} album${preview.toDelete.length !== 1 ? 's' : ''}`}
+                        </button>
+                      )}
+                    </div>
+
+                    {preview && (
+                      <div className="mt-3 text-sm">
+                        <div className="text-gray-300 mb-2">
+                          <span className="text-red-400">{preview.toDelete.length}</span> would be deleted ·{' '}
+                          <span className="text-green-400">{preview.toKeep.length}</span> kept (have played tracks)
+                        </div>
+                        {preview.toDelete.length > 0 && (
+                          <details className="bg-black/30 rounded p-2">
+                            <summary className="cursor-pointer text-red-300 text-xs">Show {preview.toDelete.length} album{preview.toDelete.length !== 1 ? 's' : ''} to delete</summary>
+                            <ul className="mt-2 space-y-1 text-xs text-gray-400 max-h-48 overflow-y-auto">
+                              {preview.toDelete.map(a => (
+                                <li key={a.id}>
+                                  <span className="text-gray-300">{a.title}</span>
+                                  {a.artist && <span> — {a.artist}</span>}
+                                  <span className="text-gray-500"> ({a.trackCount} track{a.trackCount !== 1 ? 's' : ''})</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </details>
+                        )}
+                        {preview.toKeep.length > 0 && (
+                          <details className="bg-black/30 rounded p-2 mt-2">
+                            <summary className="cursor-pointer text-green-300 text-xs">Show {preview.toKeep.length} album{preview.toKeep.length !== 1 ? 's' : ''} kept</summary>
+                            <ul className="mt-2 space-y-1 text-xs text-gray-400 max-h-48 overflow-y-auto">
+                              {preview.toKeep.map(a => (
+                                <li key={a.id}>
+                                  <span className="text-gray-300">{a.title}</span>
+                                  {a.artist && <span> — {a.artist}</span>}
+                                  <span className="text-gray-500"> ({a.playedTracks}/{a.trackCount} played)</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </details>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
 
         {/* Delete by URL */}
         <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-red-500/30 p-6 mb-8">

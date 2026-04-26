@@ -61,11 +61,14 @@ export async function POST(request: NextRequest) {
     const body = await request.json().catch(() => ({}));
     const { publisherId } = body;
 
-    // Get publishers to process
+    // Get publishers to process. Music-show-only publishers are excluded —
+    // their albums must be imported via the playlist resolver (only when a
+    // curated music show references them), not via this PI-API sweep.
     const publishers = await prisma.feed.findMany({
       where: {
         type: 'publisher',
         status: 'active',
+        musicShowOnly: false,
         ...(publisherId ? { id: publisherId } : {})
       },
       select: {
