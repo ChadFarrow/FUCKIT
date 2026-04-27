@@ -446,6 +446,11 @@ export default function AdminPanel() {
       if (msoPublishers) {
         await fetchMsoPublishers();
       }
+      // For promotions (publisher already existed), offer to clean up its
+      // unplayed children. Skipped for brand-new entries — no children to clean.
+      if (data.alreadyExisted) {
+        await deleteUnplayedAlbums(data.feed.id, data.feed.title);
+      }
     } catch (error) {
       console.error('Error importing publisher:', error);
       toast.error('Network error during import');
@@ -1501,9 +1506,10 @@ export default function AdminPanel() {
             </button>
           </div>
           <p className="text-sm text-gray-400 mb-4">
-            Flag a publisher as <strong>music-show-only</strong> to skip auto-importing all of its albums.
+            Flag a publisher as <strong>music-show-only</strong> to skip auto-importing its albums going forward.
             Only albums whose tracks are referenced by a curated music show (HGH, B4TS, MMM, etc.) will be kept.
-            Use Preview to see what cleanup would delete, then Run to remove non-played albums.
+            Flagging an existing publisher also offers to delete its current unplayed albums in the same step;
+            <strong> Delete unplayed albums</strong> on the loaded list does the same on demand.
           </p>
 
           {/* Artist-name search */}
