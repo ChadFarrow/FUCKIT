@@ -408,6 +408,62 @@ export async function POST(request: NextRequest) {
     });
 
     if (existingFeed) {
+      // Self-heal: if the existing row is a zero-track album and the live XML
+      // exposes <podcast:remoteItem> references, upgrade it to a publisher
+      // feed in place. Without this, rows seeded as type='album' (e.g. from
+      // data/feeds.json discovery) bypass the line-431 fallback and stay as
+      // unloadable orphan tiles. See issue #127.
+      const isOrphanAlbumCandidate =
+        existingFeed.type === 'album' &&
+        existingFeed.status === 'active' &&
+        (existingFeed._count?.Track ?? 0) === 0;
+
+      if (isOrphanAlbumCandidate) {
+        let remoteItems: Array<{ feedGuid: string; feedUrl: string }> = [];
+        try {
+          const xmlCheck = await fetch(resolvedUrl, { signal: AbortSignal.timeout(15000) });
+          if (xmlCheck.ok) {
+            remoteItems = extractRemoteItemsFromXML(await xmlCheck.text());
+          }
+        } catch (e) {
+          console.warn('⚠️ Self-heal XML fetch failed:', e);
+        }
+
+        if (remoteItems.length > 0) {
+          console.log(`🔧 Self-healing zero-track album → publisher (${remoteItems.length} remoteItems): ${existingFeed.id}`);
+
+          await prisma.feed.update({
+            where: { id: existingFeed.id },
+            data: { type: 'publisher', lastFetched: new Date(), updatedAt: new Date() },
+          });
+
+          const artistName = existingFeed.artist || existingFeed.title;
+          const importResult = await importMissingAlbums(existingFeed.id, remoteItems);
+          const linkResult = await linkAlbumsToPublisher(existingFeed.id, remoteItems, artistName);
+
+          invalidateFeedListCaches();
+
+          const upgraded = await prisma.feed.findUnique({
+            where: { id: existingFeed.id },
+            include: { _count: { select: { Track: true } } },
+          });
+
+          return NextResponse.json({
+            feed: upgraded,
+            upgraded: {
+              from: 'album',
+              to: 'publisher',
+              remoteItemsFound: remoteItems.length,
+              imported: importResult.imported,
+              importSkipped: importResult.skipped,
+              importFailed: importResult.failed,
+              linkedByGuid: linkResult.linkedByGuid,
+              linkedByArtist: linkResult.linkedByArtist,
+            },
+          }, { status: 200 });
+        }
+      }
+
       return NextResponse.json(
         { error: 'Feed already exists', feed: existingFeed },
         { status: 409 }
