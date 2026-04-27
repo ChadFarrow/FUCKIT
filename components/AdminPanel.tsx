@@ -163,6 +163,7 @@ export default function AdminPanel() {
   const [msoSearching, setMsoSearching] = useState(false);
   const [msoSearchResults, setMsoSearchResults] = useState<MsoSearchResult[] | null>(null);
   const [msoImporting, setMsoImporting] = useState<Set<string>>(new Set());
+  const [msoSearchCleaning, setMsoSearchCleaning] = useState(false);
 
   // Nostr authentication
   const { user: nostrUser, isAuthenticated: isNostrAuthenticated, isLoading: nostrLoading } = useNostr();
@@ -454,6 +455,77 @@ export default function AdminPanel() {
         n.delete(result.feedUrl);
         return n;
       });
+    }
+  };
+
+  const deleteUnplayedFromSearch = async () => {
+    if (!msoSearchResults) return;
+    const existingIds = msoSearchResults
+      .map(r => r.existing?.id)
+      .filter((id): id is string => Boolean(id));
+    if (existingIds.length === 0) {
+      toast.info('No imported feeds in these search results');
+      return;
+    }
+
+    setMsoSearchCleaning(true);
+    try {
+      const previewRes = await fetch('/api/admin/music-show-only-publishers/cleanup-by-ids', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: existingIds, dryRun: true }),
+      });
+      const previewData = await previewRes.json();
+      if (!previewRes.ok) {
+        toast.error(previewData.error || 'Failed to preview cleanup');
+        return;
+      }
+
+      const toDelete: CleanupCandidate[] = previewData.toDelete ?? [];
+      const toKeep: CleanupKept[] = previewData.toKeep ?? [];
+      if (toDelete.length === 0) {
+        toast.info(`Nothing to delete — all ${toKeep.length} imported feed${toKeep.length !== 1 ? 's' : ''} have played tracks`);
+        return;
+      }
+
+      const trackTotal = toDelete.reduce((sum, a) => sum + a.trackCount, 0);
+      const keepNote = toKeep.length > 0
+        ? ` ${toKeep.length} played feed${toKeep.length !== 1 ? 's' : ''} will be kept.`
+        : '';
+      const ok = confirm(
+        `Delete ${toDelete.length} unplayed feed${toDelete.length !== 1 ? 's' : ''} ` +
+        `(${trackTotal} track${trackTotal !== 1 ? 's' : ''}) from these search results?${keepNote}`
+      );
+      if (!ok) return;
+
+      const cleanupRes = await fetch('/api/admin/music-show-only-publishers/cleanup-by-ids', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: existingIds }),
+      });
+      const cleanupData = await cleanupRes.json();
+      if (!cleanupRes.ok) {
+        toast.error(cleanupData.error || 'Failed to run cleanup');
+        return;
+      }
+      toast.success(`Deleted ${cleanupData.deletedAlbums} feed${cleanupData.deletedAlbums !== 1 ? 's' : ''} (${cleanupData.deletedTracks} tracks)`);
+
+      // Drop deleted entries from the search results so the row state matches DB.
+      const deletedIds = new Set(toDelete.map(a => a.id));
+      setMsoSearchResults(prev =>
+        prev?.map(r =>
+          r.existing && deletedIds.has(r.existing.id) ? { ...r, existing: null } : r
+        ) ?? null
+      );
+
+      if (msoPublishers) {
+        await fetchMsoPublishers();
+      }
+    } catch (error) {
+      console.error('Error deleting unplayed from search:', error);
+      toast.error('Network error during cleanup');
+    } finally {
+      setMsoSearchCleaning(false);
     }
   };
 
@@ -1469,8 +1541,24 @@ export default function AdminPanel() {
               If nothing matches, paste the URL into the &ldquo;Add or Update Feed&rdquo; section above.
             </p>
 
-            {msoSearchResults && msoSearchResults.length > 0 && (
+            {msoSearchResults && msoSearchResults.length > 0 && (() => {
+              const importedCount = msoSearchResults.filter(r => r.existing).length;
+              return (
               <div className="mt-4 space-y-2">
+                {importedCount > 0 && (
+                  <div className="flex items-center justify-between bg-red-500/10 border border-red-500/30 rounded p-3">
+                    <span className="text-sm text-gray-300">
+                      <span className="text-red-300 font-medium">{importedCount}</span> already in DB — bulk-delete those with no plays on any music show
+                    </span>
+                    <button
+                      onClick={deleteUnplayedFromSearch}
+                      disabled={msoSearchCleaning}
+                      className="px-3 py-1.5 bg-red-600/80 hover:bg-red-600 disabled:bg-gray-600 text-white rounded text-sm transition-colors flex-shrink-0 ml-3"
+                    >
+                      {msoSearchCleaning ? 'Deleting…' : 'Delete unplayed'}
+                    </button>
+                  </div>
+                )}
                 {msoSearchResults.map(r => {
                   const isImporting = msoImporting.has(r.feedUrl);
                   const existing = r.existing;
@@ -1517,7 +1605,8 @@ export default function AdminPanel() {
                   );
                 })}
               </div>
-            )}
+              );
+            })()}
             {msoSearchResults && msoSearchResults.length === 0 && (
               <p className="text-sm text-gray-500 mt-3">No publisher feeds found for &ldquo;{msoSearchQuery}&rdquo;.</p>
             )}
