@@ -418,6 +418,24 @@ export async function POST(request: NextRequest) {
       // Parse the RSS feed
       const parsedFeed = await parseRSSFeedWithSegments(resolvedUrl);
 
+      // Reject Podcasting 2.0 "list" mediums (musicL, podcastL, videoL, etc.).
+      // List feeds carry no <item> tags — they reference existing items via
+      // <podcast:remoteItem>. The app has no generic playlist surface for
+      // arbitrary URLs (curated playlists are hard-coded; see CLAUDE.md
+      // "Adding New Playlists"), and the publisher auto-detect below would
+      // misclassify them. See issue #127.
+      const mediumLower = parsedFeed.medium?.toLowerCase();
+      if (mediumLower && mediumLower.endsWith('l')) {
+        console.log(`🚫 Rejecting playlist feed: medium="${parsedFeed.medium}"`);
+        return NextResponse.json(
+          {
+            error: `Playlist feeds (medium="${parsedFeed.medium}") aren't supported via admin paste. Curated playlists are added by code; see CLAUDE.md "Adding New Playlists".`,
+            medium: parsedFeed.medium,
+          },
+          { status: 400 }
+        );
+      }
+
       // Override type based on podcast:medium from RSS if the frontend sent default 'album'
       // Skip for Wavlake feeds — they use medium=podcast for music content
       let resolvedType = type;
