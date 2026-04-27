@@ -107,6 +107,19 @@ Import via `/admin` (paste RSS URL). Non-Wavlake feeds with `<podcast:medium>pod
 
 **Gap — not caught by Step 2**: `type='publisher'` rows with tracks (orphan query only targets `type='album'`). Clean up manually with `DELETE /api/feeds?id=<feedId>` if you spot any.
 
+### Music-Show-Only Publishers (`/admin`)
+Spam-control tool for publishers (typically Wavlake artist pages) whose albums shouldn't auto-import. `Feed.musicShowOnly: boolean` flag on publisher rows; nightly cron in `app/api/admin/publishers/import-albums/route.ts` skips children of flagged publishers.
+
+**Two cleanup paths, both delete only feeds with zero `SystemPlaylistTrack`-linked tracks:**
+- **Per-publisher** (`POST /api/admin/music-show-only-publishers` with `{id, action:'preview'|'cleanup'}`): walks `publisherId`-linked children of the publisher and deletes the unplayed ones. Surfaced via the **Load Publishers** list's one-click **Delete unplayed albums** button (PR #123).
+- **By-IDs bulk** (`POST /api/admin/music-show-only-publishers/cleanup-by-ids` with `{ids[], dryRun?}`): flat list of feed IDs, same played/unplayed logic. Surfaced via the **Delete unplayed** banner above the artist-name search results — only appears when `importedCount > 0` in the visible results (PR #124).
+
+**Search panel buttons are forward-looking, not retroactive.** **Add as music-show-only** / **Flag existing** call `POST .../music-show-only-publishers` with `action: 'import'` — they create or promote a publisher row with `musicShowOnly=true` to skip *future* nightly imports. They never delete existing albums by themselves. As of PR #125, **Flag existing** on an already-existing publisher (`alreadyExisted=true` in response) chains into `deleteUnplayedAlbums(publisherId, title)` so the same click handles both forward + backward cleanup.
+
+**Common confusion**: spam albums often live under a *different* publisher row than the one PI surfaces in search. PI returns `medium=publisher` candidates and Wavlake `/feed/artist/<uuid>` URLs; the actual album feeds in the DB may be linked to a separate `0b982183-…`-style publisher imported earlier via a different path. The per-publisher cleanup only touches that one publisher's children — if no match, fall back to the by-IDs flow or run cleanup on the original publisher directly via curl.
+
+**Migration gotcha (issue #122)**: Railway Dockerfile does **not** run `prisma migrate deploy` on deploy. After merging a PR with a new migration, run `railway run --service StableKraft --environment production npm run db:migrate` from the repo root or the new column will be missing in prod and every Prisma query that selects it returns 500. Local `.env` is *not* overridden by `railway run` for Prisma (it auto-loads `.env`), so verify with a direct `information_schema.columns` query if unsure.
+
 ### Search
 - PostgreSQL trigram `similarity()`, flat 0.3 threshold. Do NOT lower below 0.3 — causes false positives.
 - Artist search groups by `LOWER(artist)`. Exact mode: `?fuzzy=false`.
