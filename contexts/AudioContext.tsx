@@ -956,14 +956,17 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     }
   }, [isIOSDevice]);
 
-  // Ensure Web Audio context is running (call on every playback)
-  const ensureWebAudioRunning = useCallback(() => {
+  // Ensure Web Audio context is running (call on every playback).
+  // Awaitable so resume() can guarantee the context is unsuspended before audio.play().
+  // Never throws — Web Audio failure should not block element playback.
+  const ensureWebAudioRunning = useCallback(async (): Promise<void> => {
     const ctx = webAudioContextRef.current;
-    if (ctx && ctx.state === 'suspended') {
-      console.log('🔊 Resuming suspended Web Audio context');
-      ctx.resume().catch(err => {
-        console.warn('⚠️ Failed to resume Web Audio context:', err);
-      });
+    if (!ctx || ctx.state !== 'suspended') return;
+    console.log('🔊 Resuming suspended Web Audio context');
+    try {
+      await ctx.resume();
+    } catch (err) {
+      console.warn('⚠️ Failed to resume Web Audio context:', err);
     }
   }, []);
 
@@ -3049,10 +3052,13 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     }
   };
 
-  // Resume function - uses DOM ID as fallback for reliability
+  // Resume function — tiered recovery for iOS PWA pause/resume.
+  // Tier 1: plain play(). Tier 2: load() + wait for canplay + play() (fixes stale-buffer
+  // state iOS PWA falls into after extended pause with Bluetooth earbuds). Tier 3: surface
+  // a toast with Retry so the user is never silently stuck.
   const resume = async () => {
     userInitiatedPauseRef.current = false;
-    ensureWebAudioRunning();
+    await ensureWebAudioRunning();
 
     let currentElement: HTMLAudioElement | HTMLVideoElement | null = isVideoMode
       ? videoRef.current
@@ -3064,22 +3070,70 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         : document.getElementById('stablekraft-audio-player') as HTMLAudioElement;
     }
 
-    if (currentElement) {
-      try {
-        await currentElement.play();
-        setIsPlaying(true);
-      } catch (err) {
-        console.warn('Resume play() failed, retrying in 300ms...', err);
-        setTimeout(async () => {
-          try {
-            await currentElement!.play();
-            setIsPlaying(true);
-          } catch (retryErr) {
-            console.error('Resume retry failed:', retryErr);
-          }
-        }, 300);
-      }
+    if (!currentElement) {
+      toast.error("Couldn't resume playback", {
+        duration: 8000,
+        action: { label: 'Retry', onClick: () => resumeRef.current?.() },
+      });
+      return;
     }
+
+    const el = currentElement;
+    const savedTime = el.currentTime;
+
+    // Listener-based wait for the element to reach HAVE_CURRENT_DATA after a load().
+    const waitForReady = (timeoutMs: number): Promise<void> => {
+      return new Promise((resolve) => {
+        if (el.readyState >= 2 /* HAVE_CURRENT_DATA */) { resolve(); return; }
+        const cleanup = () => {
+          el.removeEventListener('loadeddata', onReady);
+          el.removeEventListener('canplay', onReady);
+          clearTimeout(timer);
+        };
+        const onReady = () => { cleanup(); resolve(); };
+        el.addEventListener('loadeddata', onReady, { once: true });
+        el.addEventListener('canplay', onReady, { once: true });
+        const timer = setTimeout(() => { cleanup(); resolve(); }, timeoutMs);
+      });
+    };
+
+    // Tier 1 — plain play().
+    try {
+      await el.play();
+      setIsPlaying(true);
+      return;
+    } catch (err) {
+      console.warn('Resume Tier 1 failed, attempting load+play recovery', err);
+    }
+
+    // Tier 2 — load() + wait + play(). Restores stale buffer on iOS PWA.
+    try {
+      el.load();
+      await waitForReady(2000);
+      if (savedTime > 0 && Math.abs(el.currentTime - savedTime) > 0.25) {
+        el.currentTime = savedTime;
+      }
+      await el.play();
+      setIsPlaying(true);
+      return;
+    } catch (err) {
+      console.warn('Resume Tier 2 (load+play) failed', err, {
+        readyState: el.readyState,
+        networkState: el.networkState,
+        paused: el.paused,
+        currentTime: el.currentTime,
+        src: el.currentSrc || el.src,
+        ctxState: webAudioContextRef.current?.state,
+        isVideoMode,
+      });
+    }
+
+    // Tier 3 — give up with user-visible feedback.
+    setIsPlaying(false);
+    toast.error("Couldn't resume playback", {
+      duration: 8000,
+      action: { label: 'Retry', onClick: () => resumeRef.current?.() },
+    });
   };
 
   // Update pause/resume refs for media session handlers (no deps — must stay current every render)
