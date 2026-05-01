@@ -8,6 +8,7 @@ export const PODCAST_FEED_IDS: string[] = [
   'silvie-two-for-tunestr',                // Two For Tunestr
   'boo-bury-before-the-sch3m3s',           // Before The Sch3m3s (B4TS)
   'lightning-thrashes-1768079468212',      // Lightning Thrashes
+  'album-1774815386168-ixuyfdy36',         // Mutton, Mead & Music (MMM)
 ];
 
 export const PODCAST_FEED_URLS: string[] = [
@@ -15,6 +16,7 @@ export const PODCAST_FEED_URLS: string[] = [
   'https://serve.podhome.fm/rss/fafd2bfc-98ac-5010-9fcb-7403abfd420a', // Two For Tunestr
   'https://music.behindthesch3m3s.com/b4ts%20feed/feed.xml',           // Before The Sch3m3s (B4TS)
   'https://sirlibre.com/lightning-thrashes-rss.xml',                   // Lightning Thrashes
+  'https://mmmusic.show/podcast/feed.xml',                             // Mutton, Mead & Music (MMM)
 ];
 
 /** Slugs that should redirect from /album/ to /podcast/ */
@@ -26,6 +28,8 @@ export const PODCAST_SLUGS: string[] = [
   'boo-bury-before-the-sch3m3s',      // B4TS (DB ID)
   'lightning-thrashes',               // Lightning Thrashes (canonical)
   'lightning-thrashes-1768079468212', // Lightning Thrashes (DB ID)
+  'mutton-mead-and-music',            // MMM (canonical) — /playlist/mmm owns the music playlist
+  'album-1774815386168-ixuyfdy36',    // MMM (DB ID)
 ];
 
 /** Map slug to DB feed ID (when slug differs from feed ID) */
@@ -33,6 +37,7 @@ export const PODCAST_SLUG_TO_FEED_ID: Record<string, string> = {
   'two-for-tunestr': 'silvie-two-for-tunestr',
   'before-the-sch3m3s': 'boo-bury-before-the-sch3m3s',
   'lightning-thrashes': 'lightning-thrashes-1768079468212',
+  'mutton-mead-and-music': 'album-1774815386168-ixuyfdy36',
 };
 
 /** Map DB feed ID to canonical slug (for redirects) */
@@ -40,4 +45,5 @@ export const PODCAST_CANONICAL_SLUGS: Record<string, string> = {
   'silvie-two-for-tunestr': 'two-for-tunestr',
   'boo-bury-before-the-sch3m3s': 'before-the-sch3m3s',
   'lightning-thrashes-1768079468212': 'lightning-thrashes',
+  'album-1774815386168-ixuyfdy36': 'mutton-mead-and-music',
 };
