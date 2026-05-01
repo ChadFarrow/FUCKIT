@@ -88,6 +88,21 @@ export async function POST(request: NextRequest) {
 
     console.log(`🚀 Processing ${publishers.length} publisher(s) for album import via PI API`);
 
+    // Artist-level MSO gate: any artist with at least one MSO publisher row
+    // is off-limits to PI-search-based album imports, even if duplicate
+    // non-MSO publisher rows exist for the same artist. Without this, the
+    // cron PI-searched the unflagged duplicate and re-minted every album
+    // the user just deleted.
+    const msoPublishers = await prisma.feed.findMany({
+      where: { type: 'publisher', musicShowOnly: true },
+      select: { artist: true, title: true },
+    });
+    const msoArtistKeys = new Set<string>();
+    for (const p of msoPublishers) {
+      const key = (p.artist || p.title || '').trim().toLowerCase();
+      if (key) msoArtistKeys.add(key);
+    }
+
     // Deduplicate PI API searches: multiple publishers may share the same artist name
     const searchedArtists = new Set<string>();
 
@@ -117,6 +132,15 @@ export async function POST(request: NextRequest) {
       const artistName = publisher.artist || publisher.title;
       if (!artistName) {
         result.errors.push('No artist name');
+        results.push(result);
+        continue;
+      }
+
+      const artistKey = artistName.trim().toLowerCase();
+      if (artistKey && msoArtistKeys.has(artistKey)) {
+        console.log(`   ⏭️ Artist "${artistName}" has MSO publisher row elsewhere — skipping`);
+        result.skippedDetails.push(`mso-artist:${artistName}`);
+        result.skipped++;
         results.push(result);
         continue;
       }

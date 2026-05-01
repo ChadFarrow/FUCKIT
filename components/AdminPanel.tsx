@@ -322,6 +322,17 @@ export default function AdminPanel() {
       }
       setMsoPublishers(prev => prev?.map(p => p.id === id ? { ...p, musicShowOnly: next } : p) ?? null);
       toast.success(next ? 'Marked music-show-only' : 'Removed music-show-only flag');
+      // Reflect any same-artist siblings that were swept up by the flag.
+      const flaggedAlso = (data.flaggedAlso ?? []) as Array<{ id: string; title: string }>;
+      if (flaggedAlso.length > 0 && next) {
+        const flaggedIds = new Set(flaggedAlso.map(f => f.id));
+        setMsoPublishers(prev =>
+          prev?.map(p => flaggedIds.has(p.id) ? { ...p, musicShowOnly: true } : p) ?? null
+        );
+        toast.info(
+          `Also flagged ${flaggedAlso.length} same-artist publisher${flaggedAlso.length !== 1 ? 's' : ''}`
+        );
+      }
     } catch (error) {
       console.error('Error toggling flag:', error);
       toast.error('Network error updating flag');
@@ -450,6 +461,19 @@ export default function AdminPanel() {
       // unplayed children. Skipped for brand-new entries — no children to clean.
       if (data.alreadyExisted) {
         await deleteUnplayedAlbums(data.feed.id, data.feed.title);
+      }
+      // Same-artist sweep: handleImport flags every other publisher row
+      // sharing this artist (the duplicate-publisher gap that let the cron
+      // resurrect deleted albums). Chain cleanup against each so we don't
+      // leave their unplayed children dangling.
+      const flaggedAlso = (data.flaggedAlso ?? []) as Array<{ id: string; title: string }>;
+      if (flaggedAlso.length > 0) {
+        toast.info(
+          `Also flagged ${flaggedAlso.length} duplicate same-artist publisher${flaggedAlso.length !== 1 ? 's' : ''}`
+        );
+        for (const sibling of flaggedAlso) {
+          await deleteUnplayedAlbums(sibling.id, sibling.title);
+        }
       }
     } catch (error) {
       console.error('Error importing publisher:', error);

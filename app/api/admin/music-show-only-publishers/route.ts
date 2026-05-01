@@ -10,6 +10,34 @@ function invalidateFeedListCaches(): void {
   invalidateSearchCache();
 }
 
+// Flag every other publisher row sharing this artist. Without this, the
+// publisher-album cron PI-searches the artist via an unflagged duplicate
+// publisher row and re-mints every album we just suppressed. Returns the
+// rows that were newly flagged so callers can chain cleanup against them.
+async function flagSameArtistPublishers(
+  excludeId: string,
+  artist: string | null | undefined
+): Promise<Array<{ id: string; title: string }>> {
+  const key = artist?.trim();
+  if (!key) return [];
+  const others = await prisma.feed.findMany({
+    where: {
+      id: { not: excludeId },
+      type: 'publisher',
+      musicShowOnly: false,
+      artist: { equals: key, mode: 'insensitive' },
+    },
+    select: { id: true, title: true },
+  });
+  if (others.length > 0) {
+    await prisma.feed.updateMany({
+      where: { id: { in: others.map(o => o.id) } },
+      data: { musicShowOnly: true },
+    });
+  }
+  return others;
+}
+
 // GET /api/admin/music-show-only-publishers
 // Lists every publisher feed with its current flag state and child counts.
 export async function GET() {
@@ -83,7 +111,10 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    const feed = await prisma.feed.findUnique({ where: { id }, select: { id: true, type: true } });
+    const feed = await prisma.feed.findUnique({
+      where: { id },
+      select: { id: true, type: true, artist: true },
+    });
     if (!feed) {
       return NextResponse.json({ error: 'Feed not found' }, { status: 404 });
     }
@@ -100,7 +131,17 @@ export async function PATCH(request: NextRequest) {
       select: { id: true, title: true, musicShowOnly: true },
     });
 
-    return NextResponse.json({ feed: updated });
+    // Only fan out when flagging on. Un-flagging one row should not
+    // silently un-flag siblings — admins may want to keep one MSO and
+    // re-promote another.
+    const flaggedAlso = musicShowOnly
+      ? await flagSameArtistPublishers(id, feed.artist)
+      : [];
+    if (flaggedAlso.length > 0) {
+      invalidateFeedListCaches();
+    }
+
+    return NextResponse.json({ feed: updated, flaggedAlso });
   } catch (error) {
     console.error('Error updating music-show-only flag:', error);
     return NextResponse.json({ error: 'Failed to update flag' }, { status: 500 });
@@ -266,10 +307,15 @@ async function handleImport(body: any) {
     if (Object.keys(updates).length > 0) {
       await prisma.feed.update({ where: { id: existing.id }, data: updates });
     }
+    const flaggedAlso = await flagSameArtistPublishers(
+      existing.id,
+      existing.artist || artist
+    );
     invalidateFeedListCaches();
     return NextResponse.json({
       feed: { id: existing.id, title: existing.title, musicShowOnly: true },
       alreadyExisted: true,
+      flaggedAlso,
     });
   }
 
@@ -306,7 +352,12 @@ async function handleImport(body: any) {
     select: { id: true, title: true, musicShowOnly: true },
   });
 
+  const flaggedAlso = await flagSameArtistPublishers(created.id, artist);
+
   invalidateFeedListCaches();
 
-  return NextResponse.json({ feed: created, alreadyExisted: false }, { status: 201 });
+  return NextResponse.json(
+    { feed: created, alreadyExisted: false, flaggedAlso },
+    { status: 201 }
+  );
 }
