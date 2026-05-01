@@ -7,31 +7,37 @@ export const PODCAST_FEED_IDS: string[] = [
   '3aebb7a8-5942-5ee7-a148-8bdc14f1f3d4', // Upbeats
   'silvie-two-for-tunestr',                // Two For Tunestr
   'boo-bury-before-the-sch3m3s',           // Before The Sch3m3s (B4TS)
+  'lightning-thrashes-1768079468212',      // Lightning Thrashes
 ];
 
 export const PODCAST_FEED_URLS: string[] = [
   'https://serve.podhome.fm/rss/3aebb7a8-5942-5ee7-a148-8bdc14f1f3d4', // Upbeats
   'https://serve.podhome.fm/rss/fafd2bfc-98ac-5010-9fcb-7403abfd420a', // Two For Tunestr
   'https://music.behindthesch3m3s.com/b4ts%20feed/feed.xml',           // Before The Sch3m3s (B4TS)
+  'https://sirlibre.com/lightning-thrashes-rss.xml',                   // Lightning Thrashes
 ];
 
 /** Slugs that should redirect from /album/ to /podcast/ */
 export const PODCAST_SLUGS: string[] = [
   'upbeats',
-  'two-for-tunestr',              // Two For Tunestr (canonical)
-  'silvie-two-for-tunestr',       // Two For Tunestr (DB ID)
-  'before-the-sch3m3s',           // B4TS (canonical)
-  'boo-bury-before-the-sch3m3s',  // B4TS (DB ID)
+  'two-for-tunestr',                  // Two For Tunestr (canonical)
+  'silvie-two-for-tunestr',           // Two For Tunestr (DB ID)
+  'before-the-sch3m3s',               // B4TS (canonical)
+  'boo-bury-before-the-sch3m3s',      // B4TS (DB ID)
+  'lightning-thrashes',               // Lightning Thrashes (canonical)
+  'lightning-thrashes-1768079468212', // Lightning Thrashes (DB ID)
 ];
 
 /** Map slug to DB feed ID (when slug differs from feed ID) */
 export const PODCAST_SLUG_TO_FEED_ID: Record<string, string> = {
   'two-for-tunestr': 'silvie-two-for-tunestr',
   'before-the-sch3m3s': 'boo-bury-before-the-sch3m3s',
+  'lightning-thrashes': 'lightning-thrashes-1768079468212',
 };
 
 /** Map DB feed ID to canonical slug (for redirects) */
 export const PODCAST_CANONICAL_SLUGS: Record<string, string> = {
   'silvie-two-for-tunestr': 'two-for-tunestr',
   'boo-bury-before-the-sch3m3s': 'before-the-sch3m3s',
+  'lightning-thrashes-1768079468212': 'lightning-thrashes',
 };
