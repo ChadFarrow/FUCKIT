@@ -10,6 +10,7 @@ export const PODCAST_FEED_IDS: string[] = [
   'lightning-thrashes-1768079468212',      // Lightning Thrashes
   'album-1774815386168-ixuyfdy36',         // Mutton, Mead & Music (MMM)
   'kyle-m-bondo-flowgnar',                 // Flowgnar
+  '469b403f-db2d-574c-9db9-96dbb3f6561c',  // It's A Mood
 ];
 
 export const PODCAST_FEED_URLS: string[] = [
@@ -19,21 +20,24 @@ export const PODCAST_FEED_URLS: string[] = [
   'https://sirlibre.com/lightning-thrashes-rss.xml',                   // Lightning Thrashes
   'https://mmmusic.show/podcast/feed.xml',                             // Mutton, Mead & Music (MMM)
   'https://feeds.oncetold.net/80000060',                               // Flowgnar
+  'https://itsamood.org/itsamoodrss.xml',                              // It's A Mood
 ];
 
 /** Slugs that should redirect from /album/ to /podcast/ */
 export const PODCAST_SLUGS: string[] = [
   'upbeats',
-  'two-for-tunestr',                  // Two For Tunestr (canonical)
-  'silvie-two-for-tunestr',           // Two For Tunestr (DB ID)
-  'before-the-sch3m3s',               // B4TS (canonical)
-  'boo-bury-before-the-sch3m3s',      // B4TS (DB ID)
-  'lightning-thrashes',               // Lightning Thrashes (canonical)
-  'lightning-thrashes-1768079468212', // Lightning Thrashes (DB ID)
-  'mutton-mead-and-music',            // MMM (canonical) — /playlist/mmm owns the music playlist
-  'album-1774815386168-ixuyfdy36',    // MMM (DB ID)
-  'flowgnar-show',                    // Flowgnar (canonical) — /playlist/flowgnar owns the music playlist
-  'kyle-m-bondo-flowgnar',            // Flowgnar (DB ID)
+  'two-for-tunestr',                       // Two For Tunestr (canonical)
+  'silvie-two-for-tunestr',                // Two For Tunestr (DB ID)
+  'before-the-sch3m3s',                    // B4TS (canonical)
+  'boo-bury-before-the-sch3m3s',           // B4TS (DB ID)
+  'lightning-thrashes',                    // Lightning Thrashes (canonical)
+  'lightning-thrashes-1768079468212',      // Lightning Thrashes (DB ID)
+  'mutton-mead-and-music',                 // MMM (canonical) — /playlist/mmm owns the music playlist
+  'album-1774815386168-ixuyfdy36',         // MMM (DB ID)
+  'flowgnar-show',                         // Flowgnar (canonical) — /playlist/flowgnar owns the music playlist
+  'kyle-m-bondo-flowgnar',                 // Flowgnar (DB ID)
+  'its-a-mood',                            // It's A Mood (canonical)
+  '469b403f-db2d-574c-9db9-96dbb3f6561c',  // It's A Mood (DB ID, podcast:guid)
 ];
 
 /** Map slug to DB feed ID (when slug differs from feed ID) */
@@ -43,6 +47,7 @@ export const PODCAST_SLUG_TO_FEED_ID: Record<string, string> = {
   'lightning-thrashes': 'lightning-thrashes-1768079468212',
   'mutton-mead-and-music': 'album-1774815386168-ixuyfdy36',
   'flowgnar-show': 'kyle-m-bondo-flowgnar',
+  'its-a-mood': '469b403f-db2d-574c-9db9-96dbb3f6561c',
 };
 
 /** Map DB feed ID to canonical slug (for redirects) */
@@ -52,4 +57,5 @@ export const PODCAST_CANONICAL_SLUGS: Record<string, string> = {
   'lightning-thrashes-1768079468212': 'lightning-thrashes',
   'album-1774815386168-ixuyfdy36': 'mutton-mead-and-music',
   'kyle-m-bondo-flowgnar': 'flowgnar-show',
+  '469b403f-db2d-574c-9db9-96dbb3f6561c': 'its-a-mood',
 };
