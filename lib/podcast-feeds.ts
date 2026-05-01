@@ -11,6 +11,8 @@ export const PODCAST_FEED_IDS: string[] = [
   'album-1774815386168-ixuyfdy36',         // Mutton, Mead & Music (MMM)
   'kyle-m-bondo-flowgnar',                 // Flowgnar
   '469b403f-db2d-574c-9db9-96dbb3f6561c',  // It's A Mood
+  'kevin-bae-sats-and-sounds',             // Sats and Sounds
+  'homegrown-hits-1768079163338',          // Homegrown Hits
 ];
 
 export const PODCAST_FEED_URLS: string[] = [
@@ -21,6 +23,8 @@ export const PODCAST_FEED_URLS: string[] = [
   'https://mmmusic.show/podcast/feed.xml',                             // Mutton, Mead & Music (MMM)
   'https://feeds.oncetold.net/80000060',                               // Flowgnar
   'https://itsamood.org/itsamoodrss.xml',                              // It's A Mood
+  'https://satsandsounds.com/saspodcast.xml',                          // Sats and Sounds
+  'https://feed.homegrownhits.xyz/feed.xml',                           // Homegrown Hits
 ];
 
 /** Slugs that should redirect from /album/ to /podcast/ */
@@ -36,8 +40,12 @@ export const PODCAST_SLUGS: string[] = [
   'album-1774815386168-ixuyfdy36',         // MMM (DB ID)
   'flowgnar-show',                         // Flowgnar (canonical) — /playlist/flowgnar owns the music playlist
   'kyle-m-bondo-flowgnar',                 // Flowgnar (DB ID)
-  'its-a-mood',                            // It's A Mood (canonical)
+  'its-a-mood',                            // It's A Mood (canonical) — /playlist/iam owns the music playlist
   '469b403f-db2d-574c-9db9-96dbb3f6561c',  // It's A Mood (DB ID, podcast:guid)
+  'sats-and-sounds',                       // Sats and Sounds (canonical) — /playlist/sas owns the music playlist
+  'kevin-bae-sats-and-sounds',             // Sats and Sounds (DB ID)
+  'homegrown-hits',                        // Homegrown Hits (canonical) — /playlist/hgh owns the music playlist
+  'homegrown-hits-1768079163338',          // Homegrown Hits (DB ID)
 ];
 
 /** Map slug to DB feed ID (when slug differs from feed ID) */
@@ -48,6 +56,8 @@ export const PODCAST_SLUG_TO_FEED_ID: Record<string, string> = {
   'mutton-mead-and-music': 'album-1774815386168-ixuyfdy36',
   'flowgnar-show': 'kyle-m-bondo-flowgnar',
   'its-a-mood': '469b403f-db2d-574c-9db9-96dbb3f6561c',
+  'sats-and-sounds': 'kevin-bae-sats-and-sounds',
+  'homegrown-hits': 'homegrown-hits-1768079163338',
 };
 
 /** Map DB feed ID to canonical slug (for redirects) */
@@ -58,4 +68,6 @@ export const PODCAST_CANONICAL_SLUGS: Record<string, string> = {
   'album-1774815386168-ixuyfdy36': 'mutton-mead-and-music',
   'kyle-m-bondo-flowgnar': 'flowgnar-show',
   '469b403f-db2d-574c-9db9-96dbb3f6561c': 'its-a-mood',
+  'kevin-bae-sats-and-sounds': 'sats-and-sounds',
+  'homegrown-hits-1768079163338': 'homegrown-hits',
 };
