@@ -9,6 +9,7 @@ export const PODCAST_FEED_IDS: string[] = [
   'boo-bury-before-the-sch3m3s',           // Before The Sch3m3s (B4TS)
   'lightning-thrashes-1768079468212',      // Lightning Thrashes
   'album-1774815386168-ixuyfdy36',         // Mutton, Mead & Music (MMM)
+  'kyle-m-bondo-flowgnar',                 // Flowgnar
 ];
 
 export const PODCAST_FEED_URLS: string[] = [
@@ -17,6 +18,7 @@ export const PODCAST_FEED_URLS: string[] = [
   'https://music.behindthesch3m3s.com/b4ts%20feed/feed.xml',           // Before The Sch3m3s (B4TS)
   'https://sirlibre.com/lightning-thrashes-rss.xml',                   // Lightning Thrashes
   'https://mmmusic.show/podcast/feed.xml',                             // Mutton, Mead & Music (MMM)
+  'https://feeds.oncetold.net/80000060',                               // Flowgnar
 ];
 
 /** Slugs that should redirect from /album/ to /podcast/ */
@@ -30,6 +32,8 @@ export const PODCAST_SLUGS: string[] = [
   'lightning-thrashes-1768079468212', // Lightning Thrashes (DB ID)
   'mutton-mead-and-music',            // MMM (canonical) — /playlist/mmm owns the music playlist
   'album-1774815386168-ixuyfdy36',    // MMM (DB ID)
+  'flowgnar-show',                    // Flowgnar (canonical) — /playlist/flowgnar owns the music playlist
+  'kyle-m-bondo-flowgnar',            // Flowgnar (DB ID)
 ];
 
 /** Map slug to DB feed ID (when slug differs from feed ID) */
@@ -38,6 +42,7 @@ export const PODCAST_SLUG_TO_FEED_ID: Record<string, string> = {
   'before-the-sch3m3s': 'boo-bury-before-the-sch3m3s',
   'lightning-thrashes': 'lightning-thrashes-1768079468212',
   'mutton-mead-and-music': 'album-1774815386168-ixuyfdy36',
+  'flowgnar-show': 'kyle-m-bondo-flowgnar',
 };
 
 /** Map DB feed ID to canonical slug (for redirects) */
@@ -46,4 +51,5 @@ export const PODCAST_CANONICAL_SLUGS: Record<string, string> = {
   'boo-bury-before-the-sch3m3s': 'before-the-sch3m3s',
   'lightning-thrashes-1768079468212': 'lightning-thrashes',
   'album-1774815386168-ixuyfdy36': 'mutton-mead-and-music',
+  'kyle-m-bondo-flowgnar': 'flowgnar-show',
 };
