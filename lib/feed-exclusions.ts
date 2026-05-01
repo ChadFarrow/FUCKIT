@@ -7,12 +7,14 @@ export const BLACKLISTED_FEED_IDS = [
   'podtards-test',
   'bitpunkfm-unwound',
   'bitpunk-fm-unwound-1768079479444',  // bitpunk.fm unwound podcast
+  'album-1774815395173-2v8ktsh5s',     // No Agenda Show — talk podcast, not music
 ];
 
 // Feed URLs that should never be imported
 export const BLACKLISTED_FEED_URLS = [
   'https://zine.bitpunk.fm/feeds/unwound.xml',
   'https://zine.bitpunk.fm/feeds/bitpunk-fm.xml',
+  'http://feed.nashownotes.com/rss.xml',  // No Agenda Show
   // Henrik Flyman pulled all his music off Wavlake and self-hosts at
   // henrikflyman.com. Every Wavlake mirror is 404 upstream and must stay
   // banned everywhere (album grid, search, /api/feeds/exists,
