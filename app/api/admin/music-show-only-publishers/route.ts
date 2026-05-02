@@ -174,7 +174,7 @@ export async function POST(request: NextRequest) {
 
     const publisher = await prisma.feed.findUnique({
       where: { id },
-      select: { id: true, type: true, title: true, musicShowOnly: true },
+      select: { id: true, type: true, title: true, artist: true, musicShowOnly: true },
     });
     if (!publisher) {
       return NextResponse.json({ error: 'Publisher not found' }, { status: 404 });
@@ -186,9 +186,30 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find all child album feeds (publisherId points at this publisher).
+    // Find child album feeds. Two cohorts share the same delete-vs-keep rules:
+    //  1. publisherId points at this publisher (the obvious case).
+    //  2. publisherId is null but artist matches — these orphans slip past
+    //     per-publisher cleanup whenever the original import didn't link them
+    //     (different publisher row, or imported before any publisher existed).
+    //     Without this, flagging MSO + clicking "Delete unplayed albums"
+    //     leaves the artist's albums stuck in the grid and the user re-flags
+    //     thinking the action didn't take. Mirrors the artist-name fallback
+    //     used by the publisher-album cron in
+    //     `app/api/admin/publishers/import-albums/route.ts`.
+    const artistKey = (publisher.artist || publisher.title || '').trim();
     const childFeeds = await prisma.feed.findMany({
-      where: { publisherId: id },
+      where: {
+        OR: [
+          { publisherId: id },
+          ...(artistKey
+            ? [{
+                publisherId: null,
+                type: { in: ['album', 'music'] },
+                artist: { equals: artistKey, mode: 'insensitive' as const },
+              }]
+            : []),
+        ],
+      },
       select: {
         id: true,
         title: true,
