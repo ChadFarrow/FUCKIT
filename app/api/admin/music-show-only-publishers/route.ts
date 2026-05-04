@@ -137,9 +137,11 @@ export async function PATCH(request: NextRequest) {
     const flaggedAlso = musicShowOnly
       ? await flagSameArtistPublishers(id, feed.artist)
       : [];
-    if (flaggedAlso.length > 0) {
-      invalidateFeedListCaches();
-    }
+    // Always bust caches — albums-fast and the "New" tab now read the
+    // MSO flag at request time to filter MSO-artist albums out of
+    // catalog views. Without invalidation here, a flag flip wouldn't
+    // take effect until the 15-min albums-fast cache expired.
+    invalidateFeedListCaches();
 
     return NextResponse.json({ feed: updated, flaggedAlso });
   } catch (error) {

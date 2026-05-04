@@ -17,12 +17,16 @@ import {
 // podcasts like Homegrown Hits, Two For Tunestr, MMM, BAB) — users browse those
 // via the Podcasts filter or playlist pages.
 //
-// Three exclusion layers:
+// Four exclusion layers:
 //   1. type='album' query filter — drops correctly-typed podcasts.
 //   2. PLAYLIST_SOURCE_FEED_URLS — drops curated-playlist source podcasts (HGH,
 //      MMM, etc.) still mis-typed as 'album' in the DB.
 //   3. isBowlAfterBowlPodcastEntry — drops the BAB feed (mis-imported as 'album')
 //      while keeping Bowl Covers (legit music).
+//   4. Music-show-only artist gate — drops album feeds whose artist matches
+//      any publisher row flagged musicShowOnly. Without this, curated-playlist
+//      refreshes that auto-mint album feeds for remoteItem references push
+//      MSO-flagged artists back to the top of "New" with a fresh createdAt.
 //
 // Pagination via `offset` so the client can infinite-scroll like other filters.
 // We fetch all eligible feeds' metadata once (cheap — id/createdAt/url/title/
@@ -51,6 +55,24 @@ export async function GET(request: Request) {
       orderBy: { createdAt: 'desc' },
     });
 
+    // Music-show-only artist gate. Curated playlist refreshes auto-mint
+    // Feed records for every remoteItem in their XML (via addUnresolvedFeeds
+    // → upsert in parseFeedByGuid), with a fresh `createdAt` each pass —
+    // so an MSO artist whose tracks are referenced by any music show
+    // keeps reappearing at the top of "New" no matter how many times the
+    // user re-flags or deletes them. Match the artist-key shape used by
+    // the publisher-album cron and the cleanup route so orphan album
+    // feeds (publisherId=null) are caught alongside linked ones.
+    const msoPublishers = await prisma.feed.findMany({
+      where: { type: 'publisher', musicShowOnly: true },
+      select: { artist: true, title: true },
+    });
+    const msoArtistKeys = new Set<string>();
+    for (const p of msoPublishers) {
+      const key = (p.artist || p.title || '').trim().toLowerCase();
+      if (key) msoArtistKeys.add(key);
+    }
+
     const playlistUrls = new Set(getPlaylistUrls());
     const playlistIds = new Set(getAllPlaylistIds());
     const blacklistedIds = new Set(getBlacklistedFeedIds());
@@ -73,7 +95,8 @@ export async function GET(request: Request) {
           title: f.title,
           artist: f.artist,
           feedUrl: f.originalUrl,
-        })
+        }) &&
+        !msoArtistKeys.has((f.artist || '').trim().toLowerCase())
     );
 
     const total = eligible.length;
