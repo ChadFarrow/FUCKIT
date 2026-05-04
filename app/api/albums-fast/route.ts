@@ -332,11 +332,37 @@ export async function GET(request: Request) {
       return true;
     });
 
+    // Music-show-only artist gate. The MSO flag means "don't show this
+    // artist's albums in catalog views, but keep tracks reachable via
+    // any curated music show that played them." Curated playlists pull
+    // from SystemPlaylistTrack and don't go through albums-fast, so
+    // hiding album feeds here doesn't break playlist playback. Match the
+    // artist-key shape used by the publisher-album cron (artist || title,
+    // case-insensitive trim) so orphan albums (publisherId=null) are
+    // caught alongside linked ones. Query runs every request — small
+    // enough (<100 publishers typically), and we need it to react to
+    // PATCH flag flips without waiting on the 15-min feeds cache.
+    const msoPublishers = await prisma.feed.findMany({
+      where: { type: 'publisher', musicShowOnly: true },
+      select: { artist: true, title: true },
+    });
+    const msoArtistKeys = new Set<string>();
+    for (const p of msoPublishers) {
+      const key = (p.artist || p.title || '').trim().toLowerCase();
+      if (key) msoArtistKeys.add(key);
+    }
+    const msoFilteredAlbums = msoArtistKeys.size === 0
+      ? unresolvedFilteredAlbums
+      : unresolvedFilteredAlbums.filter(album => {
+          const artistKey = (album.artist || '').trim().toLowerCase();
+          return !msoArtistKeys.has(artistKey);
+        });
+
     // Deduplicate albums with same title and artist (keep the one with more tracks or from preferred source)
     const deduplicatedAlbums = (() => {
-      const seen = new Map<string, typeof unresolvedFilteredAlbums[0]>();
+      const seen = new Map<string, typeof msoFilteredAlbums[0]>();
 
-      for (const album of unresolvedFilteredAlbums) {
+      for (const album of msoFilteredAlbums) {
         // Create a key from normalized title + artist
         const key = `${album.title?.toLowerCase().trim()}|${album.artist?.toLowerCase().trim()}`;
         const existing = seen.get(key);
