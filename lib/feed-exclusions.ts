@@ -26,6 +26,7 @@ export const BLACKLISTED_FEED_URLS = [
   'https://wavlake.com/feed/music/cca74ee8-67f8-434b-a386-8417e304cdf0',  // Time Waits For No One
   'https://wavlake.com/feed/music/b7f701d7-5499-48be-8394-fcd633c649bb',  // Dancing With A Ghost
   'https://wavlake.com/feed/music/e0c852e7-a118-46b0-a751-4e42ed6e0b6c',  // Shadowbanned
+  'https://anchor.fm/s/1125b8ad4/podcast/rss',  // Unknown podcast — auto-imported without authorization
 ];
 
 // Feed URLs that back a curated playlist. Not blacklisted (admin can add them as
