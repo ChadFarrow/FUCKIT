@@ -200,8 +200,8 @@ export async function GET(request: Request) {
           valueTimeSplits: track.valueTimeSplits || undefined,
           persons: (track as { persons?: unknown }).persons || undefined,
         })),
-        v4vRecipient: feed.v4vRecipient,
-        v4vValue: feed.v4vValue,
+        v4vRecipient: feed.v4vRecipient || feed.Track?.[0]?.v4vRecipient || null,
+        v4vValue: feed.v4vValue || feed.Track?.[0]?.v4vValue || null,
         persons: (feed as { persons?: unknown }).persons || undefined,
         trackCount: feed._count?.Track || 0,
       }));
