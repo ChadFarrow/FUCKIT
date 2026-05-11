@@ -52,6 +52,9 @@ export async function resolvePlaylistItems(
         image: true,
         v4vRecipient: true,
         v4vValue: true,
+        chaptersUrl: true,
+        chapters: true,
+        valueTimeSplits: true,
         Feed: {
           select: {
             id: true,
@@ -114,6 +117,9 @@ export async function resolvePlaylistItems(
           guid: track.guid,
           v4vRecipient: track.v4vRecipient,
           v4vValue: track.v4vValue as V4VValue | null,
+          chaptersUrl: (track as any).chaptersUrl || undefined,
+          chapters: (track as any).chapters || undefined,
+          valueTimeSplits: (track as any).valueTimeSplits || undefined,
           episodeTitle: remoteItem.episodeTitle,
           episodeId: remoteItem.episodeId,
           episodeIndex: remoteItem.episodeIndex,
@@ -261,6 +267,9 @@ export async function getPlaylistFromDatabase(config: PlaylistConfig): Promise<{
                 image: true,
                 v4vRecipient: true,
                 v4vValue: true,
+                chaptersUrl: true,
+                chapters: true,
+                valueTimeSplits: true,
                 Feed: {
                   select: {
                     id: true,
@@ -302,6 +311,9 @@ export async function getPlaylistFromDatabase(config: PlaylistConfig): Promise<{
         publishedAt: pt.Track.publishedAt?.toISOString(),
         v4vRecipient: pt.Track.v4vRecipient,
         v4vValue: pt.Track.v4vValue,
+        chaptersUrl: (pt.Track as any).chaptersUrl || undefined,
+        chapters: (pt.Track as any).chapters || undefined,
+        valueTimeSplits: (pt.Track as any).valueTimeSplits || undefined,
         feedGuid: pt.Track.guid,
         itemGuid: pt.Track.guid,
         guid: pt.Track.guid,

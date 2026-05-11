@@ -80,6 +80,9 @@ export interface ResolvedTrack {
   endTime?: number;
   source?: string;
   description?: string;
+  chaptersUrl?: string | null;
+  chapters?: any | null;
+  valueTimeSplits?: any | null;
 }
 
 export interface PlaylistAlbum {
