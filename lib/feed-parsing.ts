@@ -434,8 +434,8 @@ export async function importFeedToDatabase(feedData: any, episodes: ParsedEpisod
           where: { id: feed.id },
           data: { lastNewTrackAt: new Date() }
         });
-      } catch {
-        // Column missing until migration is applied — non-fatal
+      } catch (e) {
+        console.warn(`[lastNewTrackAt] write failed for ${feed.id} — migration may be pending:`, e instanceof Error ? e.message : e);
       }
     }
 

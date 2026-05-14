@@ -157,7 +157,7 @@ function HomePageContent() {
   // Format-aware loading state (for "all" filter - load all albums before EPs)
   const [formatCounts, setFormatCounts] = useState<{ albums: number; eps: number; singles: number } | null>(null);
   const [currentFormatPhase, setCurrentFormatPhase] = useState<'albums' | 'eps' | 'singles'>('albums');
-  const API_VERSION = 'v13'; // v13: added persons (podcast:person with npub) on track + feed; consumed for Nostr p-tags on boosts
+  const API_VERSION = 'v14'; // v14: /api/feeds/recent now sorts by max(createdAt, lastNewTrackAt); bump clears stale clients caching the old createdAt-only order
   
   // HGH filter removed - no longer needed
   

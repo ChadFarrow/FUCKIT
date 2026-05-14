@@ -57,7 +57,8 @@ export async function GET(request: Request) {
         },
         orderBy: { createdAt: 'desc' },
       });
-    } catch {
+    } catch (e) {
+      console.warn('[lastNewTrackAt] read failed — migration may be pending, falling back to createdAt-only sort:', e instanceof Error ? e.message : e);
       const feeds = await prisma.feed.findMany({
         where: { status: 'active', type: 'album' },
         select: { id: true, createdAt: true, originalUrl: true, title: true, artist: true },

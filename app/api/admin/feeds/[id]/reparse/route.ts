@@ -230,14 +230,17 @@ export async function POST(
           skipDuplicates: true
         });
 
-        // Mark the feed as updated with new tracks so it surfaces in "new"
-        try {
-          await prisma.feed.update({
-            where: { id: feed.id },
-            data: { lastNewTrackAt: new Date() }
-          });
-        } catch {
-          // Column missing until migration is applied — non-fatal
+        // Mark the feed as updated with new tracks so it surfaces in "new".
+        // Skip on first-time imports (no prior tracks) — Feed.createdAt already covers that case.
+        if (existingTracks.length > 0) {
+          try {
+            await prisma.feed.update({
+              where: { id: feed.id },
+              data: { lastNewTrackAt: new Date() }
+            });
+          } catch (e) {
+            console.warn(`[lastNewTrackAt] write failed for ${feed.id} — migration may be pending:`, e instanceof Error ? e.message : e);
+          }
         }
 
         console.log(`✅ Added ${newItems.length} new tracks`);
