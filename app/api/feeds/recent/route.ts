@@ -40,21 +40,31 @@ export async function GET(request: Request) {
     const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 200);
     const offset = Math.max(parseInt(searchParams.get('offset') || '0'), 0);
 
-    const lightFeeds = await prisma.feed.findMany({
-      where: {
-        status: 'active',
-        type: 'album',
-      },
-      select: {
-        id: true,
-        createdAt: true,
-        lastNewTrackAt: true,
-        originalUrl: true,
-        title: true,
-        artist: true,
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+    // Fetch with lastNewTrackAt; fall back gracefully if the migration hasn't
+    // been applied yet (column missing → Prisma errors → catch uses createdAt only).
+    type LightFeed = { id: string; createdAt: Date; lastNewTrackAt: Date | null; originalUrl: string | null; title: string; artist: string | null };
+    let lightFeeds: LightFeed[];
+    try {
+      lightFeeds = await prisma.feed.findMany({
+        where: { status: 'active', type: 'album' },
+        select: {
+          id: true,
+          createdAt: true,
+          lastNewTrackAt: true,
+          originalUrl: true,
+          title: true,
+          artist: true,
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+    } catch {
+      const feeds = await prisma.feed.findMany({
+        where: { status: 'active', type: 'album' },
+        select: { id: true, createdAt: true, originalUrl: true, title: true, artist: true },
+        orderBy: { createdAt: 'desc' },
+      });
+      lightFeeds = feeds.map((f) => ({ ...f, lastNewTrackAt: null }));
+    }
 
     // Music-show-only artist gate. Curated playlist refreshes auto-mint
     // Feed records for every remoteItem in their XML (via addUnresolvedFeeds

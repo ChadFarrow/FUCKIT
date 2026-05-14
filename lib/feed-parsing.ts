@@ -429,10 +429,14 @@ export async function importFeedToDatabase(feedData: any, episodes: ParsedEpisod
     // Update lastNewTrackAt when new tracks are added to an existing feed
     // (not on initial import — createdAt already captures that for "new" sorting)
     if (newTracksCreated > 0 && existingTrackCount > 0) {
-      await prisma.feed.update({
-        where: { id: feed.id },
-        data: { lastNewTrackAt: new Date() }
-      });
+      try {
+        await prisma.feed.update({
+          where: { id: feed.id },
+          data: { lastNewTrackAt: new Date() }
+        });
+      } catch {
+        // Column missing until migration is applied — non-fatal
+      }
     }
 
     // Backfill oldestItemPubdate from tracks just imported
