@@ -111,6 +111,7 @@ model Feed {
   oldestItemPubdate   DateTime?
   persons             Json?
   musicShowOnly       Boolean   @default(false)
+  lastNewTrackAt      DateTime?
   Feed              Feed?     @relation("FeedToFeed", fields: [publisherId], references: [id])
   other_Feed        Feed[]    @relation("FeedToFeed")
   Track             Track[]
@@ -126,6 +127,7 @@ model Feed {
   @@index([status, priority])
   @@index([status, type])
   @@index([type])
+  @@index([lastNewTrackAt])
 }
 
 model Follow {

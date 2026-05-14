@@ -304,6 +304,7 @@ export async function importFeedToDatabase(feedData: any, episodes: ParsedEpisod
 
     // Import tracks/episodes
     let trackCount = 0;
+    let newTracksCreated = 0;
 
     // Batch lookup: Get all existing tracks by guid in one query (fixes N+1)
     const episodeGuids = episodes.map(e => e.guid).filter(Boolean);
@@ -403,6 +404,7 @@ export async function importFeedToDatabase(feedData: any, episodes: ParsedEpisod
             }
           });
           trackCount++;
+          newTracksCreated++;
         } else {
           // Update existing track with trackOrder and v4v data
           await prisma.track.update({
@@ -422,6 +424,15 @@ export async function importFeedToDatabase(feedData: any, episodes: ParsedEpisod
       } catch (error) {
         console.warn(`⚠️ Failed to import track "${episode.title}":`, error instanceof Error ? error.message : error);
       }
+    }
+
+    // Update lastNewTrackAt when new tracks are added to an existing feed
+    // (not on initial import — createdAt already captures that for "new" sorting)
+    if (newTracksCreated > 0 && existingTrackCount > 0) {
+      await prisma.feed.update({
+        where: { id: feed.id },
+        data: { lastNewTrackAt: new Date() }
+      });
     }
 
     // Backfill oldestItemPubdate from tracks just imported
