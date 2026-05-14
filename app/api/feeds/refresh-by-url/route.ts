@@ -680,10 +680,14 @@ export async function POST(request: NextRequest) {
         });
 
         // Mark the feed as updated with new tracks so it surfaces in "new"
-        await prisma.feed.update({
-          where: { id: feed.id },
-          data: { lastNewTrackAt: new Date() }
-        });
+        try {
+          await prisma.feed.update({
+            where: { id: feed.id },
+            data: { lastNewTrackAt: new Date() }
+          });
+        } catch {
+          // Column missing until migration is applied — non-fatal
+        }
       }
 
       // Get updated feed with counts
