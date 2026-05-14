@@ -678,8 +678,14 @@ export async function POST(request: NextRequest) {
           data: tracksData,
           skipDuplicates: true
         });
+
+        // Mark the feed as updated with new tracks so it surfaces in "new"
+        await prisma.feed.update({
+          where: { id: feed.id },
+          data: { lastNewTrackAt: new Date() }
+        });
       }
-      
+
       // Get updated feed with counts
       let updatedFeed = await prisma.feed.findUnique({
         where: { id: feed.id },

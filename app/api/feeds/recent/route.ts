@@ -48,6 +48,7 @@ export async function GET(request: Request) {
       select: {
         id: true,
         createdAt: true,
+        lastNewTrackAt: true,
         originalUrl: true,
         title: true,
         artist: true,
@@ -98,6 +99,16 @@ export async function GET(request: Request) {
         }) &&
         !msoArtistKeys.has((f.artist || '').trim().toLowerCase())
     );
+
+    // Sort by most recent activity: new-track additions float existing albums to the top
+    // alongside newly minted feeds. lastNewTrackAt is only set when a genuinely new
+    // track row is created (not metadata refreshes), so this doesn't cause the false-
+    // positive problem that MAX(Track.createdAt) did.
+    eligible.sort((a, b) => {
+      const aTime = Math.max(a.createdAt.getTime(), (a.lastNewTrackAt ?? a.createdAt).getTime());
+      const bTime = Math.max(b.createdAt.getTime(), (b.lastNewTrackAt ?? b.createdAt).getTime());
+      return bTime - aTime;
+    });
 
     const total = eligible.length;
     const pageIds = eligible.slice(offset, offset + limit).map((f) => f.id);

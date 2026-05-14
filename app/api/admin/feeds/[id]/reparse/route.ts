@@ -230,6 +230,12 @@ export async function POST(
           skipDuplicates: true
         });
 
+        // Mark the feed as updated with new tracks so it surfaces in "new"
+        await prisma.feed.update({
+          where: { id: feed.id },
+          data: { lastNewTrackAt: new Date() }
+        });
+
         console.log(`✅ Added ${newItems.length} new tracks`);
       }
 
