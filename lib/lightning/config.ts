@@ -3,7 +3,7 @@ export const LIGHTNING_CONFIG = {
   // Platform configuration for fee collection
   platform: {
     nodePublicKey: process.env.NEXT_PUBLIC_PLATFORM_NODE_PUBKEY || '',
-    lightningAddress: 'chadf@getalby.com',
+    lightningAddress: process.env.NEXT_PUBLIC_PLATFORM_LIGHTNING_ADDRESS || 'lushnessprecious644398@getalby.com',
     fee: 2, // Platform fee in sats per boost
     splitPercentage: 1, // Platform gets 1% of value splits
   },
