@@ -250,3 +250,37 @@ Event-driven via `window.dispatchEvent(new CustomEvent('toast', ...))`. Helpers 
 
 ### Episode/Play Count Markers
 `<podcast:txt purpose="episode">` or `<podcast:txt purpose="playcount">` in XML. Parser decodes XML entities via `decodeXmlEntities()` in `lib/playlist/parser.ts`. Original titles stored in `SystemPlaylistTrack.episodeTitle` — do NOT reverse-engineer from episode IDs (lossy). Refresh: `curl https://stablekraft.app/api/playlist/[id]?refresh`
+
+### Counting Feeds Missing Publisher Feeds
+"Missing publisher feeds" = artists with 2+ active album feeds but no `type='publisher'` feed. The `/api/publishers` response already splits these: entries with `id.startsWith('artist-')` are synthetic (no real publisher feed); others are real.
+
+Quick count via production API (run locally):
+```bash
+curl -s "https://stablekraft.app/api/publishers?limit=200" | python3 -c "
+import json, sys
+data = json.load(sys.stdin)
+real = [p for p in data['publishers'] if not p['id'].startswith('artist-')]
+synthetic = [p for p in data['publishers'] if p['id'].startswith('artist-')]
+print(f'Total: {data[\"total\"]}')
+print(f'Actual publisher feeds: {len(real)}')
+print(f'Artists missing publisher feeds: {len(synthetic)}')
+for p in sorted(synthetic, key=lambda x: -x['totalTracks']):
+    print(f'  {p[\"title\"]} — {p[\"itemCount\"]} albums, {p[\"totalTracks\"]} tracks')
+"
+```
+
+Or via Railway DB (from repo root):
+```bash
+railway run --service StableKraft --environment production npx prisma db execute --stdin <<'SQL'
+SELECT f.artist, COUNT(*) AS album_count, SUM(t.track_count) AS total_tracks
+FROM "Feed" f
+LEFT JOIN (SELECT "feedId", COUNT(*) AS track_count FROM "Track" GROUP BY "feedId") t ON t."feedId" = f.id
+WHERE f.type IN ('album','music') AND f.status = 'active' AND f.artist IS NOT NULL
+GROUP BY LOWER(f.artist)
+HAVING COUNT(*) >= 2
+  AND LOWER(f.artist) NOT IN (
+    SELECT LOWER(COALESCE(artist, title)) FROM "Feed" WHERE type = 'publisher' AND status = 'active'
+  )
+ORDER BY total_tracks DESC NULLS LAST;
+SQL
+```
