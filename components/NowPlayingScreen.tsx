@@ -254,6 +254,18 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
     };
   }, [shouldShow]);
 
+  // Sync body background to album color while open so iOS elastic overscroll
+  // areas show the album color instead of the white page background.
+  useEffect(() => {
+    if (!shouldShow) return;
+    const body = document.body;
+    const prev = body.style.backgroundColor;
+    body.style.backgroundColor = contrastColors.backgroundColor;
+    return () => {
+      body.style.backgroundColor = prev;
+    };
+  }, [shouldShow, contrastColors.backgroundColor]);
+
   // Debug: Log V4V data availability
   useEffect(() => {
     if (currentTrack) {
