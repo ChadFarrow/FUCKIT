@@ -58,7 +58,7 @@ export default function MusicSegmentsPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8" suppressHydrationWarning>
+    <div className="container mx-auto px-4 py-8 pt-safe-plus" suppressHydrationWarning>
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-4">

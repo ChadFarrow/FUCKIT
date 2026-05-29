@@ -139,7 +139,7 @@ export default function TrackDetailClient() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 pt-safe-plus">
         <div className="flex items-center justify-center py-12">
           <LoadingSpinner />
           <span className="ml-3 text-gray-400">Loading track details...</span>
@@ -150,7 +150,7 @@ export default function TrackDetailClient() {
 
   if (error || !track) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 pt-safe-plus">
         <div className="text-center py-12">
           <h1 className="text-2xl font-bold mb-4">Track Not Found</h1>
           <p className="text-gray-400 mb-6">{error || 'The requested track could not be found.'}</p>
@@ -177,7 +177,7 @@ export default function TrackDetailClient() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 pt-safe-plus">
       <MusicTrackDetail
         track={track}
         relatedTracks={relatedTracks}

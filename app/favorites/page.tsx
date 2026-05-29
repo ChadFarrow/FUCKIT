@@ -875,7 +875,7 @@ function FavoritesPageContent() {
   return (
     <AppLayout>
       <div className="h-[100dvh] flex flex-col bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white overflow-hidden">
-      <div className="container mx-auto px-4 pt-8 flex-shrink-0">
+      <div className="container mx-auto px-4 pt-safe-plus flex-shrink-0">
         <div className="mb-8">
           <button
             onClick={() => router.back()}
