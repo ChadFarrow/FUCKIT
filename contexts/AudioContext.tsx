@@ -2676,7 +2676,15 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         console.log('✅ Seamless track transition successful');
         return true;
       }
-      // If seamless fails, fall through to normal playback
+      // If backgrounded, don't fall through to attemptAudioPlayback — same reasoning as
+      // playShuffledTrack: .pause()/.removeAttribute('src')/.load() destroys the iOS session.
+      // Track is loaded with the new src; foreground-return handler will call resume().
+      if (document.visibilityState !== 'visible') {
+        console.log('📱 Background seamless failed — leaving track loaded for foreground resume');
+        isAutoTransitioningRef.current = false;
+        return false;
+      }
+      // If seamless fails in foreground, fall through to normal playback
       console.log('⚠️ Seamless playback failed, trying full playback');
     }
 
@@ -2762,6 +2770,15 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         updateMediaSession(album, track);
         console.log('✅ Seamless shuffle transition successful');
         return true;
+      }
+      // If backgrounded, don't fall through to attemptAudioPlayback — it calls .pause() /
+      // .removeAttribute('src') / .load() which destroys the iOS audio session and leaves
+      // the element in a worse state. The track is already loaded with the new src from the
+      // seamless attempt; the foreground-return visibility handler will call resume() to
+      // start it once the user switches back.
+      if (document.visibilityState !== 'visible') {
+        console.log('📱 Background seamless failed — leaving track loaded for foreground resume');
+        return false;
       }
       console.log('⚠️ Seamless playback failed, trying full playback');
     }
