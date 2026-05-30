@@ -68,12 +68,17 @@ export function UserSettingsProvider({ children }: { children: ReactNode }) {
       return;
     }
     if (lastPubkeyRef.current === pubkey) return;
+    const prev = lastPubkeyRef.current;
     lastPubkeyRef.current = pubkey;
-    setSettings(defaultSettings);
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-    } catch (error) {
-      console.error('Failed to clear user settings:', error);
+    // Only wipe when switching between two distinct logged-in accounts.
+    // null → pubkey is initial session restore on page load, not a user switch.
+    if (prev !== null && pubkey !== null) {
+      setSettings(defaultSettings);
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+      } catch (error) {
+        console.error('Failed to clear user settings:', error);
+      }
     }
   }, [user?.nostrPubkey]);
 
