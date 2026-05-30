@@ -2193,6 +2193,11 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
                       }
                     }
 
+                    // Mirror handleEnded: keep audio session warm so seamless playback succeeds
+                    isAutoTransitioningRef.current = true;
+                    if ('mediaSession' in navigator && navigator.mediaSession) {
+                      navigator.mediaSession.playbackState = 'playing';
+                    }
                     console.log('📱 Proactive advance timer fired, triggering next track');
                     if (playNextTrackRef.current) {
                       playNextTrackRef.current();
