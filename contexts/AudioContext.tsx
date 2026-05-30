@@ -1166,14 +1166,21 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
       const currentElement = (video && !video.paused && !video.ended) ? video : audio;
       if (!currentElement) return;
 
-      // If the audio element has ended and nothing new has started playing,
-      // the background advance failed — trigger it now
       if (currentElement.ended) {
+        // Background advance failed — the track ended but nothing new started.
+        // Trigger advancement now.
         console.log('📱 Track ended while backgrounded — advancing on foreground return');
-        // Reset the processed flag so playNextTrack can proceed
         trackEndProcessedRef.current = false;
         if (playNextTrackRef.current) {
           playNextTrackRef.current();
+        }
+      } else if (currentElement.paused && currentElement.src && !userInitiatedPauseRef.current) {
+        // Audio is paused but the user didn't press pause — iOS interrupted playback
+        // (another app stole the audio session) or a background track transition loaded
+        // the next track but play() was blocked. Resume now that we're in the foreground.
+        console.log('📱 Audio paused by iOS interruption — resuming on foreground return');
+        if (resumeRef.current) {
+          resumeRef.current();
         }
       }
     };
@@ -2193,6 +2200,11 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
                       }
                     }
 
+                    // Mirror handleEnded: keep audio session warm so seamless playback succeeds
+                    isAutoTransitioningRef.current = true;
+                    if ('mediaSession' in navigator && navigator.mediaSession) {
+                      navigator.mediaSession.playbackState = 'playing';
+                    }
                     console.log('📱 Proactive advance timer fired, triggering next track');
                     if (playNextTrackRef.current) {
                       playNextTrackRef.current();
@@ -2664,7 +2676,15 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         console.log('✅ Seamless track transition successful');
         return true;
       }
-      // If seamless fails, fall through to normal playback
+      // If backgrounded, don't fall through to attemptAudioPlayback — same reasoning as
+      // playShuffledTrack: .pause()/.removeAttribute('src')/.load() destroys the iOS session.
+      // Track is loaded with the new src; foreground-return handler will call resume().
+      if (document.visibilityState !== 'visible') {
+        console.log('📱 Background seamless failed — leaving track loaded for foreground resume');
+        isAutoTransitioningRef.current = false;
+        return false;
+      }
+      // If seamless fails in foreground, fall through to normal playback
       console.log('⚠️ Seamless playback failed, trying full playback');
     }
 
@@ -2750,6 +2770,15 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         updateMediaSession(album, track);
         console.log('✅ Seamless shuffle transition successful');
         return true;
+      }
+      // If backgrounded, don't fall through to attemptAudioPlayback — it calls .pause() /
+      // .removeAttribute('src') / .load() which destroys the iOS audio session and leaves
+      // the element in a worse state. The track is already loaded with the new src from the
+      // seamless attempt; the foreground-return visibility handler will call resume() to
+      // start it once the user switches back.
+      if (document.visibilityState !== 'visible') {
+        console.log('📱 Background seamless failed — leaving track loaded for foreground resume');
+        return false;
       }
       console.log('⚠️ Seamless playback failed, trying full playback');
     }
