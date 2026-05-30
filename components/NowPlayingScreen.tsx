@@ -260,7 +260,9 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
     if (!shouldShow) return;
     const body = document.body;
     const prev = body.style.backgroundColor;
-    body.style.backgroundColor = contrastColors.backgroundColor;
+    // Match the BOTTOM of the screen's gradient (line ~465), not the top, so the
+    // bottom overscroll area blends seamlessly with the darker edge above it.
+    body.style.backgroundColor = adjustColorBrightness(contrastColors.backgroundColor, -20);
     return () => {
       body.style.backgroundColor = prev;
     };
