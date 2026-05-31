@@ -1000,7 +1000,8 @@ export function BoostButton({
         message,
         helipadMetadata,
         onProgress,
-        walletProviderType
+        walletProviderType,
+        supportsKeysend
       );
 
       if (!result.success) {

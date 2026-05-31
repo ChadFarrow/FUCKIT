@@ -631,6 +631,19 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
 
       const customRecords: Record<string, string> = {};
 
+      // Extract routing custom records from helipadMetadata before building the Helipad JSON.
+      // These records (e.g. Alby's account-routing TLV) must appear as individual TLV entries
+      // in the WebLN keysend payload so the receiving node knows which account to credit.
+      // Embedding them inside the Helipad JSON blob (TLV 7629169) is not enough — the node
+      // inspects raw TLV records, not the JSON payload.
+      const { customRecords: routingCustomRecords, ...helipadMetadataWithoutRouting } =
+        (helipadMetadata as any) || {};
+      if (routingCustomRecords && typeof routingCustomRecords === 'object') {
+        for (const [key, value] of Object.entries(routingCustomRecords as Record<string, string>)) {
+          if (key && value != null) customRecords[key] = String(value);
+        }
+      }
+
       // Add boostagram message if provided
       if (message) {
         // TLV record 34349334 is used for boostagram messages
@@ -638,12 +651,12 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
         customRecords['34349334'] = message;
       }
 
-      // Add Helipad metadata if provided
+      // Add Helipad metadata if provided (routing customRecords excluded — already added above)
       if (helipadMetadata) {
         try {
           // Clean the metadata object to remove any undefined/null values that could cause issues
           const cleanMetadata = Object.fromEntries(
-            Object.entries(helipadMetadata).filter(([_, value]) => value !== undefined && value !== null)
+            Object.entries(helipadMetadataWithoutRouting).filter(([_, value]) => value !== undefined && value !== null)
           );
 
           // TLV record 7629169 is used for Helipad/Podcast 2.0 metadata (JSON)
