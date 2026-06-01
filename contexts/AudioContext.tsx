@@ -167,14 +167,6 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
   const trackEndProcessedRef = useRef<boolean>(false); // Prevent double-advance from timer + ended event
   const preloadAudioRef = useRef<HTMLAudioElement | null>(null); // Hidden Audio element for preloading next track
 
-  // Web Audio API for volume normalization (compressor)
-  const webAudioContextRef = useRef<AudioContext | null>(null);
-  const compressorRef = useRef<DynamicsCompressorNode | null>(null);
-  const audioSourceRef = useRef<MediaElementAudioSourceNode | null>(null);
-  const videoSourceRef = useRef<MediaElementAudioSourceNode | null>(null);
-  // Track if Web Audio has been activated - once true, ALL external audio must use proxy
-  // This prevents silence from cross-origin audio going through Web Audio without CORS headers
-  const webAudioActivatedRef = useRef<boolean>(false);
 
   // NIP-38 status publishing
   const { user, isAuthenticated } = useNostr();
@@ -925,83 +917,6 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     setIsIOS(isIOSDevice());
   }, [isIOSDevice]);
 
-  // Initialize Web Audio API for volume normalization (compressor)
-  // SKIP on iOS - Web Audio breaks background playback when app is minimized
-  const initWebAudio = useCallback(() => {
-    if (webAudioContextRef.current) return;
-
-    // Skip Web Audio on iOS to preserve background playback
-    if (isIOSDevice()) {
-      console.log('📱 Skipping Web Audio on iOS to preserve background playback');
-      return;
-    }
-
-    try {
-      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      webAudioContextRef.current = ctx;
-
-      // Create compressor with music normalization settings
-      const compressor = ctx.createDynamicsCompressor();
-      compressor.threshold.value = -24;  // Start compressing at -24dB
-      compressor.knee.value = 30;        // Soft knee for natural sound
-      compressor.ratio.value = 12;       // 12:1 compression ratio
-      compressor.attack.value = 0.003;   // 3ms attack
-      compressor.release.value = 0.25;   // 250ms release
-      compressor.connect(ctx.destination);
-      compressorRef.current = compressor;
-
-      console.log('🔊 Web Audio initialized for volume normalization');
-    } catch (err) {
-      console.warn('⚠️ Web Audio not available:', err);
-    }
-  }, [isIOSDevice]);
-
-  // Ensure Web Audio context is running (call on every playback).
-  // Awaitable so resume() can guarantee the context is unsuspended before audio.play().
-  // Never throws — Web Audio failure should not block element playback.
-  const ensureWebAudioRunning = useCallback(async (): Promise<void> => {
-    const ctx = webAudioContextRef.current;
-    if (!ctx || ctx.state !== 'suspended') return;
-    console.log('🔊 Resuming suspended Web Audio context');
-    try {
-      await ctx.resume();
-    } catch (err) {
-      console.warn('⚠️ Failed to resume Web Audio context:', err);
-    }
-  }, []);
-
-  // Connect media element to compressor for volume normalization
-  const connectToCompressor = useCallback((mediaElement: HTMLMediaElement, isVideo: boolean) => {
-    if (!webAudioContextRef.current || !compressorRef.current) {
-      return false;
-    }
-
-    const ctx = webAudioContextRef.current;
-    const sourceRef = isVideo ? videoSourceRef : audioSourceRef;
-
-    // Always resume audio context if suspended (critical for continued playback)
-    ensureWebAudioRunning();
-
-    // MediaElementSourceNode can only be created once per element
-    if (!sourceRef.current) {
-      try {
-        const source = ctx.createMediaElementSource(mediaElement);
-        source.connect(compressorRef.current);
-        sourceRef.current = source;
-        // Mark Web Audio as activated - from now on, ALL external audio must use proxy
-        // to prevent silence from cross-origin audio without CORS headers
-        webAudioActivatedRef.current = true;
-        console.log(`🔊 ${isVideo ? 'Video' : 'Audio'} connected to compressor for volume normalization (Web Audio now active)`);
-        return true;
-      } catch (err) {
-        // CORS error or already connected - audio will play without normalization
-        console.log('⚠️ Cannot connect to compressor (likely CORS restriction):', err);
-        return false;
-      }
-    }
-
-    return true; // Already connected
-  }, [ensureWebAudioRunning]);
 
   // AudioContext state version - increment when structure changes to invalidate old cache
   const AUDIO_STATE_VERSION = 2; // v2 includes V4V fields in tracks
@@ -1129,27 +1044,6 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
       navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused';
     }
   }, [isPlaying]);
-
-  // Resume Web Audio context when page becomes visible (needed for non-iOS volume normalization)
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        const ctx = webAudioContextRef.current;
-        if (ctx && ctx.state === 'suspended') {
-          ctx.resume().catch(err => {
-            console.warn('Failed to resume Web Audio context:', err);
-          });
-        }
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, []);
 
   // iOS background track advancement safety net:
   // When returning to foreground, check if the track ended while backgrounded
@@ -1452,17 +1346,6 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
           urlsToTry.push(sanitizedUrl);
         }
       } else if (isExternal) {
-        // CRITICAL: If Web Audio has been activated, ALWAYS use proxy for external URLs
-        // Once createMediaElementSource() connects an element to Web Audio, ALL audio
-        // from that element goes through Web Audio. Cross-origin audio without CORS
-        // headers outputs SILENCE as a security measure. Using proxy ensures CORS headers.
-        if (webAudioActivatedRef.current) {
-          console.log('🔊 [URL Strategy] Web Audio active - forcing proxy for CORS compliance');
-          urlsToTry.push(`/api/proxy-audio?url=${encodeURIComponent(sanitizedUrl)}`);
-          console.log('📋 [URL Strategy] Final URLs to try:', urlsToTry.length, 'URLs');
-          return urlsToTry;
-        }
-
         // Normalize hostname for case-insensitive matching
         const hostname = url.hostname.toLowerCase();
 
@@ -1601,13 +1484,6 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
               if (!hasResolved) {
                 videoElement.play().then(() => {
                   console.log(`✅ ${context} started successfully`);
-                  // Initialize Web Audio for volume normalization (HLS via hls.js)
-                  // Only connect for proxied URLs to avoid CORS-related silence
-                  const isProxied = typeof currentUrl === 'string' && currentUrl.includes('proxy-');
-                  if (isProxied) {
-                    initWebAudio();
-                    connectToCompressor(videoElement, true);
-                  }
                   hasResolved = true;
                   resolve(true);
                 }).catch(error => {
@@ -1669,13 +1545,6 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
           if (playPromise !== undefined) {
             await playPromise;
             console.log(`✅ ${context} started successfully with Safari native HLS`);
-            // Initialize Web Audio for volume normalization (Safari native HLS)
-            // Only connect for proxied URLs to avoid CORS-related silence
-            const isProxied = typeof currentUrl === 'string' && currentUrl.includes('proxy-');
-            if (isProxied) {
-              initWebAudio();
-              connectToCompressor(videoElement, true);
-            }
             isInitializingHlsRef.current = false;
             return true;
           }
@@ -1840,16 +1709,6 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
             mode: isVideo ? 'video' : 'audio',
             url: originalUrl
           });
-
-          // Initialize Web Audio and connect to compressor for volume normalization
-          // IMPORTANT: Only connect for proxied URLs because:
-          // 1. Once connected, ALL audio goes through Web Audio (can't undo)
-          // 2. Cross-origin audio without CORS headers outputs SILENCE
-          // 3. Our proxy has CORS headers, but direct URLs often don't
-          if (isProxied) {
-            initWebAudio();
-            connectToCompressor(currentMediaElement, isVideo);
-          }
 
           // Clear retry flag on success
           isRetryingRef.current = false;
@@ -3087,7 +2946,6 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
   // a toast with Retry so the user is never silently stuck.
   const resume = async () => {
     userInitiatedPauseRef.current = false;
-    await ensureWebAudioRunning();
 
     let currentElement: HTMLAudioElement | HTMLVideoElement | null = isVideoMode
       ? videoRef.current
@@ -3152,7 +3010,6 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         paused: el.paused,
         currentTime: el.currentTime,
         src: el.currentSrc || el.src,
-        ctxState: webAudioContextRef.current?.state,
         isVideoMode,
       });
     }
