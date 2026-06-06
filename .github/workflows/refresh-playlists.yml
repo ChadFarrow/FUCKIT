@@ -42,7 +42,7 @@ jobs:
         echo ""
         echo "📋 Step 2: Reparsing music feeds to detect new tracks..."
 
-        REPARSE_RESPONSE=$(curl -s -X POST -w "\n%{http_code}" "${BASE_URL}/api/admin/reparse-feeds?type=all&maxAgeHours=24&limit=5000")
+        REPARSE_RESPONSE=$(curl -s -X POST -w "\n%{http_code}" "${BASE_URL}/api/admin/reparse-feeds?type=all&maxAgeHours=24&limit=5000") || REPARSE_RESPONSE=$'\n000'
         HTTP_CODE=$(echo "$REPARSE_RESPONSE" | tail -n1)
         RESPONSE_BODY=$(echo "$REPARSE_RESPONSE" | sed '$d')
 
@@ -82,7 +82,7 @@ jobs:
         echo ""
         echo "📋 Step 2c: Fixing stale VTS data..."
 
-        VTS_FIX_RESPONSE=$(curl -s -X POST -w "\n%{http_code}" "${BASE_URL}/api/admin/fix-stale-vts")
+        VTS_FIX_RESPONSE=$(curl -s -X POST -w "\n%{http_code}" "${BASE_URL}/api/admin/fix-stale-vts") || VTS_FIX_RESPONSE=$'\n000'
         HTTP_CODE=$(echo "$VTS_FIX_RESPONSE" | tail -n1)
         RESPONSE_BODY=$(echo "$VTS_FIX_RESPONSE" | sed '$d')
 
@@ -158,7 +158,7 @@ jobs:
         echo ""
         echo "📋 Step 5: Parsing publisher feeds to update album relationships..."
 
-        PUBLISHER_RESPONSE=$(curl -s -X POST -w "\n%{http_code}" "${BASE_URL}/api/parse-feeds?action=parse-publishers")
+        PUBLISHER_RESPONSE=$(curl -s -X POST -w "\n%{http_code}" "${BASE_URL}/api/parse-feeds?action=parse-publishers") || PUBLISHER_RESPONSE=$'\n000'
         HTTP_CODE=$(echo "$PUBLISHER_RESPONSE" | tail -n1)
         RESPONSE_BODY=$(echo "$PUBLISHER_RESPONSE" | sed '$d')
 
@@ -174,7 +174,7 @@ jobs:
         echo ""
         echo "📋 Step 5b: Importing missing albums from publisher feeds..."
 
-        IMPORT_RESPONSE=$(curl -s -X POST -w "\n%{http_code}" "${BASE_URL}/api/admin/publishers/import-albums")
+        IMPORT_RESPONSE=$(curl -s -X POST -w "\n%{http_code}" "${BASE_URL}/api/admin/publishers/import-albums") || IMPORT_RESPONSE=$'\n000'
         HTTP_CODE=$(echo "$IMPORT_RESPONSE" | tail -n1)
         RESPONSE_BODY=$(echo "$IMPORT_RESPONSE" | sed '$d')
 
