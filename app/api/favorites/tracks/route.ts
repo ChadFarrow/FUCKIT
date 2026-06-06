@@ -58,7 +58,8 @@ export async function GET(request: NextRequest) {
             guid: true,
             v4vValue: true,
             v4vRecipient: true,
-            originalUrl: true
+            originalUrl: true,
+            type: true
           }
         }
       }

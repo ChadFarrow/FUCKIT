@@ -47,6 +47,7 @@ interface FavoriteTrack {
     v4vValue?: any;
     v4vRecipient?: string | null;
     originalUrl?: string | null;
+    type?: string | null;
   };
 }
 
@@ -755,8 +756,10 @@ function FavoritesPageContent() {
       return;
     }
 
-    // Shuffle the tracks array
-    const shuffled = [...favoriteTracks].sort(() => Math.random() - 0.5);
+    // Shuffle the tracks array, excluding podcast episodes
+    const shuffled = [...favoriteTracks]
+      .filter(track => track.Feed?.type !== 'podcast')
+      .sort(() => Math.random() - 0.5);
 
     // Create a playlist album from all shuffled tracks
     const shuffleAlbum: RSSAlbum = {
