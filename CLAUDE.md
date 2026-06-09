@@ -211,6 +211,8 @@ Favoriting saves to DB immediately, queues Nostr publish (500ms debounce). **Alw
 ### Favorites Page (`/favorites`)
 Optimistic unfavorite, auto-sync on page load. **Playlist favorites gotcha**: `isPlaylist()` and `playlistImageFallbacks` must use **lowercased feedId**, not the human name. `playlistSlugOverrides` handles ID-to-slug mismatches. Nostr playlist publishing: Kind 34139 addressable event (`d` tag = `stablekraft-favorites`).
 
+**Three `Feed` `select` blocks gotcha** (`app/api/favorites/tracks/route.ts` GET): tracks are matched by id, then guid, then audioUrl — three separate `prisma.track.findMany` queries whose results are concatenated into one `tracks` array. When adding a `Feed` field, add it to **all three** selects or `tsc` rejects the `[...tracks, ...tracksByGuid]` concat (the arrays have incompatible `Feed` shapes) and the Railway build fails at the type-check step — not caught locally unless you run `npm run build`. Same family as the albums-fast dual-select gotcha above.
+
 ### Favorite Publishers Resolution (`app/api/favorites/albums/route.ts`)
 Three feedId formats: synthetic artist IDs (`artist-adam-curry`), feed GUIDs, feed IDs. Image chain: DB → PI API → album feed image by artist name.
 
