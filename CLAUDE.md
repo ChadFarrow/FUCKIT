@@ -70,7 +70,7 @@ Playlists use `<podcast:remoteItem>` with `feedGuid` + `itemGuid`. On `?refresh`
 
 ### Feed Exclusions (`lib/feed-exclusions.ts`)
 Two lists with different semantics:
-- **`BLACKLISTED_FEED_IDS` / `BLACKLISTED_FEED_URLS`** — true bans. Applied everywhere: album grid, search, `/api/feeds/exists`, `process-remote-items`, admin bulk-import. Includes test feeds (`lnurl-test-*`, `podtards-test`) and repeat-offenders like `bitpunk-fm-unwound`.
+- **`BLACKLISTED_FEED_IDS` / `BLACKLISTED_FEED_URLS`** — true bans. Applied everywhere: album grid, search, `/api/feeds/exists`, `process-remote-items`, admin bulk-import, and the Step 5b publisher-album cron. Includes test feeds (`lnurl-test-*`, `podtards-test`) and repeat-offenders like `bitpunk-fm-unwound`. **Blacklist is the only durable removal for talk podcasts that declare `<podcast:medium>music</podcast:medium>`** (e.g. Phantom Power Business Hour): they evade the `medium=podcast` auto-detect, PI reports them as music, and Step 5b re-mints them from PI artist search with a fresh `createdAt` (top of the "new" tab) every time they're deleted.
 - **`PLAYLIST_SOURCE_FEED_URLS`** — URLs of podcast feeds backing curated playlists (B4TS, MMM, HGH, LT, Upbeats, IAM, ITDV, Two For Tunestr). Checked by `process-remote-items` (so nightly playlist refresh can't auto-create feed records for them) and by `/api/feeds/recent` (so the home `'new'` filter doesn't surface music-podcast source feeds). Admin-initiated imports (`POST /api/feeds`) never consulted these. **MMM has two entries** (legacy `mmmusic-project.ams3.cdn.digitaloceanspaces.com` and current `mmmusic.show`) because DB rows reference different hosts — keep both.
 
 Helpers: `isBlacklistedFeedId()`, `isBlacklistedFeedUrl()`, `isPlaylistSourceFeedUrl()`, `isBowlAfterBowlPodcastEntry()`. The BAB helper is shared by `/api/albums-fast` and `/api/feeds/recent` to keep the BAB-vs-Bowl-Covers rule in one place — do not re-inline it. Do **not** move playlist-source URLs back into the blacklist — doing so would block admin from promoting any of them into the Podcasts tab.
@@ -131,6 +131,12 @@ Matched by title slug, artist slug, or URL path. Multi-feed support with per-pla
 **Section labels** use the publisher feed's URL for platform detection (not album URLs), so a self-hosted publisher feed referencing Wavlake-hosted albums shows "(henrikflyman.com)" not "(Wavlake)". **`linkAlbumsToPublisher`** only links albums with `publisherId: null` — already-linked albums are skipped. To re-link, use `PUT /api/feeds` with `{ id, publisherId }`.
 
 **Phantom publisher IDs**: some albums have a `publisherId` that doesn't correspond to a feed record (e.g., Wavlake artist GUIDs auto-assigned during import). The publisher page creates synthetic feed info for these.
+
+### Track Ordering
+`Track.trackOrder` drives album display (`orderBy trackOrder asc`; the API's `trackNumber` is positional, not the stored value). Order sources, best to worst:
+1. Episode/season tags via `calculateTrackOrder` (`lib/rss-parser-db.ts`) = `season*1000 + episode`. The app's RSS parser reads both `itunes:` and `podcast:` namespace tags; **PI's episodes API only surfaces `itunes:episode` — `<podcast:episode>`-only feeds (e.g. Henrik Flyman's) come through PI with `episode: null`**.
+2. Index fallback over the episodes array. `getEpisodesFromAPI` (`lib/feed-parsing.ts`) sorts PI episodes by `datePublished` ascending — do **not** remove the sort; PI returns newest-first and the raw order reversed every PI-imported album without itunes episode tags (PR #150).
+3. Identical-timestamp items stay in PI's arbitrary tie order. Corrective: admin reparse, which uses RSS document order (also auto-runs nightly for newly imported feeds via Step 5c).
 
 ### Duration Filtering
 Tracks over 2 hours filtered as non-music (silent, no warnings).
