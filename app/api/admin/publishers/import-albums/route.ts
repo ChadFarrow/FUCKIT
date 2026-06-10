@@ -111,6 +111,7 @@ export async function POST(request: NextRequest) {
       title: string;
       piResults: number;
       imported: number;
+      importedFeedIds: string[];
       skipped: number;
       failed: number;
       errors: string[];
@@ -123,6 +124,7 @@ export async function POST(request: NextRequest) {
         title: publisher.title || publisher.id,
         piResults: 0,
         imported: 0,
+        importedFeedIds: [] as string[],
         skipped: 0,
         failed: 0,
         errors: [] as string[],
@@ -347,6 +349,7 @@ export async function POST(request: NextRequest) {
 
             console.log(`   ✅ ${piFeed.title} (${episodes.length} tracks)`);
             result.imported++;
+            result.importedFeedIds.push(feed.id);
 
             await new Promise(r => setTimeout(r, 100));
           } catch (error) {
@@ -387,6 +390,10 @@ export async function POST(request: NextRequest) {
       success: true,
       message: `Processed ${totals.publishers} publishers: ${totals.imported} albums imported`,
       totals,
+      // Flat list of feed IDs created this run — the nightly workflow's
+      // Step 5c reparses each one from its real RSS (PI API misses
+      // podcast:episode track order, chapters, and VTS).
+      importedFeedIds: results.flatMap(r => r.importedFeedIds),
       results
     });
 

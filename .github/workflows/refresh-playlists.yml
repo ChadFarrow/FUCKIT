@@ -182,6 +182,30 @@ jobs:
           IMPORTED=$(echo "$RESPONSE_BODY" | jq -r '.totals.imported // 0' 2>/dev/null || echo "?")
           SKIPPED=$(echo "$RESPONSE_BODY" | jq -r '.totals.skipped // 0' 2>/dev/null || echo "?")
           echo "✅ Publisher album import: ${IMPORTED} imported, ${SKIPPED} skipped"
+
+          # Step 5c: Reparse each newly imported feed from its real RSS.
+          # PI API misses podcast:episode/podcast:season track ordering,
+          # chapters, and VTS — reparse reads the feed XML directly and
+          # fixes all of them. Only runs for feeds created this run, so
+          # fetch volume stays tiny (no Wavlake rate-limit risk).
+          NEW_FEED_IDS=$(echo "$RESPONSE_BODY" | jq -r '.importedFeedIds[]?' 2>/dev/null)
+          if [ -n "$NEW_FEED_IDS" ]; then
+            echo ""
+            echo "📋 Step 5c: Reparsing newly imported feeds from RSS..."
+            while IFS= read -r FEED_ID; do
+              [ -z "$FEED_ID" ] && continue
+              echo "  🔄 Reparsing $FEED_ID..."
+              REPARSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "${BASE_URL}/api/admin/feeds/${FEED_ID}/reparse") || REPARSE_CODE=000
+              if [ "$REPARSE_CODE" -eq 200 ]; then
+                echo "  ✓ $FEED_ID reparsed"
+              else
+                echo "  ⚠️ $FEED_ID reparse failed (HTTP $REPARSE_CODE) - non-critical"
+              fi
+              sleep 2
+            done <<< "$NEW_FEED_IDS"
+          else
+            echo "ℹ️ No newly imported feeds to reparse"
+          fi
         else
           echo "⚠️ Publisher album import had issues (HTTP $HTTP_CODE) - non-critical"
         fi
