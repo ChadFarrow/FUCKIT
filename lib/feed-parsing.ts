@@ -483,8 +483,17 @@ export async function getEpisodesFromAPI(feedId: number): Promise<ParsedEpisode[
       return null;
     }
 
+    // PI returns episodes newest-first; sort oldest-first so callers that
+    // assign trackOrder = index + 1 (when ep.episode is null — PI doesn't
+    // surface <podcast:episode> tags) get chronological album order instead
+    // of a reversed one. Identical-timestamp items stay in PI's tie order;
+    // the corrective for those is an admin reparse (RSS document order).
+    const sortedItems = [...episodesData.items].sort(
+      (a: any, b: any) => (a.datePublished || 0) - (b.datePublished || 0)
+    );
+
     // Convert Podcast Index episodes to our format with v4v data
-    const episodes: ParsedEpisode[] = episodesData.items.map((ep: any) => ({
+    const episodes: ParsedEpisode[] = sortedItems.map((ep: any) => ({
       title: ep.title,
       description: ep.description || '',
       guid: ep.guid,
