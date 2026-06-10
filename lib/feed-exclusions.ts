@@ -8,6 +8,9 @@ export const BLACKLISTED_FEED_IDS = [
   'bitpunkfm-unwound',
   'bitpunk-fm-unwound-1768079479444',  // bitpunk.fm unwound podcast
   'album-1774815395173-2v8ktsh5s',     // No Agenda Show — talk podcast, not music
+  // Phantom Power Business Hour — talk podcast with medium=music; without the
+  // ban the 4 AM cron re-mints it from PI artist search every time it's deleted
+  'phantom-power-music-phantom-power-business-hour',
 ];
 
 // Feed URLs that should never be imported
@@ -27,6 +30,7 @@ export const BLACKLISTED_FEED_URLS = [
   'https://wavlake.com/feed/music/b7f701d7-5499-48be-8394-fcd633c649bb',  // Dancing With A Ghost
   'https://wavlake.com/feed/music/e0c852e7-a118-46b0-a751-4e42ed6e0b6c',  // Shadowbanned
   'https://anchor.fm/s/1125b8ad4/podcast/rss',  // Unknown podcast — auto-imported without authorization
+  'https://epochradio.com/feed/phantom-power-business-hour',  // Phantom Power Business Hour — talk podcast, not music
 ];
 
 // Feed URLs that back a curated playlist. Not blacklisted (admin can add them as
