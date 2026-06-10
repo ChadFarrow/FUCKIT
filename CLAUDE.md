@@ -34,7 +34,7 @@ zsp publish --skip-certificate-linking                                          
 - **stablekraft-app** (this repo) - Consumes and displays playlists
 
 ### Daily Workflow (`.github/workflows/refresh-playlists.yml`)
-Runs at 4 AM EST: clears cache → reparses feeds → refreshes playlists → parses publishers → imports missing albums from publisher feeds (Step 5b via PI API). The `PLAYLISTS` array must include ALL playlist IDs — missing ones won't get nightly processing.
+Runs at 4 AM EST: clears cache → reparses feeds → refreshes playlists → parses publishers → imports missing albums from publisher feeds (Step 5b via PI API) → reparses each newly imported feed from its real RSS (Step 5c, driven by `importedFeedIds` in the Step 5b response). Step 5c exists because PI's episodes API doesn't surface `<podcast:episode>`/`<podcast:season>` ordering, chapters, or VTS — only the RSS has them. The `PLAYLISTS` array must include ALL playlist IDs — missing ones won't get nightly processing.
 
 ### Podping Consumer Integration
 External service `msp-podping-service` (repo `ChadFarrow/msp-podping-service`) tails Hive for `pp_music_*` / `pp_podcast_*` podpings. For each ping the consumer (`consumer/src/index.ts:handleIri`) calls `/api/feeds/exists`; if it exists, calls `/api/feeds/refresh-by-url` **regardless of signer**. Only `/api/feeds` (new-feed minting) is gated to signer=`chadf` via `fromMsp` check in the consumer.
