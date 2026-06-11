@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { isSafePublicUrl } from '@/lib/url-security';
 
 // Dynamic import sharp with fallback for serverless environments
 let sharp: typeof import('sharp') | null = null;
@@ -147,14 +148,13 @@ export async function GET(request: NextRequest) {
       return new NextResponse(new Uint8Array(cached.buffer), { status: 200, headers });
     }
 
-    // Validate URL
-    let url: URL;
-    try {
-      url = new URL(imageUrl);
-    } catch {
-      console.warn(`⚠️ Invalid URL format: ${imageUrl}, returning placeholder`);
+    // Validate URL + SSRF guard (placeholder keeps Next Image optimization from failing)
+    const urlCheck = isSafePublicUrl(imageUrl, { allowHttp: true });
+    if (!urlCheck.ok) {
+      console.warn(`⚠️ Rejected image URL (${urlCheck.error}): ${imageUrl}, returning placeholder`);
       return returnPlaceholderImage();
     }
+    const url = urlCheck.url;
 
     // Try to upgrade HTTP to HTTPS for security
     // Use url.href to ensure proper URL encoding (spaces, special chars)
