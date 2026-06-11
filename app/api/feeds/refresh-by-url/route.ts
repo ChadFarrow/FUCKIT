@@ -3,6 +3,12 @@ import { prisma } from '@/lib/prisma';
 import { parseRSSFeedWithSegments, calculateTrackOrder, detectTrackMediaType, applyParsedItemFields } from '@/lib/rss-parser-db';
 import { resolvePodcastIndexUrl } from '@/lib/podcast-index-api';
 import { normalizeUrl, extractUuidFromUrl } from '@/lib/url-utils';
+import { RateLimiter } from '@/lib/api-utils';
+
+// Public endpoint (podping consumer) that triggers expensive RSS reparses —
+// cap per-IP request rate. In-memory, so the cap is per Railway instance;
+// 30/min comfortably exceeds the consumer's organic podping rate.
+const refreshLimiter = new RateLimiter(30, 60_000);
 
 interface RemoteItemResult {
   added: number;
@@ -183,6 +189,14 @@ async function processRemoteItems(feedUrl: string, publisherFeedId: string): Pro
 // POST /api/feeds/refresh-by-url - Refresh a feed by its originalUrl
 export async function POST(request: NextRequest) {
   try {
+    const clientIp = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+    if (!refreshLimiter.isAllowed(clientIp)) {
+      return NextResponse.json(
+        { error: 'Too many refresh requests, slow down' },
+        { status: 429, headers: { 'Retry-After': '60' } }
+      );
+    }
+
     const body = await request.json();
     // Accept both 'url' and 'originalUrl' for backwards compatibility
     const originalUrl = body.originalUrl || body.url;
