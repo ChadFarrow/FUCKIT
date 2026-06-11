@@ -45,7 +45,7 @@ jobs:
 
         for FEED_ID in "${PODCAST_FEEDS[@]}"; do
           echo "  🔄 Reparsing $FEED_ID..."
-          RESP=$(curl -s -X POST -w "\n%{http_code}" "${BASE_URL}/api/admin/feeds/${FEED_ID}/reparse")
+          RESP=$(curl -s -X POST -w "\n%{http_code}" -H "$AUTH_HEADER" "${BASE_URL}/api/admin/feeds/${FEED_ID}/reparse")
           HTTP_CODE=$(echo "$RESP" | tail -n1)
           BODY=$(echo "$RESP" | sed '$d')
           if [ "$HTTP_CODE" -eq 200 ]; then
@@ -61,3 +61,5 @@ jobs:
         echo "✅ Targeted podcast reparse complete"
       env:
         BASE_URL: ${{ secrets.PLAYLIST_BASE_URL || 'https://stablekraft.app' }}
+        # Harmless while ADMIN_SECRET is unset on the server (fail-open).
+        AUTH_HEADER: "Authorization: Bearer ${{ secrets.ADMIN_SECRET }}"
