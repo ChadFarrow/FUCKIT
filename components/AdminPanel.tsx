@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { toast } from '@/components/Toast';
 import { useNostr } from '@/contexts/NostrContext';
 import { getUnifiedSigner } from '@/lib/nostr/signer';
+import { adminFetch } from '@/lib/admin-fetch';
 
 export default function AdminPanel() {
   const [loading, setLoading] = useState(true);
@@ -292,7 +293,7 @@ export default function AdminPanel() {
   const fetchMsoPublishers = async () => {
     setMsoLoading(true);
     try {
-      const response = await fetch('/api/admin/music-show-only-publishers');
+      const response = await adminFetch('/api/admin/music-show-only-publishers');
       const data = await response.json();
       if (response.ok && Array.isArray(data.publishers)) {
         setMsoPublishers(data.publishers);
@@ -310,7 +311,7 @@ export default function AdminPanel() {
   const toggleMusicShowOnly = async (id: string, next: boolean) => {
     setMsoToggling(prev => new Set(prev).add(id));
     try {
-      const response = await fetch('/api/admin/music-show-only-publishers', {
+      const response = await adminFetch('/api/admin/music-show-only-publishers', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, musicShowOnly: next }),
@@ -348,7 +349,7 @@ export default function AdminPanel() {
   const deleteUnplayedAlbums = async (id: string, publisherTitle: string) => {
     setMsoCleaning(prev => new Set(prev).add(id));
     try {
-      const previewRes = await fetch('/api/admin/music-show-only-publishers', {
+      const previewRes = await adminFetch('/api/admin/music-show-only-publishers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, action: 'preview' }),
@@ -376,7 +377,7 @@ export default function AdminPanel() {
       );
       if (!ok) return;
 
-      const cleanupRes = await fetch('/api/admin/music-show-only-publishers', {
+      const cleanupRes = await adminFetch('/api/admin/music-show-only-publishers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, action: 'cleanup' }),
@@ -408,7 +409,7 @@ export default function AdminPanel() {
     }
     setMsoSearching(true);
     try {
-      const response = await fetch(`/api/admin/music-show-only-publishers/search?q=${encodeURIComponent(q)}`);
+      const response = await adminFetch(`/api/admin/music-show-only-publishers/search?q=${encodeURIComponent(q)}`);
       const data = await response.json();
       if (!response.ok) {
         toast.error(data.error || 'Search failed');
@@ -429,7 +430,7 @@ export default function AdminPanel() {
   const importMsoPublisher = async (result: MsoSearchResult) => {
     setMsoImporting(prev => new Set(prev).add(result.feedUrl));
     try {
-      const response = await fetch('/api/admin/music-show-only-publishers', {
+      const response = await adminFetch('/api/admin/music-show-only-publishers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -499,7 +500,7 @@ export default function AdminPanel() {
 
     setMsoSearchCleaning(true);
     try {
-      const previewRes = await fetch('/api/admin/music-show-only-publishers/cleanup-by-ids', {
+      const previewRes = await adminFetch('/api/admin/music-show-only-publishers/cleanup-by-ids', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ids: existingIds, dryRun: true }),
@@ -527,7 +528,7 @@ export default function AdminPanel() {
       );
       if (!ok) return;
 
-      const cleanupRes = await fetch('/api/admin/music-show-only-publishers/cleanup-by-ids', {
+      const cleanupRes = await adminFetch('/api/admin/music-show-only-publishers/cleanup-by-ids', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ids: existingIds }),
@@ -571,7 +572,7 @@ export default function AdminPanel() {
     setReparsingFeeds(prev => new Set(prev).add(feedId));
 
     try {
-      const response = await fetch(`/api/admin/feeds/${feedId}/reparse`, {
+      const response = await adminFetch(`/api/admin/feeds/${feedId}/reparse`, {
         method: 'POST',
       });
 
@@ -639,7 +640,7 @@ export default function AdminPanel() {
         // Check if this is the HGH playlist and clear its cache
         if (feedUrl.includes('HGH-music-playlist.xml') || feedUrl.includes('chadf-musicl-playlists')) {
           try {
-            await fetch('/api/playlist-cache?clear=hgh-playlist', {
+            await adminFetch('/api/playlist-cache?clear=hgh-playlist', {
               method: 'DELETE',
             });
             console.log('✅ Cleared HGH playlist cache');
@@ -690,7 +691,7 @@ export default function AdminPanel() {
     setBulkImportProgress(null);
 
     try {
-      const response = await fetch(`/api/admin/bulk-import?url=${encodeURIComponent(url)}`);
+      const response = await adminFetch(`/api/admin/bulk-import?url=${encodeURIComponent(url)}`);
       const data = await response.json();
 
       if (!response.ok) {
@@ -730,7 +731,7 @@ export default function AdminPanel() {
 
     try {
       const feedUrls = Array.from(bulkSelectedFeeds);
-      const response = await fetch('/api/admin/bulk-import', {
+      const response = await adminFetch('/api/admin/bulk-import', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ feedUrls, type: 'album' }),
@@ -933,7 +934,7 @@ export default function AdminPanel() {
     setDeletePreview(null);
 
     try {
-      const response = await fetch('/api/admin/feeds/delete-by-url', {
+      const response = await adminFetch('/api/admin/feeds/delete-by-url', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url, preview: true }),
@@ -968,7 +969,7 @@ export default function AdminPanel() {
     setDeletingByUrl(true);
 
     try {
-      const response = await fetch('/api/admin/feeds/delete-by-url', {
+      const response = await adminFetch('/api/admin/feeds/delete-by-url', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: deleteUrl.trim(), preview: false }),
@@ -1000,7 +1001,7 @@ export default function AdminPanel() {
     setShowFailedFeeds(false);
 
     try {
-      const response = await fetch('/api/playlist/parse-feeds-stream');
+      const response = await adminFetch('/api/playlist/parse-feeds-stream');
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
 
@@ -1095,7 +1096,7 @@ export default function AdminPanel() {
     setOrphanPreview(null);
 
     try {
-      const response = await fetch('/api/admin/orphaned-items');
+      const response = await adminFetch('/api/admin/orphaned-items');
       const data = await response.json();
 
       if (response.ok) {
@@ -1129,7 +1130,7 @@ export default function AdminPanel() {
     setDeletingOrphans(true);
 
     try {
-      const response = await fetch('/api/admin/orphaned-items', {
+      const response = await adminFetch('/api/admin/orphaned-items', {
         method: 'DELETE',
       });
 

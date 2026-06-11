@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { isSafePublicUrl } from '@/lib/url-security';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -9,6 +10,12 @@ export async function GET(request: NextRequest) {
   if (!url) {
     console.error('❌ [Audio Proxy] Missing URL parameter');
     return NextResponse.json({ error: 'URL parameter is required' }, { status: 400 });
+  }
+
+  const urlCheck = isSafePublicUrl(url, { allowHttp: true });
+  if (!urlCheck.ok) {
+    console.error(`❌ [Audio Proxy] Rejected URL (${urlCheck.error}):`, url.substring(0, 150));
+    return NextResponse.json({ error: urlCheck.error }, { status: 400 });
   }
 
   try {

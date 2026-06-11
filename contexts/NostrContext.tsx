@@ -78,7 +78,9 @@ export function NostrProvider({ children }: { children: React.ReactNode }) {
           action: {
             label: 'Retry',
             onClick: () => {
-              client.checkAndReconnectIfNeeded(isiOSDevice).catch(() => {});
+              client.checkAndReconnectIfNeeded(isiOSDevice).catch((retryErr) => {
+                console.warn('NIP-46 retry reconnect failed:', retryErr);
+              });
             },
           },
         });

@@ -18,7 +18,7 @@ jobs:
         
         # Step 1: Refresh playlist cache
         echo "📋 Step 1: Refreshing playlist cache..."
-        REFRESH_RESPONSE=$(curl -s -w "\n%{http_code}" "${BASE_URL}/api/playlist-cache?refresh=all")
+        REFRESH_RESPONSE=$(curl -s -w "\n%{http_code}" -H "$AUTH_HEADER" "${BASE_URL}/api/playlist-cache?refresh=all")
         HTTP_CODE=$(echo "$REFRESH_RESPONSE" | tail -n1)
         RESPONSE_BODY=$(echo "$REFRESH_RESPONSE" | sed '$d')
         
@@ -42,7 +42,7 @@ jobs:
         echo ""
         echo "📋 Step 2: Reparsing music feeds to detect new tracks..."
 
-        REPARSE_RESPONSE=$(curl -s -X POST -w "\n%{http_code}" "${BASE_URL}/api/admin/reparse-feeds?type=all&maxAgeHours=24&limit=5000") || REPARSE_RESPONSE=$'\n000'
+        REPARSE_RESPONSE=$(curl -s -X POST -w "\n%{http_code}" -H "$AUTH_HEADER" "${BASE_URL}/api/admin/reparse-feeds?type=all&maxAgeHours=24&limit=5000") || REPARSE_RESPONSE=$'\n000'
         HTTP_CODE=$(echo "$REPARSE_RESPONSE" | tail -n1)
         RESPONSE_BODY=$(echo "$REPARSE_RESPONSE" | sed '$d')
 
@@ -65,7 +65,7 @@ jobs:
 
         for FEED_ID in "${PODCAST_FEEDS[@]}"; do
           echo "  🔄 Reparsing podcast feed $FEED_ID..."
-          PODCAST_REPARSE=$(curl -s -X POST -w "\n%{http_code}" "${BASE_URL}/api/admin/feeds/${FEED_ID}/reparse")
+          PODCAST_REPARSE=$(curl -s -X POST -w "\n%{http_code}" -H "$AUTH_HEADER" "${BASE_URL}/api/admin/feeds/${FEED_ID}/reparse")
           HTTP_CODE=$(echo "$PODCAST_REPARSE" | tail -n1)
           RESPONSE_BODY=$(echo "$PODCAST_REPARSE" | sed '$d')
           if [ "$HTTP_CODE" -eq 200 ]; then
@@ -82,7 +82,7 @@ jobs:
         echo ""
         echo "📋 Step 2c: Fixing stale VTS data..."
 
-        VTS_FIX_RESPONSE=$(curl -s -X POST -w "\n%{http_code}" "${BASE_URL}/api/admin/fix-stale-vts") || VTS_FIX_RESPONSE=$'\n000'
+        VTS_FIX_RESPONSE=$(curl -s -X POST -w "\n%{http_code}" -H "$AUTH_HEADER" "${BASE_URL}/api/admin/fix-stale-vts") || VTS_FIX_RESPONSE=$'\n000'
         HTTP_CODE=$(echo "$VTS_FIX_RESPONSE" | tail -n1)
         RESPONSE_BODY=$(echo "$VTS_FIX_RESPONSE" | sed '$d')
 
@@ -101,7 +101,7 @@ jobs:
 
         for PLAYLIST in "${PLAYLISTS[@]}"; do
           echo "  🔄 Refreshing $PLAYLIST playlist..."
-          curl -s "${BASE_URL}/api/playlist/${PLAYLIST}?refresh=true" > /dev/null
+          curl -s -H "$AUTH_HEADER" "${BASE_URL}/api/playlist/${PLAYLIST}?refresh=true" > /dev/null
 
           if [ $? -eq 0 ]; then
             echo "  ✓ $PLAYLIST refreshed"
@@ -129,7 +129,7 @@ jobs:
           ITERATION=$((ITERATION + 1))
           echo "  🔄 Parse iteration $ITERATION/$MAX_ITERATIONS..."
 
-          PARSE_RESPONSE=$(curl -s -X POST -w "\n%{http_code}" "${BASE_URL}/api/playlist/parse-feeds")
+          PARSE_RESPONSE=$(curl -s -X POST -w "\n%{http_code}" -H "$AUTH_HEADER" "${BASE_URL}/api/playlist/parse-feeds")
           HTTP_CODE=$(echo "$PARSE_RESPONSE" | tail -n1)
           RESPONSE_BODY=$(echo "$PARSE_RESPONSE" | sed '$d')
 
@@ -158,7 +158,7 @@ jobs:
         echo ""
         echo "📋 Step 5: Parsing publisher feeds to update album relationships..."
 
-        PUBLISHER_RESPONSE=$(curl -s -X POST -w "\n%{http_code}" "${BASE_URL}/api/parse-feeds?action=parse-publishers") || PUBLISHER_RESPONSE=$'\n000'
+        PUBLISHER_RESPONSE=$(curl -s -X POST -w "\n%{http_code}" -H "$AUTH_HEADER" "${BASE_URL}/api/parse-feeds?action=parse-publishers") || PUBLISHER_RESPONSE=$'\n000'
         HTTP_CODE=$(echo "$PUBLISHER_RESPONSE" | tail -n1)
         RESPONSE_BODY=$(echo "$PUBLISHER_RESPONSE" | sed '$d')
 
@@ -174,7 +174,7 @@ jobs:
         echo ""
         echo "📋 Step 5b: Importing missing albums from publisher feeds..."
 
-        IMPORT_RESPONSE=$(curl -s -X POST -w "\n%{http_code}" "${BASE_URL}/api/admin/publishers/import-albums") || IMPORT_RESPONSE=$'\n000'
+        IMPORT_RESPONSE=$(curl -s -X POST -w "\n%{http_code}" -H "$AUTH_HEADER" "${BASE_URL}/api/admin/publishers/import-albums") || IMPORT_RESPONSE=$'\n000'
         HTTP_CODE=$(echo "$IMPORT_RESPONSE" | tail -n1)
         RESPONSE_BODY=$(echo "$IMPORT_RESPONSE" | sed '$d')
 
@@ -195,7 +195,7 @@ jobs:
             while IFS= read -r FEED_ID; do
               [ -z "$FEED_ID" ] && continue
               echo "  🔄 Reparsing $FEED_ID..."
-              REPARSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "${BASE_URL}/api/admin/feeds/${FEED_ID}/reparse") || REPARSE_CODE=000
+              REPARSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H "$AUTH_HEADER" "${BASE_URL}/api/admin/feeds/${FEED_ID}/reparse") || REPARSE_CODE=000
               if [ "$REPARSE_CODE" -eq 200 ]; then
                 echo "  ✓ $FEED_ID reparsed"
               else
@@ -216,7 +216,7 @@ jobs:
 
         for PLAYLIST in "${PLAYLISTS[@]}"; do
           echo "  🔄 Final refresh $PLAYLIST..."
-          curl -s "${BASE_URL}/api/playlist/${PLAYLIST}?refresh=true" > /dev/null
+          curl -s -H "$AUTH_HEADER" "${BASE_URL}/api/playlist/${PLAYLIST}?refresh=true" > /dev/null
 
           if [ $? -eq 0 ]; then
             echo "  ✓ $PLAYLIST updated with new tracks"
@@ -234,4 +234,6 @@ jobs:
         echo "✨ Playlist refresh workflow completed"
       env:
         BASE_URL: ${{ secrets.PLAYLIST_BASE_URL || 'https://stablekraft.app' }}
+        # Harmless while ADMIN_SECRET is unset on the server (fail-open).
+        AUTH_HEADER: "Authorization: Bearer ${{ secrets.ADMIN_SECRET }}"
 

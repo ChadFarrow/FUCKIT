@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { parseChaptersJSON } from '@/lib/rss-parser-db';
+import { isSafePublicUrl } from '@/lib/url-security';
 
 /**
  * GET /api/chapters?url=<chaptersUrl>
@@ -84,35 +85,12 @@ async function fetchAndParse(url: string) {
   }
 }
 
-// URL validation + SSRF protection. Returns the validated URL string on success
-// or `{ error }` on rejection.
+// URL validation + SSRF protection (https-only). Returns the validated URL
+// string on success or `{ error }` on rejection.
 function validateChaptersUrl(url: string): { url: string } | { error: string } {
-  let parsed: URL;
-  try {
-    parsed = new URL(url);
-  } catch {
-    return { error: 'Invalid URL' };
+  const result = isSafePublicUrl(url);
+  if (!result.ok) {
+    return { error: result.error };
   }
-
-  if (parsed.protocol !== 'https:') {
-    return { error: 'Only HTTPS URLs are allowed' };
-  }
-
-  const hostname = parsed.hostname.toLowerCase();
-  if (
-    hostname === 'localhost' ||
-    hostname === '[::1]' ||
-    hostname.endsWith('.local') ||
-    hostname.endsWith('.internal') ||
-    /^127\./.test(hostname) ||
-    /^10\./.test(hostname) ||
-    /^192\.168\./.test(hostname) ||
-    /^172\.(1[6-9]|2\d|3[01])\./.test(hostname) ||
-    /^169\.254\./.test(hostname) ||
-    hostname === '0.0.0.0'
-  ) {
-    return { error: 'Private URLs are not allowed' };
-  }
-
-  return { url: parsed.toString() };
+  return { url: result.url.toString() };
 }

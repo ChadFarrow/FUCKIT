@@ -781,7 +781,7 @@ function HomePageContent() {
         }
 
         try {
-          const response = await fetch('/api/playlists-fast');
+          const response = await fetch('/api/playlists-fast', { signal: AbortSignal.timeout(15000) });
           
           if (response.ok) {
             const data = await response.json();
@@ -796,19 +796,22 @@ function HomePageContent() {
           console.warn('⚠️ Fast playlist endpoint failed, falling back to individual APIs');
           
           // Fallback to individual playlist APIs if fast endpoint fails
+          // 15s timeout per playlist so one unreachable upstream can't hang the
+          // whole fallback; a timeout rejects that entry in allSettled.
+          const playlistFetch = (path: string) => fetch(path, { signal: AbortSignal.timeout(15000) });
           const [upbeatsResponse, b4tsResponse, itdvResponse, hghResponse, iamResponse, mmmResponse, mmtResponse, sasResponse, flowgnarResponse, ltResponse, tftResponse, greatestHitsResponse] = await Promise.allSettled([
-            fetch('/api/playlist/upbeats'),
-            fetch('/api/playlist/b4ts'),
-            fetch('/api/playlist/itdv'),
-            fetch('/api/playlist/hgh'),
-            fetch('/api/playlist/iam'),
-            fetch('/api/playlist/mmm'),
-            fetch('/api/playlist/mmt'),
-            fetch('/api/playlist/sas'),
-            fetch('/api/playlist/flowgnar'),
-            fetch('/api/playlist/lt'),
-            fetch('/api/playlist/tft'),
-            fetch('/api/playlist/greatest-hits')
+            playlistFetch('/api/playlist/upbeats'),
+            playlistFetch('/api/playlist/b4ts'),
+            playlistFetch('/api/playlist/itdv'),
+            playlistFetch('/api/playlist/hgh'),
+            playlistFetch('/api/playlist/iam'),
+            playlistFetch('/api/playlist/mmm'),
+            playlistFetch('/api/playlist/mmt'),
+            playlistFetch('/api/playlist/sas'),
+            playlistFetch('/api/playlist/flowgnar'),
+            playlistFetch('/api/playlist/lt'),
+            playlistFetch('/api/playlist/tft'),
+            playlistFetch('/api/playlist/greatest-hits')
           ]);
 
           const allAlbums: any[] = [];

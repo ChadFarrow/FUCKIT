@@ -126,6 +126,7 @@ model Feed {
   @@index([status, priority, createdAt])
   @@index([status, priority])
   @@index([status, type])
+  @@index([status, type, createdAt])
   @@index([type])
   @@index([lastNewTrackAt])
 }

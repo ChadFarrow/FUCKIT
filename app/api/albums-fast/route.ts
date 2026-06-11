@@ -13,6 +13,38 @@ import {
 
 const cache = getAlbumsFastCache();
 
+// publisher-stats.json is baked into the build (public/), so parse it once per
+// process instead of hitting the filesystem on every DB-cache miss.
+let publisherStatsCache: any[] | null = null;
+
+function loadPublisherStats(): any[] {
+  if (publisherStatsCache !== null) {
+    return publisherStatsCache;
+  }
+  let stats: any[] = [];
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    const publisherDataPath = path.join(process.cwd(), 'public', 'publisher-stats.json');
+
+    if (fs.existsSync(publisherDataPath)) {
+      const publisherData = JSON.parse(fs.readFileSync(publisherDataPath, 'utf8'));
+      stats = publisherData.publishers || [];
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`📊 Loaded ${stats.length} publisher feeds from publisher-stats.json`);
+      }
+    } else if (process.env.NODE_ENV === 'development') {
+      console.log('⚠️ No publisher-stats.json found, using empty publisher stats');
+    }
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('❌ Error loading publisher stats:', error);
+    }
+  }
+  publisherStatsCache = stats;
+  return stats;
+}
+
 // Function to get playlist albums
 async function getPlaylistAlbums() {
   try {
@@ -198,29 +230,7 @@ export async function GET(request: Request) {
       
       // Load publisher stats from the pre-built publisher data file
       // This contains actual publisher feeds (podcast:publisher references) not individual albums
-      try {
-        const fs = require('fs');
-        const path = require('path');
-        const publisherDataPath = path.join(process.cwd(), 'public', 'publisher-stats.json');
-        
-        if (fs.existsSync(publisherDataPath)) {
-          const publisherData = JSON.parse(fs.readFileSync(publisherDataPath, 'utf8'));
-          publisherStats = publisherData.publishers || [];
-          if (process.env.NODE_ENV === 'development') {
-            console.log(`📊 Loaded ${publisherStats.length} publisher feeds from publisher-stats.json`);
-          }
-        } else {
-          if (process.env.NODE_ENV === 'development') {
-            console.log('⚠️ No publisher-stats.json found, using empty publisher stats');
-          }
-          publisherStats = [];
-        }
-      } catch (error) {
-        if (process.env.NODE_ENV === 'development') {
-          console.error('❌ Error loading publisher stats:', error);
-        }
-        publisherStats = [];
-      }
+      publisherStats = loadPublisherStats();
       
       // Cache the results only for 'all' filter with no pagination (first page)
       // This provides fast cache hits for common initial load
