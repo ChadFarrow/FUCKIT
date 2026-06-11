@@ -230,6 +230,9 @@ export async function GET(request: NextRequest) {
             Track: {
               take: 1,
               orderBy: { trackOrder: 'asc' }
+            },
+            _count: {
+              select: { Track: true }
             }
           },
           take: limit,
@@ -260,28 +263,20 @@ export async function GET(request: NextRequest) {
           return !isBowlAfterBowlPodcast;
         });
 
-        const albumsWithCounts = await Promise.all(
-          filteredAlbums.map(async (album) => {
-            const trackCount = await prisma.track.count({
-              where: { feedId: album.id }
-            });
-
-            return {
-              id: album.id,
-              title: album.title,
-              artist: album.artist,
-              description: album.description,
-              coverArt: album.image,
-              type: album.type,
-              totalTracks: trackCount,
-              feedUrl: album.originalUrl,
-              feedGuid: album.id,
-              v4vRecipient: album.v4vRecipient,
-              v4vValue: album.v4vValue,
-              updatedAt: album.updatedAt
-            };
-          })
-        );
+        const albumsWithCounts = filteredAlbums.map((album) => ({
+          id: album.id,
+          title: album.title,
+          artist: album.artist,
+          description: album.description,
+          coverArt: album.image,
+          type: album.type,
+          totalTracks: album._count.Track,
+          feedUrl: album.originalUrl,
+          feedGuid: album.id,
+          v4vRecipient: album.v4vRecipient,
+          v4vValue: album.v4vValue,
+          updatedAt: album.updatedAt
+        }));
 
         results.albums = albumsWithCounts;
       }
