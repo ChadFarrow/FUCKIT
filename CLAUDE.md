@@ -39,7 +39,7 @@ Runs at 4 AM EST: clears cache → reparses feeds → refreshes playlists → pa
 ### Podping Consumer Integration
 External service `msp-podping-service` (repo `ChadFarrow/msp-podping-service`) tails Hive for `pp_music_*` / `pp_podcast_*` podpings. For each ping the consumer (`consumer/src/index.ts:handleIri`) calls `/api/feeds/exists`; if it exists, calls `/api/feeds/refresh-by-url` **regardless of signer**. Only `/api/feeds` (new-feed minting) is gated to signer=`chadf` via `fromMsp` check in the consumer.
 
-Four public endpoints (none auth-gated server-side; auth is client-side in the consumer):
+Four public endpoints (intentionally exempt from the `ADMIN_SECRET` middleware gate — see Admin API Auth below; consumer-side auth only). `refresh-by-url` is rate-limited 30 req/min/IP (in-memory, per Railway instance):
 - `GET /api/feeds/exists?url=<URL>` or `?guid=<GUID>` → `{ exists: boolean }`. Blacklisted URLs always return `false` (reuses `isBlacklistedFeedUrl()` from `lib/feed-exclusions.ts`). URL lookup tries normalized + raw variants; on miss, falls back to `extractUuidFromUrl()` → `Feed.guid`/`Feed.id` lookup. **Keep this fallback** — without it, Podhome podpings for UpBeats (broadcasts `serve.podhome.fm/rss/<uuid>` while DB stores `feeds.rssblue.com/upbeats`) silently no-op. Keep matching logic in sync with `refresh-by-url` — divergence caused the Podhome/UpBeats silent-skip bug.
 - `POST /api/feeds/refresh-by-url` with `{ originalUrl }` — same lookup pattern (URL variants → uuid-from-URL fallback). **Does NOT mint new feeds** unless caller passes explicit `feedId` in body (guards against rogue unauthed POSTs creating garbage rows). Must stay fast + idempotent. Current `feedId` callers: LNURL and Podtards test-feed buttons in `AdminPanel.tsx`.
 - `POST /api/feeds` with `{ originalUrl, type: 'album' }` — **consumer-gated to signer=`chadf`** (only our MSP can mint new feed records). Stranger podpings drop at the consumer's `!exists && fromMsp` branch. Server-side has no auth.
@@ -48,6 +48,18 @@ Four public endpoints (none auth-gated server-side; auth is client-side in the c
 When modifying these endpoints, check consumer expectations in `msp-podping-service/consumer/src/index.ts` — if adding auth, wire a shared-secret env var into the consumer too.
 
 **Host latency summary:** Fountain ≈ real-time via podping; Wavlake + self-hosted music sites = nightly 4 AM reparse only. Full per-host table and HafSQL provenance in `reference_podping_host_coverage.md` memory.
+
+### Admin API Auth (`ADMIN_SECRET`, since PR #153)
+`middleware.ts` + `lib/admin-auth.ts` enforce a bearer secret on destructive/expensive endpoints: all `/api/admin/*` **except** `/api/admin/verify` (npub-whitelist login check — must stay open or AdminPanel login breaks), `PUT`/`DELETE /api/feeds`, `DELETE /api/tracks`, `/api/parse-feeds`, `/api/playlist-cache`, `/api/playlist/parse-feeds(-stream)`, and `GET /api/playlist/<name>?refresh=true` (plain playlist GETs stay public — the gate is the query param). The four podping-consumer endpoints above are never gated.
+
+- **Ad-hoc curl to any gated endpoint needs `-H "Authorization: Bearer $ADMIN_SECRET"`** — including the documented duplicate-fix (`DELETE /api/feeds?id=`) and stale-track (`DELETE /api/tracks?id=`) flows.
+- **Fail-open by design**: if the `ADMIN_SECRET` env var is unset, auth passes with a warn log (deploys can't lock out crons before secrets exist). Do **not** "fix" this to fail-closed without coordinating all three secret locations.
+- **Secret lives in three places** — Railway env (enforcement), GitHub Actions secret (workflows send it via `AUTH_HEADER` env in both refresh workflows), browser `localStorage['admin_secret']` (AdminPanel routes gated calls through `adminFetch` in `lib/admin-fetch.ts`, which prompts on first 401). Rotate = update all three.
+- When adding an admin route, the `/api/admin/:path*` matcher covers it automatically. When adding a *non-admin* gated path, update both `requiresAdminAuth()` **and** the `matcher` array in `middleware.ts` — a path missing from the matcher silently bypasses auth.
+- The radio-subdomain rewrite in `middleware.ts` is gated on `!pathname.startsWith('/api/')` — keep it that way.
+
+### SSRF Guard (`lib/url-security.ts`)
+`isSafePublicUrl(url, { allowHttp? })` rejects private/internal hosts (localhost, RFC-1918, link-local, `.local`/`.internal`). Used by `/api/chapters` (https-only), `/api/proxy-image` (returns placeholder on rejection — never break Next Image), and `/api/proxy-audio` (400). Any new endpoint that fetches a caller-supplied URL must use it. Known limit: string check only, no DNS-rebinding defense.
 
 ### Targeted Podcast Reparse (`.github/workflows/refresh-podcasts-targeted.yml`)
 Every 30 min from 11:00–13:59 UTC on Sundays (UpBeats) and Tuesdays (Two For Tunestr) — the observed publish windows (7 AM Eastern year-round, UTC shifts ±1h on DST). Belt-and-suspenders safety net for consumer outages or Podhome emission gaps; catches new episodes within ~30 min of publish. Day-of-week check inside the workflow means off-day cron ticks early-exit at zero cost. When adding a curated podcast with a predictable publish schedule, update both this file's `PODCAST_FEEDS` array (and day switch if a new weekday) **and** `refresh-playlists.yml` Step 2b.
