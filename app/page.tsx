@@ -157,7 +157,7 @@ function HomePageContent() {
   // Format-aware loading state (for "all" filter - load all albums before EPs)
   const [formatCounts, setFormatCounts] = useState<{ albums: number; eps: number; singles: number } | null>(null);
   const [currentFormatPhase, setCurrentFormatPhase] = useState<'albums' | 'eps' | 'singles'>('albums');
-  const API_VERSION = 'v14'; // v14: /api/feeds/recent now sorts by max(createdAt, lastNewTrackAt); bump clears stale clients caching the old createdAt-only order
+  const API_VERSION = 'v15'; // v15: albums-fast now includes podcastImages (Podcasting 2.0 <podcast:image>) on feeds and tracks
   
   // HGH filter removed - no longer needed
   

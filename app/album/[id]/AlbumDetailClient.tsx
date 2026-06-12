@@ -7,6 +7,7 @@ import { useSearchParams } from 'next/navigation';
 import { Play, Pause, SkipBack, SkipForward, Volume2, Video } from 'lucide-react';
 import { RSSAlbum } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
+import { pickCanvasBackground } from '@/lib/podcast-images';
 import { generateAlbumUrl, generateAlbumSlug, generatePublisherSlug, generatePublisherUrl, getPublisherInfo } from '@/lib/url-utils';
 import { useAudio } from '@/contexts/AudioContext';
 import { useScrollDetectionContext } from '@/components/ScrollDetectionProvider';
@@ -156,20 +157,22 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
         if (response.ok) {
           const data = await response.json();
           const foundAlbum = data.album;
-          
-          if (foundAlbum?.coverArt) {
-            console.log('🎨 Preloading background image for desktop:', foundAlbum.coverArt);
+          // Desktop preload: prefer the 16:9 <podcast:image> canvas, else album cover art.
+          const bgSource = (foundAlbum && (pickCanvasBackground(foundAlbum.podcastImages, 'landscape') || foundAlbum.coverArt)) || null;
+
+          if (bgSource) {
+            console.log('🎨 Preloading background image for desktop:', bgSource);
             
             // Add cache-busting parameter to prevent stale cache issues
             const cacheBuster = Date.now();
-            const imageUrlWithCacheBuster = (typeof foundAlbum.coverArt === 'string' && foundAlbum.coverArt.includes('?')) 
-              ? `${foundAlbum.coverArt}&cb=${cacheBuster}`
-              : `${foundAlbum.coverArt}?cb=${cacheBuster}`;
+            const imageUrlWithCacheBuster = (typeof bgSource === 'string' && bgSource.includes('?')) 
+              ? `${bgSource}&cb=${cacheBuster}`
+              : `${bgSource}?cb=${cacheBuster}`;
             
             // Preload the image
             const img = new window.Image();
             img.onload = () => {
-              console.log('✅ Background image preloaded successfully:', foundAlbum.coverArt);
+              console.log('✅ Background image preloaded successfully:', bgSource);
               setBackgroundImage(imageUrlWithCacheBuster);
               setBackgroundLoaded(true);
             };
@@ -177,15 +180,15 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
               // Only log if it's not a CORS/OpaqueResponseBlocking error (expected for some external images)
               const isCorsError = typeof error !== 'string' && error?.target && (error.target as HTMLImageElement).complete === false;
               if (!isCorsError) {
-                console.warn('⚠️ Background image preload failed, trying fallback:', foundAlbum.coverArt);
+                console.warn('⚠️ Background image preload failed, trying fallback:', bgSource);
               }
               
               // Try image proxy for external URLs (but never for data URLs)
-              if (foundAlbum.coverArt && 
-                  typeof foundAlbum.coverArt === 'string' && 
-                  !foundAlbum.coverArt.includes('stablekraft.app') &&
-                  !foundAlbum.coverArt.startsWith('data:')) {
-                const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(foundAlbum.coverArt)}`;
+              if (bgSource && 
+                  typeof bgSource === 'string' && 
+                  !bgSource.includes('stablekraft.app') &&
+                  !bgSource.startsWith('data:')) {
+                const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(bgSource)}`;
                 console.log('🔄 Trying image proxy for background:', proxyUrl);
                 
                 const proxyImg = new window.Image();
@@ -199,8 +202,8 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                   // Final fallback - try original URL without cache buster
                   const fallbackImg = new window.Image();
                   fallbackImg.onload = () => {
-                    console.log('✅ Background image preloaded with fallback URL:', foundAlbum.coverArt);
-                    setBackgroundImage(foundAlbum.coverArt || null);
+                    console.log('✅ Background image preloaded with fallback URL:', bgSource);
+                    setBackgroundImage(bgSource || null);
                     setBackgroundLoaded(true);
                   };
                   fallbackImg.onerror = (fallbackError) => {
@@ -209,7 +212,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                     setBackgroundLoaded(true);
                   };
                   fallbackImg.decoding = 'async';
-                  fallbackImg.src = foundAlbum.coverArt;
+                  fallbackImg.src = bgSource;
                 };
                 proxyImg.decoding = 'async';
                 proxyImg.src = proxyUrl;
@@ -217,8 +220,8 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                 // For internal URLs, try without cache buster as fallback
                 const fallbackImg = new window.Image();
                 fallbackImg.onload = () => {
-                  console.log('✅ Background image preloaded with fallback URL:', foundAlbum.coverArt);
-                  setBackgroundImage(foundAlbum.coverArt || null);
+                  console.log('✅ Background image preloaded with fallback URL:', bgSource);
+                  setBackgroundImage(bgSource || null);
                   setBackgroundLoaded(true);
                 };
                 fallbackImg.onerror = (fallbackError) => {
@@ -227,7 +230,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                   setBackgroundLoaded(true);
                 };
                 fallbackImg.decoding = 'async';
-                fallbackImg.src = foundAlbum.coverArt;
+                fallbackImg.src = bgSource;
               }
             };
             
@@ -473,11 +476,17 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
     setBackgroundLoaded(false);
     setAlbumArtLoaded(false);
     
-    // Simple background image loading without complex fallbacks
+    // Prefer a Podcasting 2.0 <podcast:image> canvas background sized for the current
+    // viewport (16:9 on desktop, 9:16 on mobile); fall back to the album cover art.
     if (album?.coverArt) {
-      console.log('🖼️ Loading background image:', album?.coverArt);
+      const canvasBg = pickCanvasBackground(
+        (album as any).podcastImages,
+        isDesktop ? 'landscape' : 'portrait'
+      );
+      const bgUrl = canvasBg || album.coverArt;
+      console.log('🖼️ Loading background image:', bgUrl, canvasBg ? '(podcast:image canvas)' : '(album art)');
       console.log('🖼️ Album found:', album.title);
-      setBackgroundImage(album.coverArt);
+      setBackgroundImage(bgUrl);
       setBackgroundLoaded(true);
     } else {
       console.log('🚫 No cover art available, using gradient background');
@@ -488,7 +497,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
       setBackgroundImage(null);
       setBackgroundLoaded(true);
     }
-  }, [album?.coverArt, isLoading]); // Simplified dependencies to prevent infinite loop
+  }, [album?.coverArt, (album as any)?.podcastImages, isDesktop, isLoading]); // re-pick canvas on viewport orientation change
 
   // Optimized background style calculation - memoized to prevent repeated logs
   const backgroundStyle = useMemo(() => {

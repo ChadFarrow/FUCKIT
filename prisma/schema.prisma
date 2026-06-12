@@ -110,6 +110,7 @@ model Feed {
   podcastCategories   String[]  @default([])
   oldestItemPubdate   DateTime?
   persons             Json?
+  podcastImages       Json?
   musicShowOnly       Boolean   @default(false)
   lastNewTrackAt      DateTime?
   Feed              Feed?     @relation("FeedToFeed", fields: [publisherId], references: [id])
@@ -243,6 +244,7 @@ model Track {
   chapters            Json?
   valueTimeSplits     Json?
   persons             Json?
+  podcastImages       Json?
   SystemPlaylistTrack SystemPlaylistTrack[]
   Feed                Feed                  @relation(fields: [feedId], references: [id], onDelete: Cascade)
 

@@ -65,6 +65,7 @@ export async function POST(
           podcastCategories: parsedFeed.podcastCategories || [],
           explicit: parsedFeed.explicit,
           ...(parsedFeed.podcastGuid && { guid: parsedFeed.podcastGuid }),
+          ...(parsedFeed.podcastImages && { podcastImages: parsedFeed.podcastImages as any }),
           lastFetched: new Date(),
           status: 'active',
           lastError: null,
