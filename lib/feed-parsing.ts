@@ -9,7 +9,7 @@ import crypto from 'crypto';
 import { prisma } from '@/lib/prisma';
 import { ValueTagParser } from '@/lib/lightning/value-parser';
 import { isValidFeedUrl, normalizeUrl } from '@/lib/url-utils';
-import { calculateTrackOrder, parsePodcastGuidFromXML, fetchChapters, parseChannelPersonsFromXML } from '@/lib/rss-parser-db';
+import { calculateTrackOrder, parsePodcastGuidFromXML, fetchChapters, parseChannelPersonsFromXML, parseChannelPodcastImagesFromXML, pickSquareArtwork } from '@/lib/rss-parser-db';
 import { decodeHtmlEntities } from '@/lib/decode-entities';
 
 const PODCAST_INDEX_API_KEY = process.env.PODCAST_INDEX_API_KEY;
@@ -255,6 +255,15 @@ export async function importFeedToDatabase(feedData: any, episodes: ParsedEpisod
       console.log(`👥 Found ${channelPersons.length} channel-level person(s) for feed ${feedId}`);
     }
 
+    // Parse channel-level <podcast:image> tags (Podcasting 2.0 multi-variant artwork)
+    const channelPodcastImages = xmlText ? parseChannelPodcastImagesFromXML(xmlText) : [];
+    const channelPodcastImagesData = channelPodcastImages.length > 0 ? channelPodcastImages : null;
+    if (channelPodcastImagesData) {
+      console.log(`🖼️ Found ${channelPodcastImages.length} channel-level podcast:image variant(s) for feed ${feedId}`);
+    }
+    // Fall back to a square podcast:image only when no other image source exists.
+    const feedImage = feedData.image || pickSquareArtwork(channelPodcastImagesData) || null;
+
     // Use upsert to atomically create or update feed (prevents race conditions)
     const feed = await prisma.feed.upsert({
       where: { id: feedId },
@@ -265,7 +274,7 @@ export async function importFeedToDatabase(feedData: any, episodes: ParsedEpisod
         originalUrl: normalizedFeedUrl,
         type: feedData.type === 1 ? 'music' : 'podcast',
         artist: feedData.author || null,
-        image: feedData.image || null,
+        image: feedImage,
         language: feedData.language || null,
         category: feedData.categories ? Object.keys(feedData.categories)[0] : null,
         explicit: feedData.explicit === 1,
@@ -276,7 +285,8 @@ export async function importFeedToDatabase(feedData: any, episodes: ParsedEpisod
         ...(feedV4vData && { v4vValue: feedV4vData }),
         ...(feedV4vRecipient && { v4vRecipient: feedV4vRecipient }),
         ...(podcastGuid && { guid: podcastGuid }),
-        ...(channelPersonsData && { persons: channelPersonsData })
+        ...(channelPersonsData && { persons: channelPersonsData }),
+        ...(channelPodcastImagesData && { podcastImages: channelPodcastImagesData })
       },
       update: {
         // Update existing feed metadata
@@ -293,7 +303,8 @@ export async function importFeedToDatabase(feedData: any, episodes: ParsedEpisod
         ...(feedV4vData && { v4vValue: feedV4vData }),
         ...(feedV4vRecipient && { v4vRecipient: feedV4vRecipient }),
         ...(podcastGuid && { guid: podcastGuid }),
-        ...(channelPersonsData && { persons: channelPersonsData })
+        ...(channelPersonsData && { persons: channelPersonsData }),
+        ...(channelPodcastImagesData && { podcastImages: channelPodcastImagesData })
       }
     });
 

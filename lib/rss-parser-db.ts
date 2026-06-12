@@ -1,6 +1,12 @@
 import Parser from 'rss-parser';
 import { XMLParser } from 'fast-xml-parser';
 import { validateDuration } from './duration-validation';
+import { PodcastImage, pickSquareArtwork, pickCanvasBackground } from './podcast-images';
+
+// Re-export so existing import sites (e.g. lib/feed-parsing.ts) keep resolving these
+// from rss-parser-db; the canonical, dependency-free home is lib/podcast-images.ts.
+export type { PodcastImage };
+export { pickSquareArtwork, pickCanvasBackground };
 
 interface CustomFeed {
   title?: string;
@@ -93,6 +99,7 @@ export interface ParsedFeed {
   podcastGuid?: string;
   medium?: string;
   items: ParsedItem[];
+  podcastImages?: PodcastImage[];
   v4vRecipient?: string;
   v4vValue?: any;
   publisherFeed?: {
@@ -144,6 +151,7 @@ export interface ParsedItem {
   chapters?: Array<{ title: string; startTime: number; endTime?: number; img?: string }>;
   valueTimeSplits?: Array<{ startTime: number; duration: number; remotePercentage: number; remoteItem?: { feedGuid: string; itemGuid: string; medium?: string } }>;
   persons?: ParsedPerson[];
+  podcastImages?: PodcastImage[];
 }
 
 export interface ParsedPerson {
@@ -233,6 +241,7 @@ export function applyParsedItemFields(updateData: any, matchedItem: ParsedItem |
   if (matchedItem.chapters) updateData.chapters = matchedItem.chapters;
   if (matchedItem.valueTimeSplits) updateData.valueTimeSplits = matchedItem.valueTimeSplits;
   if (matchedItem.persons && matchedItem.persons.length > 0) updateData.persons = matchedItem.persons;
+  if (matchedItem.podcastImages && matchedItem.podcastImages.length > 0) updateData.podcastImages = matchedItem.podcastImages;
 }
 
 // NIP-19 bech32 npub format: 63 chars total, lowercase letters + numbers minus 1/b/i/o
@@ -303,6 +312,60 @@ export function parseChannelPersonsFromXML(xmlText: string): ParsedPerson[] {
     const channelMatch = xmlText.match(/<channel[^>]*>([\s\S]*?)(?=<item\b|<\/channel>)/i);
     if (!channelMatch) return [];
     return parsePersonsFromBlock(channelMatch[1] || '');
+  } catch {
+    return [];
+  }
+}
+
+// Extract <podcast:image> entries from any XML block (item or channel scope).
+function parsePodcastImagesFromBlock(xmlBlock: string): PodcastImage[] {
+  const images: PodcastImage[] = [];
+  // Matches both self-closing (`<podcast:image …/>`) and open/close forms
+  const regex = /<podcast:image\b([^>]*?)(?:\/>|>[\s\S]*?<\/podcast:image>)/gi;
+  let match;
+  while ((match = regex.exec(xmlBlock)) !== null) {
+    const attrs = parsePersonAttrs(match[1] || '');
+    if (!attrs.href) continue; // href is required per spec
+    const image: PodcastImage = { href: attrs.href };
+    if (attrs.alt) image.alt = attrs.alt;
+    if (attrs['aspect-ratio']) image.aspectRatio = attrs['aspect-ratio'];
+    if (attrs.type) image.type = attrs.type;
+    if (attrs.purpose) image.purpose = attrs.purpose;
+    const width = parseInt(attrs.width, 10);
+    if (Number.isFinite(width)) image.width = width;
+    const height = parseInt(attrs.height, 10);
+    if (Number.isFinite(height)) image.height = height;
+    images.push(image);
+  }
+  return images;
+}
+
+export function parseItemPodcastImagesFromXML(xmlText: string, itemTitle: string): PodcastImage[] {
+  try {
+    const itemRegex = /<item[^>]*>([\s\S]*?)<\/item>/g;
+    const items: string[] = [];
+    let itemMatch;
+    while ((itemMatch = itemRegex.exec(xmlText)) !== null) items.push(itemMatch[0]);
+
+    const xmlEncodedTitle = itemTitle.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const escapedTitle = itemTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const escapedXmlTitle = xmlEncodedTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const titleRegex = new RegExp(`<title>(<!\\[CDATA\\[)?${escapedTitle}(\\]\\]>)?</title>`, 'i');
+    const xmlTitleRegex = new RegExp(`<title>(<!\\[CDATA\\[)?${escapedXmlTitle}(\\]\\]>)?</title>`, 'i');
+    const itemContent = items.find(item => titleRegex.test(item) || xmlTitleRegex.test(item));
+    if (!itemContent) return [];
+    return parsePodcastImagesFromBlock(itemContent);
+  } catch {
+    return [];
+  }
+}
+
+export function parseChannelPodcastImagesFromXML(xmlText: string): PodcastImage[] {
+  try {
+    // Channel block = from opening <channel> up to first <item> (or </channel>)
+    const channelMatch = xmlText.match(/<channel[^>]*>([\s\S]*?)(?=<item\b|<\/channel>)/i);
+    if (!channelMatch) return [];
+    return parsePodcastImagesFromBlock(channelMatch[1] || '');
   } catch {
     return [];
   }
@@ -1009,6 +1072,9 @@ export async function parseRSSFeed(feedUrl: string): Promise<ParsedFeed> {
     // Extract podcast:publisher remoteItem from channel level
     const publisherFeed = parsePublisherFeedFromXML(xmlText);
 
+    // Extract channel-level <podcast:image> variants (Podcasting 2.0 multi-variant artwork)
+    const channelPodcastImages = parseChannelPodcastImagesFromXML(xmlText);
+
     // Now parse with the RSS parser
     // Since rss-parser doesn't support parseString in Node.js, we'll use parseURL
     // The XML typo fix above helps, but parseURL will fetch again
@@ -1136,6 +1202,12 @@ export async function parseRSSFeed(feedUrl: string): Promise<ParsedFeed> {
         const itemPersons = parseItemPersonsFromXML(xmlText, item.title || '');
         if (itemPersons.length > 0) {
           parsedItem.persons = itemPersons;
+        }
+
+        // Parse <podcast:image> tags at item level
+        const itemPodcastImages = parseItemPodcastImagesFromXML(xmlText, item.title || '');
+        if (itemPodcastImages.length > 0) {
+          parsedItem.podcastImages = itemPodcastImages;
         }
 
         if (itemV4vData.recipient) {
@@ -1383,6 +1455,7 @@ export async function parseRSSFeed(feedUrl: string): Promise<ParsedFeed> {
       podcastGuid: podcastGuid || undefined,
       medium: podcastMedium || undefined,
       items,
+      podcastImages: channelPodcastImages.length > 0 ? channelPodcastImages : undefined,
       v4vRecipient: feedV4vRecipient,
       v4vValue: feedV4vValue,
       publisherFeed: publisherFeed || undefined

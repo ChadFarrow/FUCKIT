@@ -175,6 +175,7 @@ export async function GET(request: Request) {
             v4vRecipient: true,
             v4vValue: true,
             persons: true,
+            podcastImages: true,
             Track: {
               where: {
                 audioUrl: { not: '' },
@@ -199,6 +200,7 @@ export async function GET(request: Request) {
                 chapters: true,
                 valueTimeSplits: true,
                 persons: true,
+                podcastImages: true,
               },
               orderBy: [
                 { trackOrder: 'asc' },
@@ -303,11 +305,13 @@ export async function GET(request: Request) {
           chapters: (track as any).chapters || undefined,
           valueTimeSplits: (track as any).valueTimeSplits || undefined,
           persons: (track as any).persons || undefined,
+          podcastImages: (track as any).podcastImages || undefined,
         })),
       // Include V4V payment data from feed (preferred) or first track (fallback)
       v4vRecipient: feed.v4vRecipient || feed.Track?.[0]?.v4vRecipient || null,
       v4vValue: feed.v4vValue || feed.Track?.[0]?.v4vValue || null,
       persons: (feed as any).persons || undefined,
+      podcastImages: (feed as any).podcastImages || undefined,
       // Actual track count from database (tracks array may be limited)
       trackCount: feed._count.Track
     }));
@@ -464,6 +468,7 @@ export async function GET(request: Request) {
               v4vRecipient: true,
               v4vValue: true,
               persons: true,
+              podcastImages: true,
               Track: {
                 where: { audioUrl: { not: '' }, status: 'active' },
                 select: {
@@ -485,6 +490,7 @@ export async function GET(request: Request) {
                   chapters: true,
                   valueTimeSplits: true,
                   persons: true,
+                  podcastImages: true,
                 },
                 orderBy: [
                   { trackOrder: 'asc' },
@@ -538,12 +544,14 @@ export async function GET(request: Request) {
               chapters: track.chapters || undefined,
               valueTimeSplits: track.valueTimeSplits || undefined,
               persons: (track as any).persons || undefined,
+              podcastImages: (track as any).podcastImages || undefined,
             })),
             totalTracks: feed._count?.Track || feed.Track?.length || 0,
             trackCount: feed._count?.Track || feed.Track?.length || 0,
             v4vRecipient: feed.v4vRecipient,
             v4vValue: feed.v4vValue,
             persons: (feed as any).persons || undefined,
+            podcastImages: (feed as any).podcastImages || undefined,
           };
           });
           break;

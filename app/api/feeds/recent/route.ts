@@ -148,6 +148,7 @@ export async function GET(request: Request) {
         v4vRecipient: true,
         v4vValue: true,
         persons: true,
+        podcastImages: true,
         Track: {
           where: { audioUrl: { not: '' }, status: 'active' },
           select: {
@@ -169,6 +170,7 @@ export async function GET(request: Request) {
             chapters: true,
             valueTimeSplits: true,
             persons: true,
+            podcastImages: true,
           },
           orderBy: [
             { trackOrder: 'asc' },
@@ -221,10 +223,12 @@ export async function GET(request: Request) {
           chapters: track.chapters || undefined,
           valueTimeSplits: track.valueTimeSplits || undefined,
           persons: (track as { persons?: unknown }).persons || undefined,
+          podcastImages: (track as { podcastImages?: unknown }).podcastImages || undefined,
         })),
         v4vRecipient: feed.v4vRecipient || feed.Track?.[0]?.v4vRecipient || null,
         v4vValue: feed.v4vValue || feed.Track?.[0]?.v4vValue || null,
         persons: (feed as { persons?: unknown }).persons || undefined,
+        podcastImages: (feed as { podcastImages?: unknown }).podcastImages || undefined,
         trackCount: feed._count?.Track || 0,
       }));
 
