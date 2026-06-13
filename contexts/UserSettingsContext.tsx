@@ -23,6 +23,7 @@ export interface UserSettings {
 
 interface UserSettingsContextType {
   settings: UserSettings;
+  isLoaded: boolean;
   updateSettings: (updates: Partial<UserSettings>) => void;
   resetSettings: () => void;
 }
@@ -103,6 +104,7 @@ export function UserSettingsProvider({ children }: { children: ReactNode }) {
 
   const value: UserSettingsContextType = {
     settings,
+    isLoaded,
     updateSettings,
     resetSettings,
   };

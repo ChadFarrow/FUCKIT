@@ -1,16 +1,27 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SettingsSection, SettingsRow } from './SettingsLayout';
 import { useUserSettings } from '@/hooks/useUserSettings';
 import { useBitcoinConnect } from '@/components/Lightning/BitcoinConnectProvider';
 
 export default function UserSettings() {
-  const { settings, updateSettings } = useUserSettings();
+  const { settings, isLoaded, updateSettings } = useUserSettings();
   const { isConnected: isWalletConnected } = useBitcoinConnect();
   const [boostAmount, setBoostAmount] = useState(settings.defaultBoostAmount?.toString() || '21');
   const [boostName, setBoostName] = useState(settings.defaultBoostName || '');
   const [autoBoostAmount, setAutoBoostAmount] = useState(settings.autoBoostAmount?.toString() || '50');
+
+  // Sync display state once localStorage has been read — useState initial values
+  // may be captured before the provider's load effect finishes.
+  useEffect(() => {
+    if (isLoaded) {
+      setBoostAmount(settings.defaultBoostAmount?.toString() || '21');
+      setBoostName(settings.defaultBoostName || '');
+      setAutoBoostAmount(settings.autoBoostAmount?.toString() || '50');
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded]);
 
   const handleBoostAmountChange = (value: string) => {
     setBoostAmount(value);
