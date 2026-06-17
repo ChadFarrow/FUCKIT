@@ -733,7 +733,7 @@ export default function PlaylistTemplateCompact({ config }: PlaylistTemplateComp
       backgroundPosition: 'center',
       backgroundAttachment: 'fixed',
       // Add image rendering optimizations for better quality
-      filter: 'blur(0px) contrast(1.05) brightness(0.95)',
+      filter: 'blur(4px) contrast(0.9) brightness(0.95)',
       imageRendering: 'high-quality' as any,
       WebkitBackfaceVisibility: 'hidden' as any,
       transform: 'translateZ(0)' as any,
