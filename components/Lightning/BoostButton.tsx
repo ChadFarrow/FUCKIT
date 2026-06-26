@@ -72,6 +72,7 @@ export function BoostButton({
   const [customAmount, setCustomAmount] = useState('');
   const [message, setMessage] = useState('');
   const [senderName, setSenderName] = useState('');
+  const [postToNostr, setPostToNostr] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -105,6 +106,12 @@ export function BoostButton({
     // Set default boost amount from settings
     if (settings.defaultBoostAmount) {
       setCustomAmount(settings.defaultBoostAmount.toString());
+    }
+
+    // Load persisted "post to Nostr" preference (defaults to on)
+    const savedPostToNostr = localStorage.getItem('boostPostToNostr');
+    if (savedPostToNostr !== null) {
+      setPostToNostr(savedPostToNostr === 'true');
     }
 
     return () => setMounted(false);
@@ -412,7 +419,7 @@ export function BoostButton({
         setNostrStatus('idle');
         let nostrPostingFailed = false;
 
-        if (LIGHTNING_CONFIG.features.nostrIntegration && (trackId || feedId) && isNostrAuthenticated && nostrUser) {
+        if (LIGHTNING_CONFIG.features.nostrIntegration && (trackId || feedId) && isNostrAuthenticated && nostrUser && postToNostr) {
           console.log('✅ Boost: All conditions met, proceeding to post to Nostr...');
           setNostrStatus('connecting');
           try {
@@ -1455,6 +1462,25 @@ export function BoostButton({
                 {message.length}/{LIGHTNING_CONFIG.boostagram.maxLength}
               </p>
             </div>
+
+            {/* Post to Nostr - only when logged into Nostr */}
+            {LIGHTNING_CONFIG.features.nostrIntegration && isNostrAuthenticated && nostrUser && (trackId || feedId) && (
+              <div className="mb-6 flex items-center gap-2">
+                <input
+                  id="postToNostr"
+                  type="checkbox"
+                  checked={postToNostr}
+                  onChange={(e) => {
+                    setPostToNostr(e.target.checked);
+                    localStorage.setItem('boostPostToNostr', String(e.target.checked));
+                  }}
+                  className="h-4 w-4 accent-yellow-500"
+                />
+                <label htmlFor="postToNostr" className="text-sm text-gray-300 select-none cursor-pointer">
+                  Post this boost to Nostr
+                </label>
+              </div>
+            )}
 
             {/* Keysend Warning - show when wallet is connected but doesn't support keysend */}
             {isConnected && !supportsKeysend && activeValueSplits?.some(s => s.type === 'node') && (
