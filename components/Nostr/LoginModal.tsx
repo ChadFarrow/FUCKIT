@@ -12,6 +12,7 @@ import {
   preserveWalletConnection,
   prepareLoginEvent,
   processSignedLogin,
+  saveUserData,
 } from '@/lib/nostr/auth-utils';
 
 interface LoginModalProps {
@@ -28,8 +29,9 @@ export default function LoginModal({ onClose }: LoginModalProps) {
   // Card-menu view state: 'menu' shows the grid of sign-in options. Selecting
   // a card either runs the handler directly (Extension) or opens a sub-view
   // (Bunker URI, Primal QR, Amber QR, Advanced/nostr-login).
-  const [view, setView] = useState<'menu' | 'bunker' | 'primal' | 'amber'>('menu');
+  const [view, setView] = useState<'menu' | 'bunker' | 'primal' | 'amber' | 'nip05'>('menu');
   const [bunkerUri, setBunkerUri] = useState('');
+  const [nip05Identifier, setNip05Identifier] = useState('');
 
   // NIP-46 connection hook (used by Primal tab)
   const {
@@ -116,6 +118,51 @@ export default function LoginModal({ onClose }: LoginModalProps) {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to connect';
       setError(message);
+      setIsSubmitting(false);
+    }
+  };
+
+  // NIP-05 read-only login. Resolves a name@domain identifier to a pubkey via
+  // the domain's /.well-known/nostr.json (done server-side), loads the profile,
+  // and signs the user in WITHOUT a signer. They can browse as themselves and
+  // see their favorites, but signed actions (boost, publish) stay unavailable
+  // until they connect a real signer.
+  const handleNip05Login = async () => {
+    const identifier = nip05Identifier.trim().toLowerCase();
+    const [name, domain] = identifier.split('@');
+    if (identifier.split('@').length !== 2 || !name || !domain) {
+      setError('Enter a valid NIP-05 address like alice@example.com');
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      setError(null);
+
+      const res = await fetch('/api/nostr/auth/nip05-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier }),
+      });
+
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data?.success || !data?.user) {
+        throw new Error(data?.error || `NIP-05 login failed: ${res.status}`);
+      }
+
+      // Persist as a read-only nip05 session. saveUserData stores nostr_user +
+      // nostr_login_type='nip05' and correctly skips savePreferredSigner.
+      // Intentionally NOT calling markFavoritesSyncPending — that publishes
+      // favorites to Nostr and needs a signer. The server route already
+      // migrated session favorites into the DB; NostrContext reads them from
+      // the DB on reload.
+      saveUserData(data.user, 'nip05');
+
+      onClose();
+      await preserveWalletConnection();
+      window.location.reload();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to complete NIP-05 login');
       setIsSubmitting(false);
     }
   };
@@ -692,6 +739,19 @@ export default function LoginModal({ onClose }: LoginModalProps) {
               </div>
             </button>
             <button
+              onClick={() => { setError(null); setNip05Identifier(''); setView('nip05'); }}
+              disabled={isSubmitting}
+              className="w-full text-left p-4 rounded-lg bg-gray-800 border border-gray-700 hover:border-stablekraft-teal hover:bg-gray-700/70 transition-all disabled:opacity-50 group flex items-center gap-3"
+            >
+              <span className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-lg bg-purple-500/20 text-xl group-hover:bg-purple-500/30 transition-colors" aria-hidden>📇</span>
+              <div className="min-w-0 flex-1">
+                <div className="font-semibold text-white leading-tight">NIP-05 Address</div>
+                <p className="text-xs text-gray-300 mt-0.5">
+                  Browse as yourself, read-only. Enter <code className="text-stablekraft-teal">name@domain.com</code> — no signer needed.
+                </p>
+              </div>
+            </button>
+            <button
               onClick={() => { setError(null); setLoginMethod('amber'); setView('amber'); }}
               disabled={isSubmitting}
               className="w-full text-left p-4 rounded-lg bg-gray-800 border border-gray-700 hover:border-stablekraft-teal hover:bg-gray-700/70 transition-all disabled:opacity-50 group flex items-center gap-3"
@@ -754,6 +814,45 @@ export default function LoginModal({ onClose }: LoginModalProps) {
             </button>
             <p className="mt-3 text-xs text-gray-400">
               Get a URI from your signer app: open nsec.app, Alby.to, Keycast, or Amber → export/share connection.
+            </p>
+          </div>
+        )}
+
+        {/* NIP-05 view */}
+        {view === 'nip05' && (
+          <div className="mb-4">
+            <button
+              onClick={() => { setView('menu'); setError(null); }}
+              className="text-sm text-gray-400 hover:text-white mb-3 flex items-center gap-1 transition-colors"
+            >
+              ← Back
+            </button>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Enter your NIP-05 address
+            </label>
+            <input
+              type="text"
+              value={nip05Identifier}
+              onChange={(e) => setNip05Identifier(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter' && nip05Identifier.includes('@') && !isSubmitting) handleNip05Login(); }}
+              placeholder="alice@example.com"
+              inputMode="email"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
+              disabled={isSubmitting}
+              className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-stablekraft-teal focus:border-transparent disabled:opacity-50 mb-2"
+              autoFocus
+            />
+            <button
+              onClick={handleNip05Login}
+              disabled={isSubmitting || !nip05Identifier.includes('@')}
+              className="w-full px-4 py-2 bg-stablekraft-teal text-white rounded-lg hover:bg-stablekraft-teal/90 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors"
+            >
+              {isSubmitting ? 'Connecting…' : 'Connect'}
+            </button>
+            <p className="mt-3 text-xs text-gray-400">
+              Read-only — you can see your profile and favorites. To boost or publish to Nostr, sign in with a signer (extension, Amber, Primal, or bunker).
             </p>
           </div>
         )}
