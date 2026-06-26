@@ -15,6 +15,10 @@ export const BLACKLISTED_FEED_IDS = [
   // Linked to the (non-musicShowOnly) Ainsley Costello publisher, so Step 5b
   // re-mints it nightly unless banned.
   '38ae1424-20b4-5478-a847-670734fcfb80',
+  // Phantom Power Music publisher cleanup — both feeds back the artist-slug
+  // /publisher/phantom-power-music page and are non-music Phantom Power content.
+  '9a8ab3f7-3a8d-51cc-8a02-c17ce892ab40',  // Phantom Power Music Review — talk podcast, not music
+  '329ef973-3d68-51cd-bb0d-d4a9e35027a7',  // "Artist Night w/ Blue House Band" — 36s trailer test feed
 ];
 
 // Feed URLs that should never be imported
@@ -36,6 +40,8 @@ export const BLACKLISTED_FEED_URLS = [
   'https://anchor.fm/s/1125b8ad4/podcast/rss',  // Unknown podcast — auto-imported without authorization
   'https://epochradio.com/feed/phantom-power-business-hour',  // Phantom Power Business Hour — talk podcast, not music
   'https://epochradio.com/feed/ainsley-costello-live',  // Ainsley Costello Live — old test feed (blank placeholder audio)
+  'https://epochradio.com/feed/phantom-power-music-review',  // Phantom Power Music Review — talk podcast, not music
+  'https://feeds.rssblue.com/artist-night-blue-house-band',  // "Artist Night w/ Blue House Band" — 36s trailer test feed
 ];
 
 // Feed URLs that back a curated playlist. Not blacklisted (admin can add them as
