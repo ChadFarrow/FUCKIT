@@ -11,6 +11,10 @@ export const BLACKLISTED_FEED_IDS = [
   // Phantom Power Business Hour — talk podcast with medium=music; without the
   // ban the 4 AM cron re-mints it from PI artist search every time it's deleted
   'phantom-power-music-phantom-power-business-hour',
+  // Ainsley Costello Live — old test feed (6s audio.blank.mp3 placeholder).
+  // Linked to the (non-musicShowOnly) Ainsley Costello publisher, so Step 5b
+  // re-mints it nightly unless banned.
+  '38ae1424-20b4-5478-a847-670734fcfb80',
 ];
 
 // Feed URLs that should never be imported
@@ -31,6 +35,7 @@ export const BLACKLISTED_FEED_URLS = [
   'https://wavlake.com/feed/music/e0c852e7-a118-46b0-a751-4e42ed6e0b6c',  // Shadowbanned
   'https://anchor.fm/s/1125b8ad4/podcast/rss',  // Unknown podcast — auto-imported without authorization
   'https://epochradio.com/feed/phantom-power-business-hour',  // Phantom Power Business Hour — talk podcast, not music
+  'https://epochradio.com/feed/ainsley-costello-live',  // Ainsley Costello Live — old test feed (blank placeholder audio)
 ];
 
 // Feed URLs that back a curated playlist. Not blacklisted (admin can add them as
