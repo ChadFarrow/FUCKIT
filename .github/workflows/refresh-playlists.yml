@@ -95,6 +95,27 @@ jobs:
           echo "⚠️ Stale VTS fix had issues (HTTP $HTTP_CODE) - non-critical"
         fi
 
+        # Step 2d: Recover feeds stuck in 'error' from a transient reparse failure.
+        # A momentary fetch hiccup during Step 2/2b flips a healthy feed to
+        # status='error', and nothing flips it back — so it silently vanishes from
+        # the album grid and Podcasts tab until a manual reparse. This re-activates
+        # any error'd feed that still has tracks (cached content is better than a
+        # disappeared feed); a genuinely-dead feed with zero tracks stays hidden.
+        echo ""
+        echo "📋 Step 2d: Recovering feeds stuck in error status..."
+
+        FIX_STATUS_RESPONSE=$(curl -s -X POST -w "\n%{http_code}" -H "$AUTH_HEADER" "${BASE_URL}/api/admin/fix-feed-status") || FIX_STATUS_RESPONSE=$'\n000'
+        HTTP_CODE=$(echo "$FIX_STATUS_RESPONSE" | tail -n1)
+        RESPONSE_BODY=$(echo "$FIX_STATUS_RESPONSE" | sed '$d')
+
+        if [ "$HTTP_CODE" -eq 200 ]; then
+          FEEDS_RECOVERED=$(echo "$RESPONSE_BODY" | jq -r '.feeds | length' 2>/dev/null || echo "?")
+          echo "✅ Feed status recovery: ${FEEDS_RECOVERED} feed(s) flipped error → active"
+          echo "$RESPONSE_BODY" | jq -r '.feeds[]? | "  ↳ \(.title) (\(.trackCount) tracks)"' 2>/dev/null || true
+        else
+          echo "⚠️ Feed status recovery had issues (HTTP $HTTP_CODE) - non-critical"
+        fi
+
         # Step 3: Refresh playlists with full v4v parsing
         echo ""
         echo "📋 Step 3: Refreshing playlists with full RSS parsing (includes v4v payment data)..."
