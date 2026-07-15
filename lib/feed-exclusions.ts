@@ -29,8 +29,9 @@ export const BLACKLISTED_FEED_URLS = [
   // Henrik Flyman pulled all his music off Wavlake and self-hosts at
   // henrikflyman.com. Every Wavlake mirror is 404 upstream and must stay
   // banned everywhere (album grid, search, /api/feeds/exists,
-  // process-remote-items, Step 5b auto-import) so the 4 AM cron can't
-  // re-mint them from PI API artist search.
+  // process-remote-items, Step 5b auto-import, and the /publisher/[id] page)
+  // so the 4 AM cron can't re-mint them from PI API artist search and any
+  // lingering DB rows can't surface on the artist's publisher page.
   'https://wavlake.com/feed/music/9a5340e4-50ca-48c3-9b06-3f6b782b5131',  // A Song For The Voiceless
   'https://wavlake.com/feed/music/9a218bec-4411-4f93-9caa-f3f84e4ef5f0',  // Authority
   'https://wavlake.com/feed/music/26822e8f-cc32-4f7b-b760-720cbe2455ff',  // Thorns

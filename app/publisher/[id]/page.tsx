@@ -2,6 +2,18 @@ import { Metadata } from 'next';
 import PublisherDetailClient from './PublisherDetailClient';
 import { getPublisherInfo, generateAlbumSlug } from '@/lib/url-utils';
 import { prisma } from '@/lib/prisma';
+import { isBlacklistedFeedId, isBlacklistedFeedUrl } from '@/lib/feed-exclusions';
+
+// Blacklisted feeds (e.g. Henrik Flyman's dead Wavlake mirrors — he self-hosts
+// at henrikflyman.com now) are banned from import/grid/search, but the publisher
+// page queries the DB directly. Without this filter, any lingering blacklisted
+// feed rows still surface here via remoteItem, publisherId, or artist-name
+// matching. Keep display in sync with the "banned everywhere" intent.
+function isNotBlacklistedFeed(feed: { id: string; originalUrl?: string | null }): boolean {
+  if (isBlacklistedFeedId(feed.id)) return false;
+  if (feed.originalUrl && isBlacklistedFeedUrl(feed.originalUrl)) return false;
+  return true;
+}
 
 // Force dynamic rendering to always fetch fresh publisher data from database
 export const dynamic = 'force-dynamic';
@@ -591,6 +603,14 @@ async function loadPublisherData(publisherId: string) {
 
       console.log(`✅ Found ${relatedFeeds.length} albums via remote item GUIDs/URLs`);
 
+      // Drop blacklisted feeds (e.g. Henrik Flyman's dead Wavlake mirrors) so they
+      // never render on the publisher page, matching the grid/search behavior.
+      const beforeBlacklist = relatedFeeds.length;
+      relatedFeeds = relatedFeeds.filter(isNotBlacklistedFeed);
+      if (relatedFeeds.length < beforeBlacklist) {
+        console.log(`🚫 Excluded ${beforeBlacklist - relatedFeeds.length} blacklisted feed(s) from Official Releases`);
+      }
+
       // Note: No platform-based filtering here. If a GUID from any publisher feed
       // (Fountain, Wavlake, self-hosted, etc.) matched an album in the DB, it's an
       // official release. The per-feed section logic below handles platform grouping.
@@ -609,7 +629,7 @@ async function loadPublisherData(publisherId: string) {
 
     // Find albums linked via publisherId to ANY of this artist's publisher feeds
     const allPublisherFeedIds = allPublisherFeeds.map(f => f.id);
-    const publisherIdFeeds = await prisma.feed.findMany({
+    let publisherIdFeeds = await prisma.feed.findMany({
       where: {
         publisherId: { in: allPublisherFeedIds },
         type: { in: ['album', 'music', 'podcast'] },
@@ -648,6 +668,9 @@ async function loadPublisherData(publisherId: string) {
         { title: 'asc' }
       ]
     });
+
+    // Drop blacklisted feeds linked via publisherId before they get merged in.
+    publisherIdFeeds = publisherIdFeeds.filter(isNotBlacklistedFeed);
 
     // Build a map from album ID -> publisherId for section assignment
     const albumPublisherIdMap = new Map<string, string>();
@@ -873,9 +896,11 @@ async function loadPublisherData(publisherId: string) {
           ]
         });
 
-      // Filter out albums already in GUID results to get artist-only matches
+      // Filter out albums already in GUID results to get artist-only matches,
+      // and drop blacklisted feeds (e.g. Henrik Flyman's dead Wavlake mirrors)
+      // so they don't reappear under "More from Artist" via name matching.
       const guidIds = new Set(relatedFeeds.map(f => f.id));
-      artistOnlyFeeds = allArtistFeeds.filter(feed => !guidIds.has(feed.id));
+      artistOnlyFeeds = allArtistFeeds.filter(feed => !guidIds.has(feed.id) && isNotBlacklistedFeed(feed));
 
       console.log(`✅ Found ${relatedFeeds.length} GUID-matched albums, ${artistOnlyFeeds.length} additional artist-matched albums`);
     }
