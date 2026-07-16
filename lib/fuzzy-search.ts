@@ -142,6 +142,7 @@ export async function fuzzySearchAlbums(options: FuzzySearchOptions): Promise<Fu
       (SELECT COUNT(*) FROM "Track" WHERE "feedId" = f.id) as "totalTracks"
     FROM "Feed" f
     WHERE f.status = 'active'
+      AND f."markedDead" = false
       AND f.type != 'publisher'
       AND (
         similarity(f.title, ${query}) > ${threshold}
@@ -184,6 +185,7 @@ export async function fuzzySearchArtists(options: FuzzySearchOptions): Promise<F
       GROUP BY "feedId"
     ) tc ON tc."feedId" = f.id
     WHERE f.status = 'active'
+      AND f."markedDead" = false
       AND f.artist IS NOT NULL
       AND similarity(f.artist, ${query}) > ${threshold}
     GROUP BY LOWER(f.artist)

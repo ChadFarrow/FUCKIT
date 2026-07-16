@@ -214,6 +214,7 @@ export async function GET(request: NextRequest) {
           where: {
             AND: [
               { status: 'active' },
+              { markedDead: false },
               { type: { not: 'publisher' } },
               { originalUrl: { notIn: [...playlistUrls, ...BLACKLISTED_FEED_URLS] } },
               { id: { notIn: [...playlistIds, ...blacklistedIds] } },
