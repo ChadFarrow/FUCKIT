@@ -396,6 +396,24 @@ async function loadPublisherData(publisherId: string) {
       artistName = publisherFeed.artist || publisherFeed.title;
     }
 
+    // Henrik Flyman self-hosts everything at henrikflyman.com and pulled ALL his
+    // music off Wavlake. On his publisher page ONLY, hide every wavlake.com feed
+    // regardless of its stored artist string — mirrors sometimes carry a slightly
+    // different or empty artist, so the artist-scoped blacklist rule can miss
+    // them. This is page-scoped: no other artist's cross-platform Wavlake albums
+    // are affected (see the cross-platform warning at the top of this section).
+    const normalizedArtistName = (artistName || '').toLowerCase().trim();
+    const isHenrikFlymanPage =
+      normalizedArtistName === 'henrik flyman' ||
+      publisherId.toLowerCase() === 'henrik-flyman';
+
+    // Combined per-feed filter for every album source on this page.
+    const keepFeed = (feed: { id: string; originalUrl?: string | null; artist?: string | null }): boolean => {
+      if (!isNotBlacklistedFeed(feed)) return false;
+      if (isHenrikFlymanPage && (feed.originalUrl || '').toLowerCase().includes('wavlake.com')) return false;
+      return true;
+    };
+
     // Find ALL publisher feeds for this artist (supports multiple publisher feeds per artist)
     let allPublisherFeeds = [publisherFeed];
     if (artistName) {
@@ -610,9 +628,9 @@ async function loadPublisherData(publisherId: string) {
       // Drop blacklisted feeds (e.g. Henrik Flyman's dead Wavlake mirrors) so they
       // never render on the publisher page, matching the grid/search behavior.
       const beforeBlacklist = relatedFeeds.length;
-      relatedFeeds = relatedFeeds.filter(isNotBlacklistedFeed);
+      relatedFeeds = relatedFeeds.filter(keepFeed);
       if (relatedFeeds.length < beforeBlacklist) {
-        console.log(`🚫 Excluded ${beforeBlacklist - relatedFeeds.length} blacklisted feed(s) from Official Releases`);
+        console.log(`🚫 Excluded ${beforeBlacklist - relatedFeeds.length} blacklisted/Wavlake feed(s) from Official Releases`);
       }
 
       // Note: No platform-based filtering here. If a GUID from any publisher feed
@@ -673,8 +691,9 @@ async function loadPublisherData(publisherId: string) {
       ]
     });
 
-    // Drop blacklisted feeds linked via publisherId before they get merged in.
-    publisherIdFeeds = publisherIdFeeds.filter(isNotBlacklistedFeed);
+    // Drop blacklisted (and, on Henrik's page, Wavlake) feeds linked via
+    // publisherId before they get merged in.
+    publisherIdFeeds = publisherIdFeeds.filter(keepFeed);
 
     // Build a map from album ID -> publisherId for section assignment
     const albumPublisherIdMap = new Map<string, string>();
@@ -904,7 +923,7 @@ async function loadPublisherData(publisherId: string) {
       // and drop blacklisted feeds (e.g. Henrik Flyman's dead Wavlake mirrors)
       // so they don't reappear under "More from Artist" via name matching.
       const guidIds = new Set(relatedFeeds.map(f => f.id));
-      artistOnlyFeeds = allArtistFeeds.filter(feed => !guidIds.has(feed.id) && isNotBlacklistedFeed(feed));
+      artistOnlyFeeds = allArtistFeeds.filter(feed => !guidIds.has(feed.id) && keepFeed(feed));
 
       console.log(`✅ Found ${relatedFeeds.length} GUID-matched albums, ${artistOnlyFeeds.length} additional artist-matched albums`);
     }
