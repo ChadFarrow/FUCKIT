@@ -4,7 +4,7 @@ import { generatePodcastIndexHeaders } from '@/lib/podcast-index-api';
 import { getEpisodesFromAPI, parseDuration } from '@/lib/feed-parsing';
 import { calculateTrackOrder } from '@/lib/rss-parser-db';
 import { generateAlbumSlug, normalizeUrl } from '@/lib/url-utils';
-import { isBlacklistedFeedUrl } from '@/lib/feed-exclusions';
+import { isBlacklistedFeedUrl, isHenrikFlymanWavlakeMirror } from '@/lib/feed-exclusions';
 
 const API_BASE_URL = 'https://api.podcastindex.org/api/1.0';
 
@@ -173,6 +173,15 @@ export async function POST(request: NextRequest) {
             // feed rows the user has intentionally deleted.
             if (feedUrl && isBlacklistedFeedUrl(feedUrl)) {
               result.skippedDetails.push(`blacklisted:${piFeed.title}|${feedUrl}`);
+              result.skipped++;
+              continue;
+            }
+
+            // Henrik Flyman pulled all his music off Wavlake (self-hosts at
+            // henrikflyman.com). Never re-mint his Wavlake mirrors from PI
+            // artist search — new ones appear faster than URLs can be listed.
+            if (isHenrikFlymanWavlakeMirror({ artist: piFeed.author || artistName, feedUrl: piFeed.url || piFeed.originalUrl || feedUrl })) {
+              result.skippedDetails.push(`henrik-wavlake:${piFeed.title}|${feedUrl}`);
               result.skipped++;
               continue;
             }

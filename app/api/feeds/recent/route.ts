@@ -6,6 +6,7 @@ import {
   BLACKLISTED_FEED_URLS,
   isPlaylistSourceFeedUrl,
   isBowlAfterBowlPodcastEntry,
+  isHenrikFlymanWavlakeMirror,
 } from '@/lib/feed-exclusions';
 
 // "New" = recently added to the app, ordered by Feed.createdAt desc. NOT release
@@ -108,6 +109,9 @@ export async function GET(request: Request) {
           artist: f.artist,
           feedUrl: f.originalUrl,
         }) &&
+        // Henrik Flyman's Wavlake mirrors are dead (he self-hosts now) — keep
+        // them out of "New" no matter how often they get re-touched.
+        !isHenrikFlymanWavlakeMirror({ artist: f.artist, feedUrl: f.originalUrl }) &&
         !msoArtistKeys.has((f.artist || '').trim().toLowerCase())
     );
 

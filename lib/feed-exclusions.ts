@@ -69,7 +69,10 @@ export const PLAYLIST_SOURCE_FEED_URLS = [
 // this artist-scoped rule bans ANY wavlake.com feed whose artist is Henrik
 // Flyman — current and future. It is deliberately narrow: it does NOT hide
 // other artists' legitimate cross-platform Wavlake albums (see the publisher
-// page's cross-platform warning). Applied by the /publisher/[id] page.
+// page's cross-platform warning). Applied everywhere a dead feed should be
+// hidden: album grid (albums-fast), "New" (feeds/recent), search, the
+// /publisher/[id] page, and the Step 5b publisher-album cron (skips re-mint).
+// The feed rows stay in the DB — this is a "flag as dead", not a delete.
 export function isHenrikFlymanWavlakeMirror(entry: {
   artist?: string | null;
   feedUrl?: string | null;

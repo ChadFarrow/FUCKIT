@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { parseSearchQuery, buildTsQuery, normalizeQuery, buildFieldFilters } from '@/lib/search-utils';
 import { fuzzySearchTracks, fuzzySearchAlbums, fuzzySearchArtists, calculateThreshold } from '@/lib/fuzzy-search';
 import { searchPlaylists, getPlaylistUrls, getAllPlaylistIds } from '@/lib/playlist/configs';
-import { getBlacklistedFeedIds, BLACKLISTED_FEED_URLS } from '@/lib/feed-exclusions';
+import { getBlacklistedFeedIds, BLACKLISTED_FEED_URLS, isHenrikFlymanWavlakeMirror } from '@/lib/feed-exclusions';
 import { CACHE_TTL, getSearchCache } from '@/lib/caches/search-cache';
 
 const prisma = new PrismaClient();
@@ -259,6 +259,11 @@ export async function GET(request: NextRequest) {
             (albumArtist.includes('bowl after bowl') && !albumTitle.includes('covers')) ||
             (feedUrl.includes('bowlafterbowl.com') && !albumTitle.includes('covers') && album.id !== 'bowl-covers')
           );
+
+          // Henrik Flyman's Wavlake mirrors are dead (he self-hosts now).
+          if (isHenrikFlymanWavlakeMirror({ artist: album.artist, feedUrl: album.originalUrl })) {
+            return false;
+          }
 
           return !isBowlAfterBowlPodcast;
         });

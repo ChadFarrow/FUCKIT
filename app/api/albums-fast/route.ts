@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { Track } from '@prisma/client';
 import { getPlaylistUrls, getAllPlaylistIds } from '@/lib/playlist/configs';
-import { getBlacklistedFeedIds, BLACKLISTED_FEED_URLS, isBowlAfterBowlPodcastEntry } from '@/lib/feed-exclusions';
+import { getBlacklistedFeedIds, BLACKLISTED_FEED_URLS, isBowlAfterBowlPodcastEntry, isHenrikFlymanWavlakeMirror } from '@/lib/feed-exclusions';
 import {
   CACHE_DURATION,
   PLAYLIST_CACHE_DURATION,
@@ -418,7 +418,10 @@ export async function GET(request: Request) {
       !blacklistedIds.includes(album.id) &&
       album.type !== 'podcast' &&
       (!album.feedUrl || !playlistUrls.includes(album.feedUrl)) &&
-      (!album.feedUrl || !BLACKLISTED_FEED_URLS.includes(album.feedUrl))
+      (!album.feedUrl || !BLACKLISTED_FEED_URLS.includes(album.feedUrl)) &&
+      // Henrik Flyman pulled all his music off Wavlake (self-hosts at
+      // henrikflyman.com) — treat any of his lingering Wavlake mirrors as dead.
+      !isHenrikFlymanWavlakeMirror({ artist: album.artist, feedUrl: album.feedUrl })
     );
 
     // Apply filtering
