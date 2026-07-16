@@ -61,6 +61,24 @@ export const PLAYLIST_SOURCE_FEED_URLS = [
   'https://serve.podhome.fm/rss/fafd2bfc-98ac-5010-9fcb-7403abfd420a',  // Two For Tunestr
 ];
 
+// Henrik Flyman pulled ALL his music off Wavlake and self-hosts at
+// henrikflyman.com, but Wavlake keeps surfacing brand-new mirror feeds for him
+// (e.g. the 2026 "Unbreakable" / "Is This The End" / "The Writing's on the Wall"
+// / "They Intend to Destroy Beauty" releases). Chasing each new
+// wavlake.com/feed/music/<uuid> URL in BLACKLISTED_FEED_URLS doesn't scale, so
+// this artist-scoped rule bans ANY wavlake.com feed whose artist is Henrik
+// Flyman — current and future. It is deliberately narrow: it does NOT hide
+// other artists' legitimate cross-platform Wavlake albums (see the publisher
+// page's cross-platform warning). Applied by the /publisher/[id] page.
+export function isHenrikFlymanWavlakeMirror(entry: {
+  artist?: string | null;
+  feedUrl?: string | null;
+}): boolean {
+  const artist = (entry.artist || '').toLowerCase().trim();
+  const feedUrl = (entry.feedUrl || '').toLowerCase();
+  return artist === 'henrik flyman' && feedUrl.includes('wavlake.com');
+}
+
 const normalizedBlacklistedUrls = BLACKLISTED_FEED_URLS.map(normalizeUrl);
 const normalizedPlaylistSourceUrls = PLAYLIST_SOURCE_FEED_URLS.map(normalizeUrl);
 

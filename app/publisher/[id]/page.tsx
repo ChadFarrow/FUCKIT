@@ -2,16 +2,20 @@ import { Metadata } from 'next';
 import PublisherDetailClient from './PublisherDetailClient';
 import { getPublisherInfo, generateAlbumSlug } from '@/lib/url-utils';
 import { prisma } from '@/lib/prisma';
-import { isBlacklistedFeedId, isBlacklistedFeedUrl } from '@/lib/feed-exclusions';
+import { isBlacklistedFeedId, isBlacklistedFeedUrl, isHenrikFlymanWavlakeMirror } from '@/lib/feed-exclusions';
 
 // Blacklisted feeds (e.g. Henrik Flyman's dead Wavlake mirrors — he self-hosts
 // at henrikflyman.com now) are banned from import/grid/search, but the publisher
 // page queries the DB directly. Without this filter, any lingering blacklisted
 // feed rows still surface here via remoteItem, publisherId, or artist-name
 // matching. Keep display in sync with the "banned everywhere" intent.
-function isNotBlacklistedFeed(feed: { id: string; originalUrl?: string | null }): boolean {
+//
+// Also drops Henrik Flyman's ever-growing set of Wavlake mirror feeds via the
+// artist-scoped rule, since new ones appear faster than we can blacklist URLs.
+function isNotBlacklistedFeed(feed: { id: string; originalUrl?: string | null; artist?: string | null }): boolean {
   if (isBlacklistedFeedId(feed.id)) return false;
   if (feed.originalUrl && isBlacklistedFeedUrl(feed.originalUrl)) return false;
+  if (isHenrikFlymanWavlakeMirror({ artist: feed.artist, feedUrl: feed.originalUrl })) return false;
   return true;
 }
 
