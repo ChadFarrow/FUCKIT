@@ -1042,7 +1042,7 @@ export default function AdminPanel() {
       });
       const data = await response.json();
       if (response.ok && data.success) {
-        toast.success(dead ? `Marked dead: ${data.feed.title}` : `Restored: ${data.feed.title}`);
+        toast.success(dead ? `Hidden: ${data.feed.title}` : `Restored: ${data.feed.title}`);
         setMarkDeadPreview({ found: true, feed: data.feed });
       } else {
         toast.error(data.error || 'Failed to update feed');
@@ -1877,11 +1877,11 @@ export default function AdminPanel() {
           </div>
         </div>
 
-        {/* Mark Feed Dead / Restore */}
+        {/* Hide / Retire Feed */}
         <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-yellow-500/30 p-6 mb-8">
-          <h2 className="text-2xl font-semibold mb-4 text-yellow-400">Mark Feed as Dead</h2>
+          <h2 className="text-2xl font-semibold mb-4 text-yellow-400">Hide Feed (Dead / Test / Unwanted)</h2>
           <p className="text-sm text-gray-400 mb-4">
-            For feeds taken down upstream (e.g. removed from Wavlake). The feed stays in the database but is hidden everywhere — grid, New, search, and publisher pages — and the nightly cron won&apos;t re-import it. Use this instead of deleting, which lets the cron re-mint it. You can restore a feed here too.
+            Hide any feed you never want shown — a feed taken down upstream (e.g. removed from Wavlake), a leftover test feed, or a stray podcast. The feed stays in the database but is hidden everywhere — grid, New, search, and publisher pages — and the nightly cron won&apos;t re-import it. Use this instead of deleting, which lets the cron re-mint it. You can restore a feed here too.
           </p>
           <div className="space-y-4">
             <div>
@@ -1941,7 +1941,7 @@ export default function AdminPanel() {
                       <h4 className="font-semibold text-white flex items-center gap-2">
                         {markDeadPreview.feed.title}
                         {markDeadPreview.feed.markedDead && (
-                          <span className="px-2 py-0.5 text-xs rounded bg-yellow-600/40 text-yellow-200 border border-yellow-500/40">DEAD</span>
+                          <span className="px-2 py-0.5 text-xs rounded bg-yellow-600/40 text-yellow-200 border border-yellow-500/40">HIDDEN</span>
                         )}
                       </h4>
                       <p className="text-sm text-gray-300">{markDeadPreview.feed.artist}</p>
@@ -1976,10 +1976,10 @@ export default function AdminPanel() {
                         {markDeadBusy ? (
                           <>
                             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                            Marking dead...
+                            Hiding...
                           </>
                         ) : (
-                          <>💀 Mark as Dead</>
+                          <>🚫 Hide Feed</>
                         )}
                       </button>
                     )}
