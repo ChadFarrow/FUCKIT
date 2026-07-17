@@ -10,7 +10,8 @@ export async function GET(request: Request) {
       where: {
         type: {
           notIn: ['test'] // Exclude test feeds from main parsed-feeds API
-        }
+        },
+        markedDead: false // Hide manually-flagged feeds (see "Hiding Feeds" in CLAUDE.md)
       },
       include: {
         Track: {

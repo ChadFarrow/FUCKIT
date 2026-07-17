@@ -15,7 +15,8 @@ export async function GET(request: NextRequest) {
     const publisherFeeds = await prisma.feed.findMany({
       where: {
         type: 'publisher',
-        status: 'active'
+        status: 'active',
+        markedDead: false
       },
       select: {
         id: true,
@@ -34,7 +35,8 @@ export async function GET(request: NextRequest) {
     const albumFeeds = await prisma.feed.findMany({
       where: {
         type: { in: ['album', 'music'] },
-        status: 'active'
+        status: 'active',
+        markedDead: false
       },
       select: {
         id: true,

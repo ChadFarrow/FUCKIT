@@ -14,7 +14,7 @@ export async function GET(
     
     // Get all feeds from database
     const feeds = await prisma.feed.findMany({
-      where: { status: 'active' },
+      where: { status: 'active', markedDead: false },
       include: {
         Track: {
           where: {
@@ -38,7 +38,8 @@ export async function GET(
     const publisherFeeds = await prisma.feed.findMany({
       where: {
         type: 'publisher',
-        status: 'active'
+        status: 'active',
+        markedDead: false
       },
       select: {
         id: true,
