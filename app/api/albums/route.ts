@@ -81,8 +81,9 @@ export async function GET(request: Request) {
     console.log(`🎵 Albums API request: limit=${limit}, offset=${offset}, tier=${tier}, feedId=${feedId}, filter=${filter}, publisher=${publisher}`);
     
     // Build where clause for feeds based on filter
-    const feedWhere: any = { 
-      status: 'active'
+    const feedWhere: any = {
+      status: 'active',
+      markedDead: false
     };
 
     // Apply type filtering based on filter parameter

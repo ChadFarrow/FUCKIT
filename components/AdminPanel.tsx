@@ -30,6 +30,15 @@ export default function AdminPanel() {
     message?: string;
   } | null>(null);
 
+  // Mark-dead state (flag a taken-down feed as dead without deleting it)
+  const [markDeadInput, setMarkDeadInput] = useState('');
+  const [markDeadBusy, setMarkDeadBusy] = useState(false);
+  const [markDeadPreview, setMarkDeadPreview] = useState<{
+    found: boolean;
+    feed?: { id: string; title: string; artist: string | null; originalUrl: string | null; markedDead: boolean };
+    message?: string;
+  } | null>(null);
+
   // Bulk import state
   const [bulkSearching, setBulkSearching] = useState(false);
   const [bulkImporting, setBulkImporting] = useState(false);
@@ -993,6 +1002,59 @@ export default function AdminPanel() {
     }
   };
 
+  // Look up a feed (by URL or feed ID) and show its current dead state.
+  const previewMarkDead = async () => {
+    const value = markDeadInput.trim();
+    if (!value) return;
+    setMarkDeadBusy(true);
+    setMarkDeadPreview(null);
+    try {
+      // Send the value as both id and url; the endpoint tries id first, then url.
+      const response = await adminFetch('/api/admin/feeds/mark-dead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: value, url: value, preview: true }),
+      });
+      const data = await response.json();
+      if (response.ok && data.found) {
+        setMarkDeadPreview({ found: true, feed: data.feed });
+      } else {
+        setMarkDeadPreview({ found: false, message: data.message || 'No feed found' });
+      }
+    } catch (error) {
+      console.error('Error looking up feed:', error);
+      toast.error('Lookup failed. Please try again.');
+    } finally {
+      setMarkDeadBusy(false);
+    }
+  };
+
+  // Flag the previewed feed as dead (dead=true) or restore it (dead=false).
+  const applyMarkDead = async (dead: boolean) => {
+    const feed = markDeadPreview?.feed;
+    if (!feed) return;
+    setMarkDeadBusy(true);
+    try {
+      const response = await adminFetch('/api/admin/feeds/mark-dead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: feed.id, dead }),
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        toast.success(dead ? `Hidden: ${data.feed.title}` : `Restored: ${data.feed.title}`);
+        setMarkDeadPreview({ found: true, feed: data.feed });
+      } else {
+        toast.error(data.error || 'Failed to update feed');
+      }
+    } catch (error) {
+      console.error('Error updating feed:', error);
+      toast.error('Network error. Please try again.');
+    } finally {
+      setMarkDeadBusy(false);
+    }
+  };
+
   const parseMissingTracks = async () => {
     setParsingMissingTracks(true);
     setParseResult(null);
@@ -1808,6 +1870,123 @@ export default function AdminPanel() {
                     <p className="text-gray-400">
                       {deletePreview.message || `No feed found for slug "${deletePreview.slug}"`}
                     </p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Hide / Retire Feed */}
+        <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-yellow-500/30 p-6 mb-8">
+          <h2 className="text-2xl font-semibold mb-4 text-yellow-400">Hide Feed (Dead / Test / Unwanted)</h2>
+          <p className="text-sm text-gray-400 mb-4">
+            Hide any feed you never want shown — a feed taken down upstream (e.g. removed from Wavlake), a leftover test feed, or a stray podcast. The feed stays in the database but is hidden everywhere — grid, New, search, and publisher pages — and the nightly cron won&apos;t re-import it. Use this instead of deleting, which lets the cron re-mint it. You can restore a feed here too.
+          </p>
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="markDeadInput" className="block text-sm font-medium text-gray-300 mb-2">
+                Paste the feed URL or feed ID
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  id="markDeadInput"
+                  value={markDeadInput}
+                  onChange={(e) => {
+                    setMarkDeadInput(e.target.value);
+                    setMarkDeadPreview(null);
+                  }}
+                  onPaste={(e) => {
+                    const pastedText = e.clipboardData.getData('text');
+                    if (pastedText.trim()) {
+                      e.preventDefault();
+                      setMarkDeadInput(pastedText.trim());
+                      setMarkDeadPreview(null);
+                    }
+                  }}
+                  placeholder="https://wavlake.com/feed/music/... or a feed ID"
+                  className="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                  disabled={markDeadBusy}
+                  autoComplete="off"
+                />
+                <button
+                  type="button"
+                  onClick={previewMarkDead}
+                  disabled={markDeadBusy || !markDeadInput.trim()}
+                  className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium flex items-center gap-2"
+                >
+                  {markDeadBusy && !markDeadPreview ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      Looking up...
+                    </>
+                  ) : (
+                    <>🔍 Look up</>
+                  )}
+                </button>
+              </div>
+              <p className="mt-2 text-xs text-gray-400">
+                Accepts the feed&apos;s RSS URL or its feed ID. Look up first to confirm, then mark dead or restore.
+              </p>
+            </div>
+
+            {markDeadPreview && (
+              <div className={`rounded-lg p-4 border ${
+                markDeadPreview.found ? 'bg-yellow-500/10 border-yellow-500/30' : 'bg-gray-500/10 border-gray-500/30'
+              }`}>
+                {markDeadPreview.found && markDeadPreview.feed ? (
+                  <div className="space-y-3">
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-semibold text-white flex items-center gap-2">
+                        {markDeadPreview.feed.title}
+                        {markDeadPreview.feed.markedDead && (
+                          <span className="px-2 py-0.5 text-xs rounded bg-yellow-600/40 text-yellow-200 border border-yellow-500/40">HIDDEN</span>
+                        )}
+                      </h4>
+                      <p className="text-sm text-gray-300">{markDeadPreview.feed.artist}</p>
+                      <p className="text-xs text-gray-500 mt-1 font-mono break-all">
+                        {markDeadPreview.feed.originalUrl}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1 font-mono">ID: {markDeadPreview.feed.id}</p>
+                    </div>
+                    {markDeadPreview.feed.markedDead ? (
+                      <button
+                        type="button"
+                        onClick={() => applyMarkDead(false)}
+                        disabled={markDeadBusy}
+                        className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium flex items-center justify-center gap-2"
+                      >
+                        {markDeadBusy ? (
+                          <>
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                            Restoring...
+                          </>
+                        ) : (
+                          <>♻️ Restore Feed</>
+                        )}
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => applyMarkDead(true)}
+                        disabled={markDeadBusy}
+                        className="w-full px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium flex items-center justify-center gap-2"
+                      >
+                        {markDeadBusy ? (
+                          <>
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                            Hiding...
+                          </>
+                        ) : (
+                          <>🚫 Hide Feed</>
+                        )}
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-center py-2">
+                    <p className="text-gray-400">{markDeadPreview.message || 'No feed found'}</p>
                   </div>
                 )}
               </div>

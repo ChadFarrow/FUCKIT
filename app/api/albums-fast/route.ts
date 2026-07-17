@@ -157,7 +157,7 @@ export async function GET(request: Request) {
       try {
         // Fetch feeds with minimal track data (optimized select)
         feeds = await prisma.feed.findMany({
-          where: { status: 'active' },
+          where: { status: 'active', markedDead: false },
           select: {
             id: true,
             guid: true,
@@ -453,6 +453,7 @@ export async function GET(request: Request) {
             where: {
               status: 'active',
               type: 'podcast',
+              markedDead: false,
             },
             select: {
               id: true,

@@ -205,6 +205,13 @@ export async function POST(request: NextRequest) {
             });
 
             if (existing) {
+              // Manually flagged dead (e.g. taken down upstream) — leave it
+              // untouched. The row stays put, so no fresh copy is minted.
+              if (existing.markedDead) {
+                result.skippedDetails.push(`dead:${existing.id}|${existing.title}`);
+                result.skipped++;
+                continue;
+              }
               console.log(`   ⏭️ Exists: ${existing.title} (${existing.id})`);
               result.skippedDetails.push(`exists:${existing.id}|${existing.title}|pubId:${existing.publisherId}`);
               if (!existing.publisherId) {
