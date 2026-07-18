@@ -27,6 +27,15 @@ interface AlbumDetailClientProps {
   extraAlbumActions?: React.ReactNode; // Optional extra buttons next to album Boost
 }
 
+// Module-scoped background cache. Module scope survives client-side route remounts within a
+// session, so navigating between albums can initialize the background from a previously-resolved
+// value instead of null — which otherwise flashes the default dark gradient on every navigation
+// (the page passes initialAlbum=null and always fetches client-side). `backgroundCacheById` gives
+// an instantly-correct background on revisit; `lastShownBackground` holds the previous album's art
+// for a first visit until the new art resolves, avoiding the default-gradient flicker.
+const backgroundCacheById = new Map<string, string>();
+let lastShownBackground: string | null = null;
+
 export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, extraAlbumActions }: AlbumDetailClientProps) {
   const [album, setAlbum] = useState<RSSAlbum | null>(initialAlbum);
   const [isLoading, setIsLoading] = useState(!initialAlbum);
@@ -74,8 +83,11 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
   const { shouldPreventClick } = useScrollDetectionContext();
   const lightning = useLightning(); // Initialize Lightning context
 
-  // Background state
-  const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
+  // Background state — seed from the module cache (this album's last-resolved background, else the
+  // most recently shown one) so a client-side navigation doesn't flash the default gradient.
+  const [backgroundImage, setBackgroundImage] = useState<string | null>(
+    () => backgroundCacheById.get(albumId) ?? lastShownBackground
+  );
   const [isClient, setIsClient] = useState(false);
   const [backgroundLoaded, setBackgroundLoaded] = useState(false);
   const [albumArtLoaded, setAlbumArtLoaded] = useState(false);
@@ -498,6 +510,19 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
       setBackgroundLoaded(true);
     }
   }, [album?.coverArt, (album as any)?.podcastImages, isDesktop, isLoading]); // re-pick canvas on viewport orientation change
+
+  // Remember every resolved background so future navigations can seed their initial background from
+  // the module cache instead of flashing the default gradient.
+  useEffect(() => {
+    if (!backgroundImage) return;
+    // Always the most-recent visible background (held over on the NEXT navigation).
+    lastShownBackground = backgroundImage;
+    // Only key it to this album once the album's own data has loaded, so a carried-over previous
+    // background is never cached under the wrong id.
+    if (album && !isLoading) {
+      backgroundCacheById.set(albumId, backgroundImage);
+    }
+  }, [backgroundImage, album, isLoading, albumId]);
 
   // Optimized background style calculation - memoized to prevent repeated logs
   const backgroundStyle = useMemo(() => {

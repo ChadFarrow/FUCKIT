@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { generateAlbumSlug, getPublisherInfo } from '@/lib/url-utils';
 import { getAllPlaylistIds, getPlaylistUrls, getPlaylistConfig, PLAYLIST_CONFIGS } from '@/lib/playlist/configs';
 import { PODCAST_FEED_IDS, PODCAST_FEED_URLS } from '@/lib/podcast-feeds';
+import { isBlacklistedFeedId, isBlacklistedFeedUrl, isHenrikFlymanWavlakeMirror } from '@/lib/feed-exclusions';
 
 const ITDV_PLAYLIST_URL = 'https://raw.githubusercontent.com/ChadFarrow/chadf-musicl-playlists/refs/heads/main/docs/ITDV-music-playlist.xml';
 const HGH_PLAYLIST_URL = 'https://raw.githubusercontent.com/ChadFarrow/chadf-musicl-playlists/refs/heads/main/docs/HGH-music-playlist.xml';
@@ -911,6 +912,24 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
     }
 
     console.log(`📊 Found ${potentialMatches.length} potential matches for slug "${slug}"`);
+
+    // When a title slug collides across multiple feeds, drop feeds that are hidden
+    // everywhere else — blacklisted, markedDead, or Henrik Flyman Wavlake mirrors — so the
+    // slug resolves to the surviving (e.g. self-hosted) album instead of a dead mirror.
+    // Only narrow when a visible alternative exists, so an album that ONLY has a hidden
+    // feed record still resolves rather than 404ing.
+    if (potentialMatches.length > 1) {
+      const visibleMatches = potentialMatches.filter(({ feed }) =>
+        !feed.markedDead &&
+        !isBlacklistedFeedId(feed.id) &&
+        !isBlacklistedFeedUrl(feed.originalUrl || '') &&
+        !isHenrikFlymanWavlakeMirror({ artist: feed.artist, feedUrl: feed.originalUrl })
+      );
+      if (visibleMatches.length > 0 && visibleMatches.length < potentialMatches.length) {
+        console.log(`🚫 Dropped ${potentialMatches.length - visibleMatches.length} hidden feed(s) from slug matches for "${slug}"`);
+        potentialMatches = visibleMatches;
+      }
+    }
 
     // Transform feeds into albums and search for matching slug
     let foundAlbum = null;
