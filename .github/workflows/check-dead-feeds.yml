@@ -1,0 +1,49 @@
+name: Check Dead Feeds
+
+# Weekly "did an artist take their catalog down?" sweep. Asks PodcastIndex which
+# of our active feeds it has crawled as dead (feed.dead > 0), then confirms each
+# with a direct 404/410 fetch before auto-hiding it via markedDead. Hiding is
+# reversible from the admin "Hide Feed" card, and the run's JSON report (logged
+# below) is the audit trail of what got hidden each week.
+#
+# Rare-but-real problem: a taken-down feed keeps showing because its tracks are
+# cached in the DB. See /api/admin/check-dead-feeds and the "Hiding Feeds" /
+# "Dead-feed check" section of CLAUDE.md.
+
+on:
+  schedule:
+    # Weekly, Monday 10:00 UTC. GitHub Actions cron can drift ~15 min — fine here.
+    - cron: '0 10 * * 1'
+  workflow_dispatch:
+
+jobs:
+  check-dead-feeds:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check for dead feeds (PI dead flag -> confirm 404 -> auto-hide)
+      run: |
+        BASE_URL="${BASE_URL:-https://stablekraft.app}"
+
+        echo "🔎 Checking for dead feeds at $(date -u)"
+        RESP=$(curl -s -X POST -w "\n%{http_code}" \
+          -H "$AUTH_HEADER" \
+          -H "Content-Type: application/json" \
+          "${BASE_URL}/api/admin/check-dead-feeds")
+        HTTP_CODE=$(echo "$RESP" | tail -n1)
+        BODY=$(echo "$RESP" | sed '$d')
+
+        echo "$BODY" | jq '.' 2>/dev/null || echo "$BODY"
+
+        if [ "$HTTP_CODE" -eq 200 ]; then
+          HID=$(echo "$BODY" | jq -r '.hiddenCount // 0' 2>/dev/null || echo "?")
+          REVIEW=$(echo "$BODY" | jq -r '.needsReview | length' 2>/dev/null || echo "?")
+          echo "✅ Dead-feed check complete: hid ${HID} feed(s), ${REVIEW} need review"
+        else
+          echo "⚠️ Dead-feed check issue (HTTP $HTTP_CODE)"
+          exit 1
+        fi
+      env:
+        BASE_URL: ${{ secrets.PLAYLIST_BASE_URL || 'https://stablekraft.app' }}
+        # Harmless while ADMIN_SECRET is unset on the server (fail-open).
+        AUTH_HEADER: "Authorization: Bearer ${{ secrets.ADMIN_SECRET }}"

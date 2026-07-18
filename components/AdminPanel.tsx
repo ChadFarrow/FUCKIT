@@ -39,6 +39,20 @@ export default function AdminPanel() {
     message?: string;
   } | null>(null);
 
+  // Dead-feed sweep state (PI dead flag -> confirm 404 -> auto-hide)
+  const [deadCheckBusy, setDeadCheckBusy] = useState(false);
+  const [deadCheckReport, setDeadCheckReport] = useState<{
+    dryRun: boolean;
+    checked: number;
+    candidates: number;
+    hiddenCount?: number;
+    wouldHide?: Array<{ id: string; title: string; artist: string | null; url: string; piDead: number; httpStatus: number | null }>;
+    hidden?: Array<{ id: string; title: string; artist: string | null; url: string; piDead: number; httpStatus: number | null }>;
+    needsReview: Array<{ id: string; title: string; artist: string | null; url: string; piDead: number; httpStatus: number | null; reason?: string }>;
+    unconfirmed: Array<{ id: string; title: string; artist: string | null; url: string; piDead: number; httpStatus: number | null; reason?: string }>;
+    message?: string;
+  } | null>(null);
+
   // Bulk import state
   const [bulkSearching, setBulkSearching] = useState(false);
   const [bulkImporting, setBulkImporting] = useState(false);
@@ -1055,6 +1069,34 @@ export default function AdminPanel() {
     }
   };
 
+  // Run the dead-feed sweep. dryRun=true previews what would be hidden;
+  // dryRun=false confirms 404 and auto-hides via markedDead.
+  const runDeadFeedCheck = async (dryRun: boolean) => {
+    setDeadCheckBusy(true);
+    if (dryRun) setDeadCheckReport(null);
+    try {
+      const response = await adminFetch('/api/admin/check-dead-feeds', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dryRun }),
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setDeadCheckReport(data);
+        if (!dryRun) {
+          toast.success(`Hid ${data.hiddenCount ?? 0} dead feed(s)`);
+        }
+      } else {
+        toast.error(data.error || 'Dead-feed check failed');
+      }
+    } catch (error) {
+      console.error('Error checking dead feeds:', error);
+      toast.error('Network error. Please try again.');
+    } finally {
+      setDeadCheckBusy(false);
+    }
+  };
+
   const parseMissingTracks = async () => {
     setParsingMissingTracks(true);
     setParseResult(null);
@@ -1992,6 +2034,126 @@ export default function AdminPanel() {
               </div>
             )}
           </div>
+        </div>
+
+        {/* Dead-feed sweep (PI dead flag -> confirm 404 -> auto-hide) */}
+        <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-yellow-500/30 p-6 mb-8">
+          <h2 className="text-2xl font-semibold mb-4 text-yellow-400">Check for Dead Feeds</h2>
+          <p className="text-sm text-gray-400 mb-4">
+            Finds feeds whose URL has gone dead upstream (an artist pulled their catalog, a Wavlake mirror 404s). Asks Podcast Index which of our active feeds it has crawled as dead, then confirms each with a direct 404/410 fetch before hiding it. Confirmed-dead feeds are hidden via the same reversible flag as &quot;Hide Feed&quot; above. Preview first — nothing is hidden until you confirm.
+          </p>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => runDeadFeedCheck(true)}
+              disabled={deadCheckBusy}
+              className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium flex items-center gap-2"
+            >
+              {deadCheckBusy ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  Checking...
+                </>
+              ) : (
+                <>🔎 Check for dead feeds</>
+              )}
+            </button>
+          </div>
+
+          {deadCheckReport && (
+            <div className="mt-4 space-y-4">
+              <p className="text-sm text-gray-300">
+                Checked {deadCheckReport.checked} active feed(s) · {deadCheckReport.candidates} flagged dead by Podcast Index.
+              </p>
+
+              {(() => {
+                const toHide = deadCheckReport.dryRun ? deadCheckReport.wouldHide : deadCheckReport.hidden;
+                return (
+                  <>
+                    {toHide && toHide.length > 0 && (
+                      <div className="rounded-lg p-4 border bg-yellow-500/10 border-yellow-500/30">
+                        <h4 className="font-semibold text-yellow-300 mb-2">
+                          {deadCheckReport.dryRun
+                            ? `${toHide.length} confirmed-dead feed(s) would be hidden (404/410)`
+                            : `${deadCheckReport.hiddenCount ?? toHide.length} confirmed-dead feed(s) hidden`}
+                        </h4>
+                        <ul className="space-y-1 text-sm">
+                          {toHide.map((f) => (
+                            <li key={f.id} className="text-gray-300">
+                              <span className="font-medium text-white">{f.title}</span>
+                              {f.artist ? <span className="text-gray-400"> — {f.artist}</span> : null}
+                              <span className="text-gray-500"> (PI dead={f.piDead}, HTTP {f.httpStatus ?? '—'})</span>
+                              <br />
+                              <span className="text-xs text-gray-500 font-mono break-all">{f.url}</span>
+                            </li>
+                          ))}
+                        </ul>
+                        {deadCheckReport.dryRun && (
+                          <button
+                            type="button"
+                            onClick={() => runDeadFeedCheck(false)}
+                            disabled={deadCheckBusy}
+                            className="mt-3 w-full px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium flex items-center justify-center gap-2"
+                          >
+                            {deadCheckBusy ? (
+                              <>
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                Hiding...
+                              </>
+                            ) : (
+                              <>🚫 Hide {toHide.length} confirmed-dead feed(s)</>
+                            )}
+                          </button>
+                        )}
+                      </div>
+                    )}
+
+                    {toHide && toHide.length === 0 && (
+                      <p className="text-sm text-green-400">No confirmed-dead feeds. Nothing to hide. ✅</p>
+                    )}
+                  </>
+                );
+              })()}
+
+              {deadCheckReport.needsReview.length > 0 && (
+                <div className="rounded-lg p-4 border bg-orange-500/10 border-orange-500/30">
+                  <h4 className="font-semibold text-orange-300 mb-2">
+                    {deadCheckReport.needsReview.length} need review — Podcast Index says dead but the URL still responds
+                  </h4>
+                  <ul className="space-y-1 text-sm">
+                    {deadCheckReport.needsReview.map((f) => (
+                      <li key={f.id} className="text-gray-300">
+                        <span className="font-medium text-white">{f.title}</span>
+                        {f.artist ? <span className="text-gray-400"> — {f.artist}</span> : null}
+                        <span className="text-gray-500"> (PI dead={f.piDead}, HTTP {f.httpStatus ?? '—'})</span>
+                        <br />
+                        <span className="text-xs text-gray-500 font-mono break-all">{f.url}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-2 text-xs text-gray-400">
+                    Not hidden automatically. Use &quot;Hide Feed&quot; above to hide any of these manually.
+                  </p>
+                </div>
+              )}
+
+              {deadCheckReport.unconfirmed.length > 0 && (
+                <details className="rounded-lg p-4 border bg-gray-500/10 border-gray-500/30">
+                  <summary className="cursor-pointer text-sm text-gray-300">
+                    {deadCheckReport.unconfirmed.length} unconfirmed (transient errors, not hidden)
+                  </summary>
+                  <ul className="mt-2 space-y-1 text-sm">
+                    {deadCheckReport.unconfirmed.map((f) => (
+                      <li key={f.id} className="text-gray-400">
+                        <span className="text-gray-300">{f.title}</span>
+                        <span className="text-gray-500"> — {f.reason || `HTTP ${f.httpStatus ?? '—'}`}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Database Cleanup - Orphaned Items */}
