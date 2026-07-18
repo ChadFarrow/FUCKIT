@@ -24,25 +24,48 @@ jobs:
     - name: Check for dead feeds (PI dead flag -> confirm 404 -> auto-hide)
       run: |
         BASE_URL="${BASE_URL:-https://stablekraft.app}"
+        LIMIT=300
+        OFFSET=0
+        TOTAL_HIDDEN=0
+        TOTAL_REVIEW=0
+        PAGE=0
 
         echo "🔎 Checking for dead feeds at $(date -u)"
-        RESP=$(curl -s -X POST -w "\n%{http_code}" \
-          -H "$AUTH_HEADER" \
-          -H "Content-Type: application/json" \
-          "${BASE_URL}/api/admin/check-dead-feeds")
-        HTTP_CODE=$(echo "$RESP" | tail -n1)
-        BODY=$(echo "$RESP" | sed '$d')
 
-        echo "$BODY" | jq '.' 2>/dev/null || echo "$BODY"
+        # The active-feed set is thousands of feeds and each request handles a
+        # bounded slice, so loop until the endpoint reports nextOffset=null.
+        while :; do
+          PAGE=$((PAGE + 1))
+          RESP=$(curl -s --max-time 300 -X POST -w "\n%{http_code}" \
+            -H "$AUTH_HEADER" \
+            -H "Content-Type: application/json" \
+            -d "{\"limit\":${LIMIT},\"offset\":${OFFSET}}" \
+            "${BASE_URL}/api/admin/check-dead-feeds")
+          HTTP_CODE=$(echo "$RESP" | tail -n1)
+          BODY=$(echo "$RESP" | sed '$d')
 
-        if [ "$HTTP_CODE" -eq 200 ]; then
-          HID=$(echo "$BODY" | jq -r '.hiddenCount // 0' 2>/dev/null || echo "?")
-          REVIEW=$(echo "$BODY" | jq -r '.needsReview | length' 2>/dev/null || echo "?")
-          echo "✅ Dead-feed check complete: hid ${HID} feed(s), ${REVIEW} need review"
-        else
-          echo "⚠️ Dead-feed check issue (HTTP $HTTP_CODE)"
-          exit 1
-        fi
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "⚠️ Dead-feed check issue on page ${PAGE} (HTTP $HTTP_CODE)"
+            echo "$BODY"
+            exit 1
+          fi
+
+          echo "── page ${PAGE}: $(echo "$BODY" | jq -r '.message' 2>/dev/null || echo "$BODY")"
+          # Log any feed actually hidden this page (the audit trail).
+          echo "$BODY" | jq -c '.hidden[]? | {id,title,artist,piDead,httpStatus}' 2>/dev/null || true
+          echo "$BODY" | jq -c '.needsReview[]? | {id,title,artist,httpStatus,reason}' 2>/dev/null || true
+
+          HID=$(echo "$BODY" | jq -r '.hiddenCount // 0' 2>/dev/null || echo 0)
+          REVIEW=$(echo "$BODY" | jq -r '.needsReview | length' 2>/dev/null || echo 0)
+          TOTAL_HIDDEN=$((TOTAL_HIDDEN + HID))
+          TOTAL_REVIEW=$((TOTAL_REVIEW + REVIEW))
+
+          NEXT=$(echo "$BODY" | jq -r '.nextOffset // "null"' 2>/dev/null || echo "null")
+          [ "$NEXT" = "null" ] && break
+          OFFSET=$NEXT
+        done
+
+        echo "✅ Dead-feed check complete: hid ${TOTAL_HIDDEN} feed(s), ${TOTAL_REVIEW} need review (${PAGE} page(s))"
       env:
         BASE_URL: ${{ secrets.PLAYLIST_BASE_URL || 'https://stablekraft.app' }}
         # Harmless while ADMIN_SECRET is unset on the server (fail-open).

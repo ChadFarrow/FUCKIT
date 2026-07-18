@@ -45,6 +45,7 @@ export default function AdminPanel() {
     dryRun: boolean;
     checked: number;
     candidates: number;
+    totalActive?: number;
     hiddenCount?: number;
     wouldHide?: Array<{ id: string; title: string; artist: string | null; url: string; piDead: number; httpStatus: number | null }>;
     hidden?: Array<{ id: string; title: string; artist: string | null; url: string; piDead: number; httpStatus: number | null }>;
@@ -1070,24 +1071,75 @@ export default function AdminPanel() {
   };
 
   // Run the dead-feed sweep. dryRun=true previews what would be hidden;
-  // dryRun=false confirms 404 and auto-hides via markedDead.
+  // dryRun=false confirms 404 and auto-hides via markedDead. The endpoint
+  // paginates (thousands of feeds), so loop until nextOffset is null and
+  // accumulate results across pages.
   const runDeadFeedCheck = async (dryRun: boolean) => {
     setDeadCheckBusy(true);
     if (dryRun) setDeadCheckReport(null);
     try {
-      const response = await adminFetch('/api/admin/check-dead-feeds', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ dryRun }),
-      });
-      const data = await response.json();
-      if (response.ok && data.success) {
-        setDeadCheckReport(data);
-        if (!dryRun) {
-          toast.success(`Hid ${data.hiddenCount ?? 0} dead feed(s)`);
+      let offset = 0;
+      let checked = 0;
+      let candidates = 0;
+      let hiddenCount = 0;
+      let totalActive = 0;
+      const toHide: any[] = [];
+      const needsReview: any[] = [];
+      const unconfirmed: any[] = [];
+
+      // Hard cap on pages as a runaway guard (1000 limit × 60 ≈ 60k feeds).
+      for (let page = 0; page < 60; page++) {
+        const response = await adminFetch('/api/admin/check-dead-feeds', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ dryRun, limit: 300, offset }),
+        });
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+          toast.error(data.error || 'Dead-feed check failed');
+          setDeadCheckBusy(false);
+          return;
         }
-      } else {
-        toast.error(data.error || 'Dead-feed check failed');
+
+        totalActive = data.totalActive ?? totalActive;
+        checked += data.checked ?? 0;
+        candidates += data.candidates ?? 0;
+        hiddenCount += data.hiddenCount ?? 0;
+        if (Array.isArray(data.wouldHide)) toHide.push(...data.wouldHide);
+        if (Array.isArray(data.hidden)) toHide.push(...data.hidden);
+        if (Array.isArray(data.needsReview)) needsReview.push(...data.needsReview);
+        if (Array.isArray(data.unconfirmed)) unconfirmed.push(...data.unconfirmed);
+
+        // Show progress as pages come in.
+        setDeadCheckReport({
+          dryRun,
+          checked,
+          candidates,
+          totalActive,
+          ...(dryRun ? { wouldHide: toHide } : { hidden: toHide, hiddenCount }),
+          needsReview,
+          unconfirmed,
+          message: `Scanned ${checked} of ${totalActive} active feed(s)…`,
+        });
+
+        if (data.nextOffset === null || data.nextOffset === undefined) break;
+        offset = data.nextOffset;
+      }
+
+      setDeadCheckReport({
+        dryRun,
+        checked,
+        candidates,
+        totalActive,
+        ...(dryRun ? { wouldHide: toHide } : { hidden: toHide, hiddenCount }),
+        needsReview,
+        unconfirmed,
+        message: dryRun
+          ? `Scanned ${checked} active feed(s): ${toHide.length} confirmed dead, ${needsReview.length} need review.`
+          : `Scanned ${checked} active feed(s): hid ${hiddenCount}, ${needsReview.length} need review.`,
+      });
+      if (!dryRun) {
+        toast.success(`Hid ${hiddenCount} dead feed(s)`);
       }
     } catch (error) {
       console.error('Error checking dead feeds:', error);

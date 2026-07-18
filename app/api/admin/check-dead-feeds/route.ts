@@ -27,9 +27,15 @@ import { invalidateSearchCache } from '@/lib/caches/search-cache';
  * In dryRun mode nothing is written and confirmed feeds come back as `wouldHide`.
  */
 
-const PI_BATCH_SIZE = 10;
-const PI_BATCH_DELAY_MS = 1000;
+const PI_BATCH_SIZE = 15;
+const PI_BATCH_DELAY_MS = 250;
 const CONFIRM_TIMEOUT_MS = 15000;
+// Paginate: the active-feed set is large (thousands), so a single request
+// processes one bounded slice and returns `nextOffset`. The weekly workflow
+// (and any caller) loops until `nextOffset` is null. Keeps each request well
+// under edge/function timeouts.
+const DEFAULT_LIMIT = 300;
+const MAX_LIMIT = 1000;
 
 type FeedRow = {
   id: string;
@@ -57,15 +63,25 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => ({}));
     const dryRun: boolean = Boolean(body?.dryRun);
-    const limit: number | undefined =
-      typeof body?.limit === 'number' && body.limit > 0 ? body.limit : undefined;
+    const limit: number =
+      typeof body?.limit === 'number' && body.limit > 0
+        ? Math.min(body.limit, MAX_LIMIT)
+        : DEFAULT_LIMIT;
+    const offset: number =
+      typeof body?.offset === 'number' && body.offset > 0 ? Math.floor(body.offset) : 0;
 
     // --- Step 1: discover candidates via PodcastIndex `dead` flag ------------
+    // Stable `id asc` ordering so offset paging is consistent across calls.
+    const where = { status: 'active', markedDead: false } as const;
+    const totalActive = await prisma.feed.count({ where });
     const feeds: FeedRow[] = await prisma.feed.findMany({
-      where: { status: 'active', markedDead: false },
+      where,
       select: { id: true, title: true, artist: true, originalUrl: true, guid: true },
-      ...(limit ? { take: limit } : {}),
+      orderBy: { id: 'asc' },
+      skip: offset,
+      take: limit,
     });
+    const nextOffset = offset + feeds.length < totalActive ? offset + limit : null;
 
     const candidates: Array<{ feed: FeedRow; piDead: number }> = [];
 
@@ -157,7 +173,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       dryRun,
+      totalActive,
+      offset,
       checked: feeds.length,
+      nextOffset,
       candidates: candidates.length,
       ...(dryRun
         ? { wouldHide: confirmed }
@@ -165,8 +184,8 @@ export async function POST(request: NextRequest) {
       needsReview,
       unconfirmed,
       message: dryRun
-        ? `Would hide ${confirmed.length} confirmed-dead feed(s); ${needsReview.length} need review, ${unconfirmed.length} unconfirmed.`
-        : `Hid ${hiddenCount} confirmed-dead feed(s); ${needsReview.length} need review, ${unconfirmed.length} unconfirmed.`,
+        ? `Would hide ${confirmed.length} confirmed-dead feed(s); ${needsReview.length} need review, ${unconfirmed.length} unconfirmed. (feeds ${offset}–${offset + feeds.length} of ${totalActive})`
+        : `Hid ${hiddenCount} confirmed-dead feed(s); ${needsReview.length} need review, ${unconfirmed.length} unconfirmed. (feeds ${offset}–${offset + feeds.length} of ${totalActive})`,
     });
   } catch (error) {
     console.error('Error in check-dead-feeds:', error);
