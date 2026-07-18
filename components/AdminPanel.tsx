@@ -46,6 +46,8 @@ export default function AdminPanel() {
     checked: number;
     candidates: number;
     totalActive?: number;
+    resolvedInPI?: number;
+    notInPI?: number;
     hiddenCount?: number;
     wouldHide?: Array<{ id: string; title: string; artist: string | null; url: string; piDead: number; httpStatus: number | null }>;
     hidden?: Array<{ id: string; title: string; artist: string | null; url: string; piDead: number; httpStatus: number | null }>;
@@ -1083,6 +1085,8 @@ export default function AdminPanel() {
       let candidates = 0;
       let hiddenCount = 0;
       let totalActive = 0;
+      let resolvedInPI = 0;
+      let notInPI = 0;
       const toHide: any[] = [];
       const needsReview: any[] = [];
       const unconfirmed: any[] = [];
@@ -1105,6 +1109,8 @@ export default function AdminPanel() {
         checked += data.checked ?? 0;
         candidates += data.candidates ?? 0;
         hiddenCount += data.hiddenCount ?? 0;
+        resolvedInPI += data.resolvedInPI ?? 0;
+        notInPI += data.notInPI ?? 0;
         if (Array.isArray(data.wouldHide)) toHide.push(...data.wouldHide);
         if (Array.isArray(data.hidden)) toHide.push(...data.hidden);
         if (Array.isArray(data.needsReview)) needsReview.push(...data.needsReview);
@@ -1116,6 +1122,8 @@ export default function AdminPanel() {
           checked,
           candidates,
           totalActive,
+          resolvedInPI,
+          notInPI,
           ...(dryRun ? { wouldHide: toHide } : { hidden: toHide, hiddenCount }),
           needsReview,
           unconfirmed,
@@ -1131,6 +1139,8 @@ export default function AdminPanel() {
         checked,
         candidates,
         totalActive,
+        resolvedInPI,
+        notInPI,
         ...(dryRun ? { wouldHide: toHide } : { hidden: toHide, hiddenCount }),
         needsReview,
         unconfirmed,
@@ -2115,7 +2125,7 @@ export default function AdminPanel() {
           {deadCheckReport && (
             <div className="mt-4 space-y-4">
               <p className="text-sm text-gray-300">
-                Checked {deadCheckReport.checked} active feed(s) · {deadCheckReport.candidates} flagged dead by Podcast Index.
+                Checked {deadCheckReport.checked} active feed(s) · {deadCheckReport.resolvedInPI ?? 0} resolved in Podcast Index ({deadCheckReport.notInPI ?? 0} not indexed) · {deadCheckReport.candidates} flagged dead.
               </p>
 
               {(() => {

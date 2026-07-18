@@ -84,6 +84,10 @@ export async function POST(request: NextRequest) {
     const nextOffset = offset + feeds.length < totalActive ? offset + limit : null;
 
     const candidates: Array<{ feed: FeedRow; piDead: number }> = [];
+    // Diagnostics so a zero result is trustworthy: proves we actually reached
+    // PI and how many feeds it could resolve (vs. silently returning null).
+    let resolvedInPI = 0;
+    let notInPI = 0;
 
     for (let i = 0; i < feeds.length; i += PI_BATCH_SIZE) {
       const batch = feeds.slice(i, i + PI_BATCH_SIZE);
@@ -97,7 +101,11 @@ export async function POST(request: NextRequest) {
             : await podcastIndexAPI.getFeedByUrl(feed.originalUrl);
 
           // Not in PI (self-hosted feeds PI doesn't track) → never flag.
-          if (!piFeed) return;
+          if (!piFeed) {
+            notInPI++;
+            return;
+          }
+          resolvedInPI++;
 
           if (typeof piFeed.dead === 'number' && piFeed.dead > 0) {
             candidates.push({ feed, piDead: piFeed.dead });
@@ -176,6 +184,8 @@ export async function POST(request: NextRequest) {
       totalActive,
       offset,
       checked: feeds.length,
+      resolvedInPI,
+      notInPI,
       nextOffset,
       candidates: candidates.length,
       ...(dryRun
