@@ -219,6 +219,18 @@ Login flows save user data, set `localStorage['nostr_pending_favorites_sync'] = 
 ### iOS PWA Background Audio (`contexts/AudioContext.tsx`)
 Three-layer strategy: (1) preload at 15s before end, (2) proactive timer at 5s before end, (3) visibility change safety net. `trackEndProcessedRef` prevents double-advance. **Critical**: do not auto-resume if user explicitly paused.
 
+### Android Background Audio — Ping-Pong Dual Element (`contexts/AudioContext.tsx`)
+Android (Chrome / "add to home screen" PWA) drops `play()` when a track transition does `src=…; load(); play()` on the **same** `<audio>` element while the screen is locked — the `.load()` tears the element down and the follow-up `play()` counts as a fresh background autoplay, which Android blocks. Symptom: music stalls at every track boundary until the user wakes/foregrounds the phone (the visibility safety net was the only recovery). iOS is unaffected — it *relies* on the single-element seamless src-swap to keep its audio session warm.
+
+Fix = **start the next track on a second `<audio>` element while the first is still playing**, then swap active + pause the old one — playback never fully stops, so Android doesn't block it. **Android-gated; iOS/desktop keep the single-element path untouched.**
+
+- **Two audio elements**: `audioRef` (`#stablekraft-audio-player`) + `audioRefB` (`#stablekraft-audio-player-b`). `activeAudioRef` points at the current one; **it is only ever repointed inside the Android ping-pong branch**, so on iOS/desktop `getActiveAudioEl()` always === `audioRef.current`.
+- **`getActiveAudioEl()` / `getIdleAudioEl()`** are the indirection. **Every "current playback element" access must go through `getActiveAudioEl()`** (never raw `audioRef.current`) — pause/resume/seek/stall-detection/media-session/NIP-38/visibility-safety-net all do. The media-session `seekto` handler and `stop()` were the easy-to-miss ones (`stop()` pauses **both** audio elements).
+- **Listener guard**: media event listeners bind to **both** audio elements; each handler early-returns via `shouldProcess(e)` unless `e.currentTarget` is the true current element (`getActiveAudioEl()`, or the video el in video mode). Without this the idle element's preload events (`loadedmetadata`, etc.) would drive state — e.g. seek the active element to `startTime`.
+- **Preload**: at 5s the cross-element preload targets `getIdleAudioEl()` on Android audio→audio (previously a no-op since `nextElement === currentElement`); `attemptPingPongPlayback` reuses it if `readyState >= 2`.
+- **Transition path**: `attemptPingPongPlayback(track, album, sessionId)` runs **before** `attemptSeamlessPlayback` in both `playAlbum` and `playShuffledTrack`, gated `isAndroidRef.current && !isVideoMode`. Audio-only (returns false for video/HLS → falls through). On failure it falls through to the existing seamless/full path (no regression). A platform-neutral stopgap (reassert `playbackState='playing'` + one `NotAllowedError` retry, no second `load()`) also lives in `attemptSeamlessPlayback`.
+- **Verification is device-only**: the locked-screen autoplay policy does not reproduce on desktop/emulator. Test on a physical Android phone + Bluetooth earbuds, screen locked, ≥3 auto boundaries untouched; watch logs for `✅ Ping-pong transition succeeded` and no background `NotAllowedError`.
+
 ### Sorting
 `/api/albums-fast` accepts `sort` param (`added-desc`, `added-asc`, `year-desc`, `year-asc`, `name-asc`, `name-desc`, `tracks-desc`, `tracks-asc`). **Do NOT send `sort=name-asc` as default** — bypasses format grouping (Albums → EPs → Singles). Date fields: `Feed.oldestItemPubdate` = release date, `Feed.createdAt` = when added.
 

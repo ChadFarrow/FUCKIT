@@ -139,8 +139,17 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
 
   // iOS detection state (for JSX conditional rendering)
   const [isIOS, setIsIOS] = useState(false);
+  // Android detection state (drives the ping-pong background-transition path)
+  const [isAndroid, setIsAndroid] = useState(false);
+  // Stable ref so event handlers/timers can read Android-ness without re-subscribing
+  const isAndroidRef = useRef(false);
 
   const audioRef = useRef<HTMLAudioElement>(null);
+  const audioRefB = useRef<HTMLAudioElement>(null); // Second audio element for Android gapless ping-pong
+  // Points at whichever of audioRef/audioRefB is currently the playback element.
+  // Only ever repointed inside the Android ping-pong branch — on iOS/desktop it
+  // stays === audioRef.current so behavior is unchanged.
+  const activeAudioRef = useRef<HTMLAudioElement | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<HlsType | null>(null);
   const albumsLoadedRef = useRef(false);
@@ -227,7 +236,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
             return;
           }
 
-          const currentElement = isVideoMode ? videoRef.current : audioRef.current;
+          const currentElement = isVideoMode ? videoRef.current : getActiveAudioEl();
 
           // Construct track page URL on this site
           const baseUrl = typeof window !== 'undefined'
@@ -827,7 +836,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
       if (!prev) return;
 
       // Get actual current playback time from the audio/video element
-      const audio = audioRef.current;
+      const audio = getActiveAudioEl();
       const video = videoRef.current;
       const currentElement = (video && !video.paused && !video.ended) ? video : audio;
       if (!currentElement) return;
@@ -916,6 +925,35 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
   useEffect(() => {
     setIsIOS(isIOSDevice());
   }, [isIOSDevice]);
+
+  // Detect Android (excluding anything that also matches iOS). Android's
+  // background-media autoplay policy drops play() after a load()+play() on the
+  // same element while the screen is locked — the ping-pong path below starts
+  // the next track on a second, already-loaded element to avoid that.
+  const isAndroidDevice = useCallback(() => {
+    if (typeof navigator === 'undefined') return false;
+    return /Android/i.test(navigator.userAgent) &&
+           !/iPhone|iPad|iPod/i.test(navigator.userAgent);
+  }, []);
+
+  // Set Android state (JSX) + ref (handlers/timers) on mount
+  useEffect(() => {
+    const android = isAndroidDevice();
+    setIsAndroid(android);
+    isAndroidRef.current = android;
+  }, [isAndroidDevice]);
+
+  // Active/idle audio element indirection for the Android ping-pong path.
+  // getActiveAudioEl() is the current playback element (defaults to audioRef);
+  // getIdleAudioEl() is the other of the two audio elements. On iOS/desktop
+  // activeAudioRef is never repointed, so getActiveAudioEl() === audioRef.current.
+  const getActiveAudioEl = useCallback((): HTMLAudioElement | null => {
+    return activeAudioRef.current ?? audioRef.current;
+  }, []);
+  const getIdleAudioEl = useCallback((): HTMLAudioElement | null => {
+    const active = activeAudioRef.current ?? audioRef.current;
+    return active === audioRefB.current ? audioRef.current : audioRefB.current;
+  }, []);
 
 
   // AudioContext state version - increment when structure changes to invalidate old cache
@@ -1021,7 +1059,8 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         navigator.mediaSession.setActionHandler('seekforward', null);
         navigator.mediaSession.setActionHandler('seekto', (details) => {
           if (details.seekTime != null) {
-            const el = document.getElementById('stablekraft-audio-player') as HTMLAudioElement;
+            // Use the active audio element (may be the ping-pong B element on Android)
+            const el = getActiveAudioEl();
             if (el) {
               el.currentTime = details.seekTime;
             }
@@ -1055,7 +1094,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
       if (document.visibilityState !== 'visible') return;
 
       // Check both audio and video elements
-      const audio = audioRef.current;
+      const audio = getActiveAudioEl();
       const video = videoRef.current;
       const currentElement = (video && !video.paused && !video.ended) ? video : audio;
       if (!currentElement) return;
@@ -1588,7 +1627,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     console.log('🎵 Attempting audio playback:', { originalUrl, context, mediaType });
     const isVideo = isVideoUrl(originalUrl, mediaType);
     const isHls = isHlsUrl(originalUrl);
-    const mediaElement = isVideo ? videoRef.current : audioRef.current;
+    const mediaElement = isVideo ? videoRef.current : getActiveAudioEl();
 
     if (!mediaElement) {
       console.error(`❌ ${isVideo ? 'Video' : 'Audio'} element reference is null`);
@@ -1657,7 +1696,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
       }
 
       // Check if media element is still valid
-      const currentMediaElement = isVideo ? videoRef.current : audioRef.current;
+      const currentMediaElement = isVideo ? videoRef.current : getActiveAudioEl();
       if (!currentMediaElement) {
         console.error(`❌ ${isVideo ? 'Video' : 'Audio'} element became null during playback attempt`);
         return false;
@@ -1771,7 +1810,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
   // by directly swapping source without pause/clear/delay
   const attemptSeamlessPlayback = async (audioUrl: string, context: string, sessionId?: number, mediaType?: string): Promise<boolean> => {
     const isVideo = isVideoUrl(audioUrl, mediaType);
-    const currentElement = isVideo ? videoRef.current : audioRef.current;
+    const currentElement = isVideo ? videoRef.current : getActiveAudioEl();
 
     if (!currentElement) {
       console.warn('⚠️ No media element for seamless playback');
@@ -1807,6 +1846,12 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         // Reset currentTime to 0 for iOS - the src change may not automatically reset it
         currentElement.currentTime = 0;
 
+        // Reassert "playing" right before play() so the media session stays warm
+        // across the src swap (helps some backgrounded cases).
+        if ('mediaSession' in navigator && navigator.mediaSession) {
+          navigator.mediaSession.playbackState = 'playing';
+        }
+
         // Attempt immediate play
         const playPromise = currentElement.play();
         if (playPromise !== undefined) {
@@ -1816,6 +1861,22 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         }
         return true;
       } catch (error) {
+        // Safe stopgap: a backgrounded play() can reject with NotAllowedError.
+        // Retry ONCE without another load() (a second load() only makes it worse).
+        // This is a cheap safety layer, not the primary Android fix (ping-pong).
+        if (error instanceof DOMException && error.name === 'NotAllowedError') {
+          try {
+            await new Promise(resolve => setTimeout(resolve, 50));
+            if ('mediaSession' in navigator && navigator.mediaSession) {
+              navigator.mediaSession.playbackState = 'playing';
+            }
+            await currentElement.play();
+            console.log(`✅ Seamless playback started on retry: ${context}`);
+            return true;
+          } catch (retryError) {
+            console.warn(`⚠️ Seamless playback retry failed: ${retryError}`);
+          }
+        }
         console.warn(`⚠️ Seamless playback attempt ${i + 1} failed: ${error}`);
         // Continue to next URL if available
       }
@@ -1830,13 +1891,111 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     return false;
   };
 
+  // Android gapless ping-pong transition.
+  // Starts the next track on the IDLE audio element WHILE the current element is
+  // still playing, then promotes idle -> active and pauses the old element.
+  // Because playback never fully stops, Android's locked-screen background
+  // autoplay policy does not block the new play() — unlike a load()+play() on the
+  // same element (what attemptSeamlessPlayback does), which Android drops on a
+  // locked screen, stalling playback until the user foregrounds the app.
+  // Audio-only; returns false (to fall through to seamless/full playback) for
+  // video/HLS or on any failure.
+  const attemptPingPongPlayback = async (
+    track: RSSAlbum['tracks'][number],
+    album: RSSAlbum,
+    sessionId?: number
+  ): Promise<boolean> => {
+    const rawUrl = getTrackPlaybackUrl(track);
+    if (isVideoUrl(rawUrl, track.mediaType)) return false; // video handled elsewhere
+
+    const idle = getIdleAudioEl();
+    const outgoing = getActiveAudioEl();
+    if (!idle) return false;
+
+    const urlsToTry = getAudioUrlsToTry(rawUrl);
+    const startTime = track.startTime && typeof track.startTime === 'number' ? track.startTime : 0;
+
+    for (let i = 0; i < urlsToTry.length; i++) {
+      if (sessionId !== undefined && playbackSessionRef.current !== sessionId) {
+        console.log(`⏭️ Ping-pong session ${sessionId} cancelled, newer session ${playbackSessionRef.current} active`);
+        return false;
+      }
+
+      let secureUrl = urlsToTry[i];
+      if (secureUrl.startsWith('http://')) {
+        secureUrl = secureUrl.replace(/^http:/, 'https:');
+      }
+
+      try {
+        // Reuse the idle element if the 5s preload already loaded this exact URL
+        // (readyState >= 2 = HAVE_CURRENT_DATA); otherwise load it now.
+        const alreadyLoaded = idle.src === secureUrl && idle.readyState >= 2;
+        if (!alreadyLoaded) {
+          idle.src = secureUrl;
+          idle.load();
+        }
+        idle.currentTime = startTime;
+        idle.muted = false;
+        idle.volume = 0.8;
+
+        if ('mediaSession' in navigator && navigator.mediaSession) {
+          navigator.mediaSession.playbackState = 'playing';
+        }
+
+        // Start the new element while the old one is still playing.
+        await idle.play();
+
+        // Success — promote idle to active, then quiesce the old element.
+        activeAudioRef.current = idle;
+        if (outgoing && outgoing !== idle) {
+          try { outgoing.pause(); } catch { /* ignore */ }
+        }
+
+        // Reset advance/preload bookkeeping for the new current track.
+        trackEndProcessedRef.current = false;
+        pendingNextTrackUrlRef.current = null;
+        if (iosAdvanceTimerRef.current) {
+          clearTimeout(iosAdvanceTimerRef.current);
+          iosAdvanceTimerRef.current = null;
+        }
+
+        setIsPlaying(true);
+        if ('mediaSession' in navigator && navigator.mediaSession) {
+          navigator.mediaSession.playbackState = 'playing';
+        }
+        updateMediaSession(album, track);
+        setIsLoading(false);
+        const isProxied = secureUrl.includes('proxy-audio');
+        console.log(`✅ Ping-pong transition succeeded (${isProxied ? 'proxy' : 'direct'}): ${track.title}`);
+        return true;
+      } catch (err) {
+        console.warn(`⚠️ Ping-pong attempt ${i + 1}/${urlsToTry.length} failed: ${err}`);
+        // Try next URL; on total failure, caller falls through to seamless/full.
+      }
+    }
+
+    return false;
+  };
+
   // Media event listeners
   useEffect(() => {
     const audio = audioRef.current;
+    const audioB = audioRefB.current;
     const video = videoRef.current;
-    if (!audio || !video) return;
+    if (!audio || !audioB || !video) return;
 
-    const handlePlay = () => {
+    // Only process events from the ONE element that is currently the playback
+    // element. With the Android ping-pong path there are two audio elements, and
+    // the idle one still fires loadstart/loadedmetadata/etc while it is preloaded
+    // — those must not drive state (e.g. seek the active element to startTime).
+    const shouldProcess = (e: Event): boolean => {
+      const t = e.currentTarget;
+      if (isVideoMode) return t === video;
+      return t === getActiveAudioEl();
+    };
+
+    const handlePlay = (e: Event) => {
+      if (!shouldProcess(e)) return;
       setIsPlaying(true);
       // Reset iOS background advance tracking for next track end
       trackEndProcessedRef.current = false;
@@ -1859,17 +2018,19 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
       publishNip38StatusDebounced('play');
     };
 
-    const handlePause = () => {
+    const handlePause = (e: Event) => {
+      if (!shouldProcess(e)) return;
       // Ignore pause events from track ending — handleEnded handles transitions
-      const currentElement = isVideoMode ? video : audio;
-      if (currentElement.ended) {
+      const currentElement = isVideoMode ? video : getActiveAudioEl();
+      if (!currentElement || currentElement.ended) {
         return;
       }
 
       setIsPlaying(false);
     };
 
-    const handleEnded = async () => {
+    const handleEnded = async (e: Event) => {
+      if (!shouldProcess(e)) return;
       console.log('🎵 Track ended, attempting to play next track');
 
       // Clear proactive advance timer (no longer needed)
@@ -1934,8 +2095,10 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
       }
     };
 
-    const handleTimeUpdate = () => {
-      const currentElement = isVideoMode ? video : audio;
+    const handleTimeUpdate = (e: Event) => {
+      if (!shouldProcess(e)) return;
+      const currentElement = isVideoMode ? video : getActiveAudioEl();
+      if (!currentElement) return;
       currentTimeRef.current = currentElement.currentTime;
       setCurrentTime(currentElement.currentTime);
 
@@ -2011,9 +2174,19 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
               prefetchAudio(secureNextUrl).catch(() => {});
             }
 
-            // At 5s: Cross-element preload (audio <-> video transitions)
+            // At 5s: Cross-element preload.
+            // - audio <-> video transitions use the alternate media element.
+            // - On Android, audio->audio transitions preload into the IDLE audio
+            //   element so the ping-pong handoff below can start it while the
+            //   current element is still playing (locked-screen autoplay survival).
+            //   On iOS/desktop this resolves to audioRef.current (== current
+            //   element) and the `!== currentElement` guard makes it a no-op —
+            //   behavior unchanged.
             if (timeRemaining <= 5) {
-              const nextElement = isVideoUrl(nextTrackUrl, nextTrack.mediaType) ? videoRef.current : audioRef.current;
+              const nextIsVideo = isVideoUrl(nextTrackUrl, nextTrack.mediaType);
+              const nextElement = nextIsVideo
+                ? videoRef.current
+                : (isAndroidRef.current && !isVideoMode ? getIdleAudioEl() : audioRef.current);
               if (nextElement && nextElement !== currentElement) {
                 if (!nextElement.src || nextElement.src !== secureNextUrl) {
                   console.log('🔄 Preloading next track into alternate element:', nextTrack.title);
@@ -2032,7 +2205,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
               console.log(`📱 Scheduling proactive track advance in ${Math.round(advanceInMs)}ms`);
               iosAdvanceTimerRef.current = setTimeout(() => {
                 iosAdvanceTimerRef.current = null;
-                const el = isVideoMode ? videoRef.current : audioRef.current;
+                const el = isVideoMode ? videoRef.current : getActiveAudioEl();
                 // Only advance if track actually ended (or is at the very end)
                 if (el && (el.ended || (el.duration > 0 && el.currentTime >= el.duration - 0.5))) {
                   // Guard against double-advance (handleEnded may have already fired)
@@ -2077,8 +2250,10 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
       }
     };
 
-    const handleLoadedMetadata = () => {
-      const currentElement = isVideoMode ? video : audio;
+    const handleLoadedMetadata = (e: Event) => {
+      if (!shouldProcess(e)) return;
+      const currentElement = isVideoMode ? video : getActiveAudioEl();
+      if (!currentElement) return;
       setDuration(currentElement.duration);
 
       // Re-update media session with duration info for iOS
@@ -2107,6 +2282,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     };
 
     const handleError = (event: Event) => {
+      if (!shouldProcess(event)) return;
       const mediaError = (event.target as HTMLMediaElement)?.error;
       console.error(`🚫 ${isVideoMode ? 'Video' : 'Audio'} error:`, mediaError);
 
@@ -2158,6 +2334,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     // iOS-specific: Handle stalled event - iOS fires this when buffering
     // Without this handler, iOS may pause playback and not resume
     const handleStalled = (event: Event) => {
+      if (!shouldProcess(event)) return;
       const element = event.target as HTMLMediaElement;
       console.log('⏸️ Media stalled (buffering) - iOS may need help resuming');
 
@@ -2173,6 +2350,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
 
     // iOS-specific: Handle waiting event - playback stopped due to lack of data
     const handleWaiting = (event: Event) => {
+      if (!shouldProcess(event)) return;
       const element = event.target as HTMLMediaElement;
       console.log('⏳ Media waiting for data (buffering)');
 
@@ -2188,8 +2366,8 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
       }, 1000);
     };
 
-    // Add event listeners to both audio and video elements
-    const elements = [audio, video];
+    // Add event listeners to both audio elements (ping-pong) and the video element
+    const elements = [audio, audioB, video];
     elements.forEach(element => {
       element.addEventListener('play', handlePlay);
       element.addEventListener('pause', handlePause);
@@ -2259,7 +2437,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     }
 
     const checkForStall = () => {
-      const currentElement = isVideoMode ? videoRef.current : audioRef.current;
+      const currentElement = isVideoMode ? videoRef.current : getActiveAudioEl();
       if (!currentElement) return;
 
       // Only check if we think we're playing AND element is not paused AND not ended
@@ -2351,7 +2529,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     stallCheckIntervalRef.current = setInterval(checkForStall, 2000);
 
     // Initialize last known time
-    const currentElement = isVideoMode ? videoRef.current : audioRef.current;
+    const currentElement = isVideoMode ? videoRef.current : getActiveAudioEl();
     if (currentElement) {
       lastKnownTimeRef.current = currentElement.currentTime;
     }
@@ -2430,7 +2608,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         // re-registering can cause stale closures or handler conflicts
 
         // Set position state (required for iOS lockscreen controls)
-        const currentElement = isVideoMode ? videoRef.current : audioRef.current;
+        const currentElement = isVideoMode ? videoRef.current : getActiveAudioEl();
         if (currentElement && currentElement.duration && !isNaN(currentElement.duration)) {
           try {
             navigator.mediaSession.setPositionState({
@@ -2520,6 +2698,19 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         isPlaying,
         isAutoTransitioning: isAutoTransitioningRef.current
       });
+      // Android: try the gapless ping-pong path first. Starting the next track on
+      // a second element (while this one still plays) survives locked-screen
+      // background transitions that a same-element load()+play() would stall.
+      if (isAndroidRef.current && !isVideoMode) {
+        const pingPongSuccess = await attemptPingPongPlayback(track, album, sessionId);
+        if (pingPongSuccess) {
+          isAutoTransitioningRef.current = false;
+          if (playbackSessionRef.current !== sessionId) return false;
+          console.log('✅ Android ping-pong track transition successful');
+          return true;
+        }
+        // Fall through to seamless/full playback on failure.
+      }
       // Try seamless playback first for iOS background compatibility
       const seamlessSuccess = await attemptSeamlessPlayback(getTrackPlaybackUrl(track), 'Track transition', sessionId, track.mediaType);
       // Clear auto-transitioning flag after attempt
@@ -2617,6 +2808,17 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         isPlaying,
         isAutoTransitioning: isAutoTransitioningRef.current
       });
+      // Android: gapless ping-pong first (see playAlbum for rationale).
+      if (isAndroidRef.current && !isVideoMode) {
+        const pingPongSuccess = await attemptPingPongPlayback(track, album, sessionId);
+        if (pingPongSuccess) {
+          isAutoTransitioningRef.current = false;
+          if (playbackSessionRef.current !== sessionId) return false;
+          console.log('✅ Android ping-pong shuffle transition successful');
+          return true;
+        }
+        // Fall through to seamless/full playback on failure.
+      }
       const seamlessSuccess = await attemptSeamlessPlayback(getTrackPlaybackUrl(track), 'Shuffle track transition', sessionId, track.mediaType);
       // Clear auto-transitioning flag after attempt
       isAutoTransitioningRef.current = false;
@@ -2926,7 +3128,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
 
     let currentElement: HTMLAudioElement | HTMLVideoElement | null = isVideoMode
       ? videoRef.current
-      : audioRef.current;
+      : getActiveAudioEl();
 
     if (!currentElement) {
       currentElement = isVideoMode
@@ -2949,7 +3151,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
 
     let currentElement: HTMLAudioElement | HTMLVideoElement | null = isVideoMode
       ? videoRef.current
-      : audioRef.current;
+      : getActiveAudioEl();
 
     if (!currentElement) {
       currentElement = isVideoMode
@@ -3033,7 +3235,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
 
   // Seek function
   const seek = (time: number) => {
-    const currentElement = isVideoMode ? videoRef.current : audioRef.current;
+    const currentElement = isVideoMode ? videoRef.current : getActiveAudioEl();
     if (currentElement && duration) {
       // Mark as manual seek so VTS detection doesn't trigger autoboost
       isManualSeekRef.current = true;
@@ -3448,10 +3650,14 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
 
   // Stop function
   const stop = () => {
-    // Stop both audio and video elements
+    // Stop both audio elements (ping-pong A + B) and the video element
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
+    }
+    if (audioRefB.current) {
+      audioRefB.current.pause();
+      audioRefB.current.currentTime = 0;
     }
     if (videoRef.current) {
       videoRef.current.pause();
@@ -3610,6 +3816,29 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
       <audio
         id="stablekraft-audio-player"
         ref={audioRef}
+        preload={isIOS ? 'auto' : 'metadata'}
+        playsInline
+        webkit-playsinline="true"
+        x-webkit-airplay="allow"
+        autoPlay={false}
+        controls={true}
+        muted={false}
+        style={{
+          position: 'absolute',
+          left: '-9999px',
+          top: '-9999px',
+          width: '1px',
+          height: '1px',
+          pointerEvents: 'none'
+        }}
+      />
+      {/* Second audio element — used only on Android for gapless ping-pong
+          transitions (start next track here while the first is still playing so
+          Android's locked-screen autoplay policy doesn't drop play()). Idle on
+          iOS/desktop. */}
+      <audio
+        id="stablekraft-audio-player-b"
+        ref={audioRefB}
         preload={isIOS ? 'auto' : 'metadata'}
         playsInline
         webkit-playsinline="true"
