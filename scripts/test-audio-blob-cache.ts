@@ -26,7 +26,7 @@ test('preparing a new next revokes the previous unconsumed next', () => {
   const { cache, created, revoked } = makeCache();
   cache.prepareNext('urlA', B());
   cache.prepareNext('urlB', B());
-  assert.deepEqual(revoked, [created[0]]);
+  assert.deepStrictEqual(revoked, [created[0]]);
   assert.equal(cache.getPreparedNext('urlB'), created[1]);
   assert.equal(cache.hasPreparedNext('urlA'), false);
 });
@@ -36,7 +36,7 @@ test('promoteToPlaying keeps the promoted blob and clears next (first playing bl
   cache.prepareNext('urlA', B());
   cache.promoteToPlaying('urlA');
   assert.equal(cache.hasPreparedNext('urlA'), false);
-  assert.deepEqual(revoked, []);
+  assert.deepStrictEqual(revoked, []);
 });
 
 test('a later promote revokes the previously-playing blob', () => {
@@ -45,7 +45,7 @@ test('a later promote revokes the previously-playing blob', () => {
   cache.promoteToPlaying('urlA');
   cache.prepareNext('urlB', B());
   cache.promoteToPlaying('urlB');
-  assert.deepEqual(revoked, [created[0]]);
+  assert.deepStrictEqual(revoked, [created[0]]);
 });
 
 test('promoteToPlaying with a non-matching key is a no-op', () => {
@@ -53,7 +53,7 @@ test('promoteToPlaying with a non-matching key is a no-op', () => {
   cache.prepareNext('urlA', B());
   cache.promoteToPlaying('urlZ');
   assert.equal(cache.hasPreparedNext('urlA'), true);
-  assert.deepEqual(revoked, []);
+  assert.deepStrictEqual(revoked, []);
 });
 
 test('clearAll revokes both next and playing', () => {
@@ -62,5 +62,5 @@ test('clearAll revokes both next and playing', () => {
   cache.promoteToPlaying('urlA');
   cache.prepareNext('urlB', B());
   cache.clearAll();
-  assert.deepEqual(revoked.slice().sort(), [created[0], created[1]].slice().sort());
+  assert.deepStrictEqual(revoked.slice().sort(), [created[0], created[1]].slice().sort());
 });

@@ -189,7 +189,6 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     return nextBlobCacheRef.current;
   };
 
-
   // NIP-38 status publishing
   const { user, isAuthenticated } = useNostr();
   const { settings } = useUserSettings();
