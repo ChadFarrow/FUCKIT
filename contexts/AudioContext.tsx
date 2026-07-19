@@ -38,6 +38,23 @@ function isBoostChaptersUrl(url: string | undefined | null): boolean {
   }
 }
 
+/**
+ * Native-Android-only bridge to the PlaybackKeepAlive foreground service.
+ * On iOS, desktop, and the browser PWA this is a complete no-op (returns
+ * before any side effect). Never throws — a missing plugin or older native
+ * shell degrades silently to today's no-foreground-service behavior.
+ */
+function playbackKeepAlive(action: 'start' | 'stop'): void {
+  try {
+    const cap = (typeof window !== 'undefined' ? (window as any).Capacitor : undefined);
+    if (!cap?.isNativePlatform?.()) return;      // browser PWA / SSR / iOS Safari
+    if (cap.getPlatform?.() !== 'android') return; // native, Android only
+    cap.Plugins?.PlaybackKeepAlive?.[action]?.();
+  } catch {
+    // swallow — must never break the audio pipeline
+  }
+}
+
 interface AudioContextType {
   // Audio state
   currentPlayingAlbum: RSSAlbum | null;
@@ -212,6 +229,14 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
   useEffect(() => {
     autoBoostKeysendWarningShownRef.current = false;
   }, [supportsKeysend]);
+
+  // Native Android: hold a foreground service while audio is playing so the OS
+  // does not suspend the backgrounded WebView (locked-screen playback). No-op on
+  // every non-native platform. Keyed on isPlaying, which stays true across track
+  // transitions and only flips false on pause / stop / end-of-queue.
+  useEffect(() => {
+    playbackKeepAlive(isPlaying ? 'start' : 'stop');
+  }, [isPlaying]);
 
   // Track previous VTS segment for chapter transition auto-boost
   const prevVtsSegmentRef = useRef<{ index: number; feedGuid?: string; itemGuid?: string; remotePercentage: number } | null>(null);
