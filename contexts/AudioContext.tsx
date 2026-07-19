@@ -1904,7 +1904,6 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     return false;
   };
 
-  // Android gapless ping-pong transition.
   // Resolve the single "primary" playback URL for a track — the same first
   // candidate the transition path uses — so the prefetch key and the ping-pong
   // lookup always agree.
@@ -1986,6 +1985,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
   // locked screen, stalling playback until the user foregrounds the app.
   // Audio-only; returns false (to fall through to seamless/full playback) for
   // video/HLS or on any failure.
+  // Android gapless ping-pong transition.
   const attemptPingPongPlayback = async (
     track: RSSAlbum['tracks'][number],
     album: RSSAlbum,
@@ -2001,20 +2001,28 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     const urlsToTry = getAudioUrlsToTry(rawUrl);
     const startTime = track.startTime && typeof track.startTime === 'number' ? track.startTime : 0;
 
-    for (let i = 0; i < urlsToTry.length; i++) {
+    // Prefer the prefetched in-memory blob (survives backgrounded media-load
+    // suspension); fall back to the network URLs on any miss/failure.
+    const blobKey = primaryPlaybackUrl(track);
+    const blobUrl = blobKey ? getBlobCache().getPreparedNext(blobKey) : null;
+    const sources: Array<{ url: string; isBlob: boolean }> = [];
+    if (blobUrl) sources.push({ url: blobUrl, isBlob: true });
+    for (const u of urlsToTry) {
+      let s = u;
+      if (s.startsWith('http://')) s = s.replace(/^http:/, 'https:');
+      sources.push({ url: s, isBlob: false });
+    }
+
+    for (let i = 0; i < sources.length; i++) {
       if (sessionId !== undefined && playbackSessionRef.current !== sessionId) {
         console.log(`⏭️ Ping-pong session ${sessionId} cancelled, newer session ${playbackSessionRef.current} active`);
         return false;
       }
 
-      let secureUrl = urlsToTry[i];
-      if (secureUrl.startsWith('http://')) {
-        secureUrl = secureUrl.replace(/^http:/, 'https:');
-      }
+      const { url: secureUrl, isBlob } = sources[i];
 
       try {
-        // Reuse the idle element if the 5s preload already loaded this exact URL
-        // (readyState >= 2 = HAVE_CURRENT_DATA); otherwise load it now.
+        // Reuse the idle element if it already holds this exact source loaded.
         const alreadyLoaded = idle.src === secureUrl && idle.readyState >= 2;
         if (!alreadyLoaded) {
           idle.src = secureUrl;
@@ -2036,6 +2044,11 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         if (outgoing && outgoing !== idle) {
           try { outgoing.pause(); } catch { /* ignore */ }
         }
+        // A consumed blob becomes the "playing" blob; the previously-playing
+        // blob (now finished) is revoked inside promoteToPlaying.
+        if (isBlob && blobKey) {
+          getBlobCache().promoteToPlaying(blobKey);
+        }
 
         // Reset advance/preload bookkeeping for the new current track.
         trackEndProcessedRef.current = false;
@@ -2052,11 +2065,11 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         updateMediaSession(album, track);
         setIsLoading(false);
         const isProxied = secureUrl.includes('proxy-audio');
-        console.log(`✅ Ping-pong transition succeeded (${isProxied ? 'proxy' : 'direct'}): ${track.title}`);
+        console.log(`✅ Ping-pong transition succeeded (${isBlob ? 'blob' : isProxied ? 'proxy' : 'direct'}): ${track.title}`);
         return true;
       } catch (err) {
-        console.warn(`⚠️ Ping-pong attempt ${i + 1}/${urlsToTry.length} failed: ${err}`);
-        // Try next URL; on total failure, caller falls through to seamless/full.
+        console.warn(`⚠️ Ping-pong attempt ${i + 1}/${sources.length} failed: ${err}`);
+        // Try next source; on total failure, caller falls through to seamless/full.
       }
     }
 
@@ -3745,6 +3758,8 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
       audioRefB.current.pause();
       audioRefB.current.currentTime = 0;
     }
+    // Android blob prefetch: release any held object URLs (playing + prepared).
+    nextBlobCacheRef.current?.clearAll();
     if (videoRef.current) {
       videoRef.current.pause();
       videoRef.current.currentTime = 0;
