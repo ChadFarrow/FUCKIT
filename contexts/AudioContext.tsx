@@ -175,6 +175,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
   const pendingNextTrackUrlRef = useRef<string | null>(null); // Pre-computed URL for next track
   const iosAdvanceTimerRef = useRef<NodeJS.Timeout | null>(null); // Proactive advance timer
   const trackEndProcessedRef = useRef<boolean>(false); // Prevent double-advance from timer + ended event
+  const earlyAdvanceTriggeredRef = useRef<boolean>(false); // Android: guard so the pre-end gapless advance fires once per track
   const preloadAudioRef = useRef<HTMLAudioElement | null>(null); // Hidden Audio element for preloading next track
 
   // Android locked-screen fix: holds the NEXT track's bytes as an in-memory
@@ -2097,6 +2098,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
       setIsPlaying(true);
       // Reset iOS background advance tracking for next track end
       trackEndProcessedRef.current = false;
+      earlyAdvanceTriggeredRef.current = false; // re-arm Android pre-end gapless advance for this track
       pendingNextTrackUrlRef.current = null;
       if (iosAdvanceTimerRef.current) {
         clearTimeout(iosAdvanceTimerRef.current);
@@ -2255,6 +2257,37 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
 
             // Store pre-computed URL for fast access in handleEnded
             pendingNextTrackUrlRef.current = secureNextUrl;
+
+            // ANDROID GAPLESS OVERLAP: ~0.5s before the current track ends, if the
+            // next track's blob is already prefetched, start the transition NOW —
+            // while this element is still playing. attemptPingPongPlayback starts
+            // the idle (blob) element and only then pauses this one, so audio never
+            // goes silent. That continuity is what a locked/backgrounded Android tab
+            // needs: a next track (re)started during a silent gap keeps advancing but
+            // plays inaudibly until foreground, whereas one started while audio is
+            // still outputting stays audible. Blob-gated (instant, no network) and
+            // Android-only; iOS/desktop keep the end-of-track transition untouched.
+            if (
+              isAndroidRef.current &&
+              !isVideoMode &&
+              timeRemaining <= 0.5 &&
+              !trackEndProcessedRef.current &&
+              !earlyAdvanceTriggeredRef.current
+            ) {
+              const blobKey = primaryPlaybackUrl(nextTrack);
+              if (blobKey && getBlobCache().getPreparedNext(blobKey)) {
+                earlyAdvanceTriggeredRef.current = true;
+                trackEndProcessedRef.current = true; // suppress the natural 'ended' advance
+                isAutoTransitioningRef.current = true;
+                if ('mediaSession' in navigator && navigator.mediaSession) {
+                  navigator.mediaSession.playbackState = 'playing';
+                }
+                console.log(`⏩ Android early gapless advance (${timeRemaining.toFixed(2)}s before end): ${nextTrack.title}`);
+                if (playNextTrackRef.current) {
+                  playNextTrackRef.current();
+                }
+              }
+            }
 
             // At 15s: Preload next track audio via hidden Audio element
             // This populates the browser's HTTP cache so load() in handleEnded is instant
