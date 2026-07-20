@@ -3,6 +3,9 @@
  * No DOM / React dependencies so they are unit-testable in node:test.
  */
 
+/** localStorage key that records the user dismissed the Android battery hint. */
+export const ANDROID_BATTERY_HINT_DISMISSED_KEY = 'android_battery_hint_dismissed';
+
 /**
  * Whether the first-play battery hint should be shown.
  * Shows only on an Android browser (not the native Capacitor app) that has

@@ -2,9 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
-import { resolveBrowserName } from '@/lib/android-battery-hint';
-
-const DISMISSED_KEY = 'android_battery_hint_dismissed';
+import { resolveBrowserName, ANDROID_BATTERY_HINT_DISMISSED_KEY } from '@/lib/android-battery-hint';
 
 /**
  * One-time modal shown to Android browser users on first playback, explaining
@@ -44,7 +42,7 @@ export default function AndroidBatteryHintModal() {
 
   const dismiss = () => {
     try {
-      localStorage.setItem(DISMISSED_KEY, '1');
+      localStorage.setItem(ANDROID_BATTERY_HINT_DISMISSED_KEY, '1');
     } catch {
       // ignore — private mode etc.; worst case it shows again next session
     }

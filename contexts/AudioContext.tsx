@@ -17,7 +17,7 @@ import { hasV4V as checkHasV4V, getV4VRecipients, getPrimaryRecipient, formatVal
 import { prefetchUpcomingTracks, prefetchAudio } from '@/lib/audio-prefetch';
 import { NextTrackBlobCache } from '@/lib/audio-blob-prefetch';
 import { PodcastChapter } from '@/lib/podcast-types';
-import { shouldShowAndroidBatteryHint } from '@/lib/android-battery-hint';
+import { shouldShowAndroidBatteryHint, ANDROID_BATTERY_HINT_DISMISSED_KEY } from '@/lib/android-battery-hint';
 
 // Track guids excluded from global shuffle (non-music recap/talk content).
 const SHUFFLE_EXCLUDED_TRACK_GUIDS = new Set<string>([
@@ -993,7 +993,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     androidHintDispatchedRef.current = true;
     try {
       const isNative = !!(window as any).Capacitor?.isNativePlatform?.();
-      const dismissed = localStorage.getItem('android_battery_hint_dismissed') === '1';
+      const dismissed = localStorage.getItem(ANDROID_BATTERY_HINT_DISMISSED_KEY) === '1';
       if (shouldShowAndroidBatteryHint({ isAndroid: isAndroidDevice(), isNative, dismissed })) {
         window.dispatchEvent(new CustomEvent('android-battery-hint'));
       }
