@@ -11,6 +11,7 @@ import { generateAlbumUrl } from '@/lib/url-utils';
 import { useScrollDetectionContext } from '@/components/ScrollDetectionProvider';
 import { BoostButton } from '@/components/Lightning/BoostButton';
 import FavoriteButton from '@/components/favorites/FavoriteButton';
+import DownloadButton from '@/components/downloads/DownloadButton';
 import { hasV4V as checkHasV4V } from '@/lib/v4v-utils';
 
 // Hook to manage prefetch based on visibility and hover
@@ -314,7 +315,7 @@ function AlbumCard({ album, isPlaying = false, onPlay, className = '', linkFilte
         {/* Favorite Button - Heart icon in bottom-right corner */}
         {(album as any).feedId && (
           <div
-            className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 z-20"
+            className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 z-20 flex items-center gap-1.5"
             onClick={(e) => {
               e.stopPropagation();
             }}
@@ -322,6 +323,15 @@ function AlbumCard({ album, isPlaying = false, onPlay, className = '', linkFilte
               e.stopPropagation();
             }}
           >
+            {!isPublisherCard && !isPlaylistCard && (album as any).feedId && album.tracks?.length ? (
+              <div className="bg-black/80 rounded-full w-8 h-8 flex items-center justify-center pointer-events-auto touch-manipulation hover:bg-black/90 transition-colors">
+                <DownloadButton
+                  downloadTarget={{ type: 'album', album: album as any }}
+                  size={18}
+                  className="text-white"
+                />
+              </div>
+            ) : null}
             <div className="bg-black/80 rounded-full w-8 h-8 flex items-center justify-center pointer-events-auto touch-manipulation hover:bg-black/90 transition-colors">
               <FavoriteButton
                 feedId={(album as any).feedId}

@@ -1554,9 +1554,9 @@ function HomePageContent() {
               </div>
 
               {/* Right side - Action buttons */}
-              <div className="flex items-center gap-2 flex-shrink-0">
+              <div className="flex items-center gap-2 min-w-0">
                 {/* Search Button */}
-                <SearchBar className="w-full sm:w-auto md:min-w-[200px] lg:min-w-[300px]" />
+                <SearchBar className="sm:w-auto md:min-w-[200px] lg:min-w-[300px]" />
 
                 {/* Favorites Button */}
                 <Link
@@ -1574,13 +1574,28 @@ function HomePageContent() {
                 {/* Shuffle Button */}
                 <button
                   onClick={handleShuffle}
-                  className="bg-stablekraft-teal hover:bg-stablekraft-orange text-white p-2 rounded-lg transition-all shadow-lg hover:shadow-xl active:scale-95"
+                  className="bg-stablekraft-teal hover:bg-stablekraft-orange text-white p-2 rounded-lg transition-all shadow-lg hover:shadow-xl active:scale-95 flex items-center justify-center"
                   title="Random Shuffle"
+                  aria-label="Random Shuffle"
+                  style={{ minWidth: '36px', minHeight: '36px' }}
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ display: 'block' }}>
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
                 </button>
+
+                {/* Downloads Button */}
+                <Link
+                  href="/downloads"
+                  className="flex bg-amber-500 hover:bg-amber-600 text-white p-2 rounded-lg transition-all shadow-lg hover:shadow-xl active:scale-95 items-center justify-center flex-shrink-0"
+                  title="Downloads"
+                  aria-label="Downloads"
+                  style={{ minWidth: '36px', minHeight: '36px' }}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ display: 'block' }}>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                </Link>
 
                 {/* View Toggle */}
                 <div className="flex items-center bg-gray-800 rounded-lg p-1 border border-gray-600">

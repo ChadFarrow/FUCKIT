@@ -16,6 +16,7 @@ import BackButton from '@/components/BackButton';
 import { useLightning } from '@/contexts/LightningContext';
 import { BoostButton } from '@/components/Lightning/BoostButton';
 import FavoriteButton from '@/components/favorites/FavoriteButton';
+import DownloadButton from '@/components/downloads/DownloadButton';
 import ShareButton from '@/components/Nostr/ShareButton';
 import { hasV4V as checkHasV4V, formatValueSplitsForBoost, getPrimaryRecipient } from '@/lib/v4v-utils';
 // import CDNImage from '@/components/CDNImage'; // Replaced with Next.js Image for performance
@@ -914,7 +915,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
             {/* Album Favorite Button - Heart icon in bottom-right corner */}
             {album.feedId && (
               <div
-                className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 z-20"
+                className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 z-20 flex items-center gap-1.5"
                 onClick={(e) => {
                   e.stopPropagation();
                 }}
@@ -922,6 +923,13 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                   e.stopPropagation();
                 }}
               >
+                <div className="bg-black/60 backdrop-blur-sm rounded-full w-8 h-8 flex items-center justify-center pointer-events-auto touch-manipulation hover:bg-black/80 transition-colors">
+                  <DownloadButton
+                    downloadTarget={{ type: 'album', album }}
+                    size={18}
+                    className="text-white"
+                  />
+                </div>
                 <div className="bg-black/60 backdrop-blur-sm rounded-full w-8 h-8 flex items-center justify-center pointer-events-auto touch-manipulation hover:bg-black/80 transition-colors">
                   <FavoriteButton
                     feedId={album.feedId}
@@ -1288,9 +1296,14 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                         </div>
                       )}
 
-                      {/* Favorite Button */}
+                      {/* Favorite + Download */}
                       {(track.guid || track.url || track.title) && (
-                        <div onClick={(e) => e.stopPropagation()}>
+                        <div onClick={(e) => e.stopPropagation()} className="flex items-center gap-2">
+                          <DownloadButton
+                            downloadTarget={{ type: 'track', track }}
+                            size={20}
+                            className="text-white"
+                          />
                           <FavoriteButton
                             trackId={track.guid || track.url || `${album.feedId}-${track.title}`}
                             size={20}

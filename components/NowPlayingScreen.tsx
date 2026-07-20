@@ -11,6 +11,8 @@ import { adjustColorBrightness, ensureGoodContrast } from '@/lib/color-utils';
 import { colorCache } from '@/lib/color-cache';
 import { BoostButton } from '@/components/Lightning/BoostButton';
 import FavoriteButton from '@/components/favorites/FavoriteButton';
+import DownloadButton from '@/components/downloads/DownloadButton';
+import { useDownloadsSafe } from '@/contexts/DownloadsContext';
 import { generateAlbumUrl } from '@/lib/url-utils';
 import { formatValueSplitsForBoost, getPrimaryRecipient } from '@/lib/v4v-utils';
 import UserMenu from '@/components/UserMenu';
@@ -48,6 +50,8 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
 
   const { settings, updateSettings } = useUserSettings();
 
+  const downloads = useDownloadsSafe();
+  const [downloadedCoverSrc, setDownloadedCoverSrc] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [seekTime, setSeekTime] = useState(0);
   const [dominantColor, setDominantColor] = useState('#1A252F');
@@ -348,15 +352,41 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
     : undefined;
   const originalImageUrl = chapterImg || currentTrack?.image || currentPlayingAlbum?.coverArt || '';
 
+  // Prefer a downloaded cover (cached blob) so art shows offline; falls back to
+  // the proxied network URL in `albumArt` below when the cover isn't downloaded.
+  useEffect(() => {
+    // Clear immediately so we never render a just-revoked blob during the async
+    // gap; albumArt falls back to the network URL until the new cover resolves.
+    setDownloadedCoverSrc(null);
+    if (!downloads || !originalImageUrl) return;
+    let cancelled = false;
+    let created: string | null = null;
+    downloads.getCoverUrl(originalImageUrl).then((blob) => {
+      if (cancelled) {
+        if (blob) URL.revokeObjectURL(blob);
+        return;
+      }
+      created = blob;
+      setDownloadedCoverSrc(blob);
+    });
+    return () => {
+      cancelled = true;
+      if (created) URL.revokeObjectURL(created);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [originalImageUrl]);
+
   // For VTS podcasts (playlists), favorite the individual song via remoteItem
   // For regular tracks, favorite via currentTrack.id
   const hasVTS = currentTrack?.valueTimeSplits && currentTrack.valueTimeSplits.length > 0;
   const favoriteTrackId = hasVTS
     ? activeVTS?.remoteItem?.itemGuid  // null if between VTS segments
     : currentTrack?.id;
-  const albumArt = originalImageUrl
-    ? getProxiedImageUrl(originalImageUrl)
-    : '/api/placeholder/400/400';
+  const albumArt = downloadedCoverSrc
+    ? downloadedCoverSrc
+    : originalImageUrl
+      ? getProxiedImageUrl(originalImageUrl)
+      : '/api/placeholder/400/400';
 
   // Extract dominant color from album art and ensure good contrast
   useEffect(() => {
@@ -579,12 +609,28 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
             {/* Favorite Button - Top-right corner overlay */}
             {favoriteTrackId && (
               <div
-                className="absolute top-4 right-4 z-20"
+                className="absolute top-4 right-4 z-20 flex items-center gap-2"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
                 }}
               >
+                {!hasVTS && currentTrack?.url ? (
+                  <div
+                    className="backdrop-blur-md rounded-full w-12 h-12 flex items-center justify-center pointer-events-auto touch-manipulation active:scale-95 transition-all shadow-xl"
+                    style={{
+                      backgroundColor: 'rgba(0,0,0,0.6)',
+                      boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
+                      border: '2px solid rgba(255,255,255,0.1)'
+                    }}
+                  >
+                    <DownloadButton
+                      downloadTarget={{ type: 'track', track: currentTrack as any }}
+                      size={28}
+                      className="text-white"
+                    />
+                  </div>
+                ) : null}
                 <div
                   className="backdrop-blur-md rounded-full w-12 h-12 flex items-center justify-center pointer-events-auto touch-manipulation active:scale-95 transition-all shadow-xl"
                   style={{

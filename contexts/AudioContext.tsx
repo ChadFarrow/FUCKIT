@@ -16,6 +16,9 @@ import { ValueRecipient } from '@/lib/lightning/value-parser';
 import { hasV4V as checkHasV4V, getV4VRecipients, getPrimaryRecipient, formatValueSplitsForBoost } from '@/lib/v4v-utils';
 import { prefetchUpcomingTracks, prefetchAudio } from '@/lib/audio-prefetch';
 import { NextTrackBlobCache } from '@/lib/audio-blob-prefetch';
+import { downloadManager } from '@/lib/downloads/download-manager';
+import { getObjectUrl as getDownloadObjectUrl } from '@/lib/downloads/downloads-cache';
+import { primaryPlaybackKey } from '@/lib/downloads/playback-key';
 import { PodcastChapter } from '@/lib/podcast-types';
 import { shouldShowAndroidBatteryHint, ANDROID_BATTERY_HINT_DISMISSED_KEY } from '@/lib/android-battery-hint';
 
@@ -169,6 +172,11 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
   // Only ever repointed inside the Android ping-pong branch — on iOS/desktop it
   // stays === audioRef.current so behavior is unchanged.
   const activeAudioRef = useRef<HTMLAudioElement | null>(null);
+  // Offline downloads: when the track about to play has a downloaded copy, this
+  // holds a same-origin blob: object URL for it, which getAudioUrlsToTry then
+  // prepends to the candidate list so playback needs zero network. At most one
+  // is live at a time (revoked on replace/stop).
+  const activeLocalSrcRef = useRef<{ key: string; objectUrl: string } | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<HlsType | null>(null);
   const albumsLoadedRef = useRef(false);
@@ -1378,6 +1386,15 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
       return [];
     }
 
+    // OFFLINE DOWNLOADS: if this track was downloaded and its blob is prepared,
+    // try the local copy first. The network candidates still follow, so a bad/
+    // evicted blob falls back automatically (every attempt path iterates this).
+    const local = activeLocalSrcRef.current;
+    if (local && local.key === primaryPlaybackKey(originalUrl)) {
+      console.log('📥 [URL Strategy] Using downloaded local copy first');
+      urlsToTry.push(local.objectUrl);
+    }
+
     // Sanitize URL: encode spaces that aren't already encoded
     // Many RSS feeds have unencoded spaces in URLs which break playback
     let sanitizedUrl = originalUrl;
@@ -1522,6 +1539,48 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     ).join(''));
 
     return urlsToTry;
+  };
+
+  // Revoke the current downloaded-track object URL, if any.
+  const revokeActiveLocalSrc = () => {
+    if (activeLocalSrcRef.current) {
+      try {
+        URL.revokeObjectURL(activeLocalSrcRef.current.objectUrl);
+      } catch {
+        /* ignore */
+      }
+      activeLocalSrcRef.current = null;
+    }
+  };
+
+  // OFFLINE DOWNLOADS: prepare a local blob source for `track` if it was
+  // downloaded, so the next getAudioUrlsToTry call plays it from storage. Clears
+  // the ref for non-downloaded tracks. Self-heals if the bytes were evicted.
+  const prepareLocalSource = async (track: { url?: string } | null | undefined): Promise<void> => {
+    const key = primaryPlaybackKey(track?.url);
+    // Already prepared for this exact track — reuse.
+    if (activeLocalSrcRef.current?.key === key) return;
+
+    if (!key || !downloadManager.isDownloaded(key)) {
+      revokeActiveLocalSrc();
+      return;
+    }
+
+    try {
+      const objectUrl = await getDownloadObjectUrl(key);
+      if (!objectUrl) {
+        // Bytes gone (e.g. iOS eviction) — forget the record and stream instead.
+        await downloadManager.forgetEvicted(key);
+        revokeActiveLocalSrc();
+        return;
+      }
+      revokeActiveLocalSrc();
+      activeLocalSrcRef.current = { key, objectUrl };
+      console.log('📥 Prepared downloaded copy for playback:', key.slice(-60));
+    } catch (err) {
+      console.warn('Could not prepare downloaded copy, will stream:', err);
+      revokeActiveLocalSrc();
+    }
   };
 
   // Helper function to attempt HLS playback
@@ -2828,6 +2887,9 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
       return false;
     }
 
+    // Prefer a downloaded copy if this track was saved for offline.
+    await prepareLocalSource(track);
+
     // Set loading state immediately for UI feedback
     setIsLoading(true);
 
@@ -2962,6 +3024,9 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
       console.error('❌ No valid track found in shuffled playlist');
       return false;
     }
+
+    // Prefer a downloaded copy if this track was saved for offline.
+    await prepareLocalSource(track);
 
     // Increment session ID to cancel any stale playback attempts
     const sessionId = ++playbackSessionRef.current;
@@ -3809,7 +3874,10 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     // Set the album context so repeat works
     setCurrentPlayingAlbum(singleTrackAlbum);
     setCurrentTrackIndex(0);
-    
+
+    // Prefer a downloaded copy if this track was saved for offline.
+    await prepareLocalSource({ url: audioUrl });
+
     // Attempt to play the track
     const success = await attemptAudioPlayback(audioUrl, 'individual track');
     
@@ -3838,6 +3906,8 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     }
     // Android blob prefetch: release any held object URLs (playing + prepared).
     nextBlobCacheRef.current?.clearAll();
+    // Offline downloads: release the current downloaded-track object URL.
+    revokeActiveLocalSrc();
     if (videoRef.current) {
       videoRef.current.pause();
       videoRef.current.currentTime = 0;

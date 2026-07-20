@@ -7,7 +7,7 @@ import { useNostr } from '@/contexts/NostrContext';
 import { useBitcoinConnect } from '@/components/Lightning/BitcoinConnectProvider';
 import { useAudio } from '@/contexts/AudioContext';
 import Link from 'next/link';
-import { Menu, Zap, Settings, LogOut, User, Wallet, Info } from 'lucide-react';
+import { Menu, Zap, Settings, LogOut, User, Wallet, Info, Download } from 'lucide-react';
 import { WalletInfoDisplay } from '@/components/Lightning/WalletInfoDisplay';
 
 // Lazy load LoginModal
@@ -218,6 +218,15 @@ export default function UserMenu({ className = '' }: UserMenuProps) {
 
                 {/* Settings & Authentication */}
                 <div className="space-y-2">
+                  <Link
+                    href="/downloads"
+                    onClick={() => { setShowDropdown(false); setFullscreenMode(false); }}
+                    className="w-full flex items-center gap-3 px-3 py-2 text-left text-gray-300 hover:bg-gray-800 rounded-lg transition-colors"
+                  >
+                    <Download className="w-4 h-4" />
+                    Downloads
+                  </Link>
+
                   <Link
                     href="/settings"
                     onClick={() => { setShowDropdown(false); setFullscreenMode(false); }}

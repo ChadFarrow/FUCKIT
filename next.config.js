@@ -114,6 +114,10 @@ const withPWA = require('next-pwa')({
   fallbacks: {
     document: '/offline', // Offline page for HTML documents
   },
+  // Precache the downloads page shell so the offline page's "Play your downloads"
+  // CTA reaches it even if /downloads was never visited online (it would otherwise
+  // fall back to /offline). Data is fetched client-side, so a static shell is fine.
+  additionalManifestEntries: [{ url: '/downloads', revision: null }],
   cacheOnFrontEndNav: true,
   reloadOnOnline: true,
 });

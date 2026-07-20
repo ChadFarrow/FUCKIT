@@ -225,7 +225,7 @@ export default function SearchBar({
   );
 
   return (
-    <div ref={searchRef} className={`relative z-50 ${className}`}>
+    <div ref={searchRef} className={`relative z-50 ${isExpanded ? 'flex-1 min-w-0' : ''} ${className}`}>
       {/* Mobile: Collapsed - Search Button (hidden on desktop) */}
       <button
         onClick={() => {

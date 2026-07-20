@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Wifi, WifiOff, Music, RefreshCw } from 'lucide-react';
+import { Wifi, WifiOff, Music, RefreshCw, Download } from 'lucide-react';
 
 export default function OfflinePage() {
   return (
@@ -31,15 +31,23 @@ export default function OfflinePage() {
             Available Offline
           </h2>
           <ul className="text-sm text-gray-300 space-y-2">
+            <li>• Downloaded albums and tracks (saved for offline)</li>
             <li>• Previously loaded albums and tracks</li>
             <li>• Cached album artwork</li>
             <li>• Music player functionality</li>
-            <li>• Basic navigation</li>
           </ul>
         </div>
 
         {/* Actions */}
         <div className="space-y-4">
+          <Link
+            href="/downloads"
+            className="w-full bg-amber-500 hover:bg-amber-600 text-black px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center"
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Play your downloads
+          </Link>
+
           <a
             href="/"
             className="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center"
@@ -47,13 +55,6 @@ export default function OfflinePage() {
             <RefreshCw className="h-4 w-4 mr-2" />
             Try Again
           </a>
-          
-          <Link
-            href="/"
-            className="block w-full border border-gray-600 hover:border-gray-500 text-white px-6 py-3 rounded-lg font-medium transition-colors"
-          >
-            Go to Home
-          </Link>
         </div>
 
         {/* Network Status */}
