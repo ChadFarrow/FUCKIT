@@ -1093,20 +1093,6 @@ export default function PlaylistTemplateCompact({ config }: PlaylistTemplateComp
                                       feedGuidForImport={track.feedGuid || track.valueForValue?.feedGuid}
                                       size={14}
                                       className="p-1"
-                                      downloadTarget={
-                                        (track.valueForValue?.resolvedAudioUrl || track.audioUrl)
-                                          ? {
-                                              type: 'track',
-                                              track: {
-                                                url: track.valueForValue?.resolvedAudioUrl || track.audioUrl,
-                                                title: track.title,
-                                                artist: track.artist,
-                                                guid: track.itemGuid || track.id,
-                                                duration: track.duration,
-                                              },
-                                            }
-                                          : undefined
-                                      }
                                     />
                                   </div>
 
@@ -1294,20 +1280,6 @@ export default function PlaylistTemplateCompact({ config }: PlaylistTemplateComp
                         feedGuidForImport={track.feedGuid || track.valueForValue?.feedGuid}
                         size={18}
                         className="p-1"
-                        downloadTarget={
-                          (track.valueForValue?.resolvedAudioUrl || track.audioUrl)
-                            ? {
-                                type: 'track',
-                                track: {
-                                  url: track.valueForValue?.resolvedAudioUrl || track.audioUrl,
-                                  title: track.title,
-                                  artist: track.artist,
-                                  guid: track.itemGuid || track.id,
-                                  duration: track.duration,
-                                },
-                              }
-                            : undefined
-                        }
                       />
                     </div>
 

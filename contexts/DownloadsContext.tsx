@@ -5,7 +5,6 @@ import {
   downloadManager,
   type DownloadableTrack,
   type DownloadableAlbum,
-  type DownloadablePlaylist,
   type DownloadState,
   type AggregateState,
 } from '@/lib/downloads/download-manager';
@@ -19,13 +18,10 @@ interface DownloadsContextType {
   isTrackDownloaded: (track: DownloadableTrack) => boolean;
   getTrackState: (track: DownloadableTrack) => DownloadState;
   getAlbumState: (album: DownloadableAlbum) => AggregateState;
-  getPlaylistState: (playlist: DownloadablePlaylist) => AggregateState;
   downloadTrack: (track: DownloadableTrack) => Promise<boolean>;
   downloadAlbum: (album: DownloadableAlbum) => Promise<AggregateState>;
-  downloadPlaylist: (playlist: DownloadablePlaylist) => Promise<AggregateState>;
   removeTrack: (track: DownloadableTrack) => Promise<void>;
   removeAlbum: (album: DownloadableAlbum) => Promise<void>;
-  removePlaylist: (playlist: DownloadablePlaylist) => Promise<void>;
   removeByKey: (key: string) => Promise<void>;
   clearAllDownloads: () => Promise<void>;
   listDownloads: () => DownloadRecord[];
@@ -67,13 +63,10 @@ export function DownloadsProvider({ children }: { children: React.ReactNode }) {
     isTrackDownloaded: (t) => downloadManager.isTrackDownloaded(t),
     getTrackState: (t) => downloadManager.getDownloadState(primaryKeyOf(t)),
     getAlbumState: (a) => downloadManager.getAlbumState(a),
-    getPlaylistState: (p) => downloadManager.getPlaylistState(p),
     downloadTrack: (t) => downloadManager.downloadTrack(t),
     downloadAlbum: (a) => downloadManager.downloadAlbum(a),
-    downloadPlaylist: (p) => downloadManager.downloadPlaylist(p),
     removeTrack: (t) => downloadManager.removeTrack(t),
     removeAlbum: (a) => downloadManager.removeAlbum(a),
-    removePlaylist: (p) => downloadManager.removePlaylist(p),
     removeByKey: (k) => downloadManager.removeByKey(k),
     clearAllDownloads: () => downloadManager.clearAllDownloads(),
     listDownloads: () => downloadManager.listDownloads(),

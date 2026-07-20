@@ -12,7 +12,7 @@ const DB_NAME = 'StableKraftDownloadsDB';
 const DB_VERSION = 1;
 const STORE_NAME = 'downloads';
 
-export type DownloadOwner = 'track' | `album:${string}` | `playlist:${string}`;
+export type DownloadOwner = 'track' | `album:${string}`;
 
 export interface DownloadRecord {
   /** Canonical primaryPlaybackKey — also the Cache API key for the bytes. */
@@ -24,7 +24,6 @@ export interface DownloadRecord {
   albumId?: string;
   albumTitle?: string;
   coverArt?: string;
-  playlistId?: string;
   sizeBytes: number;
   durationSecs?: number;
   createdAt: number;
@@ -69,7 +68,6 @@ function openDB(): Promise<IDBDatabase> {
       if (!db.objectStoreNames.contains(STORE_NAME)) {
         const store = db.createObjectStore(STORE_NAME, { keyPath: 'key' });
         store.createIndex('albumId', 'albumId', { unique: false });
-        store.createIndex('playlistId', 'playlistId', { unique: false });
       }
     };
   });

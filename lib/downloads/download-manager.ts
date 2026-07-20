@@ -34,13 +34,6 @@ export interface DownloadableAlbum {
   tracks?: DownloadableTrack[];
 }
 
-export interface DownloadablePlaylist {
-  id?: string | null;
-  title?: string | null;
-  coverArt?: string | null;
-  tracks?: DownloadableTrack[];
-}
-
 export type DownloadStatus = 'idle' | 'queued' | 'downloading' | 'downloaded' | 'error';
 
 export interface DownloadState {
@@ -88,9 +81,6 @@ const MAX_CONCURRENT = 3;
 
 function albumOwner(album: DownloadableAlbum): DownloadOwner {
   return `album:${album.feedId ?? album.id ?? 'unknown'}`;
-}
-function playlistOwner(playlist: DownloadablePlaylist): DownloadOwner {
-  return `playlist:${playlist.id ?? 'unknown'}`;
 }
 function trackKey(track: DownloadableTrack): string {
   return primaryPlaybackKey(track.url);
@@ -231,9 +221,6 @@ export class DownloadManager {
   getAlbumState(album: DownloadableAlbum): AggregateState {
     return this.aggregate(album.tracks ?? []);
   }
-  getPlaylistState(playlist: DownloadablePlaylist): AggregateState {
-    return this.aggregate(playlist.tracks ?? []);
-  }
 
   listDownloads(): DownloadRecord[] {
     return Array.from(this.records.values()).sort((a, b) => b.createdAt - a.createdAt);
@@ -272,7 +259,6 @@ export class DownloadManager {
       albumId?: string | null;
       albumTitle?: string | null;
       coverArt?: string | null;
-      playlistId?: string | null;
     }
   ): Promise<boolean> {
     if (!isDownloadable(track)) return false;
@@ -323,7 +309,6 @@ export class DownloadManager {
         albumId: meta.albumId ?? undefined,
         albumTitle: meta.albumTitle ?? undefined,
         coverArt: meta.coverArt ?? undefined,
-        playlistId: meta.playlistId ?? undefined,
         sizeBytes,
         durationSecs: parseDuration(track.duration),
         createdAt: Date.now(),
@@ -371,19 +356,6 @@ export class DownloadManager {
     // Kick them all off; the pool caps real concurrency. Tolerate partials.
     await Promise.all(tracks.map((t) => this.downloadOne(t, owner, meta)));
     return this.getAlbumState(album);
-  }
-
-  async downloadPlaylist(playlist: DownloadablePlaylist): Promise<AggregateState> {
-    await this.init();
-    const owner = playlistOwner(playlist);
-    const meta = {
-      playlistId: playlist.id,
-      albumTitle: playlist.title,
-      coverArt: playlist.coverArt,
-    };
-    const tracks = (playlist.tracks ?? []).filter(isDownloadable);
-    await Promise.all(tracks.map((t) => this.downloadOne(t, owner, meta)));
-    return this.getPlaylistState(playlist);
   }
 
   // ---- removal ---------------------------------------------------------
@@ -437,10 +409,6 @@ export class DownloadManager {
   async removeAlbum(album: DownloadableAlbum): Promise<void> {
     await this.init();
     await this.removeByOwner(albumOwner(album));
-  }
-  async removePlaylist(playlist: DownloadablePlaylist): Promise<void> {
-    await this.init();
-    await this.removeByOwner(playlistOwner(playlist));
   }
 
   /** Remove a single stored track by its key regardless of owner (Downloads page). */

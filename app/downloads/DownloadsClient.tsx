@@ -18,7 +18,7 @@ function formatBytes(bytes: number): string {
 
 interface DownloadGroup {
   id: string;
-  kind: 'album' | 'playlist' | 'loose';
+  kind: 'album' | 'loose';
   title: string;
   coverArt?: string;
   records: DownloadRecord[];
@@ -62,7 +62,6 @@ export default function DownloadsClient() {
 
   const groups = useMemo<DownloadGroup[]>(() => {
     const byAlbum = new Map<string, DownloadGroup>();
-    const byPlaylist = new Map<string, DownloadGroup>();
     const loose: DownloadRecord[] = [];
 
     for (const rec of records) {
@@ -76,22 +75,12 @@ export default function DownloadsClient() {
         };
         g.records.push(rec);
         byAlbum.set(rec.albumId, g);
-      } else if (rec.playlistId) {
-        const g = byPlaylist.get(rec.playlistId) ?? {
-          id: rec.playlistId,
-          kind: 'playlist' as const,
-          title: rec.albumTitle || 'Playlist',
-          coverArt: rec.coverArt,
-          records: [],
-        };
-        g.records.push(rec);
-        byPlaylist.set(rec.playlistId, g);
       } else {
         loose.push(rec);
       }
     }
 
-    const out: DownloadGroup[] = [...byAlbum.values(), ...byPlaylist.values()];
+    const out: DownloadGroup[] = [...byAlbum.values()];
     if (loose.length) {
       out.push({ id: 'loose', kind: 'loose', title: 'Individual tracks', records: loose });
     }

@@ -12,18 +12,17 @@ import { useDownloadsSafe } from '@/contexts/DownloadsContext';
 import type {
   DownloadableTrack,
   DownloadableAlbum,
-  DownloadablePlaylist,
 } from '@/lib/downloads/download-manager';
 
 /**
  * Optional third "downloaded" tier for the heart. When provided, the heart is
  * tri-state: neutral → red (favorite) → gold (favorite + downloaded offline) →
  * neutral (removes both). Absent → the heart is the classic two-state control.
+ * Scoped to albums and individual tracks — playlists aren't downloadable.
  */
 export type DownloadTarget =
   | { type: 'track'; track: DownloadableTrack }
-  | { type: 'album'; album: DownloadableAlbum }
-  | { type: 'playlist'; playlist: DownloadablePlaylist };
+  | { type: 'album'; album: DownloadableAlbum };
 
 // Helper hook that safely uses batched favorites, with fallback
 function useBatchedFavoritesSafe() {
@@ -355,9 +354,7 @@ export default function FavoriteButton({
   const hasDownloadableContent = (() => {
     if (!downloadTarget) return false;
     if (downloadTarget.type === 'track') return !!downloadTarget.track?.url;
-    const tracks =
-      downloadTarget.type === 'album' ? downloadTarget.album.tracks : downloadTarget.playlist.tracks;
-    return !!tracks?.some((t) => !!t?.url);
+    return !!downloadTarget.album.tracks?.some((t) => !!t?.url);
   })();
   const downloadEnabled = hasDownloadableContent && !!downloads;
 
@@ -367,11 +364,7 @@ export default function FavoriteButton({
       const s = downloads!.getTrackState(downloadTarget!.track);
       return { status: s.status, fraction: s.fraction ?? 0 };
     }
-    if (downloadTarget!.type === 'album') {
-      const s = downloads!.getAlbumState(downloadTarget!.album);
-      return { status: s.status, fraction: s.fraction };
-    }
-    const s = downloads!.getPlaylistState(downloadTarget!.playlist);
+    const s = downloads!.getAlbumState(downloadTarget!.album);
     return { status: s.status, fraction: s.fraction };
   })();
 
@@ -384,15 +377,13 @@ export default function FavoriteButton({
     // Fire-and-forget: the button reflects progress via context re-renders, and
     // a later click cancels. Errors surface as toasts from the manager path.
     if (downloadTarget!.type === 'track') downloads!.downloadTrack(downloadTarget!.track);
-    else if (downloadTarget!.type === 'album') downloads!.downloadAlbum(downloadTarget!.album);
-    else downloads!.downloadPlaylist(downloadTarget!.playlist);
+    else downloads!.downloadAlbum(downloadTarget!.album);
   };
 
   const removeDownload = async () => {
     if (!downloadEnabled) return;
     if (downloadTarget!.type === 'track') await downloads!.removeTrack(downloadTarget!.track);
-    else if (downloadTarget!.type === 'album') await downloads!.removeAlbum(downloadTarget!.album);
-    else await downloads!.removePlaylist(downloadTarget!.playlist);
+    else await downloads!.removeAlbum(downloadTarget!.album);
   };
 
   // Tri-state cycle: neutral → red (favorite) → gold (download) →
