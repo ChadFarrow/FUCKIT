@@ -5,6 +5,7 @@ import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import ClientErrorBoundary from '@/components/ClientErrorBoundary'
 import { ToastContainer } from '@/components/Toast'
+import AndroidBatteryHintModal from '@/components/AndroidBatteryHintModal'
 import { AudioProvider } from '@/contexts/AudioContext'
 import { SessionProvider } from '@/contexts/SessionContext'
 import { NostrProvider } from '@/contexts/NostrContext'
@@ -283,6 +284,7 @@ export default function RootLayout({
                           <NowPlayingScreen />
                           <BackToTop />
                           <ToastContainer />
+                          <AndroidBatteryHintModal />
                           <ServiceWorkerRegistration />
                           </KeyboardShortcutsProvider>
                         </AudioProvider>

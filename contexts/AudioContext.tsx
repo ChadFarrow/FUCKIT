@@ -17,6 +17,7 @@ import { hasV4V as checkHasV4V, getV4VRecipients, getPrimaryRecipient, formatVal
 import { prefetchUpcomingTracks, prefetchAudio } from '@/lib/audio-prefetch';
 import { NextTrackBlobCache } from '@/lib/audio-blob-prefetch';
 import { PodcastChapter } from '@/lib/podcast-types';
+import { shouldShowAndroidBatteryHint } from '@/lib/android-battery-hint';
 
 // Track guids excluded from global shuffle (non-music recap/talk content).
 const SHUFFLE_EXCLUDED_TRACK_GUIDS = new Set<string>([
@@ -980,6 +981,26 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     setIsAndroid(android);
     isAndroidRef.current = android;
   }, [isAndroidDevice]);
+
+  // One-time Android battery-optimization hint: on the first time playback
+  // starts, if this is an Android browser (not the native app) that hasn't
+  // dismissed the hint, dispatch the event that opens AndroidBatteryHintModal.
+  // Fires at most once per session; localStorage makes it once-ever. Never
+  // throws into the audio pipeline.
+  const androidHintDispatchedRef = useRef(false);
+  useEffect(() => {
+    if (!isPlaying || androidHintDispatchedRef.current) return;
+    androidHintDispatchedRef.current = true;
+    try {
+      const isNative = !!(window as any).Capacitor?.isNativePlatform?.();
+      const dismissed = localStorage.getItem('android_battery_hint_dismissed') === '1';
+      if (shouldShowAndroidBatteryHint({ isAndroid: isAndroidDevice(), isNative, dismissed })) {
+        window.dispatchEvent(new CustomEvent('android-battery-hint'));
+      }
+    } catch {
+      // swallow — must never break playback
+    }
+  }, [isPlaying, isAndroidDevice]);
 
   // Active/idle audio element indirection for the Android ping-pong path.
   // getActiveAudioEl() is the current playback element (defaults to audioRef);
