@@ -487,7 +487,12 @@ function HomePageContent() {
       try {
         // Format-aware loading: For "all" filter, ensure we load all albums before any EPs
         const currentCount = displayedAlbums.length;
-        let startIndex = (nextPage - 1) * ALBUMS_PER_PAGE;
+        // Offset MUST be the count of items already loaded, NOT page*pageSize:
+        // loadLimit varies (albums load in 2x batches below), so page arithmetic
+        // drifts out of sync with what's actually loaded and re-fetches rows,
+        // which surfaces as duplicate cards. (The publishers path above already
+        // uses offset=currentCount for this same reason.)
+        let startIndex = currentCount;
         let loadLimit = ALBUMS_PER_PAGE;
 
         // When "all" is selected and we have format counts, enforce format boundaries
@@ -533,14 +538,24 @@ function HomePageContent() {
           // Append new albums to existing ones (already sorted globally from server)
           // The API returns albums in correct global order: Albums → EPs → Singles
           setDisplayedAlbums(prev => {
-            const updated = [...prev, ...newAlbums];
+            // Dedup by stable id as a safety net: even if an offset ever drifts,
+            // a card can never appear twice. Only genuinely-new items are added.
+            const seen = new Set(prev.map(a => (a as any).id ?? (a as any).feedId ?? a.title));
+            const additions = newAlbums.filter(a => {
+              const key = (a as any).id ?? (a as any).feedId ?? a.title;
+              if (seen.has(key)) return false;
+              seen.add(key);
+              return true;
+            });
+            const updated = [...prev, ...additions];
             const totalLoaded = updated.length;
-            // Check if there are more albums:
-            // 1. If we loaded fewer albums than requested, we've reached the end
-            // 2. Otherwise, check if total loaded is less than total count
-            const hasMore = newAlbums.length >= loadLimit && totalLoaded < newTotalCount;
+            // More to load only if: this fetch added new items, the server
+            // returned a full batch, and we haven't reached the total. Requiring
+            // new items also stops paging if a fetch returns only duplicates.
+            const hasMore =
+              additions.length > 0 && newAlbums.length >= loadLimit && totalLoaded < newTotalCount;
             if (process.env.NODE_ENV === 'development') {
-              console.log(`📊 Pagination check: loaded=${newAlbums.length}, totalLoaded=${totalLoaded}, totalCount=${newTotalCount}, hasMore=${hasMore}`);
+              console.log(`📊 Pagination check: fetched=${newAlbums.length}, added=${additions.length}, totalLoaded=${totalLoaded}, totalCount=${newTotalCount}, hasMore=${hasMore}`);
             }
             setHasMoreAlbums(hasMore);
             return updated;
