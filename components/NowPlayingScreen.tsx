@@ -599,6 +599,11 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
                     feedGuidForImport={hasVTS ? activeVTS?.remoteItem?.feedGuid : undefined}
                     size={28}
                     className="text-white"
+                    downloadTarget={
+                      !hasVTS && currentTrack?.url
+                        ? { type: 'track', track: currentTrack as any }
+                        : undefined
+                    }
                   />
                 </div>
               </div>

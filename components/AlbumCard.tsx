@@ -333,6 +333,11 @@ function AlbumCard({ album, isPlaying = false, onPlay, className = '', linkFilte
                   artist: album.artist
                 } : undefined}
                 favoriteType={isPublisherCard ? 'publisher' : isPlaylistCard ? 'playlist' : 'album'}
+                downloadTarget={
+                  !isPublisherCard && !isPlaylistCard && (album as any).feedId && album.tracks?.length
+                    ? { type: 'album', album: album as any }
+                    : undefined
+                }
               />
             </div>
           </div>

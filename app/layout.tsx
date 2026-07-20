@@ -13,6 +13,7 @@ import NostrLoginAutoInit from '@/components/Nostr/NostrLoginInit'
 import { UserSettingsProvider } from '@/contexts/UserSettingsContext'
 import { SidebarProvider } from '@/contexts/SidebarContext'
 import { BatchedFavoritesProvider } from '@/contexts/BatchedFavoritesContext'
+import { DownloadsProvider } from '@/contexts/DownloadsContext'
 import LightningWrapper from '@/components/LightningWrapper'
 import GlobalNowPlayingBar from '@/components/GlobalNowPlayingBar'
 import NowPlayingScreen from '@/components/NowPlayingScreen'
@@ -253,6 +254,7 @@ export default function RootLayout({
                       <ScrollRestorationProvider>
                       <SessionProvider>
                         <BatchedFavoritesProvider>
+                        <DownloadsProvider>
                         <AudioProvider>
                           <KeyboardShortcutsProvider>
                           <div className="min-h-screen relative">
@@ -288,6 +290,7 @@ export default function RootLayout({
                           <ServiceWorkerRegistration />
                           </KeyboardShortcutsProvider>
                         </AudioProvider>
+                        </DownloadsProvider>
                         </BatchedFavoritesProvider>
                       </SessionProvider>
                       </ScrollRestorationProvider>

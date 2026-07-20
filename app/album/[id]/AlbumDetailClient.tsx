@@ -932,6 +932,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                       title: album.tracks[0].title,
                       artist: album.artist
                     } : undefined}
+                    downloadTarget={{ type: 'album', album }}
                   />
                 </div>
               </div>
@@ -1295,6 +1296,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                             trackId={track.guid || track.url || `${album.feedId}-${track.title}`}
                             size={20}
                             className="text-white"
+                            downloadTarget={{ type: 'track', track }}
                           />
                         </div>
                       )}

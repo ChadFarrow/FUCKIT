@@ -1,13 +1,29 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Heart } from 'lucide-react';
+import { Heart, Loader2 } from 'lucide-react';
 import { useSession } from '@/contexts/SessionContext';
 import { useNostr } from '@/contexts/NostrContext';
 import { getSessionId } from '@/lib/session-utils';
 import { toast } from '@/components/Toast';
 import { queueFavoritePublish, queueFavoriteDeletion } from '@/lib/nostr/publish-queue';
 import { useBatchedFavorites } from '@/contexts/BatchedFavoritesContext';
+import { useDownloadsSafe } from '@/contexts/DownloadsContext';
+import type {
+  DownloadableTrack,
+  DownloadableAlbum,
+  DownloadablePlaylist,
+} from '@/lib/downloads/download-manager';
+
+/**
+ * Optional third "downloaded" tier for the heart. When provided, the heart is
+ * tri-state: neutral → red (favorite) → gold (favorite + downloaded offline) →
+ * neutral (removes both). Absent → the heart is the classic two-state control.
+ */
+export type DownloadTarget =
+  | { type: 'track'; track: DownloadableTrack }
+  | { type: 'album'; album: DownloadableAlbum }
+  | { type: 'playlist'; playlist: DownloadablePlaylist };
 
 // Helper hook that safely uses batched favorites, with fallback
 function useBatchedFavoritesSafe() {
@@ -61,6 +77,10 @@ interface FavoriteButtonProps {
   // Feed GUID for auto-importing album when track not in database
   // Used for tracks from playlists like Top 100 that are resolved at runtime
   feedGuidForImport?: string;
+  // When provided, enables the gold "downloaded for offline" tier. The heart
+  // then cycles neutral → red (favorite) → gold (favorite + downloaded) →
+  // neutral. Downloads are a superset of favorites (you favorite first).
+  downloadTarget?: DownloadTarget;
 }
 
 export default function FavoriteButton({
@@ -72,11 +92,13 @@ export default function FavoriteButton({
   isFavorite: initialIsFavorite,
   singleTrackData,
   favoriteType = 'album',
-  feedGuidForImport
+  feedGuidForImport,
+  downloadTarget
 }: FavoriteButtonProps) {
   const { sessionId, isLoading } = useSession();
   const { user, isAuthenticated: isNostrAuthenticated } = useNostr();
   const { checkFavorites, getFavoriteStatus } = useBatchedFavoritesSafe();
+  const downloads = useDownloadsSafe();
   const [isFavorite, setIsFavorite] = useState(initialIsFavorite ?? false);
   const [isLoadingState, setIsLoadingState] = useState(initialIsFavorite === undefined);
   const [isToggling, setIsToggling] = useState(false);
@@ -326,6 +348,84 @@ export default function FavoriteButton({
     }
   };
 
+  // ---- Download tier (only active when there is real downloadable audio) ----
+  // Self-gates on a resolvable media URL so hearts on URL-less items (e.g. some
+  // playlist rows that resolve their audio only at play time) stay classic
+  // two-state favorites instead of showing a dead gold tier.
+  const hasDownloadableContent = (() => {
+    if (!downloadTarget) return false;
+    if (downloadTarget.type === 'track') return !!downloadTarget.track?.url;
+    const tracks =
+      downloadTarget.type === 'album' ? downloadTarget.album.tracks : downloadTarget.playlist.tracks;
+    return !!tracks?.some((t) => !!t?.url);
+  })();
+  const downloadEnabled = hasDownloadableContent && !!downloads;
+
+  const downloadAgg = (() => {
+    if (!downloadEnabled) return { status: 'idle' as const, fraction: 0 };
+    if (downloadTarget!.type === 'track') {
+      const s = downloads!.getTrackState(downloadTarget!.track);
+      return { status: s.status, fraction: s.fraction ?? 0 };
+    }
+    if (downloadTarget!.type === 'album') {
+      const s = downloads!.getAlbumState(downloadTarget!.album);
+      return { status: s.status, fraction: s.fraction };
+    }
+    const s = downloads!.getPlaylistState(downloadTarget!.playlist);
+    return { status: s.status, fraction: s.fraction };
+  })();
+
+  const isDownloaded = downloadEnabled && downloadAgg.status === 'downloaded';
+  const isDownloading =
+    downloadEnabled && (downloadAgg.status === 'downloading' || downloadAgg.status === 'queued');
+
+  const startDownload = () => {
+    if (!downloadEnabled) return;
+    // Fire-and-forget: the button reflects progress via context re-renders, and
+    // a later click cancels. Errors surface as toasts from the manager path.
+    if (downloadTarget!.type === 'track') downloads!.downloadTrack(downloadTarget!.track);
+    else if (downloadTarget!.type === 'album') downloads!.downloadAlbum(downloadTarget!.album);
+    else downloads!.downloadPlaylist(downloadTarget!.playlist);
+  };
+
+  const removeDownload = async () => {
+    if (!downloadEnabled) return;
+    if (downloadTarget!.type === 'track') await downloads!.removeTrack(downloadTarget!.track);
+    else if (downloadTarget!.type === 'album') await downloads!.removeAlbum(downloadTarget!.album);
+    else await downloads!.removePlaylist(downloadTarget!.playlist);
+  };
+
+  // Tri-state cycle: neutral → red (favorite) → gold (download) →
+  // neutral (remove both). Downloading → cancel back to red.
+  const handleTriStateClick = async () => {
+    if (isToggling || isLoadingState) return;
+
+    if (isDownloaded) {
+      // gold → neutral: drop the download AND the favorite.
+      await removeDownload();
+      if (isFavorite) await toggleFavorite();
+      return;
+    }
+    if (isDownloading) {
+      // cancel an in-flight download, keep the favorite (back to red).
+      await removeDownload();
+      return;
+    }
+    if (!isFavorite) {
+      // neutral → red: favorite it (existing path; download comes next click).
+      await toggleFavorite();
+      return;
+    }
+    // red → gold: keep the favorite, start the download.
+    if (!downloads!.isOnline) {
+      toast.error("You're offline — connect to download for offline listening.");
+      return;
+    }
+    startDownload();
+  };
+
+  const activate = downloadEnabled ? handleTriStateClick : toggleFavorite;
+
   const handleClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
@@ -334,7 +434,7 @@ export default function FavoriteButton({
       setTouchHandled(false);
       return;
     }
-    await toggleFavorite();
+    await activate();
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -352,13 +452,26 @@ export default function FavoriteButton({
       delete button.dataset.touched;
       // Mark that touch handled this - prevents duplicate onClick
       setTouchHandled(true);
-      await toggleFavorite();
+      await activate();
     }
   };
 
   if (isLoadingState || !itemId) {
     return null;
   }
+
+  // Tri-state aria-label for the download-enabled heart.
+  const ariaLabel = downloadEnabled
+    ? isDownloaded
+      ? 'Downloaded for offline — tap to remove download and unfavorite'
+      : isDownloading
+        ? 'Downloading — tap to cancel'
+        : isFavorite
+          ? 'Favorited — tap to download for offline'
+          : 'Add to favorites'
+    : isFavorite
+      ? 'Remove from favorites'
+      : 'Add to favorites';
 
   return (
     <button
@@ -369,17 +482,27 @@ export default function FavoriteButton({
       className={`favorite-button ${className} transition-all duration-200 hover:scale-110 active:scale-95 flex items-center justify-center touch-manipulation ${
         isToggling ? 'opacity-50 cursor-wait' : 'cursor-pointer'
       }`}
-      aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+      aria-label={ariaLabel}
+      title={ariaLabel}
       disabled={isToggling}
     >
-      <Heart
-        size={size}
-        className={`transition-colors duration-200 flex-shrink-0 ${
-          isFavorite
-            ? 'fill-red-500 text-red-500'
-            : 'fill-transparent text-gray-400 hover:text-red-400'
-        }`}
-      />
+      {isDownloading ? (
+        <Loader2
+          size={size}
+          className="animate-spin text-amber-400 flex-shrink-0"
+        />
+      ) : (
+        <Heart
+          size={size}
+          className={`transition-colors duration-200 flex-shrink-0 ${
+            isDownloaded
+              ? 'fill-amber-400 text-amber-400'
+              : isFavorite
+                ? 'fill-red-500 text-red-500'
+                : 'fill-transparent text-gray-400 hover:text-red-400'
+          }`}
+        />
+      )}
     </button>
   );
 }
