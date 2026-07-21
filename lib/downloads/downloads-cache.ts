@@ -13,6 +13,11 @@
  */
 import { getProxiedAudioUrl } from '../audio-url-utils';
 
+// PERSISTENCE INVARIANT: this bucket name is load-bearing. Renaming it (e.g.
+// bumping `-v1` → `-v2`) orphans every downloaded track and forces limited-
+// bandwidth users to re-download over their data plan. Only `clearAllBytes()`
+// (explicit user "delete all") and per-key eviction ever remove entries — never
+// an app update. Keep the name stable across releases.
 export const DOWNLOADS_CACHE = 'stablekraft-downloads-v1';
 
 function cacheApiAvailable(): boolean {
@@ -129,6 +134,8 @@ export async function clearAllBytes(): Promise<void> {
 // through the same-origin image proxy so the bytes are readable (cross-origin
 // art hosts otherwise give opaque responses we can't turn into a blob: URL).
 
+// PERSISTENCE INVARIANT: load-bearing bucket name — see DOWNLOADS_CACHE above.
+// Do not rename across releases; it would orphan cached cover art.
 export const DOWNLOADS_ART_CACHE = 'stablekraft-downloads-art-v1';
 
 /** Fetch a cover image via the same-origin proxy and store it under `url`.
