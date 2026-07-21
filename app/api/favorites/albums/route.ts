@@ -40,14 +40,19 @@ export async function GET(request: NextRequest) {
       where: { id: { in: feedIds } },
       include: {
         Track: {
-          take: 5,
+          where: { audioUrl: { not: '' }, status: 'active' },
+          take: 50,
           orderBy: { trackOrder: 'asc' },
           select: {
             id: true,
+            guid: true,
             title: true,
             artist: true,
             duration: true,
-            image: true
+            image: true,
+            audioUrl: true,
+            mediaType: true,
+            trackOrder: true
           }
         },
         _count: {
@@ -66,9 +71,10 @@ export async function GET(request: NextRequest) {
         where: { guid: { in: unmatchedIds } },
         include: {
           Track: {
-            take: 5,
+            where: { audioUrl: { not: '' }, status: 'active' },
+            take: 50,
             orderBy: { trackOrder: 'asc' },
-            select: { id: true, title: true, artist: true, duration: true, image: true }
+            select: { id: true, guid: true, title: true, artist: true, duration: true, image: true, audioUrl: true, mediaType: true, trackOrder: true }
           },
           _count: { select: { Track: true } }
         }
