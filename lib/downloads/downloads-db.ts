@@ -8,6 +8,12 @@
  * canonical `primaryPlaybackKey`.
  */
 
+// PERSISTENCE INVARIANT — do not break for limited-bandwidth users.
+// DB_NAME and STORE_NAME are load-bearing: renaming either orphans every
+// existing download and forces a full re-download over the user's data plan.
+// DB_VERSION may be bumped ONLY with an additive `onupgradeneeded` migration
+// (create new stores/indexes; never deleteObjectStore or recreate `downloads`).
+// The current handler below is already migration-safe — keep it that way.
 const DB_NAME = 'StableKraftDownloadsDB';
 const DB_VERSION = 1;
 const STORE_NAME = 'downloads';
@@ -69,6 +75,8 @@ function openDB(): Promise<IDBDatabase> {
 
     request.onupgradeneeded = (event) => {
       const db = (event.target as IDBOpenDBRequest).result;
+      // Additive only — see the PERSISTENCE INVARIANT note above. Never drop or
+      // recreate `downloads`; that would wipe users' offline library on update.
       if (!db.objectStoreNames.contains(STORE_NAME)) {
         const store = db.createObjectStore(STORE_NAME, { keyPath: 'key' });
         store.createIndex('albumId', 'albumId', { unique: false });
