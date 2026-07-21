@@ -317,9 +317,18 @@ function AlbumCard({ album, isPlaying = false, onPlay, className = '', linkFilte
           <div
             className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 z-20 flex items-center gap-1.5"
             onClick={(e) => {
+              // preventDefault is required (not just stopPropagation): taps on the
+              // circular padding — or the empty circle when DownloadButton renders
+              // null — would otherwise trigger the parent <Link>'s default anchor
+              // navigation to the album page.
+              e.preventDefault();
               e.stopPropagation();
             }}
             onTouchStart={(e) => {
+              e.stopPropagation();
+            }}
+            onTouchEnd={(e) => {
+              e.preventDefault();
               e.stopPropagation();
             }}
           >
