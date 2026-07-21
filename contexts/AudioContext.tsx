@@ -1229,9 +1229,17 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     if ('mediaSession' in navigator && !isNativeAndroid()) {
       navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused';
     }
-    const el = getActiveAudioEl();
-    const position = el && !isNaN(el.currentTime) ? Math.round(el.currentTime * 1000) : 0;
-    nativeMedia('setPlaybackState', { isPlaying, position });
+    // Only drive the native Android lock-screen session once playback has
+    // actually started (an album/track is loaded). Without this guard the
+    // mount-time isPlaying=false push would cold-start the foreground service
+    // and post an empty notification before the user plays anything. Once a
+    // track is loaded this still fires on pause, so the paused notification
+    // (Play button) persists as intended.
+    if (currentPlayingAlbum) {
+      const el = getActiveAudioEl();
+      const position = el && !isNaN(el.currentTime) ? Math.round(el.currentTime * 1000) : 0;
+      nativeMedia('setPlaybackState', { isPlaying, position });
+    }
   }, [isPlaying]);
 
   // iOS background track advancement safety net:
