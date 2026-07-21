@@ -69,6 +69,9 @@ interface FavoriteAlbum {
     artist: string | null;
     duration: number | null;
     image: string | null;
+    audioUrl?: string | null;
+    guid?: string | null;
+    mediaType?: string | null;
   }>;
 }
 
@@ -1022,8 +1025,11 @@ function FavoritesPageContent() {
                       title: track.title,
                       artist: track.artist || undefined,
                       duration: track.duration ? `${Math.floor(track.duration / 60)}:${String(track.duration % 60).padStart(2, '0')}` : '0:00',
-                      url: '',
-                      id: track.id
+                      url: track.audioUrl || '',
+                      id: track.id,
+                      guid: track.guid || undefined,
+                      image: track.image || undefined,
+                      mediaType: (track.mediaType as 'audio' | 'video' | undefined) || undefined
                     })),
                     trackCount: album.trackCount || album.Track?.length || 0,
                     feedId: album.id, // Use album.id as feedId for lookup
