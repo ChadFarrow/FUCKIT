@@ -2478,12 +2478,24 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
             // Fires shortly after the track should end, while iOS may still allow JS execution
             // (iOS keeps JS semi-active while audio was recently playing)
             if (!iosAdvanceTimerRef.current && timeRemaining <= 5 && timeRemaining > 0.5) {
-              const advanceInMs = (timeRemaining + 0.2) * 1000; // 200ms after expected end
-              console.log(`📱 Scheduling proactive track advance in ${Math.round(advanceInMs)}ms`);
+              // On iOS in the background, fire the advance slightly BEFORE the
+              // current track ends — while its element is still actively playing —
+              // so the audio session stays warm across the src swap. A swap that
+              // happens after the element has already ended/paused in the
+              // background gets its play() blocked (NotAllowedError), which is why
+              // the next track otherwise only starts on foreground return.
+              // Everywhere else, keep firing just after the expected end.
+              const fireEarlyOnIOS = isIOSDevice() && document.visibilityState === 'hidden';
+              const advanceInMs = fireEarlyOnIOS
+                ? Math.max(0, (timeRemaining - 0.35) * 1000) // 350ms before expected end
+                : (timeRemaining + 0.2) * 1000;              // 200ms after expected end
+              console.log(`📱 Scheduling proactive track advance in ${Math.round(advanceInMs)}ms (fireEarlyOnIOS=${fireEarlyOnIOS})`);
               iosAdvanceTimerRef.current = setTimeout(() => {
                 iosAdvanceTimerRef.current = null;
                 const el = isVideoMode ? videoRef.current : getActiveAudioEl();
-                // Only advance if track actually ended (or is at the very end)
+                // Advance when the track is at/near its end. When firing early on
+                // backgrounded iOS the element is still playing (~0.35s left), so
+                // accept "within 0.5s of the end" in addition to a real `ended`.
                 if (el && (el.ended || (el.duration > 0 && el.currentTime >= el.duration - 0.5))) {
                   // Guard against double-advance (handleEnded may have already fired)
                   if (!trackEndProcessedRef.current) {
