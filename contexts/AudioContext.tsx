@@ -189,6 +189,10 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
   const [chaptersAreBoostMarkers, setChaptersAreBoostMarkers] = useState(false);
   const chaptersTrackKeyRef = useRef<string>(''); // Track which episode chapters belong to
   const currentTimeRef = useRef(0); // Ref for currentTime to avoid re-creating callbacks
+  // Last playback position we observed while > 0. iOS can evict a backgrounded
+  // audio element's buffer and reset currentTime to 0; this ref survives that so
+  // resume() can seek back instead of restarting the track from the beginning.
+  const lastNonZeroPositionRef = useRef(0);
 
   // iOS detection state (for JSX conditional rendering)
   const [isIOS, setIsIOS] = useState(false);
@@ -2336,6 +2340,12 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
       const currentElement = isVideoMode ? video : getActiveAudioEl();
       if (!currentElement) return;
       currentTimeRef.current = currentElement.currentTime;
+      // Record the last real position so resume() can recover from an iOS
+      // background buffer-eviction that resets currentTime to 0. Ignore ~0
+      // readings so a collapse can never overwrite the good value.
+      if (currentElement.currentTime > 0.25) {
+        lastNonZeroPositionRef.current = currentElement.currentTime;
+      }
       setCurrentTime(currentElement.currentTime);
 
       // Update position state for iOS lockscreen controls
@@ -2952,6 +2962,9 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     // This is especially important on iOS where timeupdate events may be delayed
     const startTime = track.startTime && typeof track.startTime === 'number' ? track.startTime : 0;
     setCurrentTime(startTime);
+    // New track: reset the recovery position so a prior track's position can't
+    // leak into this one's resume-after-background restore.
+    lastNonZeroPositionRef.current = startTime;
 
     // When manually playing an album/track, always exit shuffle mode
     // This ensures shuffle is turned off when you play something specific
@@ -3080,6 +3093,9 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     // Reset currentTime immediately when switching tracks to avoid stale time showing in UI
     const startTime = track.startTime && typeof track.startTime === 'number' ? track.startTime : 0;
     setCurrentTime(startTime);
+    // New track: reset the recovery position so a prior track's position can't
+    // leak into this one's resume-after-background restore.
+    lastNonZeroPositionRef.current = startTime;
 
     // In shuffle mode, if we're playing or auto-transitioning, use seamless playback for iOS background
     if (isPlaying || isAutoTransitioningRef.current) {
@@ -3448,6 +3464,15 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
 
     const el = currentElement;
     const savedTime = el.currentTime;
+    // Recovery position for iOS background buffer-eviction: if the element's
+    // currentTime has collapsed to ~0 (iOS dropped the buffer while backgrounded),
+    // fall back to the last non-zero position we recorded so we resume where the
+    // user left off instead of restarting the track from the beginning.
+    const recoverTime = savedTime > 1 ? savedTime : lastNonZeroPositionRef.current;
+    const shouldRestore = (t: number) =>
+      recoverTime > 1 &&
+      t < 1 &&
+      (!el.duration || isNaN(el.duration) || recoverTime < el.duration - 0.5);
 
     // Listener-based wait for the element to reach HAVE_CURRENT_DATA after a load().
     const waitForReady = (timeoutMs: number): Promise<void> => {
@@ -3468,6 +3493,11 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     // Tier 1 — plain play().
     try {
       await el.play();
+      // iOS may have reset currentTime to 0 while backgrounded — seek back so the
+      // track resumes where the user left off rather than from the start.
+      if (shouldRestore(el.currentTime)) {
+        try { el.currentTime = recoverTime; } catch { /* seek can throw pre-buffer */ }
+      }
       setIsPlaying(true);
       return;
     } catch (err) {
@@ -3478,8 +3508,10 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     try {
       el.load();
       await waitForReady(2000);
-      if (savedTime > 0 && Math.abs(el.currentTime - savedTime) > 0.25) {
-        el.currentTime = savedTime;
+      // load() resets currentTime to 0; restore the recovery position (which
+      // accounts for an iOS buffer-eviction collapse, not just an in-app pause).
+      if (recoverTime > 1 && Math.abs(el.currentTime - recoverTime) > 0.25) {
+        el.currentTime = recoverTime;
       }
       await el.play();
       setIsPlaying(true);
@@ -3966,6 +3998,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     setCurrentTrackIndex(0);
     setCurrentTime(0);
     setDuration(0);
+    lastNonZeroPositionRef.current = 0;
     setIsVideoMode(false);
 
     // Clear shuffle state
