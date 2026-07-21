@@ -59,6 +59,26 @@ function playbackKeepAlive(action: 'start' | 'stop'): void {
   }
 }
 
+/** True only inside the native Capacitor Android app (not iOS/PWA/SSR). */
+function isNativeAndroid(): boolean {
+  try {
+    const cap = (window as any).Capacitor;
+    return !!cap?.isNativePlatform?.() && cap.getPlatform?.() === 'android';
+  } catch {
+    return false;
+  }
+}
+
+/** Push now-playing data to the native lock-screen MediaSession. No-op off native Android. */
+function nativeMedia(method: 'updateMetadata' | 'setPlaybackState', data: Record<string, unknown>): void {
+  try {
+    if (!isNativeAndroid()) return;
+    (window as any).Capacitor?.Plugins?.PlaybackKeepAlive?.[method]?.(data);
+  } catch {
+    // Best-effort — never break the audio pipeline.
+  }
+}
+
 /** Whether the user's manual Offline-mode switch (Downloads page) is on. */
 function isOfflineModeOn(): boolean {
   try {
@@ -275,7 +295,11 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
   // every non-native platform. Keyed on isPlaying, which stays true across track
   // transitions and only flips false on pause / stop / end-of-queue.
   useEffect(() => {
-    playbackKeepAlive(isPlaying ? 'start' : 'stop');
+    // Start the FGS on play. Do NOT stop on pause: the native MediaSession
+    // notification must persist while paused so the user can resume from the
+    // lock screen (the wake lock is released on pause in the state-sync effect
+    // below). No-op on every non-native platform.
+    if (isPlaying) playbackKeepAlive('start');
   }, [isPlaying]);
 
   // Track previous VTS segment for chapter transition auto-boost
@@ -1121,7 +1145,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
 
   // Initialize Media Session API early for iOS 26 lockscreen controls
   useEffect(() => {
-    if ('mediaSession' in navigator && navigator.mediaSession) {
+    if ('mediaSession' in navigator && navigator.mediaSession && !isNativeAndroid()) {
       try {
         // Register action handlers immediately on mount (before any playback)
         // This is required for iOS 26 PWA mode to recognize media capabilities
@@ -1175,11 +1199,39 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     }
   }, []); // Run only once on mount
 
+  // Native Android lock-screen controls: route MediaSession button presses back
+  // into the app's existing playback functions. iOS/PWA use navigator.mediaSession.
+  useEffect(() => {
+    if (!isNativeAndroid()) return;
+    const plugin = (window as any).Capacitor?.Plugins?.PlaybackKeepAlive;
+    if (!plugin?.addListener) return;
+    let handle: any;
+    Promise.resolve(
+      plugin.addListener('mediaSessionAction', (ev: { action: string; seekTo?: number }) => {
+        switch (ev.action) {
+          case 'play': resumeRef.current?.(); break;
+          case 'pause': pauseRef.current?.(); break;
+          case 'next': playNextTrackRef.current?.(); break;
+          case 'previous': playPreviousTrackRef.current?.(); break;
+          case 'seekto': {
+            const el = getActiveAudioEl();
+            if (el && ev.seekTo != null) el.currentTime = ev.seekTo / 1000; // ms → s
+            break;
+          }
+        }
+      })
+    ).then((h) => { handle = h; }).catch(() => {});
+    return () => { try { handle?.remove?.(); } catch {} };
+  }, []);
+
   // Sync playbackState with isPlaying — single source of truth for lock screen controls
   useEffect(() => {
-    if ('mediaSession' in navigator) {
+    if ('mediaSession' in navigator && !isNativeAndroid()) {
       navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused';
     }
+    const el = getActiveAudioEl();
+    const position = el && !isNaN(el.currentTime) ? Math.round(el.currentTime * 1000) : 0;
+    nativeMedia('setPlaybackState', { isPlaying, position });
   }, [isPlaying]);
 
   // iOS background track advancement safety net:
@@ -2825,7 +2877,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
 
   // Helper function to update media session metadata
   const updateMediaSession = (album: RSSAlbum, track: any) => {
-    if ('mediaSession' in navigator && navigator.mediaSession) {
+    if ('mediaSession' in navigator && navigator.mediaSession && !isNativeAndroid()) {
       try {
         // Ensure we have valid artwork URL - prefer track image, then album cover
         let originalArtworkUrl = track.image || album.coverArt || '/stablekraft-rocket.png';
@@ -2901,6 +2953,29 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         });
       } catch (error) {
         console.warn('Failed to update media session:', error);
+      }
+    }
+
+    // Native Android: push the same now-playing data to the lock-screen MediaSession.
+    if (isNativeAndroid()) {
+      try {
+        const originalArtworkUrl = track.image || album.coverArt || '/stablekraft-rocket.png';
+        let artworkUrl = getProxiedMediaImageUrl(originalArtworkUrl);
+        if (artworkUrl.startsWith('/')) {
+          const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://stablekraft.app';
+          artworkUrl = `${baseUrl}${artworkUrl}`;
+        }
+        const el = isVideoMode ? videoRef.current : getActiveAudioEl();
+        const duration = el && el.duration && !isNaN(el.duration) ? Math.round(el.duration * 1000) : 0;
+        nativeMedia('updateMetadata', {
+          title: track.title || 'Unknown Track',
+          artist: track.artist || album.artist || 'Unknown Artist',
+          album: album.title || 'Unknown Album',
+          artworkUrl: originalArtworkUrl.startsWith('https://') ? originalArtworkUrl : artworkUrl,
+          duration,
+        });
+      } catch {
+        // Best-effort.
       }
     }
   };
