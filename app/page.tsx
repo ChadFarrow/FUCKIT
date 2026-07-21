@@ -152,6 +152,9 @@ function HomePageContent() {
   const [totalAlbums, setTotalAlbums] = useState(0);
   const [displayedAlbums, setDisplayedAlbums] = useState<RSSAlbum[]>([]);
   const [hasMoreAlbums, setHasMoreAlbums] = useState(true);
+  // Mobile: when the search input is expanded it takes over the whole header
+  // row (the dropdown + action buttons hide) so it can't get squished/overflow.
+  const [searchExpanded, setSearchExpanded] = useState(false);
   const ALBUMS_PER_PAGE = 50; // Load 50 albums per page for better user experience
 
   // Format-aware loading state (for "all" filter - load all albums before EPs)
@@ -1522,12 +1525,12 @@ function HomePageContent() {
         <div className="relative z-30 bg-black/70 backdrop-blur-sm border-b border-gray-700 py-2 sm:py-3">
           <div className="container mx-auto px-6">
             <div className="flex items-center justify-between gap-2">
-              {/* Mobile: Dropdown filter */}
+              {/* Mobile: Dropdown filter (hidden while the mobile search is open) */}
               <select
                 value={activeFilter}
                 onChange={(e) => handleFilterChange(e.target.value as FilterType)}
                 disabled={isFilterLoading}
-                className="md:hidden bg-gray-800 text-white px-3 py-2 rounded text-sm border border-gray-600 focus:outline-none focus:border-stablekraft-teal"
+                className={`md:hidden bg-gray-800 text-white px-3 py-2 rounded text-sm border border-gray-600 focus:outline-none focus:border-stablekraft-teal ${searchExpanded ? 'hidden' : ''}`}
               >
                 <option value="all">All</option>
                 <option value="new">New</option>
@@ -1569,10 +1572,12 @@ function HomePageContent() {
               </div>
 
               {/* Right side - Action buttons */}
-              <div className="flex items-center gap-2 min-w-0">
+              <div className={`flex items-center gap-2 min-w-0 ${searchExpanded ? 'flex-1' : ''}`}>
                 {/* Search Button */}
-                <SearchBar className="sm:w-auto md:min-w-[200px] lg:min-w-[300px]" />
+                <SearchBar onExpandedChange={setSearchExpanded} className="sm:w-auto md:min-w-[200px] lg:min-w-[300px]" />
 
+                {/* Sibling controls — hidden on mobile while the search is expanded */}
+                <div className={`items-center gap-2 flex-shrink-0 ${searchExpanded ? 'hidden' : 'flex'}`}>
                 {/* Favorites Button */}
                 <Link
                   href="/favorites"
@@ -1642,6 +1647,7 @@ function HomePageContent() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
                     </svg>
                   </button>
+                </div>
                 </div>
 
               </div>

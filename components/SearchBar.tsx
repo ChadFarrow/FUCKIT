@@ -43,13 +43,17 @@ interface SearchBarProps {
   placeholder?: string;
   autoFocus?: boolean;
   className?: string;
+  /** Notified when the mobile collapsed→expanded state changes, so the parent
+   *  can give the input the whole row (hide sibling controls) while it's open. */
+  onExpandedChange?: (expanded: boolean) => void;
 }
 
 export default function SearchBar({
   onSearch,
   placeholder = 'Search tracks, albums, artists...',
   autoFocus = false,
-  className = ''
+  className = '',
+  onExpandedChange
 }: SearchBarProps) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult | null>(null);
@@ -207,6 +211,11 @@ export default function SearchBar({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Let the parent react to the mobile expand/collapse (give the input the row).
+  useEffect(() => {
+    onExpandedChange?.(isExpanded);
+  }, [isExpanded, onExpandedChange]);
 
   // Cleanup debounce timer
   useEffect(() => {
