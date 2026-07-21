@@ -59,6 +59,37 @@ function playbackKeepAlive(action: 'start' | 'stop'): void {
   }
 }
 
+/** Whether the user's manual Offline-mode switch (Downloads page) is on. */
+function isOfflineModeOn(): boolean {
+  try {
+    return typeof window !== 'undefined' && localStorage.getItem('sk_offline_mode') === '1';
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * QoS gate: in manual Offline mode, refuse to *attempt* streaming a track that
+ * isn't downloaded — so a poor/flaky connection can't hang the app trying to
+ * buffer. Downloaded tracks play as normal. Returns true if playback was blocked.
+ * Awaits `init()` so the downloaded set is populated before we decide.
+ */
+async function blockNonDownloadedInOfflineMode(
+  track: { url?: string | null } | null | undefined
+): Promise<boolean> {
+  if (!isOfflineModeOn()) return false;
+  try {
+    await downloadManager.init();
+    if (track?.url && downloadManager.isTrackDownloaded(track as any)) return false;
+  } catch {
+    // if we can't tell, fail safe to blocked (offline mode is intentional)
+  }
+  toast.info("Offline mode is on — this song isn't downloaded. Turn it off to stream.", {
+    duration: 3500,
+  });
+  return true;
+}
+
 interface AudioContextType {
   // Audio state
   currentPlayingAlbum: RSSAlbum | null;
@@ -2887,6 +2918,9 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
       return false;
     }
 
+    // Offline mode (QoS): don't attempt to stream a non-downloaded track.
+    if (await blockNonDownloadedInOfflineMode(track)) return false;
+
     // Prefer a downloaded copy if this track was saved for offline.
     await prepareLocalSource(track);
 
@@ -3024,6 +3058,9 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
       console.error('❌ No valid track found in shuffled playlist');
       return false;
     }
+
+    // Offline mode (QoS): don't attempt to stream a non-downloaded track.
+    if (await blockNonDownloadedInOfflineMode(track)) return false;
 
     // Prefer a downloaded copy if this track was saved for offline.
     await prepareLocalSource(track);
@@ -3847,8 +3884,10 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
 
   // Play individual track function
   const playTrack = async (audioUrl: string, startTime: number = 0, endTime?: number): Promise<boolean> => {
+    // Offline mode (QoS): don't attempt to stream a non-downloaded track.
+    if (await blockNonDownloadedInOfflineMode({ url: audioUrl })) return false;
     console.log('🎵 Playing individual track:', { audioUrl, startTime, endTime });
-    
+
     // Stop any current playback
     stop();
     
