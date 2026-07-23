@@ -231,6 +231,65 @@ jobs:
           echo "⚠️ Publisher album import had issues (HTTP $HTTP_CODE) - non-critical"
         fi
 
+        # Step 5d: Import new albums from artists already on the site that have
+        # NO publisher feed (e.g. self-hosted artists like leuenbergmusic.com).
+        # PI-searches each existing artist by name and imports a found album only
+        # when its host matches one the artist already uses. Paginated — loop
+        # until nextOffset is null. Newly minted feeds are reparsed from RSS
+        # afterward (same Step 5c rationale: PI misses episode order/chapters/VTS).
+        echo ""
+        echo "📋 Step 5d: Importing new albums from existing artists (no publisher feed)..."
+
+        ARTIST_OFFSET=0
+        ARTIST_NEW_FEED_IDS=""
+        while : ; do
+          ARTIST_RESPONSE=$(curl -s -X POST -w "\n%{http_code}" -H "$AUTH_HEADER" -H "Content-Type: application/json" \
+            -d "{\"limit\":50,\"offset\":${ARTIST_OFFSET}}" \
+            "${BASE_URL}/api/admin/artists/import-new-albums") || ARTIST_RESPONSE=$'\n000'
+          HTTP_CODE=$(echo "$ARTIST_RESPONSE" | tail -n1)
+          RESPONSE_BODY=$(echo "$ARTIST_RESPONSE" | sed '$d')
+
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "⚠️ Artist album import had issues (HTTP $HTTP_CODE) at offset ${ARTIST_OFFSET} - non-critical"
+            break
+          fi
+
+          A_IMPORTED=$(echo "$RESPONSE_BODY" | jq -r '.totals.imported // 0' 2>/dev/null || echo "?")
+          A_SKIPPED=$(echo "$RESPONSE_BODY" | jq -r '.totals.skipped // 0' 2>/dev/null || echo "?")
+          A_TOTAL=$(echo "$RESPONSE_BODY" | jq -r '.totalArtists // 0' 2>/dev/null || echo "?")
+          echo "  ✓ offset ${ARTIST_OFFSET}/${A_TOTAL}: ${A_IMPORTED} imported, ${A_SKIPPED} skipped"
+
+          PAGE_IDS=$(echo "$RESPONSE_BODY" | jq -r '.importedFeedIds[]?' 2>/dev/null)
+          [ -n "$PAGE_IDS" ] && ARTIST_NEW_FEED_IDS="${ARTIST_NEW_FEED_IDS}"$'\n'"${PAGE_IDS}"
+
+          NEXT_OFFSET=$(echo "$RESPONSE_BODY" | jq -r '.nextOffset // empty' 2>/dev/null)
+          if [ -z "$NEXT_OFFSET" ]; then
+            break
+          fi
+          ARTIST_OFFSET="$NEXT_OFFSET"
+          sleep 1
+        done
+
+        # Reparse each newly imported artist feed from its real RSS.
+        ARTIST_NEW_FEED_IDS=$(echo "$ARTIST_NEW_FEED_IDS" | sed '/^$/d')
+        if [ -n "$ARTIST_NEW_FEED_IDS" ]; then
+          echo ""
+          echo "📋 Step 5d-reparse: Reparsing newly imported artist feeds from RSS..."
+          while IFS= read -r FEED_ID; do
+            [ -z "$FEED_ID" ] && continue
+            echo "  🔄 Reparsing $FEED_ID..."
+            REPARSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H "$AUTH_HEADER" "${BASE_URL}/api/admin/feeds/${FEED_ID}/reparse") || REPARSE_CODE=000
+            if [ "$REPARSE_CODE" -eq 200 ]; then
+              echo "  ✓ $FEED_ID reparsed"
+            else
+              echo "  ⚠️ $FEED_ID reparse failed (HTTP $REPARSE_CODE) - non-critical"
+            fi
+            sleep 2
+          done <<< "$ARTIST_NEW_FEED_IDS"
+        else
+          echo "ℹ️ No newly imported artist feeds to reparse"
+        fi
+
         # Step 6: Final playlist refresh to include newly parsed tracks
         echo ""
         echo "📋 Step 6: Final playlist refresh to include newly parsed tracks in SystemPlaylist..."
