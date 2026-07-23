@@ -761,3 +761,17 @@ export function extractUuidFromUrl(url: string): string | null {
   const m = url.match(/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})/i);
   return m ? m[1].toLowerCase() : null;
 }
+
+/**
+ * Extract the bare host from a feed URL for host-based matching, e.g.
+ *   https://www.leuenbergmusic.com/podcast/foo/feed.xml → "leuenbergmusic.com"
+ * Lowercases and strips a leading "www.". Returns '' when the URL can't be
+ * parsed, so callers can treat unparseable URLs as "no host" (never a match).
+ */
+export function feedUrlHost(url: string): string {
+  try {
+    return new URL(url).hostname.toLowerCase().replace(/^www\./, '');
+  } catch {
+    return '';
+  }
+}

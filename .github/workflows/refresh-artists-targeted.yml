@@ -1,0 +1,84 @@
+name: Refresh Artists Targeted
+
+# Frequent auto-add of new releases from artists already on the site that have
+# NO publisher feed (e.g. self-hosted artists like leuenbergmusic.com). The
+# nightly refresh-playlists.yml already runs this same sweep once (Step 5d);
+# this workflow reruns it every few hours so a new release shows up within
+# hours instead of waiting up to 24h for the nightly cron.
+#
+# Self-hosted music sites don't emit podpings (per the host-latency summary in
+# CLAUDE.md), so this frequent sweep — not real-time podping — is the lever that
+# shrinks the discovery delay for those artists.
+#
+# The endpoint only PI-searches non-Wavlake artists without a publisher row,
+# dedups searches, and host-matches candidates, so each run is bounded and safe
+# to repeat. All lookups hit PodcastIndex, never Wavlake.
+
+on:
+  schedule:
+    # Every 3 hours. Anchored to the creation minute by GitHub's scheduler.
+    - cron: '0 */3 * * *'
+  workflow_dispatch:
+
+jobs:
+  import-new-artist-albums:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Sweep existing artists for new albums
+      run: |
+        BASE_URL="${BASE_URL:-https://stablekraft.app}"
+        echo "🔄 Targeted artist album sweep at $(date -u)"
+
+        OFFSET=0
+        TOTAL_IMPORTED=0
+        NEW_FEED_IDS=""
+        while : ; do
+          RESP=$(curl -s -X POST -w "\n%{http_code}" -H "$AUTH_HEADER" -H "Content-Type: application/json" \
+            -d "{\"limit\":50,\"offset\":${OFFSET}}" \
+            "${BASE_URL}/api/admin/artists/import-new-albums") || RESP=$'\n000'
+          HTTP_CODE=$(echo "$RESP" | tail -n1)
+          BODY=$(echo "$RESP" | sed '$d')
+
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "⚠️ Artist sweep issue (HTTP $HTTP_CODE) at offset ${OFFSET} - stopping"
+            break
+          fi
+
+          IMPORTED=$(echo "$BODY" | jq -r '.totals.imported // 0' 2>/dev/null || echo 0)
+          SKIPPED=$(echo "$BODY" | jq -r '.totals.skipped // 0' 2>/dev/null || echo 0)
+          TOTAL=$(echo "$BODY" | jq -r '.totalArtists // 0' 2>/dev/null || echo "?")
+          echo "  ✓ offset ${OFFSET}/${TOTAL}: ${IMPORTED} imported, ${SKIPPED} skipped"
+          TOTAL_IMPORTED=$((TOTAL_IMPORTED + IMPORTED))
+
+          PAGE_IDS=$(echo "$BODY" | jq -r '.importedFeedIds[]?' 2>/dev/null)
+          [ -n "$PAGE_IDS" ] && NEW_FEED_IDS="${NEW_FEED_IDS}"$'\n'"${PAGE_IDS}"
+
+          NEXT_OFFSET=$(echo "$BODY" | jq -r '.nextOffset // empty' 2>/dev/null)
+          [ -z "$NEXT_OFFSET" ] && break
+          OFFSET="$NEXT_OFFSET"
+          sleep 1
+        done
+
+        # Reparse newly imported feeds from real RSS (PI misses episode order /
+        # chapters / VTS — same rationale as refresh-playlists Step 5c).
+        NEW_FEED_IDS=$(echo "$NEW_FEED_IDS" | sed '/^$/d')
+        if [ -n "$NEW_FEED_IDS" ]; then
+          echo "📋 Reparsing ${TOTAL_IMPORTED} newly imported feed(s) from RSS..."
+          while IFS= read -r FEED_ID; do
+            [ -z "$FEED_ID" ] && continue
+            REPARSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H "$AUTH_HEADER" "${BASE_URL}/api/admin/feeds/${FEED_ID}/reparse") || REPARSE_CODE=000
+            if [ "$REPARSE_CODE" -eq 200 ]; then
+              echo "  ✓ $FEED_ID reparsed"
+            else
+              echo "  ⚠️ $FEED_ID reparse failed (HTTP $REPARSE_CODE) - non-critical"
+            fi
+            sleep 2
+          done <<< "$NEW_FEED_IDS"
+        fi
+
+        echo "✅ Targeted artist album sweep complete: ${TOTAL_IMPORTED} imported"
+      env:
+        BASE_URL: ${{ secrets.PLAYLIST_BASE_URL || 'https://stablekraft.app' }}
+        # Harmless while ADMIN_SECRET is unset on the server (fail-open).
+        AUTH_HEADER: "Authorization: Bearer ${{ secrets.ADMIN_SECRET }}"
