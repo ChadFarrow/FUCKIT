@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, Suspense } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+import ArtworkImage from '@/components/ArtworkImage';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from '@/contexts/SessionContext';
 import { useNostr } from '@/contexts/NostrContext';
@@ -1189,7 +1189,7 @@ function FavoritesPageContent() {
                       >
                         {/* Album Art */}
                         <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden flex-shrink-0">
-                          <Image
+                          <ArtworkImage
                             src={getAlbumArtworkUrl(track.image || track.Feed?.image || '', 'thumbnail')}
                             alt={track.title}
                             width={64}
@@ -1430,7 +1430,7 @@ function FavoritesPageContent() {
                   >
                     {/* Album Art */}
                     <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden flex-shrink-0">
-                      <Image
+                      <ArtworkImage
                         src={getAlbumArtworkUrl(fav.item.image || '', 'thumbnail')}
                         alt={fav.item.title}
                         width={64}
@@ -1467,7 +1467,7 @@ function FavoritesPageContent() {
                       <div className="flex items-center gap-2 mt-1">
                         {/* User avatar */}
                         {fav.favoritedBy.avatar ? (
-                          <Image
+                          <ArtworkImage
                             src={fav.favoritedBy.avatar}
                             alt=""
                             width={16}

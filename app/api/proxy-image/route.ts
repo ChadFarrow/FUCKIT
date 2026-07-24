@@ -9,10 +9,24 @@ try {
   console.warn('⚠️ Sharp not available, image processing disabled:', e);
 }
 
-// In-memory cache for proxied images (LRU-style with max entries)
+// In-memory cache for proxied images (LRU-style, bounded by entries AND by bytes)
 const imageCache = new Map<string, { buffer: Buffer; contentType: string; timestamp: number }>();
 const MAX_CACHE_ENTRIES = 500; // Increased from 100 for better cache hit rate
 const CACHE_TTL_MS = 2 * 60 * 60 * 1000; // 2 hours (increased from 30 minutes)
+// Feed artwork is arbitrary in size — Homegrown Hits ships ~19 MB animated GIFs
+// per episode. An entry-count-only bound let a handful of those pin hundreds of
+// MB of Railway RSS, so cap total bytes and refuse to cache oversized images at
+// all (they still get proxied, just re-fetched each time).
+const MAX_CACHE_BYTES = 96 * 1024 * 1024; // 96 MB total
+const MAX_CACHEABLE_IMAGE_BYTES = 4 * 1024 * 1024; // Skip anything bigger than 4 MB
+let cacheBytes = 0;
+
+function dropCacheEntry(key: string) {
+  const entry = imageCache.get(key);
+  if (!entry) return;
+  cacheBytes -= entry.buffer.length;
+  imageCache.delete(key);
+}
 
 function getCachedImage(url: string) {
   const cached = imageCache.get(url);
@@ -20,18 +34,31 @@ function getCachedImage(url: string) {
     return cached;
   }
   if (cached) {
-    imageCache.delete(url); // Expired
+    dropCacheEntry(url); // Expired
   }
   return null;
 }
 
 function setCachedImage(url: string, buffer: Buffer, contentType: string) {
-  // Evict oldest entries if at capacity
-  if (imageCache.size >= MAX_CACHE_ENTRIES) {
-    const oldestKey = imageCache.keys().next().value;
-    if (oldestKey) imageCache.delete(oldestKey);
+  if (buffer.length > MAX_CACHEABLE_IMAGE_BYTES) {
+    return; // Too big to keep resident - serve it through without caching
   }
+
+  // Replacing an existing key must not double-count its bytes
+  dropCacheEntry(url);
+
+  // Evict oldest entries until the new one fits both bounds
+  while (
+    imageCache.size > 0 &&
+    (imageCache.size >= MAX_CACHE_ENTRIES || cacheBytes + buffer.length > MAX_CACHE_BYTES)
+  ) {
+    const oldestKey = imageCache.keys().next().value;
+    if (!oldestKey) break;
+    dropCacheEntry(oldestKey);
+  }
+
   imageCache.set(url, { buffer, contentType, timestamp: Date.now() });
+  cacheBytes += buffer.length;
 }
 
 /**
@@ -164,6 +191,14 @@ export async function GET(request: NextRequest) {
     }
     const fetchUrl = url.href;
 
+    // The timeout covers the whole fetch, body included. 3s is right for normal
+    // cover art but starves animated GIFs — Homegrown Hits episode art is ~19 MB,
+    // which needs a sustained >6 MB/s to land in time, so it intermittently
+    // aborted and fell back to the placeholder ("Image fetch timeout" in the
+    // Railway logs). Give GIF URLs a longer leash without slowing everything else.
+    const looksAnimated = url.pathname.toLowerCase().endsWith('.gif');
+    const fetchTimeoutMs = looksAnimated ? 12000 : 3000;
+
     // Fetch the image with better error handling
     const response = await fetch(fetchUrl, {
       headers: {
@@ -172,7 +207,7 @@ export async function GET(request: NextRequest) {
         'Accept-Encoding': 'gzip, deflate, br',
       },
       // Reduce timeout to prevent long-hanging requests
-      signal: AbortSignal.timeout(3000), // 3 second timeout for faster fallback
+      signal: AbortSignal.timeout(fetchTimeoutMs),
       redirect: 'follow', // Follow redirects (including HTTP -> HTTPS)
     });
 

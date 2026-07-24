@@ -159,6 +159,43 @@ export function getAlbumArtworkUrl(originalUrl: string, size: 'thumbnail' | 'med
 }
 
 /**
+ * Detect artwork URLs that next/image must not try to optimize.
+ *
+ * Next's optimizer refuses to process animated images, but it still fetches and
+ * buffers the whole file first and then logs
+ *   "⚠ The requested resource ... is an animated image so it will not be optimized"
+ * to stderr — one line per card referencing the image, which Railway records at
+ * severity=error. Some feeds ship genuinely huge animated GIFs (Homegrown Hits
+ * episode art is ~19 MB each), so a single track list also pushed hundreds of MB
+ * through the Next server for nothing.
+ *
+ * Passing `unoptimized` on these sends the browser straight at the source and
+ * skips the optimizer entirely. Handles `/api/proxy-image?url=<encoded>` wrappers
+ * since that is how most feed artwork reaches an <Image>.
+ *
+ * @param url - The artwork URL as handed to next/image
+ * @returns true when the URL points at an animated (GIF) image
+ */
+export function isAnimatedArtworkUrl(url: string): boolean {
+  if (!url || typeof url !== 'string') return false;
+
+  let candidate = url;
+  const proxyMatch = url.match(/[?&]url=([^&]+)/);
+  if (url.includes('/api/proxy-image') && proxyMatch) {
+    try {
+      candidate = decodeURIComponent(proxyMatch[1]);
+    } catch {
+      // Malformed percent-encoding - test the raw parameter rather than the
+      // wrapper URL, whose path is always /api/proxy-image
+      candidate = proxyMatch[1];
+    }
+  }
+
+  const path = candidate.split('?')[0].split('#')[0];
+  return path.toLowerCase().endsWith('.gif');
+}
+
+/**
  * Get a placeholder image URL for missing artwork
  * @param size - The desired size
  * @returns A placeholder image URL

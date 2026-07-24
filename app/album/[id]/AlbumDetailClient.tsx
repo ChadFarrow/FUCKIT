@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+import ArtworkImage from '@/components/ArtworkImage';
 import { useSearchParams } from 'next/navigation';
 import { Play, Pause, SkipBack, SkipForward, Volume2, Video } from 'lucide-react';
 import { RSSAlbum } from '@/lib/rss-parser';
@@ -863,7 +863,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
           <div className="flex flex-col gap-6 lg:gap-4 lg:col-span-2 lg:min-h-0">
             {/* Album Art with Play Button Overlay */}
             <div className="relative group mx-auto lg:mx-0 w-[280px] h-[280px] lg:w-full lg:h-auto lg:aspect-square lg:max-w-[320px] lg:flex-shrink-0">
-            <Image 
+            <ArtworkImage 
               src={albumArtError || !album?.coverArt ? getPlaceholderImageUrl('medium') : getAlbumArtworkUrl(album.coverArt, 'medium', true)} 
               alt={album.title}
               width={280}
@@ -1085,7 +1085,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
               <div className="flex items-center gap-4 mb-4">
                 {doerfelsPublisherInfo.image && (
                   <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
-                    <Image
+                    <ArtworkImage
                       src={getAlbumArtworkUrl(doerfelsPublisherInfo.image, 'thumbnail')}
                       alt="The Doerfels"
                       width={64}
@@ -1187,7 +1187,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                     <div className="flex items-center gap-3 flex-1 min-w-0">
                       <div className="relative w-12 h-12 md:w-14 md:h-14 flex-shrink-0 overflow-hidden rounded">
                         {/* Use track-specific artwork if available, fallback to album artwork */}
-                        <Image
+                        <ArtworkImage
                           src={getAlbumArtworkUrl(track.image || album?.coverArt || '', 'thumbnail', true)}
                           alt={track.title}
                           width={48}
@@ -1359,7 +1359,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                     >
                       <div className="bg-white/5 hover:bg-white/10 rounded-lg p-3 transition-all duration-200 hover:scale-105">
                         <div className="aspect-square relative mb-3">
-                          <Image
+                          <ArtworkImage
                             src={getAlbumArtworkUrl(podrollAlbum.coverArt || '', 'thumbnail')}
                             alt={podrollAlbum.title}
                             width={150}

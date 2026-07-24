@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo, useCallback, Suspense } from 'react';
 import Image from 'next/image';
+import ArtworkImage from '@/components/ArtworkImage';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -1790,7 +1791,7 @@ function HomePageContent() {
                                 className="group flex items-center gap-4 p-4 bg-black/40 backdrop-blur-md rounded-xl hover:bg-black/50 transition-all duration-300 border border-gray-700/50 hover:border-cyan-400/30 shadow-lg hover:shadow-xl hover:shadow-cyan-400/10"
                               >
                                 <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 relative">
-                                  <Image
+                                  <ArtworkImage
                                     src={getAlbumArtworkUrl(album.coverArt || '', 'large')}
                                     alt={album.title}
                                     width={80}
@@ -1870,7 +1871,7 @@ function HomePageContent() {
                                 className="group flex items-center gap-4 p-4 bg-black/40 backdrop-blur-md rounded-xl hover:bg-black/50 transition-all duration-300 border border-gray-700/50 hover:border-cyan-400/30 shadow-lg hover:shadow-xl hover:shadow-cyan-400/10"
                               >
                                 <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 relative">
-                                  <Image
+                                  <ArtworkImage
                                     src={getAlbumArtworkUrl(album.coverArt || '', 'large')}
                                     alt={album.title}
                                     width={80}
@@ -1950,7 +1951,7 @@ function HomePageContent() {
                                 className="group flex items-center gap-4 p-4 bg-black/40 backdrop-blur-md rounded-xl hover:bg-black/50 transition-all duration-300 border border-gray-700/50 hover:border-cyan-400/30 shadow-lg hover:shadow-xl hover:shadow-cyan-400/10"
                               >
                                 <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 relative">
-                                  <Image
+                                  <ArtworkImage
                                     src={getAlbumArtworkUrl(album.coverArt || '', 'large')}
                                     alt={album.title}
                                     width={80}
@@ -2037,7 +2038,7 @@ function HomePageContent() {
                         className="group flex items-center gap-4 p-4 bg-black/40 backdrop-blur-md rounded-xl hover:bg-black/50 transition-all duration-300 border border-gray-700/50 hover:border-cyan-400/30 shadow-lg hover:shadow-xl hover:shadow-cyan-400/10"
                       >
                         <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 relative">
-                          <Image
+                          <ArtworkImage
                             src={getAlbumArtworkUrl(album.coverArt || '', 'large')}
                             alt={album.title}
                             width={80}
