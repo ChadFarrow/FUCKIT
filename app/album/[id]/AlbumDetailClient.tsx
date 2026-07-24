@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import ArtworkImage from '@/components/ArtworkImage';
 import { useSearchParams } from 'next/navigation';
-import { Play, Pause, SkipBack, SkipForward, Volume2, Video } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Volume2, Video, MoreVertical, Shuffle } from 'lucide-react';
 import { RSSAlbum } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { pickCanvasBackground } from '@/lib/podcast-images';
@@ -94,10 +94,25 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
   const [backgroundLoaded, setBackgroundLoaded] = useState(false);
   const [albumArtLoaded, setAlbumArtLoaded] = useState(false);
   const [albumArtError, setAlbumArtError] = useState(false);
+  // Mobile: track rows are one line; the per-row actions live behind a kebab.
+  const [expandedTrackKey, setExpandedTrackKey] = useState<string | null>(null);
+  // Mobile: the compact sticky header appears once the cover scrolls away.
+  const [showStickyHeader, setShowStickyHeader] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
   const preloadAttemptedRef = useRef(false);
   
+
+  // Mobile only: reveal the compact sticky header once the cover has scrolled away,
+  // so Play and shuffle stay reachable deep in a long track list. Desktop keeps the
+  // header permanently visible in its own column, so it never needs this.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const onScroll = () => setShowStickyHeader(window.scrollY > 220);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   // Detect desktop for background loading optimization
   useEffect(() => {
@@ -848,22 +863,59 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
       {/* Background layer - fixed positioned to override global layout background */}
       <div style={backgroundStyle} />
 
+      {/* Compact sticky header (mobile only) - appears once the cover scrolls off, so
+          Play and shuffle stay reachable without scrolling back up a long list. */}
+      <div
+        className={`lg:hidden fixed top-0 left-0 right-0 z-40 transition-transform duration-200 ${
+          showStickyHeader ? 'translate-y-0' : '-translate-y-full pointer-events-none'
+        }`}
+        style={{ paddingTop: 'var(--sk-safe-top)' }}
+        aria-hidden={!showStickyHeader}
+      >
+        <div className="flex items-center gap-3 px-3 py-2 bg-black/80 backdrop-blur-md border-b border-white/10">
+          <ArtworkImage
+            src={albumArtError || !album?.coverArt ? getPlaceholderImageUrl('thumbnail') : getAlbumArtworkUrl(album.coverArt, 'thumbnail', true)}
+            alt=""
+            width={36}
+            height={36}
+            className="w-9 h-9 rounded object-cover flex-shrink-0"
+          />
+          <span className="flex-1 min-w-0 truncate text-sm font-semibold text-white">{album.title}</span>
+          <button
+            onClick={shuffleAllTracks}
+            className="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 text-white flex-shrink-0 active:scale-95 transition-transform"
+            aria-label="Shuffle"
+          >
+            <Shuffle className="w-4 h-4" />
+          </button>
+          <button
+            onClick={globalIsPlaying && currentPlayingAlbum?.title === album?.title ? togglePlay : playAlbum}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white text-black text-sm font-semibold flex-shrink-0 active:scale-95 transition-transform"
+            aria-label={globalIsPlaying && currentPlayingAlbum?.title === album?.title ? 'Pause' : 'Play'}
+          >
+            {globalIsPlaying && currentPlayingAlbum?.title === album?.title
+              ? <Pause className="w-4 h-4" fill="currentColor" />
+              : <Play className="w-4 h-4" fill="currentColor" />}
+          </button>
+        </div>
+      </div>
+
       {/* Content layer - relative positioned above background */}
       <div className="min-h-screen lg:h-full text-white relative z-10 lg:overflow-hidden">
-        <div className="container mx-auto px-6 pt-16 md:pt-12 pb-40 lg:pb-8 lg:h-full lg:flex lg:flex-col">
+        <div className="container mx-auto px-4 lg:px-6 pt-6 md:pt-12 pb-40 lg:pb-8 lg:h-full lg:flex lg:flex-col">
         {/* Back / Home buttons */}
-        <div className="mb-6 lg:flex-shrink-0 flex items-center gap-1">
+        <div className="mb-3 lg:mb-6 lg:flex-shrink-0 flex items-center gap-1">
           <BackButton label="Back" />
           <HomeButton />
         </div>
 
         {/* Two-column layout on desktop, single column on mobile */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 mb-8 lg:mb-0 lg:flex-1 lg:min-h-0">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-8 mb-8 lg:mb-0 lg:flex-1 lg:min-h-0">
           {/* Left Column: Album Art and Info (2/5 width) */}
-          <div className="flex flex-col gap-6 lg:gap-4 lg:col-span-2 lg:min-h-0">
+          <div className="flex flex-col gap-3 lg:gap-4 lg:col-span-2 lg:min-h-0">
             {/* Album Art with Play Button Overlay */}
-            <div className="relative group mx-auto lg:mx-0 w-[280px] h-[280px] lg:w-full lg:h-auto lg:aspect-square lg:max-w-[320px] lg:flex-shrink-0">
-            <ArtworkImage 
+            <div className="relative group mx-auto lg:mx-0 w-[200px] h-[200px] lg:w-full lg:h-auto lg:aspect-square lg:max-w-[320px] lg:flex-shrink-0">
+            <ArtworkImage
               src={albumArtError || !album?.coverArt ? getPlaceholderImageUrl('medium') : getAlbumArtworkUrl(album.coverArt, 'medium', true)} 
               alt={album.title}
               width={280}
@@ -917,7 +969,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
             {/* Album Favorite Button - Heart icon in bottom-right corner */}
             {album.feedId && (
               <div
-                className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 z-20 flex items-center gap-1.5"
+                className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 z-20 hidden lg:flex items-center gap-1.5"
                 onClick={(e) => {
                   e.stopPropagation();
                 }}
@@ -949,9 +1001,9 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
           </div>
           
             {/* Album Info */}
-            <div className="bg-black/50 backdrop-blur-sm rounded-lg p-6 lg:flex-1 lg:min-h-0 lg:overflow-y-auto">
-            <div className="text-center lg:text-left space-y-4">
-            <h1 className="text-3xl md:text-4xl font-bold leading-tight">{album.title}</h1>
+            <div className="bg-black/50 backdrop-blur-sm rounded-lg p-4 lg:p-6 lg:flex-1 lg:min-h-0 lg:overflow-y-auto">
+            <div className="text-center lg:text-left space-y-3 lg:space-y-4">
+            <h1 className="text-2xl md:text-4xl font-bold leading-tight">{album.title}</h1>
             {album.publisher ? (
               <Link
                 href={`/publisher/${generatePublisherSlug({ artist: album.artist, feedGuid: album.publisher.feedGuid })}`}
@@ -974,14 +1026,75 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
               {album.explicit && <span className="bg-red-600 text-white px-2 py-1 rounded text-xs">EXPLICIT</span>}
             </div>
 
-            {/* Share Button */}
-            <div className="flex items-center justify-center lg:justify-start">
+            {/* Share Button - desktop keeps the labelled pill; mobile folds it into
+                the consolidated action row below. */}
+            <div className="hidden lg:flex items-center justify-start">
               <ShareButton
                 feedId={albumId}
                 className="bg-stablekraft-teal/90 hover:bg-stablekraft-teal text-white"
                 size="sm"
                 showLabel
               />
+            </div>
+
+            {/* Mobile action row - one place for every album-level action. These used to
+                be scattered across the artwork corners (download / favourite), a teal
+                Share pill, and a separate Boost block further down the page. */}
+            <div className="lg:hidden flex items-center justify-center gap-3">
+              <button
+                onClick={shuffleAllTracks}
+                className="w-11 h-11 flex items-center justify-center rounded-full bg-white/10 text-white active:scale-95 transition-transform flex-shrink-0"
+                aria-label="Shuffle"
+                title="Shuffle"
+              >
+                <Shuffle className="w-[18px] h-[18px]" />
+              </button>
+
+              {checkHasV4V(album) && (
+                <BoostButton
+                  trackId={undefined}
+                  feedId={album.feedId}
+                  trackTitle={album.title}
+                  artistName={album.artist}
+                  lightningAddress={getPrimaryRecipient(album)}
+                  valueSplits={formatValueSplitsForBoost(album, album.artist)}
+                  feedUrl={album.feedUrl}
+                  remoteFeedGuid={album.feedGuid}
+                  albumName={album.title}
+                  publisherGuid={album.publisher?.feedGuid}
+                  publisherUrl={album.publisher?.feedGuid ? `https://stablekraft.app${generatePublisherUrl({ artist: album.artist, feedGuid: album.publisher.feedGuid })}` : undefined}
+                  persons={(album as any).persons || []}
+                  className="flex items-center gap-2 px-4 py-2.5 text-sm"
+                />
+              )}
+
+              {album.feedId && (
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 flex items-center justify-center rounded-full bg-white/10 flex-shrink-0">
+                    <FavoriteButton
+                      feedId={album.feedId}
+                      size={20}
+                      className="text-white"
+                      singleTrackData={album.tracks.length === 1 ? {
+                        id: album.tracks[0].guid || album.tracks[0].url || `${album.feedId}-${album.tracks[0].title}`,
+                        title: album.tracks[0].title,
+                        artist: album.artist
+                      } : undefined}
+                    />
+                  </div>
+                  <div className="w-11 h-11 flex items-center justify-center rounded-full bg-white/10 flex-shrink-0">
+                    <DownloadButton
+                      downloadTarget={{ type: 'album', album }}
+                      size={20}
+                      className="text-white"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="w-11 h-11 flex items-center justify-center rounded-full bg-white/10 flex-shrink-0">
+                <ShareButton feedId={albumId} variant="ghost" size="sm" className="text-white" />
+              </div>
             </div>
 
             {(album.summary || album.description) && (() => {
@@ -993,7 +1106,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                 : fullText;
 
               return (
-                <div className="text-center lg:text-left max-w-lg lg:max-w-none lg:mx-0 mx-auto">
+                <div className="text-left max-w-lg lg:max-w-none lg:mx-0 mx-auto">
                   <p className="text-gray-300 leading-relaxed">{displayText}</p>
                   {needsTruncation && (
                     <button
@@ -1027,9 +1140,10 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
 
             {/* Lightning Boost and Funding Information */}
             <div className="space-y-4">
-              {/* Lightning Boost Button - only show if v4v data exists */}
+              {/* Lightning Boost Button - only show if v4v data exists.
+                  Desktop only: mobile carries Boost in the action row above. */}
               {checkHasV4V(album) ? (
-                <div className="flex justify-center lg:justify-start gap-2">
+                <div className="hidden lg:flex justify-start gap-2">
                   <BoostButton
                     trackId={undefined}
                     feedId={album.feedId}
@@ -1048,7 +1162,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                   {extraAlbumActions}
                 </div>
               ) : (
-                <div className="flex justify-center lg:justify-start gap-2">
+                <div className="hidden lg:flex justify-start gap-2">
                   <div className="px-6 py-3 bg-gray-800/50 rounded-lg text-gray-400 text-sm">
                     No Lightning payment info available for this album
                   </div>
@@ -1143,9 +1257,9 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
           {/* Right Column: Track List (Desktop) / Below (Mobile) (3/5 width) */}
           <div className="lg:col-span-3 lg:min-h-0">
             {/* Track List */}
-            <div className="bg-black/40 backdrop-blur-sm rounded-lg p-4 md:p-6 lg:h-full lg:flex lg:flex-col lg:min-h-0">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 lg:flex-shrink-0">
-                <h2 className="text-xl font-semibold text-center sm:text-left">Tracks</h2>
+            <div className="bg-black/40 backdrop-blur-sm rounded-lg p-2 md:p-6 lg:h-full lg:flex lg:flex-col lg:min-h-0">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-0 lg:mb-4 lg:flex-shrink-0">
+                <h2 className="hidden lg:block text-xl font-semibold text-left">{(album as any)?.isPodcast ? 'Episodes' : 'Tracks'}</h2>
 
                 {/* Shuffle Controls */}
                 <ControlsBar
@@ -1162,18 +1276,19 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                   showShuffle={true}
                   resultCount={filteredTracks.length}
                   resultLabel={filterParam === 'videos' ? 'video tracks' : 'tracks'}
-                  className="flex-shrink-0"
+                  className="flex-shrink-0 hidden lg:flex"
                 />
               </div>
-              <div className="space-y-2 lg:flex-1 lg:min-h-0 lg:overflow-y-auto lg:pb-28">
+              <div className="space-y-0 lg:space-y-2 divide-y divide-white/5 lg:divide-y-0 lg:flex-1 lg:min-h-0 lg:overflow-y-auto lg:pb-28">
                 {filteredTracks.map((track, displayIndex) => {
                   // Find the original index in album.tracks for correct playback
                   const originalIndex = album.tracks.findIndex(t => t === track);
                   const isUnavailable = track.status && track.status !== 'active';
+                  const trackKey = track.guid || track.url || `${track.title}-${displayIndex}`;
                   return (
                   <div
                     key={track.guid || track.url || `${track.title}-${displayIndex}`}
-                    className={`flex flex-col md:flex-row md:items-center md:justify-between gap-2 p-4 rounded-lg transition-colors group ${
+                    className={`flex flex-row items-center justify-between gap-2 py-2 px-2.5 md:p-4 rounded-lg transition-colors group ${
                       isUnavailable
                         ? 'opacity-50 cursor-not-allowed'
                         : 'hover:bg-white/10 cursor-pointer'
@@ -1184,8 +1299,16 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                     title={isUnavailable ? 'This track is currently unavailable' : undefined}
                   >
                     {/* Row 1: Artwork + Track Info */}
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <div className="relative w-12 h-12 md:w-14 md:h-14 flex-shrink-0 overflow-hidden rounded">
+                    <div className="flex items-center gap-2.5 md:gap-3 flex-1 min-w-0">
+                      {/* Mobile: a track number in place of the thumbnail — every row
+                          repeats the same cover anyway, and it buys the row's height back.
+                          Podcasts get no number (episodes are listed newest-first). */}
+                      {!(album as any)?.isPodcast && (
+                        <span className="md:hidden w-5 flex-shrink-0 text-right text-sm text-gray-300 tabular-nums">
+                          {displayIndex + 1}
+                        </span>
+                      )}
+                      <div className="relative hidden md:block w-12 h-12 md:w-14 md:h-14 flex-shrink-0 overflow-hidden rounded">
                         {/* Use track-specific artwork if available, fallback to album artwork */}
                         <ArtworkImage
                           src={getAlbumArtworkUrl(track.image || album?.coverArt || '', 'thumbnail', true)}
@@ -1234,24 +1357,22 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                       </div>
                       <div className="min-w-0 flex-1">
                         {/* Mobile: stacked layout, Desktop: single line */}
-                        <div className="md:hidden">
-                          <p className="font-medium line-clamp-2 text-sm">
+                        {/* Mobile: one line. The artist is already in the header, so it
+                            only earns a line on podcasts, where it carries the date. */}
+                        <div className="md:hidden flex items-center gap-2 min-w-0">
+                          <p className="font-medium text-sm truncate min-w-0">
                             {track.title}
-                            {((track as any).mediaType === 'video' || (track as any).alternateEnclosures?.some((enc: any) => enc.type?.includes('video'))) && (
-                              <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                                <Video className="w-2.5 h-2.5 mr-0.5" />
-                                Video
-                              </span>
-                            )}
                           </p>
-                          {track.subtitle && (
-                            <p className="text-xs text-gray-400 italic truncate">{track.subtitle}</p>
+                          {((track as any).mediaType === 'video' || (track as any).alternateEnclosures?.some((enc: any) => enc.type?.includes('video'))) && (
+                            <span className="flex-shrink-0 inline-flex items-center px-1 py-0.5 rounded text-[10px] font-medium bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                              <Video className="w-2.5 h-2.5" />
+                            </span>
                           )}
-                          <p className="text-xs text-gray-400 truncate">
-                            {(album as any)?.isPodcast && (track as any).publishedAt
-                              ? new Date((track as any).publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-                              : album?.artist}
-                          </p>
+                          {(album as any)?.isPodcast && (track as any).publishedAt && (
+                            <span className="flex-shrink-0 text-[11px] text-gray-400">
+                              {new Date((track as any).publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                            </span>
+                          )}
                         </div>
                         <div className="hidden md:block">
                           <p className="font-medium text-base line-clamp-2 whitespace-normal break-words">
@@ -1273,16 +1394,32 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                       </div>
                     </div>
                     {/* Row 2: Duration + Action Buttons */}
-                    <div className="flex items-center justify-end gap-2 md:gap-4 md:flex-shrink-0">
+                    <div className="flex items-center justify-end gap-2 md:gap-4 flex-shrink-0">
                       {track.explicit && (
-                        <span className="bg-red-600 text-white px-1 py-0.5 rounded text-xs font-bold">
+                        <span className="bg-red-600 text-white px-1 py-0.5 rounded text-[10px] md:text-xs font-bold">
                           E
                         </span>
                       )}
-                      <span className="text-xs md:text-sm text-gray-400">
+                      <span className="text-xs md:text-sm text-gray-300 md:text-gray-400 tabular-nums">
                         {formatDuration(track.duration)}
                       </span>
 
+                      {/* Mobile: the per-row actions collapse behind this kebab so the row
+                          stays one line. Desktop keeps them inline. */}
+                      <button
+                        type="button"
+                        className="md:hidden flex-shrink-0 w-8 h-8 -mr-1 flex items-center justify-center text-gray-400 rounded-full active:bg-white/10"
+                        aria-label={expandedTrackKey === trackKey ? 'Hide track actions' : 'Show track actions'}
+                        aria-expanded={expandedTrackKey === trackKey}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setExpandedTrackKey(expandedTrackKey === trackKey ? null : trackKey);
+                        }}
+                      >
+                        <MoreVertical className="w-4 h-4" />
+                      </button>
+
+                      <div className={`${expandedTrackKey === trackKey ? 'flex' : 'hidden'} md:flex items-center gap-3 md:gap-4`}>
                       {/* Share Button */}
                       {track.id && (
                         <div onClick={(e) => e.stopPropagation()}>
@@ -1314,32 +1451,11 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                         </div>
                       )}
 
-                      {/* Boost Button - only show if v4v data exists (track, album, or valueTimeSplits level) */}
-                      {(checkHasV4V(track) || checkHasV4V(album) || (track.valueTimeSplits && track.valueTimeSplits.length > 0)) && (
-                        <div onClick={(e) => e.stopPropagation()}>
-                          <BoostButton
-                            key={track.guid || track.url || `boost-${track.title}-${displayIndex}`}
-                            trackId={track.id}
-                            feedId={album.feedId}
-                            trackTitle={track.title}
-                            artistName={album.artist}
-                            valueSplits={formatValueSplitsForBoost(track, album.artist) || formatValueSplitsForBoost(album, album.artist)}
-                            lightningAddress={getPrimaryRecipient(track) || getPrimaryRecipient(album)}
-                            episodeGuid={track.v4vValue?.itemGuid || track.valueTimeSplits?.find(v => v.remoteItem?.itemGuid)?.remoteItem?.itemGuid || track.guid}
-                            remoteFeedGuid={track.v4vValue?.feedGuid || track.valueTimeSplits?.find(v => v.remoteItem?.feedGuid)?.remoteItem?.feedGuid || album.feedGuid}
-                            remoteStartTime={track.v4vValue?.remoteStartTime ?? track.valueTimeSplits?.find(v => v.remoteItem)?.startTime}
-                            feedUrl={album.feedUrl}
-                            albumName={album.title}
-                            publisherGuid={album.publisher?.feedGuid}
-                            publisherUrl={album.publisher?.feedGuid ? `https://stablekraft.app${generatePublisherUrl({ artist: album.artist, feedGuid: album.publisher.feedGuid })}` : undefined}
-                            persons={[
-                              ...((track as any).persons || []),
-                              ...((album as any).persons || []),
-                            ]}
-                            className="text-xs px-2 py-1"
-                          />
-                        </div>
-                      )}
+                      {/* Per-track Boost intentionally removed: boosting is an act tied to
+                          listening, so it lives on Now Playing and the player bar, not on
+                          every row of an album you are only browsing. Album-level Boost
+                          stays in the header action row. */}
+                      </div>
                     </div>
                   </div>
                   );
