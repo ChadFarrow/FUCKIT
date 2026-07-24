@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
+import ArtworkImage from '@/components/ArtworkImage';
 import { useState, useEffect } from 'react';
 
 interface PlaylistItem {
@@ -263,7 +263,7 @@ function PlaylistContent() {
               {/* Playlist Artwork */}
               {playlist.image && (
                 <div className="mb-4 relative h-48">
-                  <Image
+                  <ArtworkImage
                     src={playlist.image}
                     alt={`${playlist.title} artwork`}
                     fill

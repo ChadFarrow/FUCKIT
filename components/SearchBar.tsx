@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
+import ArtworkImage from '@/components/ArtworkImage';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { generateAlbumUrl, generatePublisherSlug } from '@/lib/url-utils';
 
@@ -309,7 +309,7 @@ export default function SearchBar({
                   }`}
                 >
                   <div className="w-10 h-10 rounded overflow-hidden flex-shrink-0 bg-gray-800">
-                    <Image
+                    <ArtworkImage
                       src={getAlbumArtworkUrl(track.image || '', 'thumbnail')}
                       alt={track.title}
                       width={40}
@@ -346,7 +346,7 @@ export default function SearchBar({
                     }`}
                   >
                     <div className="w-10 h-10 rounded overflow-hidden flex-shrink-0 bg-gray-800">
-                      <Image
+                      <ArtworkImage
                         src={getAlbumArtworkUrl(album.coverArt || '', 'thumbnail')}
                         alt={album.title}
                         width={40}
@@ -416,7 +416,7 @@ export default function SearchBar({
                     }`}
                   >
                     <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gray-800">
-                      <Image
+                      <ArtworkImage
                         src={getAlbumArtworkUrl(artist.image || '', 'thumbnail')}
                         alt={artist.name}
                         width={40}

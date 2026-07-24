@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
+import ArtworkImage from '@/components/ArtworkImage';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { generateAlbumUrl, generatePublisherSlug } from '@/lib/url-utils';
@@ -204,7 +204,7 @@ function SearchContent() {
                         className="flex items-center gap-4 p-4 bg-white/5 backdrop-blur-sm rounded-xl hover:bg-white/10 transition-all duration-200 border border-white/10 hover:border-white/20"
                       >
                         <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-gray-800">
-                          <Image
+                          <ArtworkImage
                             src={getAlbumArtworkUrl(track.image || '', 'thumbnail')}
                             alt={track.title}
                             width={64}
@@ -248,7 +248,7 @@ function SearchContent() {
                         className="group bg-white/5 backdrop-blur-sm rounded-xl p-4 hover:bg-white/10 transition-all duration-200 border border-white/10 hover:border-white/20"
                       >
                         <div className="aspect-square rounded-lg overflow-hidden mb-3 bg-gray-800">
-                          <Image
+                          <ArtworkImage
                             src={getAlbumArtworkUrl(album.coverArt || '', 'medium')}
                             alt={album.title}
                             width={200}
@@ -309,7 +309,7 @@ function SearchContent() {
                         className="group bg-white/5 backdrop-blur-sm rounded-xl p-4 hover:bg-white/10 transition-all duration-200 border border-white/10 hover:border-white/20"
                       >
                         <div className="aspect-square rounded-lg overflow-hidden mb-3 bg-gray-800">
-                          <Image
+                          <ArtworkImage
                             src={getAlbumArtworkUrl(podcast.coverArt || '', 'medium')}
                             alt={podcast.title}
                             width={200}
@@ -344,7 +344,7 @@ function SearchContent() {
                         className="group bg-white/5 backdrop-blur-sm rounded-xl p-4 hover:bg-white/10 transition-all duration-200 border border-white/10 hover:border-white/20"
                       >
                         <div className="aspect-square rounded-full overflow-hidden mb-3 bg-gray-800">
-                          <Image
+                          <ArtworkImage
                             src={getAlbumArtworkUrl(artist.image || '', 'medium')}
                             alt={artist.name}
                             width={200}

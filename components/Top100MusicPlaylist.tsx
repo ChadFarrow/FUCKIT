@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
+import ArtworkImage from '@/components/ArtworkImage';
 import { useAudio } from '@/contexts/AudioContext';
 import { useScrollDetectionContext } from '@/components/ScrollDetectionProvider';
 import { logger } from '@/lib/logger';
@@ -241,7 +241,7 @@ export default function Top100MusicPlaylist() {
               
               {/* Track Artwork */}
               <div className="relative w-10 h-10 md:w-12 md:h-12 flex-shrink-0 overflow-hidden rounded">
-                <Image 
+                <ArtworkImage 
                   src={getAlbumArtworkUrl(track.artwork || '', 'thumbnail', true)}
                   alt={track.title}
                   width={48}

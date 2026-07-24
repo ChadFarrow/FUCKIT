@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+import ArtworkImage from '@/components/ArtworkImage';
 import { Play, Music, Disc, Calendar, Clock, ExternalLink, Info, Share2 } from 'lucide-react';
 import { RSSAlbum, RSSPublisherItem } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
@@ -791,7 +791,7 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
         {/* Fallback background - use artist image or gradient */}
         {publisherInfo?.coverArt ? (
           <div className="fixed inset-0 z-0">
-            <Image 
+            <ArtworkImage 
               src={getAlbumArtworkUrl(publisherInfo.coverArt, 'large')} 
               alt={publisherInfo.title || 'Artist background'}
               width={1920}
@@ -830,7 +830,7 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
         {/* Fallback background - use artist image or gradient */}
         {publisherInfo?.coverArt ? (
           <div className="fixed inset-0 z-0">
-            <Image 
+            <ArtworkImage 
               src={getAlbumArtworkUrl(publisherInfo.coverArt, 'large')} 
               alt={publisherInfo.title || 'Artist background'}
               width={1920}
@@ -981,7 +981,7 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
         >
           <div className="relative aspect-square">
             {album.coverArt ? (
-              <Image
+              <ArtworkImage
                 src={getAlbumArtworkUrl(album.coverArt, 'medium')}
                 alt={album.title}
                 width={300}
@@ -1055,7 +1055,7 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
         >
           <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
             {album.coverArt ? (
-              <Image
+              <ArtworkImage
                 src={getAlbumArtworkUrl(album.coverArt, 'thumbnail')}
                 alt={album.title}
                 width={64}
@@ -1106,7 +1106,7 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
       {/* Enhanced Background */}
       {(publisherInfo?.coverArt || publisherInfo?.avatarArt) && !backgroundImageError ? (
         <div className="fixed inset-0 z-0" style={{ transform: 'translateZ(0)', willChange: 'transform' }}>
-          <Image
+          <ArtworkImage
             src={getAlbumArtworkUrl(publisherInfo.coverArt || publisherInfo.avatarArt || '', 'large', true)}
             alt={publisherInfo.title || "Publisher background"}
             width={1920}
@@ -1158,7 +1158,7 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
               {albumsSortedByDate.length > 0 && albumsSortedByDate[0].coverArt ? (
                 // Use newest album's artwork for avatar
                 <div className="w-48 h-48 rounded-2xl overflow-hidden shadow-2xl ring-4 ring-white/20">
-                  <Image
+                  <ArtworkImage
                     src={getAlbumArtworkUrl(albumsSortedByDate[0].coverArt, 'xl')}
                     alt={albumsSortedByDate[0].title || "Latest Release"}
                     width={256}
@@ -1174,7 +1174,7 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
               ) : publisherInfo?.avatarArt ? (
                 // Fallback to publisher avatar art
                 <div className="w-48 h-48 rounded-2xl overflow-hidden shadow-2xl ring-4 ring-white/20">
-                  <Image
+                  <ArtworkImage
                     src={getAlbumArtworkUrl(publisherInfo.avatarArt, 'xl')}
                     alt={publisherInfo.title || "Artist"}
                     width={256}
