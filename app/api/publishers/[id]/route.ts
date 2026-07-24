@@ -194,7 +194,7 @@ export async function GET(
         description: feed.description,
         trackCount: feed.Track.length,
         albumSlug: albumSlug,
-        releaseDate: feed.lastFetched || feed.createdAt,
+        releaseDate: feed.oldestItemPubdate || feed.createdAt,
         explicit: feed.explicit
       };
     });

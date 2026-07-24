@@ -55,7 +55,7 @@ export async function GET(request: Request) {
               description: track.description || feed.description,
               trackCount: 0,
               albumSlug: albumKey.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
-              releaseDate: track.publishedAt || feed.lastFetched || feed.createdAt,
+              releaseDate: track.publishedAt || feed.oldestItemPubdate || feed.createdAt,
               explicit: track.explicit || false
             });
           }
@@ -109,7 +109,7 @@ export async function GET(request: Request) {
             artist: feed.artist || 'Unknown Artist',
             description: feed.description || '',
             coverArt: feed.image || '',
-            releaseDate: feed.lastFetched || feed.createdAt,
+            releaseDate: feed.oldestItemPubdate || feed.createdAt,
             explicit: feed.explicit ?? false,
             tracks: tracks,
             feedId: feed.id,

@@ -489,7 +489,7 @@ export async function GET(request: Request) {
         description: album.description,
         coverArt: album.image || `/api/placeholder-image?title=${encodeURIComponent(album.title)}&artist=${encodeURIComponent(album.artist)}`,
         tracks: tracks,
-        releaseDate: feed.lastFetched || feed.createdAt,
+        releaseDate: feed.oldestItemPubdate || feed.createdAt,
         podroll: isPlaylist ? { enabled: true } : null,
         publisher: publisher,
         funding: null, // Can be enhanced with V4V data from tracks

@@ -1080,7 +1080,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
           artist: album.artist || artistName,
           coverArt: isValidImageUrl(album.image) ? album.image : null,
           trackCount: album._count.Track,
-          releaseDate: album.createdAt
+          releaseDate: album.oldestItemPubdate || album.createdAt
         }));
 
         console.log(`📀 Found ${publisherAlbums.length} albums for publisher "${feed.title}"`);
@@ -1244,7 +1244,10 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
         subtitle: '',
         coverArt: (isValidImageUrl(feed.image) ? feed.image : `/api/placeholder-image?title=${encodeURIComponent(albumTitle)}&artist=${encodeURIComponent(feed.artist || 'Unknown Artist')}`),
         podcastImages: (feed as any).podcastImages || undefined,
-        releaseDate: feed.lastFetched || feed.createdAt,
+        // Real release date. lastFetched is when we last CRAWLED the feed and
+        // createdAt is when it was added to StableKraft — both report the wrong
+        // year for back-catalogue albums (issue #169). Matches albums-fast.
+        releaseDate: feed.oldestItemPubdate || feed.createdAt,
         explicit: feed.explicit ?? false,
         tracks: tracks,
         podroll: isPlaylist ? { enabled: true } : null,
@@ -1411,7 +1414,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
           subtitle: '',
           coverArt: (isValidImageUrl(feed.image) ? feed.image : `/api/placeholder-image?title=${encodeURIComponent(albumTitle)}&artist=${encodeURIComponent(feed.artist || 'Unknown Artist')}`),
           podcastImages: (feed as any).podcastImages || undefined,
-          releaseDate: feed.lastFetched || feed.createdAt,
+          // Real release date — see the note on the other branch above.
+          releaseDate: feed.oldestItemPubdate || feed.createdAt,
           explicit: feed.explicit ?? false,
           tracks: tracks,
           podroll: isPlaylist ? { enabled: true } : null,
