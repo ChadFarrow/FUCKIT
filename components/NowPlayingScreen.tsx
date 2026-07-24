@@ -511,8 +511,9 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
         paddingLeft: 'var(--sk-safe-left)',
         paddingRight: 'var(--sk-safe-right)'
       }}>
-        {/* Header */}
-        <div className="relative flex items-center justify-between p-4 pb-2">
+        {/* Header - fixed height; close / album name / menu share one row so the
+            album name can never sit on top of the close button */}
+        <div className="flex-shrink-0 flex items-center gap-2 px-4 pt-1 pb-1">
           <button
             onClick={() => {
               if (onClose) {
@@ -521,12 +522,13 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
                 setFullscreenMode(false);
               }
             }}
-            className="p-2 rounded-full bg-black/20 backdrop-blur-sm hover:bg-black/30 transition-all duration-200 z-10"
+            className="flex-shrink-0 p-2 rounded-full bg-black/20 backdrop-blur-sm hover:bg-black/30 transition-all duration-200"
+            aria-label="Close now playing"
           >
             <ChevronDown className="w-6 h-6" />
           </button>
 
-          {/* Playing from button - absolutely centered */}
+          {/* Playing from - single line, shares the row instead of overlapping */}
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -540,42 +542,31 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
               const albumUrl = generateAlbumUrl(currentPlayingAlbum.title);
               router.push(albumUrl);
             }}
-            className="absolute left-1/2 -translate-x-1/2 text-center rounded-lg py-2 px-4 max-w-xs cursor-pointer hover:bg-black/50 active:scale-95 transition-all duration-200 z-10"
+            className="flex-1 min-w-0 truncate text-center text-sm font-medium rounded-lg px-2 py-1 cursor-pointer hover:bg-black/30 active:scale-95 transition-all duration-200"
             style={{
-              backgroundColor: 'rgba(0,0,0,0.4)',
-              backdropFilter: 'blur(8px)',
-              WebkitBackdropFilter: 'blur(8px)'
+              color: contrastColors.textColor,
+              textShadow: '0 2px 4px rgba(0,0,0,0.8)'
             }}
+            title={currentPlayingAlbum.title}
           >
-            <p
-              className="text-sm font-medium pointer-events-none"
-              style={{
-                color: contrastColors.textColor,
-                textShadow: '0 2px 4px rgba(0,0,0,0.8)',
-                fontWeight: '500'
-              }}
-            >
-              Playing from
-            </p>
-            <p
-              className="text-sm font-semibold truncate pointer-events-none"
-              style={{
-                color: contrastColors.textColor,
-                textShadow: '0 2px 4px rgba(0,0,0,0.8)',
-                fontWeight: '600'
-              }}
-            >
-              {currentPlayingAlbum.title}
-            </p>
+            {currentPlayingAlbum.title}
           </button>
 
-          {/* User Menu */}
-          <UserMenu />
+          {/* User Menu - avatar only; the display name would crowd out the album name */}
+          <UserMenu showName={false} />
         </div>
 
-        {/* Album Art or Video */}
-        <div className="flex items-start justify-center px-8 pt-12">
-          <div className="relative w-full max-w-sm aspect-square">
+        {/* Album Art or Video - the one flexible row, so a short screen shrinks the
+            artwork instead of clipping the transport controls off the bottom.
+            Sized to min(width, height) so it stays 1:1 and never stretches. */}
+        <div
+          className="flex-1 min-h-0 grid place-items-center px-6 py-2"
+          style={{ containerType: 'size' }}
+        >
+          <div
+            className="relative aspect-square"
+            style={{ width: 'min(100cqw, 100cqh)', maxWidth: '24rem' }}
+          >
             {isVideoMode ? (
               <div
                 ref={videoContainerRef}
@@ -595,66 +586,6 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
               />
             )}
 
-            {/* Boost Button - Top-left corner overlay - always show */}
-            <button
-              className="absolute top-4 left-4 z-20 p-3 rounded-full transition-all duration-200 hover:scale-110 active:scale-95 shadow-lg pointer-events-auto touch-manipulation"
-              style={{
-                backgroundColor: '#FBBF24',
-                color: '#000000',
-                backdropFilter: 'blur(10px)',
-                WebkitBackdropFilter: 'blur(10px)',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
-              }}
-              onClick={() => setShowBoostModal(true)}
-              title="Send a boost"
-            >
-              <Zap className="w-6 h-6 pointer-events-none" fill="#000000" />
-            </button>
-
-            {/* Favorite Button - Top-right corner overlay */}
-            {favoriteTrackId && (
-              <div
-                className="absolute top-4 right-4 z-20 flex items-center gap-2"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                }}
-              >
-                {!hasVTS && currentTrack?.url ? (
-                  <div
-                    className="backdrop-blur-md rounded-full w-12 h-12 flex items-center justify-center pointer-events-auto touch-manipulation active:scale-95 transition-all shadow-xl"
-                    style={{
-                      backgroundColor: 'rgba(0,0,0,0.6)',
-                      boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
-                      border: '2px solid rgba(255,255,255,0.1)'
-                    }}
-                  >
-                    <DownloadButton
-                      downloadTarget={{ type: 'track', track: currentTrack as any }}
-                      size={28}
-                      className="text-white"
-                    />
-                  </div>
-                ) : null}
-                <div
-                  className="backdrop-blur-md rounded-full w-12 h-12 flex items-center justify-center pointer-events-auto touch-manipulation active:scale-95 transition-all shadow-xl"
-                  style={{
-                    backgroundColor: 'rgba(0,0,0,0.6)',
-                    boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
-                    border: '2px solid rgba(255,255,255,0.1)'
-                  }}
-                >
-                  <FavoriteButton
-                    key={favoriteTrackId}
-                    trackId={favoriteTrackId}
-                    feedGuidForImport={hasVTS ? activeVTS?.remoteItem?.feedGuid : undefined}
-                    size={28}
-                    className="text-white"
-                  />
-                </div>
-              </div>
-            )}
-
             {/* Reflection effect */}
             <div
               className="absolute -bottom-4 left-0 right-0 h-20 bg-gradient-to-b from-transparent to-black/20 rounded-b-2xl pointer-events-none"
@@ -665,20 +596,79 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
           </div>
         </div>
 
+        {/* Track actions - favorite / boost / download. These used to float on the
+            artwork corners, where they covered cover-art titles. */}
+        <div
+          className="flex-shrink-0 flex items-center justify-center gap-5 px-8 pt-3"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+        >
+          {favoriteTrackId && (
+            <div
+              className="backdrop-blur-md rounded-full w-12 h-12 flex items-center justify-center touch-manipulation active:scale-95 transition-all shadow-xl"
+              style={{
+                backgroundColor: 'rgba(0,0,0,0.6)',
+                boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
+                border: '2px solid rgba(255,255,255,0.1)'
+              }}
+            >
+              <FavoriteButton
+                key={favoriteTrackId}
+                trackId={favoriteTrackId}
+                feedGuidForImport={hasVTS ? activeVTS?.remoteItem?.feedGuid : undefined}
+                size={28}
+                className="text-white"
+              />
+            </div>
+          )}
+
+          <button
+            className="w-14 h-14 flex items-center justify-center rounded-full transition-all duration-200 hover:scale-110 active:scale-95 shadow-lg touch-manipulation"
+            style={{
+              backgroundColor: '#FBBF24',
+              color: '#000000',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
+            }}
+            onClick={() => setShowBoostModal(true)}
+            title="Send a boost"
+          >
+            <Zap className="w-6 h-6 pointer-events-none" fill="#000000" />
+          </button>
+
+          {!hasVTS && currentTrack?.url ? (
+            <div
+              className="backdrop-blur-md rounded-full w-12 h-12 flex items-center justify-center touch-manipulation active:scale-95 transition-all shadow-xl"
+              style={{
+                backgroundColor: 'rgba(0,0,0,0.6)',
+                boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
+                border: '2px solid rgba(255,255,255,0.1)'
+              }}
+            >
+              <DownloadButton
+                downloadTarget={{ type: 'track', track: currentTrack as any }}
+                size={28}
+                className="text-white"
+              />
+            </div>
+          ) : null}
+        </div>
+
         {/* Track Info */}
-        <div className="px-8 pt-16 pb-6 text-center">
+        <div className="flex-shrink-0 px-8 pt-3 text-center">
           <div className="overflow-hidden">
             <h1
               ref={titleRef}
               className={`text-2xl font-bold mb-2 whitespace-nowrap ${titleOverflows ? 'animate-marquee hover:animate-none' : ''}`}
             >
-              <Link href={`${generateAlbumUrl(currentPlayingAlbum.title)}${currentTrack.id ? `?track=${currentTrack.id}` : ''}`} className="underline">
+              <Link href={`${generateAlbumUrl(currentPlayingAlbum.title)}${currentTrack.id ? `?track=${currentTrack.id}` : ''}`} className="hover:underline">
                 {currentTrack.title || 'Unknown Track'}
               </Link>
               {titleOverflows && (
                 <>
                   <span className="px-8" />
-                  <Link href={`${generateAlbumUrl(currentPlayingAlbum.title)}${currentTrack.id ? `?track=${currentTrack.id}` : ''}`} className="underline">
+                  <Link href={`${generateAlbumUrl(currentPlayingAlbum.title)}${currentTrack.id ? `?track=${currentTrack.id}` : ''}`} className="hover:underline">
                     {currentTrack.title || 'Unknown Track'}
                   </Link>
                 </>
@@ -707,7 +697,7 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
         </div>
 
         {/* Progress Bar */}
-        <div className="px-8 pb-6">
+        <div className="flex-shrink-0 px-8 pt-4">
           <div
             ref={progressRef}
             className="relative h-1 rounded-full cursor-pointer"
@@ -755,7 +745,7 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
         </div>
 
         {/* Controls */}
-        <div className="px-8 pb-4">
+        <div className="flex-shrink-0 px-8 pt-3">
           {/* Center Controls */}
           <div className="flex items-center justify-between w-full max-w-xs mx-auto">
             {/* Shuffle Button */}

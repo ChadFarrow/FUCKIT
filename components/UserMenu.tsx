@@ -24,9 +24,15 @@ const LoginModal = dynamic(() => import('./Nostr/LoginModal'), {
 
 interface UserMenuProps {
   className?: string;
+  /**
+   * Show the Nostr display name beside the avatar. Off on Now Playing, where the
+   * header also carries the album name — a long display name would otherwise
+   * squeeze it down to an ellipsis.
+   */
+  showName?: boolean;
 }
 
-export default function UserMenu({ className = '' }: UserMenuProps) {
+export default function UserMenu({ className = '', showName = true }: UserMenuProps) {
   const { user, isAuthenticated, logout } = useNostr();
   const { isConnected, connect, disconnect, isLoading } = useBitcoinConnect();
   const { setFullscreenMode } = useAudio();
@@ -114,9 +120,11 @@ export default function UserMenu({ className = '' }: UserMenuProps) {
                   }}
                 />
               )}
-              <span className="text-sm text-white">
-                {user.displayName || 'User'}
-              </span>
+              {showName && (
+                <span className="text-sm text-white truncate max-w-[10rem]">
+                  {user.displayName || 'User'}
+                </span>
+              )}
             </div>
           )}
 
