@@ -883,7 +883,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
           <span className="flex-1 min-w-0 truncate text-sm font-semibold text-white">{album.title}</span>
           <button
             onClick={shuffleAllTracks}
-            className="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 text-white flex-shrink-0 active:scale-95 transition-transform"
+            className="w-9 h-9 flex items-center justify-center rounded-full bg-white/[0.18] ring-1 ring-white/30 backdrop-blur-md shadow-lg text-white flex-shrink-0 active:scale-95 transition-transform"
             aria-label="Shuffle"
           >
             <Shuffle className="w-4 h-4" />
@@ -1043,7 +1043,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
             <div className="lg:hidden flex items-center justify-center gap-3">
               <button
                 onClick={shuffleAllTracks}
-                className="w-11 h-11 flex items-center justify-center rounded-full bg-white/10 text-white active:scale-95 transition-transform flex-shrink-0"
+                className="w-11 h-11 flex items-center justify-center rounded-full bg-white/[0.18] ring-1 ring-white/30 backdrop-blur-md shadow-lg text-white active:scale-95 transition-transform flex-shrink-0"
                 aria-label="Shuffle"
                 title="Shuffle"
               >
@@ -1070,7 +1070,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
 
               {album.feedId && (
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 flex items-center justify-center rounded-full bg-white/10 flex-shrink-0">
+                  <div className="w-11 h-11 flex items-center justify-center rounded-full bg-white/[0.18] ring-1 ring-white/30 backdrop-blur-md shadow-lg flex-shrink-0">
                     <FavoriteButton
                       feedId={album.feedId}
                       size={20}
@@ -1082,7 +1082,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                       } : undefined}
                     />
                   </div>
-                  <div className="w-11 h-11 flex items-center justify-center rounded-full bg-white/10 flex-shrink-0">
+                  <div className="w-11 h-11 flex items-center justify-center rounded-full bg-white/[0.18] ring-1 ring-white/30 backdrop-blur-md shadow-lg flex-shrink-0">
                     <DownloadButton
                       downloadTarget={{ type: 'album', album }}
                       size={20}
@@ -1092,7 +1092,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                 </div>
               )}
 
-              <div className="w-11 h-11 flex items-center justify-center rounded-full bg-white/10 flex-shrink-0">
+              <div className="w-11 h-11 flex items-center justify-center rounded-full bg-white/[0.18] ring-1 ring-white/30 backdrop-blur-md shadow-lg flex-shrink-0">
                 <ShareButton feedId={albumId} variant="ghost" size="sm" className="text-white" />
               </div>
             </div>
