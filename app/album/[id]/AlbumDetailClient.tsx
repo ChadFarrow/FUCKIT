@@ -1404,21 +1404,8 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                         {formatDuration(track.duration)}
                       </span>
 
-                      {/* Mobile: the per-row actions collapse behind this kebab so the row
-                          stays one line. Desktop keeps them inline. */}
-                      <button
-                        type="button"
-                        className="md:hidden flex-shrink-0 w-8 h-8 -mr-1 flex items-center justify-center text-gray-400 rounded-full active:bg-white/10"
-                        aria-label={expandedTrackKey === trackKey ? 'Hide track actions' : 'Show track actions'}
-                        aria-expanded={expandedTrackKey === trackKey}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setExpandedTrackKey(expandedTrackKey === trackKey ? null : trackKey);
-                        }}
-                      >
-                        <MoreVertical className="w-4 h-4" />
-                      </button>
-
+                      {/* The revealed actions sit BEFORE the kebab so they expand leftwards
+                          and the kebab itself never moves — the same spot toggles it shut. */}
                       <div className={`${expandedTrackKey === trackKey ? 'flex' : 'hidden'} md:flex items-center gap-3 md:gap-4`}>
                       {/* Share Button */}
                       {track.id && (
@@ -1456,6 +1443,22 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                           every row of an album you are only browsing. Album-level Boost
                           stays in the header action row. */}
                       </div>
+
+                      {/* Mobile: fixed anchor at the right edge. Rendered last so the
+                          actions above open to its left and it stays put when toggled. */}
+                      <button
+                        type="button"
+                        className="md:hidden flex-shrink-0 w-8 h-8 -mr-1 flex items-center justify-center rounded-full active:bg-white/10 transition-colors"
+                        style={{ color: expandedTrackKey === trackKey ? '#fff' : undefined }}
+                        aria-label={expandedTrackKey === trackKey ? 'Hide track actions' : 'Show track actions'}
+                        aria-expanded={expandedTrackKey === trackKey}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setExpandedTrackKey(expandedTrackKey === trackKey ? null : trackKey);
+                        }}
+                      >
+                        <MoreVertical className={`w-4 h-4 ${expandedTrackKey === trackKey ? 'text-white' : 'text-gray-400'}`} />
+                      </button>
                     </div>
                   </div>
                   );
