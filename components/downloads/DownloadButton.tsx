@@ -23,12 +23,16 @@ export type DownloadTarget =
 interface DownloadButtonProps {
   downloadTarget: DownloadTarget;
   className?: string;
+  /** Classes for the idle download arrow. The icon carries its own text colour,
+      so a `text-*` on `className` can never reach it — pass it here. */
+  iconClassName?: string;
   size?: number;
 }
 
 export default function DownloadButton({
   downloadTarget,
   className = '',
+  iconClassName = 'text-gray-400 hover:text-white',
   size = 24,
 }: DownloadButtonProps) {
   const downloads = useDownloadsSafe();
@@ -118,7 +122,7 @@ export default function DownloadButton({
       ) : isDownloaded ? (
         <Check size={size} className="text-green-500 flex-shrink-0" />
       ) : (
-        <Download size={size} className="text-gray-400 hover:text-white flex-shrink-0" />
+        <Download size={size} className={`${iconClassName} flex-shrink-0`} />
       )}
     </button>
   );

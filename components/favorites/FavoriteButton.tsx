@@ -45,6 +45,9 @@ interface FavoriteButtonProps {
   trackId?: string;
   feedId?: string;
   className?: string;
+  /** Classes for the heart itself when NOT favorited. The icon carries its own
+      text colour, so a `text-*` on `className` can never reach it — pass it here. */
+  iconClassName?: string;
   size?: number;
   onToggle?: (isFavorite: boolean) => void;
   isFavorite?: boolean; // Optional prop to set initial favorite state (useful on favorites page)
@@ -67,6 +70,7 @@ export default function FavoriteButton({
   trackId,
   feedId,
   className = '',
+  iconClassName = 'text-gray-400 hover:text-red-400',
   size = 24,
   onToggle,
   isFavorite: initialIsFavorite,
@@ -377,7 +381,7 @@ export default function FavoriteButton({
         className={`transition-colors duration-200 flex-shrink-0 ${
           isFavorite
             ? 'fill-red-500 text-red-500'
-            : 'fill-transparent text-gray-400 hover:text-red-400'
+            : `fill-transparent ${iconClassName}`
         }`}
       />
     </button>
