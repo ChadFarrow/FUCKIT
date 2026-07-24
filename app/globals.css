@@ -25,6 +25,27 @@
   --text-secondary: #64748B;
   --accent-primary: var(--stablekraft-teal);
   --accent-secondary: var(--stablekraft-orange);
+
+  /* ---------------------------------------------------------------------
+   * Safe-area insets — ALWAYS consume these, never bare env(safe-area-inset-*)
+   *
+   * Android (targetSdk 36) forces edge-to-edge, so the native Capacitor
+   * WebView draws under the status and navigation bars. Chromium's own
+   * env(safe-area-inset-*) does not reliably report Android *system bar*
+   * insets — which is exactly why Capacitor 8's built-in SystemBars plugin
+   * injects --safe-area-inset-{top,right,bottom,left} onto <html> itself
+   * (see injectSafeAreaCSS in SystemBars.java). Bare env() resolved to 0 on
+   * LineageOS and the Now Playing transport row ended up under the nav bar.
+   *
+   * Taking max() of both sources is safe, not double-padding: when Capacitor
+   * pads the WebView's parent instead of passing insets through, it computes
+   * the injected values from a zeroed inset set and injects 0px. On iOS and
+   * desktop browsers the injected var is absent and env() wins unchanged.
+   * ------------------------------------------------------------------- */
+  --sk-safe-top: max(var(--safe-area-inset-top, 0px), env(safe-area-inset-top, 0px));
+  --sk-safe-right: max(var(--safe-area-inset-right, 0px), env(safe-area-inset-right, 0px));
+  --sk-safe-bottom: max(var(--safe-area-inset-bottom, 0px), env(safe-area-inset-bottom, 0px));
+  --sk-safe-left: max(var(--safe-area-inset-left, 0px), env(safe-area-inset-left, 0px));
 }
 
 @layer base {
@@ -226,32 +247,32 @@
 @layer utilities {
   /* iOS Safe Area Support */
   .pb-safe {
-    padding-bottom: env(safe-area-inset-bottom);
+    padding-bottom: var(--sk-safe-bottom);
   }
-  
+
   /* Add extra padding on top of safe area for better spacing */
   .pb-safe-plus {
-    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+    padding-bottom: calc(1rem + var(--sk-safe-bottom));
   }
-  
+
   /* Top safe area for iPhone dynamic island */
   .pt-safe {
-    padding-top: env(safe-area-inset-top);
+    padding-top: var(--sk-safe-top);
   }
-  
+
   /* Add extra padding on top of safe area for better spacing */
   .pt-safe-plus {
-    padding-top: calc(1rem + env(safe-area-inset-top));
+    padding-top: calc(1rem + var(--sk-safe-top));
   }
-  
+
   /* Extra large top safe area padding for more spacing */
   .pt-safe-xl {
-    padding-top: calc(2rem + env(safe-area-inset-top));
+    padding-top: calc(2rem + var(--sk-safe-top));
   }
-  
+
   /* iOS specific utilities */
   .pt-ios {
-    padding-top: env(safe-area-inset-top);
+    padding-top: var(--sk-safe-top);
   }
   
   /* Enhanced content overlay utilities */
@@ -265,12 +286,12 @@
 @media (display-mode: standalone) {
   /* Ensure the player bar is visible in standalone mode */
   .fixed.bottom-0 {
-    bottom: env(safe-area-inset-bottom);
+    bottom: var(--sk-safe-bottom);
   }
 
   /* Add padding to body for standalone mode */
   body {
-    padding-bottom: env(safe-area-inset-bottom);
+    padding-bottom: var(--sk-safe-bottom);
   }
 }
 

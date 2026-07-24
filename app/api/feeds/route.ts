@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { parseRSSFeedWithSegments, calculateTrackOrder, detectTrackMediaType, applyParsedItemFields } from '@/lib/rss-parser-db';
+import { syncOldestItemPubdate } from '@/lib/feed-pubdate';
 import { findPublisherFeed } from '@/lib/publisher-detector';
 import { generateAlbumSlug, isValidFeedUrl, normalizeUrl, normalizeArtistName } from '@/lib/url-utils';
 import { resolvePodcastIndexUrl } from '@/lib/podcast-index-api';
@@ -247,6 +248,10 @@ async function importMissingAlbums(
           data: tracksData,
           skipDuplicates: true
         });
+
+        // Release date for the grid + "Year" sort — without this the read
+        // paths fall back to feed.createdAt and show the date it was added.
+        await syncOldestItemPubdate(feed.id);
       }
 
       console.log(`✅ Imported: ${parsedFeed.title} (${parsedFeed.items.length} tracks)`);
@@ -604,8 +609,12 @@ export async function POST(request: NextRequest) {
           data: tracksData,
           skipDuplicates: true
         });
+
+        // Release date for the grid + "Year" sort — without this the read
+        // paths fall back to feed.createdAt and show the date it was added.
+        await syncOldestItemPubdate(feed.id);
       }
-      
+
       // Return feed with track count
       const feedWithCount = await prisma.feed.findUnique({
         where: { id: feed.id },

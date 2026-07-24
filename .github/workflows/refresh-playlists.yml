@@ -116,6 +116,27 @@ jobs:
           echo "⚠️ Feed status recovery had issues (HTTP $HTTP_CODE) - non-critical"
         fi
 
+        # Step 2e: Backfill missing release dates.
+        # Read paths resolve releaseDate as `oldestItemPubdate || createdAt`, so a
+        # feed with a null column reports the date it was ADDED to StableKraft as
+        # its release year (issue #169 — a 2025 album displaying "2026"). Import
+        # paths now set the column themselves; this is the safety net for feeds
+        # that arrive by any path that doesn't, and for historical rows.
+        echo ""
+        echo "📋 Step 2e: Backfilling missing release dates (oldestItemPubdate)..."
+
+        PUBDATE_RESPONSE=$(curl -s -X POST -w "\n%{http_code}" -H "$AUTH_HEADER" "${BASE_URL}/api/admin/backfill-oldest-pubdate") || PUBDATE_RESPONSE=$'\n000'
+        HTTP_CODE=$(echo "$PUBDATE_RESPONSE" | tail -n1)
+        RESPONSE_BODY=$(echo "$PUBDATE_RESPONSE" | sed '$d')
+
+        if [ "$HTTP_CODE" -eq 200 ]; then
+          PUBDATE_UPDATED=$(echo "$RESPONSE_BODY" | jq -r '.updated' 2>/dev/null || echo "?")
+          PUBDATE_SKIPPED=$(echo "$RESPONSE_BODY" | jq -r '.skipped' 2>/dev/null || echo "?")
+          echo "✅ Release dates: ${PUBDATE_UPDATED} backfilled, ${PUBDATE_SKIPPED} skipped (no dated tracks)"
+        else
+          echo "⚠️ Release date backfill had issues (HTTP $HTTP_CODE) - non-critical"
+        fi
+
         # Step 3: Refresh playlists with full v4v parsing
         echo ""
         echo "📋 Step 3: Refreshing playlists with full RSS parsing (includes v4v payment data)..."

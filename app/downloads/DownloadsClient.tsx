@@ -7,6 +7,7 @@ import { useDownloads } from '@/contexts/DownloadsContext';
 import { useAudio } from '@/contexts/AudioContext';
 import { primaryPlaybackKey } from '@/lib/downloads/playback-key';
 import BackButton from '@/components/BackButton';
+import HomeButton from '@/components/HomeButton';
 import type { DownloadRecord } from '@/lib/downloads/downloads-db';
 import type { DownloadableAlbum } from '@/lib/downloads/download-manager';
 import type { RSSAlbum } from '@/lib/rss-parser';
@@ -214,7 +215,10 @@ export default function DownloadsClient() {
     // illegibly into the content, while keeping a subtle sense of depth.
     <div className="min-h-screen bg-neutral-950/85 backdrop-blur-sm">
       <div className="max-w-3xl mx-auto px-4 py-8 text-white">
-        <BackButton className="mb-4 -ml-2" />
+        <div className="mb-4 -ml-2 flex items-center gap-1">
+          <BackButton />
+          <HomeButton />
+        </div>
 
         {/* Header card */}
         <header className="rounded-2xl bg-neutral-900/80 backdrop-blur-md border border-white/10 shadow-xl p-5 mb-6">

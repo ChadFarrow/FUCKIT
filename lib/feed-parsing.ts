@@ -9,6 +9,7 @@ import crypto from 'crypto';
 import { prisma } from '@/lib/prisma';
 import { ValueTagParser } from '@/lib/lightning/value-parser';
 import { isValidFeedUrl, normalizeUrl } from '@/lib/url-utils';
+import { syncOldestItemPubdate } from '@/lib/feed-pubdate';
 import { calculateTrackOrder, parsePodcastGuidFromXML, fetchChapters, parseChannelPersonsFromXML, parseChannelPodcastImagesFromXML, pickSquareArtwork } from '@/lib/rss-parser-db';
 import { decodeHtmlEntities } from '@/lib/decode-entities';
 
@@ -450,18 +451,8 @@ export async function importFeedToDatabase(feedData: any, episodes: ParsedEpisod
       }
     }
 
-    // Backfill oldestItemPubdate from tracks just imported
-    const oldestPubDate = episodes
-      .filter(e => e.pubDate)
-      .map(e => new Date(e.pubDate))
-      .sort((a, b) => a.getTime() - b.getTime())[0];
-
-    if (oldestPubDate) {
-      await prisma.feed.update({
-        where: { id: feed.id },
-        data: { oldestItemPubdate: oldestPubDate }
-      });
-    }
+    // Release date for the grid + "Year" sort, from the tracks just imported
+    await syncOldestItemPubdate(feed.id);
 
     return {
       feedId: feed.id,

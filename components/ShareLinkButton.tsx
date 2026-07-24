@@ -59,7 +59,7 @@ export default function ShareLinkButton() {
       title="Share this page"
       aria-label="Copy page link to clipboard"
       style={{
-        marginBottom: 'calc(env(safe-area-inset-bottom, 0px) + 0px)',
+        marginBottom: 'calc(var(--sk-safe-bottom) + 0px)',
         minWidth: '48px',
         minHeight: '48px',
         display: 'flex',

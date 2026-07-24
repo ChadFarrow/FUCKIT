@@ -319,7 +319,7 @@ export default function DatabaseMusicPlayer() {
             >
               <div 
                 className="h-full bg-gradient-to-r from-green-400 to-blue-400"
-                style={{ width: duration ? `${(currentTime / duration) * 100}%` : '0%' }}
+                style={{ width: duration ? `${Math.min(100, Math.max(0, (currentTime / duration) * 100))}%` : '0%' }}
               />
             </div>
           </div>

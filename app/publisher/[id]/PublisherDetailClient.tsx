@@ -13,6 +13,7 @@ import { useAudio } from '@/contexts/AudioContext';
 import { toast } from '@/components/Toast';
 import dataService from '@/lib/data-service';
 import BackButton from '@/components/BackButton';
+import HomeButton from '@/components/HomeButton';
 import FavoriteButton from '@/components/favorites/FavoriteButton';
 
 interface FeedSection {
@@ -1143,8 +1144,9 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
       <div className="relative z-10">
         {/* Navigation */}
         <div className="container mx-auto px-4 pt-8">
-          <div className="mb-6">
+          <div className="mb-6 flex items-center gap-1">
             <BackButton label="Back" />
+            <HomeButton />
           </div>
         </div>
 

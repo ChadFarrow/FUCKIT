@@ -153,7 +153,7 @@ const GlobalNowPlayingBar: React.FC = () => {
       left: 0,
       right: 0,
       padding: '16px',
-      paddingBottom: 'calc(16px + env(safe-area-inset-bottom))', // Add iOS safe area padding
+      paddingBottom: 'calc(16px + var(--sk-safe-bottom))', // Clear the iOS home indicator / Android nav bar
       backgroundColor: '#1f2937',
       borderTop: '1px solid #f97316',
       zIndex: 50

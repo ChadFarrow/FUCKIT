@@ -2244,6 +2244,19 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         if (outgoing && outgoing !== idle) {
           try { outgoing.pause(); } catch { /* ignore */ }
         }
+
+        // Adopt the new element's clock. The `loadedmetadata` handler is gated
+        // by shouldProcess(), which rejects events from an element while it is
+        // still idle — and this element was idle when its metadata arrived (in
+        // both the preloaded and the fresh-load() path). Without this, duration
+        // stays pinned to the PREVIOUS track for the whole song, so the time
+        // label is wrong and the unclamped progress knob slides off screen.
+        // The durationchange listener below covers metadata arriving later.
+        if (Number.isFinite(idle.duration) && idle.duration > 0) {
+          setDuration(idle.duration);
+        }
+        setCurrentTime(idle.currentTime);
+        currentTimeRef.current = idle.currentTime;
         // A consumed blob becomes the "playing" blob; the previously-playing
         // blob (now finished) is revoked inside promoteToPlaying.
         if (isBlob && blobKey) {
@@ -2599,6 +2612,19 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
       }
     };
 
+    // Keeps `duration` honest for the element that is actually playing. Needed
+    // because the Android ping-pong path promotes a preloaded element whose
+    // `loadedmetadata` already fired (and was rejected by shouldProcess) while
+    // it was still idle — leaving duration stuck on the previous track.
+    const handleDurationChange = (e: Event) => {
+      if (!shouldProcess(e)) return;
+      const currentElement = isVideoMode ? video : getActiveAudioEl();
+      if (!currentElement) return;
+      if (Number.isFinite(currentElement.duration) && currentElement.duration > 0) {
+        setDuration(currentElement.duration);
+      }
+    };
+
     const handleLoadedMetadata = (e: Event) => {
       if (!shouldProcess(e)) return;
       const currentElement = isVideoMode ? video : getActiveAudioEl();
@@ -2723,6 +2749,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
       element.addEventListener('ended', handleEnded);
       element.addEventListener('timeupdate', handleTimeUpdate);
       element.addEventListener('loadedmetadata', handleLoadedMetadata);
+      element.addEventListener('durationchange', handleDurationChange);
       element.addEventListener('error', handleError);
       element.addEventListener('stalled', handleStalled);
       element.addEventListener('waiting', handleWaiting);
@@ -2736,6 +2763,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         element.removeEventListener('ended', handleEnded);
         element.removeEventListener('timeupdate', handleTimeUpdate);
         element.removeEventListener('loadedmetadata', handleLoadedMetadata);
+        element.removeEventListener('durationchange', handleDurationChange);
         element.removeEventListener('error', handleError);
         element.removeEventListener('stalled', handleStalled);
         element.removeEventListener('waiting', handleWaiting);

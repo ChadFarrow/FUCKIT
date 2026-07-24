@@ -472,6 +472,7 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
   };
 
   const formatTime = (seconds: number) => {
+    if (!Number.isFinite(seconds) || seconds < 0) return '--:--';
     const hours = Math.floor(seconds / 3600);
     const mins = Math.floor((seconds % 3600) / 60);
     const secs = Math.floor(seconds % 60);
@@ -481,7 +482,11 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
+  // Clamped: a stale/short duration would otherwise push the knob's `left`
+  // past 100% and slide it off the right edge of the screen.
+  const progress = duration > 0
+    ? Math.min(100, Math.max(0, (currentTime / duration) * 100))
+    : 0;
 
   if (!shouldShow || !currentPlayingAlbum || !currentTrack) {
     return null;
@@ -501,10 +506,10 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
       {/* Content */}
       <div className="relative flex flex-col h-full" style={{
         color: contrastColors.textColor,
-        paddingTop: 'max(env(safe-area-inset-top), 16px)',
-        paddingBottom: 'max(env(safe-area-inset-bottom), 20px)',
-        paddingLeft: 'env(safe-area-inset-left)',
-        paddingRight: 'env(safe-area-inset-right)'
+        paddingTop: 'max(var(--sk-safe-top), 16px)',
+        paddingBottom: 'max(var(--sk-safe-bottom), 20px)',
+        paddingLeft: 'var(--sk-safe-left)',
+        paddingRight: 'var(--sk-safe-right)'
       }}>
         {/* Header */}
         <div className="relative flex items-center justify-between p-4 pb-2">
