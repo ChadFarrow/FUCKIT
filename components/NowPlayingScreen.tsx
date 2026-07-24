@@ -599,7 +599,7 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
         {/* Track actions - favorite / boost / download. These used to float on the
             artwork corners, where they covered cover-art titles. */}
         <div
-          className="flex-shrink-0 flex items-center justify-center gap-5 px-8 pt-3"
+          className="flex-shrink-0 flex items-center justify-center gap-5 px-6 pt-3"
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -607,8 +607,9 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
         >
           {favoriteTrackId && (
             <div
-              className="backdrop-blur-md rounded-full w-12 h-12 flex items-center justify-center touch-manipulation active:scale-95 transition-all shadow-xl"
+              className="backdrop-blur-md rounded-full flex items-center justify-center touch-manipulation active:scale-95 transition-all shadow-xl flex-shrink-0"
               style={{
+                width: 48, height: 48,
                 backgroundColor: 'rgba(0,0,0,0.6)',
                 boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
                 border: '2px solid rgba(255,255,255,0.1)'
@@ -625,8 +626,9 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
           )}
 
           <button
-            className="w-14 h-14 flex items-center justify-center rounded-full transition-all duration-200 hover:scale-110 active:scale-95 shadow-lg touch-manipulation"
+            className="flex items-center justify-center rounded-full transition-all duration-200 hover:scale-110 active:scale-95 shadow-lg touch-manipulation flex-shrink-0"
             style={{
+              width: 56, height: 56,
               backgroundColor: '#FBBF24',
               color: '#000000',
               boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
@@ -634,13 +636,14 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
             onClick={() => setShowBoostModal(true)}
             title="Send a boost"
           >
-            <Zap className="w-6 h-6 pointer-events-none" fill="#000000" />
+            <Zap size={24} className="pointer-events-none" fill="#000000" />
           </button>
 
           {!hasVTS && currentTrack?.url ? (
             <div
-              className="backdrop-blur-md rounded-full w-12 h-12 flex items-center justify-center touch-manipulation active:scale-95 transition-all shadow-xl"
+              className="backdrop-blur-md rounded-full flex items-center justify-center touch-manipulation active:scale-95 transition-all shadow-xl flex-shrink-0"
               style={{
+                width: 48, height: 48,
                 backgroundColor: 'rgba(0,0,0,0.6)',
                 boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
                 border: '2px solid rgba(255,255,255,0.1)'
@@ -747,12 +750,13 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
         {/* Controls */}
         <div className="flex-shrink-0 px-8 pt-3">
           {/* Center Controls */}
-          <div className="flex items-center justify-between w-full max-w-xs mx-auto">
+          <div className="flex items-center justify-between w-full mx-auto" style={{ maxWidth: 'min(320px, 100%)' }}>
             {/* Shuffle Button */}
             <button
               onClick={toggleShuffle}
-              className="p-2 rounded-full transition-all duration-200"
+              className="rounded-full transition-all duration-200 flex items-center justify-center flex-shrink-0"
               style={{
+                width: 40, height: 40,
                 backgroundColor: isShuffleMode
                   ? `${contrastColors.textColor}30`
                   : `${contrastColors.textColor}10`,
@@ -761,47 +765,50 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
                   : `${contrastColors.textColor}60`
               }}
             >
-              <Shuffle className="w-5 h-5" />
+              <Shuffle size={20} />
             </button>
 
             {/* Previous Button */}
             <button
               onClick={playPreviousTrack}
-              className="p-3 rounded-full transition-all duration-200 hover:scale-105 active:scale-95"
+              className="rounded-full transition-all duration-200 hover:scale-105 active:scale-95 flex items-center justify-center flex-shrink-0"
               style={{
+                width: 52, height: 52,
                 backgroundColor: `${contrastColors.textColor}20`,
                 color: contrastColors.textColor
               }}
             >
-              <SkipBack className="w-6 h-6" />
+              <SkipBack size={24} />
             </button>
 
             {/* Play/Pause Button */}
             <button
               onClick={isPlaying ? pause : resume}
-              className="p-4 rounded-full transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg"
+              className="rounded-full transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg flex items-center justify-center flex-shrink-0"
               style={{
+                width: 64, height: 64,
                 backgroundColor: contrastColors.textColor,
                 boxShadow: `0 8px 25px rgba(0,0,0,0.3)`
               }}
             >
               {isPlaying ? (
-                <Pause className="w-8 h-8" style={{ color: contrastColors.backgroundColor }} />
+                <Pause size={32} style={{ color: contrastColors.backgroundColor }} />
               ) : (
-                <Play className="w-8 h-8 ml-1" style={{ color: contrastColors.backgroundColor }} />
+                <Play size={32} className="ml-1" style={{ color: contrastColors.backgroundColor }} />
               )}
             </button>
 
             {/* Next Button */}
             <button
               onClick={playNextTrack}
-              className="p-3 rounded-full transition-all duration-200 hover:scale-105 active:scale-95"
+              className="rounded-full transition-all duration-200 hover:scale-105 active:scale-95 flex items-center justify-center flex-shrink-0"
               style={{
+                width: 52, height: 52,
                 backgroundColor: `${contrastColors.textColor}20`,
                 color: contrastColors.textColor
               }}
             >
-              <SkipForward className="w-6 h-6" />
+              <SkipForward size={24} />
             </button>
 
             {/* Repeat Button */}
@@ -814,8 +821,9 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
                 console.log('🔂 Fullscreen repeat button clicked:', { currentMode: repeatMode, nextMode });
                 setRepeatMode(nextMode);
               }}
-              className="p-2 rounded-full transition-all duration-200 relative"
+              className="rounded-full transition-all duration-200 relative flex items-center justify-center flex-shrink-0"
               style={{
+                width: 40, height: 40,
                 backgroundColor: repeatMode !== 'none'
                   ? `${contrastColors.textColor}30`
                   : `${contrastColors.textColor}10`,
@@ -829,7 +837,7 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
                 'Repeat all'
               }
             >
-              <Repeat className="w-5 h-5" />
+              <Repeat size={20} />
               {repeatMode === 'one' && (
                 <span
                   className="absolute -top-1 -right-1 text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold"
