@@ -215,9 +215,19 @@ export async function GET(request: NextRequest) {
         (imageBuffer[0] === 0x3C && imageBuffer[1] === 0x3F && imageBuffer[2] === 0x78 && imageBuffer[3] === 0x6D); // SVG (XML)
       
       // If we have a content-type header saying it's an image, trust it even without signature match
-      // (some images might have different signatures or be valid but not match common ones)
+      // (formats like AVIF/HEIC/TIFF are valid but not in the signature list above).
+      //
+      // But when the signature does NOT match AND the server did not claim an
+      // image type, this is not an image — it is almost always an HTML error
+      // page served for a URL that merely ends in .png/.jpg, which slipped past
+      // the content-type guard above via hasImageExtension. Passing those bytes
+      // through made Next's Image optimizer log
+      //   "⨯ The requested resource isn't a valid image ... received null"
+      // once per card referencing the image — hundreds of lines per page view.
+      // Fall back to the placeholder like every other rejection path here.
       if (!isValidImageSignature && !isValidImageType && imageBuffer.length > 10) {
-        console.warn(`⚠️ Image signature validation failed for ${imageUrl}, but proceeding with content-type: ${contentType}`);
+        console.warn(`⚠️ Not an image (signature mismatch, content-type: ${contentType}) for ${imageUrl}, returning placeholder`);
+        return returnPlaceholderImage();
       }
     } catch (validationError) {
       console.warn('⚠️ Image validation check failed, proceeding anyway:', validationError);
