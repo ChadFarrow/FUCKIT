@@ -160,7 +160,7 @@ function HomePageContent() {
   // Format-aware loading state (for "all" filter - load all albums before EPs)
   const [formatCounts, setFormatCounts] = useState<{ albums: number; eps: number; singles: number } | null>(null);
   const [currentFormatPhase, setCurrentFormatPhase] = useState<'albums' | 'eps' | 'singles'>('albums');
-  const API_VERSION = 'v15'; // v15: albums-fast now includes podcastImages (Podcasting 2.0 <podcast:image>) on feeds and tracks
+  const API_VERSION = 'v16'; // v16: releaseDate corrected for feeds whose oldestItemPubdate was null (issue #169) — shape unchanged, but cached values were wrong
   
   // HGH filter removed - no longer needed
   

@@ -4,6 +4,7 @@ import { getEpisodesFromAPI, parseDuration } from '@/lib/feed-parsing';
 import { calculateTrackOrder } from '@/lib/rss-parser-db';
 import { generateAlbumSlug, normalizeUrl } from '@/lib/url-utils';
 import { isBlacklistedFeedUrl, isHenrikFlymanWavlakeMirror } from '@/lib/feed-exclusions';
+import { syncOldestItemPubdate } from '@/lib/feed-pubdate';
 
 export const PI_API_BASE_URL = 'https://api.podcastindex.org/api/1.0';
 
@@ -248,18 +249,8 @@ export async function mintAlbumFromPiFeed(
     skipDuplicates: true
   });
 
-  // Backfill oldestItemPubdate from tracks just imported
-  const oldestPubDate = episodes
-    .filter(e => e.pubDate)
-    .map(e => new Date(e.pubDate))
-    .sort((a, b) => a.getTime() - b.getTime())[0];
-
-  if (oldestPubDate) {
-    await prisma.feed.update({
-      where: { id: feed.id },
-      data: { oldestItemPubdate: oldestPubDate }
-    });
-  }
+  // Release date for the grid + "Year" sort, from the tracks just imported
+  await syncOldestItemPubdate(feed.id);
 
   return { status: 'imported', feedId: feed.id, tracks: episodes.length, detail: `${piFeed.title} (${episodes.length} tracks)` };
 }

@@ -126,7 +126,9 @@ export default function RadioPlayer() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
+  const progress = duration > 0
+    ? Math.min(100, Math.max(0, (currentTime / duration) * 100))
+    : 0;
 
   if (!currentPlayingAlbum || !currentTrack) {
     return null;
@@ -151,8 +153,8 @@ export default function RadioPlayer() {
         className="relative flex flex-col h-full items-center justify-center px-8"
         style={{
           color: contrastColors.textColor,
-          paddingTop: 'max(env(safe-area-inset-top), 24px)',
-          paddingBottom: 'max(env(safe-area-inset-bottom), 24px)',
+          paddingTop: 'max(var(--sk-safe-top), 24px)',
+          paddingBottom: 'max(var(--sk-safe-bottom), 24px)',
         }}
       >
         {/* Radio Badge */}

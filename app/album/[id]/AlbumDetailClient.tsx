@@ -13,6 +13,7 @@ import { useAudio } from '@/contexts/AudioContext';
 import { useScrollDetectionContext } from '@/components/ScrollDetectionProvider';
 import ControlsBar from '@/components/ControlsBar';
 import BackButton from '@/components/BackButton';
+import HomeButton from '@/components/HomeButton';
 import { useLightning } from '@/contexts/LightningContext';
 import { BoostButton } from '@/components/Lightning/BoostButton';
 import FavoriteButton from '@/components/favorites/FavoriteButton';
@@ -850,9 +851,10 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
       {/* Content layer - relative positioned above background */}
       <div className="min-h-screen lg:h-full text-white relative z-10 lg:overflow-hidden">
         <div className="container mx-auto px-6 pt-16 md:pt-12 pb-40 lg:pb-8 lg:h-full lg:flex lg:flex-col">
-        {/* Back button */}
-        <div className="mb-6 lg:flex-shrink-0">
+        {/* Back / Home buttons */}
+        <div className="mb-6 lg:flex-shrink-0 flex items-center gap-1">
           <BackButton label="Back" />
+          <HomeButton />
         </div>
 
         {/* Two-column layout on desktop, single column on mobile */}

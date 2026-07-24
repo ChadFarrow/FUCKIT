@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { parseRSSFeedWithSegments, calculateTrackOrder, applyParsedItemFields, detectTrackMediaType } from '@/lib/rss-parser-db';
+import { syncOldestItemPubdate } from '@/lib/feed-pubdate';
 
 /**
  * POST /api/admin/feeds/[id]/reparse
@@ -246,6 +247,13 @@ export async function POST(
 
         console.log(`✅ Added ${newItems.length} new tracks`);
       }
+
+      // Refresh the release date used by the grid + "Year" sort. Runs
+      // unconditionally (not just when newItems exist) because a reparse also
+      // upserts existing tracks and can correct their publishedAt. Feeds added
+      // before this was wired up have a null column and were falling back to
+      // feed.createdAt — a reparse now repairs them.
+      await syncOldestItemPubdate(feed.id);
 
       // Get updated feed with counts
       const updatedFeed = await prisma.feed.findUnique({
