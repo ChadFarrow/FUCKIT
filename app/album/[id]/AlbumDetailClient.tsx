@@ -914,7 +914,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
           {/* Left Column: Album Art and Info (2/5 width) */}
           <div className="flex flex-col gap-3 lg:gap-4 lg:col-span-2 lg:min-h-0">
             {/* Album Art with Play Button Overlay */}
-            <div className="relative group mx-auto lg:mx-0 w-[200px] h-[200px] lg:w-full lg:h-auto lg:aspect-square lg:max-w-[320px] lg:flex-shrink-0">
+            <div className="relative group mx-auto lg:mx-0 w-[260px] h-[260px] lg:w-full lg:h-auto lg:aspect-square lg:max-w-[320px] lg:flex-shrink-0">
             <ArtworkImage
               src={albumArtError || !album?.coverArt ? getPlaceholderImageUrl('medium') : getAlbumArtworkUrl(album.coverArt, 'medium', true)} 
               alt={album.title}
@@ -1001,7 +1001,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
           </div>
           
             {/* Album Info */}
-            <div className="bg-black/50 backdrop-blur-sm rounded-lg p-4 lg:p-6 lg:flex-1 lg:min-h-0 lg:overflow-y-auto">
+            <div className="lg:bg-black/50 lg:backdrop-blur-sm rounded-lg p-0 lg:p-6 lg:flex-1 lg:min-h-0 lg:overflow-y-auto">
             <div className="text-center lg:text-left space-y-3 lg:space-y-4">
             <h1 className="text-2xl md:text-4xl font-bold leading-tight">{album.title}</h1>
             {album.publisher ? (
@@ -1019,7 +1019,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
               <p className="text-lg text-gray-300 italic">{album.subtitle}</p>
             )}
             
-            <div className="flex items-center justify-center lg:justify-start gap-6 text-sm text-gray-400">
+            <div className="hidden lg:flex items-center justify-start gap-6 text-sm text-gray-400">
               <span>{getAlbumYear(album.releaseDate)}</span>
               <span>{Array.isArray(album.tracks) ? album.tracks.length : 0} {(album as any).isPodcast ? 'episodes' : 'tracks'}</span>
               <span>{calculateTotalDuration(album.tracks)} min</span>
@@ -1106,7 +1106,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                 : fullText;
 
               return (
-                <div className="text-left max-w-lg lg:max-w-none lg:mx-0 mx-auto">
+                <div className="hidden lg:block text-left max-w-lg lg:max-w-none lg:mx-0 mx-auto">
                   <p className="text-gray-300 leading-relaxed">{displayText}</p>
                   {needsTruncation && (
                     <button
@@ -1126,7 +1126,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
               const publisherExists = getPublisherInfo(publisherSlug) !== null;
               
               return publisherExists ? (
-                <div className="flex items-center justify-center lg:justify-start gap-2 text-sm text-gray-400">
+                <div className="hidden lg:flex items-center justify-start gap-2 text-sm text-gray-400">
                   <span>More from this artist:</span>
                   <Link
                     href={`/publisher/${publisherSlug}`}
@@ -1463,6 +1463,53 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                   </div>
                   );
                 })}
+
+                {/* Mobile: the reference material — release info, description, artist link —
+                    lives after the list. Above the tracks it competed with the artwork and
+                    the songs, which are what the page is actually for. Desktop keeps these
+                    in the left column, where there is room for them. */}
+                <div className="lg:hidden pt-6 mt-2 border-t border-white/10 space-y-4">
+                  <div className="flex items-center flex-wrap gap-x-5 gap-y-2 text-sm text-gray-400 px-1">
+                    <span>{getAlbumYear(album.releaseDate)}</span>
+                    <span>{Array.isArray(album.tracks) ? album.tracks.length : 0} {(album as any).isPodcast ? 'episodes' : 'tracks'}</span>
+                    <span>{calculateTotalDuration(album.tracks)} min</span>
+                    {album.explicit && <span className="bg-red-600 text-white px-2 py-0.5 rounded text-xs">EXPLICIT</span>}
+                  </div>
+
+                  {(album.summary || album.description) && (() => {
+                    const fullText = (album.summary || album.description || '').replace(/<[^>]*>/g, '');
+                    const charLimit = 200;
+                    const needsTruncation = fullText.length > charLimit;
+                    const displayText = needsTruncation && !descriptionExpanded
+                      ? fullText.slice(0, charLimit).trim() + '...'
+                      : fullText;
+                    return (
+                      <div className="px-1">
+                        <p className="text-gray-300 text-sm leading-relaxed">{displayText}</p>
+                        {needsTruncation && (
+                          <button
+                            onClick={() => setDescriptionExpanded(!descriptionExpanded)}
+                            className="text-blue-400 hover:text-blue-300 text-sm mt-1 transition-colors"
+                          >
+                            {descriptionExpanded ? 'Show less' : 'Show more'}
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })()}
+
+                  {album.publisher && (() => {
+                    const publisherSlug = generatePublisherSlug({ artist: album.artist, feedGuid: album.publisher.feedGuid });
+                    return getPublisherInfo(publisherSlug) !== null ? (
+                      <div className="flex items-center gap-2 text-sm text-gray-400 px-1">
+                        <span>More from this artist:</span>
+                        <Link href={`/publisher/${publisherSlug}`} className="text-blue-400 hover:text-blue-300 transition-colors">
+                          View Discography
+                        </Link>
+                      </div>
+                    ) : null;
+                  })()}
+                </div>
 
 
                 {/* PodRoll and Publisher Recommendations */}
