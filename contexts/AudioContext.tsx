@@ -21,6 +21,21 @@ import { getObjectUrl as getDownloadObjectUrl } from '@/lib/downloads/downloads-
 import { primaryPlaybackKey } from '@/lib/downloads/playback-key';
 import { PodcastChapter } from '@/lib/podcast-types';
 import { shouldShowAndroidBatteryHint, ANDROID_BATTERY_HINT_DISMISSED_KEY } from '@/lib/android-battery-hint';
+import {
+  PLAYBACK_STATE_KEY,
+  PLAYBACK_POSITION_KEY,
+  AUDIO_STATE_VERSION,
+  albumSessionKey,
+  serializeAlbumForPersistence,
+  rehydrateAlbum,
+  resolveResumePosition,
+  isSessionFresh,
+} from '@/lib/playback-state';
+
+// How often the "resume where you left off" position record may be rewritten.
+// The exact second is best-effort; the point of the feature is coming back to
+// the right track. Backgrounding the app flushes immediately regardless.
+const POSITION_SAVE_THROTTLE_MS = 5000;
 
 // Track guids excluded from global shuffle (non-music recap/talk content).
 const SHUFFLE_EXCLUDED_TRACK_GUIDS = new Set<string>([
@@ -214,6 +229,22 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
   // resume() can seek back instead of restarting the track from the beginning.
   const lastNonZeroPositionRef = useRef(0);
 
+  // "Resume where you left off": a one-shot instruction to seek the *next*
+  // track that finishes loading to a restored position. Consumed (and always
+  // cleared) by handleLoadedMetadata, which is both the one place that already
+  // seeks on load and the one place that would otherwise reset us to 0.
+  const pendingResumeSeekRef = useRef<{
+    albumKey: string;
+    trackIndex: number;
+    position: number;
+    setAt: number;
+  } | null>(null);
+  // Throttle stamp for the position record — see the save effects below.
+  const lastPositionWriteRef = useRef(0);
+  // Mirrors currentPlayingAlbum so the async session restore can tell whether
+  // the user has already started something in the meantime.
+  const currentPlayingAlbumRef = useRef<RSSAlbum | null>(null);
+
   // iOS detection state (for JSX conditional rendering)
   const [isIOS, setIsIOS] = useState(false);
   // Android detection state (drives the ping-pong background-transition path)
@@ -245,6 +276,9 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
   const playPreviousTrackRef = useRef<() => Promise<void>>();
   const pauseRef = useRef<() => void>();
   const resumeRef = useRef<() => void>();
+  // stop() is declared after resume(); this lets the cold-start failure toast
+  // offer "Dismiss player" without reordering the file.
+  const stopRef = useRef<() => void>();
   // Silent stall detection refs - detect when audio stops advancing while supposedly playing
   const lastKnownTimeRef = useRef<number>(0);
   const staleTimeCounterRef = useRef<number>(0);
@@ -1082,57 +1116,117 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
   }, []);
 
 
-  // AudioContext state version - increment when structure changes to invalidate old cache
-  const AUDIO_STATE_VERSION = 2; // v2 includes V4V fields in tracks
-
-  // Load state from IndexedDB on mount
+  // "Resume where you left off" — restore the last session on mount.
+  //
+  // We restore the album/playlist and track index so the now-playing bar comes
+  // back, plus the saved position so it reads e.g. "3:12 / 5:40". Playback does
+  // NOT start: `isPlaying` is deliberately never restored, because browsers
+  // block audio without a user gesture on a fresh page load, so an auto-play
+  // attempt would fail and leave the UI claiming to play silence. The first tap
+  // of play goes through resume()'s cold-start branch, which loads the track and
+  // seeks to the restored position.
+  //
+  // Shuffle is deliberately NOT persisted or restored. The old record stored the
+  // shuffled playlist as bare titles, which can never be rehydrated into
+  // playable tracks — restoring `isShuffleMode: true` alongside an empty
+  // playlist made playNextTrack quietly fall through to album order while the
+  // shuffle icon showed "on". playAlbum force-clears shuffle anyway, so the
+  // first tap always ended a restored shuffle session regardless. A restored
+  // session resumes in album order.
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      storage.getItem('audioPlayerState').then((savedState) => {
-        if (savedState) {
-          try {
-            const state = typeof savedState === 'string' ? JSON.parse(savedState) : savedState;
+    // The /radio route mounts its own AudioProvider; a radio session should
+    // neither overwrite nor inherit the main app's resume point.
+    if (typeof window === 'undefined' || radioMode) return;
 
-            // Check cache version - invalidate if version mismatch
-            if (state.version !== AUDIO_STATE_VERSION) {
-              console.log(`🔄 AudioContext cache version mismatch (${state.version} !== ${AUDIO_STATE_VERSION}), clearing old cache`);
-              storage.removeItem('audioPlayerState');
-              return;
-            }
+    let cancelled = false;
 
-            // Restore shuffle state
-            if (state.isShuffleMode !== undefined) {
-              setIsShuffleMode(state.isShuffleMode);
-            }
-            if (state.currentShuffleIndex !== undefined) {
-              setCurrentShuffleIndex(state.currentShuffleIndex);
-            }
+    const dropSession = () => {
+      storage.removeItem(PLAYBACK_STATE_KEY);
+      storage.removeItem(PLAYBACK_POSITION_KEY);
+    };
 
-            // Restore track index and timing info
-            setCurrentTrackIndex(state.currentTrackIndex || 0);
-            setCurrentTime(state.currentTime || 0);
-            setDuration(state.duration || 0);
+    (async () => {
+      try {
+        const savedState = await storage.getItem(PLAYBACK_STATE_KEY);
+        if (!savedState || cancelled) return;
 
-            // Note: isPlaying is not restored to prevent autoplay issues
-            // Note: currentPlayingAlbum will be restored when needed by playNextTrack
+        const state = typeof savedState === 'string' ? JSON.parse(savedState) : savedState;
 
-            if (process.env.NODE_ENV === 'development') {
-              console.log('🔄 Restored audio state from IndexedDB:', {
-                version: state.version,
-                trackIndex: state.currentTrackIndex,
-                shuffleMode: state.isShuffleMode,
-                hasAlbumData: !!state.currentPlayingAlbum
-              });
-            }
-          } catch (error) {
-            console.warn('Failed to restore audio state:', error);
+        // Version gate — invalidates every older-shaped record for free.
+        if (state.version !== AUDIO_STATE_VERSION) {
+          console.log(`🔄 Playback session version mismatch (${state.version} !== ${AUDIO_STATE_VERSION}), clearing`);
+          dropSession();
+          return;
+        }
+
+        if (!isSessionFresh({ timestamp: state.timestamp, now: Date.now() })) {
+          console.log('🔄 Playback session too old to restore, clearing');
+          dropSession();
+          return;
+        }
+
+        const album = rehydrateAlbum(state.album);
+        if (!album) {
+          console.log('🔄 Saved playback session has no playable track, clearing');
+          dropSession();
+          return;
+        }
+
+        const trackIndex = Math.max(
+          0,
+          Math.min(state.currentTrackIndex || 0, album.tracks.length - 1)
+        );
+
+        // Read the position BEFORE touching state. Setting the album first would
+        // publish a render in which the album is restored but currentTimeRef is
+        // still 0 — and the position-save effect, which fires on exactly that
+        // change, would write that 0 straight over the saved position. The
+        // symptom is nasty: the session resumes correctly once, then loses its
+        // position on the next reload.
+        let position: number | null = null;
+        let savedDuration = 0;
+        const savedPosition = await storage.getItem(PLAYBACK_POSITION_KEY);
+        if (savedPosition) {
+          const pos = typeof savedPosition === 'string' ? JSON.parse(savedPosition) : savedPosition;
+          // Only apply a position that belongs to this exact album and track.
+          if (pos.albumKey === albumSessionKey(album) && pos.trackIndex === trackIndex) {
+            position = typeof pos.position === 'number' ? pos.position : 0;
+            savedDuration = typeof pos.duration === 'number' ? pos.duration : 0;
           }
         }
-      }).catch((error) => {
-        console.error('IndexedDB getItem error:', error);
-      });
-    }
-  }, []);
+
+        if (cancelled) return;
+        // If the user already started something while we were reading storage,
+        // their choice wins — never yank playback back to the old session.
+        if (currentPlayingAlbumRef.current) return;
+
+        if (position !== null) {
+          // Refs first, so no render can observe the album without the position:
+          // currentTimeRef is what the position-save path reads, and
+          // lastNonZeroPositionRef is resume()'s iOS buffer-eviction anchor.
+          currentTimeRef.current = position;
+          lastNonZeroPositionRef.current = position;
+          setCurrentTime(position);
+          setDuration(savedDuration);
+        }
+
+        setCurrentPlayingAlbum(album);
+        setCurrentTrackIndex(trackIndex);
+
+        if (process.env.NODE_ENV === 'development') {
+          console.log('🔄 Restored playback session:', {
+            album: album.title,
+            track: album.tracks[trackIndex]?.title,
+            trackIndex,
+          });
+        }
+      } catch (error) {
+        console.warn('Failed to restore playback session:', error);
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [radioMode]);
 
   // Add user interaction handler to enable audio playback
   useEffect(() => {
@@ -1273,6 +1367,12 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         // Audio is paused but the user didn't press pause — iOS interrupted playback
         // (another app stole the audio session) or a background track transition loaded
         // the next track but play() was blocked. Resume now that we're in the foreground.
+        //
+        // The `currentElement.src` check is LOAD-BEARING, not a nicety: after a
+        // restored session the album is in state but nothing is loaded, and
+        // userInitiatedPauseRef defaults to false — so src is the only thing
+        // stopping this handler from auto-resuming a restored session the first
+        // time the tab regains focus. Removing it reintroduces autoplay.
         console.log('📱 Audio paused by iOS interruption — resuming on foreground return');
         if (resumeRef.current) {
           resumeRef.current();
@@ -1289,49 +1389,84 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     };
   }, []);
 
-  // Save state to IndexedDB when it changes - with debouncing
-  useEffect(() => {
-    if (typeof window !== 'undefined' && currentPlayingAlbum) {
-      const timeoutId = setTimeout(async () => {
-        const state = {
-          version: AUDIO_STATE_VERSION, // Include version for cache invalidation
-          currentPlayingAlbum: {
-            title: currentPlayingAlbum.title,
-            artist: currentPlayingAlbum.artist,
-            coverArt: currentPlayingAlbum.coverArt,
-            feedId: currentPlayingAlbum.feedId,
-            feedUrl: currentPlayingAlbum.feedUrl,
-            feedGuid: currentPlayingAlbum.feedGuid,
-            tracks: currentPlayingAlbum.tracks?.map(track => ({
-              title: track.title,
-              audioUrl: track.url,
-              startTime: track.startTime,
-              endTime: track.endTime,
-              // Include V4V fields for Lightning payments
-              v4vRecipient: track.v4vRecipient,
-              v4vValue: track.v4vValue,
-              guid: track.guid,
-              image: track.image
-            }))
-          },
-          currentTrackIndex,
-          currentTime,
-          duration,
-          isShuffleMode,
-          shuffledPlaylist: shuffledPlaylist.map(item => ({
-            albumTitle: item.album.title,
-            trackIndex: item.trackIndex,
-            trackTitle: item.track.title
-          })),
-          currentShuffleIndex,
-          timestamp: Date.now()
-        };
-        await storage.setItem('audioPlayerState', state);
-      }, 100); // Debounce to prevent excessive writes
+  // --- "Resume where you left off" — the two save paths --------------------
+  //
+  // Identity and position are stored in SEPARATE records on purpose. They used
+  // to share one, whose effect had `currentTime` in its deps — so the entire
+  // album (every track, with V4V payloads) was re-serialized and rewritten to
+  // IndexedDB on every timeupdate, roughly four times a second. The 100ms
+  // debounce did nothing against a 250ms tick. Splitting them means the big
+  // payload is written only when the track actually changes.
 
-      return () => clearTimeout(timeoutId);
+  // 1. Identity — which album/playlist, which track. Rarely changes.
+  useEffect(() => {
+    if (typeof window === 'undefined' || radioMode || !currentPlayingAlbum) return;
+
+    const timeoutId = setTimeout(async () => {
+      try {
+        await storage.setItem(PLAYBACK_STATE_KEY, {
+          version: AUDIO_STATE_VERSION,
+          album: serializeAlbumForPersistence(currentPlayingAlbum, currentTrackIndex),
+          currentTrackIndex,
+          timestamp: Date.now(),
+        });
+      } catch (error) {
+        console.warn('Failed to save playback session:', error);
+      }
+    }, 100);
+
+    return () => clearTimeout(timeoutId);
+  }, [currentPlayingAlbum, currentTrackIndex, radioMode]);
+
+  // 2. Position — small, written on a throttle. A throttle rather than a
+  // debounce: during continuous playback timeupdate never goes quiet, so a
+  // debounce would only ever fire after playback stopped.
+  const savePosition = useCallback(async () => {
+    if (typeof window === 'undefined' || radioMode || !currentPlayingAlbum) return;
+    // A resume seek is in flight: the element is loading and its clock still
+    // reads ~0, so persisting it now would overwrite the very position we're
+    // about to seek to. handleLoadedMetadata clears the ref once it lands.
+    if (pendingResumeSeekRef.current) return;
+    try {
+      lastPositionWriteRef.current = Date.now();
+      await storage.setItem(PLAYBACK_POSITION_KEY, {
+        albumKey: albumSessionKey(currentPlayingAlbum),
+        trackIndex: currentTrackIndex,
+        position: currentTimeRef.current,
+        duration,
+        timestamp: Date.now(),
+      });
+    } catch (error) {
+      console.warn('Failed to save playback position:', error);
     }
-  }, [currentPlayingAlbum, currentTrackIndex, currentTime, duration, isShuffleMode, shuffledPlaylist, currentShuffleIndex]);
+  }, [currentPlayingAlbum, currentTrackIndex, duration, radioMode]);
+
+  const savePositionRef = useRef(savePosition);
+  useEffect(() => { savePositionRef.current = savePosition; });
+  useEffect(() => { currentPlayingAlbumRef.current = currentPlayingAlbum; });
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || radioMode || !currentPlayingAlbum) return;
+    if (Date.now() - lastPositionWriteRef.current < POSITION_SAVE_THROTTLE_MS) return;
+    savePosition();
+  }, [currentTime, duration, currentPlayingAlbum, radioMode, savePosition]);
+
+  // Flush immediately when the app is backgrounded or closed — that's the exact
+  // moment the user "leaves", and it's what keeps the throttle's worst-case loss
+  // from ever being what they actually see on return. `visibilitychange` is the
+  // reliable mobile signal; `pagehide` racing an async IndexedDB write is not.
+  useEffect(() => {
+    if (typeof window === 'undefined' || radioMode) return;
+
+    const flushOnHide = () => {
+      if (document.visibilityState === 'hidden') {
+        savePositionRef.current?.();
+      }
+    };
+
+    document.addEventListener('visibilitychange', flushOnHide);
+    return () => document.removeEventListener('visibilitychange', flushOnHide);
+  }, [radioMode]);
 
   // Load albums data for playback - with retry logic for cold starts
   useEffect(() => {
@@ -2636,6 +2771,36 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         const track = currentPlayingAlbum.tracks[currentTrackIndex];
         updateMediaSession(currentPlayingAlbum, track);
 
+        // "Resume where you left off": apply a restored position, if one is
+        // pending for exactly this album + track. This has to happen here
+        // because the branches below would otherwise stomp it — either seeking
+        // to the track's own startTime, or resetting currentTime to 0.
+        const pendingResume = pendingResumeSeekRef.current;
+        // Always one-shot: a stale instruction must never leak into the next track.
+        pendingResumeSeekRef.current = null;
+        if (
+          pendingResume &&
+          Date.now() - pendingResume.setAt < 60_000 &&
+          pendingResume.trackIndex === currentTrackIndex &&
+          pendingResume.albumKey === albumSessionKey(currentPlayingAlbum)
+        ) {
+          const resumeAt = resolveResumePosition({
+            position: pendingResume.position,
+            duration: currentElement.duration,
+            startTime: track.startTime,
+            endTime: track.endTime,
+          });
+          if (resumeAt !== null) {
+            // Mark as a manual seek so the VTS transition detector doesn't read
+            // the jump as a real segment change and fire an autoboost payment
+            // for a segment the user never re-listened to.
+            isManualSeekRef.current = true;
+            console.log(`⏩ Resuming "${track.title}" at ${Math.round(resumeAt)}s`);
+            currentElement.currentTime = resumeAt;
+            return;
+          }
+        }
+
         // Check if current track has time segment information and seek to start time
         if (track.startTime && typeof track.startTime === 'number') {
           // Validate start time against duration
@@ -3084,10 +3249,25 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     // Reset currentTime immediately when switching tracks to avoid stale time showing in UI
     // This is especially important on iOS where timeupdate events may be delayed
     const startTime = track.startTime && typeof track.startTime === 'number' ? track.startTime : 0;
-    setCurrentTime(startTime);
+    // If this play is a cold-start resume, seed the UI with the restored
+    // position rather than the track's start — otherwise the now-playing bar
+    // visibly snaps 3:12 → 0:00 and back once metadata lands.
+    const pendingResume = pendingResumeSeekRef.current;
+    const resumeSeed =
+      pendingResume &&
+      pendingResume.trackIndex === trackIndex &&
+      pendingResume.albumKey === albumSessionKey(album)
+        ? resolveResumePosition({
+            position: pendingResume.position,
+            startTime: track.startTime,
+            endTime: track.endTime,
+          })
+        : null;
+    const uiStartTime = resumeSeed ?? startTime;
+    setCurrentTime(uiStartTime);
     // New track: reset the recovery position so a prior track's position can't
     // leak into this one's resume-after-background restore.
-    lastNonZeroPositionRef.current = startTime;
+    lastNonZeroPositionRef.current = uiStartTime;
 
     // When manually playing an album/track, always exit shuffle mode
     // This ensures shuffle is turned off when you play something specific
@@ -3298,13 +3478,14 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     }
 
     // Clear any existing shuffle state to ensure a fresh random shuffle
-    // This prevents the same order from being restored from IndexedDB
     setShuffledPlaylist([]);
     setCurrentShuffleIndex(0);
     setIsShuffleMode(false);
-    if (typeof window !== 'undefined') {
-      storage.removeItem('audioPlayerState');
-    }
+    // NOTE: this deliberately does NOT delete the saved playback session.
+    // It used to, to stop a stale shuffle order being restored — a concern that
+    // no longer exists now that shuffle isn't persisted. Deleting it here meant
+    // a single visit to /radio (RadioClient calls shuffleAllTracks on load)
+    // wiped the user's resume point.
 
     // Create a flat array of all tracks with their album info
     const allTracks: Array<{
@@ -3434,9 +3615,8 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     setShuffledPlaylist([]);
     setCurrentShuffleIndex(0);
     setIsShuffleMode(false);
-    if (typeof window !== 'undefined') {
-      storage.removeItem('audioPlayerState');
-    }
+    // Deliberately does not delete the saved playback session — see the note in
+    // shuffleAllTracks above.
 
     // Create a flat array of all tracks with their album info
     const allTracks: Array<{
@@ -3557,6 +3737,9 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     if (currentElement) {
       currentElement.pause();
       setIsPlaying(false);
+      // Pausing is a natural "I'm stopping here" moment — flush the resume
+      // position past the throttle so it's exact if the user leaves now.
+      savePositionRef.current?.();
     }
   };
 
@@ -3582,6 +3765,46 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         duration: 8000,
         action: { label: 'Retry', onClick: () => resumeRef.current?.() },
       });
+      return;
+    }
+
+    // Cold start: the session was restored from storage on mount, so the album
+    // is in state but no media element has ever been loaded. Tiers 1-3 below all
+    // assume a loaded element — play() on a src-less one throws, load() fails,
+    // and the user gets "Couldn't resume playback" on the very first tap. Route
+    // through playAlbum instead, which is also our user-gesture entry point.
+    //
+    // The check is on the ELEMENT, never on state: `pageshow` fires on bfcache
+    // restores where the element still holds its src, and treating those as cold
+    // starts would restart the track every time the user navigated back.
+    const hasUsableSrc =
+      !!(currentElement.currentSrc || currentElement.src) &&
+      currentElement.networkState !== HTMLMediaElement.NETWORK_EMPTY;
+
+    if (!hasUsableSrc && currentPlayingAlbum?.tracks?.length) {
+      pendingResumeSeekRef.current = {
+        albumKey: albumSessionKey(currentPlayingAlbum),
+        trackIndex: currentTrackIndex,
+        // currentTimeRef is authoritative — the `currentTime` closure can still
+        // be stale on the first render after a restore.
+        position: currentTimeRef.current || currentTime,
+        setAt: Date.now(),
+      };
+
+      const started = await playAlbum(currentPlayingAlbum, currentTrackIndex);
+      if (!started) {
+        pendingResumeSeekRef.current = null;
+        setIsPlaying(false);
+        // Offline mode already explained itself via blockNonDownloadedInOfflineMode;
+        // a second toast would just contradict it.
+        if (!isOfflineModeOn()) {
+          toast.error("Couldn't reload that track — it may no longer be available.", {
+            duration: 8000,
+            action: { label: 'Dismiss player', onClick: () => stopRef.current?.() },
+          });
+        }
+      }
+      // Never fall through to the tiers — they can only fail from here.
       return;
     }
 
@@ -3667,6 +3890,10 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     resumeRef.current = resume;
   });
 
+  useEffect(() => {
+    stopRef.current = stop;
+  });
+
   // Seek function
   const seek = (time: number) => {
     const currentElement = isVideoMode ? videoRef.current : getActiveAudioEl();
@@ -3675,6 +3902,32 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
       isManualSeekRef.current = true;
       // Validate time value
       const validTime = Math.max(0, Math.min(time, duration));
+
+      // Cold start: the session was restored but nothing is loaded yet, so this
+      // element has no src. Writing currentTime on it does nothing and reads
+      // back 0 — which would then be persisted, meaning one stray tap on the
+      // restored progress bar destroyed the saved position. Move the intent,
+      // not the element: update the UI and the pending resume target instead.
+      const hasUsableSrc =
+        !!(currentElement.currentSrc || currentElement.src) &&
+        currentElement.networkState !== HTMLMediaElement.NETWORK_EMPTY;
+      if (!hasUsableSrc && currentPlayingAlbum?.tracks?.length) {
+        setCurrentTime(validTime);
+        // savePosition reads the ref, not the state — keep them in step.
+        currentTimeRef.current = validTime;
+        lastNonZeroPositionRef.current = validTime;
+        // Persist BEFORE arming the pending seek: savePosition deliberately
+        // skips writes while a resume seek is in flight, so setting the ref
+        // first would silently drop this scrub.
+        savePositionRef.current?.();
+        pendingResumeSeekRef.current = {
+          albumKey: albumSessionKey(currentPlayingAlbum),
+          trackIndex: currentTrackIndex,
+          position: validTime,
+          setAt: Date.now(),
+        };
+        return;
+      }
       
       // Check if the time is reasonable (not too large)
       if (time > duration * 2) {
@@ -3726,15 +3979,19 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         });
       }
       
-      // Try to recover from IndexedDB if available
+      // Try to recover from IndexedDB if available. This covers the window
+      // before the mount restore resolves. It must go through rehydrateAlbum:
+      // the persisted record is a projection, not an RSSAlbum, and handing it
+      // to playAlbum raw used to dead-end at "No valid track found".
       if (typeof window !== 'undefined') {
         try {
-          const savedState = await storage.getItem('audioPlayerState');
+          const savedState = await storage.getItem(PLAYBACK_STATE_KEY);
           if (savedState) {
             const parsedState = typeof savedState === 'string' ? JSON.parse(savedState) : savedState;
-            if (parsedState.currentPlayingAlbum && parsedState.currentPlayingAlbum.tracks) {
+            const recovered = rehydrateAlbum(parsedState.album);
+            if (recovered) {
               console.log('🔄 Attempting to recover from saved state');
-              setCurrentPlayingAlbum(parsedState.currentPlayingAlbum);
+              setCurrentPlayingAlbum(recovered);
               setCurrentTrackIndex(parsedState.currentTrackIndex || 0);
               // Retry after state recovery - using ref to avoid stale closure
               setTimeout(() => {
@@ -4129,10 +4386,13 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     setShuffledPlaylist([]);
     setCurrentShuffleIndex(0);
 
-    // Clear IndexedDB
+    // Clear the saved playback session — stop() means "I'm done with this",
+    // so there is nothing to resume. Both records must go.
     if (typeof window !== 'undefined') {
-      storage.removeItem('audioPlayerState');
+      storage.removeItem(PLAYBACK_STATE_KEY);
+      storage.removeItem(PLAYBACK_POSITION_KEY);
     }
+    pendingResumeSeekRef.current = null;
 
     // Don't clear NIP-38 status - it persists as "last played"
   };
