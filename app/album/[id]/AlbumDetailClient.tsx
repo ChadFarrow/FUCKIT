@@ -1024,7 +1024,10 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
               <p className="text-lg text-gray-300 italic">{album.subtitle}</p>
             )}
             
-            <div className="hidden lg:flex items-center justify-start gap-6 text-sm text-gray-400">
+            {/* Artwork, title, artist, these stats and the description read as one block —
+                the album's identity — with the action row below it as the divider before
+                the track list. */}
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-2 text-sm text-gray-400">
               <span>{getAlbumYear(album.releaseDate)}</span>
               <span>{Array.isArray(album.tracks) ? album.tracks.length : 0} {(album as any).isPodcast ? 'episodes' : 'tracks'}</span>
               <span>{calculateTotalDuration(album.tracks)} min</span>
@@ -1042,9 +1045,51 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
               />
             </div>
 
+            {(album.summary || album.description) && (() => {
+              const fullText = (album.summary || album.description || '').replace(/<[^>]*>/g, '');
+              const charLimit = 200;
+              const needsTruncation = fullText.length > charLimit;
+              const displayText = needsTruncation && !descriptionExpanded
+                ? fullText.slice(0, charLimit).trim() + '...'
+                : fullText;
+
+              return (
+                <div className="text-center lg:text-left max-w-lg lg:max-w-none mx-auto lg:mx-0">
+                  <p className="text-sm lg:text-base text-gray-300 leading-relaxed">{displayText}</p>
+                  {needsTruncation && (
+                    <button
+                      onClick={() => setDescriptionExpanded(!descriptionExpanded)}
+                      className="text-blue-400 hover:text-blue-300 text-sm mt-1 transition-colors"
+                    >
+                      {descriptionExpanded ? 'Show less' : 'Show more'}
+                    </button>
+                  )}
+                </div>
+              );
+            })()}
+
+            {/* Publisher Information */}
+            {album.publisher && (() => {
+              const publisherSlug = generatePublisherSlug({ artist: album.artist, feedGuid: album.publisher.feedGuid });
+              const publisherExists = getPublisherInfo(publisherSlug) !== null;
+
+              return publisherExists ? (
+                <div className="flex items-center justify-center lg:justify-start gap-2 text-sm text-gray-400">
+                  <span>More from this artist:</span>
+                  <Link
+                    href={`/publisher/${publisherSlug}`}
+                    className="text-blue-400 hover:text-blue-300 transition-colors"
+                  >
+                    View Discography
+                  </Link>
+                </div>
+              ) : null;
+            })()}
+
             {/* Mobile action row - one place for every album-level action. These used to
                 be scattered across the artwork corners (download / favourite), a teal
-                Share pill, and a separate Boost block further down the page. */}
+                Share pill, and a separate Boost block further down the page. It sits
+                below the identity block above, acting as the divider before the tracks. */}
             {/* Touch targets are px, never rem. Android's Font size setting scales the
                 root font size and Tailwind's width, padding and gap utilities are all
                 rem-based, so at 1.3x the rem-sized circles inflated until shuffle ran
@@ -1108,47 +1153,6 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                 <ShareButton feedId={albumId} variant="ghost" size="sm" className="text-white !p-0" iconClassName="w-[20px] h-[20px]" />
               </div>
             </div>
-
-            {(album.summary || album.description) && (() => {
-              const fullText = (album.summary || album.description || '').replace(/<[^>]*>/g, '');
-              const charLimit = 200;
-              const needsTruncation = fullText.length > charLimit;
-              const displayText = needsTruncation && !descriptionExpanded
-                ? fullText.slice(0, charLimit).trim() + '...'
-                : fullText;
-
-              return (
-                <div className="hidden lg:block text-left max-w-lg lg:max-w-none lg:mx-0 mx-auto">
-                  <p className="text-gray-300 leading-relaxed">{displayText}</p>
-                  {needsTruncation && (
-                    <button
-                      onClick={() => setDescriptionExpanded(!descriptionExpanded)}
-                      className="text-blue-400 hover:text-blue-300 text-sm mt-1 transition-colors"
-                    >
-                      {descriptionExpanded ? 'Show less' : 'Show more'}
-                    </button>
-                  )}
-                </div>
-              );
-            })()}
-
-            {/* Publisher Information */}
-            {album.publisher && (() => {
-              const publisherSlug = generatePublisherSlug({ artist: album.artist, feedGuid: album.publisher.feedGuid });
-              const publisherExists = getPublisherInfo(publisherSlug) !== null;
-              
-              return publisherExists ? (
-                <div className="hidden lg:flex items-center justify-start gap-2 text-sm text-gray-400">
-                  <span>More from this artist:</span>
-                  <Link
-                    href={`/publisher/${publisherSlug}`}
-                    className="text-blue-400 hover:text-blue-300 transition-colors"
-                  >
-                    View Discography
-                  </Link>
-                </div>
-              ) : null;
-            })()}
 
             {/* Lightning Boost and Funding Information */}
             <div className="space-y-4">
@@ -1501,54 +1505,6 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                   </div>
                   );
                 })}
-
-                {/* Mobile: the reference material — release info, description, artist link —
-                    lives after the list. Above the tracks it competed with the artwork and
-                    the songs, which are what the page is actually for. Desktop keeps these
-                    in the left column, where there is room for them. */}
-                <div className="lg:hidden pt-6 mt-2 border-t border-white/10 space-y-4">
-                  <div className="flex items-center flex-wrap gap-x-5 gap-y-2 text-sm text-gray-400 px-1">
-                    <span>{getAlbumYear(album.releaseDate)}</span>
-                    <span>{Array.isArray(album.tracks) ? album.tracks.length : 0} {(album as any).isPodcast ? 'episodes' : 'tracks'}</span>
-                    <span>{calculateTotalDuration(album.tracks)} min</span>
-                    {album.explicit && <span className="bg-red-600 text-white px-2 py-0.5 rounded text-xs">EXPLICIT</span>}
-                  </div>
-
-                  {(album.summary || album.description) && (() => {
-                    const fullText = (album.summary || album.description || '').replace(/<[^>]*>/g, '');
-                    const charLimit = 200;
-                    const needsTruncation = fullText.length > charLimit;
-                    const displayText = needsTruncation && !descriptionExpanded
-                      ? fullText.slice(0, charLimit).trim() + '...'
-                      : fullText;
-                    return (
-                      <div className="px-1">
-                        <p className="text-gray-300 text-sm leading-relaxed">{displayText}</p>
-                        {needsTruncation && (
-                          <button
-                            onClick={() => setDescriptionExpanded(!descriptionExpanded)}
-                            className="text-blue-400 hover:text-blue-300 text-sm mt-1 transition-colors"
-                          >
-                            {descriptionExpanded ? 'Show less' : 'Show more'}
-                          </button>
-                        )}
-                      </div>
-                    );
-                  })()}
-
-                  {album.publisher && (() => {
-                    const publisherSlug = generatePublisherSlug({ artist: album.artist, feedGuid: album.publisher.feedGuid });
-                    return getPublisherInfo(publisherSlug) !== null ? (
-                      <div className="flex items-center gap-2 text-sm text-gray-400 px-1">
-                        <span>More from this artist:</span>
-                        <Link href={`/publisher/${publisherSlug}`} className="text-blue-400 hover:text-blue-300 transition-colors">
-                          View Discography
-                        </Link>
-                      </div>
-                    ) : null;
-                  })()}
-                </div>
-
 
                 {/* PodRoll and Publisher Recommendations */}
             {podrollAlbums.length > 0 && (
