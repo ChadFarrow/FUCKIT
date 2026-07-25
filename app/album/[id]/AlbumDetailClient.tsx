@@ -1438,10 +1438,36 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                         </div>
                       )}
 
-                      {/* Per-track Boost intentionally removed: boosting is an act tied to
-                          listening, so it lives on Now Playing and the player bar, not on
-                          every row of an album you are only browsing. Album-level Boost
-                          stays in the header action row. */}
+                      {/* Boost Button - desktop only. On mobile, boosting is an act tied to
+                          listening, so it lives on Now Playing and the player bar rather than
+                          behind the kebab of every row of an album you are only browsing;
+                          album-level Boost stays in the mobile action row. Desktop has the
+                          width to carry it per-row, so it keeps it. */}
+                      {(checkHasV4V(track) || checkHasV4V(album) || (track.valueTimeSplits && track.valueTimeSplits.length > 0)) && (
+                        <div onClick={(e) => e.stopPropagation()} className="hidden md:block">
+                          <BoostButton
+                            key={track.guid || track.url || `boost-${track.title}-${displayIndex}`}
+                            trackId={track.id}
+                            feedId={album.feedId}
+                            trackTitle={track.title}
+                            artistName={album.artist}
+                            valueSplits={formatValueSplitsForBoost(track, album.artist) || formatValueSplitsForBoost(album, album.artist)}
+                            lightningAddress={getPrimaryRecipient(track) || getPrimaryRecipient(album)}
+                            episodeGuid={track.v4vValue?.itemGuid || track.valueTimeSplits?.find(v => v.remoteItem?.itemGuid)?.remoteItem?.itemGuid || track.guid}
+                            remoteFeedGuid={track.v4vValue?.feedGuid || track.valueTimeSplits?.find(v => v.remoteItem?.feedGuid)?.remoteItem?.feedGuid || album.feedGuid}
+                            remoteStartTime={track.v4vValue?.remoteStartTime ?? track.valueTimeSplits?.find(v => v.remoteItem)?.startTime}
+                            feedUrl={album.feedUrl}
+                            albumName={album.title}
+                            publisherGuid={album.publisher?.feedGuid}
+                            publisherUrl={album.publisher?.feedGuid ? `https://stablekraft.app${generatePublisherUrl({ artist: album.artist, feedGuid: album.publisher.feedGuid })}` : undefined}
+                            persons={[
+                              ...((track as any).persons || []),
+                              ...((album as any).persons || []),
+                            ]}
+                            className="text-xs px-2 py-1"
+                          />
+                        </div>
+                      )}
                       </div>
 
                       {/* Mobile: fixed anchor at the right edge. Rendered last so the
