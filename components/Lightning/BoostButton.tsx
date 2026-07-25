@@ -1168,7 +1168,10 @@ export function BoostButton({
           className={`flex items-center ${iconOnly ? 'justify-center p-2' : 'gap-2 px-4 py-2'} bg-yellow-500 hover:bg-yellow-400 text-black rounded-lg font-semibold transition-colors ${className}`}
           title="Send a boost"
         >
-          <Zap className={`${iconOnly ? "w-5 h-5" : "w-5 h-5"} pointer-events-none`} />
+          {/* px, not rem: w-5 scales with the OS font setting, so on Android the glyph
+              swelled to fill (and eventually overflow) a fixed-size button. Identical to
+              w-5 h-5 at the default root size, so nothing changes at 1x. */}
+          <Zap size={20} className="pointer-events-none" />
           {!iconOnly && <span>Boost</span>}
         </button>
       )}

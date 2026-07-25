@@ -872,30 +872,35 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
         style={{ paddingTop: 'var(--sk-safe-top)' }}
         aria-hidden={!showStickyHeader}
       >
-        <div className="flex items-center gap-3 px-3 py-2 bg-black/80 backdrop-blur-md border-b border-white/10">
+        {/* px sizing throughout, for the same reason as the action row below: only the
+            title is allowed to grow with the OS font setting, and it truncates. */}
+        <div className="flex items-center bg-black/80 backdrop-blur-md border-b border-white/10" style={{ gap: 12, paddingLeft: 12, paddingRight: 12, paddingTop: 8, paddingBottom: 8 }}>
           <ArtworkImage
             src={albumArtError || !album?.coverArt ? getPlaceholderImageUrl('thumbnail') : getAlbumArtworkUrl(album.coverArt, 'thumbnail', true)}
             alt=""
             width={36}
             height={36}
-            className="w-9 h-9 rounded object-cover flex-shrink-0"
+            className="rounded object-cover flex-shrink-0"
+            style={{ width: 36, height: 36 }}
           />
           <span className="flex-1 min-w-0 truncate text-sm font-semibold text-white">{album.title}</span>
           <button
             onClick={shuffleAllTracks}
-            className="w-9 h-9 flex items-center justify-center rounded-full bg-black/45 ring-1 ring-white/25 backdrop-blur-md shadow-lg text-white flex-shrink-0 active:scale-95 transition-transform"
+            className="flex items-center justify-center rounded-full bg-black/45 ring-1 ring-white/25 backdrop-blur-md shadow-lg text-white flex-shrink-0 active:scale-95 transition-transform"
+            style={{ width: 40, height: 40 }}
             aria-label="Shuffle"
           >
-            <Shuffle className="w-4 h-4" />
+            <Shuffle size={18} />
           </button>
           <button
             onClick={globalIsPlaying && currentPlayingAlbum?.title === album?.title ? togglePlay : playAlbum}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white text-black text-sm font-semibold flex-shrink-0 active:scale-95 transition-transform"
+            className="flex items-center justify-center rounded-full bg-white text-black font-semibold flex-shrink-0 active:scale-95 transition-transform"
+            style={{ width: 40, height: 40 }}
             aria-label={globalIsPlaying && currentPlayingAlbum?.title === album?.title ? 'Pause' : 'Play'}
           >
             {globalIsPlaying && currentPlayingAlbum?.title === album?.title
-              ? <Pause className="w-4 h-4" fill="currentColor" />
-              : <Play className="w-4 h-4" fill="currentColor" />}
+              ? <Pause size={18} fill="currentColor" />
+              : <Play size={18} fill="currentColor" />}
           </button>
         </div>
       </div>
@@ -1040,14 +1045,20 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
             {/* Mobile action row - one place for every album-level action. These used to
                 be scattered across the artwork corners (download / favourite), a teal
                 Share pill, and a separate Boost block further down the page. */}
-            <div className="lg:hidden flex items-center justify-center gap-3">
+            {/* Touch targets are px, never rem. Android's Font size setting scales the
+                root font size and Tailwind's width, padding and gap utilities are all
+                rem-based, so at 1.3x the rem-sized circles inflated until shuffle ran
+                off the left edge and share off the right — justify-center spills both
+                ways. Only text should grow. Same rule as the Now Playing transport row. */}
+            <div className="lg:hidden flex items-center justify-center" style={{ gap: 12 }}>
               <button
                 onClick={shuffleAllTracks}
-                className="w-11 h-11 flex items-center justify-center rounded-full bg-black/45 ring-1 ring-white/25 backdrop-blur-md shadow-lg text-white active:scale-95 transition-transform flex-shrink-0"
+                className="flex items-center justify-center rounded-full bg-black/45 ring-1 ring-white/25 backdrop-blur-md shadow-lg text-white active:scale-95 transition-transform flex-shrink-0"
+                style={{ width: 44, height: 44 }}
                 aria-label="Shuffle"
                 title="Shuffle"
               >
-                <Shuffle className="w-5 h-5" />
+                <Shuffle size={20} />
               </button>
 
               {checkHasV4V(album) && (
@@ -1064,13 +1075,14 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                   publisherGuid={album.publisher?.feedGuid}
                   publisherUrl={album.publisher?.feedGuid ? `https://stablekraft.app${generatePublisherUrl({ artist: album.artist, feedGuid: album.publisher.feedGuid })}` : undefined}
                   persons={(album as any).persons || []}
-                  className="flex items-center gap-2 px-4 py-2.5 text-sm"
+                  iconOnly
+                  className="!w-[44px] !h-[44px] !p-0 !rounded-full flex-shrink-0"
                 />
               )}
 
               {album.feedId && (
-                <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 flex items-center justify-center rounded-full bg-black/45 ring-1 ring-white/25 backdrop-blur-md shadow-lg flex-shrink-0">
+                <div className="flex items-center flex-shrink-0" style={{ gap: 12 }}>
+                  <div className="flex items-center justify-center rounded-full bg-black/45 ring-1 ring-white/25 backdrop-blur-md shadow-lg flex-shrink-0" style={{ width: 44, height: 44 }}>
                     <FavoriteButton
                       feedId={album.feedId}
                       size={20}
@@ -1082,7 +1094,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                       } : undefined}
                     />
                   </div>
-                  <div className="w-11 h-11 flex items-center justify-center rounded-full bg-black/45 ring-1 ring-white/25 backdrop-blur-md shadow-lg flex-shrink-0">
+                  <div className="flex items-center justify-center rounded-full bg-black/45 ring-1 ring-white/25 backdrop-blur-md shadow-lg flex-shrink-0" style={{ width: 44, height: 44 }}>
                     <DownloadButton
                       downloadTarget={{ type: 'album', album }}
                       size={20}
@@ -1092,8 +1104,8 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                 </div>
               )}
 
-              <div className="w-11 h-11 flex items-center justify-center rounded-full bg-black/45 ring-1 ring-white/25 backdrop-blur-md shadow-lg flex-shrink-0">
-                <ShareButton feedId={albumId} variant="ghost" size="sm" className="text-white" iconClassName="w-5 h-5" />
+              <div className="flex items-center justify-center rounded-full bg-black/45 ring-1 ring-white/25 backdrop-blur-md shadow-lg flex-shrink-0" style={{ width: 44, height: 44 }}>
+                <ShareButton feedId={albumId} variant="ghost" size="sm" className="text-white !p-0" iconClassName="w-[20px] h-[20px]" />
               </div>
             </div>
 
@@ -1474,8 +1486,8 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                           actions above open to its left and it stays put when toggled. */}
                       <button
                         type="button"
-                        className="md:hidden flex-shrink-0 w-8 h-8 -mr-1 flex items-center justify-center rounded-full active:bg-white/10 transition-colors"
-                        style={{ color: expandedTrackKey === trackKey ? '#fff' : undefined }}
+                        className="md:hidden flex-shrink-0 -mr-1 flex items-center justify-center rounded-full active:bg-white/10 transition-colors"
+                        style={{ width: 32, height: 32, color: expandedTrackKey === trackKey ? '#fff' : undefined }}
                         aria-label={expandedTrackKey === trackKey ? 'Hide track actions' : 'Show track actions'}
                         aria-expanded={expandedTrackKey === trackKey}
                         onClick={(e) => {
@@ -1483,7 +1495,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                           setExpandedTrackKey(expandedTrackKey === trackKey ? null : trackKey);
                         }}
                       >
-                        <MoreVertical className={`w-4 h-4 ${expandedTrackKey === trackKey ? 'text-white' : 'text-gray-400'}`} />
+                        <MoreVertical size={18} className={expandedTrackKey === trackKey ? 'text-white' : 'text-gray-400'} />
                       </button>
                     </div>
                   </div>
