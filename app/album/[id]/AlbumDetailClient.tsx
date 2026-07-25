@@ -1318,7 +1318,12 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
           {/* Right Column: Track List (Desktop) / Below (Mobile) (3/5 width) */}
           <div className="lg:col-span-3 lg:min-h-0">
             {/* Track List */}
-            <div className="bg-black/40 backdrop-blur-sm rounded-lg p-2 md:p-6 lg:h-full lg:flex lg:flex-col lg:min-h-0">
+            {/* `lg:` throughout the track list, matching the rows inside it. The page has
+                one mobile boundary — the left column, sticky header, action row and
+                description toggle are all `lg:`-gated, so rows switching at `md:` produced
+                a hybrid at 768-1023px: mobile chrome around desktop rows, with per-track
+                Boost showing and no Tracks heading or ControlsBar at all. */}
+            <div className="bg-black/40 backdrop-blur-sm rounded-lg p-2 lg:p-6 lg:h-full lg:flex lg:flex-col lg:min-h-0">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-0 lg:mb-4 lg:flex-shrink-0">
                 <h2 className="hidden lg:block text-xl font-semibold text-left">{(album as any)?.isPodcast ? 'Episodes' : 'Tracks'}</h2>
 
@@ -1349,7 +1354,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                   return (
                   <div
                     key={track.guid || track.url || `${track.title}-${displayIndex}`}
-                    className={`flex flex-row items-center justify-between gap-2 py-2 px-2.5 md:p-4 rounded-lg transition-colors group ${
+                    className={`flex flex-row items-center justify-between gap-2 py-2 px-2.5 lg:p-4 rounded-lg transition-colors group ${
                       isUnavailable
                         ? 'opacity-50 cursor-not-allowed'
                         : 'hover:bg-white/10 cursor-pointer'
@@ -1360,16 +1365,16 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                     title={isUnavailable ? 'This track is currently unavailable' : undefined}
                   >
                     {/* Row 1: Artwork + Track Info */}
-                    <div className="flex items-center gap-2.5 md:gap-3 flex-1 min-w-0">
+                    <div className="flex items-center gap-2.5 lg:gap-3 flex-1 min-w-0">
                       {/* Mobile: a track number in place of the thumbnail — every row
                           repeats the same cover anyway, and it buys the row's height back.
                           Podcasts get no number (episodes are listed newest-first). */}
                       {!(album as any)?.isPodcast && (
-                        <span className="md:hidden w-5 flex-shrink-0 text-right text-sm text-gray-300 tabular-nums">
+                        <span className="lg:hidden w-5 flex-shrink-0 text-right text-sm text-gray-300 tabular-nums">
                           {displayIndex + 1}
                         </span>
                       )}
-                      <div className="relative hidden md:block w-12 h-12 md:w-14 md:h-14 flex-shrink-0 overflow-hidden rounded">
+                      <div className="relative hidden lg:block w-12 h-12 lg:w-14 lg:h-14 flex-shrink-0 overflow-hidden rounded">
                         {/* Use track-specific artwork if available, fallback to album artwork */}
                         <ArtworkImage
                           src={getAlbumArtworkUrl(track.image || album?.coverArt || '', 'thumbnail', true)}
@@ -1426,7 +1431,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                         {/* Mobile: stacked layout, Desktop: single line */}
                         {/* Mobile: one line. The artist is already in the header, so it
                             only earns a line on podcasts, where it carries the date. */}
-                        <div className="md:hidden flex items-center gap-2 min-w-0">
+                        <div className="lg:hidden flex items-center gap-2 min-w-0">
                           <p className="font-medium text-sm truncate min-w-0">
                             {track.title}
                           </p>
@@ -1441,7 +1446,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                             </span>
                           )}
                         </div>
-                        <div className="hidden md:block">
+                        <div className="hidden lg:block">
                           <p className="font-medium text-base line-clamp-2 whitespace-normal break-words">
                             {track.title}
                             {((track as any).mediaType === 'video' || (track as any).alternateEnclosures?.some((enc: any) => enc.type?.includes('video'))) && (
@@ -1461,13 +1466,13 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                       </div>
                     </div>
                     {/* Row 2: Duration + Action Buttons */}
-                    <div className="flex items-center justify-end gap-2 md:gap-4 flex-shrink-0">
+                    <div className="flex items-center justify-end gap-2 lg:gap-4 flex-shrink-0">
                       {track.explicit && (
-                        <span className="bg-red-600 text-white px-1 py-0.5 rounded text-[10px] md:text-xs font-bold">
+                        <span className="bg-red-600 text-white px-1 py-0.5 rounded text-[10px] lg:text-xs font-bold">
                           E
                         </span>
                       )}
-                      <span className="text-xs md:text-sm text-gray-300 md:text-gray-400 tabular-nums">
+                      <span className="text-xs lg:text-sm text-gray-300 lg:text-gray-400 tabular-nums">
                         {formatDuration(track.duration)}
                       </span>
 
@@ -1478,7 +1483,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                           as the title silently shrinking to nothing rather than as a
                           clipped control — at 2.0x font scale an opened row lost its title
                           entirely (measured 0px), so a collapsed-state sweep can't catch it. */}
-                      <div className={`${expandedTrackKey === trackKey ? 'flex' : 'hidden'} md:flex items-center gap-[12px] md:gap-[16px]`}>
+                      <div className={`${expandedTrackKey === trackKey ? 'flex' : 'hidden'} lg:flex items-center gap-[12px] lg:gap-[16px]`}>
                       {/* Share Button */}
                       {track.id && (
                         <div onClick={(e) => e.stopPropagation()}>
@@ -1517,7 +1522,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                           album-level Boost stays in the mobile action row. Desktop has the
                           width to carry it per-row, so it keeps it. */}
                       {(checkHasV4V(track) || checkHasV4V(album) || (track.valueTimeSplits && track.valueTimeSplits.length > 0)) && (
-                        <div onClick={(e) => e.stopPropagation()} className="hidden md:block">
+                        <div onClick={(e) => e.stopPropagation()} className="hidden lg:block">
                           <BoostButton
                             key={track.guid || track.url || `boost-${track.title}-${displayIndex}`}
                             trackId={track.id}
@@ -1547,7 +1552,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                           actions above open to its left and it stays put when toggled. */}
                       <button
                         type="button"
-                        className="md:hidden flex-shrink-0 -mr-1 flex items-center justify-center rounded-full active:bg-white/10 transition-colors"
+                        className="lg:hidden flex-shrink-0 -mr-1 flex items-center justify-center rounded-full active:bg-white/10 transition-colors"
                         style={{ width: 32, height: 32, color: expandedTrackKey === trackKey ? '#fff' : undefined }}
                         aria-label={expandedTrackKey === trackKey ? 'Hide track actions' : 'Show track actions'}
                         aria-expanded={expandedTrackKey === trackKey}
