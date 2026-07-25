@@ -1,5 +1,9 @@
 import { prisma } from '@/lib/prisma';
-import { buildFeedUrlVariants, extractUuidFromUrl } from '@/lib/url-utils';
+import {
+  buildFeedUrlLooseVariants,
+  buildFeedUrlVariants,
+  extractUuidFromUrl,
+} from '@/lib/url-utils';
 
 /**
  * Single source of truth for "which Feed row does this URL mean?".
@@ -11,7 +15,7 @@ import { buildFeedUrlVariants, extractUuidFromUrl } from '@/lib/url-utils';
  * silent-skip bug — so the ladder lives here, once, instead of being copy-pasted.
  */
 
-export type FeedUrlMatchKind = 'exact' | 'case-insensitive' | 'uuid-in-url';
+export type FeedUrlMatchKind = 'exact' | 'loose' | 'uuid-in-url';
 
 export interface FeedUrlMatch {
   id: string;
@@ -24,10 +28,10 @@ export interface FeedUrlMatch {
  * Returns the id rather than the row so callers keep their own `select` shapes;
  * `refresh-by-url` follows up with a primary-key `findUnique`.
  *
- * Rungs, in order — an exact match always wins, so two rows that legitimately differ
- * only by path casing still each resolve to themselves:
+ * Rungs, in order — an exact match always wins, so two rows that legitimately differ only
+ * by path casing or percent-encoding still each resolve to themselves:
  *   1. exact `originalUrl` match on any variant (uses the @unique btree index)
- *   2. case-insensitive match on the same variants
+ *   2. loose match — case-insensitive, over case *and* encoding variants
  *   3. UUID embedded in the URL, matched against Feed.guid / Feed.id
  */
 export async function findFeedIdByUrl(
@@ -42,26 +46,33 @@ export async function findFeedIdByUrl(
   });
   if (exact) return { id: exact.id, matchedVia: 'exact' };
 
-  // `normalizeUrl` lowercases the hostname (via `new URL().toString()`) but leaves path
-  // and query casing alone, and self-hosted music hosts have no UUID in the path for
-  // rung 3 to fall back on — so for them exact-string is the only signal, and a stored
-  // row whose path casing differs from what Podping broadcasts is invisible. RFC 3986
-  // does treat paths as case-sensitive; that's an accepted deviation, since rung 1 above
-  // still wins whenever both rows exist and the case this changes is otherwise a silent
-  // duplicate mint.
-  const caseInsensitive = await prisma.feed.findFirst({
+  // Two dimensions the exact rung can't see, both of which produced silent duplicate mints:
+  //
+  //   case — `normalizeUrl` lowercases the hostname (via `new URL().toString()`) but leaves
+  //   path and query casing alone, and self-hosted music hosts have no UUID in the path for
+  //   rung 3 to fall back on, so for them exact-string is the only signal.
+  //
+  //   encoding — `buildFeedUrlLooseVariants` adds a percent-decoded form, because ~69 prod
+  //   rows store literal spaces in `originalUrl` while podpings broadcast the `%20` form.
+  //
+  // RFC 3986 does treat paths as case-sensitive; that's an accepted deviation, since rung 1
+  // above still wins whenever both rows exist and the case this changes is otherwise a
+  // silent duplicate mint. Keep this rung's inputs in sync with the lowercase+decode
+  // comparison in isBlacklistedFeedUrl()/isPlaylistSourceFeedUrl().
+  const looseVariants = buildFeedUrlLooseVariants(...urls);
+  const loose = await prisma.feed.findFirst({
     where: {
-      OR: variants.map((variant) => ({
+      OR: looseVariants.map((variant) => ({
         originalUrl: { equals: variant, mode: 'insensitive' as const },
       })),
     },
     select: { id: true },
   });
-  if (caseInsensitive) {
+  if (loose) {
     console.log(
-      `🔠 feed-lookup: matched feed ${caseInsensitive.id} via case-insensitive URL (${variants[0]})`
+      `🔠 feed-lookup: matched feed ${loose.id} via loose URL match (${looseVariants[0]})`
     );
-    return { id: caseInsensitive.id, matchedVia: 'case-insensitive' };
+    return { id: loose.id, matchedVia: 'loose' };
   }
 
   // Podpings often carry a different host than the DB's originalUrl for the same feed
