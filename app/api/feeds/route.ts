@@ -5,6 +5,7 @@ import { syncOldestItemPubdate } from '@/lib/feed-pubdate';
 import { findPublisherFeed } from '@/lib/publisher-detector';
 import { generateAlbumSlug, isValidFeedUrl, normalizeUrl, normalizeArtistName } from '@/lib/url-utils';
 import { resolvePodcastIndexUrl } from '@/lib/podcast-index-api';
+import { findFeedIdByUrl } from '@/lib/feed-lookup';
 import { invalidateAlbumsFastCache } from '@/lib/caches/albums-fast-cache';
 import { invalidateSearchCache } from '@/lib/caches/search-cache';
 import { BLACKLISTED_FEED_IDS, BLACKLISTED_FEED_URLS, isBlacklistedFeedUrl } from '@/lib/feed-exclusions';
@@ -403,15 +404,21 @@ export async function POST(request: NextRequest) {
 
     const normalizedOriginalUrl = normalizeUrl(resolvedUrl);
 
-    // Check if feed already exists by URL first (return early to avoid parsing)
-    const existingFeed = await prisma.feed.findUnique({
-      where: { originalUrl: normalizedOriginalUrl },
-      include: {
-        _count: {
-          select: { Track: true }
-        }
-      }
-    });
+    // Check if feed already exists by URL first (return early to avoid parsing).
+    // Uses the same lookup ladder as /api/feeds/exists and /api/feeds/refresh-by-url
+    // (lib/feed-lookup.ts) — this is the endpoint that mints, so a lookup narrower than
+    // the consumer's exists check turns a case-variant URL into a duplicate feed row.
+    const existingMatch = await findFeedIdByUrl(resolvedUrl, originalUrl);
+    const existingFeed = existingMatch
+      ? await prisma.feed.findUnique({
+          where: { id: existingMatch.id },
+          include: {
+            _count: {
+              select: { Track: true }
+            }
+          }
+        })
+      : null;
 
     if (existingFeed) {
       return NextResponse.json(

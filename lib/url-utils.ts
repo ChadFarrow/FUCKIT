@@ -752,6 +752,29 @@ export function normalizeUrl(urlString: string): string {
 }
 
 /**
+ * Build the ordered, deduped set of URL forms to try when looking a feed up by URL.
+ * Normalized form first (that's what write paths store), then the raw form when it
+ * differs — `normalizeUrl` fixes trailing slashes and space-vs-%20, so the raw form
+ * catches rows written before normalization or via a path that skipped it.
+ *
+ * Pure and dependency-free so it stays unit-testable; the DB ladder that consumes it
+ * lives in lib/feed-lookup.ts. Note this deliberately does NOT collapse case — case
+ * differences are handled by that ladder's case-insensitive rung, not here.
+ */
+export function buildFeedUrlVariants(...urls: Array<string | null | undefined>): string[] {
+  const variants = new Set<string>();
+
+  for (const url of urls) {
+    if (!url) continue;
+    const normalized = normalizeUrl(url);
+    variants.add(normalized);
+    if (url !== normalized) variants.add(url);
+  }
+
+  return Array.from(variants);
+}
+
+/**
  * Extract a UUID from a URL path, e.g.
  *   https://serve.podhome.fm/rss/3aebb7a8-5942-5ee7-a148-8bdc14f1f3d4
  *   → "3aebb7a8-5942-5ee7-a148-8bdc14f1f3d4"
