@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { parseRSSFeedWithSegments, calculateTrackOrder, detectTrackMediaType, applyParsedItemFields } from '@/lib/rss-parser-db';
 import { resolvePodcastIndexUrl } from '@/lib/podcast-index-api';
-import { normalizeUrl, extractUuidFromUrl } from '@/lib/url-utils';
+import { normalizeUrl } from '@/lib/url-utils';
+import { findFeedIdByUrl } from '@/lib/feed-lookup';
 import { RateLimiter } from '@/lib/api-utils';
 
 // Public endpoint (podping consumer) that triggers expensive RSS reparses —
@@ -219,33 +220,17 @@ export async function POST(request: NextRequest) {
       console.log(`🔄 Resolved Podcast Index URL → ${resolvedUrl}`);
     }
 
-    // Normalize URLs for consistent lookup (handles encoding differences like spaces vs %20)
+    // Normalize URLs for consistent storage (handles encoding differences like spaces vs %20)
     const normalizedResolvedUrl = normalizeUrl(resolvedUrl);
 
-    // Build a set of URL variants to check (normalized + raw, resolved + original)
-    const urlVariants = new Set([normalizedResolvedUrl]);
-    if (resolvedUrl !== normalizedResolvedUrl) urlVariants.add(resolvedUrl);
-    if (originalUrl !== normalizedResolvedUrl && originalUrl !== resolvedUrl) urlVariants.add(originalUrl);
-
-    // Find the feed by any URL variant
-    let feed = await prisma.feed.findFirst({
-      where: { originalUrl: { in: Array.from(urlVariants) } }
-    });
-
-    // Fallback: match by UUID embedded in the URL against Feed.guid or Feed.id.
-    // Covers cases where the stored originalUrl uses a different host than the podping
-    // but both route to the same RSS (e.g. feeds.rssblue.com vs serve.podhome.fm/rss/<uuid>).
-    if (!feed) {
-      const extractedUuid = extractUuidFromUrl(resolvedUrl);
-      if (extractedUuid) {
-        feed = await prisma.feed.findFirst({
-          where: { OR: [{ guid: extractedUuid }, { id: extractedUuid }] }
-        });
-        if (feed) {
-          console.log(`🔗 refresh-by-url: matched feed ${feed.id} via uuid-in-URL fallback (${extractedUuid})`);
-        }
-      }
-    }
+    // Shared lookup ladder (exact URL variants → case-insensitive → uuid-in-URL) lives in
+    // lib/feed-lookup.ts so this endpoint, GET /api/feeds/exists, and POST /api/feeds
+    // can't drift apart — divergence between the first two caused the Podhome/UpBeats
+    // silent-skip bug.
+    const match = await findFeedIdByUrl(resolvedUrl, originalUrl);
+    let feed = match
+      ? await prisma.feed.findUnique({ where: { id: match.id } })
+      : null;
 
     // Guard: if URL + UUID lookup both missed, only allow creation when the
     // caller explicitly provided customFeedId. This closes a loophole where any

@@ -82,21 +82,26 @@ export function isHenrikFlymanWavlakeMirror(entry: {
   return artist === 'henrik flyman' && feedUrl.includes('wavlake.com');
 }
 
-const normalizedBlacklistedUrls = BLACKLISTED_FEED_URLS.map(normalizeUrl);
-const normalizedPlaylistSourceUrls = PLAYLIST_SOURCE_FEED_URLS.map(normalizeUrl);
+// Compared case-insensitively: `normalizeUrl` lowercases the hostname but leaves path
+// and query casing alone, so an exact-string compare let a case variant of a banned URL
+// slip past both /api/feeds/exists and the POST /api/feeds 403. Matches the case-insensitive
+// rung in lib/feed-lookup.ts — the two must agree, or a URL can be un-findable as an
+// existing feed yet still not recognized as blacklisted.
+const comparableBlacklistedUrls = BLACKLISTED_FEED_URLS.map(url => normalizeUrl(url).toLowerCase());
+const comparablePlaylistSourceUrls = PLAYLIST_SOURCE_FEED_URLS.map(url => normalizeUrl(url).toLowerCase());
 
 export function isBlacklistedFeedId(id: string): boolean {
   return BLACKLISTED_FEED_IDS.includes(id);
 }
 
 export function isBlacklistedFeedUrl(url: string): boolean {
-  const normalized = normalizeUrl(url);
-  return normalizedBlacklistedUrls.includes(normalized);
+  const normalized = normalizeUrl(url).toLowerCase();
+  return comparableBlacklistedUrls.includes(normalized);
 }
 
 export function isPlaylistSourceFeedUrl(url: string): boolean {
-  const normalized = normalizeUrl(url);
-  return normalizedPlaylistSourceUrls.includes(normalized);
+  const normalized = normalizeUrl(url).toLowerCase();
+  return comparablePlaylistSourceUrls.includes(normalized);
 }
 
 export function getBlacklistedFeedIds(): string[] {
