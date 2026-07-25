@@ -8,6 +8,14 @@ npm run db:studio    # Open Prisma Studio
 npm run deploy       # Build deployment package (local)
 git push origin main # Deploy to production (Railway auto-deploys from git)
 
+# Tests — there is NO jest/vitest. The pattern is node:test + tsx.
+npm run test:downloads                              # lib/downloads/*.test.ts
+npx tsx --test lib/album-detail-routes.test.ts      # which routes render AlbumDetailClient
+npx tsx --test lib/android-battery-hint.test.ts
+npx tsx --test lib/cdn-utils.test.ts                # animated-artwork detection
+npx tsx --test lib/url-utils.test.ts                # feed URL variants (podping lookup ladder)
+npx tsx --test lib/*.test.ts                        # all of the above
+
 # Android / zapstore (requires JDK 21 + ~/.stablekraft-android.env) — see project_zapstore_distribution.md memory
 npm run android:sync                                                                  # Copy web assets into android/
 JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home npm run android:release
@@ -17,6 +25,7 @@ zsp publish --skip-certificate-linking                                          
 ## Boundaries
 - Never commit secrets (`.env`, API keys)
 - Run `npm run build` before committing — but **stop `npm run dev` first**. Both write `.next/`, so building over a live dev server replaces the chunks its running client already fetched, and every asset request 400s (`ERR_ABORTED` on `_next/static/...`) until the dev server is restarted. Symptom is a page stuck on its loading state with no obvious error. Recovery: kill dev, `rm -rf .next`, `npm run dev`. Any phone testing over the LAN needs a hard reload afterwards.
+- **Testing on a phone over the LAN? The service worker will serve it stale content.** `next-pwa` is disabled in dev, but a production `npm run build` writes `public/sw.js` + `public/workbox-*.js`, and Next serves `public/` statically **even in dev** — so any device that registered the worker keeps getting its cached HTML shell and CSS from `http://<lan-ip>:3000`. Symptom: the phone shows a layout you already changed, often with CSS partly missing (flex `gap`s collapsing, so text runs together) because the shell and the stylesheet come from different builds. A plain reload does not fix it. Delete `public/sw.js` and `public/workbox-*.js` (both gitignored build artifacts) so `/sw.js` 404s — the browser then drops the registration on next load — and reload twice, or use a private tab. Worth deleting them after every local `npm run build` you didn't intend to deploy.
 - No `src/` directory — all source lives in `app/`, `lib/`, `components/`, `contexts/`
 - No `deploy-*/` artifacts in the repo — add to `.gitignore` if generated
 - No JSON-file databases — all data is in PostgreSQL via Prisma
@@ -399,7 +408,9 @@ Three feedId formats: synthetic artist IDs (`artist-adam-curry`), feed GUIDs, fe
 ### BackButton (`components/BackButton.tsx`) + HomeButton
 Uses `window.history.length`. Do NOT use `document.referrer` — doesn't update during SPA navigation.
 
-`components/HomeButton.tsx` is a plain `Link href="/"` styled to match, rendered **beside** `BackButton` (never replacing it) on album detail, publisher detail, and `/downloads` — Back walks one step up the stack, Home escapes it entirely. Routes without a Back row (`/favorites`, `/search`, `/playlist/*`, `/podcast/*`) deliberately don't have one yet; mount it globally in `layout.tsx` alongside `BackToTop` if that changes.
+`components/HomeButton.tsx` is a plain `Link href="/"` styled to match, rendered **beside** `BackButton` (never replacing it) on album detail, publisher detail, and `/downloads` — Back walks one step up the stack, Home escapes it entirely. `/podcast/*` has the row too, because it renders the same `AlbumDetailClient`. Routes without a Back row (`/favorites`, `/search`, `/playlist/*`) deliberately don't have one yet; mount it globally in `layout.tsx` alongside `BackToTop` if that changes.
+
+**Four routes render `AlbumDetailClient`**: `/album/[id]`, `/podcast/[id]`, `/album/beach-trash/demo`, and `/sandbox/album`. A change to that component lands on all four — and route-matching helpers that special-case the album page (e.g. `isAlbumDetailRoute` in `lib/album-detail-routes.ts`, which hides the floating buttons) must cover all four, not just the obvious two. Both copies of that predicate missed `/sandbox/album` before it was extracted.
 
 **The `history.length` heuristic here is web-only — do not copy it into the Android back handler.** `AndroidBackButton` uses the native `canGoBack` payload instead, because `history.length` counts *total* entries and never shrinks, so it still reads `> 1` after you've stepped back to the first page. See the Android Hardware Back Button section.
 
