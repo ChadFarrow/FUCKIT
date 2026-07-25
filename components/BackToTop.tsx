@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { ArrowUp } from 'lucide-react';
+import { isAlbumDetailRoute } from '@/lib/album-detail-routes';
 
 /**
  * Floating back-to-top button
@@ -9,6 +11,11 @@ import { ArrowUp } from 'lucide-react';
  */
 export function BackToTop() {
   const [isVisible, setIsVisible] = useState(false);
+  const pathname = usePathname();
+  // Album and podcast pages put a kebab on every track row in exactly this corner,
+  // so the floating button covers one row's controls. Those pages also carry a
+  // compact sticky header, which already provides orientation while scrolling.
+  const overlapsRowControls = isAlbumDetailRoute(pathname);
 
   useEffect(() => {
     const toggleVisibility = () => {
@@ -41,7 +48,7 @@ export function BackToTop() {
     });
   };
 
-  if (!isVisible) {
+  if (!isVisible || overlapsRowControls) {
     return null;
   }
 

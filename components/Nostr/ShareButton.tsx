@@ -10,6 +10,9 @@ interface ShareButtonProps {
   trackTitle?: string;
   albumTitle?: string;
   className?: string;
+  /** Overrides the size-derived classes on the share glyph. Use when the button
+      sits inside a fixed-size container and needs to match neighbouring icons. */
+  iconClassName?: string;
   variant?: 'default' | 'outline' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
   showLabel?: boolean;
@@ -19,6 +22,7 @@ export default function ShareButton({
   trackId,
   feedId,
   className = '',
+  iconClassName,
   variant = 'default',
   size = 'md',
   showLabel = false,
@@ -51,7 +55,7 @@ export default function ShareButton({
       } ${size === 'sm' ? 'px-2 py-1 text-xs' : size === 'lg' ? 'px-6 py-3 text-base' : 'px-4 py-2 text-sm'} ${className}`}
       title="Copy link to clipboard"
     >
-      <Share2 className={size === 'sm' ? 'w-4 h-4' : size === 'lg' ? 'w-6 h-6' : 'w-5 h-5'} />
+      <Share2 className={iconClassName ?? (size === 'sm' ? 'w-4 h-4' : size === 'lg' ? 'w-6 h-6' : 'w-5 h-5')} />
       {showLabel && <span>Share</span>}
     </button>
   );

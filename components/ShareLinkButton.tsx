@@ -1,14 +1,20 @@
 'use client';
 
 import React, { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { Share2 } from 'lucide-react';
+import { isAlbumDetailRoute } from '@/lib/album-detail-routes';
 import { toast } from './Toast';
 import { useAudio } from '@/contexts/AudioContext';
 
 export default function ShareLinkButton() {
   const [isCopying, setIsCopying] = useState(false);
+  const pathname = usePathname();
   const { currentPlayingAlbum } = useAudio();
   const isPlayerVisible = !!currentPlayingAlbum;
+  // Album and podcast pages carry their own share control in the header action row,
+  // and this floating button lands on top of the track list. Skip it there.
+  const hasOwnShare = isAlbumDetailRoute(pathname);
 
   const handleShare = async () => {
     try {
@@ -46,8 +52,9 @@ export default function ShareLinkButton() {
     }
   };
 
-  // Hide when player bar is visible (share button is in the player bar)
-  if (isPlayerVisible) {
+  // Hide when player bar is visible (share button is in the player bar), and on
+  // pages that already expose share in their own header.
+  if (isPlayerVisible || hasOwnShare) {
     return null;
   }
 
