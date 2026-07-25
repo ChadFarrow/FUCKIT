@@ -1,6 +1,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { buildFeedUrlVariants, extractUuidFromUrl, normalizeUrl } from './url-utils';
+import {
+  buildFeedUrlLooseVariants,
+  buildFeedUrlVariants,
+  extractUuidFromUrl,
+  normalizeUrl,
+} from './url-utils';
 
 test('returns a single variant when the url is already normalized', () => {
   const url = 'https://headstarts.uk/msp/nat-hills-music/Nat_Hills_Music.xml';
@@ -61,6 +66,69 @@ test('lowercases the host but does NOT collapse path case', () => {
 
 test('preserves an unparseable url as-is rather than dropping it', () => {
   assert.deepEqual(buildFeedUrlVariants('not-a-url'), ['not-a-url']);
+});
+
+test('loose variants add the decoded form for a %20-encoded url', () => {
+  // 69 prod rows store literal spaces in originalUrl (written by paths off the ladder),
+  // while podpings broadcast the %20 form — without the decoded variant those rows are
+  // invisible and the consumer mints a duplicate.
+  const encoded = 'https://headstarts.uk/msp/Nathan%20Abbott/oh-my/oh-my_on-the-shelf.xml';
+  const variants = buildFeedUrlLooseVariants(encoded);
+  assert.equal(variants[0], encoded, 'exact form stays first');
+  assert.ok(
+    variants.includes('https://headstarts.uk/msp/Nathan Abbott/oh-my/oh-my_on-the-shelf.xml'),
+    'literal-space form is offered'
+  );
+});
+
+test('loose variants cover both directions from either input form', () => {
+  const encoded = 'https://headstarts.uk/msp/fable%20music/the%20raven/the%20raven.xml';
+  const spaced = 'https://headstarts.uk/msp/fable music/the raven/the raven.xml';
+
+  assert.ok(buildFeedUrlLooseVariants(encoded).includes(spaced));
+  // The encode direction already worked via normalizeUrl; assert it still does.
+  assert.ok(buildFeedUrlLooseVariants(spaced).includes(encoded));
+});
+
+test('loose variants decode reserved characters back to the stored form', () => {
+  const encoded = 'https://music.behindthesch3m3s.com/wp-content/uploads/2023/07/Tempest%20%5B4-Tracks%5D.xml';
+  assert.ok(
+    buildFeedUrlLooseVariants(encoded).includes(
+      'https://music.behindthesch3m3s.com/wp-content/uploads/2023/07/Tempest [4-Tracks].xml'
+    )
+  );
+});
+
+test('loose variants handle an apostrophe in the path', () => {
+  const encoded = "https://jimmiebratcher.s3.us-west-1.amazonaws.com/I'm%20Hungry%20Album/im-hungry.xml";
+  assert.ok(
+    buildFeedUrlLooseVariants(encoded).includes(
+      "https://jimmiebratcher.s3.us-west-1.amazonaws.com/I'm Hungry Album/im-hungry.xml"
+    )
+  );
+});
+
+test('loose variants survive a malformed percent escape instead of throwing', () => {
+  // decodeURIComponent raises URIError on "%zz"; the undecoded variant must still be offered.
+  const url = 'https://example.com/feeds/bad%zz.xml';
+  assert.deepEqual(buildFeedUrlLooseVariants(url), [url]);
+});
+
+test('loose variants never decode the origin', () => {
+  // A blanket decodeURIComponent over the whole string would turn %2F into a slash and
+  // could rewrite what reads as the host — decoding is scoped to path/query/hash.
+  const url = 'https://example.com/feed%2Fnested.xml';
+  const variants = buildFeedUrlLooseVariants(url);
+  assert.ok(variants.every(v => v.startsWith('https://example.com/')));
+  assert.ok(variants.includes('https://example.com/feed/nested.xml'));
+});
+
+test('loose variants preserve an unparseable url as-is', () => {
+  assert.deepEqual(buildFeedUrlLooseVariants('not-a-url'), ['not-a-url']);
+});
+
+test('loose variants skip null/undefined/empty inputs like the exact builder', () => {
+  assert.deepEqual(buildFeedUrlLooseVariants(null, undefined), []);
 });
 
 test('extractUuidFromUrl finds a Podhome-style uuid and lowercases it', () => {

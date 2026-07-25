@@ -1,4 +1,4 @@
-import { normalizeUrl } from './url-utils';
+import { buildFeedUrlLooseVariants } from './url-utils';
 
 // Feed IDs that should never be imported or displayed
 export const BLACKLISTED_FEED_IDS = [
@@ -82,26 +82,34 @@ export function isHenrikFlymanWavlakeMirror(entry: {
   return artist === 'henrik flyman' && feedUrl.includes('wavlake.com');
 }
 
-// Compared case-insensitively: `normalizeUrl` lowercases the hostname but leaves path
-// and query casing alone, so an exact-string compare let a case variant of a banned URL
-// slip past both /api/feeds/exists and the POST /api/feeds 403. Matches the case-insensitive
-// rung in lib/feed-lookup.ts — the two must agree, or a URL can be un-findable as an
-// existing feed yet still not recognized as blacklisted.
-const comparableBlacklistedUrls = BLACKLISTED_FEED_URLS.map(url => normalizeUrl(url).toLowerCase());
-const comparablePlaylistSourceUrls = PLAYLIST_SOURCE_FEED_URLS.map(url => normalizeUrl(url).toLowerCase());
+// Compared case- and encoding-insensitively, matching the loose rung in lib/feed-lookup.ts
+// — the two must agree, or a URL can be un-findable as an existing feed yet still not
+// recognized as blacklisted. `normalizeUrl` lowercases the hostname but leaves path/query
+// casing alone and encodes literal spaces to %20, so an exact-string compare let both a
+// case variant and an encoding variant of a banned URL slip past /api/feeds/exists and the
+// POST /api/feeds 403. Expanding both sides means either stored form matches either query
+// form.
+function comparableUrlSet(urls: string[]): Set<string> {
+  return new Set(urls.flatMap(url => buildFeedUrlLooseVariants(url).map(v => v.toLowerCase())));
+}
+
+const comparableBlacklistedUrls = comparableUrlSet(BLACKLISTED_FEED_URLS);
+const comparablePlaylistSourceUrls = comparableUrlSet(PLAYLIST_SOURCE_FEED_URLS);
+
+function matchesComparableUrl(url: string, comparable: Set<string>): boolean {
+  return buildFeedUrlLooseVariants(url).some(variant => comparable.has(variant.toLowerCase()));
+}
 
 export function isBlacklistedFeedId(id: string): boolean {
   return BLACKLISTED_FEED_IDS.includes(id);
 }
 
 export function isBlacklistedFeedUrl(url: string): boolean {
-  const normalized = normalizeUrl(url).toLowerCase();
-  return comparableBlacklistedUrls.includes(normalized);
+  return matchesComparableUrl(url, comparableBlacklistedUrls);
 }
 
 export function isPlaylistSourceFeedUrl(url: string): boolean {
-  const normalized = normalizeUrl(url).toLowerCase();
-  return comparablePlaylistSourceUrls.includes(normalized);
+  return matchesComparableUrl(url, comparablePlaylistSourceUrls);
 }
 
 export function getBlacklistedFeedIds(): string[] {

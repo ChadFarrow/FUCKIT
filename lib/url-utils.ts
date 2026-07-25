@@ -775,6 +775,55 @@ export function buildFeedUrlVariants(...urls: Array<string | null | undefined>):
 }
 
 /**
+ * Percent-decode a URL's path/query/hash, leaving scheme and host untouched.
+ * Returns null when there is nothing to decode or the input can't be decoded.
+ *
+ * The origin is preserved verbatim on purpose: a blanket `decodeURIComponent` over the
+ * whole string would turn a `%2F` into `/` and could rewrite what looks like the host.
+ */
+function decodeUrlPath(urlString: string): string | null {
+  try {
+    const { origin } = new URL(urlString);
+    // `origin` is "null" for non-http(s) schemes and won't prefix the input; bail rather
+    // than slicing at the wrong offset.
+    const rest = urlString.startsWith(origin) ? urlString.slice(origin.length) : null;
+    if (rest === null) return null;
+
+    const decoded = origin + decodeURIComponent(rest);
+    return decoded === urlString ? null : decoded;
+  } catch {
+    // `new URL` throws on unparseable input; `decodeURIComponent` throws URIError on a
+    // malformed escape (e.g. "%zz"). Either way there's no decoded form to offer.
+    return null;
+  }
+}
+
+/**
+ * `buildFeedUrlVariants` plus a percent-decoded form of each variant.
+ *
+ * Only the decode direction is new — `normalizeUrl` already turns an incoming literal
+ * space into `%20`, so a query in the raw form finds an encoded row. The reverse was the
+ * gap: ~69 prod rows store `originalUrl` with literal spaces (written by paths
+ * deliberately off the ladder — playlist import, bulk import, lib/feed-discovery.ts), so a
+ * podping carrying the correct `%20` form couldn't see them and minted a duplicate row
+ * instead. That happened 17 times before it was caught.
+ *
+ * Pure and dependency-free, same as `buildFeedUrlVariants`; consumed by the loose rung in
+ * lib/feed-lookup.ts. Like that function it does NOT collapse case — the DB rung's
+ * `mode: 'insensitive'` handles the case dimension, this handles the encoding one.
+ */
+export function buildFeedUrlLooseVariants(...urls: Array<string | null | undefined>): string[] {
+  const variants = new Set<string>(buildFeedUrlVariants(...urls));
+
+  for (const variant of Array.from(variants)) {
+    const decoded = decodeUrlPath(variant);
+    if (decoded) variants.add(decoded);
+  }
+
+  return Array.from(variants);
+}
+
+/**
  * Extract a UUID from a URL path, e.g.
  *   https://serve.podhome.fm/rss/3aebb7a8-5942-5ee7-a148-8bdc14f1f3d4
  *   → "3aebb7a8-5942-5ee7-a148-8bdc14f1f3d4"
