@@ -37,6 +37,11 @@ import {
 // the right track. Backgrounding the app flushes immediately regardless.
 const POSITION_SAVE_THROTTLE_MS = 5000;
 
+// How long an armed resume seek suppresses incidental position saves. Bounded
+// so a ref that never gets consumed (armed, then the user never pressed play)
+// cannot disable position saving for the rest of the session.
+const PENDING_RESUME_BLOCKS_SAVE_MS = 30000;
+
 // Track guids excluded from global shuffle (non-music recap/talk content).
 const SHUFFLE_EXCLUDED_TRACK_GUIDS = new Set<string>([
   'f475f98b-8ed4-4b06-8038-53727b9100d6', // The Satellite Skirmish: Boost Recap
@@ -1421,12 +1426,23 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
   // 2. Position — small, written on a throttle. A throttle rather than a
   // debounce: during continuous playback timeupdate never goes quiet, so a
   // debounce would only ever fire after playback stopped.
-  const savePosition = useCallback(async () => {
+  const savePosition = useCallback(async (options?: { force?: boolean }) => {
     if (typeof window === 'undefined' || radioMode || !currentPlayingAlbum) return;
     // A resume seek is in flight: the element is loading and its clock still
-    // reads ~0, so persisting it now would overwrite the very position we're
-    // about to seek to. handleLoadedMetadata clears the ref once it lands.
-    if (pendingResumeSeekRef.current) return;
+    // reads ~0, so an incidental timeupdate-driven save would overwrite the very
+    // position we're about to seek to. handleLoadedMetadata clears the ref once
+    // it lands.
+    //
+    // Two escape hatches, both load-bearing:
+    //  - `force` is for an explicit, user-intended write (scrubbing a restored
+    //    bar). Without it, the second and later scrubs were silently dropped,
+    //    because the first scrub leaves the ref armed.
+    //  - the staleness bound releases a ref that never got consumed — e.g. the
+    //    user scrubbed and walked away without pressing play — which otherwise
+    //    disabled position saving for the rest of the session.
+    const pending = pendingResumeSeekRef.current;
+    const pendingIsFresh = !!pending && Date.now() - pending.setAt < PENDING_RESUME_BLOCKS_SAVE_MS;
+    if (!options?.force && pendingIsFresh) return;
     try {
       lastPositionWriteRef.current = Date.now();
       await storage.setItem(PLAYBACK_POSITION_KEY, {
@@ -3916,16 +3932,15 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         // savePosition reads the ref, not the state — keep them in step.
         currentTimeRef.current = validTime;
         lastNonZeroPositionRef.current = validTime;
-        // Persist BEFORE arming the pending seek: savePosition deliberately
-        // skips writes while a resume seek is in flight, so setting the ref
-        // first would silently drop this scrub.
-        savePositionRef.current?.();
         pendingResumeSeekRef.current = {
           albumKey: albumSessionKey(currentPlayingAlbum),
           trackIndex: currentTrackIndex,
           position: validTime,
           setAt: Date.now(),
         };
+        // force: this is an explicit user scrub, not an incidental timeupdate,
+        // so it must persist even though we just armed the resume ref above.
+        savePositionRef.current?.({ force: true });
         return;
       }
       
