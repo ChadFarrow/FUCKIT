@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import ArtworkImage from '@/components/ArtworkImage';
 import { useSearchParams } from 'next/navigation';
-import { Play, Pause, SkipBack, SkipForward, Volume2, Video, MoreVertical, Shuffle } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Volume2, Video, MoreVertical, Shuffle, ChevronDown } from 'lucide-react';
 import { RSSAlbum } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { pickCanvasBackground } from '@/lib/podcast-images';
@@ -1053,18 +1053,44 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                 ? fullText.slice(0, charLimit).trim() + '...'
                 : fullText;
 
+              const aboutLabel = (album as any)?.isPodcast ? 'About this podcast' : 'About this album';
+
               return (
-                <div className="text-center lg:text-left max-w-lg lg:max-w-none mx-auto lg:mx-0">
-                  <p className="text-sm lg:text-base text-gray-300 leading-relaxed">{displayText}</p>
-                  {needsTruncation && (
+                <>
+                  {/* Mobile: fully collapsed behind a toggle. The description is reference
+                      material — it shouldn't push the track list down the screen before
+                      you've asked to read it. Desktop keeps the inline preview below,
+                      where the left column has room for it. */}
+                  <div className="lg:hidden max-w-lg mx-auto">
                     <button
+                      type="button"
                       onClick={() => setDescriptionExpanded(!descriptionExpanded)}
-                      className="text-blue-400 hover:text-blue-300 text-sm mt-1 transition-colors"
+                      aria-expanded={descriptionExpanded}
+                      className="flex items-center justify-center gap-1.5 mx-auto text-sm text-gray-300 hover:text-white transition-colors"
                     >
-                      {descriptionExpanded ? 'Show less' : 'Show more'}
+                      <span>{aboutLabel}</span>
+                      <ChevronDown
+                        size={16}
+                        className={`flex-shrink-0 transition-transform duration-200 ${descriptionExpanded ? 'rotate-180' : ''}`}
+                      />
                     </button>
-                  )}
-                </div>
+                    {descriptionExpanded && (
+                      <p className="text-sm text-gray-300 leading-relaxed text-center mt-2">{fullText}</p>
+                    )}
+                  </div>
+
+                  <div className="hidden lg:block text-left lg:max-w-none lg:mx-0">
+                    <p className="text-base text-gray-300 leading-relaxed">{displayText}</p>
+                    {needsTruncation && (
+                      <button
+                        onClick={() => setDescriptionExpanded(!descriptionExpanded)}
+                        className="text-blue-400 hover:text-blue-300 text-sm mt-1 transition-colors"
+                      >
+                        {descriptionExpanded ? 'Show less' : 'Show more'}
+                      </button>
+                    )}
+                  </div>
+                </>
               );
             })()}
 
