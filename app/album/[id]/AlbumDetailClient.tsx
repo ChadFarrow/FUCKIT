@@ -942,7 +942,13 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
 
       {/* Content layer - relative positioned above background */}
       <div className="min-h-screen lg:h-full text-white relative z-10 lg:overflow-hidden">
-        <div className="container mx-auto px-4 lg:px-6 pt-6 md:pt-12 pb-40 lg:pb-8 lg:h-full lg:flex lg:flex-col">
+        {/* Top padding must carry the safe-area inset. This was `pt-16` before the page
+            was compacted, which happened to clear the iOS status bar by accident; `pt-6`
+            alone put the Back/Home row under the clock and signal icons. Per the
+            Safe-Area Insets rule, the inset comes from `var(--sk-safe-*)`, never bare
+            `env()`. The 24px base preserves the compact spacing on devices that report
+            no inset (Android browser, desktop), where the var resolves to 0. */}
+        <div className="container mx-auto px-4 lg:px-6 pt-[calc(var(--sk-safe-top)+24px)] md:pt-[calc(var(--sk-safe-top)+48px)] pb-40 lg:pb-8 lg:h-full lg:flex lg:flex-col">
         {/* Back / Home buttons */}
         <div className="mb-3 lg:mb-6 lg:flex-shrink-0 flex items-center gap-1">
           <BackButton label="Back" />

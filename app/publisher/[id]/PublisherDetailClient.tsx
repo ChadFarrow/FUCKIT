@@ -1143,7 +1143,11 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
       {/* Content */}
       <div className="relative z-10">
         {/* Navigation */}
-        <div className="container mx-auto px-4 pt-8">
+        {/* Top padding carries the safe-area inset — in a standalone PWA the web view
+            goes full-bleed under the status bar, so a bare pt-8 puts the Back button
+            under the clock on a notched iPhone (59px inset). In Safari the browser
+            chrome absorbs it, which is why this only shows up once installed. */}
+        <div className="container mx-auto px-4 pt-[calc(var(--sk-safe-top)+32px)]">
           <div className="mb-6 flex items-center gap-1">
             <BackButton label="Back" />
             <HomeButton />

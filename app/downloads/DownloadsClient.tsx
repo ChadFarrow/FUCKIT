@@ -214,7 +214,11 @@ export default function DownloadsClient() {
     // Dark scrim so the app's atmospheric canvas background doesn't bleed
     // illegibly into the content, while keeping a subtle sense of depth.
     <div className="min-h-screen bg-neutral-950/85 backdrop-blur-sm">
-      <div className="max-w-3xl mx-auto px-4 py-8 text-white">
+      {/* pt carries the safe-area inset: in a standalone PWA the web view is full-bleed
+          under the status bar, so a bare py-8 puts the Back button under the clock on a
+          notched iPhone (59px inset). Safari's own chrome hides this, so it only appears
+          once the app is installed. pb stays at the py-8 value. */}
+      <div className="max-w-3xl mx-auto px-4 pt-[calc(var(--sk-safe-top)+32px)] pb-8 text-white">
         <div className="mb-4 -ml-2 flex items-center gap-1">
           <BackButton />
           <HomeButton />
