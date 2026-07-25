@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { Share2 } from 'lucide-react';
+import { isAlbumDetailRoute } from '@/lib/album-detail-routes';
 import { toast } from './Toast';
 import { useAudio } from '@/contexts/AudioContext';
 
@@ -13,7 +14,7 @@ export default function ShareLinkButton() {
   const isPlayerVisible = !!currentPlayingAlbum;
   // Album and podcast pages carry their own share control in the header action row,
   // and this floating button lands on top of the track list. Skip it there.
-  const hasOwnShare = !!pathname && (pathname.startsWith('/album/') || pathname.startsWith('/podcast/'));
+  const hasOwnShare = isAlbumDetailRoute(pathname);
 
   const handleShare = async () => {
     try {

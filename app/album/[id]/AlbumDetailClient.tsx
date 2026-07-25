@@ -858,6 +858,28 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
     );
   }
 
+  // Album-level boost metadata, shared by the mobile action row and the desktop block.
+  // These were duplicated verbatim across the two breakpoints — the same failure family as
+  // the `/api/albums-fast` dual-select gotcha, where a later fix lands on one copy and the
+  // other silently keeps sending wrong boost metadata on the breakpoint nobody retested.
+  // `remoteFeedGuid` must stay a real GUID (`album.feedGuid`), never the feed slug.
+  const albumBoostProps = {
+    trackId: undefined,
+    feedId: album.feedId,
+    trackTitle: album.title,
+    artistName: album.artist,
+    lightningAddress: getPrimaryRecipient(album),
+    valueSplits: formatValueSplitsForBoost(album, album.artist),
+    feedUrl: album.feedUrl,
+    remoteFeedGuid: album.feedGuid,
+    albumName: album.title,
+    publisherGuid: album.publisher?.feedGuid,
+    publisherUrl: album.publisher?.feedGuid
+      ? `https://stablekraft.app${generatePublisherUrl({ artist: album.artist, feedGuid: album.publisher.feedGuid })}`
+      : undefined,
+    persons: (album as any).persons || [],
+  };
+
   return (
     <div className="lg:fixed lg:inset-0 lg:z-[15]">
       {/* Background layer - fixed positioned to override global layout background */}
@@ -866,15 +888,28 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
       {/* Compact sticky header (mobile only) - appears once the cover scrolls off, so
           Play and shuffle stay reachable without scrolling back up a long list. */}
       <div
-        className={`lg:hidden fixed top-0 left-0 right-0 z-40 transition-transform duration-200 ${
+        className={`lg:hidden fixed top-0 left-0 right-0 z-30 transition-transform duration-200 ${
           showStickyHeader ? 'translate-y-0' : '-translate-y-full pointer-events-none'
         }`}
-        style={{ paddingTop: 'var(--sk-safe-top)' }}
+        style={{
+          paddingTop: 'var(--sk-safe-top)',
+          // `visibility` rather than `aria-hidden` alone: the shuffle/play buttons stay
+          // focusable behind `pointer-events-none`, so a keyboard could otherwise tab
+          // into off-screen controls.
+          visibility: showStickyHeader ? 'visible' : 'hidden',
+        }}
         aria-hidden={!showStickyHeader}
       >
         {/* px sizing throughout, for the same reason as the action row below: only the
-            title is allowed to grow with the OS font setting, and it truncates. */}
-        <div className="flex items-center bg-black/80 backdrop-blur-md border-b border-white/10" style={{ gap: 12, paddingLeft: 12, paddingRight: 12, paddingTop: 8, paddingBottom: 8 }}>
+            title is allowed to grow with the OS font setting, and it truncates.
+
+            Two things keep the global UserMenu usable. AppLayout renders it at
+            `fixed right-4 z-40` (16px inset, 40px wide = the rightmost 56px), and this bar
+            is full-bleed and renders later in the DOM. So (a) the bar is z-30, below the
+            menu's z-40 — otherwise even the bar's transparent padding swallows the tap and
+            an avatar press fires Play; and (b) paddingRight keeps the controls themselves
+            clear of the avatar rather than merely underneath it. Keep it >= 56 plus a gap. */}
+        <div className="flex items-center bg-black/80 backdrop-blur-md border-b border-white/10" style={{ gap: 12, paddingLeft: 12, paddingRight: 68, paddingTop: 8, paddingBottom: 8 }}>
           <ArtworkImage
             src={albumArtError || !album?.coverArt ? getPlaceholderImageUrl('thumbnail') : getAlbumArtworkUrl(album.coverArt, 'thumbnail', true)}
             alt=""
@@ -1134,18 +1169,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
 
               {checkHasV4V(album) && (
                 <BoostButton
-                  trackId={undefined}
-                  feedId={album.feedId}
-                  trackTitle={album.title}
-                  artistName={album.artist}
-                  lightningAddress={getPrimaryRecipient(album)}
-                  valueSplits={formatValueSplitsForBoost(album, album.artist)}
-                  feedUrl={album.feedUrl}
-                  remoteFeedGuid={album.feedGuid}
-                  albumName={album.title}
-                  publisherGuid={album.publisher?.feedGuid}
-                  publisherUrl={album.publisher?.feedGuid ? `https://stablekraft.app${generatePublisherUrl({ artist: album.artist, feedGuid: album.publisher.feedGuid })}` : undefined}
-                  persons={(album as any).persons || []}
+                  {...albumBoostProps}
                   iconOnly
                   className="!w-[44px] !h-[44px] !p-0 !rounded-full flex-shrink-0"
                 />
@@ -1153,7 +1177,13 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
 
               {album.feedId && (
                 <div className="flex items-center flex-shrink-0" style={{ gap: 12 }}>
-                  <div className="flex items-center justify-center rounded-full bg-black/45 ring-1 ring-white/25 backdrop-blur-md shadow-lg flex-shrink-0" style={{ width: 44, height: 44 }}>
+                  {/* `[&>button]:*` makes the child button fill the circle. These three
+                      components render their own <button> with no padding, so the circle
+                      is only a painted <div> — the real tap target was the 20px glyph
+                      inside it, and the visual affordance lied about where to press.
+                      Styling the child directly would mean fighting each component's own
+                      classes at equal specificity, where stylesheet order decides. */}
+                  <div className="flex items-center justify-center rounded-full bg-black/45 ring-1 ring-white/25 backdrop-blur-md shadow-lg flex-shrink-0 [&>button]:w-full [&>button]:h-full [&>button]:rounded-full" style={{ width: 44, height: 44 }}>
                     <FavoriteButton
                       feedId={album.feedId}
                       size={20}
@@ -1165,7 +1195,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                       } : undefined}
                     />
                   </div>
-                  <div className="flex items-center justify-center rounded-full bg-black/45 ring-1 ring-white/25 backdrop-blur-md shadow-lg flex-shrink-0" style={{ width: 44, height: 44 }}>
+                  <div className="flex items-center justify-center rounded-full bg-black/45 ring-1 ring-white/25 backdrop-blur-md shadow-lg flex-shrink-0 [&>button]:w-full [&>button]:h-full [&>button]:rounded-full" style={{ width: 44, height: 44 }}>
                     <DownloadButton
                       downloadTarget={{ type: 'album', album }}
                       size={20}
@@ -1175,7 +1205,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                 </div>
               )}
 
-              <div className="flex items-center justify-center rounded-full bg-black/45 ring-1 ring-white/25 backdrop-blur-md shadow-lg flex-shrink-0" style={{ width: 44, height: 44 }}>
+              <div className="flex items-center justify-center rounded-full bg-black/45 ring-1 ring-white/25 backdrop-blur-md shadow-lg flex-shrink-0 [&>button]:w-full [&>button]:h-full [&>button]:rounded-full [&>button]:justify-center" style={{ width: 44, height: 44 }}>
                 <ShareButton feedId={albumId} variant="ghost" size="sm" className="text-white !p-0" iconClassName="w-[20px] h-[20px]" />
               </div>
             </div>
@@ -1187,18 +1217,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
               {checkHasV4V(album) ? (
                 <div className="hidden lg:flex justify-start gap-2">
                   <BoostButton
-                    trackId={undefined}
-                    feedId={album.feedId}
-                    trackTitle={album.title}
-                    artistName={album.artist}
-                    lightningAddress={getPrimaryRecipient(album)}
-                    valueSplits={formatValueSplitsForBoost(album, album.artist)}
-                    feedUrl={album.feedUrl}
-                    remoteFeedGuid={album.feedGuid}
-                    albumName={album.title}
-                    publisherGuid={album.publisher?.feedGuid}
-                    publisherUrl={album.publisher?.feedGuid ? `https://stablekraft.app${generatePublisherUrl({ artist: album.artist, feedGuid: album.publisher.feedGuid })}` : undefined}
-                    persons={(album as any).persons || []}
+                    {...albumBoostProps}
                     className="flex items-center gap-2 px-6 py-3 text-base"
                   />
                   {extraAlbumActions}
@@ -1397,7 +1416,13 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                           </button>
                         </div>
                       </div>
-                      <div className="min-w-0 flex-1">
+                      {/* min-w in px, not rem: everything else in this row (number,
+                          duration, the expanded actions) grows with the OS font setting,
+                          and `min-w-0 truncate` means the title yields all of it — at 2.0x
+                          with the kebab open it reached 0px and the row became
+                          unidentifiable. A px floor keeps the title legible; the actions
+                          truncate instead. */}
+                      <div className="min-w-[64px] flex-1">
                         {/* Mobile: stacked layout, Desktop: single line */}
                         {/* Mobile: one line. The artist is already in the header, so it
                             only earns a line on podcasts, where it carries the date. */}
@@ -1448,7 +1473,12 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
 
                       {/* The revealed actions sit BEFORE the kebab so they expand leftwards
                           and the kebab itself never moves — the same spot toggles it shut. */}
-                      <div className={`${expandedTrackKey === trackKey ? 'flex' : 'hidden'} md:flex items-center gap-3 md:gap-4`}>
+                      {/* px gaps, same rule as the action row. These are rem by default,
+                          and because the title is `min-w-0 truncate` the overflow shows up
+                          as the title silently shrinking to nothing rather than as a
+                          clipped control — at 2.0x font scale an opened row lost its title
+                          entirely (measured 0px), so a collapsed-state sweep can't catch it. */}
+                      <div className={`${expandedTrackKey === trackKey ? 'flex' : 'hidden'} md:flex items-center gap-[12px] md:gap-[16px]`}>
                       {/* Share Button */}
                       {track.id && (
                         <div onClick={(e) => e.stopPropagation()}>
@@ -1459,7 +1489,8 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                             albumTitle={album.title}
                             variant="ghost"
                             size="sm"
-                            className="text-white hover:text-purple-400 p-1"
+                            className="text-white hover:text-purple-400 !p-[4px]"
+                            iconClassName="w-[16px] h-[16px]"
                           />
                         </div>
                       )}
