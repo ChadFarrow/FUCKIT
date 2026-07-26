@@ -538,7 +538,6 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
         const { PENDING_NWC_BACKUP_OFFER_KEY } = await import('@/lib/nostr/auth-utils');
         const pending = localStorage.getItem(PENDING_NWC_BACKUP_OFFER_KEY);
         if (!pending || pending !== pubkey) return;
-        localStorage.removeItem(PENDING_NWC_BACKUP_OFFER_KEY);
 
         const {
           getConnectedNwcUri,
@@ -548,23 +547,69 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
           signerSupportsNip44,
         } = await import('@/lib/nostr/nwc-backup');
 
-        if (!(await signerSupportsNip44())) return;
+        // Wait for the signer to actually be there before asking what it can do.
+        //
+        // A NIP-07 extension is available synchronously, so this used to look
+        // fine on desktop. NIP-46 is not: after the post-login reload the client
+        // has to be rebuilt from localStorage and reconnected to its relay,
+        // which takes seconds. Asking supportsNip44() before that finishes
+        // returns false — the signer isn't connected, not incapable — and the
+        // whole feature silently no-opped on exactly the phone signers it
+        // matters most for. ensureSignerAvailable() is the codebase's existing
+        // answer to this (BoostButton and the publish queue both use it).
+        const { ensureSignerAvailable } = await import('@/lib/nostr/signer-reconnect');
+        let reconnect = await ensureSignerAvailable();
+        // Retry for a short window rather than judging on one instant. A signer
+        // can land a few seconds after mount — a NIP-46 client rebuilding its
+        // relay connection, or an extension injecting late — and a single check
+        // pushes the whole thing to the next page load for no reason.
+        for (let attempt = 0; !reconnect.success && attempt < 5; attempt++) {
+          await new Promise((r) => setTimeout(r, 3000));
+          if (cancelled) return;
+          reconnect = await ensureSignerAvailable();
+        }
         if (cancelled) return;
+        if (!reconnect.success) {
+          // Still nothing after ~15s. Leave the flag in place so the next page
+          // load retries rather than burning the one chance we had.
+          console.warn('⚠️ NWC backup: signer not ready, will retry next load:', reconnect.error);
+          return;
+        }
+
+        if (!(await signerSupportsNip44())) {
+          // Permanent for this signer (NIP-55, read-only nip05, an extension
+          // with no nip44) — consume the flag, there is nothing to retry.
+          localStorage.removeItem(PENDING_NWC_BACKUP_OFFER_KEY);
+          return;
+        }
+        if (cancelled) return;
+        localStorage.removeItem(PENDING_NWC_BACKUP_OFFER_KEY);
 
         if (!getConnectedNwcUri()) {
           // ── No wallet here: bring the saved one across ──────────────────
           const manuallyDisconnectedHere =
             localStorage.getItem('wallet_manually_disconnected') === 'true';
-          if (manuallyDisconnectedHere) return;
+          if (manuallyDisconnectedHere) {
+            console.log('ℹ️ NWC backup: skipping auto-restore — wallet was manually disconnected on this device');
+            return;
+          }
 
-          if (!(await checkBackupExists(pubkey))) return;
+          if (!(await checkBackupExists(pubkey))) {
+            console.log('ℹ️ NWC backup: no backup found on relays for this account');
+            return;
+          }
           if (cancelled) return;
+          console.log('🔎 NWC backup: found a backup, decrypting…');
 
           // Decrypt prompts the signer — silent on most extensions, an approval
           // on NIP-46. Worth it: the alternative is the user re-pasting a
           // connection string they already saved.
           const uri = await fetchNwcBackup(pubkey);
-          if (!uri || cancelled) return;
+          if (!uri) {
+            console.warn('⚠️ NWC backup: found an event but could not read a connection string from it');
+            return;
+          }
+          if (cancelled) return;
 
           const { connectNWC } = await import('@getalby/bitcoin-connect');
           connectNWC(uri);
