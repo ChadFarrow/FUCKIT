@@ -224,12 +224,8 @@ export async function checkBackupExists(
  * hide the backup UI rather than let it fail at use time.
  */
 export async function signerSupportsNip44(): Promise<boolean> {
-  // A NIP-07-shaped signer on window is the simplest and most reliable answer,
-  // and it is present far more often than the UnifiedSigner path suggests:
-  // nostr-login installs one for NIP-46 sessions (Amber, bunker) too. Asking
-  // UnifiedSigner alone meant a nip46 login answered "can you encrypt?" with
-  // "is the bunker relay connected right now?" — the wrong question, and false
-  // for seconds after a reload even though window.nostr.nip44 worked fine.
+  // A real extension's nip44 is a reliable yes. Anything else has to ask the
+  // app's own signer — see getWindowNip44 for why window presence is not proof.
   if (getWindowNip44()) return true;
   try {
     const { getUnifiedSigner } = await import('./signer');
@@ -241,9 +237,23 @@ export async function signerSupportsNip44(): Promise<boolean> {
   }
 }
 
-/** The NIP-07 nip44 interface if a signer put one on window (boostmebitch's approach). */
+/**
+ * The nip44 interface from a REAL NIP-07 extension.
+ *
+ * The login-type gate is essential and was learned the hard way. nostr-login
+ * installs its own `window.nostr` shim that advertises nip44.encrypt/decrypt
+ * whether or not it has a signer behind it — and when it doesn't, calling one
+ * pops its "Welcome to Nostr!" login dialog instead of encrypting. `noBanner`
+ * doesn't suppress that; it only hides the passive banner.
+ *
+ * So presence on window proves nothing. Only trust it when the user actually
+ * signed in with an extension. For nip46 (Amber, Primal, bunker) the app's own
+ * UnifiedSigner holds the live connection and must be used instead — it was
+ * connected the whole time while this shim was hijacking the call.
+ */
 function getWindowNip44(): { encrypt: Function; decrypt: Function } | null {
   if (typeof window === 'undefined') return null;
+  if (localStorage.getItem('nostr_login_type') !== 'extension') return null;
   const n44 = (window as any).nostr?.nip44;
   return n44 && typeof n44.encrypt === 'function' && typeof n44.decrypt === 'function' ? n44 : null;
 }
