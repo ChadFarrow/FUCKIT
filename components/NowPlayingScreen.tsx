@@ -552,8 +552,8 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
             {currentPlayingAlbum.title}
           </button>
 
-          {/* User Menu - avatar only; the display name would crowd out the album name */}
-          <UserMenu showName={false} />
+          {/* User Menu - avatar only, which is now UserMenu's behaviour everywhere */}
+          <UserMenu />
         </div>
 
         {/* Album Art or Video - the one flexible row, so a short screen shrinks the

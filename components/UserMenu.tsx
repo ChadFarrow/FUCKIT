@@ -24,20 +24,17 @@ const LoginModal = dynamic(() => import('./Nostr/LoginModal'), {
 
 interface UserMenuProps {
   className?: string;
-  /**
-   * Show the Nostr display name beside the avatar. Off on Now Playing, where the
-   * header also carries the album name — a long display name would otherwise
-   * squeeze it down to an ellipsis.
-   */
-  showName?: boolean;
 }
 
-export default function UserMenu({ className = '', showName = true }: UserMenuProps) {
+export default function UserMenu({ className = '' }: UserMenuProps) {
   const { user, isAuthenticated, logout } = useNostr();
   const { isConnected, connect, disconnect, isLoading } = useBitcoinConnect();
   const { setFullscreenMode } = useAudio();
   const [showDropdown, setShowDropdown] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  // A broken avatar URL must fall back to the placeholder, not vanish — see the
+  // trigger below for why disappearing is worse than showing no picture.
+  const [avatarFailed, setAvatarFailed] = useState(false);
 
   // Determine icon color based on connection status
   const getIconColor = () => {
@@ -107,23 +104,33 @@ export default function UserMenu({ className = '', showName = true }: UserMenuPr
     <>
       <div className={`relative ${className}`}>
         <div className="flex items-center gap-2">
-          {/* Nostr Profile Display - Show when authenticated */}
+          {/* Signed-in indicator: the profile picture only. The display name used to
+              sit beside it, but this cluster is fixed over page content and the name
+              made it wide enough to cover album card titles.
+
+              The avatar slot ALWAYS renders when authenticated — never gate the whole
+              thing on `user.avatar`. The hamburger next to it is drawn whether or not
+              you're signed in, and its colour encodes *wallet* state, not auth. So a
+              user with no profile picture (or a broken avatar URL) would look exactly
+              logged out, which is the one thing this cluster exists to convey. The
+              placeholder mirrors the dropdown's. */}
           {isAuthenticated && user && (
             <div className="flex items-center gap-2">
-              {user.avatar && (
+              {user.avatar && !avatarFailed ? (
                 <img
                   src={user.avatar}
                   alt={user.displayName || 'User'}
+                  title={user.displayName || 'User'}
                   className="w-8 h-8 rounded-full object-cover flex-shrink-0"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = 'none';
-                  }}
+                  onError={() => setAvatarFailed(true)}
                 />
-              )}
-              {showName && (
-                <span className="text-sm text-white truncate max-w-[10rem]">
-                  {user.displayName || 'User'}
-                </span>
+              ) : (
+                <div
+                  className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center flex-shrink-0"
+                  title={user.displayName || 'User'}
+                >
+                  <User className="w-4 h-4 text-gray-400" />
+                </div>
               )}
             </div>
           )}
