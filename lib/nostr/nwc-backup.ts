@@ -31,8 +31,6 @@ import { getUserWriteRelays } from './nip65';
 export const NWC_BACKUP_KIND = 30078;
 export const NWC_BACKUP_D_TAG = 'stablekraft:wallet:nwc';
 
-/** Set once a backup has been published from this device, so disconnect knows to tombstone it. */
-export const NWC_BACKUP_PUBKEY_KEY = 'sk_nwc_backup_pubkey';
 /** Pubkeys that answered "Not now", so the post-login offer doesn't nag on every sign-in. */
 export const NWC_BACKUP_DECLINED_KEY = 'sk_nwc_backup_declined';
 
@@ -262,9 +260,6 @@ export async function publishNwcBackup(pubkey: string, uri: string): Promise<voi
   // Keep the cache honest here rather than at each call site — the modal and the
   // account menu both read it, and a stale 'none' would offer to save twice.
   setCachedBackupExists(pubkey, true);
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(NWC_BACKUP_PUBKEY_KEY, pubkey);
-  }
 }
 
 /**
@@ -276,18 +271,9 @@ export async function publishNwcBackup(pubkey: string, uri: string): Promise<voi
 export async function deleteNwcBackup(pubkey: string): Promise<void> {
   await signAndPublish(pubkey, '');
   setCachedBackupExists(pubkey, false);
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem(NWC_BACKUP_PUBKEY_KEY);
-  }
 }
 
 // ── local flags ───────────────────────────────────────────────────────────
-
-/** Did this device publish a backup for this user? Gates the disconnect tombstone. */
-export function hasLocalBackupFlag(pubkey: string): boolean {
-  if (typeof window === 'undefined') return false;
-  return localStorage.getItem(NWC_BACKUP_PUBKEY_KEY) === pubkey;
-}
 
 export function markBackupDeclined(pubkey: string): void {
   if (typeof window === 'undefined') return;

@@ -563,33 +563,20 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
   }, [isNostrAuthenticated, nostrUser?.nostrPubkey]);
 
   /**
-   * Remove the Nostr backup when the user disconnects, per the chosen policy.
+   * Disconnecting does NOT remove the Nostr backup — deliberately.
    *
-   * Best-effort and deliberately fire-and-forget-ish: a dead relay or a declined
-   * signature must never leave the wallet still connected locally. Gated on the
-   * local flag so users who never saved a backup get no signer prompt at all.
+   * It used to. That made restore impossible: with a wallet connected, the menu
+   * offers Switch / Disconnect / NWC Backup and no "Connect", so the only route
+   * to the picker (where the "Saved wallet" restore row lives) is Disconnect —
+   * or Switch Wallet, which disconnects first. Both tombstoned the backup on the
+   * way, so it was always destroyed before it could ever be restored from, on
+   * every device rather than just across devices.
    *
-   * Known consequence, accepted: disconnecting on one device tombstones the
-   * backup for every device. "Switch Wallet" runs disconnect → connect, so
-   * switching also clears the old backup; the newly connected wallet re-offers.
+   * Removal now lives solely on the account menu's "NWC Backup" row, which shows
+   * "Saved" and removes on click. That's an explicit action with a visible state,
+   * which is what deleting a spending credential should require.
    */
-  const removeBackupOnDisconnect = async () => {
-    try {
-      const pubkey = nostrUser?.nostrPubkey;
-      if (!pubkey) return;
-      const { hasLocalBackupFlag, deleteNwcBackup } = await import('@/lib/nostr/nwc-backup');
-      if (!hasLocalBackupFlag(pubkey)) return;
-      await deleteNwcBackup(pubkey);
-      console.log('🗑️ Removed encrypted NWC backup from Nostr');
-    } catch (err) {
-      console.warn('⚠️ Could not remove NWC backup (wallet still disconnected locally):', err);
-    }
-  };
-
   const disconnectWallet = async () => {
-    // Before the disconnect clears bc:config — the tombstone needs the signer,
-    // not the config, but ordering keeps the intent obvious.
-    await removeBackupOnDisconnect();
     try {
       console.log('🔌 Disconnecting wallet...');
       const bitcoinConnect = await import('@getalby/bitcoin-connect');
