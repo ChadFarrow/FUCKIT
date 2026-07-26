@@ -61,7 +61,9 @@ export function WalletConnectModal({ isOpen, onClose, initialView = 'picker' }: 
   const { user, isAuthenticated } = useNostr();
   const pubkey = user?.nostrPubkey || null;
   const [canBackup, setCanBackup] = useState(false);
-  const [backupFound, setBackupFound] = useState(false);
+  // 'checking' until the relay query answers. The restore row is shown for all
+  // of these — see the row itself for why it isn't gated on 'saved'.
+  const [backupState, setBackupState] = useState<'checking' | 'saved' | 'none' | 'unknown'>('checking');
   const [isSaving, setIsSaving] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
 
@@ -106,18 +108,17 @@ export function WalletConnectModal({ isOpen, onClose, initialView = 'picker' }: 
     if (!isOpen || view !== 'picker' || !canBackup || !pubkey) return;
     const cached = getCachedBackupExists(pubkey);
     if (cached !== undefined) {
-      setBackupFound(cached);
+      setBackupState(cached ? 'saved' : 'none');
       return;
     }
     let cancelled = false;
+    setBackupState('checking');
     (async () => {
       try {
         const status = await checkBackupExists(pubkey);
-        // Only offer to restore on a definite 'saved'. An 'unknown' (relays
-        // unreachable) must not render a row that would then fail to decrypt.
-        if (!cancelled) setBackupFound(status === 'saved');
+        if (!cancelled) setBackupState(status);
       } catch {
-        if (!cancelled) setBackupFound(false);
+        if (!cancelled) setBackupState('unknown');
       }
     })();
     return () => { cancelled = true; };
@@ -265,9 +266,12 @@ export function WalletConnectModal({ isOpen, onClose, initialView = 'picker' }: 
     try {
       const uri = await fetchNwcBackup(pubkey);
       if (!uri) {
-        setError('Could not read your saved wallet. It may have been removed.');
+        // fetchNwcBackup queries first and only decrypts a hit, so reaching here
+        // means there is genuinely nothing saved for this account — say that
+        // plainly rather than implying something went wrong.
+        setError('No saved wallet found for your Nostr account. Connect one below and you can save it.');
         setCachedBackupExists(pubkey, false);
-        setBackupFound(false);
+        setBackupState('none');
         return;
       }
       const { connectNWC } = await import('@getalby/bitcoin-connect');
@@ -376,9 +380,15 @@ export function WalletConnectModal({ isOpen, onClose, initialView = 'picker' }: 
 
         {view === 'picker' && (
           <div className="grid grid-cols-1 gap-2">
-            {/* Restore row. Only rendered once a relay query confirmed a backup
-                exists; tapping it is what triggers the decrypt. */}
-            {backupFound && (
+            {/* Restore row.
+                Shown whenever this session COULD restore (signed in with a
+                signer that can decrypt) — not only once a relay query has
+                confirmed a backup. Gating it on confirmation made it invisible
+                while the query was in flight and invisible whenever relays were
+                unreachable, so a user with a perfectly good backup saw no way to
+                get it. Tapping re-checks and only decrypts if something is
+                there, so a wasted tap costs a relay query, not a signer prompt. */}
+            {canBackup && (
               <button
                 onClick={handleRestoreBackup}
                 disabled={isConnecting || isRestoring}
@@ -394,10 +404,18 @@ export function WalletConnectModal({ isOpen, onClose, initialView = 'picker' }: 
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="font-semibold text-white leading-tight">
-                    {isRestoring ? 'Restoring…' : 'Saved wallet'}
+                    {isRestoring
+                      ? 'Restoring…'
+                      : backupState === 'saved'
+                        ? 'Saved wallet'
+                        : 'Restore from Nostr'}
                   </div>
                   <p className="text-xs text-gray-300 mt-0.5">
-                    Connect the wallet you backed up to Nostr.
+                    {backupState === 'checking'
+                      ? 'Looking for a wallet you backed up…'
+                      : backupState === 'saved'
+                        ? 'Connect the wallet you backed up to Nostr.'
+                        : 'Connect a wallet you previously backed up to Nostr.'}
                   </p>
                 </div>
               </button>
