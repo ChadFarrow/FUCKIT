@@ -506,18 +506,23 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
   }, []);
 
   /**
-   * Post-login "back up your wallet?" offer.
+   * Post-login backup handling. Two directions, depending on what this device
+   * already has. Login flows drop a flag before their reload; this picks it up.
    *
-   * A user can connect a wallet while signed out (boosting works without Nostr —
-   * auth only gates posting the boost note), so the offer can't live only at
-   * connect time. Login flows drop a flag before their reload; this picks it up
-   * and applies the real conditions, so the feature isn't left to be discovered.
+   * NO wallet on this device → AUTO-RESTORE the backup.
+   *   This is the point of the feature: sign in on a new phone or browser and
+   *   your wallet is simply there, without digging the connection string out of
+   *   Alby Hub again. Skipped if the user deliberately disconnected on this
+   *   device (`wallet_manually_disconnected`), matching the existing rule that
+   *   an explicit disconnect is never undone automatically.
    *
-   * Every one of these gates matters:
-   *   - an NWC wallet is connected  → extension connections have no string to save
-   *   - the signer can encrypt      → NIP-55 and read-only nip05 cannot
-   *   - the user hasn't declined    → otherwise it asks on every single login
-   *   - no backup exists already    → relay query, no signer prompt
+   * A wallet IS connected but isn't backed up → OFFER to save it.
+   *   Connecting a wallet while signed out is common (boosting works without
+   *   Nostr — auth only gates posting the boost note), so the offer can't live
+   *   only at connect time or those users would never see it.
+   *
+   * Both paths need a signer that can encrypt; NIP-55 and read-only nip05
+   * cannot, and the whole thing no-ops for them.
    */
   useEffect(() => {
     if (backupOfferCheckedRef.current) return;
@@ -535,25 +540,50 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
         if (!pending || pending !== pubkey) return;
         localStorage.removeItem(PENDING_NWC_BACKUP_OFFER_KEY);
 
-        const { getConnectedNwcUri, hasDeclinedBackup, hasNwcBackup } = await import(
-          '@/lib/nostr/nwc-backup'
-        );
-        if (!getConnectedNwcUri()) return;
+        const {
+          getConnectedNwcUri,
+          hasDeclinedBackup,
+          checkBackupExists,
+          fetchNwcBackup,
+          signerSupportsNip44,
+        } = await import('@/lib/nostr/nwc-backup');
+
+        if (!(await signerSupportsNip44())) return;
+        if (cancelled) return;
+
+        if (!getConnectedNwcUri()) {
+          // ── No wallet here: bring the saved one across ──────────────────
+          const manuallyDisconnectedHere =
+            localStorage.getItem('wallet_manually_disconnected') === 'true';
+          if (manuallyDisconnectedHere) return;
+
+          if (!(await checkBackupExists(pubkey))) return;
+          if (cancelled) return;
+
+          // Decrypt prompts the signer — silent on most extensions, an approval
+          // on NIP-46. Worth it: the alternative is the user re-pasting a
+          // connection string they already saved.
+          const uri = await fetchNwcBackup(pubkey);
+          if (!uri || cancelled) return;
+
+          const { connectNWC } = await import('@getalby/bitcoin-connect');
+          connectNWC(uri);
+          console.log('🔄 Restoring wallet from Nostr backup after sign-in');
+          const { toast } = await import('@/components/Toast');
+          toast.success('Wallet restored from your Nostr backup');
+          return;
+        }
+
+        // ── Wallet already here: offer to back it up ─────────────────────
         if (hasDeclinedBackup(pubkey)) return;
-
-        const { getUnifiedSigner } = await import('@/lib/nostr/signer');
-        const signer = getUnifiedSigner();
-        await signer.ensureInitialized();
-        if (!signer.supportsNip44()) return;
-
-        if (await hasNwcBackup(pubkey)) return;
+        if (await checkBackupExists(pubkey)) return;
         if (cancelled) return;
 
         setWalletModalView('offer-backup');
         setIsWalletModalOpen(true);
       } catch (err) {
-        // Never let this surface — it's an optional nicety on top of login.
-        console.warn('⚠️ NWC backup offer check failed:', err);
+        // Never surface — this is an optional convenience layered onto login.
+        console.warn('⚠️ NWC backup post-login check failed:', err);
       }
     })();
 
