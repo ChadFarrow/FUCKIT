@@ -291,10 +291,16 @@ export default function RootLayout({
                                 and 81px at md+, plus the home-indicator inset — so with
                                 a 34px inset it was covered, but in Safari, where the
                                 inset is 0 while the toolbar shows, 23px (mobile) and
-                                31px (desktop) of bare artwork showed. Tracking the inset
-                                keeps it covered in every combination; the values are 1px
-                                under the measured bar height so it can never overshoot. */}
-                            <div className="relative z-10 pb-[calc(88px+var(--sk-safe-bottom))] md:pb-[calc(80px+var(--sk-safe-bottom))]">
+                                31px (desktop) of bare artwork showed. `--sk-player-reserve`
+                                (globals.css) tracks the inset and sits 1px under the
+                                measured bar height so it can never overshoot.
+
+                                Note this padding makes the document taller than the
+                                viewport, which is what a page using the `h-[100dvh]`
+                                inner-scroll pattern must subtract — otherwise the body
+                                scrolls and drags its "pinned" header away. See
+                                app/favorites/page.tsx. */}
+                            <div className="relative z-10 pb-[var(--sk-player-reserve)]">
                               {children}
                             </div>
                           </div>

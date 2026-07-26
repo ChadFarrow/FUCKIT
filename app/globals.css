@@ -46,6 +46,21 @@
   --sk-safe-right: max(var(--safe-area-inset-right, 0px), env(safe-area-inset-right, 0px));
   --sk-safe-bottom: max(var(--safe-area-inset-bottom, 0px), env(safe-area-inset-bottom, 0px));
   --sk-safe-left: max(var(--safe-area-inset-left, 0px), env(safe-area-inset-left, 0px));
+
+  /* Vertical room GlobalNowPlayingBar occupies: how much a page must keep clear
+     at the bottom, and how much scroll room the layout reserves for it.
+     Measured bar height is 89px on mobile and 81px at md+, plus the home
+     indicator; these sit 1px under so a reservation can never overshoot the bar
+     and expose a strip of background above it (see app/layout.tsx).
+     Single-sourced because both the layout wrapper and any page that manages
+     its own height need the same number. */
+  --sk-player-reserve: calc(88px + var(--sk-safe-bottom));
+}
+
+@media (min-width: 768px) {
+  :root {
+    --sk-player-reserve: calc(80px + var(--sk-safe-bottom));
+  }
 }
 
 @layer base {

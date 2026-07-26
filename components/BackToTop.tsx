@@ -16,35 +16,67 @@ export function BackToTop() {
   // so the floating button covers one row's controls.
   const overlapsRowControls = isAlbumDetailRoute(pathname);
 
+  // Pages that manage their own height (favorites' `h-[calc(100dvh-…)]` column)
+  // scroll an inner element, not the window — `window.scrollY` stays 0 there, so this
+  // button would never appear and clicking it would do nothing. Those pages opt in by
+  // marking their scroll port with `data-scroll-container`.
+  const [scroller, setScroller] = useState<HTMLElement | null>(null);
+
   useEffect(() => {
+    // Re-query per route: the container unmounts when navigating away.
+    let target: HTMLElement | Window = window;
+    let timeoutId: NodeJS.Timeout;
+    let observer: MutationObserver | null = null;
+
+    const readTop = () => (target === window ? window.scrollY : (target as HTMLElement).scrollTop);
     const toggleVisibility = () => {
-      // Show button when page is scrolled down 300px
-      setIsVisible(window.scrollY > 300);
+      // Show button when scrolled down 300px
+      setIsVisible(readTop() > 300);
     };
 
     // Throttle scroll event for performance
-    let timeoutId: NodeJS.Timeout;
     const handleScroll = () => {
       clearTimeout(timeoutId);
       timeoutId = setTimeout(toggleVisibility, 100);
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    
-    // Check initial scroll position
-    toggleVisibility();
+    const bind = (el: HTMLElement | null) => {
+      target.removeEventListener('scroll', handleScroll);
+      target = el ?? window;
+      setScroller(el);
+      target.addEventListener('scroll', handleScroll, { passive: true });
+      toggleVisibility();
+    };
+
+    const found = document.querySelector<HTMLElement>('[data-scroll-container]');
+    bind(found);
+
+    if (!found) {
+      // This component is mounted in the root layout, so on a page that renders its
+      // own scroll port we run BEFORE that port exists — querying once would silently
+      // leave us bound to a window that never scrolls, and the button would never
+      // appear. Watch for it, then rebind.
+      observer = new MutationObserver(() => {
+        const el = document.querySelector<HTMLElement>('[data-scroll-container]');
+        if (el) {
+          bind(el);
+          observer?.disconnect();
+          observer = null;
+        }
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
+    }
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      observer?.disconnect();
+      target.removeEventListener('scroll', handleScroll);
       clearTimeout(timeoutId);
     };
-  }, []);
+  }, [pathname]);
 
   const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
+    const target: HTMLElement | Window = scroller ?? window;
+    target.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   if (!isVisible || overlapsRowControls) {

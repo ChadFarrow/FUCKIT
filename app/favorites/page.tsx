@@ -17,9 +17,11 @@ import FavoriteButton from '@/components/favorites/FavoriteButton';
 import SyncToNostrButton from '@/components/favorites/SyncToNostrButton';
 import PublishPlaylistButton from '@/components/favorites/PublishPlaylistButton';
 import { BoostButton } from '@/components/Lightning/BoostButton';
-import { Heart, Music, Disc, Users, Play, ArrowLeft, Shuffle, ListMusic, Globe, RefreshCw } from 'lucide-react';
+import { Heart, Music, Disc, Users, Play, Shuffle, ListMusic, Globe, RefreshCw } from 'lucide-react';
 import { toast } from '@/components/Toast';
 import AppLayout from '@/components/AppLayout';
+import BackButton from '@/components/BackButton';
+import HomeButton from '@/components/HomeButton';
 import { useAutoSyncFavorites } from '@/hooks/useAutoSyncFavorites';
 
 // Cache key for community favorites in sessionStorage
@@ -880,27 +882,20 @@ function FavoritesPageContent() {
 
   return (
     <AppLayout>
-      <div className="h-[100dvh] flex flex-col bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white overflow-hidden">
+      {/* The height must SUBTRACT the layout's player reservation. `app/layout.tsx`
+          wraps every page in `pb-[var(--sk-player-reserve)]`, so a bare `h-[100dvh]`
+          made the document taller than the viewport — the body then scrolled ~88-122px
+          and dragged this "pinned" header off the top with it, which is exactly the
+          bug this page was reported for. Subtracting it makes the document exactly one
+          viewport tall, so only the inner list scrolls. */}
+      <div className="h-[calc(100dvh-var(--sk-player-reserve))] flex flex-col bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white overflow-hidden">
+      {/* Pinned block: Back/Home and the tabs only. The title, subtitle and sync
+          button deliberately live in the scroll area below — pinning the whole header
+          cost ~240px, roughly 30% of a phone screen. */}
       <div className="container mx-auto px-4 pt-safe-plus flex-shrink-0">
-        <div className="mb-8">
-          <button
-            onClick={() => router.back()}
-            className="mb-4 flex items-center gap-2 text-gray-400 hover:text-white transition-colors group"
-            aria-label="Go back"
-          >
-            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-            <span className="text-sm sm:text-base">Back</span>
-          </button>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <div>
-              <h1 className="text-2xl sm:text-4xl font-bold mb-2 flex items-center gap-2 sm:gap-3">
-                <Heart className="w-6 h-6 sm:w-10 sm:h-10 text-red-500 fill-red-500" />
-                My Favorites
-              </h1>
-              <p className="text-sm sm:text-base text-gray-400">Your favorite tracks, albums, and publishers</p>
-            </div>
-            <SyncToNostrButton className="self-start sm:self-auto" />
-          </div>
+        <div className="mb-4 -ml-2 flex items-center gap-1">
+          <BackButton />
+          <HomeButton />
         </div>
 
         {/* Tabs */}
@@ -967,9 +962,23 @@ function FavoritesPageContent() {
         </div>
       </div>
 
-      {/* Scrollable content area */}
-      <div className="flex-1 min-h-0 overflow-y-auto">
+      {/* Scrollable content area. `data-scroll-container` tells BackToTop to drive
+          this element instead of the window — the window does not scroll on this page,
+          so the button would otherwise never appear and its click would do nothing. */}
+      <div className="flex-1 min-h-0 overflow-y-auto" data-scroll-container>
         <div className="container mx-auto px-4 pt-6 pb-28">
+
+        {/* Title block scrolls with the list; only Back/Home and the tabs stay pinned. */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
+          <div>
+            <h1 className="text-2xl sm:text-4xl font-bold mb-2 flex items-center gap-2 sm:gap-3">
+              <Heart className="w-6 h-6 sm:w-10 sm:h-10 text-red-500 fill-red-500" />
+              My Favorites
+            </h1>
+            <p className="text-sm sm:text-base text-gray-400">Your favorite tracks, albums, and publishers</p>
+          </div>
+          <SyncToNostrButton className="self-start sm:self-auto" />
+        </div>
 
         {error && (
           <div className="mb-6 p-4 bg-red-900/20 border border-red-500/50 rounded-lg text-red-400">
