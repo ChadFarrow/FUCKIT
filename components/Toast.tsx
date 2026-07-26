@@ -104,8 +104,19 @@ export function ToastContainer() {
   
   if (toasts.length === 0) return null;
   
+  // Toasts must clear GlobalNowPlayingBar rather than cover it. The bar is fixed at
+  // bottom 0 with z-50, and ToastContainer mounts after it in `layout.tsx`, so at equal
+  // z-index toasts won and sat on top of the transport — which matters because these
+  // toasts carry action buttons ("Reconnect", "Retry"), so the overlap could put a
+  // toast's button over the bar's play/skip controls.
+  //
+  // One offset at every breakpoint: the bar measures 89px on mobile and 81px at
+  // md/desktop widths, plus the home-indicator inset. `6.5rem + var(--sk-safe-bottom)`
+  // clears all three. The old value was `bottom-24` (96px) with an `sm:bottom-4`
+  // override — 96px happened to clear a 0-inset bar but not a notched iPhone's 123px,
+  // and the 16px desktop override sat inside the bar outright.
   return (
-    <div className="fixed bottom-24 right-4 sm:bottom-4 z-50 space-y-2">
+    <div className="fixed bottom-[calc(var(--sk-safe-bottom)+6.5rem)] right-4 z-50 space-y-2">
       {toasts.map(toast => (
         <ToastItem key={toast.id} toast={toast} onDismiss={dismissToast} />
       ))}
