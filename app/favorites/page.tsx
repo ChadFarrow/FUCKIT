@@ -142,6 +142,19 @@ function FavoritesPageContent() {
   const [publisherSortBy, setPublisherSortBy] = useState<'date-desc' | 'date-asc' | 'title-asc' | 'title-desc'>('title-asc');
   const [playlistSortBy, setPlaylistSortBy] = useState<'date-desc' | 'date-asc' | 'title-asc' | 'title-desc'>('title-asc');
 
+  // This page owns the viewport: the document is exactly one screen tall and only the
+  // inner list scrolls. But iOS still elastically drags the whole document when a
+  // gesture starts somewhere non-scrollable — i.e. on the pinned header — which makes
+  // the "pinned" row visibly slide. Suppressing the document's overscroll is the same
+  // remedy NowPlayingScreen applies while it's open; scoped to this page and restored
+  // on unmount so pull-to-refresh is unaffected everywhere else.
+  useEffect(() => {
+    const html = document.documentElement;
+    const previous = html.style.overscrollBehavior;
+    html.style.overscrollBehavior = 'none';
+    return () => { html.style.overscrollBehavior = previous; };
+  }, []);
+
   useEffect(() => {
     if (sessionLoading || nostrLoading) return;
 
@@ -965,7 +978,7 @@ function FavoritesPageContent() {
       {/* Scrollable content area. `data-scroll-container` tells BackToTop to drive
           this element instead of the window — the window does not scroll on this page,
           so the button would otherwise never appear and its click would do nothing. */}
-      <div className="flex-1 min-h-0 overflow-y-auto" data-scroll-container>
+      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain" data-scroll-container>
         <div className="container mx-auto px-4 pt-6 pb-28">
 
         {/* Title block scrolls with the list; only Back/Home and the tabs stay pinned. */}
