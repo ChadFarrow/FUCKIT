@@ -12,6 +12,7 @@ import {
   fetchCoinosProfile,
   fetchCoinosUserByPubkey,
 } from '@/lib/lightning/wallet-detection';
+import { WalletConnectModal } from './WalletConnectModal';
 
 interface BitcoinConnectContextType {
   isConnected: boolean;
@@ -79,18 +80,26 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
   const [keysendSupported, setKeysendSupported] = useState<boolean | null>(null); // null = not probed yet
   const balanceIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Wallet picker (our own modal, rendered below). connect() opens it and holds
+  // the caller's resolver here until it closes.
+  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
+  const walletModalResolveRef = useRef<(() => void) | null>(null);
+
   useEffect(() => {
     // Initialize Bitcoin Connect on component mount (client-side only)
     // Note: We always initialize Bitcoin Connect even for NIP-46/NIP-55/Amber logins
     // because users may separately connect an NWC wallet for Lightning payments.
     // init() doesn't trigger popups — only requestProvider()/launchModal() do.
     // The WebLN auto-connect for Alby is guarded separately below.
+    //
+    // Still required even though wallet selection is now our own modal: init()
+    // configures persistence, the auto-reconnect from localStorage['bc:config'],
+    // and the appName passed to NWC connectors.
     if (typeof window !== 'undefined') {
       import('@getalby/bitcoin-connect').then(({ init, onConnected, onDisconnected }) => {
         init({
           appName: 'StableKraft',
-          showBalance: true, // Show balance in the modal
-          // Don't specify filters to allow all connection methods including browser extensions
+          showBalance: true,
         });
 
         // Listen for connection events
@@ -119,10 +128,24 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
           localStorage.setItem('wallet_manually_disconnected', 'false');
           setManuallyDisconnected(false);
 
-          // Force wallet reconnection after Nostr login by calling requestProvider
-          // This is safe because we know the user had a wallet connected before login
+          // Force wallet reconnection after Nostr login by calling requestProvider.
+          //
+          // requestProvider() LAUNCHES THE BITCOIN CONNECT MODAL when no provider
+          // is available, so it must only be called when a saved connection
+          // actually exists — otherwise logging in with Nostr pops up the very
+          // modal we replaced.
+          //
+          // The check reads localStorage['bc:config'] rather than
+          // getConnectorConfig(): the library kicks off its own reconnect from
+          // that key at module-load time, so the in-memory connectorConfig is
+          // still undefined while that attempt is in flight. localStorage is the
+          // durable signal for "this user had a wallet".
           import('@getalby/bitcoin-connect').then(async ({ requestProvider }) => {
             try {
+              if (!localStorage.getItem('bc:config')) {
+                console.log('ℹ️ No saved wallet config — skipping restore (would open the wallet modal)');
+                return; // the finally below still clears isLoading
+              }
               console.log('🔍 Restoring wallet connection after Nostr login...');
               const restoredProvider = await requestProvider();
               if (restoredProvider) {
@@ -152,36 +175,9 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
       setIsLoading(false);
     }
 
-    // Add global CSS to ensure Bitcoin Connect modal is immediately interactive
-    const style = document.createElement('style');
-    style.textContent = `
-      bc-modal-wrapper,
-      bc-modal-wrapper *,
-      bc-modal,
-      bc-modal * {
-        pointer-events: auto !important;
-      }
-
-      /* Ensure modal overlay allows clicks through to the modal */
-      bc-modal-wrapper::part(overlay) {
-        pointer-events: auto !important;
-      }
-
-      /* Ensure close button is immediately clickable */
-      bc-modal::part(close-button),
-      bc-modal [part="close-button"],
-      bc-modal button[aria-label*="Close"],
-      bc-modal button[aria-label*="close"] {
-        pointer-events: auto !important;
-        cursor: pointer !important;
-        z-index: 9999 !important;
-      }
-    `;
-    document.head.appendChild(style);
-
-    return () => {
-      document.head.removeChild(style);
-    };
+    // No `bc-modal` CSS shim here any more: wallet selection is now our own
+    // WalletConnectModal, and nothing in the app renders bitcoin-connect's web
+    // components. The library is still used for the connectors themselves.
   }, []);
 
   // Auto-connect WebLN when Nostr user is authenticated (Alby extension)
@@ -458,55 +454,39 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
     }
   }, [isConnected]);
 
-  const connect = async () => {
-    try {
-      setIsLoading(true);
+  /**
+   * Opens StableKraft's own wallet picker (WalletConnectModal), which drives the
+   * bitcoin-connect connectors directly. Connection state still arrives through
+   * the onConnected subscription set up above — this function only owns the view.
+   *
+   * Resolves when the modal closes, which is the same fire-and-forget contract
+   * callers already had: the old implementation awaited launchModal(), which
+   * returns void and never waited for a connection either.
+   */
+  const connect = async (): Promise<void> => {
+    // Clear manual disconnect flag when user explicitly connects
+    setManuallyDisconnected(false);
+    localStorage.setItem('wallet_manually_disconnected', 'false');
 
-      // Clear manual disconnect flag when user explicitly connects
-      setManuallyDisconnected(false);
-      localStorage.setItem('wallet_manually_disconnected', 'false');
-
-      // Always use Bitcoin Connect modal to let user choose their wallet
-      // This gives users full control over which wallet to connect
-      const bitcoinConnect = await import('@getalby/bitcoin-connect');
-
-      try {
-        console.log('🔌 Launching Bitcoin Connect modal...');
-
-        // Launch Bitcoin Connect modal
-        // This will show all available wallet options (Alby, Phoenix, NWC, etc.)
-        // Connection state is updated via the onConnected callback set up in useEffect
-        await bitcoinConnect.launchModal();
-
-        console.log('✅ Modal launch completed');
-
-        // After modal closes, check if a connection was made
-        // The onConnected event should fire, but let's verify the connection state
-        setTimeout(async () => {
-          try {
-            const connectedProvider = await bitcoinConnect.requestProvider();
-            if (connectedProvider && !provider) {
-              console.log('🔄 Modal closed with connection, but state not updated. Forcing update...');
-              setProvider(connectedProvider);
-              setIsConnected(true);
-            }
-          } catch (err) {
-            // No connection made, user likely cancelled
-            console.log('ℹ️ No connection after modal close');
-          }
-        }, 500); // Small delay to let onConnected fire first
-      } catch (providerError) {
-        // User may have cancelled or there was an error
-        console.log('Bitcoin Connect modal cancelled or error:', providerError);
-        throw providerError;
-      }
-
-    } catch (error) {
-      console.error('Failed to connect wallet:', error);
-    } finally {
-      setIsLoading(false);
+    // A second call while the picker is already open just re-uses it, and must not
+    // strand the first caller's promise.
+    if (walletModalResolveRef.current) {
+      walletModalResolveRef.current();
+      walletModalResolveRef.current = null;
     }
+
+    setIsWalletModalOpen(true);
+
+    return new Promise<void>((resolve) => {
+      walletModalResolveRef.current = resolve;
+    });
   };
+
+  const closeWalletModal = useCallback(() => {
+    setIsWalletModalOpen(false);
+    walletModalResolveRef.current?.();
+    walletModalResolveRef.current = null;
+  }, []);
 
   const disconnectWallet = async () => {
     try {
@@ -814,6 +794,10 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
       }}
     >
       {children}
+      {/* Rendered here so every connect() entry point — UserMenu on both
+          breakpoints, LightningWalletButton, BoostButton — shares one picker.
+          This provider wraps the whole app via layout.tsx → LightningWrapper. */}
+      <WalletConnectModal isOpen={isWalletModalOpen} onClose={closeWalletModal} />
     </BitcoinConnectContext.Provider>
   );
 }
