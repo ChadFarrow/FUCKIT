@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import NowPlaying from './NowPlaying';
 import { useAudio } from '@/contexts/AudioContext';
 import { getPlaceholderImageUrl } from '@/lib/cdn-utils';
@@ -94,6 +94,18 @@ const GlobalNowPlayingBar: React.FC = () => {
       albumArt: getArtworkUrl(currentTrackIndex)
     };
   }, [currentPlayingAlbum, currentTrackIndex, duration, getArtworkUrl, chapters, currentChapterIndex]);
+
+  // Flag the bar's presence on <html> so CSS can reserve space for it only when it
+  // actually exists. `--sk-player-reserve` (globals.css) is 0 without this attribute,
+  // which stops the layout wrapper and any page sizing itself off that variable from
+  // holding open an empty strip that shows the app's artwork background through it.
+  // Reported on the zapstore build's favorites page with nothing playing.
+  useEffect(() => {
+    const root = document.documentElement;
+    if (currentPlayingAlbum) root.setAttribute('data-player', '');
+    else root.removeAttribute('data-player');
+    return () => root.removeAttribute('data-player');
+  }, [currentPlayingAlbum]);
 
   // Don't render if nothing is playing or if fullscreen mode is active
   if (!currentPlayingAlbum || isFullscreenMode) {

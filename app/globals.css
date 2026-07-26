@@ -53,12 +53,22 @@
      indicator; these sit 1px under so a reservation can never overshoot the bar
      and expose a strip of background above it (see app/layout.tsx).
      Single-sourced because both the layout wrapper and any page that manages
-     its own height need the same number. */
+     its own height need the same number.
+
+     Zero unless the bar is actually on screen. GlobalNowPlayingBar sets
+     `data-player` on <html> while it renders. Reserving unconditionally held open
+     an empty strip with nothing to fill it, so the app's artwork background showed
+     through below the page — reported on the zapstore build's favorites page with
+     nothing playing. */
+  --sk-player-reserve: 0px;
+}
+
+:root[data-player] {
   --sk-player-reserve: calc(88px + var(--sk-safe-bottom));
 }
 
 @media (min-width: 768px) {
-  :root {
+  :root[data-player] {
     --sk-player-reserve: calc(80px + var(--sk-safe-bottom));
   }
 }
