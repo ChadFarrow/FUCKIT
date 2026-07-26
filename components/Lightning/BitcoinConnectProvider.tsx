@@ -598,12 +598,20 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
 
         if (!getConnectedNwcUri()) {
           // ── No wallet here: bring the saved one across ──────────────────
-          const manuallyDisconnectedHere =
-            localStorage.getItem('wallet_manually_disconnected') === 'true';
-          if (manuallyDisconnectedHere) {
-            console.log('ℹ️ NWC backup: skipping auto-restore — wallet was manually disconnected on this device');
-            return;
-          }
+          //
+          // NOT gated on `wallet_manually_disconnected`. It used to be, on the
+          // reasoning that a deliberate disconnect shouldn't be silently undone
+          // — but that flag never expires, so disconnecting a wallet once killed
+          // auto-restore on that device forever. Signing out and back in then
+          // left the user with no wallet and no explanation, which is precisely
+          // what this feature exists to prevent.
+          //
+          // Signing in is itself an explicit user action, and the flag's real
+          // job is narrower: stopping the WebLN extension auto-connect from
+          // overriding a user who just disconnected. Clear it here for the same
+          // reason connect() does.
+          localStorage.setItem('wallet_manually_disconnected', 'false');
+          setManuallyDisconnected(false);
 
           const status = await checkBackupExists(pubkey);
           if (status !== 'saved') {
