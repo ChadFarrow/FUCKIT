@@ -319,10 +319,6 @@ export function WalletConnectModal({ isOpen, onClose }: WalletConnectModalProps)
               </button>
             )}
 
-            <p className="text-xs text-gray-400 mb-3">
-              Boosts are sent with keysend. Alby Hub and Coinos support it — Primal’s NWC does not.
-            </p>
-
             <button
               onClick={handleNwcConnect}
               disabled={isConnecting || !nwcUri.trim()}
@@ -331,11 +327,6 @@ export function WalletConnectModal({ isOpen, onClose }: WalletConnectModalProps)
             >
               {isConnecting ? 'Connecting…' : 'Connect'}
             </button>
-
-            <p className="mt-3 text-xs text-gray-400">
-              Get a string from your wallet: Alby Hub → Connections → Add Connection, or Coinos →
-              Settings → Nostr Wallet Connect.
-            </p>
           </div>
         )}
       </div>
