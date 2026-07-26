@@ -722,7 +722,7 @@ export class NIP46Client {
 
       // Verify the primary relay is actually connected
       if (!connectedRelays.includes(relayUrl)) {
-        const helpMessage = `Try regenerating your bunker:// URI in your signer app with a different relay like wss://relay.nsec.app or wss://relay.damus.io`;
+        const helpMessage = `Try regenerating your bunker:// URI in your signer app with a different relay like wss://nos.lol or wss://relay.damus.io`;
         const errorMsg = `Primary relay ${relayUrl} failed to connect. ${helpMessage}`;
         console.error(`❌ NIP-46: ${errorMsg}`);
         throw new Error(errorMsg);
@@ -732,7 +732,7 @@ export class NIP46Client {
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : String(err);
       console.error(`❌ NIP-46: Failed to connect to primary relay ${relayUrl}:`, errorMsg);
-      const helpMessage = `The relay "${relayUrl}" may be offline or unreachable. Try regenerating your bunker:// URI in your signer app (Aegis/Amber) with a different relay like wss://relay.nsec.app or wss://relay.damus.io`;
+      const helpMessage = `The relay "${relayUrl}" may be offline or unreachable. Try regenerating your bunker:// URI in your signer app (Aegis/Amber) with a different relay like wss://nos.lol or wss://relay.damus.io`;
       throw new Error(`Failed to connect to relay ${relayUrl}. ${helpMessage}`);
     }
 
@@ -3067,7 +3067,6 @@ export class NIP46Client {
               '  • Check Amber\'s "Recent Requests" or activity log\n' +
               '  • Verify Amber is connected to at least one of these relays:\n' +
               '    - wss://relay.damus.io\n' +
-              '    - wss://relay.nsec.app\n' +
               '    - wss://nostr.oxtr.dev\n' +
               '    - wss://theforest.nostr1.com\n' +
               '    - wss://relay.primal.net\n' +
@@ -3253,8 +3252,9 @@ export class NIP46Client {
           // For 'connect' requests, only use primary relay (Amber is listening here)
           // Publishing to multiple relays causes rate limits and doesn't help
           // For other requests, we can use backup relays for redundancy
+          // wss://relay.nsec.app dropped 2026-07-26 — returning 502; see the
+          // note in lib/nostr/relay.ts getDefaultRelays().
           const backupRelays = [
-            'wss://relay.nsec.app',      // More reliable, less rate-limited
             'wss://nos.lol',              // Popular and stable
             'wss://relay.snort.social',   // Snort's relay
             'wss://nostr.oxtr.dev',       // Alternative relay

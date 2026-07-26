@@ -241,8 +241,12 @@ export function getDefaultRelays(): string[] {
   if (relays.length === 0) {
     // Default relays (commonly used public relays)
     // Note: relay.damus.io is often rate-limited, so we prioritize other relays
+    // Dropped 2026-07-26: wss://relay.nsec.app. It sat first here, labelled
+    // "more reliable", while actually returning 502 — costing ~0.5–1.4s on
+    // every relay operation (NIP-65 fetch, publish queue, boost notes).
+    // filterReachableRelays only pattern-matches localhost-style URLs, so
+    // nothing pruned it automatically.
     relays = [
-      'wss://relay.nsec.app',      // More reliable, less rate-limited
       'wss://nos.lol',              // Popular and stable
       'wss://relay.snort.social',   // Snort's relay
       'wss://nostr.oxtr.dev',       // Alternative relay

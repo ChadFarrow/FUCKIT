@@ -183,6 +183,9 @@ export function useNip46Connection(options: UseNip46ConnectionOptions): Nip46Con
     // Get default relay for connection
     const { getDefaultRelays } = await import('@/lib/nostr/relay');
     const relays = getDefaultRelays();
+    // nsec.app is no longer in getDefaultRelays() (dropped 2026-07-26, 502s), so
+    // that half of this filter is now belt-and-braces — it still guards against
+    // the relay coming back into the defaults or arriving from a user's NIP-65.
     const preferredRelays = relays.filter(r => !r.includes('relay.damus.io') && !r.includes('relay.nsec.app'));
     const relayUrl = preferredRelays[0] || 'wss://nos.lol';
 
