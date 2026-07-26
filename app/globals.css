@@ -289,10 +289,16 @@
     bottom: var(--sk-safe-bottom);
   }
 
-  /* Add padding to body for standalone mode */
-  body {
-    padding-bottom: var(--sk-safe-bottom);
-  }
+  /* NO `body { padding-bottom: var(--sk-safe-bottom) }` here.
+     It used to be, and it opened a strip of bare background above the player.
+     Body padding sits OUTSIDE every page's own background element, so it made the
+     document taller than the painted area while GlobalNowPlayingBar stayed anchored
+     to the viewport: scrolled to the bottom with a 34px home indicator, a page's
+     background ended ~23px above the bar and the fixed artwork layer showed through
+     as a band. Measured on /downloads and /favorites.
+     It was also redundant — the bar applies its own
+     `paddingBottom: calc(16px + var(--sk-safe-bottom))`, and every other
+     inset-aware surface uses the `--sk-safe-*` vars directly. */
 }
 
 /* Marquee Animation for scrolling text */
