@@ -96,23 +96,9 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
   const [albumArtError, setAlbumArtError] = useState(false);
   // Mobile: track rows are one line; the per-row actions live behind a kebab.
   const [expandedTrackKey, setExpandedTrackKey] = useState<string | null>(null);
-  // Mobile: the compact sticky header appears once the cover scrolls away.
-  const [showStickyHeader, setShowStickyHeader] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
   const preloadAttemptedRef = useRef(false);
-  
-
-  // Mobile only: reveal the compact sticky header once the cover has scrolled away,
-  // so Play and shuffle stay reachable deep in a long track list. Desktop keeps the
-  // header permanently visible in its own column, so it never needs this.
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const onScroll = () => setShowStickyHeader(window.scrollY > 220);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   // Detect desktop for background loading optimization
   useEffect(() => {
@@ -885,60 +871,14 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
       {/* Background layer - fixed positioned to override global layout background */}
       <div style={backgroundStyle} />
 
-      {/* Compact sticky header (mobile only) - appears once the cover scrolls off, so
-          Play and shuffle stay reachable without scrolling back up a long list. */}
-      <div
-        className={`lg:hidden fixed top-0 left-0 right-0 z-30 transition-transform duration-200 ${
-          showStickyHeader ? 'translate-y-0' : '-translate-y-full pointer-events-none'
-        }`}
-        style={{
-          paddingTop: 'var(--sk-safe-top)',
-          // `visibility` rather than `aria-hidden` alone: the shuffle/play buttons stay
-          // focusable behind `pointer-events-none`, so a keyboard could otherwise tab
-          // into off-screen controls.
-          visibility: showStickyHeader ? 'visible' : 'hidden',
-        }}
-        aria-hidden={!showStickyHeader}
-      >
-        {/* px sizing throughout, for the same reason as the action row below: only the
-            title is allowed to grow with the OS font setting, and it truncates.
-
-            Two things keep the global UserMenu usable. AppLayout renders it at
-            `fixed right-4 z-40` (16px inset, 40px wide = the rightmost 56px), and this bar
-            is full-bleed and renders later in the DOM. So (a) the bar is z-30, below the
-            menu's z-40 — otherwise even the bar's transparent padding swallows the tap and
-            an avatar press fires Play; and (b) paddingRight keeps the controls themselves
-            clear of the avatar rather than merely underneath it. Keep it >= 56 plus a gap. */}
-        <div className="flex items-center bg-black/80 backdrop-blur-md border-b border-white/10" style={{ gap: 12, paddingLeft: 12, paddingRight: 68, paddingTop: 8, paddingBottom: 8 }}>
-          <ArtworkImage
-            src={albumArtError || !album?.coverArt ? getPlaceholderImageUrl('thumbnail') : getAlbumArtworkUrl(album.coverArt, 'thumbnail', true)}
-            alt=""
-            width={36}
-            height={36}
-            className="rounded object-cover flex-shrink-0"
-            style={{ width: 36, height: 36 }}
-          />
-          <span className="flex-1 min-w-0 truncate text-sm font-semibold text-white">{album.title}</span>
-          <button
-            onClick={shuffleAllTracks}
-            className="flex items-center justify-center rounded-full bg-black/45 ring-1 ring-white/25 backdrop-blur-md shadow-lg text-white flex-shrink-0 active:scale-95 transition-transform"
-            style={{ width: 40, height: 40 }}
-            aria-label="Shuffle"
-          >
-            <Shuffle size={18} />
-          </button>
-          <button
-            onClick={globalIsPlaying && currentPlayingAlbum?.title === album?.title ? togglePlay : playAlbum}
-            className="flex items-center justify-center rounded-full bg-white text-black font-semibold flex-shrink-0 active:scale-95 transition-transform"
-            style={{ width: 40, height: 40 }}
-            aria-label={globalIsPlaying && currentPlayingAlbum?.title === album?.title ? 'Pause' : 'Play'}
-          >
-            {globalIsPlaying && currentPlayingAlbum?.title === album?.title
-              ? <Pause size={18} fill="currentColor" />
-              : <Play size={18} fill="currentColor" />}
-          </button>
-        </div>
-      </div>
+      {/* No fixed overlay belongs at the top of this page. A compact sticky header
+          (thumbnail + title + shuffle + play) lived here briefly and was removed: it
+          appeared at only 220px of scroll, while the cover, title and action row were
+          all still on screen, and its full-bleed background ran underneath the global
+          UserMenu so the account avatar looked buried in it. Its Play duplicated
+          GlobalNowPlayingBar (fixed bottom, z-50) whenever audio was loaded, and
+          tapping track 1 otherwise. See the z-40 note in CLAUDE.md before adding any
+          fixed overlay here. */}
 
       {/* Content layer - relative positioned above background */}
       <div className="min-h-screen lg:h-full text-white relative z-10 lg:overflow-hidden">
@@ -1325,8 +1265,8 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
           <div className="lg:col-span-3 lg:min-h-0">
             {/* Track List */}
             {/* `lg:` throughout the track list, matching the rows inside it. The page has
-                one mobile boundary — the left column, sticky header, action row and
-                description toggle are all `lg:`-gated, so rows switching at `md:` produced
+                one mobile boundary — the left column, action row and description
+                toggle are all `lg:`-gated, so rows switching at `md:` produced
                 a hybrid at 768-1023px: mobile chrome around desktop rows, with per-track
                 Boost showing and no Tracks heading or ControlsBar at all. */}
             <div className="bg-black/40 backdrop-blur-sm rounded-lg p-2 lg:p-6 lg:h-full lg:flex lg:flex-col lg:min-h-0">

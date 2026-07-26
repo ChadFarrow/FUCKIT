@@ -13,8 +13,7 @@ export function BackToTop() {
   const [isVisible, setIsVisible] = useState(false);
   const pathname = usePathname();
   // Album and podcast pages put a kebab on every track row in exactly this corner,
-  // so the floating button covers one row's controls. Those pages also carry a
-  // compact sticky header, which already provides orientation while scrolling.
+  // so the floating button covers one row's controls.
   const overlapsRowControls = isAlbumDetailRoute(pathname);
 
   useEffect(() => {
