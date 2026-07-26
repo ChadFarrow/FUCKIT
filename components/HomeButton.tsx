@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { Home } from 'lucide-react';
+import { BACK_ROW_BUTTON_CLASSES } from './BackButton';
 
 interface HomeButtonProps {
   label?: string;
@@ -19,7 +20,7 @@ export default function HomeButton({
   label = 'Home',
   className = ''
 }: HomeButtonProps) {
-  const baseClasses = "flex items-center gap-2 text-gray-400 hover:text-white transition-all duration-200 p-2 rounded-lg hover:bg-white/5 active:scale-95";
+  const baseClasses = BACK_ROW_BUTTON_CLASSES;
 
   return (
     <Link

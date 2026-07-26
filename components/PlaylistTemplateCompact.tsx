@@ -17,6 +17,7 @@ import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { generateAlbumSlug } from '@/lib/url-utils';
 import AppLayout from '@/components/AppLayout';
 import HomeButton from '@/components/HomeButton';
+import { BACK_ROW_BUTTON_CLASSES } from '@/components/BackButton';
 
 interface PlaylistTemplateCompactProps {
   config: PlaylistConfig;
@@ -800,7 +801,7 @@ export default function PlaylistTemplateCompact({ config }: PlaylistTemplateComp
             <div className="mb-4 -ml-2 flex items-center gap-1">
               <Link
                 href="/?filter=playlist"
-                className="flex items-center gap-2 text-gray-400 hover:text-white transition-all duration-200 p-2 rounded-lg hover:bg-white/5 active:scale-95"
+                className={BACK_ROW_BUTTON_CLASSES}
                 aria-label="Back to playlists"
               >
                 <ChevronLeft className="h-5 w-5" />

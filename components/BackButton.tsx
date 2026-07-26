@@ -12,6 +12,22 @@ interface BackButtonProps {
   useHistory?: boolean; // Use browser back() instead of href
 }
 
+/**
+ * Shared styling for the Back/Home control group.
+ *
+ * Single-sourced because three places render a button in this row — BackButton,
+ * HomeButton, and the playlist page's own "Back to Playlists" link, which points at a
+ * named destination rather than a history step and so can't reuse BackButton itself.
+ * Copies of this string drift; the pair is supposed to read as one control group.
+ *
+ * `min-h-[44px]` is the touch-target floor. Padding alone gave 36px (`p-2` = 8px each
+ * side around a 20px icon), under the 44px minimum. It is an arbitrary px value on
+ * purpose: Tailwind's `p-*`/`h-*` are rem, so an OS font-size setting would scale the
+ * target itself — only the label should scale.
+ */
+export const BACK_ROW_BUTTON_CLASSES =
+  "flex items-center gap-2 text-gray-400 hover:text-white transition-all duration-200 p-2 min-h-[44px] rounded-lg hover:bg-white/5 active:scale-95";
+
 export default function BackButton({
   href = '/',
   label = 'Back',
@@ -20,7 +36,7 @@ export default function BackButton({
   useHistory = true // Default to using browser history
 }: BackButtonProps) {
   const router = useRouter();
-  const baseClasses = "flex items-center gap-2 text-gray-400 hover:text-white transition-all duration-200 p-2 rounded-lg hover:bg-white/5 active:scale-95";
+  const baseClasses = BACK_ROW_BUTTON_CLASSES;
   const combinedClasses = `${baseClasses} ${className}`;
 
   const handleBack = () => {
