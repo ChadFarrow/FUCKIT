@@ -305,7 +305,7 @@ export default function UserMenu({ className = '' }: UserMenuProps) {
                             className="w-full flex items-center gap-3 px-3 py-2 text-left text-gray-300 hover:bg-gray-800 rounded-lg transition-colors disabled:opacity-60 disabled:cursor-default"
                           >
                             <ShieldCheck className="w-4 h-4 flex-shrink-0" />
-                            <span className="flex-1 min-w-0">Nostr Backup</span>
+                            <span className="flex-1 min-w-0">NWC Backup</span>
                             <span
                               className={`text-xs flex-shrink-0 ${
                                 backupStatus === 'saved' ? 'text-green-400' : 'text-gray-500'
