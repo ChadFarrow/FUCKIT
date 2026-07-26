@@ -2,7 +2,16 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Puzzle, Zap, ClipboardPaste } from 'lucide-react';
+import { Puzzle, Zap, ClipboardPaste, ShieldCheck, RotateCcw } from 'lucide-react';
+import { useNostr } from '@/contexts/NostrContext';
+import {
+  hasNwcBackup,
+  fetchNwcBackup,
+  publishNwcBackup,
+  getConnectedNwcUri,
+  markBackupDeclined,
+  hasDeclinedBackup,
+} from '@/lib/nostr/nwc-backup';
 
 /**
  * StableKraft's own wallet picker, replacing the @getalby/bitcoin-connect modal.
@@ -19,7 +28,7 @@ import { Puzzle, Zap, ClipboardPaste } from 'lucide-react';
  * The WebLNProvider that reaches sendKeysend/sendPayment is unchanged.
  */
 
-type View = 'picker' | 'nwc';
+type View = 'picker' | 'nwc' | 'offer-backup';
 
 // bitcoin-connect's connect functions swallow their own errors — they log, reset
 // state, and never reject (the public `connect` is even typed `=> void`). So a
@@ -28,18 +37,37 @@ type View = 'picker' | 'nwc';
 // it needs to be generous.
 const CONNECT_TIMEOUT_MS = 30_000;
 
+/**
+ * Existence of a Nostr backup, cached per pubkey for the page's lifetime, so
+ * reopening the modal doesn't re-query relays. Module scope survives remounts.
+ */
+const backupExistsCache = new Map<string, boolean>();
+
 interface WalletConnectModalProps {
   isOpen: boolean;
   onClose: () => void;
+  /**
+   * Open straight into the save offer instead of the picker. Used by the
+   * post-login prompt, when the user signs in with a wallet already connected.
+   */
+  initialView?: View;
 }
 
-export function WalletConnectModal({ isOpen, onClose }: WalletConnectModalProps) {
+export function WalletConnectModal({ isOpen, onClose, initialView = 'picker' }: WalletConnectModalProps) {
   const [mounted, setMounted] = useState(false);
   const [view, setView] = useState<View>('picker');
   const [hasExtension, setHasExtension] = useState(false);
   const [nwcUri, setNwcUri] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
+
+  // Nostr-backup state
+  const { user, isAuthenticated } = useNostr();
+  const pubkey = user?.nostrPubkey || null;
+  const [canBackup, setCanBackup] = useState(false);
+  const [backupFound, setBackupFound] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isRestoring, setIsRestoring] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -51,10 +79,58 @@ export function WalletConnectModal({ isOpen, onClose }: WalletConnectModalProps)
   useEffect(() => {
     if (!isOpen) return;
     setHasExtension(typeof window !== 'undefined' && !!(window as any).webln);
-    setView('picker');
+    setView(initialView);
     setError(null);
     setIsConnecting(false);
-  }, [isOpen]);
+    setIsSaving(false);
+    setIsRestoring(false);
+  }, [isOpen, initialView]);
+
+  // Can this session encrypt at all? NIP-55 and read-only nip05 sessions can't,
+  // and not every extension implements window.nostr.nip44 — so ask the signer
+  // rather than assuming, and hide the feature when the answer is no.
+  useEffect(() => {
+    if (!isOpen || !isAuthenticated || !pubkey) {
+      setCanBackup(false);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const { getUnifiedSigner } = await import('@/lib/nostr/signer');
+        const signer = getUnifiedSigner();
+        await signer.ensureInitialized();
+        if (!cancelled) setCanBackup(signer.supportsNip44());
+      } catch {
+        if (!cancelled) setCanBackup(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [isOpen, isAuthenticated, pubkey]);
+
+  // Look for an existing backup so the picker can offer to restore it. This is a
+  // plain relay query — no signer, no decrypt — so it can run speculatively
+  // without firing an approval prompt on the user's phone. Decryption happens
+  // only if they tap Connect.
+  useEffect(() => {
+    if (!isOpen || view !== 'picker' || !canBackup || !pubkey) return;
+    const cached = backupExistsCache.get(pubkey);
+    if (cached !== undefined) {
+      setBackupFound(cached);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const found = await hasNwcBackup(pubkey);
+        backupExistsCache.set(pubkey, found);
+        if (!cancelled) setBackupFound(found);
+      } catch {
+        if (!cancelled) setBackupFound(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [isOpen, view, canBackup, pubkey]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -139,7 +215,13 @@ export function WalletConnectModal({ isOpen, onClose }: WalletConnectModalProps)
       connectNWC(uri);
       if (await connected) {
         setNwcUri('');
-        onClose();
+        // They just typed a connection string in. If it can be backed up, ask —
+        // this is the moment it makes sense, not buried in a settings screen.
+        if (canBackup && pubkey) {
+          setView('offer-backup');
+        } else {
+          onClose();
+        }
       } else {
         // Keep the pasted text — these strings are far too long to re-paste on a phone.
         setError('Couldn’t connect. Check the connection string and try again.');
@@ -151,6 +233,67 @@ export function WalletConnectModal({ isOpen, onClose }: WalletConnectModalProps)
       setIsConnecting(false);
     }
   }, [nwcUri, onClose, waitForConnection]);
+
+  /** Save the currently connected NWC string to Nostr, encrypted to the user. */
+  const handleSaveBackup = useCallback(async () => {
+    if (!pubkey) return;
+    // Read from bc:config rather than component state: it's the source of truth
+    // for what's actually connected, and covers the post-login entry point where
+    // this modal never saw the string typed.
+    const uri = getConnectedNwcUri();
+    if (!uri) {
+      setError('No NWC wallet is connected, so there is nothing to save.');
+      return;
+    }
+    setError(null);
+    setIsSaving(true);
+    try {
+      await publishNwcBackup(pubkey, uri);
+      backupExistsCache.set(pubkey, true);
+      onClose();
+    } catch (err) {
+      console.error('NWC backup failed:', err);
+      setError(err instanceof Error ? err.message : 'Could not save the backup. Try again.');
+    } finally {
+      setIsSaving(false);
+    }
+  }, [pubkey, onClose]);
+
+  const handleDeclineBackup = useCallback(() => {
+    // Remember the refusal so signing in again doesn't ask the same question.
+    if (pubkey) markBackupDeclined(pubkey);
+    onClose();
+  }, [pubkey, onClose]);
+
+  /** Decrypt the saved string and connect it. First and only signer prompt. */
+  const handleRestoreBackup = useCallback(async () => {
+    if (!pubkey) return;
+    setError(null);
+    setIsRestoring(true);
+    try {
+      const uri = await fetchNwcBackup(pubkey);
+      if (!uri) {
+        setError('Could not read your saved wallet. It may have been removed.');
+        backupExistsCache.set(pubkey, false);
+        setBackupFound(false);
+        return;
+      }
+      const { connectNWC } = await import('@getalby/bitcoin-connect');
+      const connected = waitForConnection();
+      connectNWC(uri);
+      if (await connected) {
+        // Came from the backup, so there's nothing new to offer saving.
+        onClose();
+      } else {
+        setError('Your saved wallet could not connect. It may have been revoked.');
+      }
+    } catch (err) {
+      console.error('NWC restore failed:', err);
+      setError(err instanceof Error ? err.message : 'Could not restore your saved wallet.');
+    } finally {
+      setIsRestoring(false);
+    }
+  }, [pubkey, onClose, waitForConnection]);
 
   // The connection string arrives from another app and is far too long to type,
   // so on mobile this button is the realistic path in.
@@ -195,7 +338,11 @@ export function WalletConnectModal({ isOpen, onClose }: WalletConnectModalProps)
       >
         <div className="flex justify-between items-start mb-1 gap-3">
           <h2 className="text-xl font-bold text-white">
-            {view === 'picker' ? 'Connect a wallet' : 'Nostr Wallet Connect'}
+            {view === 'picker'
+              ? 'Connect a wallet'
+              : view === 'nwc'
+                ? 'Nostr Wallet Connect'
+                : 'Save this wallet to Nostr?'}
           </h2>
           <button
             onClick={onClose}
@@ -222,6 +369,33 @@ export function WalletConnectModal({ isOpen, onClose }: WalletConnectModalProps)
 
         {view === 'picker' && (
           <div className="grid grid-cols-1 gap-2">
+            {/* Restore row. Only rendered once a relay query confirmed a backup
+                exists; tapping it is what triggers the decrypt. */}
+            {backupFound && (
+              <button
+                onClick={handleRestoreBackup}
+                disabled={isConnecting || isRestoring}
+                className="w-full text-left p-4 rounded-lg bg-stablekraft-teal/10 border border-stablekraft-teal/50 hover:border-stablekraft-teal hover:bg-stablekraft-teal/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed group flex items-center gap-3"
+                style={{ minHeight: 64 }}
+              >
+                <span
+                  className="flex-shrink-0 flex items-center justify-center rounded-lg bg-stablekraft-teal/20 transition-colors"
+                  style={{ width: 40, height: 40 }}
+                  aria-hidden
+                >
+                  <RotateCcw size={20} className="text-stablekraft-teal" />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="font-semibold text-white leading-tight">
+                    {isRestoring ? 'Restoring…' : 'Saved wallet'}
+                  </div>
+                  <p className="text-xs text-gray-300 mt-0.5">
+                    Connect the wallet you backed up to Nostr.
+                  </p>
+                </div>
+              </button>
+            )}
+
             {hasExtension && (
               <button
                 onClick={handleExtensionConnect}
@@ -326,6 +500,43 @@ export function WalletConnectModal({ isOpen, onClose }: WalletConnectModalProps)
               style={{ minHeight: 48 }}
             >
               {isConnecting ? 'Connecting…' : 'Connect'}
+            </button>
+          </div>
+        )}
+
+        {view === 'offer-backup' && (
+          <div>
+            <div className="flex items-start gap-3 mb-4">
+              <span
+                className="flex-shrink-0 flex items-center justify-center rounded-lg bg-stablekraft-teal/20"
+                style={{ width: 40, height: 40 }}
+                aria-hidden
+              >
+                <ShieldCheck size={20} className="text-stablekraft-teal" />
+              </span>
+              <p className="text-sm text-gray-300">
+                Encrypted with your Nostr key, so only you can read it. Sign in on another
+                device and you can connect this wallet there without pasting it again.
+              </p>
+            </div>
+
+            {/* Two plain buttons, neither preselected — publishing a spending
+                credential should be a decision, not a default. */}
+            <button
+              onClick={handleSaveBackup}
+              disabled={isSaving}
+              className="w-full px-4 py-2 bg-stablekraft-teal text-white rounded-lg hover:bg-stablekraft-teal/90 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors mb-2"
+              style={{ minHeight: 48 }}
+            >
+              {isSaving ? 'Saving…' : 'Save to Nostr'}
+            </button>
+            <button
+              onClick={handleDeclineBackup}
+              disabled={isSaving}
+              className="w-full px-4 py-2 text-gray-300 bg-gray-800 border border-gray-700 rounded-lg hover:border-gray-500 hover:text-white transition-colors disabled:opacity-50"
+              style={{ minHeight: 48 }}
+            >
+              Not now
             </button>
           </div>
         )}

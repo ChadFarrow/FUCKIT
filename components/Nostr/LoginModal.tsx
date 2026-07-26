@@ -600,8 +600,11 @@ export default function LoginModal({ onClose }: LoginModalProps) {
         // Defer favorites sync until after the post-login reload.
         // NostrContext picks this up on the next page load and runs sync
         // when the page is stable.
-        const { markFavoritesSyncPending } = await import('@/lib/nostr/auth-utils');
+        const { markFavoritesSyncPending, markNwcBackupOfferPending } = await import('@/lib/nostr/auth-utils');
         markFavoritesSyncPending(loginData.user.id);
+        // Same deferral for the NWC-backup offer (this is the NIP-46 path, which
+        // can encrypt — so it's exactly the case the offer is for).
+        markNwcBackupOfferPending(loginData.user.nostrPubkey);
 
         // Hide NIP-46 connect UI if still showing
         setShowNip46Connect(false);

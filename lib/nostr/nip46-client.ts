@@ -3918,6 +3918,54 @@ export class NIP46Client {
   /**
    * Sign an event using the remote signer
    */
+  /**
+   * Shared preamble for any remote request: connected, pubkey known, and the
+   * relay subscription live. iOS PWA kills WebSockets when backgrounded and the
+   * REQ is lost on reconnect, so responses would never arrive without this.
+   */
+  private async ensureReadyForRequest(): Promise<void> {
+    if (!this.connection?.connected) {
+      await this.authenticate();
+    }
+    if (!this.connection?.pubkey) {
+      await this.getPublicKey();
+    }
+    if (!this.connection?.pubkey) {
+      throw new Error('Signer public key not available. Please wait for the connection to be established.');
+    }
+    await this.ensureSubscription();
+  }
+
+  /**
+   * NIP-44 encrypt via the remote signer.
+   *
+   * Response routing note: replies resolve on the id path
+   * (`pendingRequests.get(content.id)`). The shape-based fallbacks further down
+   * only fire when the id does NOT match, and each is gated on the pending
+   * request's method being 'get_public_key' or 'sign_event' — so a base64
+   * NIP-44 result can neither be stolen by them nor satisfied by a stray hex
+   * reply. A signer that mangles request ids fails by timing out, which is the
+   * correct behaviour here rather than resolving with the wrong payload.
+   */
+  async nip44Encrypt(pubkey: string, plaintext: string): Promise<string> {
+    await this.ensureReadyForRequest();
+    const result = await this.sendRequest('nip44_encrypt', [pubkey, plaintext]);
+    if (typeof result !== 'string' || !result) {
+      throw new Error('Signer returned no ciphertext for nip44_encrypt');
+    }
+    return result;
+  }
+
+  /** NIP-44 decrypt via the remote signer. See nip44Encrypt for routing notes. */
+  async nip44Decrypt(pubkey: string, ciphertext: string): Promise<string> {
+    await this.ensureReadyForRequest();
+    const result = await this.sendRequest('nip44_decrypt', [pubkey, ciphertext]);
+    if (typeof result !== 'string') {
+      throw new Error('Signer returned no plaintext for nip44_decrypt');
+    }
+    return result;
+  }
+
   async signEvent(event: Event): Promise<Event> {
     this.debugLog('🔵 [NIP46-SIGN] signEvent called - starting signature request');
 

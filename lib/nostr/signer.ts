@@ -16,6 +16,16 @@ export interface Signer {
   getPublicKey: () => Promise<string>;
   signEvent: (event: Event) => Promise<Event>;
   isAvailable: () => boolean;
+  /**
+   * NIP-44 encrypt/decrypt, optional because not every signer can do it:
+   * NIP-07 extensions only expose `window.nostr.nip44` if they implement it,
+   * NIP-55 (Amber over Android intents) implements only sign_event, and a
+   * nip05 session has no signer at all. Callers must gate on supportsNip44()
+   * and degrade rather than assume — see lib/nostr/nwc-backup.ts.
+   */
+  supportsNip44?: () => boolean;
+  nip44Encrypt?: (pubkey: string, plaintext: string) => Promise<string>;
+  nip44Decrypt?: (pubkey: string, ciphertext: string) => Promise<string>;
 }
 
 /**
@@ -63,6 +73,26 @@ class NIP07Signer implements Signer {
 
     return this.nostr.signEvent(eventTemplate);
   }
+
+  supportsNip44(): boolean {
+    if (!this.isAvailable()) return false;
+    const nip44 = this.nostr?.nip44;
+    return !!nip44 && typeof nip44.encrypt === 'function' && typeof nip44.decrypt === 'function';
+  }
+
+  async nip44Encrypt(pubkey: string, plaintext: string): Promise<string> {
+    if (!this.supportsNip44()) {
+      throw new Error('This extension does not support NIP-44 encryption');
+    }
+    return this.nostr.nip44.encrypt(pubkey, plaintext);
+  }
+
+  async nip44Decrypt(pubkey: string, ciphertext: string): Promise<string> {
+    if (!this.supportsNip44()) {
+      throw new Error('This extension does not support NIP-44 encryption');
+    }
+    return this.nostr.nip44.decrypt(pubkey, ciphertext);
+  }
 }
 
 /**
@@ -109,6 +139,34 @@ class NIP46Signer implements Signer {
     return withSignerNudge(() => this.client.signEvent(event), {
       signerLabel: this.signerLabel(),
       op: 'sign',
+    });
+  }
+
+  // NIP-46 signers (Amber, Primal, bunker) all speak nip44_encrypt/decrypt —
+  // it's how the transport itself is encrypted. Capability is just connectivity.
+  supportsNip44(): boolean {
+    return this.isAvailable();
+  }
+
+  async nip44Encrypt(pubkey: string, plaintext: string): Promise<string> {
+    if (!this.isAvailable()) {
+      throw new Error('NIP-46 client not connected');
+    }
+    const { withSignerNudge } = await import('./signer-nudge');
+    return withSignerNudge(() => this.client.nip44Encrypt(pubkey, plaintext), {
+      signerLabel: this.signerLabel(),
+      op: 'encrypt',
+    });
+  }
+
+  async nip44Decrypt(pubkey: string, ciphertext: string): Promise<string> {
+    if (!this.isAvailable()) {
+      throw new Error('NIP-46 client not connected');
+    }
+    const { withSignerNudge } = await import('./signer-nudge');
+    return withSignerNudge(() => this.client.nip44Decrypt(pubkey, ciphertext), {
+      signerLabel: this.signerLabel(),
+      op: 'decrypt',
     });
   }
 
@@ -516,6 +574,32 @@ export class UnifiedSigner {
       throw new Error('No signer available. Please connect a Nostr extension or NIP-46 signer.');
     }
     return this.activeSigner.signEvent(event);
+  }
+
+  /**
+   * Whether the active signer can do NIP-44 encrypt/decrypt.
+   *
+   * False for NIP-55 (intent-based, sign_event only), for a nip05 read-only
+   * session, and for extensions that don't implement window.nostr.nip44.
+   * UI must gate on this and hide the feature rather than fail at use time.
+   */
+  supportsNip44(): boolean {
+    const signer = this.activeSigner;
+    return !!signer && typeof signer.supportsNip44 === 'function' && signer.supportsNip44();
+  }
+
+  async nip44Encrypt(pubkey: string, plaintext: string): Promise<string> {
+    if (!this.activeSigner?.nip44Encrypt) {
+      throw new Error('Your signer does not support encryption (NIP-44)');
+    }
+    return this.activeSigner.nip44Encrypt(pubkey, plaintext);
+  }
+
+  async nip44Decrypt(pubkey: string, ciphertext: string): Promise<string> {
+    if (!this.activeSigner?.nip44Decrypt) {
+      throw new Error('Your signer does not support encryption (NIP-44)');
+    }
+    return this.activeSigner.nip44Decrypt(pubkey, ciphertext);
   }
 
   /**

@@ -83,7 +83,9 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
   // Wallet picker (our own modal, rendered below). connect() opens it and holds
   // the caller's resolver here until it closes.
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
+  const [walletModalView, setWalletModalView] = useState<'picker' | 'offer-backup'>('picker');
   const walletModalResolveRef = useRef<(() => void) | null>(null);
+  const backupOfferCheckedRef = useRef(false);
 
   useEffect(() => {
     // Initialize Bitcoin Connect on component mount (client-side only)
@@ -475,6 +477,7 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
       walletModalResolveRef.current = null;
     }
 
+    setWalletModalView('picker');
     setIsWalletModalOpen(true);
 
     return new Promise<void>((resolve) => {
@@ -484,11 +487,96 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
 
   const closeWalletModal = useCallback(() => {
     setIsWalletModalOpen(false);
+    setWalletModalView('picker');
     walletModalResolveRef.current?.();
     walletModalResolveRef.current = null;
   }, []);
 
+  /**
+   * Post-login "back up your wallet?" offer.
+   *
+   * A user can connect a wallet while signed out (boosting works without Nostr —
+   * auth only gates posting the boost note), so the offer can't live only at
+   * connect time. Login flows drop a flag before their reload; this picks it up
+   * and applies the real conditions, so the feature isn't left to be discovered.
+   *
+   * Every one of these gates matters:
+   *   - an NWC wallet is connected  → extension connections have no string to save
+   *   - the signer can encrypt      → NIP-55 and read-only nip05 cannot
+   *   - the user hasn't declined    → otherwise it asks on every single login
+   *   - no backup exists already    → relay query, no signer prompt
+   */
+  useEffect(() => {
+    if (backupOfferCheckedRef.current) return;
+    if (typeof window === 'undefined') return;
+    if (!isNostrAuthenticated || !nostrUser?.nostrPubkey) return;
+
+    backupOfferCheckedRef.current = true;
+    const pubkey = nostrUser.nostrPubkey;
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const { PENDING_NWC_BACKUP_OFFER_KEY } = await import('@/lib/nostr/auth-utils');
+        const pending = localStorage.getItem(PENDING_NWC_BACKUP_OFFER_KEY);
+        if (!pending || pending !== pubkey) return;
+        localStorage.removeItem(PENDING_NWC_BACKUP_OFFER_KEY);
+
+        const { getConnectedNwcUri, hasDeclinedBackup, hasNwcBackup } = await import(
+          '@/lib/nostr/nwc-backup'
+        );
+        if (!getConnectedNwcUri()) return;
+        if (hasDeclinedBackup(pubkey)) return;
+
+        const { getUnifiedSigner } = await import('@/lib/nostr/signer');
+        const signer = getUnifiedSigner();
+        await signer.ensureInitialized();
+        if (!signer.supportsNip44()) return;
+
+        if (await hasNwcBackup(pubkey)) return;
+        if (cancelled) return;
+
+        setWalletModalView('offer-backup');
+        setIsWalletModalOpen(true);
+      } catch (err) {
+        // Never let this surface — it's an optional nicety on top of login.
+        console.warn('⚠️ NWC backup offer check failed:', err);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isNostrAuthenticated, nostrUser?.nostrPubkey]);
+
+  /**
+   * Remove the Nostr backup when the user disconnects, per the chosen policy.
+   *
+   * Best-effort and deliberately fire-and-forget-ish: a dead relay or a declined
+   * signature must never leave the wallet still connected locally. Gated on the
+   * local flag so users who never saved a backup get no signer prompt at all.
+   *
+   * Known consequence, accepted: disconnecting on one device tombstones the
+   * backup for every device. "Switch Wallet" runs disconnect → connect, so
+   * switching also clears the old backup; the newly connected wallet re-offers.
+   */
+  const removeBackupOnDisconnect = async () => {
+    try {
+      const pubkey = nostrUser?.nostrPubkey;
+      if (!pubkey) return;
+      const { hasLocalBackupFlag, deleteNwcBackup } = await import('@/lib/nostr/nwc-backup');
+      if (!hasLocalBackupFlag(pubkey)) return;
+      await deleteNwcBackup(pubkey);
+      console.log('🗑️ Removed encrypted NWC backup from Nostr');
+    } catch (err) {
+      console.warn('⚠️ Could not remove NWC backup (wallet still disconnected locally):', err);
+    }
+  };
+
   const disconnectWallet = async () => {
+    // Before the disconnect clears bc:config — the tombstone needs the signer,
+    // not the config, but ordering keeps the intent obvious.
+    await removeBackupOnDisconnect();
     try {
       console.log('🔌 Disconnecting wallet...');
       const bitcoinConnect = await import('@getalby/bitcoin-connect');
@@ -797,7 +885,11 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
       {/* Rendered here so every connect() entry point — UserMenu on both
           breakpoints, LightningWalletButton, BoostButton — shares one picker.
           This provider wraps the whole app via layout.tsx → LightningWrapper. */}
-      <WalletConnectModal isOpen={isWalletModalOpen} onClose={closeWalletModal} />
+      <WalletConnectModal
+        isOpen={isWalletModalOpen}
+        onClose={closeWalletModal}
+        initialView={walletModalView}
+      />
     </BitcoinConnectContext.Provider>
   );
 }

@@ -153,6 +153,30 @@ export function markFavoritesSyncPending(userId: string): void {
 }
 
 /**
+ * Key used to offer an encrypted NWC backup after the post-login reload.
+ *
+ * A user can connect a Lightning wallet while signed out — boosting works
+ * without Nostr, it only gates posting the boost note — so the save offer
+ * can't live solely at connect time or those users would never see it.
+ * BitcoinConnectProvider picks this up and decides whether the offer applies.
+ */
+export const PENDING_NWC_BACKUP_OFFER_KEY = 'nostr_pending_nwc_backup_offer';
+
+/**
+ * Mark that the NWC-backup offer should be considered after the next page
+ * load. Only a *candidate* — the provider still checks that a wallet is
+ * actually connected, that the signer can encrypt, that no backup exists, and
+ * that this user hasn't already declined.
+ */
+export function markNwcBackupOfferPending(pubkey: string): void {
+  try {
+    localStorage.setItem(PENDING_NWC_BACKUP_OFFER_KEY, pubkey);
+  } catch (err) {
+    console.warn('⚠️ Failed to mark NWC backup offer pending:', err);
+  }
+}
+
+/**
  * Start favorites sync immediately (fire and forget). Prefer
  * markFavoritesSyncPending() in login flows that reload the page.
  */
@@ -189,6 +213,9 @@ export async function completeLogin(
   // Defer sync until after the reload — NostrContext picks this up once the
   // page is stable and runs sync then.
   markFavoritesSyncPending(user.id);
+  // Likewise defer the "back up your wallet?" question. Candidate only; the
+  // provider applies the real conditions after the reload.
+  markNwcBackupOfferPending(user.nostrPubkey);
   onClose();
   await preserveWalletConnection();
   setTimeout(() => window.location.reload(), reloadDelay);
