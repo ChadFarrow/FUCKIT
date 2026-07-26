@@ -14,6 +14,8 @@ npx tsx --test lib/album-detail-routes.test.ts      # which routes render AlbumD
 npx tsx --test lib/android-battery-hint.test.ts
 npx tsx --test lib/cdn-utils.test.ts                # animated-artwork detection
 npx tsx --test lib/url-utils.test.ts                # feed URL variants (podping lookup ladder)
+npx tsx --test lib/nostr/nwc-backup.test.ts         # NWC backup pure helpers
+node lib/nostr/nwc-backup.browser-probe.mjs         # wallet picker + backup flows (needs `npm run dev`)
 npx tsx --test lib/*.test.ts                        # all of the above
 
 # Android / zapstore (requires JDK 21 + ~/.stablekraft-android.env) — see project_zapstore_distribution.md memory
@@ -409,6 +411,7 @@ Populate: `curl https://stablekraft.app/api/playlist/[id]?refresh`
 ### Nostr Publish Queue & Relay Management
 Favoriting saves to DB immediately, queues Nostr publish (500ms debounce). **Always call `disconnectAll()`** after publishing or WebSocket connections leak. Key files: `lib/nostr/publish-queue.ts`, `lib/nostr/relay.ts`.
 
+- **`getDefaultRelays()` no longer includes `wss://relay.nsec.app`** (dropped 2026-07-26). It sat first in the list, labelled "more reliable", while returning **502** — costing ~0.5–1.4s on every relay operation. `filterReachableRelays()` only pattern-matches localhost-style URLs, so nothing prunes a dead host automatically; check a relay before adding one. The same URL was also removed from `nip46-client`'s backup-relay list and from the help text that told users to point their bunker at it.
 - **NIP-01 tag validation**: `createFavoriteEventTemplate` (in `lib/nostr/favorites.ts`) throws if `itemId` is falsy so we never publish events with `["d", null]` tags — strict relays (nsec.app) reject them. Validate all required tag values at build time, not publish time.
 - **Dead-socket filtering** (`RelayManager.publish`): write relays filtered by `relay.connected !== false` before publishing. Each `relay.publish()` wrapped in `Promise.resolve().then(...)` so sync throws flow through `Promise.allSettled`.
 - **Stale-signer recovery** (`flushQueue`): routes through `ensureSignerAvailable()` from `signer-reconnect.ts` (same wrapper `BoostButton.tsx` uses). Do **not** revert to the manual `isAvailable() + NIP-55-only` branch — it silently dropped favorites on stale singleton signers.
@@ -432,6 +435,34 @@ Uses `window.history.length`. Do NOT use `document.referrer` — doesn't update 
 **Four routes render `AlbumDetailClient`**: `/album/[id]`, `/podcast/[id]`, `/album/beach-trash/demo`, and `/sandbox/album`. A change to that component lands on all four — and route-matching helpers that special-case the album page (e.g. `isAlbumDetailRoute` in `lib/album-detail-routes.ts`, which hides the floating buttons) must cover all four, not just the obvious two. Both copies of that predicate missed `/sandbox/album` before it was extracted.
 
 **The `history.length` heuristic here is web-only — do not copy it into the Android back handler.** `AndroidBackButton` uses the native `canGoBack` payload instead, because `history.length` counts *total* entries and never shrinks, so it still reads `> 1` after you've stepped back to the first page. See the Android Hardware Back Button section.
+
+### Wallet Connection UI — our own picker, not the Bitcoin Connect modal
+`@getalby/bitcoin-connect` is still the transport (connectors, persistence, `onConnected`), but its **modal is never shown**. `components/Lightning/WalletConnectModal.tsx` replaces it, rendered once by `BitcoinConnectProvider` next to `{children}` so every `connect()` entry point shares one picker.
+
+Why: bitcoin-connect's modal listed ~10 wallet tiles, but every tile except the browser extension resolves to the **same `NWCConnector`** (`dist/connectors/index.d.ts`) — they're setup instructions for pasting an NWC string, dressed as ten technologies. It also offered wallets whose relay can't keysend (Primal), so users committed and then boosts failed.
+
+- **Two rows only**: "Browser Extension" (rendered only when `window.webln` exists, so mobile collapses to one row) → `connect({connectorType:'extension.generic'})`, and "Nostr Wallet Connect" → `connectNWC(uri)`. A third "Restore from Nostr" row appears when the session could restore (see below).
+- **The library's connect functions never reject.** They `catch` internally, log, set `store.error`, and call `disconnect()`; the public `connect` is even typed `=> void`. Success is only observable as "`onConnected` fired". The modal races an `onConnected` subscription against a 30s timer — and **`onConnected` fires SYNCHRONOUSLY at subscribe time if a provider already exists**, so the first (immediate) fire must be ignored or opening the modal while connected reports instant success.
+- **`connect()` in the provider only owns the view.** It opens the modal and returns a promise resolved when it closes — the same fire-and-forget contract callers already had (`launchModal()` returned void). Its resolver lives in a ref and is settled on unmount so `BoostButton`'s `await connect()` can't hang.
+- **`requestProvider()` LAUNCHES the Bitcoin Connect modal** when no provider exists. The post-Nostr-login restore path must therefore check `localStorage['bc:config']` first — not `getConnectorConfig()`, which is still empty while the library's own module-load reconnect is in flight.
+- **"Paste from clipboard" is touch-only** (`pointer: coarse`). `navigator.clipboard.readText()` forces a browser confirmation (Firefox/Safari show their own Paste button), making it two clicks where ⌘V is one keystroke. It also needs a **secure context**, so it is absent over `http://<lan-ip>` — that's not the gate misfiring.
+- Verify with `node lib/nostr/nwc-backup.browser-probe.mjs` against a running dev server.
+
+### Encrypted NWC Backup on Nostr (`lib/nostr/nwc-backup.ts`)
+Publishes the user's NWC connection string, NIP-44 encrypted to their own key, as a replaceable NIP-78 event (**kind 30078**, d-tag **`stablekraft:wallet:nwc`**, content = encrypt-to-self of `{"uri":…}`) so signing in on another device restores the wallet without re-pasting. Save is **opt-in and asked for**; restore after sign-in is **automatic**.
+
+Every one of these was learned by breaking it — do not "simplify" any of them away:
+
+- **`RelayManager.publish()` only reaches relays you `connect()`ed first.** It iterates `this.relays`, which `connect()` populates. Skip that and `writeRelays` is empty, `publish()` resolves with `[]`, and the unchecked `await` looks like success while the event goes **nowhere**. That shipped, and made "Saved" a lie for a full round of testing. Always connect first, then assert `results.some(r => r.status === 'fulfilled')` — `publish()` returns settled results and never rejects, so an unchecked await cannot tell "stored" from "refused".
+- **`window.nostr.nip44` is NOT proof the session can encrypt.** `nostr-login` installs a shim advertising `encrypt`/`decrypt` with no signer behind it; calling one opens its *"Welcome to Nostr!"* dialog instead (`noBanner: true` doesn't suppress that — it only hides the passive banner). Gate the window path on `nostr_login_type === 'extension'`; for nip46 use `UnifiedSigner`, which holds the live Amber/Primal connection.
+- **A relay query has three outcomes, not two.** `querySync` waits for EOSE from every relay and dead ones never send it, so an outer `Promise.race` timeout **discards events healthy relays already returned** — an existing backup then reads as "none" and the UI asks the user to re-save it. Use `querySync`'s `maxWait`, and keep `'saved' | 'none' | 'unknown'` distinct: never cache an `'unknown'`, never render it as "Not saved", never offer to re-save on it.
+- **NIP-44 through a remote signer needs ~120s, not 10s** — a human taps Approve on their phone. The outer `withTimeout` sits at 130s, *outside* `withSignerNudge`'s 125s hard fail, which is itself outside `nip46-client`'s 120s request timeout: innermost has the most specific error, so it must fire first.
+- **Disconnect must NOT tombstone the backup.** It used to. With a wallet connected the menu offers Switch / NWC Backup / Disconnect and no "Connect", so the only route to the restore row *is* disconnect — the backup was always destroyed before it could be used, on every device. Removal lives solely on the account-menu row.
+- **Only clear `wallet_manually_disconnected` when actually restoring.** It's also read by the WebLN extension auto-connect effect, so clearing it before confirming a backup exists silently reconnected an extension wallet for a user who had deliberately disconnected. Auto-restore is otherwise **not** gated on that flag — it never expires, so gating on it killed restore on that device forever.
+- **Signer readiness is not instant.** A NIP-07 extension is synchronous, NIP-46 is not: after the post-login reload the client rebuilds and reconnects over seconds. Route through `ensureSignerAvailable()` and retry (~15s) before concluding a signer "can't" encrypt; keep the pending flag on transient failure so the next load retries, and consume it only when the answer is real.
+- **Known limit**: the tombstone reaches the relays we publish to *now*, which need not be where the original landed — hence "removed (where reachable)".
+
+Entry points: the picker's restore row, the offer after an NWC paste, a post-login offer/auto-restore driven by `markNwcBackupOfferPending` (`lib/nostr/auth-utils.ts`, same deferral pattern as favorites sync), and the account-menu row (Switch Wallet → **NWC Backup** → Disconnect Wallet, destructive last).
 
 ### Lightning Wallet Detection
 **Keysend capability** (`components/Lightning/BitcoinConnectProvider.tsx`): two signals combined with **OR**. Signal A = WebLN `GetInfoResponse.methods` (NWC wallets populate with `pay_keysend`/`multi_pay_keysend`, extensions with `keysend`). Signal B = provider-type whitelist (`alby`/`alby-hub`/`extension`/`coinos`) from `detectWalletProviderType()`. Either is sufficient.

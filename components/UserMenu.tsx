@@ -167,7 +167,10 @@ export default function UserMenu({ className = '' }: UserMenuProps) {
       const { deleteNwcBackup } = await import('@/lib/nostr/nwc-backup');
       await deleteNwcBackup(pubkey);
       setBackupStatus('none');
-      toast.success('Backup removed from Nostr');
+      // "where reachable" is not hedging for its own sake: the tombstone only
+      // reaches the relays we publish to now, which need not be every relay the
+      // original landed on.
+      toast.success('Backup removed from Nostr (where reachable)');
     } catch (error) {
       console.error('Failed to remove NWC backup:', error);
       setBackupStatus('saved');

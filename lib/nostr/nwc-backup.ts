@@ -46,7 +46,12 @@ export const NWC_BACKUP_DECLINED_KEY = 'sk_nwc_backup_declined';
  * signers: nip46-client's own request timeout and withSignerNudge's 125s hard
  * fail. The nudge toast (below) appears after 4s so the wait is never silent.
  */
-const NIP44_TIMEOUT_MS = 120_000;
+// Sits OUTSIDE withSignerNudge's 125s hard fail, which itself sits outside
+// nip46-client's 120s request timeout. That ordering is deliberate and
+// documented: the innermost layer has the most specific error, so it must be
+// the one that fires. An outer wrapper at exactly 120s raced the client and
+// replaced its diagnosis with a bare "timed out".
+const NIP44_TIMEOUT_MS = 130_000;
 
 const RELAY_QUERY_TIMEOUT_MS = 8_000;
 const MAX_READ_RELAYS = 20;
@@ -112,12 +117,18 @@ export function getConnectedNwcUri(): string | null {
 }
 
 function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  // The timer is cleared once the race settles. Without this every call left a
+  // pending setTimeout — and its closure — alive for the full timeout, which at
+  // signer timescales is over two minutes.
+  let timer: ReturnType<typeof setTimeout> | undefined;
   return Promise.race([
     promise,
-    new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error(`${label} timed out`)), ms)
-    ),
-  ]);
+    new Promise<never>((_, reject) => {
+      timer = setTimeout(() => reject(new Error(`${label} timed out`)), ms);
+    }),
+  ]).finally(() => {
+    if (timer !== undefined) clearTimeout(timer);
+  }) as Promise<T>;
 }
 
 /**

@@ -498,6 +498,16 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
     setIsWalletModalOpen(true);
   }, []);
 
+  // BoostButton and UserMenu `await connect()`, whose promise is held in a ref
+  // until the modal closes. If the provider unmounts while it's open that
+  // resolver is dropped and the caller waits forever, so settle it here.
+  useEffect(() => {
+    return () => {
+      walletModalResolveRef.current?.();
+      walletModalResolveRef.current = null;
+    };
+  }, []);
+
   const closeWalletModal = useCallback(() => {
     setIsWalletModalOpen(false);
     setWalletModalView('picker');
@@ -512,9 +522,8 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
    * NO wallet on this device → AUTO-RESTORE the backup.
    *   This is the point of the feature: sign in on a new phone or browser and
    *   your wallet is simply there, without digging the connection string out of
-   *   Alby Hub again. Skipped if the user deliberately disconnected on this
-   *   device (`wallet_manually_disconnected`), matching the existing rule that
-   *   an explicit disconnect is never undone automatically.
+   *   Alby Hub again. Deliberately NOT gated on `wallet_manually_disconnected`
+   *   — see the comment at that branch for why gating on it broke the feature.
    *
    * A wallet IS connected but isn't backed up → OFFER to save it.
    *   Connecting a wallet while signed out is common (boosting works without
@@ -527,13 +536,16 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
   useEffect(() => {
     if (backupOfferCheckedRef.current) return;
     if (typeof window === 'undefined') return;
-    // One line so a support session can see WHY nothing happened, instead of
-    // silence. Every early return below this point logs its reason.
-    console.log('🔐 NWC backup check:', {
-      authenticated: isNostrAuthenticated,
-      hasPubkey: !!nostrUser?.nostrPubkey,
-      flagPresent: !!localStorage.getItem('nostr_pending_nwc_backup_offer'),
-    });
+    // Only log when there is actually a pending offer to act on — otherwise this
+    // fires on every page load for every visitor. Every early return below this
+    // point logs its reason, so a support session can still see WHY nothing
+    // happened rather than facing silence.
+    if (localStorage.getItem('nostr_pending_nwc_backup_offer')) {
+      console.log('🔐 NWC backup check:', {
+        authenticated: isNostrAuthenticated,
+        hasPubkey: !!nostrUser?.nostrPubkey,
+      });
+    }
     if (!isNostrAuthenticated || !nostrUser?.nostrPubkey) return;
 
     backupOfferCheckedRef.current = true;
@@ -605,14 +617,6 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
           // auto-restore on that device forever. Signing out and back in then
           // left the user with no wallet and no explanation, which is precisely
           // what this feature exists to prevent.
-          //
-          // Signing in is itself an explicit user action, and the flag's real
-          // job is narrower: stopping the WebLN extension auto-connect from
-          // overriding a user who just disconnected. Clear it here for the same
-          // reason connect() does.
-          localStorage.setItem('wallet_manually_disconnected', 'false');
-          setManuallyDisconnected(false);
-
           const status = await checkBackupExists(pubkey);
           if (status !== 'saved') {
             console.log(
@@ -657,6 +661,15 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
             return;
           }
           if (cancelled) return;
+
+          // Clear the manual-disconnect flag HERE, not earlier. It's also read by
+          // the WebLN extension auto-connect effect above, so clearing it before
+          // we knew a backup existed meant an extension user who deliberately
+          // disconnected got silently reconnected on their next sign-in even when
+          // there was no backup at all — breaking behaviour that predates this
+          // feature. Only an actual restore should reset it.
+          localStorage.setItem('wallet_manually_disconnected', 'false');
+          setManuallyDisconnected(false);
 
           const { connectNWC } = await import('@getalby/bitcoin-connect');
           connectNWC(uri);
