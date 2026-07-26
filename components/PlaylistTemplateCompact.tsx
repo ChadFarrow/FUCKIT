@@ -16,6 +16,7 @@ import { toast } from '@/components/Toast';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { generateAlbumSlug } from '@/lib/url-utils';
 import AppLayout from '@/components/AppLayout';
+import HomeButton from '@/components/HomeButton';
 
 interface PlaylistTemplateCompactProps {
   config: PlaylistConfig;
@@ -786,15 +787,27 @@ export default function PlaylistTemplateCompact({ config }: PlaylistTemplateComp
 
       {/* Content overlay - positioned above background like album pages */}
       <div className="min-h-screen lg:h-full text-white relative z-10 lg:overflow-hidden">
-        <div className="container mx-auto px-6 pt-6 pb-40 lg:pb-8 lg:h-full lg:flex lg:flex-col">
+        {/* Top padding must carry the safe-area inset. A standalone PWA draws under the
+            status bar, so a bare pt-6 (24px) put "Back to Playlists" under the clock and
+            Dynamic Island on a notched iPhone (59px inset). Safari's own chrome hides
+            this, which is why it only showed up once installed to the home screen. The
+            24px is the old pt-6 value, so devices reporting no inset are unchanged. */}
+        <div className="container mx-auto px-6 pt-[calc(var(--sk-safe-top)+24px)] pb-40 lg:pb-8 lg:h-full lg:flex lg:flex-col">
           <div className="lg:flex-shrink-0">
-            <Link
-              href="/?filter=playlist"
-              className="inline-flex items-center gap-2 text-gray-400 hover:text-stablekraft-teal transition-colors text-sm mb-4"
-            >
-              <ChevronLeft className="w-4 h-4" />
-              <span>Back to Playlists</span>
-            </Link>
+            {/* Back walks to the playlist list; Home escapes the stack entirely. Same
+                pairing as album/publisher/downloads — see HomeButton. The row carries
+                the -ml-2 and mb-4 so the buttons' own p-2 doesn't misalign them. */}
+            <div className="mb-4 -ml-2 flex items-center gap-1">
+              <Link
+                href="/?filter=playlist"
+                className="flex items-center gap-2 text-gray-400 hover:text-white transition-all duration-200 p-2 rounded-lg hover:bg-white/5 active:scale-95"
+                aria-label="Back to playlists"
+              >
+                <ChevronLeft className="h-5 w-5" />
+                <span className="text-sm font-medium">Back to Playlists</span>
+              </Link>
+              <HomeButton />
+            </div>
           </div>
 
           {/* Main Content - Two Column Layout */}
