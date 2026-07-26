@@ -49,6 +49,8 @@ interface BitcoinConnectContextType {
   makeInvoice: (amount: number, memo?: string) => Promise<{ invoice?: string; error?: string }>;
   isLoading: boolean;
   supportsKeysend: boolean;
+  /** Open the wallet modal straight on the "save this wallet to Nostr?" step. */
+  openBackupOffer: () => void;
   // Enhanced wallet info
   walletInfo: WalletInfo | null;
   balance: number | null;
@@ -485,6 +487,17 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
     });
   };
 
+  /**
+   * Open the modal on the backup offer directly. The account menu uses this so
+   * an already-connected, already-signed-in user can reach the feature — they
+   * have no other trigger, since the offer otherwise fires only on a fresh NWC
+   * paste or a fresh login.
+   */
+  const openBackupOffer = useCallback(() => {
+    setWalletModalView('offer-backup');
+    setIsWalletModalOpen(true);
+  }, []);
+
   const closeWalletModal = useCallback(() => {
     setIsWalletModalOpen(false);
     setWalletModalView('picker');
@@ -873,6 +886,7 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
         makeInvoice,
         isLoading,
         supportsKeysend,
+        openBackupOffer,
         // Enhanced wallet info
         walletInfo,
         balance,

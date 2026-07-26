@@ -5,12 +5,14 @@ import { createPortal } from 'react-dom';
 import { Puzzle, Zap, ClipboardPaste, ShieldCheck, RotateCcw } from 'lucide-react';
 import { useNostr } from '@/contexts/NostrContext';
 import {
-  hasNwcBackup,
+  checkBackupExists,
+  getCachedBackupExists,
+  setCachedBackupExists,
   fetchNwcBackup,
   publishNwcBackup,
   getConnectedNwcUri,
   markBackupDeclined,
-  hasDeclinedBackup,
+  signerSupportsNip44,
 } from '@/lib/nostr/nwc-backup';
 
 /**
@@ -36,12 +38,6 @@ type View = 'picker' | 'nwc' | 'offer-backup';
 // long we wait before calling it a failure. NWC connects go out over a relay, so
 // it needs to be generous.
 const CONNECT_TIMEOUT_MS = 30_000;
-
-/**
- * Existence of a Nostr backup, cached per pubkey for the page's lifetime, so
- * reopening the modal doesn't re-query relays. Module scope survives remounts.
- */
-const backupExistsCache = new Map<string, boolean>();
 
 interface WalletConnectModalProps {
   isOpen: boolean;
@@ -96,14 +92,8 @@ export function WalletConnectModal({ isOpen, onClose, initialView = 'picker' }: 
     }
     let cancelled = false;
     (async () => {
-      try {
-        const { getUnifiedSigner } = await import('@/lib/nostr/signer');
-        const signer = getUnifiedSigner();
-        await signer.ensureInitialized();
-        if (!cancelled) setCanBackup(signer.supportsNip44());
-      } catch {
-        if (!cancelled) setCanBackup(false);
-      }
+      const supported = await signerSupportsNip44();
+      if (!cancelled) setCanBackup(supported);
     })();
     return () => { cancelled = true; };
   }, [isOpen, isAuthenticated, pubkey]);
@@ -114,7 +104,7 @@ export function WalletConnectModal({ isOpen, onClose, initialView = 'picker' }: 
   // only if they tap Connect.
   useEffect(() => {
     if (!isOpen || view !== 'picker' || !canBackup || !pubkey) return;
-    const cached = backupExistsCache.get(pubkey);
+    const cached = getCachedBackupExists(pubkey);
     if (cached !== undefined) {
       setBackupFound(cached);
       return;
@@ -122,8 +112,7 @@ export function WalletConnectModal({ isOpen, onClose, initialView = 'picker' }: 
     let cancelled = false;
     (async () => {
       try {
-        const found = await hasNwcBackup(pubkey);
-        backupExistsCache.set(pubkey, found);
+        const found = await checkBackupExists(pubkey);
         if (!cancelled) setBackupFound(found);
       } catch {
         if (!cancelled) setBackupFound(false);
@@ -146,9 +135,9 @@ export function WalletConnectModal({ isOpen, onClose, initialView = 'picker' }: 
    *
    * `onConnected` fires SYNCHRONOUSLY at subscribe time if a provider is already
    * available. That would report success for a connection attempt that hasn't
-   * happened yet (e.g. "Switch Wallet" from LightningWalletButton, which opens
-   * this modal without disconnecting first). The `ignoreImmediate` flag drops
-   * that synchronous fire and only accepts a later one.
+   * happened yet, any time this modal is opened while a wallet is still
+   * connected. The `ignoreImmediate` flag drops that synchronous fire and only
+   * accepts a later one.
    */
   const waitForConnection = useCallback(async (): Promise<boolean> => {
     const { onConnected } = await import('@getalby/bitcoin-connect');
@@ -248,8 +237,9 @@ export function WalletConnectModal({ isOpen, onClose, initialView = 'picker' }: 
     setError(null);
     setIsSaving(true);
     try {
+      // publishNwcBackup updates the shared existence cache itself, so the
+      // account menu's status row reflects this without another relay query.
       await publishNwcBackup(pubkey, uri);
-      backupExistsCache.set(pubkey, true);
       onClose();
     } catch (err) {
       console.error('NWC backup failed:', err);
@@ -274,7 +264,7 @@ export function WalletConnectModal({ isOpen, onClose, initialView = 'picker' }: 
       const uri = await fetchNwcBackup(pubkey);
       if (!uri) {
         setError('Could not read your saved wallet. It may have been removed.');
-        backupExistsCache.set(pubkey, false);
+        setCachedBackupExists(pubkey, false);
         setBackupFound(false);
         return;
       }

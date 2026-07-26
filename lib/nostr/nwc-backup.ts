@@ -157,6 +157,50 @@ export async function hasNwcBackup(pubkey: string): Promise<boolean> {
 }
 
 /**
+ * Backup existence, cached per pubkey for the page's lifetime. Module scope so
+ * it survives component remounts — the wallet modal and the account menu both
+ * ask, and neither should re-hit relays for an answer we already have.
+ */
+const backupExistsCache = new Map<string, boolean>();
+
+export function getCachedBackupExists(pubkey: string): boolean | undefined {
+  return backupExistsCache.get(pubkey);
+}
+
+export function setCachedBackupExists(pubkey: string, exists: boolean): void {
+  backupExistsCache.set(pubkey, exists);
+}
+
+export async function checkBackupExists(
+  pubkey: string,
+  options: { force?: boolean } = {}
+): Promise<boolean> {
+  if (!options.force) {
+    const cached = backupExistsCache.get(pubkey);
+    if (cached !== undefined) return cached;
+  }
+  const exists = await hasNwcBackup(pubkey);
+  backupExistsCache.set(pubkey, exists);
+  return exists;
+}
+
+/**
+ * Can the current session encrypt at all? False for NIP-55, for a read-only
+ * nip05 session, and for extensions without window.nostr.nip44. Callers should
+ * hide the backup UI rather than let it fail at use time.
+ */
+export async function signerSupportsNip44(): Promise<boolean> {
+  try {
+    const { getUnifiedSigner } = await import('./signer');
+    const signer = getUnifiedSigner();
+    await signer.ensureInitialized();
+    return signer.supportsNip44();
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Fetch and decrypt the stored connection string. Prompts the signer, so only
  * call this after the user has explicitly asked to restore.
  */
@@ -215,6 +259,9 @@ export async function publishNwcBackup(pubkey: string, uri: string): Promise<voi
   );
   await signAndPublish(pubkey, ciphertext);
 
+  // Keep the cache honest here rather than at each call site — the modal and the
+  // account menu both read it, and a stale 'none' would offer to save twice.
+  setCachedBackupExists(pubkey, true);
   if (typeof window !== 'undefined') {
     localStorage.setItem(NWC_BACKUP_PUBKEY_KEY, pubkey);
   }
@@ -228,6 +275,7 @@ export async function publishNwcBackup(pubkey: string, uri: string): Promise<voi
  */
 export async function deleteNwcBackup(pubkey: string): Promise<void> {
   await signAndPublish(pubkey, '');
+  setCachedBackupExists(pubkey, false);
   if (typeof window !== 'undefined') {
     localStorage.removeItem(NWC_BACKUP_PUBKEY_KEY);
   }

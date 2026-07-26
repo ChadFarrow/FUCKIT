@@ -1,13 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import dynamic from 'next/dynamic';
 import { useNostr } from '@/contexts/NostrContext';
 import { useBitcoinConnect } from '@/components/Lightning/BitcoinConnectProvider';
 import { useAudio } from '@/contexts/AudioContext';
 import Link from 'next/link';
-import { Menu, Zap, Settings, LogOut, User, Wallet, Info, Download } from 'lucide-react';
+import { Menu, Zap, Settings, LogOut, User, Wallet, Info, Download, ShieldCheck } from 'lucide-react';
+import { toast } from '@/components/Toast';
 import { WalletInfoDisplay } from '@/components/Lightning/WalletInfoDisplay';
 
 // Lazy load LoginModal
@@ -28,7 +29,15 @@ interface UserMenuProps {
 
 export default function UserMenu({ className = '' }: UserMenuProps) {
   const { user, isAuthenticated, logout } = useNostr();
-  const { isConnected, connect, disconnect, isLoading } = useBitcoinConnect();
+  const { isConnected, connect, disconnect, isLoading, openBackupOffer } = useBitcoinConnect();
+
+  // Nostr backup status for the connected NWC wallet. 'hidden' means the row
+  // isn't applicable at all: no NWC string to save (an extension connection has
+  // none), not signed in, or a signer that can't encrypt (NIP-55 / read-only
+  // nip05 / an extension without window.nostr.nip44).
+  const [backupStatus, setBackupStatus] = useState<
+    'hidden' | 'checking' | 'saved' | 'none' | 'saving' | 'removing'
+  >('hidden');
   const { setFullscreenMode } = useAudio();
   const [showDropdown, setShowDropdown] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -87,6 +96,74 @@ export default function UserMenu({ className = '' }: UserMenuProps) {
     } catch (error) {
       console.error('Failed to switch wallet:', error);
       alert('Failed to switch wallet. Please try again.');
+    }
+  };
+
+  /**
+   * Resolve backup status when the menu opens.
+   *
+   * Deliberately triggered by opening the menu rather than on page load: the
+   * check hits relays, and an already-connected, already-signed-in user would
+   * otherwise pay for it on every single load. Opening the menu is a user
+   * action, and the result is cached per pubkey for the rest of the session.
+   */
+  const refreshBackupStatus = useCallback(async (force = false) => {
+    try {
+      const pubkey = user?.nostrPubkey;
+      if (!isConnected || !isAuthenticated || !pubkey) {
+        setBackupStatus('hidden');
+        return;
+      }
+      const { getConnectedNwcUri, signerSupportsNip44, getCachedBackupExists, checkBackupExists } =
+        await import('@/lib/nostr/nwc-backup');
+
+      // An extension connection has no connection string, so there is nothing
+      // this row could back up.
+      if (!getConnectedNwcUri() || !(await signerSupportsNip44())) {
+        setBackupStatus('hidden');
+        return;
+      }
+
+      const cached = force ? undefined : getCachedBackupExists(pubkey);
+      if (cached !== undefined) {
+        setBackupStatus(cached ? 'saved' : 'none');
+        return;
+      }
+      setBackupStatus('checking');
+      const exists = await checkBackupExists(pubkey, { force });
+      setBackupStatus(exists ? 'saved' : 'none');
+    } catch {
+      setBackupStatus('hidden');
+    }
+  }, [isConnected, isAuthenticated, user?.nostrPubkey]);
+
+  useEffect(() => {
+    if (!showDropdown) return;
+    refreshBackupStatus();
+  }, [showDropdown, refreshBackupStatus]);
+
+  const handleBackupAction = async () => {
+    if (backupStatus === 'none') {
+      // Reuse the same offer screen the connect flow and post-login prompt use,
+      // so the explanation and the consent are worded identically everywhere.
+      setShowDropdown(false);
+      openBackupOffer();
+      return;
+    }
+    if (backupStatus !== 'saved') return;
+
+    const pubkey = user?.nostrPubkey;
+    if (!pubkey) return;
+    setBackupStatus('removing');
+    try {
+      const { deleteNwcBackup } = await import('@/lib/nostr/nwc-backup');
+      await deleteNwcBackup(pubkey);
+      setBackupStatus('none');
+      toast.success('Backup removed from Nostr');
+    } catch (error) {
+      console.error('Failed to remove NWC backup:', error);
+      setBackupStatus('saved');
+      toast.error('Could not remove the backup. Try again.');
     }
   };
 
@@ -214,6 +291,33 @@ export default function UserMenu({ className = '' }: UserMenuProps) {
                           <LogOut className="w-4 h-4" />
                           Disconnect Wallet
                         </button>
+
+                        {/* Third wallet action: the Nostr backup, showing its own
+                            status. This is the only entry point for someone
+                            already signed in with a wallet already connected —
+                            the offer otherwise fires only on a fresh NWC paste
+                            or a fresh login, so without this row existing users
+                            would never come across the feature. */}
+                        {backupStatus !== 'hidden' && (
+                          <button
+                            onClick={handleBackupAction}
+                            disabled={backupStatus === 'checking' || backupStatus === 'removing'}
+                            className="w-full flex items-center gap-3 px-3 py-2 text-left text-gray-300 hover:bg-gray-800 rounded-lg transition-colors disabled:opacity-60 disabled:cursor-default"
+                          >
+                            <ShieldCheck className="w-4 h-4 flex-shrink-0" />
+                            <span className="flex-1 min-w-0">Nostr Backup</span>
+                            <span
+                              className={`text-xs flex-shrink-0 ${
+                                backupStatus === 'saved' ? 'text-green-400' : 'text-gray-500'
+                              }`}
+                            >
+                              {backupStatus === 'checking' && 'Checking…'}
+                              {backupStatus === 'removing' && 'Removing…'}
+                              {backupStatus === 'saved' && 'Saved'}
+                              {backupStatus === 'none' && 'Not saved'}
+                            </span>
+                          </button>
+                        )}
                       </div>
                     </div>
                   ) : (
