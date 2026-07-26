@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, Suspense } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback, Suspense } from 'react';
 import Link from 'next/link';
 import ArtworkImage from '@/components/ArtworkImage';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -24,9 +24,23 @@ import BackButton from '@/components/BackButton';
 import HomeButton from '@/components/HomeButton';
 import { useAutoSyncFavorites } from '@/hooks/useAutoSyncFavorites';
 
-// Cache key for community favorites in sessionStorage
-const COMMUNITY_CACHE_KEY = 'community-favorites-cache';
-const COMMUNITY_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+// Cache key for community favorites in sessionStorage. v2 because the payload is now
+// grouped by person — a stale v1 envelope would deserialize into the wrong shape.
+// Scoped per-pubkey because `excludeSelf` changes what comes back.
+const COMMUNITY_CACHE_KEY = 'community-favorites-cache:v2';
+const communityCacheKeyFor = (pubkey?: string | null) =>
+  `${COMMUNITY_CACHE_KEY}:${pubkey || 'anon'}`;
+// Three hours, matching the server's FRESH_MS: other people's favorites have no urgency,
+// so there's nothing to gain from re-asking sooner and a fast tab to gain from not.
+const COMMUNITY_CACHE_TTL = 3 * 60 * 60 * 1000;
+// An empty result expires much sooner — "nobody here yet" is the one answer we want to
+// stop showing quickly once it stops being true.
+const COMMUNITY_EMPTY_CACHE_TTL = 15 * 60 * 1000;
+// Older than this and we'd rather show a spinner than something misleadingly stale.
+// Between the TTL and this, the cached list is painted immediately and refreshed behind it.
+const COMMUNITY_CACHE_HARD_MAX = 24 * 60 * 60 * 1000;
+// How many tiles to show per person before "show all".
+const COMMUNITY_PREVIEW_COUNT = 8;
 
 interface FavoriteTrack {
   id: string;
@@ -94,15 +108,22 @@ interface CommunityFavorite {
       title: string;
     };
   };
-  favoritedBy: {
-    pubkey: string;
-    npub: string;
-    displayName?: string;
-    avatar?: string;
-  };
   favoritedAt: number;
   nostrEventId: string;
+  /** Canonical DB id — safe to hand to FavoriteButton. Never the raw Nostr `d` tag. */
   originalItemId: string;
+}
+
+/** The Community tab is grouped by person; the API returns it pre-grouped. */
+interface CommunityPerson {
+  pubkey: string;
+  npub: string;
+  displayName?: string;
+  avatar?: string;
+  nip05?: string;
+  favoriteCount: number;
+  mostRecentAt: number;
+  favorites: CommunityFavorite[];
 }
 
 function FavoritesPageContent() {
@@ -130,11 +151,16 @@ function FavoritesPageContent() {
   const [favoriteTracks, setFavoriteTracks] = useState<FavoriteTrack[]>([]);
   const [favoritePublishers, setFavoritePublishers] = useState<FavoriteAlbum[]>([]);
   const [favoritePlaylists, setFavoritePlaylists] = useState<FavoriteAlbum[]>([]);
-  const [communityFavorites, setCommunityFavorites] = useState<CommunityFavorite[]>([]);
+  const [communityPeople, setCommunityPeople] = useState<CommunityPerson[]>([]);
   const [communityLoading, setCommunityLoading] = useState(false);
   const [communityError, setCommunityError] = useState<string | null>(null);
   const [communityFilter, setCommunityFilter] = useState<'all' | 'tracks' | 'albums'>('all');
-  const [communityUserFilter, setCommunityUserFilter] = useState<string | null>(null); // npub or null for "all"
+  // Which people have their full list expanded past the preview cap.
+  const [expandedPeople, setExpandedPeople] = useState<Set<string>>(new Set());
+  // The loading state is read inside loadCommunityFavorites, which the effect can call
+  // twice in quick succession — both closures would see `false` and start a sweep. A ref
+  // is the only guard that reflects the in-flight call synchronously.
+  const communityLoadingRef = useRef(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [trackSortBy, setTrackSortBy] = useState<'date-desc' | 'date-asc' | 'title-asc' | 'title-desc' | 'artist-asc' | 'artist-desc'>('date-desc');
@@ -299,34 +325,53 @@ function FavoritesPageContent() {
 
     // If unfavorited, remove from community list immediately
     if (!isFavorite) {
-      setCommunityFavorites(prev => prev.filter(fav => fav.nostrEventId !== nostrEventId));
+      setCommunityPeople(prev =>
+        prev
+          .map(person => {
+            const favorites = person.favorites.filter(f => f.nostrEventId !== nostrEventId);
+            return { ...person, favorites, favoriteCount: favorites.length };
+          })
+          .filter(person => person.favorites.length > 0)
+      );
       // Clear cache so next load gets fresh data
       if (typeof window !== 'undefined') {
-        sessionStorage.removeItem(COMMUNITY_CACHE_KEY);
+        sessionStorage.removeItem(communityCacheKeyFor(nostrUser?.nostrPubkey));
       }
     }
   };
 
-  const loadCommunityFavorites = async (forceRefresh = false) => {
-    if (communityLoading && !forceRefresh) return;
+  const loadCommunityFavorites = useCallback(async (forceRefresh = false) => {
+    if (communityLoadingRef.current) return;
+
+    const cacheKey = communityCacheKeyFor(nostrUser?.nostrPubkey);
 
     // Clear cache if force refresh
     if (forceRefresh && typeof window !== 'undefined') {
-      sessionStorage.removeItem(COMMUNITY_CACHE_KEY);
+      sessionStorage.removeItem(cacheKey);
     }
 
-    // Check cache first (unless force refresh)
+    // Stale-while-revalidate. Paint whatever we have IMMEDIATELY, then decide whether to
+    // go back to the network behind the already-rendered view. Waiting on relays before
+    // showing anything is what made this tab feel slow; the data is other people's
+    // favorites, so a few-minute-old answer on screen now beats a perfect one in 4s.
+    //
+    // An EMPTY result is cached too — it used to require `data.length > 0`, so the
+    // common "nobody here" case re-ran the full sweep on every single visit.
+    let paintedFromCache = false;
     if (!forceRefresh && typeof window !== 'undefined') {
       try {
-        const cached = sessionStorage.getItem(COMMUNITY_CACHE_KEY);
+        const cached = sessionStorage.getItem(cacheKey);
         if (cached) {
-          const { data, timestamp } = JSON.parse(cached);
-          const isExpired = Date.now() - timestamp > COMMUNITY_CACHE_TTL;
-
-          if (!isExpired && data && data.length > 0) {
-            console.log('📦 Using cached community favorites');
-            setCommunityFavorites(data);
-            return;
+          const { people, timestamp } = JSON.parse(cached);
+          if (Array.isArray(people)) {
+            const age = Date.now() - timestamp;
+            const ttl = people.length ? COMMUNITY_CACHE_TTL : COMMUNITY_EMPTY_CACHE_TTL;
+            if (age <= COMMUNITY_CACHE_HARD_MAX) {
+              setCommunityPeople(people);
+              paintedFromCache = true;
+            }
+            // Young enough to trust outright — don't touch the network at all.
+            if (age <= ttl) return;
           }
         }
       } catch (e) {
@@ -334,7 +379,10 @@ function FavoritesPageContent() {
       }
     }
 
-    setCommunityLoading(true);
+    communityLoadingRef.current = true;
+    // Only show the spinner when there's nothing on screen. A background revalidate must
+    // not replace a rendered list with a loading state.
+    if (!paintedFromCache) setCommunityLoading(true);
     setCommunityError(null);
 
     try {
@@ -345,7 +393,7 @@ function FavoritesPageContent() {
 
       // Always fetch all types - filtering is done client-side for faster switching
       const response = await fetch(
-        `/api/nostr/global-favorites?type=all&limit=200&excludeSelf=true`,
+        `/api/nostr/global-favorites?excludeSelf=true${forceRefresh ? '&refresh=true' : ''}`,
         { headers }
       );
 
@@ -355,39 +403,49 @@ function FavoritesPageContent() {
 
       const data = await response.json();
 
-      if (data.success) {
-        const favorites = data.data || [];
-        setCommunityFavorites(favorites);
+      // A relay outage is NOT "nobody has favorites" — surface it as an error with a
+      // retry and never cache it, or one bad sweep sticks for the whole TTL.
+      if (data.status === 'error' || !data.success) {
+        throw new Error(data.error || 'Could not reach Nostr relays');
+      }
 
-        // Cache the results
-        if (typeof window !== 'undefined') {
-          try {
-            sessionStorage.setItem(COMMUNITY_CACHE_KEY, JSON.stringify({
-              data: favorites,
-              timestamp: Date.now()
-            }));
-            console.log('💾 Cached community favorites');
-          } catch (e) {
-            console.warn('Failed to cache community favorites:', e);
-          }
+      const people: CommunityPerson[] = data.people || [];
+      setCommunityPeople(people);
+
+      if (typeof window !== 'undefined') {
+        try {
+          sessionStorage.setItem(cacheKey, JSON.stringify({ people, timestamp: Date.now() }));
+        } catch (e) {
+          console.warn('Failed to cache community favorites:', e);
         }
-      } else {
-        throw new Error(data.error || 'Unknown error');
       }
     } catch (err) {
       console.error('Error loading community favorites:', err);
-      setCommunityError(err instanceof Error ? err.message : 'Failed to load community favorites');
+      // Only surface an error banner when there's nothing on screen. A failed BACKGROUND
+      // revalidate should leave the already-painted list alone rather than throwing an
+      // alarming banner over content that is perfectly usable.
+      if (!paintedFromCache) {
+        setCommunityError(
+          err instanceof Error ? err.message : 'Failed to load community favorites'
+        );
+      }
     } finally {
+      communityLoadingRef.current = false;
       setCommunityLoading(false);
     }
-  };
+  }, [nostrUser?.nostrPubkey]);
 
-  // Load community favorites when tab is selected (filter is applied client-side)
+  // Load community favorites when the tab is selected.
+  //
+  // Waiting on `nostrLoading` matters: deep-linking to ?tab=community used to fire this
+  // before NostrContext had hydrated, so the x-nostr-pubkey header was missing and
+  // excludeSelf silently no-opped — you saw your own favorites. Keying on the pubkey
+  // also re-fetches after a late sign-in instead of showing the anonymous list forever.
   useEffect(() => {
-    if (activeTab === 'community') {
-      loadCommunityFavorites();
-    }
-  }, [activeTab]);
+    if (activeTab !== 'community') return;
+    if (nostrLoading) return;
+    loadCommunityFavorites();
+  }, [activeTab, nostrLoading, nostrUser?.nostrPubkey, loadCommunityFavorites]);
 
   // Helper to format relative time
   const formatRelativeTime = (timestamp: number) => {
@@ -405,6 +463,60 @@ function FavoritesPageContent() {
   const formatNpub = (npub: string, displayName?: string) => {
     if (displayName) return displayName;
     return `${npub.slice(0, 8)}...${npub.slice(-4)}`;
+  };
+
+  const toRssAlbum = (album: any): RSSAlbum => ({
+    id: album.id,
+    title: album.title,
+    artist: album.artist || 'Unknown Artist',
+    description: album.description || '',
+    coverArt: album.coverArt || '',
+    releaseDate: album.releaseDate,
+    tracks: (album.tracks || []).map((track: any) => ({
+      title: track.title,
+      duration: track.duration || '0:00',
+      url: track.url || '',
+      id: track.id,
+      v4vRecipient: track.v4vRecipient,
+      v4vValue: track.v4vValue,
+      guid: track.guid,
+    })),
+    link: '',
+    feedUrl: album.feedUrl || '',
+    feedId: album.feedId || album.id,
+    feedGuid: album.feedGuid,
+    v4vRecipient: album.v4vRecipient,
+    v4vValue: album.v4vValue,
+  });
+
+  // Play a community favorite — the album itself, or the album positioned at the track.
+  // Extracted from the render so both were not maintained as near-identical copies.
+  const playCommunityFavorite = async (fav: CommunityFavorite) => {
+    const albumId = fav.type === 'album' ? fav.item.id : fav.item.feedId;
+    if (!albumId) {
+      toast.error(fav.type === 'album' ? 'Could not play album' : 'Could not play track');
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/albums/${albumId}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.album?.tracks) {
+          const index =
+            fav.type === 'album'
+              ? 0
+              : data.album.tracks.findIndex((t: any) => t.id === fav.item.id);
+          if (index >= 0) {
+            await globalPlayAlbum(toRssAlbum(data.album), index);
+            return;
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Error playing community favorite:', err);
+    }
+    toast.error(fav.type === 'album' ? 'Could not play album' : 'Could not play track');
   };
 
   const handlePlayAlbum = async (album: any, e: React.MouseEvent | React.TouchEvent) => {
@@ -736,37 +848,23 @@ function FavoritesPageContent() {
     }
   }, [favoritePlaylists, playlistSortBy]);
 
-  // Extract unique users from community favorites for the user filter dropdown
-  const uniqueUsers = useMemo(() => {
-    const userMap = new Map<string, { npub: string; displayName?: string; avatar?: string }>();
-    communityFavorites.forEach(fav => {
-      if (!userMap.has(fav.favoritedBy.npub)) {
-        userMap.set(fav.favoritedBy.npub, fav.favoritedBy);
-      }
-    });
-    return Array.from(userMap.values()).sort((a, b) =>
-      (a.displayName || a.npub).localeCompare(b.displayName || b.npub)
-    );
-  }, [communityFavorites]);
+  // Apply the type filter WITHIN each person, then drop anyone left with nothing.
+  // (The old per-user dropdown is gone — people are the structure now.)
+  const filteredCommunityPeople = useMemo(() => {
+    if (communityFilter === 'all') return communityPeople;
+    const wanted = communityFilter === 'tracks' ? 'track' : 'album';
+    return communityPeople
+      .map(person => ({
+        ...person,
+        favorites: person.favorites.filter(f => f.type === wanted),
+      }))
+      .filter(person => person.favorites.length > 0);
+  }, [communityPeople, communityFilter]);
 
-  // Filter community favorites by type and selected user (client-side for fast switching)
-  const filteredCommunityFavorites = useMemo(() => {
-    let filtered = communityFavorites;
-
-    // Filter by type (all, tracks, albums)
-    if (communityFilter === 'tracks') {
-      filtered = filtered.filter(fav => fav.type === 'track');
-    } else if (communityFilter === 'albums') {
-      filtered = filtered.filter(fav => fav.type === 'album');
-    }
-
-    // Filter by selected user
-    if (communityUserFilter !== null) {
-      filtered = filtered.filter(fav => fav.favoritedBy.npub === communityUserFilter);
-    }
-
-    return filtered;
-  }, [communityFavorites, communityFilter, communityUserFilter]);
+  const communityTotalFavorites = useMemo(
+    () => filteredCommunityPeople.reduce((n, p) => n + p.favorites.length, 0),
+    [filteredCommunityPeople]
+  );
 
   const handleShufflePlay = async () => {
     if (favoriteTracks.length === 0) {
@@ -1369,14 +1467,16 @@ function FavoritesPageContent() {
           </div>
         )}
 
-        {/* Community Tab */}
+        {/* Community Tab — grouped by person, not one flat chronological list */}
         {activeTab === 'community' && (
           <div>
             {/* Header with description and controls */}
             <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <p className="text-sm text-gray-400">
-                  Discover what others are favoriting
+                  {filteredCommunityPeople.length > 0
+                    ? `${filteredCommunityPeople.length} ${filteredCommunityPeople.length === 1 ? 'person' : 'people'} · ${communityTotalFavorites} ${communityTotalFavorites === 1 ? 'favorite' : 'favorites'}`
+                    : 'Discover what others are favoriting'}
                 </p>
               </div>
               <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
@@ -1390,19 +1490,6 @@ function FavoritesPageContent() {
                   <option value="tracks">Tracks Only</option>
                   <option value="albums">Albums Only</option>
                 </select>
-                <select
-                  id="community-user-filter"
-                  value={communityUserFilter || ''}
-                  onChange={(e) => setCommunityUserFilter(e.target.value || null)}
-                  className="px-3 sm:px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-stablekraft-teal focus:border-stablekraft-teal transition-all max-w-[180px]"
-                >
-                  <option value="">All Users</option>
-                  {uniqueUsers.map(user => (
-                    <option key={user.npub} value={user.npub}>
-                      {formatNpub(user.npub, user.displayName)}
-                    </option>
-                  ))}
-                </select>
                 <button
                   onClick={() => loadCommunityFavorites(true)}
                   disabled={communityLoading}
@@ -1414,27 +1501,33 @@ function FavoritesPageContent() {
               </div>
             </div>
 
-            {/* Error state */}
+            {/* Error state — a relay outage is not an empty community, so it gets a retry */}
             {communityError && (
-              <div className="mb-6 p-4 bg-red-900/20 border border-red-500/50 rounded-lg text-red-400">
-                {communityError}
+              <div className="mb-6 p-4 bg-red-900/20 border border-red-500/50 rounded-lg text-red-400 flex flex-col sm:flex-row sm:items-center gap-3">
+                <span className="flex-1">{communityError}</span>
+                <button
+                  onClick={() => loadCommunityFavorites(true)}
+                  className="self-start sm:self-auto px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 rounded-lg text-sm font-medium transition-colors"
+                >
+                  Retry
+                </button>
               </div>
             )}
 
             {/* Loading state */}
-            {communityLoading && filteredCommunityFavorites.length === 0 && (
+            {communityLoading && filteredCommunityPeople.length === 0 && (
               <div className="text-center py-12">
                 <LoadingSpinner size="large" text="Fetching from Nostr relays..." />
               </div>
             )}
 
             {/* Empty state */}
-            {!communityLoading && filteredCommunityFavorites.length === 0 && !communityError && (
+            {!communityLoading && filteredCommunityPeople.length === 0 && !communityError && (
               <div className="text-center py-12">
                 <Globe className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                <h2 className="text-2xl font-bold mb-2">No Community Favorites Found</h2>
+                <h2 className="text-2xl font-bold mb-2">No Community Favorites Yet</h2>
                 <p className="text-gray-400 mb-4">
-                  No one has published favorites to Nostr yet, or they couldn&apos;t be resolved.
+                  No one else has published favorites to Nostr yet.
                 </p>
                 <p className="text-gray-500 text-sm">
                   Start favoriting music and it will appear here for others!
@@ -1442,202 +1535,179 @@ function FavoritesPageContent() {
               </div>
             )}
 
-            {/* Community favorites list */}
-            {filteredCommunityFavorites.length > 0 && (
-              <div className="space-y-3">
-                {filteredCommunityFavorites.map((fav) => (
-                  <div
-                    key={fav.nostrEventId}
-                    className="grid grid-cols-[auto_1fr_auto_auto] items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-white/5 backdrop-blur-sm rounded-xl hover:bg-white/10 transition-all border border-white/10"
-                  >
-                    {/* Album Art */}
-                    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden flex-shrink-0">
-                      <ArtworkImage
-                        src={getAlbumArtworkUrl(fav.item.image || '', 'thumbnail')}
-                        alt={fav.item.title}
-                        width={64}
-                        height={64}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.src = getPlaceholderImageUrl('thumbnail');
-                        }}
-                      />
-                    </div>
+            {/* One card per person */}
+            {filteredCommunityPeople.length > 0 && (
+              <div className="space-y-4">
+                {filteredCommunityPeople.map((person) => {
+                  const isExpanded = expandedPeople.has(person.pubkey);
+                  const visible = isExpanded
+                    ? person.favorites
+                    : person.favorites.slice(0, COMMUNITY_PREVIEW_COUNT);
+                  const hidden = person.favorites.length - visible.length;
 
-                    {/* Item Info */}
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <span className={`text-xs px-1.5 py-0.5 rounded ${
-                          fav.type === 'track' || (fav.item.trackCount || 0) <= 1
-                            ? 'bg-green-500/20 text-green-400'
-                            : (fav.item.trackCount || 0) <= 6
-                              ? 'bg-yellow-500/20 text-yellow-400'
-                              : 'bg-blue-500/20 text-blue-400'
-                        }`}>
-                          {fav.type === 'track' || (fav.item.trackCount || 0) <= 1
-                            ? 'Track'
-                            : (fav.item.trackCount || 0) <= 6
-                              ? 'EP'
-                              : 'Album'}
-                        </span>
-                      </div>
-                      <h3 className="font-semibold text-base sm:text-lg truncate">{fav.item.title}</h3>
-                      <p className="text-gray-400 text-xs sm:text-sm truncate">
-                        {fav.item.artist || 'Unknown Artist'}
-                      </p>
-                      <div className="flex items-center gap-2 mt-1">
-                        {/* User avatar */}
-                        {fav.favoritedBy.avatar ? (
+                  return (
+                    <div
+                      key={person.pubkey}
+                      className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 overflow-hidden"
+                    >
+                      {/* Person header */}
+                      <div className="flex items-center gap-3 p-3 sm:p-4 border-b border-white/10">
+                        {person.avatar ? (
                           <ArtworkImage
-                            src={fav.favoritedBy.avatar}
+                            src={person.avatar}
                             alt=""
-                            width={16}
-                            height={16}
-                            className="w-4 h-4 rounded-full"
+                            width={40}
+                            height={40}
+                            className="w-10 h-10 rounded-full flex-shrink-0 object-cover"
                             unoptimized
                           />
                         ) : (
-                          <div className="w-4 h-4 rounded-full bg-gradient-to-br from-purple-500 to-pink-500" />
+                          <div className="w-10 h-10 rounded-full flex-shrink-0 bg-gradient-to-br from-purple-500 to-pink-500" />
                         )}
-                        <span className="text-gray-500 text-xs truncate">
+                        <div className="min-w-0 flex-1">
                           <a
-                            href={`https://njump.me/${fav.favoritedBy.npub}`}
+                            href={`https://njump.me/${person.npub}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="hover:text-stablekraft-teal hover:underline transition-colors"
-                            onClick={(e) => e.stopPropagation()}
+                            className="font-semibold text-base truncate block hover:text-stablekraft-teal transition-colors"
                           >
-                            {formatNpub(fav.favoritedBy.npub, fav.favoritedBy.displayName)}
+                            {formatNpub(person.npub, person.displayName)}
                           </a>
-                          {' '}• {formatRelativeTime(fav.favoritedAt)}
-                        </span>
+                          <p className="text-gray-500 text-xs truncate">
+                            {person.favorites.length}{' '}
+                            {person.favorites.length === 1 ? 'favorite' : 'favorites'}
+                            {person.mostRecentAt
+                              ? ` · ${formatRelativeTime(person.mostRecentAt)}`
+                              : ''}
+                          </p>
+                        </div>
                       </div>
-                    </div>
 
-                    {/* Favorite Button - Add to own favorites */}
-                    {(fav.originalItemId || fav.item.singleTrack?.id) ? (
-                      <FavoriteButton
-                        trackId={fav.type === 'track' ? fav.originalItemId : undefined}
-                        feedId={fav.type === 'album' && !fav.item.singleTrack ? fav.originalItemId : undefined}
-                        onToggle={handleCommunityFavoriteToggle(fav.nostrEventId)}
-                        singleTrackData={fav.item.singleTrack ? {
-                          id: fav.item.singleTrack.id,
-                          title: fav.item.singleTrack.title,
-                          artist: fav.item.artist,
-                        } : undefined}
-                      />
-                    ) : (
-                      <div className="w-6 h-6" /> // Placeholder to maintain grid layout
-                    )}
+                      {/* Their favorites */}
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 p-3 sm:p-4">
+                        {visible.map((fav) => {
+                          const count = fav.item.trackCount || 0;
+                          const label =
+                            fav.type === 'track' || count <= 1
+                              ? 'Track'
+                              : count <= 6
+                                ? 'EP'
+                                : 'Album';
+                          const badgeClass =
+                            label === 'Track'
+                              ? 'bg-green-500/20 text-green-400'
+                              : label === 'EP'
+                                ? 'bg-yellow-500/20 text-yellow-400'
+                                : 'bg-blue-500/20 text-blue-400';
+                          const href =
+                            fav.type === 'album'
+                              ? `/album/${fav.item.id}`
+                              : `/album/${fav.item.feedId}`;
 
-                    {/* Play and View Buttons */}
-                    <div className="flex items-center gap-2">
-                    {/* Play Button */}
-                    <button
-                      onClick={async () => {
-                        if (fav.type === 'album') {
-                          // Play album from the beginning
-                          try {
-                            const response = await fetch(`/api/albums/${fav.item.id}`);
-                            if (response.ok) {
-                              const data = await response.json();
-                              if (data.album && data.album.tracks) {
-                                const rssAlbum: RSSAlbum = {
-                                  id: data.album.id,
-                                  title: data.album.title,
-                                  artist: data.album.artist || 'Unknown Artist',
-                                  description: data.album.description || '',
-                                  coverArt: data.album.coverArt || '',
-                                  releaseDate: data.album.releaseDate,
-                                  tracks: data.album.tracks.map((track: any) => ({
-                                    title: track.title,
-                                    duration: track.duration || '0:00',
-                                    url: track.url || '',
-                                    id: track.id,
-                                    v4vRecipient: track.v4vRecipient,
-                                    v4vValue: track.v4vValue,
-                                    guid: track.guid,
-                                  })),
-                                  link: '',
-                                  feedUrl: data.album.feedUrl || '',
-                                  feedId: data.album.feedId || data.album.id,
-                                  feedGuid: data.album.feedGuid,
-                                  v4vRecipient: data.album.v4vRecipient,
-                                  v4vValue: data.album.v4vValue,
-                                };
-                                await globalPlayAlbum(rssAlbum, 0);
-                                return;
-                              }
+                          return (
+                            <div key={fav.nostrEventId} className="group min-w-0">
+                              <div className="relative aspect-square rounded-lg overflow-hidden bg-white/5 mb-2">
+                                <ArtworkImage
+                                  src={getAlbumArtworkUrl(fav.item.image || '', 'thumbnail')}
+                                  alt={fav.item.title}
+                                  width={200}
+                                  height={200}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    target.src = getPlaceholderImageUrl('thumbnail');
+                                  }}
+                                />
+                                {/* Play covers the whole tile so the tap target is the
+                                    artwork itself — hover-only controls are unreachable
+                                    on touch, so it stays visible at rest on small screens. */}
+                                <button
+                                  onClick={() => playCommunityFavorite(fav)}
+                                  aria-label={`Play ${fav.item.title}`}
+                                  className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
+                                >
+                                  <span className="w-11 h-11 rounded-full bg-black/60 ring-1 ring-white/25 backdrop-blur-md flex items-center justify-center">
+                                    <Play className="w-5 h-5 text-white" />
+                                  </span>
+                                </button>
+                                <div className="absolute bottom-1.5 left-1.5 sm:hidden">
+                                  <button
+                                    onClick={() => playCommunityFavorite(fav)}
+                                    aria-label={`Play ${fav.item.title}`}
+                                    className="w-11 h-11 rounded-full bg-black/60 ring-1 ring-white/25 backdrop-blur-md flex items-center justify-center"
+                                  >
+                                    <Play className="w-[18px] h-[18px] text-white" />
+                                  </button>
+                                </div>
+                                {/* Copy into your own favorites. The circle must BE the
+                                    tap target — FavoriteButton renders its own
+                                    padding-less <button>, so without the child selectors
+                                    the real target is just the glyph. */}
+                                {(fav.originalItemId || fav.item.singleTrack?.id) && (
+                                  <div className="absolute top-1.5 right-1.5 w-11 h-11 rounded-full bg-black/50 ring-1 ring-white/20 backdrop-blur-md flex items-center justify-center [&>button]:w-full [&>button]:h-full [&>button]:rounded-full [&>button]:flex [&>button]:items-center [&>button]:justify-center">
+                                    <FavoriteButton
+                                      trackId={fav.type === 'track' ? fav.originalItemId : undefined}
+                                      feedId={
+                                        fav.type === 'album' && !fav.item.singleTrack
+                                          ? fav.originalItemId
+                                          : undefined
+                                      }
+                                      onToggle={handleCommunityFavoriteToggle(fav.nostrEventId)}
+                                      singleTrackData={
+                                        fav.item.singleTrack
+                                          ? {
+                                              id: fav.item.singleTrack.id,
+                                              title: fav.item.singleTrack.title,
+                                              artist: fav.item.artist,
+                                            }
+                                          : undefined
+                                      }
+                                    />
+                                  </div>
+                                )}
+                              </div>
+
+                              <div className="flex items-center gap-1.5 mb-0.5">
+                                <span className={`text-[10px] px-1.5 py-0.5 rounded ${badgeClass}`}>
+                                  {label}
+                                </span>
+                              </div>
+                              <Link
+                                href={href}
+                                className="block font-medium text-sm truncate hover:text-stablekraft-teal transition-colors"
+                                title={fav.item.title}
+                              >
+                                {fav.item.title}
+                              </Link>
+                              <p className="text-gray-400 text-xs truncate">
+                                {fav.item.artist || 'Unknown Artist'}
+                              </p>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* One heavy favoriter must not bury everyone below them */}
+                      {(hidden > 0 || isExpanded) && (
+                        <div className="px-3 sm:px-4 pb-3 sm:pb-4">
+                          <button
+                            onClick={() =>
+                              setExpandedPeople((prev) => {
+                                const next = new Set(prev);
+                                if (next.has(person.pubkey)) next.delete(person.pubkey);
+                                else next.add(person.pubkey);
+                                return next;
+                              })
                             }
-                          } catch (err) {
-                            console.error('Error playing album:', err);
-                          }
-                          toast.error('Could not play album');
-                        } else {
-                          // Play specific track
-                          if (fav.item.feedId) {
-                            try {
-                              const response = await fetch(`/api/albums/${fav.item.feedId}`);
-                              if (response.ok) {
-                                const data = await response.json();
-                                if (data.album && data.album.tracks) {
-                                  const trackIndex = data.album.tracks.findIndex(
-                                    (t: any) => t.id === fav.item.id
-                                  );
-                                  if (trackIndex >= 0) {
-                                    const rssAlbum: RSSAlbum = {
-                                      id: data.album.id,
-                                      title: data.album.title,
-                                      artist: data.album.artist || 'Unknown Artist',
-                                      description: data.album.description || '',
-                                      coverArt: data.album.coverArt || '',
-                                      releaseDate: data.album.releaseDate,
-                                      tracks: data.album.tracks.map((track: any) => ({
-                                        title: track.title,
-                                        duration: track.duration || '0:00',
-                                        url: track.url || '',
-                                        id: track.id,
-                                        v4vRecipient: track.v4vRecipient,
-                                        v4vValue: track.v4vValue,
-                                        guid: track.guid,
-                                      })),
-                                      link: '',
-                                      feedUrl: data.album.feedUrl || '',
-                                      feedId: data.album.feedId || data.album.id,
-                                      feedGuid: data.album.feedGuid,
-                                      v4vRecipient: data.album.v4vRecipient,
-                                      v4vValue: data.album.v4vValue,
-                                    };
-                                    await globalPlayAlbum(rssAlbum, trackIndex);
-                                    return;
-                                  }
-                                }
-                              }
-                            } catch (err) {
-                              console.error('Error playing track:', err);
-                            }
-                          }
-                          toast.error('Could not play track');
-                        }
-                      }}
-                      className="px-2.5 sm:px-3 py-1.5 bg-green-600 hover:bg-green-500 rounded-lg text-white text-xs sm:text-sm font-medium transition-colors flex items-center gap-1"
-                    >
-                      <Play className="w-3 h-3 sm:w-4 sm:h-4" />
-                      <span className="hidden sm:inline">Play</span>
-                    </button>
-
-                    {/* View Button */}
-                    <Link
-                      href={fav.type === 'album' ? `/album/${fav.item.id}` : `/album/${fav.item.feedId}`}
-                      className="px-2.5 sm:px-3 py-1.5 bg-stablekraft-teal hover:bg-stablekraft-orange rounded-lg text-white text-xs sm:text-sm font-medium transition-colors flex items-center gap-1"
-                    >
-                      <Disc className="w-3 h-3 sm:w-4 sm:h-4" />
-                      <span className="hidden sm:inline">View</span>
-                    </Link>
+                            className="text-sm text-gray-400 hover:text-white transition-colors py-2 px-1 -mx-1"
+                          >
+                            {isExpanded ? 'Show less' : `Show all ${person.favorites.length}`}
+                          </button>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
