@@ -112,8 +112,10 @@ export function WalletConnectModal({ isOpen, onClose, initialView = 'picker' }: 
     let cancelled = false;
     (async () => {
       try {
-        const found = await checkBackupExists(pubkey);
-        if (!cancelled) setBackupFound(found);
+        const status = await checkBackupExists(pubkey);
+        // Only offer to restore on a definite 'saved'. An 'unknown' (relays
+        // unreachable) must not render a row that would then fail to decrypt.
+        if (!cancelled) setBackupFound(status === 'saved');
       } catch {
         if (!cancelled) setBackupFound(false);
       }

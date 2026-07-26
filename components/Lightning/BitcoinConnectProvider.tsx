@@ -527,6 +527,13 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
   useEffect(() => {
     if (backupOfferCheckedRef.current) return;
     if (typeof window === 'undefined') return;
+    // One line so a support session can see WHY nothing happened, instead of
+    // silence. Every early return below this point logs its reason.
+    console.log('🔐 NWC backup check:', {
+      authenticated: isNostrAuthenticated,
+      hasPubkey: !!nostrUser?.nostrPubkey,
+      flagPresent: !!localStorage.getItem('nostr_pending_nwc_backup_offer'),
+    });
     if (!isNostrAuthenticated || !nostrUser?.nostrPubkey) return;
 
     backupOfferCheckedRef.current = true;
@@ -537,7 +544,11 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
       try {
         const { PENDING_NWC_BACKUP_OFFER_KEY } = await import('@/lib/nostr/auth-utils');
         const pending = localStorage.getItem(PENDING_NWC_BACKUP_OFFER_KEY);
-        if (!pending || pending !== pubkey) return;
+        if (!pending || pending !== pubkey) {
+          console.log('ℹ️ NWC backup: no pending login flag for this account, nothing to do');
+          return;
+        }
+        console.log('🔐 NWC backup: login flag matched, checking signer…');
 
         const {
           getConnectedNwcUri,
@@ -594,17 +605,45 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
             return;
           }
 
-          if (!(await checkBackupExists(pubkey))) {
-            console.log('ℹ️ NWC backup: no backup found on relays for this account');
+          const status = await checkBackupExists(pubkey);
+          if (status !== 'saved') {
+            console.log(
+              status === 'none'
+                ? 'ℹ️ NWC backup: no backup exists on relays for this account'
+                : 'ℹ️ NWC backup: could not reach relays to check — leaving the flag for a retry'
+            );
+            // 'unknown' keeps the pending flag so the next load tries again;
+            // 'none' is a real answer, so consume it below by falling through.
+            if (status === 'unknown') {
+              localStorage.setItem(PENDING_NWC_BACKUP_OFFER_KEY, pubkey);
+            }
             return;
           }
           if (cancelled) return;
           console.log('🔎 NWC backup: found a backup, decrypting…');
+          // A remote signer (Amber, Primal) will ask the user to approve this.
+          // Say so, or an unexplained approval prompt appears out of nowhere
+          // seconds after login and most people will dismiss it.
+          const { toast: restoreToast } = await import('@/components/Toast');
+          restoreToast.info('Restoring your wallet — approve the request in your signer.', {
+            duration: 8000,
+          });
 
           // Decrypt prompts the signer — silent on most extensions, an approval
           // on NIP-46. Worth it: the alternative is the user re-pasting a
           // connection string they already saved.
-          const uri = await fetchNwcBackup(pubkey);
+          let uri: string | null = null;
+          try {
+            uri = await fetchNwcBackup(pubkey);
+          } catch (decryptErr) {
+            // Declined, timed out, signer asleep — all recoverable. Put the flag
+            // back so the next load can try again instead of losing the wallet.
+            localStorage.setItem(PENDING_NWC_BACKUP_OFFER_KEY, pubkey);
+            console.warn('⚠️ NWC backup: could not decrypt the backup, will retry next load:', decryptErr);
+            const { toast: failToast } = await import('@/components/Toast');
+            failToast.error('Could not restore your wallet — your signer did not approve the request.');
+            return;
+          }
           if (!uri) {
             console.warn('⚠️ NWC backup: found an event but could not read a connection string from it');
             return;
@@ -621,7 +660,9 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
 
         // ── Wallet already here: offer to back it up ─────────────────────
         if (hasDeclinedBackup(pubkey)) return;
-        if (await checkBackupExists(pubkey)) return;
+        // Only offer when we KNOW there is no backup. On 'unknown' stay quiet
+        // rather than prompting someone to re-save what they already have.
+        if ((await checkBackupExists(pubkey)) !== 'none') return;
         if (cancelled) return;
 
         setWalletModalView('offer-backup');

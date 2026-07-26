@@ -35,12 +35,18 @@ export const NWC_BACKUP_D_TAG = 'stablekraft:wallet:nwc';
 export const NWC_BACKUP_DECLINED_KEY = 'sk_nwc_backup_declined';
 
 /**
- * NIP-44 decrypt goes through the user's signer. On iOS the extension's
- * background worker (or a backgrounded Amber) can be killed between the relay
- * query and the decrypt, leaving the promise pending forever. Cap it so it
- * rejects visibly instead of hanging the UI.
+ * NIP-44 encrypt/decrypt goes through the user's signer, and a REMOTE signer
+ * means a human tapping Approve on their phone. This was 10s — a figure taken
+ * from "iOS killed the extension's background worker" — and it silently broke
+ * Amber: the relay query found the backup, the decrypt request went out, and
+ * we gave up long before the user could reach for their phone
+ * ("Decryption timed out").
+ *
+ * 120s matches what the rest of the codebase already assumes about remote
+ * signers: nip46-client's own request timeout and withSignerNudge's 125s hard
+ * fail. The nudge toast (below) appears after 4s so the wait is never silent.
  */
-const NIP44_TIMEOUT_MS = 10_000;
+const NIP44_TIMEOUT_MS = 120_000;
 
 const RELAY_QUERY_TIMEOUT_MS = 8_000;
 const MAX_READ_RELAYS = 20;
@@ -114,29 +120,51 @@ function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise
   ]);
 }
 
-async function queryBackupEvent(pubkey: string): Promise<{ content: string } | null> {
+/**
+ * A relay query has THREE outcomes, and collapsing them loses the important
+ * one. "Could not ask" is not "there is nothing there": several defaults are
+ * flaky (damus 503s, others stall), querySync waits on all of them, and a
+ * timeout used to be reported as "no backup" — so the UI said Not saved and
+ * asked the user to save a backup that already existed.
+ */
+type BackupQuery =
+  | { status: 'found'; content: string }
+  | { status: 'none' }
+  | { status: 'error' };
+
+async function queryBackupEvent(pubkey: string): Promise<BackupQuery> {
   const { SimplePool } = await import('nostr-tools/pool');
   const relays = buildReadRelays(getUserWriteRelays(pubkey), getDefaultRelays());
   const pool = new SimplePool();
   try {
+    // maxWait, not an outer Promise.race. querySync waits for EOSE from every
+    // relay, and dead ones (damus 503s, nsec.app) never send it — a racing
+    // timeout rejected and DISCARDED events the healthy relays had already
+    // returned, so an existing backup read as "none". maxWait returns what was
+    // actually collected by the deadline. The outer race is only a backstop for
+    // the pool hanging entirely.
     const events = await withTimeout(
-      pool.querySync(relays, {
-        kinds: [NWC_BACKUP_KIND],
-        authors: [pubkey],
-        '#d': [NWC_BACKUP_D_TAG],
-        limit: 1,
-      }),
-      RELAY_QUERY_TIMEOUT_MS,
+      pool.querySync(
+        relays,
+        {
+          kinds: [NWC_BACKUP_KIND],
+          authors: [pubkey],
+          '#d': [NWC_BACKUP_D_TAG],
+          limit: 1,
+        },
+        { maxWait: RELAY_QUERY_TIMEOUT_MS }
+      ),
+      RELAY_QUERY_TIMEOUT_MS * 2,
       'Relay query'
     );
-    if (!events || events.length === 0) return null;
+    if (!events || events.length === 0) return { status: 'none' };
     const latest = events.sort((a, b) => b.created_at - a.created_at)[0];
-    // A tombstone is the same coordinate with empty content — treat as "no backup".
-    if (!latest.content) return null;
-    return { content: latest.content };
+    // A tombstone is the same coordinate with empty content — a real "no backup".
+    if (!latest.content) return { status: 'none' };
+    return { status: 'found', content: latest.content };
   } catch (error) {
-    console.warn('⚠️ NWC backup: relay query failed:', error);
-    return null;
+    console.warn('⚠️ NWC backup: relay query failed (treating as unknown, NOT as "no backup"):', error);
+    return { status: 'error' };
   } finally {
     try {
       pool.close(relays);
@@ -150,9 +178,13 @@ async function queryBackupEvent(pubkey: string): Promise<{ content: string } | n
  * Does a backup exist for this pubkey? Relay query only — no signer, no
  * decrypt, so this is safe to call speculatively when a modal opens.
  */
-export async function hasNwcBackup(pubkey: string): Promise<boolean> {
-  return (await queryBackupEvent(pubkey)) !== null;
+export async function hasNwcBackup(pubkey: string): Promise<BackupStatus> {
+  const result = await queryBackupEvent(pubkey);
+  return result.status === 'found' ? 'saved' : result.status === 'none' ? 'none' : 'unknown';
 }
+
+/** 'saved' | 'none' = answered; 'unknown' = relays could not be reached. */
+export type BackupStatus = 'saved' | 'none' | 'unknown';
 
 /**
  * Backup existence, cached per pubkey for the page's lifetime. Module scope so
@@ -169,17 +201,21 @@ export function setCachedBackupExists(pubkey: string, exists: boolean): void {
   backupExistsCache.set(pubkey, exists);
 }
 
+/**
+ * Cached backup status. An 'unknown' is never cached — the next attempt should
+ * ask again rather than remember a network failure as a fact.
+ */
 export async function checkBackupExists(
   pubkey: string,
   options: { force?: boolean } = {}
-): Promise<boolean> {
+): Promise<BackupStatus> {
   if (!options.force) {
     const cached = backupExistsCache.get(pubkey);
-    if (cached !== undefined) return cached;
+    if (cached !== undefined) return cached ? 'saved' : 'none';
   }
-  const exists = await hasNwcBackup(pubkey);
-  backupExistsCache.set(pubkey, exists);
-  return exists;
+  const status = await hasNwcBackup(pubkey);
+  if (status !== 'unknown') backupExistsCache.set(pubkey, status === 'saved');
+  return status;
 }
 
 /**
@@ -188,6 +224,13 @@ export async function checkBackupExists(
  * hide the backup UI rather than let it fail at use time.
  */
 export async function signerSupportsNip44(): Promise<boolean> {
+  // A NIP-07-shaped signer on window is the simplest and most reliable answer,
+  // and it is present far more often than the UnifiedSigner path suggests:
+  // nostr-login installs one for NIP-46 sessions (Amber, bunker) too. Asking
+  // UnifiedSigner alone meant a nip46 login answered "can you encrypt?" with
+  // "is the bunker relay connected right now?" — the wrong question, and false
+  // for seconds after a reload even though window.nostr.nip44 worked fine.
+  if (getWindowNip44()) return true;
   try {
     const { getUnifiedSigner } = await import('./signer');
     const signer = getUnifiedSigner();
@@ -198,20 +241,51 @@ export async function signerSupportsNip44(): Promise<boolean> {
   }
 }
 
+/** The NIP-07 nip44 interface if a signer put one on window (boostmebitch's approach). */
+function getWindowNip44(): { encrypt: Function; decrypt: Function } | null {
+  if (typeof window === 'undefined') return null;
+  const n44 = (window as any).nostr?.nip44;
+  return n44 && typeof n44.encrypt === 'function' && typeof n44.decrypt === 'function' ? n44 : null;
+}
+
+async function nip44Encrypt(pubkey: string, plaintext: string): Promise<string> {
+  const win = getWindowNip44();
+  if (win) {
+    const { withSignerNudge } = await import('./signer-nudge');
+    return withSignerNudge(() => win.encrypt(pubkey, plaintext) as Promise<string>, {
+      op: 'encrypt',
+    });
+  }
+  const { getUnifiedSigner } = await import('./signer');
+  const signer = getUnifiedSigner();
+  await signer.ensureInitialized();
+  return signer.nip44Encrypt(pubkey, plaintext);
+}
+
+async function nip44Decrypt(pubkey: string, ciphertext: string): Promise<string> {
+  const win = getWindowNip44();
+  if (win) {
+    const { withSignerNudge } = await import('./signer-nudge');
+    return withSignerNudge(() => win.decrypt(pubkey, ciphertext) as Promise<string>, {
+      op: 'decrypt',
+    });
+  }
+  const { getUnifiedSigner } = await import('./signer');
+  const signer = getUnifiedSigner();
+  await signer.ensureInitialized();
+  return signer.nip44Decrypt(pubkey, ciphertext);
+}
+
 /**
  * Fetch and decrypt the stored connection string. Prompts the signer, so only
  * call this after the user has explicitly asked to restore.
  */
 export async function fetchNwcBackup(pubkey: string): Promise<string | null> {
   const event = await queryBackupEvent(pubkey);
-  if (!event) return null;
-
-  const { getUnifiedSigner } = await import('./signer');
-  const signer = getUnifiedSigner();
-  await signer.ensureInitialized();
+  if (event.status !== 'found') return null;
 
   const plaintext = await withTimeout(
-    signer.nip44Decrypt(pubkey, event.content),
+    nip44Decrypt(pubkey, event.content),
     NIP44_TIMEOUT_MS,
     'Decryption'
   );
@@ -267,12 +341,8 @@ async function signAndPublish(pubkey: string, content: string): Promise<void> {
 
 /** Encrypt-to-self and publish the backup. */
 export async function publishNwcBackup(pubkey: string, uri: string): Promise<void> {
-  const { getUnifiedSigner } = await import('./signer');
-  const signer = getUnifiedSigner();
-  await signer.ensureInitialized();
-
   const ciphertext = await withTimeout(
-    signer.nip44Encrypt(pubkey, buildBackupPayload(uri)),
+    nip44Encrypt(pubkey, buildBackupPayload(uri)),
     NIP44_TIMEOUT_MS,
     'Encryption'
   );

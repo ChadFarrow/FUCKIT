@@ -36,7 +36,7 @@ export default function UserMenu({ className = '' }: UserMenuProps) {
   // none), not signed in, or a signer that can't encrypt (NIP-55 / read-only
   // nip05 / an extension without window.nostr.nip44).
   const [backupStatus, setBackupStatus] = useState<
-    'hidden' | 'checking' | 'saved' | 'none' | 'saving' | 'removing'
+    'hidden' | 'checking' | 'saved' | 'none' | 'unknown' | 'saving' | 'removing'
   >('hidden');
   const { setFullscreenMode } = useAudio();
   const [showDropdown, setShowDropdown] = useState(false);
@@ -130,8 +130,10 @@ export default function UserMenu({ className = '' }: UserMenuProps) {
         return;
       }
       setBackupStatus('checking');
-      const exists = await checkBackupExists(pubkey, { force });
-      setBackupStatus(exists ? 'saved' : 'none');
+      const status = await checkBackupExists(pubkey, { force });
+      // 'unknown' means the relays could not be reached. Showing "Not saved"
+      // there is a lie that gets users to re-save a backup they already have.
+      setBackupStatus(status === 'saved' ? 'saved' : status === 'none' ? 'none' : 'unknown');
     } catch {
       setBackupStatus('hidden');
     }
@@ -143,6 +145,12 @@ export default function UserMenu({ className = '' }: UserMenuProps) {
   }, [showDropdown, refreshBackupStatus]);
 
   const handleBackupAction = async () => {
+    if (backupStatus === 'unknown') {
+      // Couldn't reach relays last time — retry the check rather than acting
+      // on an answer we don't have.
+      void refreshBackupStatus(true);
+      return;
+    }
     if (backupStatus === 'none') {
       // Reuse the same offer screen the connect flow and post-login prompt use,
       // so the explanation and the consent are worded identically everywhere.
@@ -315,6 +323,7 @@ export default function UserMenu({ className = '' }: UserMenuProps) {
                               {backupStatus === 'removing' && 'Removing…'}
                               {backupStatus === 'saved' && 'Saved'}
                               {backupStatus === 'none' && 'Not saved'}
+                              {backupStatus === 'unknown' && 'Unavailable'}
                             </span>
                           </button>
                         )}
