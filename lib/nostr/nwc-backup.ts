@@ -235,9 +235,30 @@ async function signAndPublish(pubkey: string, content: string): Promise<void> {
 
   const signed = await signer.signEvent(unsigned as any);
 
+  // RelayManager.publish() only reaches relays that were explicitly connected —
+  // it iterates `this.relays`, which connect() populates. Skipping this step
+  // doesn't error: writeRelays is empty, so publish resolves with [] and looks
+  // like success while the event goes nowhere. That shipped once and made
+  // "Saved" a lie.
+  const relayUrls = buildReadRelays(getUserWriteRelays(pubkey), getDefaultRelays());
   const relayManager = new RelayManager();
   try {
-    await relayManager.publish(signed);
+    const connections = await Promise.allSettled(
+      relayUrls.map((url) => relayManager.connect(url, { read: false, write: true }))
+    );
+    const connected = connections.filter((r) => r.status === 'fulfilled').length;
+    if (connected === 0) {
+      throw new Error('Could not reach any Nostr relay');
+    }
+
+    // Likewise check the outcome: publish() returns settled results and never
+    // rejects, so an unchecked await cannot tell "stored" from "refused".
+    const results = await relayManager.publish(signed);
+    const accepted = results.filter((r) => r.status === 'fulfilled').length;
+    if (accepted === 0) {
+      throw new Error('No relay accepted the backup');
+    }
+    console.log(`📤 NWC backup: published to ${accepted}/${connected} relay(s)`);
   } finally {
     // Standing invariant: always disconnect, or WebSockets leak and accumulate.
     await relayManager.disconnectAll();
