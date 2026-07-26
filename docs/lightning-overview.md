@@ -35,7 +35,8 @@ The system is built around **3 payment methods** with intelligent fallback chain
 | **LNURL** | `lib/lightning/lnurl.ts` — Lightning Address resolution, invoice generation, payment verification |
 | **BoostBox** | `lib/lightning/boostbox.ts` — stores boost metadata for LNURL payments (client-only, uses server proxy) |
 | **Boost UI** | `components/Lightning/BoostButton.tsx` — complete boost modal with amount, message, sender name, split details |
-| **Wallet UI** | `components/Lightning/LightningWalletButton.tsx`, `WalletInfoDisplay.tsx` — wallet dropdown, balance, fund wallet QR |
+| **Wallet UI** | `components/Lightning/WalletConnectModal.tsx` — the wallet picker (replaces the Bitcoin Connect modal); `WalletInfoDisplay.tsx` — balance, fund wallet QR; `components/UserMenu.tsx` — wallet actions (Switch / NWC Backup / Disconnect) |
+| **Wallet Backup** | `lib/nostr/nwc-backup.ts` — NWC connection string encrypted to the user's Nostr key (NIP-78 kind 30078), auto-restored on sign-in |
 
 ## API Routes
 
@@ -200,10 +201,20 @@ Retry logic: 2-3 retries for routing failures (1s delay), 1-2 retries for timeou
 
 ## Wallet UI Components
 
-### LightningWalletButton (`components/Lightning/LightningWalletButton.tsx`)
-- Three variants: minimal (icon only), button, dropdown
-- Dropdown shows wallet info via `WalletInfoDisplay`
-- Actions: Switch Wallet, Disconnect Wallet
+### WalletConnectModal (`components/Lightning/WalletConnectModal.tsx`)
+- StableKraft's own wallet picker; `@getalby/bitcoin-connect`'s modal is never shown
+- Two rows: Browser Extension (only when `window.webln` exists) and Nostr Wallet Connect
+- Plus a "Restore from Nostr" row when the session can decrypt a saved backup
+- Rendered once by `BitcoinConnectProvider`, so every `connect()` caller shares it
+- See CLAUDE.md → "Wallet Connection UI" for the invariants
+
+### Wallet actions (`components/UserMenu.tsx`)
+- Switch Wallet → NWC Backup (with status) → Disconnect Wallet, destructive last
+- Wallet info via `WalletInfoDisplay`
+
+> `LightningWalletButton.tsx` was removed 2026-07-26 — it had three variants and its
+> own wallet dropdown, but nothing had mounted it since the picker replaced the
+> Bitcoin Connect modal. `UserMenu` is the live wallet surface.
 
 ### WalletInfoDisplay (`components/Lightning/WalletInfoDisplay.tsx`)
 - Three variants: compact (inline), full (dropdown), card (settings page)

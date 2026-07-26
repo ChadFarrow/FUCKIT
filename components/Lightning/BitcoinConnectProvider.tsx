@@ -1021,8 +1021,8 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
     >
       {children}
       {/* Rendered here so every connect() entry point — UserMenu on both
-          breakpoints, LightningWalletButton, BoostButton — shares one picker.
-          This provider wraps the whole app via layout.tsx → LightningWrapper. */}
+          breakpoints, BoostButton — shares one picker. This provider wraps the
+          whole app via layout.tsx → LightningWrapper. */}
       <WalletConnectModal
         isOpen={isWalletModalOpen}
         onClose={closeWalletModal}
