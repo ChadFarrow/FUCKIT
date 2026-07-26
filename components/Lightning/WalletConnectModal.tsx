@@ -301,8 +301,23 @@ export function WalletConnectModal({ isOpen, onClose, initialView = 'picker' }: 
 
   if (!mounted || !isOpen) return null;
 
+  /**
+   * Touch devices only.
+   *
+   * navigator.clipboard.readText() reads the clipboard programmatically, so
+   * browsers demand a separate confirmation — Firefox and Safari pop their own
+   * little "Paste" button, Chrome asks for permission. That makes the control
+   * TWO clicks on a desktop, where ⌘V into the field is one keystroke: strictly
+   * worse than not having it. On a phone it's the opposite, since the
+   * alternative is long-press → tap → Paste and the string is far too long to
+   * type. `pointer: coarse` asks about the input device rather than sniffing
+   * the user agent.
+   */
   const canPaste =
-    typeof navigator !== 'undefined' && typeof navigator.clipboard?.readText === 'function';
+    typeof navigator !== 'undefined' &&
+    typeof navigator.clipboard?.readText === 'function' &&
+    typeof window !== 'undefined' &&
+    window.matchMedia?.('(pointer: coarse)').matches === true;
 
   const modalContent = (
     <div
