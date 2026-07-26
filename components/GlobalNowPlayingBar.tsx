@@ -156,7 +156,20 @@ const GlobalNowPlayingBar: React.FC = () => {
       paddingBottom: 'calc(16px + var(--sk-safe-bottom))', // Clear the iOS home indicator / Android nav bar
       backgroundColor: '#1f2937',
       borderTop: '1px solid #f97316',
-      zIndex: 50
+      zIndex: 50,
+      // iOS defers repositioning `position: fixed` elements during a momentum scroll:
+      // it keeps compositing them at a stale offset and only corrects when the scroll
+      // settles, so the bar transiently appears raised with page content visible below
+      // it (reported on the iOS home-screen PWA; it corrects itself on further scroll).
+      // Promoting the bar to its own compositing layer lets the compositor keep it
+      // pinned instead of waiting on a main-thread repaint.
+      //
+      // Safe here specifically because the bar has NO `position: fixed` descendants —
+      // a transform would otherwise make it their containing block. Its one absolutely
+      // positioned child (the desktop share button) is already contained by it. Re-check
+      // that if a fixed child is ever added.
+      transform: 'translateZ(0)',
+      willChange: 'transform',
     }}>
       {/* Share button on far left - hidden on mobile, shown on desktop */}
       <button
