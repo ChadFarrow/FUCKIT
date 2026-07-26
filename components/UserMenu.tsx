@@ -292,20 +292,15 @@ export default function UserMenu({ className = '' }: UserMenuProps) {
                           <Wallet className="w-4 h-4" />
                           Switch Wallet
                         </button>
-                        <button
-                          onClick={handleDisconnect}
-                          className="w-full flex items-center gap-3 px-3 py-2 text-left text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-                        >
-                          <LogOut className="w-4 h-4" />
-                          Disconnect Wallet
-                        </button>
+                        {/* The Nostr backup, showing its own status. This is the
+                            only entry point for someone already signed in with a
+                            wallet already connected — the offer otherwise fires
+                            only on a fresh NWC paste or a fresh login, so without
+                            this row existing users would never come across the
+                            feature.
 
-                        {/* Third wallet action: the Nostr backup, showing its own
-                            status. This is the only entry point for someone
-                            already signed in with a wallet already connected —
-                            the offer otherwise fires only on a fresh NWC paste
-                            or a fresh login, so without this row existing users
-                            would never come across the feature. */}
+                            Sits above Disconnect so the destructive action stays
+                            last in the group. */}
                         {backupStatus !== 'hidden' && (
                           <button
                             onClick={handleBackupAction}
@@ -327,6 +322,14 @@ export default function UserMenu({ className = '' }: UserMenuProps) {
                             </span>
                           </button>
                         )}
+
+                        <button
+                          onClick={handleDisconnect}
+                          className="w-full flex items-center gap-3 px-3 py-2 text-left text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          Disconnect Wallet
+                        </button>
                       </div>
                     </div>
                   ) : (
