@@ -278,8 +278,23 @@ export default function RootLayout({
                               }}
                             />
 
-                            {/* Content overlay */}
-                            <div className="relative z-10 pb-28">
+                            {/* Content overlay.
+
+                                The bottom padding reserves scroll room for
+                                GlobalNowPlayingBar, and it must match the bar's height
+                                rather than exceed it. This wrapper is transparent and
+                                sits above the fixed artwork layer, so any padding the
+                                bar does NOT cover is a visible strip of background
+                                between the page and the player.
+
+                                It was a flat `pb-28` (112px). The bar is 89px on mobile
+                                and 81px at md+, plus the home-indicator inset — so with
+                                a 34px inset it was covered, but in Safari, where the
+                                inset is 0 while the toolbar shows, 23px (mobile) and
+                                31px (desktop) of bare artwork showed. Tracking the inset
+                                keeps it covered in every combination; the values are 1px
+                                under the measured bar height so it can never overshoot. */}
+                            <div className="relative z-10 pb-[calc(88px+var(--sk-safe-bottom))] md:pb-[calc(80px+var(--sk-safe-bottom))]">
                               {children}
                             </div>
                           </div>
