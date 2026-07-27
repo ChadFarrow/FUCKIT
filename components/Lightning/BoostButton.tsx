@@ -6,6 +6,7 @@ import { useBitcoinConnect } from './BitcoinConnectProvider';
 import { useNostr } from '@/contexts/NostrContext';
 import { useUserSettings } from '@/hooks/useUserSettings';
 import { LIGHTNING_CONFIG } from '@/lib/lightning/config';
+import { looksLikeNostrIdentifier, resolveBoostSenderName } from '@/lib/lightning/sender-name';
 import { LNURLService } from '@/lib/lightning/lnurl';
 import { BoostBoxService } from '@/lib/lightning/boostbox';
 import { ValueSplitsService } from '@/lib/lightning/value-splits';
@@ -86,22 +87,14 @@ export function BoostButton({
   // These are extracted from Lightning Address NIP-05 verification during payment resolution
   // and used to add p-tags to Nostr boost posts so musicians receive notifications
   const [resolvedMusicianPubkeys, setResolvedMusicianPubkeys] = useState<Array<{ address: string; pubkey: string }>>([]);
+  // Once the field is edited by hand, no prefill effect may overwrite it.
+  const senderNameTouchedRef = useRef(false);
+
+  const isNostrSignedIn = isNostrAuthenticated && !!nostrUser;
 
   useEffect(() => {
     setIsClient(true);
     setMounted(true);
-
-    // Load sender name from settings (preferred) or localStorage (legacy) or default
-    if (settings.defaultBoostName) {
-      setSenderName(settings.defaultBoostName);
-    } else {
-      const savedName = localStorage.getItem('boostSenderName');
-      if (savedName) {
-        setSenderName(savedName);
-      } else {
-        setSenderName('StableKraft.app user');
-      }
-    }
 
     // Set default boost amount from settings
     if (settings.defaultBoostAmount) {
@@ -115,7 +108,19 @@ export function BoostButton({
     }
 
     return () => setMounted(false);
-  }, [settings.defaultBoostAmount, settings.defaultBoostName]);
+  }, [settings.defaultBoostAmount]);
+
+  // Sender name resolves in its own effect because the Nostr display name arrives
+  // asynchronously (NostrContext backfills kind-0 after login) — re-running the
+  // mount effect for it would clobber an amount the user had already typed.
+  useEffect(() => {
+    if (senderNameTouchedRef.current) return;
+    setSenderName(resolveBoostSenderName({
+      settingsName: settings.defaultBoostName,
+      savedName: localStorage.getItem('boostSenderName'),
+      nostrDisplayName: nostrUser?.displayName,
+    }));
+  }, [settings.defaultBoostName, nostrUser?.displayName]);
 
   // Handle autoOpen - check connection first
   useEffect(() => {
@@ -378,8 +383,10 @@ export function BoostButton({
       } else {
         setSuccess(true);
 
-        // Save sender name to localStorage for future boosts
-        if (senderName) {
+        // Save sender name to localStorage for future boosts. An identifier-shaped
+        // value is never persisted — resolveBoostSenderName would skip it on the next
+        // load anyway, so storing it would just leave the two out of step.
+        if (senderName && !looksLikeNostrIdentifier(senderName)) {
           localStorage.setItem('boostSenderName', senderName);
         }
 
@@ -1435,11 +1442,19 @@ export function BoostButton({
               <label className="text-sm text-gray-400 mb-2 block">
                 Your Name (optional)
               </label>
+              {/* `name` + autoComplete="off": as an unnamed text input this field was
+                  fair game for autofill, which happily stuffed it with a saved value
+                  from a Nostr login box — an npub, truncated to maxLength. */}
               <input
                 type="text"
+                name="boost-sender-name"
+                autoComplete="off"
                 placeholder="Enter your name"
                 value={senderName}
-                onChange={(e) => setSenderName(e.target.value.slice(0, 50))}
+                onChange={(e) => {
+                  senderNameTouchedRef.current = true;
+                  setSenderName(e.target.value.slice(0, 50));
+                }}
                 className="w-full px-3 py-2 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                 maxLength={50}
               />
@@ -1466,22 +1481,35 @@ export function BoostButton({
               </p>
             </div>
 
-            {/* Post to Nostr - only when logged into Nostr */}
-            {LIGHTNING_CONFIG.features.nostrIntegration && isNostrAuthenticated && nostrUser && (trackId || feedId) && (
-              <div className="mb-6 flex items-center gap-2">
-                <input
-                  id="postToNostr"
-                  type="checkbox"
-                  checked={postToNostr}
-                  onChange={(e) => {
-                    setPostToNostr(e.target.checked);
-                    localStorage.setItem('boostPostToNostr', String(e.target.checked));
-                  }}
-                  className="h-4 w-4 accent-yellow-500"
-                />
-                <label htmlFor="postToNostr" className="text-sm text-gray-300 select-none cursor-pointer">
-                  Post this boost to Nostr
-                </label>
+            {/* Post to Nostr. The row renders whether or not you are signed in — while
+                it was hidden for signed-out users its absence read as a missing
+                feature rather than as an unmet prerequisite. */}
+            {LIGHTNING_CONFIG.features.nostrIntegration && (trackId || feedId) && (
+              <div className="mb-6">
+                <div className="flex items-center gap-2">
+                  <input
+                    id="postToNostr"
+                    type="checkbox"
+                    checked={isNostrSignedIn && postToNostr}
+                    disabled={!isNostrSignedIn}
+                    onChange={(e) => {
+                      setPostToNostr(e.target.checked);
+                      localStorage.setItem('boostPostToNostr', String(e.target.checked));
+                    }}
+                    className="h-4 w-4 accent-yellow-500 disabled:opacity-50"
+                  />
+                  <label
+                    htmlFor="postToNostr"
+                    className={`text-sm select-none ${isNostrSignedIn ? 'text-gray-300 cursor-pointer' : 'text-gray-500 cursor-not-allowed'}`}
+                  >
+                    Post this boost to Nostr
+                  </label>
+                </div>
+                {!isNostrSignedIn && (
+                  <p className="text-xs text-gray-500 mt-1 ml-6">
+                    Sign in with Nostr to post your boosts.
+                  </p>
+                )}
               </div>
             )}
 
@@ -1501,7 +1529,7 @@ export function BoostButton({
             )}
 
             {/* Nostr Status */}
-            {LIGHTNING_CONFIG.features.nostrIntegration && isNostrAuthenticated && nostrUser && (trackId || feedId) && (
+            {LIGHTNING_CONFIG.features.nostrIntegration && isNostrSignedIn && (trackId || feedId) && (
               <div className="mb-4">
                 {nostrStatus === 'signing' && (
                   <div className="p-3 bg-blue-900/50 border border-blue-700 rounded-lg text-blue-200 text-sm flex items-center gap-2">
