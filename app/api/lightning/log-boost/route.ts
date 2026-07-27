@@ -1,4 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { classifyBoostFailure } from '@/lib/lightning/boost-failure';
+
+/** `[category user|fix]` — greppable triage tag on every failure line. */
+function tag(reason: string | null | undefined): string {
+  const { category, userActionable } = classifyBoostFailure(reason);
+  return `[${category} ${userActionable ? 'user' : 'fix'}]`;
+}
 
 // Simple in-memory storage for testing (replace with database in production)
 const boostLog: Array<{
@@ -12,8 +19,32 @@ const boostLog: Array<{
   type: string;
   recipient: string;
   preimage?: string;
+  // Outcome of the 2 sat StableKraft fee, which is a separate LNURL payment made
+  // after the recipients are paid. Reported by the client so a failure on a user's
+  // machine is visible here instead of only in their browser console.
+  // Whether the boost paid anyone at all.
+  status?: 'succeeded' | 'failed';
+  error?: string;
+  feeStatus?: 'sent' | 'failed';
+  feeError?: string;
+  // Recipients that got nothing on a boost that still reported success — a split
+  // payment counts as successful as soon as any one recipient is paid.
+  failedRecipients?: Array<{ name: string; amount: number; error: string }>;
   timestamp: Date;
 }> = [];
+
+/** Client-reported, so shape-check it rather than trusting the body. */
+function parseFailedRecipients(value: unknown): Array<{ name: string; amount: number; error: string }> | undefined {
+  if (!Array.isArray(value) || value.length === 0) return undefined;
+
+  const parsed = value.slice(0, 20).map((entry: any) => ({
+    name: String(entry?.name ?? 'unknown').slice(0, 200),
+    amount: Number(entry?.amount) || 0,
+    error: String(entry?.error ?? 'unknown error').slice(0, 500),
+  }));
+
+  return parsed.length > 0 ? parsed : undefined;
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -29,6 +60,11 @@ export async function POST(req: NextRequest) {
     const type = body.type;
     const recipient = body.recipient;
     const preimage = body.preimage;
+    const status: 'succeeded' | 'failed' = body.status === 'failed' ? 'failed' : 'succeeded';
+    const error = typeof body.error === 'string' ? body.error.slice(0, 500) : undefined;
+    const feeStatus = body.feeStatus === 'failed' || body.feeStatus === 'sent' ? body.feeStatus : undefined;
+    const feeError = typeof body.feeError === 'string' ? body.feeError.slice(0, 500) : undefined;
+    const failedRecipients = parseFailedRecipients(body.failedRecipients);
 
     // Check which required fields are missing
     const missingFields = [];
@@ -56,12 +92,42 @@ export async function POST(req: NextRequest) {
       type,
       recipient,
       preimage,
+      status,
+      error,
+      feeStatus,
+      feeError,
+      failedRecipients,
       timestamp: new Date(),
     };
 
     boostLog.push(boost);
 
-    console.log('⚡ Boost logged successfully:', boost.id);
+    console.log(`⚡ Boost logged (${status}):`, boost.id);
+
+    // Logged at error severity so these surface in Railway without trawling the feed.
+    if (status === 'failed') {
+      console.error(
+        `❌ ${tag(error)} Boost failed entirely — ${amount} sats to ${recipient}` +
+        ` (${trackTitle || 'unknown track'} / ${artistName || 'unknown artist'}, ${type}):` +
+        ` ${error || 'no reason reported'}`
+      );
+    }
+
+    if (failedRecipients) {
+      console.error(
+        `❌ ${failedRecipients.length} recipient(s) unpaid on boost ${boost.id}` +
+        ` (${trackTitle || 'unknown track'} / ${artistName || 'unknown artist'}, ${amount} sats, ${type}): ` +
+        failedRecipients.map(r => `${tag(r.error)} ${r.name} (${r.amount} sats): ${r.error}`).join(' | ')
+      );
+    }
+
+    if (feeStatus === 'failed') {
+      console.error(
+        `❌ ${tag(feeError)} StableKraft fee failed on boost ${boost.id} — ${amount} sats to ${recipient}` +
+        ` (${trackTitle || 'unknown track'} / ${artistName || 'unknown artist'}, ${type}):` +
+        ` ${feeError || 'no reason reported'}`
+      );
+    }
 
     return NextResponse.json({
       success: true,
