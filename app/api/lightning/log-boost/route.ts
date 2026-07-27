@@ -17,8 +17,24 @@ const boostLog: Array<{
   // machine is visible here instead of only in their browser console.
   feeStatus?: 'sent' | 'failed';
   feeError?: string;
+  // Recipients that got nothing on a boost that still reported success — a split
+  // payment counts as successful as soon as any one recipient is paid.
+  failedRecipients?: Array<{ name: string; amount: number; error: string }>;
   timestamp: Date;
 }> = [];
+
+/** Client-reported, so shape-check it rather than trusting the body. */
+function parseFailedRecipients(value: unknown): Array<{ name: string; amount: number; error: string }> | undefined {
+  if (!Array.isArray(value) || value.length === 0) return undefined;
+
+  const parsed = value.slice(0, 20).map((entry: any) => ({
+    name: String(entry?.name ?? 'unknown').slice(0, 200),
+    amount: Number(entry?.amount) || 0,
+    error: String(entry?.error ?? 'unknown error').slice(0, 500),
+  }));
+
+  return parsed.length > 0 ? parsed : undefined;
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -36,6 +52,7 @@ export async function POST(req: NextRequest) {
     const preimage = body.preimage;
     const feeStatus = body.feeStatus === 'failed' || body.feeStatus === 'sent' ? body.feeStatus : undefined;
     const feeError = typeof body.feeError === 'string' ? body.feeError.slice(0, 500) : undefined;
+    const failedRecipients = parseFailedRecipients(body.failedRecipients);
 
     // Check which required fields are missing
     const missingFields = [];
@@ -65,6 +82,7 @@ export async function POST(req: NextRequest) {
       preimage,
       feeStatus,
       feeError,
+      failedRecipients,
       timestamp: new Date(),
     };
 
@@ -72,7 +90,15 @@ export async function POST(req: NextRequest) {
 
     console.log('⚡ Boost logged successfully:', boost.id);
 
-    // Logged at error severity so it surfaces in Railway without trawling the feed.
+    // Logged at error severity so these surface in Railway without trawling the feed.
+    if (failedRecipients) {
+      console.error(
+        `❌ ${failedRecipients.length} recipient(s) unpaid on boost ${boost.id}` +
+        ` (${trackTitle || 'unknown track'} / ${artistName || 'unknown artist'}, ${amount} sats, ${type}): ` +
+        failedRecipients.map(r => `${r.name} (${r.amount} sats): ${r.error}`).join(' | ')
+      );
+    }
+
     if (feeStatus === 'failed') {
       console.error(
         `❌ StableKraft fee failed on boost ${boost.id} — ${amount} sats to ${recipient}` +

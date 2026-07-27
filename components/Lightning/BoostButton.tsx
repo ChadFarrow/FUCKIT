@@ -322,6 +322,8 @@ export function BoostButton({
       let musicianPubkeysForNostr: Array<{ address: string; pubkey: string }> = [];
       // Collect BoostBox URLs from LNURL payments for metaboost boost_link
       let collectedBoostboxUrls: string[] = [];
+      // Recipients skipped by a partly-successful split payment (see sendValueSplitPayments).
+      let failedRecipients: Array<{ name: string; amount: number; error: string }> = [];
 
       if (activeValueSplits && activeValueSplits.length > 0) {
         // Use value splits for multiple recipients (highest priority)
@@ -332,6 +334,9 @@ export function BoostButton({
         }
         if (valueSplitResult.boostboxUrls) {
           collectedBoostboxUrls = valueSplitResult.boostboxUrls;
+        }
+        if (valueSplitResult.failedRecipients) {
+          failedRecipients = valueSplitResult.failedRecipients;
         }
       } else if (activeLightningAddress && LNURLService.isLightningAddress(activeLightningAddress)) {
         // Pay to Lightning Address via LNURL-pay
@@ -416,6 +421,7 @@ export function BoostButton({
                         activeLightningAddress ? 'lightning-address' : 'keysend',
           feeStatus: platformFeeError ? 'failed' : 'sent',
           feeError: platformFeeError,
+          failedRecipients,
         });
 
         // Post to Nostr if user is authenticated and Nostr integration is enabled
@@ -929,7 +935,18 @@ export function BoostButton({
   const sendValueSplitPayments = async (
     totalAmount: number,
     message?: string
-  ): Promise<{ preimage?: string; error?: string; resolvedPubkeys?: Array<{ address: string; pubkey: string }>; boostboxUrls?: string[] }> => {
+  ): Promise<{
+    preimage?: string;
+    error?: string;
+    resolvedPubkeys?: Array<{ address: string; pubkey: string }>;
+    boostboxUrls?: string[];
+    // Recipients that did NOT get paid on an otherwise-successful boost.
+    // sendMultiRecipientPayment reports success when *any* recipient succeeds, and at
+    // >=50% it even replaces the per-recipient errors with a summary string — so
+    // without carrying these out, a partly-paid boost is indistinguishable from a
+    // fully-paid one anywhere except the payment rows on that user's screen.
+    failedRecipients?: Array<{ name: string; amount: number; error: string }>;
+  }> => {
     try {
       // Convert valueSplits to ValueRecipient format
       // Ensure split is numeric to prevent string concatenation bugs in calculations
@@ -1036,7 +1053,16 @@ export function BoostButton({
       }
 
       // Return the primary preimage, resolved Nostr pubkeys for tagging, and BoostBox URLs
-      return { preimage: result.primaryPreimage, resolvedPubkeys: resolvedNostrPubkeys, boostboxUrls: result.boostboxUrls };
+      return {
+        preimage: result.primaryPreimage,
+        resolvedPubkeys: resolvedNostrPubkeys,
+        boostboxUrls: result.boostboxUrls,
+        failedRecipients: result.failedPayments.map(payment => ({
+          name: payment.recipient.name || payment.recipient.address,
+          amount: payment.amount,
+          error: payment.result?.error || 'unknown error',
+        })),
+      };
     } catch (error) {
       return { error: error instanceof Error ? error.message : 'Value split payment failed' };
     }
@@ -1109,6 +1135,7 @@ export function BoostButton({
     // else's machine reaches the server logs — their browser console is unreachable.
     feeStatus?: 'sent' | 'failed';
     feeError?: string;
+    failedRecipients?: Array<{ name: string; amount: number; error: string }>;
   }) => {
     try {
       // Determine recipient based on payment method
@@ -1136,6 +1163,7 @@ export function BoostButton({
         preimage: data.preimage,
         feeStatus: data.feeStatus,
         feeError: data.feeError,
+        failedRecipients: data.failedRecipients?.length ? data.failedRecipients : undefined,
       };
 
       // Clean the log data to remove undefined/null values (but keep required fields)
