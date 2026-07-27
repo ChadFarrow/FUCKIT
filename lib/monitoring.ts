@@ -67,6 +67,11 @@ class MonitoringService {
   /**
    * Buffers an error/warning for /api/client-log. Every failure mode here is
    * swallowed — reporting a problem must never become a second problem.
+   *
+   * A session that has no errors pays NOTHING: this is the only entry point, so with
+   * no error or warning there is no buffer allocation, no listener, no timer and no
+   * request. All the cost below is on the failure path, where the app is already
+   * doing worse things than one batched POST.
    */
   private queueReport(level: 'warn' | 'error', category: string, message: string, data?: any) {
     if (typeof window === 'undefined') return;
@@ -81,12 +86,30 @@ class MonitoringService {
         // request per retry attempt would be its own kind of flood.
         this.flushTimer = setTimeout(() => {
           this.flushTimer = null;
-          this.flushReports();
+          this.scheduleIdleFlush();
         }, FLUSH_DELAY_MS);
       }
     } catch {
       // Ignore.
     }
+  }
+
+  /**
+   * Runs the flush in idle time so it cannot land in the same frame as playback
+   * setup, a track transition or a scroll. Telemetry has no deadline — nothing in
+   * the app waits on it — so it should always yield to work the user can perceive.
+   * The timeout keeps a permanently-busy page from deferring reports forever.
+   */
+  private scheduleIdleFlush() {
+    const idle = (window as any).requestIdleCallback;
+
+    if (typeof idle === 'function') {
+      idle(() => this.flushReports(), { timeout: 10_000 });
+      return;
+    }
+
+    // Safari has no requestIdleCallback; a macrotask still yields the current frame.
+    setTimeout(() => this.flushReports(), 0);
   }
 
   /**
@@ -108,6 +131,14 @@ class MonitoringService {
 
   private flushReports(isUnloading = false) {
     try {
+      // Manual Offline mode is the user telling us they are on a bad connection and
+      // want bandwidth spent on playback. Spending it on telemetry instead is exactly
+      // backwards, so reports stay buffered (bounded, with drop counting) until they
+      // turn it off. Read directly rather than through DownloadsContext — this runs
+      // outside React and must not pull a context into the monitoring module.
+      // Stored as '1'/'0' by DownloadsContext — matches AudioContext's own reader.
+      if (localStorage.getItem('sk_offline_mode') === '1') return;
+
       const { entries, dropped } = this.reportBuffer.drain();
       if (entries.length === 0 && dropped === 0) return;
 
