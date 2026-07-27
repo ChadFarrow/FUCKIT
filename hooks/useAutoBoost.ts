@@ -5,6 +5,7 @@ import { useBitcoinConnect } from '@/components/Lightning/BitcoinConnectProvider
 import { useUserSettings } from '@/contexts/UserSettingsContext';
 import { ValueSplitsService } from '@/lib/lightning/value-splits';
 import { ValueRecipient } from '@/lib/lightning/value-parser';
+import { reportBoost } from '@/lib/lightning/report-boost';
 import { toast } from '@/components/Toast';
 import { hasV4V as checkHasV4V, getV4VRecipients, getPrimaryRecipient } from '@/lib/v4v-utils';
 
@@ -145,28 +146,22 @@ export function useAutoBoost() {
         }
       }
 
+      // Reported on BOTH branches — see reportBoost. Auto-boost fires while the
+      // screen is off, so a failure that is only a toast is a failure nobody sees.
+      const autoBoostReport = {
+        trackId: track.id,
+        feedId: album.id,
+        trackTitle: track.title,
+        artistName: album.artist,
+        amount: boostAmount,
+        senderName: settings.defaultBoostName || 'StableKraft.app user',
+        recipient: getPrimaryRecipient(track) || 'value-splits',
+      };
+
       if (result?.preimage) {
         console.log(`✅ Auto-boost successful: ${boostAmount} sats`);
 
-        // Log boost to database (without Nostr posting)
-        try {
-          await fetch('/api/lightning/log-boost', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              trackId: track.id,
-              feedId: album.id,
-              amount: boostAmount,
-              message: '', // No message for auto-boost
-              senderName: settings.defaultBoostName || 'StableKraft.app user',
-              preimage: result.preimage,
-              type: 'auto', // Mark as auto-boost
-              recipient: getPrimaryRecipient(track) || 'value-splits'
-            })
-          });
-        } catch (logError) {
-          console.warn('⚠️ Failed to log auto-boost:', logError);
-        }
+        await reportBoost({ ...autoBoostReport, preimage: result.preimage, status: 'succeeded' });
 
         // Show subtle toast notification
         toast.success(`Auto-boost: ${boostAmount} sats ⚡`, {
@@ -175,11 +170,23 @@ export function useAutoBoost() {
 
         return { success: true, amount: boostAmount };
       } else {
-        console.warn(`⚠️ Auto-boost failed: ${result?.error || 'Unknown error'}`);
+        const reason = result?.error || 'Unknown error';
+        console.warn(`⚠️ Auto-boost failed: ${reason}`);
+        await reportBoost({ ...autoBoostReport, status: 'failed', error: reason });
         return { success: false, error: result?.error || 'Payment failed' };
       }
     } catch (error) {
       console.error('❌ Auto-boost error:', error);
+      await reportBoost({
+        trackId: track.id,
+        feedId: album.id,
+        trackTitle: track.title,
+        artistName: album.artist,
+        amount: boostAmount,
+        recipient: getPrimaryRecipient(track) || 'value-splits',
+        status: 'failed',
+        error: error instanceof Error ? error.message : String(error),
+      });
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     } finally {
       isProcessingRef.current = false;

@@ -13,6 +13,7 @@ import { publishNowPlayingStatus, clearUserStatus } from '@/lib/nostr/nip38';
 import { useBitcoinConnect } from '@/components/Lightning/BitcoinConnectProvider';
 import { ValueSplitsService } from '@/lib/lightning/value-splits';
 import { ValueRecipient } from '@/lib/lightning/value-parser';
+import { reportBoost } from '@/lib/lightning/report-boost';
 import { hasV4V as checkHasV4V, getV4VRecipients, getPrimaryRecipient, formatValueSplitsForBoost } from '@/lib/v4v-utils';
 import { prefetchUpcomingTracks, prefetchAudio } from '@/lib/audio-prefetch';
 import { NextTrackBlobCache } from '@/lib/audio-blob-prefetch';
@@ -526,37 +527,45 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         }
       }
 
+      // Reported on BOTH branches. Auto-boost runs while the screen is off, so the
+      // toasts below are for whoever happens to be looking — the report is the
+      // record. Logging only the successes is how a failing auto-boost stayed
+      // invisible for an entire backgrounded album.
+      const autoBoostReport = {
+        trackId: track.id,
+        feedId: album.id,
+        trackTitle: track.title,
+        artistName: track.artist || album.artist,
+        amount,
+        senderName: settings.defaultBoostName || 'StableKraft.app user',
+        recipient: getPrimaryRecipient(track) || getPrimaryRecipient(album) || 'value-splits',
+      };
+
       if (result?.preimage) {
         console.log(`✅ Auto-boost successful: ${amount} sats`);
 
-        // Log boost to database (without Nostr posting)
-        try {
-          await fetch('/api/lightning/log-boost', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              trackId: track.id,
-              feedId: album.id,
-              amount: amount,
-              message: '', // No message for auto-boost
-              senderName: settings.defaultBoostName || 'StableKraft.app user',
-              preimage: result.preimage,
-              type: 'auto', // Mark as auto-boost
-              recipient: getPrimaryRecipient(track) || getPrimaryRecipient(album) || 'value-splits'
-            })
-          });
-        } catch (logError) {
-          console.warn('⚠️ Failed to log auto-boost:', logError);
-        }
+        await reportBoost({ ...autoBoostReport, preimage: result.preimage, status: 'succeeded' });
 
         // Show subtle toast notification
         toast.success(`Auto-boost: ${amount} sats ⚡`);
       } else {
-        console.warn(`⚠️ Auto-boost failed: ${result?.error || 'Unknown error'}`);
+        const reason = result?.error || 'Unknown error';
+        console.warn(`⚠️ Auto-boost failed: ${reason}`);
+        await reportBoost({ ...autoBoostReport, status: 'failed', error: reason });
         toast.error('Auto-boost failed');
       }
     } catch (error) {
       console.error('❌ Auto-boost error:', error);
+      await reportBoost({
+        trackId: track.id,
+        feedId: album.id,
+        trackTitle: track.title,
+        artistName: track.artist || album.artist,
+        amount,
+        recipient: getPrimaryRecipient(track) || getPrimaryRecipient(album) || 'value-splits',
+        status: 'failed',
+        error: error instanceof Error ? error.message : String(error),
+      });
       toast.error('Auto-boost failed');
     } finally {
       autoBoostProcessingRef.current = false;
@@ -768,34 +777,38 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         supportsKeysend
       );
 
+      const chapterBoostReport = {
+        trackId: `${album.id}-ch-${chapterTitle || 'unknown'}`,
+        feedId: album.id,
+        trackTitle: chapterTitle || trackTitle,
+        artistName,
+        amount,
+        recipient: recipients[0]?.address || 'value-splits',
+      };
+
       if (multiResult.success || multiResult.isPartialSuccess) {
         console.log(`✅ Chapter auto-boost successful: ${amount} sats for "${trackTitle}"`);
 
-        // Log to database
-        try {
-          await fetch('/api/lightning/log-boost', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              trackId: `${album.id}-ch-${chapterTitle || 'unknown'}`,
-              feedId: album.id,
-              trackTitle: chapterTitle || trackTitle,
-              artistName,
-              amount,
-              message: '',
-              preimage: multiResult.primaryPreimage,
-              type: 'auto',
-              recipient: recipients[0]?.address || 'value-splits'
-            })
-          });
-        } catch (logError) {
-          console.warn('⚠️ Failed to log chapter auto-boost:', logError);
-        }
+        await reportBoost({
+          ...chapterBoostReport,
+          preimage: multiResult.primaryPreimage,
+          status: 'succeeded',
+          // isPartialSuccess means some recipients got nothing, and multiResult.errors
+          // is replaced by a "Partial success: 2/3" summary at that point — carry it
+          // so a partly-paid VTS segment is distinguishable from a fully-paid one.
+          failedRecipients: multiResult.failedPayments?.map(payment => ({
+            name: payment.recipient.name || payment.recipient.address,
+            amount: payment.amount,
+            error: payment.result?.error || 'unknown error',
+          })),
+        });
 
         toast.success(`Auto-boost: ${amount} sats for ${artistName} ⚡`);
       } else {
         const errors = multiResult.errors.join(', ');
         console.warn(`⚠️ Chapter auto-boost failed: ${errors}`);
+
+        await reportBoost({ ...chapterBoostReport, status: 'failed', error: errors });
 
         const isKeysendUnsupported = errors.includes('Keysend not supported') ||
           errors.includes("doesn't support keysend") ||
@@ -812,6 +825,17 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
       }
     } catch (error) {
       console.error('❌ Chapter auto-boost error:', error);
+      await reportBoost({
+        trackId: `${album.id}-ch-${chapterTitle || 'unknown'}`,
+        feedId: album.id,
+        // trackTitle/artistName are declared inside the try, so they are out of
+        // scope here — fall back to what the arguments give us.
+        trackTitle: chapterTitle || 'Unknown Track',
+        artistName: album.artist || 'Unknown Artist',
+        amount,
+        status: 'failed',
+        error: error instanceof Error ? error.message : String(error),
+      });
       toast.error('Auto-boost failed');
     } finally {
       autoBoostProcessingRef.current = false;
