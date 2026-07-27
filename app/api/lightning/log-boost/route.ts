@@ -12,6 +12,11 @@ const boostLog: Array<{
   type: string;
   recipient: string;
   preimage?: string;
+  // Outcome of the 2 sat StableKraft fee, which is a separate LNURL payment made
+  // after the recipients are paid. Reported by the client so a failure on a user's
+  // machine is visible here instead of only in their browser console.
+  feeStatus?: 'sent' | 'failed';
+  feeError?: string;
   timestamp: Date;
 }> = [];
 
@@ -29,6 +34,8 @@ export async function POST(req: NextRequest) {
     const type = body.type;
     const recipient = body.recipient;
     const preimage = body.preimage;
+    const feeStatus = body.feeStatus === 'failed' || body.feeStatus === 'sent' ? body.feeStatus : undefined;
+    const feeError = typeof body.feeError === 'string' ? body.feeError.slice(0, 500) : undefined;
 
     // Check which required fields are missing
     const missingFields = [];
@@ -56,12 +63,23 @@ export async function POST(req: NextRequest) {
       type,
       recipient,
       preimage,
+      feeStatus,
+      feeError,
       timestamp: new Date(),
     };
 
     boostLog.push(boost);
 
     console.log('⚡ Boost logged successfully:', boost.id);
+
+    // Logged at error severity so it surfaces in Railway without trawling the feed.
+    if (feeStatus === 'failed') {
+      console.error(
+        `❌ StableKraft fee failed on boost ${boost.id} — ${amount} sats to ${recipient}` +
+        ` (${trackTitle || 'unknown track'} / ${artistName || 'unknown artist'}, ${type}):` +
+        ` ${feeError || 'no reason reported'}`
+      );
+    }
 
     return NextResponse.json({
       success: true,

@@ -391,6 +391,7 @@ export function BoostButton({
         }
 
         // Send 2 sat platform fee metaboost (include BoostBox URLs as boost_link)
+        let platformFeeError: string | undefined;
         try {
           await sendPlatformFeeMetaboost(collectedBoostboxUrls);
         } catch (feeError) {
@@ -398,9 +399,9 @@ export function BoostButton({
           // boost — but it must not be invisible either. It was previously swallowed
           // into a console.warn nobody reads, which is how a fee could quietly stop
           // going out while every boost still reported success.
-          const reason = feeError instanceof Error ? feeError.message : String(feeError);
+          platformFeeError = feeError instanceof Error ? feeError.message : String(feeError);
           console.warn('Platform fee metaboost failed:', feeError);
-          toast.warning(`Boost sent. The ${LIGHTNING_CONFIG.platform.fee} sat StableKraft fee didn't go through: ${reason}`);
+          toast.warning(`Boost sent. The ${LIGHTNING_CONFIG.platform.fee} sat StableKraft fee didn't go through: ${platformFeeError}`);
         }
 
         // Log the boost to the database
@@ -413,6 +414,8 @@ export function BoostButton({
           preimage: result.preimage,
           paymentMethod: activeValueSplits?.length ? 'value-splits' :
                         activeLightningAddress ? 'lightning-address' : 'keysend',
+          feeStatus: platformFeeError ? 'failed' : 'sent',
+          feeError: platformFeeError,
         });
 
         // Post to Nostr if user is authenticated and Nostr integration is enabled
@@ -1102,6 +1105,10 @@ export function BoostButton({
     senderName?: string;
     preimage?: string;
     paymentMethod?: string;
+    // Outcome of the platform-fee metaboost. Reported so a fee failure on someone
+    // else's machine reaches the server logs — their browser console is unreachable.
+    feeStatus?: 'sent' | 'failed';
+    feeError?: string;
   }) => {
     try {
       // Determine recipient based on payment method
@@ -1127,6 +1134,8 @@ export function BoostButton({
         type: data.paymentMethod || 'unknown',
         recipient: recipient,
         preimage: data.preimage,
+        feeStatus: data.feeStatus,
+        feeError: data.feeError,
       };
 
       // Clean the log data to remove undefined/null values (but keep required fields)
