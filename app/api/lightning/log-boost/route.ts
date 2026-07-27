@@ -1,4 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { classifyBoostFailure } from '@/lib/lightning/boost-failure';
+
+/** `[category user|fix]` — greppable triage tag on every failure line. */
+function tag(reason: string | null | undefined): string {
+  const { category, userActionable } = classifyBoostFailure(reason);
+  return `[${category} ${userActionable ? 'user' : 'fix'}]`;
+}
 
 // Simple in-memory storage for testing (replace with database in production)
 const boostLog: Array<{
@@ -100,7 +107,7 @@ export async function POST(req: NextRequest) {
     // Logged at error severity so these surface in Railway without trawling the feed.
     if (status === 'failed') {
       console.error(
-        `❌ Boost failed entirely — ${amount} sats to ${recipient}` +
+        `❌ ${tag(error)} Boost failed entirely — ${amount} sats to ${recipient}` +
         ` (${trackTitle || 'unknown track'} / ${artistName || 'unknown artist'}, ${type}):` +
         ` ${error || 'no reason reported'}`
       );
@@ -110,13 +117,13 @@ export async function POST(req: NextRequest) {
       console.error(
         `❌ ${failedRecipients.length} recipient(s) unpaid on boost ${boost.id}` +
         ` (${trackTitle || 'unknown track'} / ${artistName || 'unknown artist'}, ${amount} sats, ${type}): ` +
-        failedRecipients.map(r => `${r.name} (${r.amount} sats): ${r.error}`).join(' | ')
+        failedRecipients.map(r => `${tag(r.error)} ${r.name} (${r.amount} sats): ${r.error}`).join(' | ')
       );
     }
 
     if (feeStatus === 'failed') {
       console.error(
-        `❌ StableKraft fee failed on boost ${boost.id} — ${amount} sats to ${recipient}` +
+        `❌ ${tag(feeError)} StableKraft fee failed on boost ${boost.id} — ${amount} sats to ${recipient}` +
         ` (${trackTitle || 'unknown track'} / ${artistName || 'unknown artist'}, ${type}):` +
         ` ${feeError || 'no reason reported'}`
       );
