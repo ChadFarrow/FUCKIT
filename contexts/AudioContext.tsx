@@ -2186,6 +2186,15 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     // Clear retry flag
     isRetryingRef.current = false;
 
+    // Every candidate URL is exhausted — this is the track the user actually watched
+    // fail to play, as opposed to the per-attempt warnings above, which are noisy and
+    // often recovered from. Reported at error level so the two are separable.
+    monitoring.error('audio-playback', 'All playback URLs failed', {
+      context,
+      attempts: urlsToTry.length,
+      url: originalUrl,
+    });
+
     // Set flag to prevent error handler from auto-skipping (we'll handle failure programmatically)
     skipAutoSkipRef.current = true;
     // Clear the flag after a short delay to allow error events to fire
@@ -2865,6 +2874,16 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
       if (!shouldProcess(event)) return;
       const mediaError = (event.target as HTMLMediaElement)?.error;
       console.error(`🚫 ${isVideoMode ? 'Video' : 'Audio'} error:`, mediaError);
+
+      // The media element's own failure — the closest thing to a root cause for
+      // "playback died". Reported by code so the pattern is visible across devices;
+      // MEDIA_ERR_SRC_NOT_SUPPORTED (4) on one track is a dead URL, the same code
+      // across many is a CORS or proxy regression.
+      monitoring.error('audio-playback', `Media element error (code ${mediaError?.code ?? 'unknown'})`, {
+        code: mediaError?.code,
+        mode: isVideoMode ? 'video' : 'audio',
+        retrying: isRetryingRef.current,
+      });
 
       // Don't interfere if we're in the middle of retrying
       if (isRetryingRef.current) {

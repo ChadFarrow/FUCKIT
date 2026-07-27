@@ -1,6 +1,16 @@
 /**
  * Monitoring and logging utilities to prevent recurring issues
+ *
+ * Error and warning entries are reported to /api/client-log so they reach Railway.
+ * Before that existed this class was write-only in production: it buffered into an
+ * in-memory array in the user's browser and console-logged only in development, so
+ * every call site — including the playback-failure warning in AudioContext — was
+ * collecting diagnostics nobody could ever read. Info entries stay local.
  */
+
+import { ClientLogBuffer } from './client-log';
+
+const FLUSH_DELAY_MS = 5_000;
 
 interface LogEntry {
   timestamp: string;
@@ -14,6 +24,9 @@ class MonitoringService {
   private logs: LogEntry[] = [];
   private readonly MAX_LOGS = 1000;
   private errorPatterns: Map<string, number> = new Map();
+  private reportBuffer = new ClientLogBuffer();
+  private flushTimer: ReturnType<typeof setTimeout> | null = null;
+  private unloadHooked = false;
 
   /**
    * Log an event with structured data
@@ -44,6 +57,84 @@ class MonitoringService {
     if (process.env.NODE_ENV === 'development') {
       const emoji = level === 'error' ? '❌' : level === 'warn' ? '⚠️' : 'ℹ️';
       console.log(`${emoji} [${category}] ${message}`, data ? data : '');
+    }
+
+    if (level !== 'info') {
+      this.queueReport(level, category, message, data);
+    }
+  }
+
+  /**
+   * Buffers an error/warning for /api/client-log. Every failure mode here is
+   * swallowed — reporting a problem must never become a second problem.
+   */
+  private queueReport(level: 'warn' | 'error', category: string, message: string, data?: any) {
+    if (typeof window === 'undefined') return;
+
+    try {
+      const shouldFlush = this.reportBuffer.add({ level, category, message, data }, Date.now());
+
+      this.hookUnload();
+
+      if (shouldFlush && this.flushTimer === null) {
+        // Batched rather than sent per-entry: failures arrive in bursts, and one
+        // request per retry attempt would be its own kind of flood.
+        this.flushTimer = setTimeout(() => {
+          this.flushTimer = null;
+          this.flushReports();
+        }, FLUSH_DELAY_MS);
+      }
+    } catch {
+      // Ignore.
+    }
+  }
+
+  /**
+   * A backgrounded tab may never come back — on iOS it is frequently killed outright
+   * — so pending reports are flushed on the way out via sendBeacon, which survives
+   * unload where fetch does not. 'pagehide' rather than 'unload': the latter is not
+   * fired reliably on mobile Safari and disqualifies the page from the bfcache.
+   */
+  private hookUnload() {
+    if (this.unloadHooked) return;
+    this.unloadHooked = true;
+
+    const flushOnExit = () => this.flushReports(true);
+    window.addEventListener('pagehide', flushOnExit);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') flushOnExit();
+    });
+  }
+
+  private flushReports(isUnloading = false) {
+    try {
+      const { entries, dropped } = this.reportBuffer.drain();
+      if (entries.length === 0 && dropped === 0) return;
+
+      const payload = JSON.stringify({
+        entries,
+        dropped,
+        context: {
+          path: window.location?.pathname,
+          platform: navigator.userAgent,
+          display: window.matchMedia?.('(display-mode: standalone)')?.matches ? 'standalone' : 'browser',
+        },
+      });
+
+      if (isUnloading && navigator.sendBeacon) {
+        navigator.sendBeacon('/api/client-log', new Blob([payload], { type: 'application/json' }));
+        return;
+      }
+
+      // keepalive so a flush already in flight survives a navigation.
+      fetch('/api/client-log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload,
+        keepalive: true,
+      }).catch(() => {});
+    } catch {
+      // Ignore.
     }
   }
 
