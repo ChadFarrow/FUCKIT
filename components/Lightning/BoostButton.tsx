@@ -394,8 +394,13 @@ export function BoostButton({
         try {
           await sendPlatformFeeMetaboost(collectedBoostboxUrls);
         } catch (feeError) {
+          // The recipients have already been paid, so a failed fee never fails the
+          // boost — but it must not be invisible either. It was previously swallowed
+          // into a console.warn nobody reads, which is how a fee could quietly stop
+          // going out while every boost still reported success.
+          const reason = feeError instanceof Error ? feeError.message : String(feeError);
           console.warn('Platform fee metaboost failed:', feeError);
-          // Don't fail the main payment if the fee fails
+          toast.warning(`Boost sent. The ${LIGHTNING_CONFIG.platform.fee} sat StableKraft fee didn't go through: ${reason}`);
         }
 
         // Log the boost to the database
@@ -1067,7 +1072,21 @@ export function BoostButton({
         platformFee,
         comment
       );
-      await sendPayment(invoice);
+
+      // sendPayment RESOLVES with { error } on failure — it does not throw (see
+      // BitcoinConnectProvider, which parses the Lightning error and returns it).
+      // Discarding the result logged "✅ Platform fee sent" over every failed fee and
+      // left the caller's catch unreachable, so a fee that never went out was
+      // indistinguishable from one that did. The two other payment paths
+      // (value-splits.ts, and the single-recipient branch above) already check it.
+      // No retry here on purpose: sendPayment already retries no-route and timeout
+      // internally, and retrying from out here would re-issue a fresh invoice —
+      // double-paying whenever the first attempt actually settled but reported failure.
+      const result = await sendPayment(invoice);
+      if (result.error) {
+        throw new Error(result.error);
+      }
+
       console.log(`✅ Platform fee sent via Lightning Address: ${platformFee} sats`);
     } catch (error) {
       console.error('Platform fee payment failed:', error);
