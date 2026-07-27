@@ -385,6 +385,22 @@ export function BoostButton({
 
       if (result.error) {
         setError(result.error);
+
+        // A boost that fails outright used to reach the server not at all — logBoost
+        // only ran on the success branch — so the one thing most worth a warning was
+        // the one thing invisible from outside the sender's browser.
+        await logBoost({
+          trackId,
+          feedId,
+          amount,
+          message,
+          senderName,
+          paymentMethod: activeValueSplits?.length ? 'value-splits' :
+                        activeLightningAddress ? 'lightning-address' : 'keysend',
+          status: 'failed',
+          error: result.error,
+          failedRecipients,
+        });
       } else {
         setSuccess(true);
 
@@ -1136,6 +1152,8 @@ export function BoostButton({
     feeStatus?: 'sent' | 'failed';
     feeError?: string;
     failedRecipients?: Array<{ name: string; amount: number; error: string }>;
+    status?: 'succeeded' | 'failed';
+    error?: string;
   }) => {
     try {
       // Determine recipient based on payment method
@@ -1164,6 +1182,8 @@ export function BoostButton({
         feeStatus: data.feeStatus,
         feeError: data.feeError,
         failedRecipients: data.failedRecipients?.length ? data.failedRecipients : undefined,
+        status: data.status || 'succeeded',
+        error: data.error,
       };
 
       // Clean the log data to remove undefined/null values (but keep required fields)
