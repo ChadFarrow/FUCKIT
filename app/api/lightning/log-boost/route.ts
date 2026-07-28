@@ -140,9 +140,9 @@ function parseFailedRecipients(value: unknown): Array<{ name: string; amount: nu
   if (!Array.isArray(value) || value.length === 0) return undefined;
 
   const parsed = value.slice(0, 20).map((entry: any) => ({
-    name: String(entry?.name ?? 'unknown').slice(0, 200),
+    name: clampField(entry?.name ?? 'unknown', 200),
     amount: Number(entry?.amount) || 0,
-    error: String(entry?.error ?? 'unknown error').slice(0, 500),
+    error: clampField(entry?.error ?? 'unknown error', 500),
   }));
 
   return parsed.length > 0 ? parsed : undefined;
