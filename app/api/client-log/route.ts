@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { dayKey } from '@/lib/admin/diagnostics';
 
 /**
  * Sink for client-side error/warning reports (lib/monitoring.ts).
@@ -69,6 +71,66 @@ function formatData(data: unknown): string {
   }
 }
 
+/**
+ * Folds one collapsed entry into its daily bucket for the /admin panel.
+ *
+ * Upsert rather than insert is what makes persisting safe on an UNAUTHENTICATED
+ * endpoint: row growth becomes bounded by distinct messages per day instead of by
+ * traffic. `count` increments by the entry's OWN count — the client already collapsed
+ * repeats into it, so adding 1 would undercount by however many the client merged.
+ *
+ * Never throws. A missing table (deploy before migration) collects nothing and logs
+ * nothing to the client.
+ */
+async function persistClientError(entry: {
+  level: string;
+  category: string;
+  message: string;
+  count: number;
+  data: unknown;
+  path: string;
+  platform: string;
+}): Promise<void> {
+  try {
+    const now = new Date();
+    const sampleData = entry.data === undefined || entry.data === null
+      ? null
+      : String(typeof entry.data === 'string' ? entry.data : JSON.stringify(entry.data)).slice(0, MAX_DATA);
+
+    await prisma.clientErrorReport.upsert({
+      where: {
+        day_level_category_message: {
+          day: dayKey(now),
+          level: entry.level,
+          category: entry.category,
+          message: entry.message,
+        },
+      },
+      create: {
+        day: dayKey(now),
+        level: entry.level,
+        category: entry.category,
+        message: entry.message,
+        count: entry.count,
+        firstSeen: now,
+        lastSeen: now,
+        samplePath: entry.path.slice(0, MAX_CONTEXT_FIELD),
+        samplePlatform: entry.platform.slice(0, 200),
+        sampleData,
+      },
+      update: {
+        count: { increment: entry.count },
+        lastSeen: now,
+        samplePath: entry.path.slice(0, MAX_CONTEXT_FIELD),
+        samplePlatform: entry.platform.slice(0, 200),
+        sampleData,
+      },
+    });
+  } catch (err) {
+    console.warn('⚠️ Failed to persist client error (diagnostics only):', err);
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || 'unknown';
@@ -122,6 +184,11 @@ export async function POST(req: NextRequest) {
       } else {
         console.warn(line);
       }
+
+      // Fire-and-forget: reporting must never become its own outage, so the response
+      // does not wait on the write. persistClientError catches internally and never
+      // throws, so this can't produce an unhandled rejection.
+      void persistClientError({ level, category, message, count, data, path, platform });
     });
 
     // Suppressed occurrences are themselves a signal — a client dropping reports is
