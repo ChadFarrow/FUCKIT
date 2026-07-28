@@ -56,17 +56,21 @@ export default function DiagnosticsPanel() {
   const [data, setData] = useState<DiagnosticsResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [days, setDays] = useState(7);
+  const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async (rangeDays: number) => {
     setLoading(true);
+    setError(null);
     try {
       const res = await adminFetch(`/api/admin/diagnostics?days=${rangeDays}`);
       if (!res.ok) {
+        setError('Failed to load diagnostics');
         toast.error('Failed to load diagnostics');
         return;
       }
       setData(await res.json());
     } catch {
+      setError('Failed to load diagnostics');
       toast.error('Failed to load diagnostics');
     } finally {
       setLoading(false);
@@ -117,24 +121,38 @@ export default function DiagnosticsPanel() {
           </div>
         )}
 
-        {boost && boost.recent.length === 0 ? (
-          <p className="text-gray-400 text-sm">No boost failures in the last {data?.days} day(s).</p>
-        ) : (
-          <div className="space-y-2">
-            {boost?.recent.map(row => (
-              <div key={row.id} className="text-sm border-b border-white/5 pb-2">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-gray-500 font-mono text-xs">{new Date(row.createdAt).toLocaleString()}</span>
-                  <span className="font-mono text-xs px-1.5 py-0.5 rounded bg-white/5">{row.scope}</span>
-                  <span className={row.userActionable ? 'text-yellow-400' : 'text-red-400'}>{row.category}</span>
-                  <span className="text-gray-300">{row.amount} sats → {row.recipient || 'unknown'}</span>
-                </div>
-                <div className="text-gray-400 text-xs mt-0.5">
-                  {row.trackTitle || 'unknown track'} / {row.artistName || 'unknown artist'} — {row.error}
-                </div>
-              </div>
-            ))}
+        {!data && !error ? (
+          <p className="text-gray-400 text-sm">Loading…</p>
+        ) : !data && error ? (
+          <div className="flex items-center gap-2">
+            <p className="text-red-400 text-sm">Couldn&apos;t load diagnostics.</p>
+            <button onClick={() => load(days)} disabled={loading} className={BTN}>Retry</button>
           </div>
+        ) : (
+          <>
+            {error && (
+              <p className="text-yellow-500 text-xs mb-2">Refresh failed — showing last loaded data, which may be out of date.</p>
+            )}
+            {boost && boost.recent.length === 0 ? (
+              <p className="text-gray-400 text-sm">No boost failures in the last {data?.days} day(s).</p>
+            ) : (
+              <div className="space-y-2">
+                {boost?.recent.map(row => (
+                  <div key={row.id} className="text-sm border-b border-white/5 pb-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-gray-500 font-mono text-xs">{new Date(row.createdAt).toLocaleString()}</span>
+                      <span className="font-mono text-xs px-1.5 py-0.5 rounded bg-white/5">{row.scope}</span>
+                      <span className={row.userActionable ? 'text-yellow-400' : 'text-red-400'}>{row.category}</span>
+                      <span className="text-gray-300">{row.amount} sats → {row.recipient || 'unknown'}</span>
+                    </div>
+                    <div className="text-gray-400 text-xs mt-0.5">
+                      {row.trackTitle || 'unknown track'} / {row.artistName || 'unknown artist'} — {row.error}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
 
@@ -154,24 +172,38 @@ export default function DiagnosticsPanel() {
           </div>
         )}
 
-        {errors && errors.recent.length === 0 ? (
-          <p className="text-gray-400 text-sm">No client errors in the last {data?.days} day(s).</p>
-        ) : (
-          <div className="space-y-2">
-            {errors?.recent.map(row => (
-              <div key={row.id} className="text-sm border-b border-white/5 pb-2">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className={row.level === 'error' ? 'text-red-400' : 'text-yellow-400'}>{row.level}</span>
-                  <span className="font-mono text-xs text-gray-400">{row.category}</span>
-                  <span className="text-gray-200">{row.message}</span>
-                  <span className="text-gray-500">×{row.count}</span>
-                </div>
-                <div className="text-gray-500 text-xs mt-0.5">
-                  {row.day} · {row.samplePath || 'unknown path'} · {row.samplePlatform || 'unknown platform'}
-                </div>
-              </div>
-            ))}
+        {!data && !error ? (
+          <p className="text-gray-400 text-sm">Loading…</p>
+        ) : !data && error ? (
+          <div className="flex items-center gap-2">
+            <p className="text-red-400 text-sm">Couldn&apos;t load diagnostics.</p>
+            <button onClick={() => load(days)} disabled={loading} className={BTN}>Retry</button>
           </div>
+        ) : (
+          <>
+            {error && (
+              <p className="text-yellow-500 text-xs mb-2">Refresh failed — showing last loaded data, which may be out of date.</p>
+            )}
+            {errors && errors.recent.length === 0 ? (
+              <p className="text-gray-400 text-sm">No client errors in the last {data?.days} day(s).</p>
+            ) : (
+              <div className="space-y-2">
+                {errors?.recent.map(row => (
+                  <div key={row.id} className="text-sm border-b border-white/5 pb-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className={row.level === 'error' ? 'text-red-400' : 'text-yellow-400'}>{row.level}</span>
+                      <span className="font-mono text-xs text-gray-400">{row.category}</span>
+                      <span className="text-gray-200">{row.message}</span>
+                      <span className="text-gray-500">×{row.count}</span>
+                    </div>
+                    <div className="text-gray-500 text-xs mt-0.5">
+                      {row.day} · {row.samplePath || 'unknown path'} · {row.samplePlatform || 'unknown platform'}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
     </>
