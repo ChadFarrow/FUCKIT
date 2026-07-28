@@ -5,6 +5,7 @@ import { toast } from '@/components/Toast';
 import { useNostr } from '@/contexts/NostrContext';
 import { getUnifiedSigner } from '@/lib/nostr/signer';
 import { adminFetch } from '@/lib/admin-fetch';
+import DiagnosticsPanel from '@/components/admin/DiagnosticsPanel';
 
 export default function AdminPanel() {
   const [loading, setLoading] = useState(true);
@@ -2461,6 +2462,8 @@ export default function AdminPanel() {
             )}
           </div>
         </div>
+
+        <DiagnosticsPanel />
 
         {/* Recently Added Feeds */}
         <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-6">
