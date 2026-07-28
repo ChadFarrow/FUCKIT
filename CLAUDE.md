@@ -22,6 +22,7 @@ npx tsx --test lib/caches/community-favorites-cache.test.ts  # Community tab: st
 npx tsx --test lib/client-log.test.ts               # client error reporting: throttle key, clamping, key sweep
 npx tsx --test lib/lightning/boost-failure.test.ts  # boost failure -> [category user|fix] triage tag
 npx tsx --test lib/lightning/sender-name.test.ts    # boost sender name: npub/autofill rejection
+npx tsx --test lib/admin/diagnostics.test.ts      # admin diagnostics: day bucket, summaries
 
 # `lib/*.test.ts` does NOT recurse — it misses lib/nostr, lib/caches and lib/downloads.
 npx tsx --test lib/*.test.ts lib/*/*.test.ts        # everything
@@ -587,6 +588,18 @@ Two paths gated by `autoBoostEnabled` setting and `autoBoostProcessingRef` mutex
 - **Manual Offline mode suppresses flushing** (`localStorage['sk_offline_mode'] === '1'`, read directly — this runs outside React and must not pull `DownloadsContext` into the monitoring module). The user has said they want bandwidth spent on playback; reports stay buffered, bounded, with drop counting.
 - **A session with no errors pays nothing** — `queueReport` is the only entry point, so with no warn/error there is no buffer, listener, timer or request. Keep it that way.
 - Tests: `npx tsx --test lib/client-log.test.ts`. The buffer only runs in a browser, so the route is verifiable by hand: `curl -X POST localhost:3000/api/client-log -H 'Content-Type: application/json' -d '{"entries":[…],"context":{…}}'` and read the `🖥️` lines off the dev server.
+
+### Admin diagnostics panel (`/admin` → Boost Failures, Client Errors)
+Boost payment failures and browser-side errors, persisted so triage doesn't mean trawling Railway logs. `components/admin/DiagnosticsPanel.tsx` (its own component — `AdminPanel.tsx` is already ~2,900 lines), served by `GET /api/admin/diagnostics?days=N`.
+
+- **Storage is deliberately asymmetric.** `BoostFailure` gets **one row per failure** — they're rare (each needs a real payment attempt) and individually interesting: which track, which recipient, what the wallet said. `ClientErrorReport` **upserts into a daily bucket and increments `count`**, keyed `@@unique([day, level, category, message])`. That is what makes persisting safe on an **unauthenticated** endpoint: row growth is bounded by distinct messages per day rather than by traffic. It also reads better — "fired 412 times today" beats 412 identical rows.
+- **`count` increments by the entry's OWN count**, not by 1. The client already collapsed repeats into it, so `+1` undercounts by however many it merged.
+- **`dayKey` is UTC.** Local time would move the bucket boundary with the server's timezone and split a day's counts across two rows.
+- **`scope` distinguishes the three failures `log-boost` emits**: `boost` (paid nobody), `recipient` (a split paid someone, these got nothing — one row each), `fee` (recipients paid, the 2 sat fee failed). The other three `console.error` calls in that route are field validation and the two catch handlers and must **not** produce rows.
+- **Every persist is individually `try/catch`ed and never changes the response.** This is load-bearing, not habit: it makes deploy-before-migrate degrade to "collects nothing" instead of failing a boost. The read endpoint still 500s until the tables exist.
+- **Retention is 30 days**, swept by a step in `refresh-playlists.yml` (`DELETE /api/admin/diagnostics?olderThanDays=30`), non-fatal so a failed prune can't fail the nightly refresh.
+- **Migration gotcha (issue #122)**: `20260727000000_add_admin_diagnostics_tables` must be applied to prod with `railway run --service StableKraft --environment production npm run db:migrate` **before** this code deploys.
+- Tests: `npx tsx --test lib/admin/diagnostics.test.ts`. DB writes have no test harness in this repo — verify with curl against `npm run dev`, then read the rows back with `npx tsx -e`.
 
 ### Toast API (`components/Toast.tsx`)
 Event-driven via `window.dispatchEvent(new CustomEvent('toast', ...))`. Helpers `toast.success/error/warning/info(message, { duration, action })` return the toast id (string). Use `toast.dismiss(id)` to programmatically remove a toast (used by `signer-nudge.ts` to clear the "Waiting on your signer…" toast the moment signing completes).

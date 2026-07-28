@@ -304,3 +304,40 @@ model UserPlaylist {
   @@index([createdBy])
   @@index([isPublic])
 }
+
+model BoostFailure {
+  id             String   @id @default(cuid())
+  createdAt      DateTime @default(now())
+  category       String
+  userActionable Boolean
+  scope          String
+  amount         Int
+  recipient      String?
+  trackTitle     String?
+  artistName     String?
+  feedId         String?
+  trackId        String?
+  paymentType    String?
+  error          String
+
+  @@index([createdAt])
+  @@index([category, createdAt])
+}
+
+model ClientErrorReport {
+  id             String   @id @default(cuid())
+  day            String
+  level          String
+  category       String
+  message        String
+  count          Int      @default(1)
+  firstSeen      DateTime @default(now())
+  lastSeen       DateTime @default(now())
+  samplePath     String?
+  samplePlatform String?
+  sampleData     String?
+
+  @@unique([day, level, category, message])
+  @@index([day])
+  @@index([category, day])
+}

@@ -333,6 +333,21 @@ jobs:
 
         echo ""
         echo "✨ Playlist refresh workflow completed"
+
+        # Step 7: Prune diagnostics older than 30 days
+        echo ""
+        echo "📋 Step 7: Pruning old diagnostics..."
+
+        PRUNE_RESPONSE=$(curl -s -X DELETE -w "\n%{http_code}" -H "$AUTH_HEADER" "${BASE_URL}/api/admin/diagnostics?olderThanDays=30") || PRUNE_RESPONSE=$'\n000'
+        HTTP_CODE=$(echo "$PRUNE_RESPONSE" | tail -n1)
+        RESPONSE_BODY=$(echo "$PRUNE_RESPONSE" | sed '$d')
+
+        if [ "$HTTP_CODE" -eq 200 ]; then
+          echo "✅ Diagnostics pruned"
+          echo "$RESPONSE_BODY" | jq '.deleted' || echo "$RESPONSE_BODY"
+        else
+          echo "⚠️ Failed to prune diagnostics (HTTP $HTTP_CODE) — non-fatal"
+        fi
       env:
         BASE_URL: ${{ secrets.PLAYLIST_BASE_URL || 'https://stablekraft.app' }}
         # Harmless while ADMIN_SECRET is unset on the server (fail-open).

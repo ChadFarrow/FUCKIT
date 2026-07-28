@@ -234,3 +234,6 @@ build-output.log
 # Python files (if not needed)
 *.pyc
 __pycache__/ 
+
+# Subagent-driven-development scratch (ledger, briefs, review packages)
+.superpowers/
