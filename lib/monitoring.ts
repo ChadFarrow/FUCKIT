@@ -6,6 +6,16 @@
  * in-memory array in the user's browser and console-logged only in development, so
  * every call site — including the playback-failure warning in AudioContext — was
  * collecting diagnostics nobody could ever read. Info entries stay local.
+ *
+ * Writing a warn/error call site: the `message` is what the throttle collapses on, so
+ * it must be CONSTANT. Anything per-item — a guid, a URL, an id — belongs in `data`,
+ * not interpolated into the message. Interpolate it and every occurrence is a fresh
+ * key, so a loop over N items queues N entries and defeats the throttle entirely.
+ * Bounded interpolations — an attempt number, a media error code — are fine.
+ *
+ * dataService.getAlbumsByFeedGuids had exactly the bad shape (one message per guid).
+ * It has no callers, so it never flooded anything; it is cited here because it shows
+ * how easily the shape gets written by accident.
  */
 
 import { ClientLogBuffer } from './client-log';
@@ -139,7 +149,7 @@ class MonitoringService {
       // Stored as '1'/'0' by DownloadsContext — matches AudioContext's own reader.
       if (localStorage.getItem('sk_offline_mode') === '1') return;
 
-      const { entries, dropped } = this.reportBuffer.drain();
+      const { entries, dropped } = this.reportBuffer.drain(Date.now());
       if (entries.length === 0 && dropped === 0) return;
 
       const payload = JSON.stringify({
@@ -152,9 +162,15 @@ class MonitoringService {
         },
       });
 
+      // sendBeacon returns FALSE rather than throwing when the payload exceeds the
+      // browser's queue budget (~64KB) — so an unchecked call silently drops exactly
+      // the reports that matter most, from a tab going away on iOS and never coming
+      // back. Entries are clamped in ClientLogBuffer.add so this should not trigger;
+      // fall through to keepalive fetch if it ever does. On the unload path fetch is
+      // a weaker guarantee than beacon, but a weaker guarantee beats none.
       if (isUnloading && navigator.sendBeacon) {
-        navigator.sendBeacon('/api/client-log', new Blob([payload], { type: 'application/json' }));
-        return;
+        const queued = navigator.sendBeacon('/api/client-log', new Blob([payload], { type: 'application/json' }));
+        if (queued) return;
       }
 
       // keepalive so a flush already in flight survives a navigation.
@@ -311,7 +327,8 @@ export function monitorApiResponse(url: string, response: Response, data?: any) 
       }
       
       if (data.validation && data.validation.warningsCount > 10) {
-        monitoring.warn(category, `High validation warning count: ${data.validation.warningsCount}`, { url });
+        // Count goes in `data` — interpolated it would be a fresh throttle key per value.
+        monitoring.warn(category, 'High validation warning count', { url, warningsCount: data.validation.warningsCount });
       }
     }
     

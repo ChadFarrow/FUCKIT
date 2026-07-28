@@ -19,7 +19,15 @@ const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX = 30;
 const rateLimits = new Map<string, { count: number; windowStart: number }>();
 
-const MAX_ENTRIES = 50;
+/**
+ * Worst case is MAX_ENTRIES * RATE_LIMIT_MAX log lines per minute per IP per instance.
+ * At 50 that was 1,500 — enough to bury the Railway log this endpoint exists to make
+ * readable, which is the same failure this app has already had twice from
+ * /api/proxy-image. Every bit of collapsing otherwise lives on the client, and a
+ * hostile caller runs no client, so the cap and the dedupe below are the only real
+ * bound. Keep in sync with MAX_QUEUE in lib/client-log.ts.
+ */
+const MAX_ENTRIES = 20;
 const MAX_MESSAGE = 300;
 const MAX_CATEGORY = 60;
 const MAX_DATA = 800;
@@ -69,7 +77,8 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const rawEntries = Array.isArray(body?.entries) ? body.entries.slice(0, MAX_ENTRIES) : [];
+    const allEntries = Array.isArray(body?.entries) ? body.entries : [];
+    const rawEntries = allEntries.slice(0, MAX_ENTRIES);
     if (rawEntries.length === 0) {
       return new NextResponse(null, { status: 204 });
     }
@@ -79,28 +88,52 @@ export async function POST(req: NextRequest) {
     const display = clamp(body?.context?.display, 40, 'unknown');
     const dropped = Number(body?.dropped) || 0;
 
+    // Collapse repeats within the batch. A cooperating client already did this, so
+    // this is here for the one that doesn't: without it a caller can hand over
+    // MAX_ENTRIES copies of one message and get MAX_ENTRIES log lines for it.
+    const collapsed = new Map<string, { level: string; category: string; message: string; count: number; data: unknown }>();
+
     for (const raw of rawEntries) {
       const level = raw?.level === 'error' ? 'error' : 'warn';
       const category = clamp(raw?.category, MAX_CATEGORY, 'uncategorized');
       const message = clamp(raw?.message, MAX_MESSAGE, 'no message');
       const count = Math.max(1, Math.min(Number(raw?.count) || 1, 100_000));
+
+      const key = `${level}:${category}:${message}`;
+      const existing = collapsed.get(key);
+
+      if (existing) {
+        existing.count += count;
+      } else {
+        // First occurrence keeps its data — later ones would only differ in detail.
+        collapsed.set(key, { level, category, message, count, data: raw?.data });
+      }
+    }
+
+    collapsed.forEach(({ level, category, message, count, data }) => {
       const repeat = count > 1 ? ` (x${count})` : '';
 
       const line =
         `🖥️ [client ${level} ${category}] ${message}${repeat}` +
-        ` | path=${path} | ${platform} | display=${display}${formatData(raw?.data)}`;
+        ` | path=${path} | ${platform} | display=${display}${formatData(data)}`;
 
       if (level === 'error') {
         console.error(line);
       } else {
         console.warn(line);
       }
-    }
+    });
 
     // Suppressed occurrences are themselves a signal — a client dropping reports is
-    // a client failing hard enough to hit the throttle.
-    if (dropped > 0) {
-      console.warn(`🖥️ [client warn throttled] ${dropped} report(s) suppressed | path=${path} | ${platform}`);
+    // a client failing hard enough to hit the throttle. Entries cut by MAX_ENTRIES are
+    // counted here too rather than vanishing: a silent cap reads as full coverage.
+    const truncated = allEntries.length - rawEntries.length;
+    if (dropped > 0 || truncated > 0) {
+      console.warn(
+        `🖥️ [client warn throttled] ${dropped} report(s) suppressed` +
+        (truncated > 0 ? `, ${truncated} over the ${MAX_ENTRIES}-entry batch cap` : '') +
+        ` | path=${path} | ${platform}`
+      );
     }
 
     return new NextResponse(null, { status: 204 });
