@@ -1,10 +1,44 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { classifyBoostFailure } from '@/lib/lightning/boost-failure';
+import { prisma } from '@/lib/prisma';
+import type { BoostFailureScope } from '@/lib/admin/diagnostics';
 
-/** `[category user|fix]` — greppable triage tag on every failure line. */
-function tag(reason: string | null | undefined): string {
+/**
+ * Classification plus its `[category user|fix]` log tag. Returned together because the
+ * persisted row and the log line need the same verdict — classifying twice invites them
+ * to disagree after a future edit to one call site.
+ */
+function classify(reason: string | null | undefined): { category: string; userActionable: boolean; tag: string } {
   const { category, userActionable } = classifyBoostFailure(reason);
-  return `[${category} ${userActionable ? 'user' : 'fix'}]`;
+  return { category, userActionable, tag: `[${category} ${userActionable ? 'user' : 'fix'}]` };
+}
+
+/**
+ * Records a failure for the /admin diagnostics panel.
+ *
+ * Never throws and never awaited into the response path: this route's job is to accept a
+ * report, and a diagnostics write must not turn a boost into an error. A missing table —
+ * the state between deploying this code and running the migration — lands here as a
+ * caught error and simply collects nothing.
+ */
+async function persistBoostFailure(row: {
+  category: string;
+  userActionable: boolean;
+  scope: BoostFailureScope;
+  amount: number;
+  recipient?: string;
+  trackTitle?: string;
+  artistName?: string;
+  feedId?: string;
+  trackId?: string;
+  paymentType?: string;
+  error: string;
+}): Promise<void> {
+  try {
+    await prisma.boostFailure.create({ data: row });
+  } catch (err) {
+    console.warn('⚠️ Failed to persist boost failure (diagnostics only):', err);
+  }
 }
 
 // Simple in-memory storage for testing (replace with database in production)
@@ -118,27 +152,72 @@ export async function POST(req: NextRequest) {
 
     // Logged at error severity so these surface in Railway without trawling the feed.
     if (status === 'failed') {
+      const verdict = classify(error);
       console.error(
-        `❌ ${tag(error)} Boost failed entirely — ${amount} sats to ${recipient}` +
+        `❌ ${verdict.tag} Boost failed entirely — ${amount} sats to ${recipient}` +
         ` (${trackTitle || 'unknown track'} / ${artistName || 'unknown artist'}, ${type}):` +
         ` ${error || 'no reason reported'}`
       );
+      await persistBoostFailure({
+        category: verdict.category,
+        userActionable: verdict.userActionable,
+        scope: 'boost',
+        amount,
+        recipient,
+        trackTitle,
+        artistName,
+        feedId,
+        trackId,
+        paymentType: type,
+        error: error || 'no reason reported',
+      });
     }
 
     if (failedRecipients) {
       console.error(
         `❌ ${failedRecipients.length} recipient(s) unpaid on boost ${boost.id}` +
         ` (${trackTitle || 'unknown track'} / ${artistName || 'unknown artist'}, ${amount} sats, ${type}): ` +
-        failedRecipients.map(r => `${tag(r.error)} ${r.name} (${r.amount} sats): ${r.error}`).join(' | ')
+        failedRecipients.map(r => `${classify(r.error).tag} ${r.name} (${r.amount} sats): ${r.error}`).join(' | ')
       );
+      // One row per unpaid recipient — which recipient failed is the whole point.
+      for (const r of failedRecipients) {
+        const verdict = classify(r.error);
+        await persistBoostFailure({
+          category: verdict.category,
+          userActionable: verdict.userActionable,
+          scope: 'recipient',
+          amount: r.amount,
+          recipient: r.name,
+          trackTitle,
+          artistName,
+          feedId,
+          trackId,
+          paymentType: type,
+          error: r.error,
+        });
+      }
     }
 
     if (feeStatus === 'failed') {
+      const verdict = classify(feeError);
       console.error(
-        `❌ ${tag(feeError)} StableKraft fee failed on boost ${boost.id} — ${amount} sats to ${recipient}` +
+        `❌ ${verdict.tag} StableKraft fee failed on boost ${boost.id} — ${amount} sats to ${recipient}` +
         ` (${trackTitle || 'unknown track'} / ${artistName || 'unknown artist'}, ${type}):` +
         ` ${feeError || 'no reason reported'}`
       );
+      await persistBoostFailure({
+        category: verdict.category,
+        userActionable: verdict.userActionable,
+        scope: 'fee',
+        amount,
+        recipient,
+        trackTitle,
+        artistName,
+        feedId,
+        trackId,
+        paymentType: type,
+        error: feeError || 'no reason reported',
+      });
     }
 
     return NextResponse.json({
