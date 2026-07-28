@@ -48,6 +48,38 @@ test('specific diagnoses beat the generic words they contain', () => {
   );
 });
 
+// The fixture above pins exact literals, which is precisely why a bare
+// `includes('keysend')` rung looked correct: every real message that names the method
+// also happened to be an unsupported-wallet message. These are the mixed forms.
+test('naming keysend does not make an ordinary failure the sender\'s problem', () => {
+  const cases: Array<[string, string, boolean]> = [
+    ['Keysend payment failed: insufficient balance', 'insufficient-balance', true],
+    ['Keysend failed - cannot find payment route', 'no-route', false],
+    ['Keysend payment timeout - recipient may be experiencing issues', 'timeout', false],
+    ['Keysend payment rejected or cancelled', 'rejected', true],
+  ];
+
+  for (const [message, category, userActionable] of cases) {
+    const result = classifyBoostFailure(message);
+    assert.equal(result.category, category, `category for: ${message}`);
+    assert.equal(result.userActionable, userActionable, `userActionable for: ${message}`);
+  }
+});
+
+test('keysend-unsupported still matches the phrasings wallets actually use', () => {
+  // Same phrasings the chapter auto-boost path in AudioContext matches on.
+  for (const message of [
+    'Keysend not supported',
+    "Your wallet doesn't support keysend",
+    'Keysend is not supported by your wallet. Try Alby or Coinos via NWC.',
+    'keysend not implemented',
+    'pay_keysend not implemented',
+  ]) {
+    assert.equal(classifyBoostFailure(message).category, 'keysend-unsupported', message);
+    assert.equal(classifyBoostFailure(message).userActionable, true, message);
+  }
+});
+
 test('an unrecognised or missing reason is unknown, never mislabelled', () => {
   assert.equal(classifyBoostFailure('something nobody has seen before').category, 'unknown');
   assert.equal(classifyBoostFailure('').category, 'unknown');
