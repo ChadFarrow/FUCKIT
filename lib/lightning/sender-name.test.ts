@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import {
   DEFAULT_BOOST_SENDER_NAME,
   looksLikeNostrIdentifier,
+  resolveAutoBoostSenderName,
   resolveBoostSenderName,
 } from './sender-name';
 
@@ -75,4 +76,19 @@ test('resolveBoostSenderName falls back to the default when nothing usable exist
 test('resolveBoostSenderName trims and caps at the input maxLength', () => {
   assert.equal(resolveBoostSenderName({ settingsName: '  Chad  ' }), 'Chad');
   assert.equal(resolveBoostSenderName({ settingsName: 'x'.repeat(80) }).length, 50);
+});
+
+test('resolveAutoBoostSenderName keeps the existing suffix behaviour', () => {
+  // Unattended paths had `name ? `${name} via StableKraft.app` : DEFAULT` inline;
+  // these two cases pin that the refactor did not change what artists see.
+  assert.equal(resolveAutoBoostSenderName('Chad'), 'Chad via StableKraft.app');
+  assert.equal(resolveAutoBoostSenderName(''), DEFAULT_BOOST_SENDER_NAME);
+  assert.equal(resolveAutoBoostSenderName(undefined), DEFAULT_BOOST_SENDER_NAME);
+});
+
+test('resolveAutoBoostSenderName sanitises an identifier that reached the setting', () => {
+  // No modal and no Nostr profile on this path, so an unusable setting falls all the
+  // way to the default rather than riding out on every unattended boost.
+  assert.equal(resolveAutoBoostSenderName(NPUB), DEFAULT_BOOST_SENDER_NAME);
+  assert.equal(resolveAutoBoostSenderName(`nostr:${NPUB}`), DEFAULT_BOOST_SENDER_NAME);
 });

@@ -44,6 +44,17 @@ export function looksLikeNostrIdentifier(value: string | null | undefined): bool
  * explicit setting → legacy localStorage value → Nostr display name → default.
  * Any candidate that looks like a Nostr identifier is skipped.
  */
+/**
+ * `sender_name` for the auto-boost paths, which have no modal and no Nostr profile to
+ * hand — just the saved setting. Sanitises it the same way the manual path does, so an
+ * identifier that reached the setting can't ride out on every unattended boost, and
+ * preserves the existing "<name> via StableKraft.app" suffix.
+ */
+export function resolveAutoBoostSenderName(settingsName?: string | null): string {
+  const name = resolveBoostSenderName({ settingsName });
+  return name === DEFAULT_BOOST_SENDER_NAME ? name : `${name} via StableKraft.app`;
+}
+
 export function resolveBoostSenderName(sources: {
   settingsName?: string | null;
   savedName?: string | null;

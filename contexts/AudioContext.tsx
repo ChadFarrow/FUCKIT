@@ -14,6 +14,7 @@ import { useBitcoinConnect } from '@/components/Lightning/BitcoinConnectProvider
 import { ValueSplitsService } from '@/lib/lightning/value-splits';
 import { ValueRecipient } from '@/lib/lightning/value-parser';
 import { reportBoost } from '@/lib/lightning/report-boost';
+import { resolveAutoBoostSenderName, resolveBoostSenderName } from '@/lib/lightning/sender-name';
 import { hasV4V as checkHasV4V, getV4VRecipients, getPrimaryRecipient, formatValueSplitsForBoost } from '@/lib/v4v-utils';
 import { prefetchUpcomingTracks, prefetchAudio } from '@/lib/audio-prefetch';
 import { NextTrackBlobCache } from '@/lib/audio-blob-prefetch';
@@ -459,7 +460,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         app_name: 'StableKraft',
         value_msat: amount * 1000,
         value_msat_total: amount * 1000,
-        sender_name: settings.defaultBoostName ? `${settings.defaultBoostName} via StableKraft.app` : 'StableKraft.app user',
+        sender_name: resolveAutoBoostSenderName(settings.defaultBoostName),
         ts: Math.floor(Date.now() / 1000),
         uuid: `auto-${Date.now()}-${Math.floor(Math.random() * 999)}`
       };
@@ -537,7 +538,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         trackTitle: track.title,
         artistName: track.artist || album.artist,
         amount,
-        senderName: settings.defaultBoostName || 'StableKraft.app user',
+        senderName: resolveBoostSenderName({ settingsName: settings.defaultBoostName }),
         recipient: getPrimaryRecipient(track) || getPrimaryRecipient(album) || 'value-splits',
       };
 
@@ -601,6 +602,12 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     }
 
     autoBoostProcessingRef.current = true;
+
+    // Hoisted so the catch below can still name who we were paying. Everything else
+    // it needs comes from the arguments; these two are resolved mid-try, and an
+    // exception thrown after resolution used to report them as 'unknown'.
+    let primaryRecipient: string | undefined;
+    let resolvedArtistName: string | undefined;
 
     try {
       const hasRemoteItem = outgoingFeedGuid && outgoingItemGuid;
@@ -736,7 +743,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         app_name: 'StableKraft',
         value_msat: amount * 1000,
         value_msat_total: amount * 1000,
-        sender_name: settings.defaultBoostName ? `${settings.defaultBoostName} via StableKraft.app` : 'StableKraft.app user',
+        sender_name: resolveAutoBoostSenderName(settings.defaultBoostName),
         ts: Math.floor(Date.now() / 1000),
         uuid: `auto-ch-${Date.now()}-${Math.floor(Math.random() * 999)}`,
         remote_feed_guid: outgoingFeedGuid,
@@ -762,6 +769,9 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         address: r.address,
         split: r.split,
       }));
+
+      primaryRecipient = recipients[0]?.address;
+      resolvedArtistName = artistName;
 
       console.log(`⚡ Chapter auto-boost: sending to ${recipients.length} recipients (${recipients.map(r => `${r.name}: ${r.split}%`).join(', ')})`);
 
@@ -828,11 +838,13 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
       await reportBoost({
         trackId: `${album.id}-ch-${chapterTitle || 'unknown'}`,
         feedId: album.id,
-        // trackTitle/artistName are declared inside the try, so they are out of
-        // scope here — fall back to what the arguments give us.
+        // trackTitle/artistName are declared inside the try, so they are out of scope
+        // here; artist and recipient are carried out in the hoisted vars above when
+        // the throw happened late enough for them to have been resolved.
         trackTitle: chapterTitle || 'Unknown Track',
-        artistName: album.artist || 'Unknown Artist',
+        artistName: resolvedArtistName || album.artist || 'Unknown Artist',
         amount,
+        recipient: primaryRecipient || 'value-splits',
         status: 'failed',
         error: error instanceof Error ? error.message : String(error),
       });

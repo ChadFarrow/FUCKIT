@@ -6,6 +6,7 @@ import { useUserSettings } from '@/contexts/UserSettingsContext';
 import { ValueSplitsService } from '@/lib/lightning/value-splits';
 import { ValueRecipient } from '@/lib/lightning/value-parser';
 import { reportBoost } from '@/lib/lightning/report-boost';
+import { resolveAutoBoostSenderName, resolveBoostSenderName } from '@/lib/lightning/sender-name';
 import { toast } from '@/components/Toast';
 import { hasV4V as checkHasV4V, getV4VRecipients, getPrimaryRecipient } from '@/lib/v4v-utils';
 
@@ -79,7 +80,7 @@ export function useAutoBoost() {
         app_name: 'StableKraft',
         value_msat: boostAmount * 1000,
         value_msat_total: boostAmount * 1000,
-        sender_name: settings.defaultBoostName ? `${settings.defaultBoostName} via StableKraft.app` : 'StableKraft.app user',
+        sender_name: resolveAutoBoostSenderName(settings.defaultBoostName),
         ts: Math.floor(Date.now() / 1000),
         uuid: `auto-${Date.now()}-${Math.floor(Math.random() * 999)}`
       };
@@ -154,7 +155,7 @@ export function useAutoBoost() {
         trackTitle: track.title,
         artistName: album.artist,
         amount: boostAmount,
-        senderName: settings.defaultBoostName || 'StableKraft.app user',
+        senderName: resolveBoostSenderName({ settingsName: settings.defaultBoostName }),
         recipient: getPrimaryRecipient(track) || 'value-splits',
       };
 
