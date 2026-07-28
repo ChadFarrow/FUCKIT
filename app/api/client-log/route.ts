@@ -93,6 +93,7 @@ async function persistClientError(entry: {
 }): Promise<void> {
   try {
     const now = new Date();
+    const day = dayKey(now);
     const sampleData = entry.data === undefined || entry.data === null
       ? null
       : String(typeof entry.data === 'string' ? entry.data : JSON.stringify(entry.data)).slice(0, MAX_DATA);
@@ -100,29 +101,29 @@ async function persistClientError(entry: {
     await prisma.clientErrorReport.upsert({
       where: {
         day_level_category_message: {
-          day: dayKey(now),
+          day,
           level: entry.level,
           category: entry.category,
           message: entry.message,
         },
       },
       create: {
-        day: dayKey(now),
+        day,
         level: entry.level,
         category: entry.category,
         message: entry.message,
         count: entry.count,
         firstSeen: now,
         lastSeen: now,
-        samplePath: entry.path.slice(0, MAX_CONTEXT_FIELD),
-        samplePlatform: entry.platform.slice(0, 200),
+        samplePath: entry.path,
+        samplePlatform: entry.platform,
         sampleData,
       },
       update: {
         count: { increment: entry.count },
         lastSeen: now,
-        samplePath: entry.path.slice(0, MAX_CONTEXT_FIELD),
-        samplePlatform: entry.platform.slice(0, 200),
+        samplePath: entry.path,
+        samplePlatform: entry.platform,
         sampleData,
       },
     });

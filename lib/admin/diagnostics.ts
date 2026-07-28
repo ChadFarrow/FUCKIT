@@ -29,7 +29,7 @@ export function dayKey(date: Date): string {
 
 function sortSummary<T extends { category: string; count: number }>(rows: T[]): T[] {
   // Category ascending breaks count ties, so the panel does not reshuffle between refreshes.
-  return rows.sort((a, b) => b.count - a.count || a.category.localeCompare(b.category));
+  return [...rows].sort((a, b) => b.count - a.count || a.category.localeCompare(b.category));
 }
 
 /** Counts ROWS — one BoostFailure row is one failure. */
