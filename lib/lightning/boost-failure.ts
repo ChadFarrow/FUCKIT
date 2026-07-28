@@ -31,6 +31,19 @@ export interface BoostFailureClassification {
   userActionable: boolean;
 }
 
+/**
+ * Both directions matter: wallets say "keysend not supported" and also
+ * "your wallet doesn't support keysend", and the latter contains neither
+ * "not supported" nor "unsupported". See matchCategory.
+ */
+const KEYSEND_UNSUPPORTED_PHRASES = [
+  'not supported',
+  'unsupported',
+  'not implemented',
+  "doesn't support",
+  'does not support',
+];
+
 const USER_ACTIONABLE: ReadonlySet<BoostFailureCategory> = new Set<BoostFailureCategory>([
   'no-wallet',
   'insufficient-balance',
@@ -51,7 +64,6 @@ function matchCategory(text: string): BoostFailureCategory {
   // Ordered: earlier rules win. "Keysend is not supported by your wallet" contains
   // "wallet", and the no-route message contains "network", so the specific
   // diagnoses have to be tested before the generic ones.
-  if (text.includes('keysend')) return 'keysend-unsupported';
   if (text.includes('value4value') || text.includes('no v4v')) return 'no-v4v-config';
   if (text.includes('insufficient')) return 'insufficient-balance';
 
@@ -68,6 +80,21 @@ function matchCategory(text: string): BoostFailureCategory {
   }
 
   if (text.includes('timeout') || text.includes('timed out')) return 'timeout';
+
+  // Sits BELOW the diagnoses above, and matches the method name only alongside an
+  // "unsupported" phrasing. `keysend-unsupported` is the one category that tells the
+  // sender to go and switch wallets, so it must not swallow a keysend payment that
+  // failed for an ordinary reason: "Keysend failed: insufficient balance" is a balance
+  // problem and "Keysend failed - cannot find payment route" is ours to fix. A bare
+  // `includes('keysend')` here classified both as the sender's problem and quietly
+  // emptied the fixable bucket this whole module exists to fill.
+  // Phrasings mirror the predicate already used in AudioContext's chapter auto-boost.
+  if (text.includes('keysend') && KEYSEND_UNSUPPORTED_PHRASES.some(phrase => text.includes(phrase))) {
+    return 'keysend-unsupported';
+  }
+
+  // NWC relays without pay_keysend frequently answer with nothing more than this.
+  if (text.includes('not implemented')) return 'keysend-unsupported';
 
   if (text.includes('lnurl') || text.includes('lightning address') || /http\s?[45]\d?\d?/.test(text)) {
     return 'lnurl-error';

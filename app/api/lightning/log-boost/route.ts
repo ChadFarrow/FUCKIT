@@ -19,12 +19,12 @@ const boostLog: Array<{
   type: string;
   recipient: string;
   preimage?: string;
+  /** Whether the boost paid anyone at all. */
+  status?: 'succeeded' | 'failed';
+  error?: string;
   // Outcome of the 2 sat StableKraft fee, which is a separate LNURL payment made
   // after the recipients are paid. Reported by the client so a failure on a user's
   // machine is visible here instead of only in their browser console.
-  // Whether the boost paid anyone at all.
-  status?: 'succeeded' | 'failed';
-  error?: string;
   feeStatus?: 'sent' | 'failed';
   feeError?: string;
   // Recipients that got nothing on a boost that still reported success — a split
@@ -32,6 +32,15 @@ const boostLog: Array<{
   failedRecipients?: Array<{ name: string; amount: number; error: string }>;
   timestamp: Date;
 }> = [];
+
+/**
+ * Ring-buffer bound on the array above. It is process memory on a long-lived Railway
+ * instance with nothing evicting it, and each entry can carry up to 20 failedRecipients
+ * at ~700 chars each (~14KB) — so an uncapped array is a slow leak that got faster when
+ * failures started being recorded alongside successes. The GET below reads the tail
+ * anyway, so dropping the oldest costs nothing that is actually consulted.
+ */
+const MAX_BOOST_LOG = 500;
 
 /** Client-reported, so shape-check it rather than trusting the body. */
 function parseFailedRecipients(value: unknown): Array<{ name: string; amount: number; error: string }> | undefined {
@@ -101,6 +110,9 @@ export async function POST(req: NextRequest) {
     };
 
     boostLog.push(boost);
+    if (boostLog.length > MAX_BOOST_LOG) {
+      boostLog.splice(0, boostLog.length - MAX_BOOST_LOG);
+    }
 
     console.log(`⚡ Boost logged (${status}):`, boost.id);
 

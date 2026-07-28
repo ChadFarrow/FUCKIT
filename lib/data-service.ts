@@ -194,7 +194,9 @@ class DataService {
         continue;
       }
 
-      monitoring.warn('data-service', `No match found for feedGuid: ${feedGuid}`);
+      // feedGuid rides in `data`, not the message — this runs once per unresolved
+      // guid, and a per-guid message would be a distinct throttle key each time.
+      monitoring.warn('data-service', 'No match found for feedGuid', { feedGuid });
     }
 
     return matchedAlbums;

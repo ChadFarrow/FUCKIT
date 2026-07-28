@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { useBitcoinConnect } from './BitcoinConnectProvider';
 import { useNostr } from '@/contexts/NostrContext';
@@ -110,17 +110,31 @@ export function BoostButton({
     return () => setMounted(false);
   }, [settings.defaultBoostAmount]);
 
-  // Sender name resolves in its own effect because the Nostr display name arrives
-  // asynchronously (NostrContext backfills kind-0 after login) — re-running the
-  // mount effect for it would clobber an amount the user had already typed.
-  useEffect(() => {
-    if (senderNameTouchedRef.current) return;
+  const prefillSenderName = useCallback(() => {
     setSenderName(resolveBoostSenderName({
       settingsName: settings.defaultBoostName,
       savedName: localStorage.getItem('boostSenderName'),
       nostrDisplayName: nostrUser?.displayName,
     }));
   }, [settings.defaultBoostName, nostrUser?.displayName]);
+
+  // Sender name resolves in its own effect because the Nostr display name arrives
+  // asynchronously (NostrContext backfills kind-0 after login) — re-running the
+  // mount effect for it would clobber an amount the user had already typed.
+  useEffect(() => {
+    if (senderNameTouchedRef.current) return;
+    prefillSenderName();
+  }, [prefillSenderName]);
+
+  // Re-prefill on every open, and clear the touched flag with it. A name typed and
+  // then abandoned (modal closed without boosting) is never persisted, so without
+  // this it would sit in the field for the life of the page — outliving the setting
+  // change or the Nostr profile load that should have replaced it.
+  useEffect(() => {
+    if (!showModal) return;
+    senderNameTouchedRef.current = false;
+    prefillSenderName();
+  }, [showModal, prefillSenderName]);
 
   // Handle autoOpen - check connection first
   useEffect(() => {
