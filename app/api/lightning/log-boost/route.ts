@@ -52,6 +52,12 @@ function isRateLimited(ip: string): boolean {
   return existing.count > RATE_LIMIT_MAX;
 }
 
+// One warning per process is enough to diagnose "the migration hasn't run" — without
+// this, the window between deploying this code and running the BoostFailure migration
+// makes every failed boost emit both Prisma's own error log and this one, up to 22
+// times per request, burying the very lines this endpoint exists to make greppable.
+let warnedBoostFailurePersistError = false;
+
 /**
  * Records a failure for the /admin diagnostics panel.
  *
@@ -60,12 +66,6 @@ function isRateLimited(ip: string): boolean {
  * the state between deploying this code and running the migration — lands here as a
  * caught error and simply collects nothing.
  */
-// One warning per process is enough to diagnose "the migration hasn't run" — without
-// this, the window between deploying this code and running the BoostFailure migration
-// makes every failed boost emit both Prisma's own error log and this one, up to 22
-// times per request, burying the very lines this endpoint exists to make greppable.
-let warnedBoostFailurePersistError = false;
-
 async function persistBoostFailure(row: {
   category: string;
   userActionable: boolean;
@@ -123,6 +123,17 @@ const boostLog: Array<{
  * anyway, so dropping the oldest costs nothing that is actually consulted.
  */
 const MAX_BOOST_LOG = 500;
+
+/**
+ * Truncates a caller-supplied value for a persisted BoostFailure column, stripping NUL
+ * bytes first — same fix as client-log's `clamp()`. A NUL makes the `create()` below
+ * throw Postgres 22021 ("invalid byte sequence"), which is caught but only warns once
+ * per process, so a single malformed request (e.g. `recipient: "a\0b"`) would otherwise
+ * silence every later persist failure in this instance.
+ */
+function clampField(value: unknown, max: number): string {
+  return String(value).replace(/\0/g, '').slice(0, max);
+}
 
 /** Client-reported, so shape-check it rather than trusting the body. */
 function parseFailedRecipients(value: unknown): Array<{ name: string; amount: number; error: string }> | undefined {
@@ -182,12 +193,12 @@ export async function POST(req: NextRequest) {
     // Clamped copies for the persisted BoostFailure rows only — the in-memory
     // ring-buffer `boost` entry below and its log lines keep the original values,
     // unchanged from before this fix.
-    const safeRecipient = String(recipient).slice(0, MAX_RECIPIENT);
-    const safeTrackTitle = trackTitle !== undefined ? String(trackTitle).slice(0, MAX_TITLE) : undefined;
-    const safeArtistName = artistName !== undefined ? String(artistName).slice(0, MAX_ARTIST) : undefined;
-    const safeFeedId = feedId !== undefined ? String(feedId).slice(0, MAX_FEED_ID) : undefined;
-    const safeTrackId = String(trackId).slice(0, MAX_TRACK_ID);
-    const safeType = String(type).slice(0, MAX_TYPE);
+    const safeRecipient = clampField(recipient, MAX_RECIPIENT);
+    const safeTrackTitle = trackTitle !== undefined ? clampField(trackTitle, MAX_TITLE) : undefined;
+    const safeArtistName = artistName !== undefined ? clampField(artistName, MAX_ARTIST) : undefined;
+    const safeFeedId = feedId !== undefined ? clampField(feedId, MAX_FEED_ID) : undefined;
+    const safeTrackId = clampField(trackId, MAX_TRACK_ID);
+    const safeType = clampField(type, MAX_TYPE);
 
     const boost = {
       id: `boost_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -249,11 +260,14 @@ export async function POST(req: NextRequest) {
         ` (${trackTitle || 'unknown track'} / ${artistName || 'unknown artist'}, ${amount} sats, ${type}): ` +
         recipientVerdicts.map(({ r, verdict }) => `${verdict.tag} ${r.name} (${r.amount} sats): ${r.error}`).join(' | ')
       );
-      // One row per unpaid recipient — which recipient failed is the whole point. Fired as
-      // ONE detached task that awaits each write sequentially (not fanned out concurrently)
-      // so a single request holds at most one connection-pool slot (lib/prisma.ts caps the
-      // pool at 3 outside development) instead of up to 20 at once. Still fire-and-forget
-      // overall — the response does not wait on this task.
+      // One row per unpaid recipient — which recipient failed is the whole point. This loop
+      // is fired as ONE detached task that awaits each write sequentially (not fanned out
+      // concurrently), so it alone never holds more than one connection-pool slot at a time
+      // instead of up to 20 at once. It is one of three independent detached paths on this
+      // route, though (this loop, the boost-level persistBoostFailure above, and the fee-level
+      // one below) — if all three fire on the same request, up to three concurrent writes can
+      // be in flight against the pool (lib/prisma.ts caps it at 3 outside development). Still
+      // fire-and-forget overall — the response does not wait on any of them.
       void (async () => {
         for (const { r, verdict } of recipientVerdicts) {
           await persistBoostFailure({
