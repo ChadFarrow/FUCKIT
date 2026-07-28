@@ -18,9 +18,9 @@ function daysAgo(days: number): Date {
 }
 
 function clampDays(raw: string | null, fallback: number): number {
-  const parsed = Number(raw);
+  const parsed = Math.floor(Number(raw));
   if (!Number.isFinite(parsed) || parsed <= 0) return fallback;
-  return Math.min(Math.floor(parsed), 365);
+  return Math.min(parsed, 365);
 }
 
 export async function GET(req: NextRequest) {
