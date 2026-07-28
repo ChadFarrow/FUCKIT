@@ -158,7 +158,9 @@ export async function POST(req: NextRequest) {
         ` (${trackTitle || 'unknown track'} / ${artistName || 'unknown artist'}, ${type}):` +
         ` ${error || 'no reason reported'}`
       );
-      await persistBoostFailure({
+      // Fire-and-forget: persistBoostFailure catches internally, so this can't surface as
+      // an unhandled rejection, and not awaiting it keeps a slow/hanging DB off the response.
+      void persistBoostFailure({
         category: verdict.category,
         userActionable: verdict.userActionable,
         scope: 'boost',
@@ -174,15 +176,18 @@ export async function POST(req: NextRequest) {
     }
 
     if (failedRecipients) {
+      // Classify each recipient once — reused for both the log line and its persisted row,
+      // so a future edit to one call site can't make the tag and the stored category disagree.
+      const recipientVerdicts = failedRecipients.map(r => ({ r, verdict: classify(r.error) }));
       console.error(
         `❌ ${failedRecipients.length} recipient(s) unpaid on boost ${boost.id}` +
         ` (${trackTitle || 'unknown track'} / ${artistName || 'unknown artist'}, ${amount} sats, ${type}): ` +
-        failedRecipients.map(r => `${classify(r.error).tag} ${r.name} (${r.amount} sats): ${r.error}`).join(' | ')
+        recipientVerdicts.map(({ r, verdict }) => `${verdict.tag} ${r.name} (${r.amount} sats): ${r.error}`).join(' | ')
       );
-      // One row per unpaid recipient — which recipient failed is the whole point.
-      for (const r of failedRecipients) {
-        const verdict = classify(r.error);
-        await persistBoostFailure({
+      // One row per unpaid recipient — which recipient failed is the whole point. Fired
+      // concurrently (not awaited) rather than one-by-one, same fire-and-forget rationale as above.
+      for (const { r, verdict } of recipientVerdicts) {
+        void persistBoostFailure({
           category: verdict.category,
           userActionable: verdict.userActionable,
           scope: 'recipient',
@@ -205,7 +210,7 @@ export async function POST(req: NextRequest) {
         ` (${trackTitle || 'unknown track'} / ${artistName || 'unknown artist'}, ${type}):` +
         ` ${feeError || 'no reason reported'}`
       );
-      await persistBoostFailure({
+      void persistBoostFailure({
         category: verdict.category,
         userActionable: verdict.userActionable,
         scope: 'fee',
