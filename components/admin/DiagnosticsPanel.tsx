@@ -34,6 +34,7 @@ interface ClientErrorRow {
   lastSeen: string;
   samplePath: string | null;
   samplePlatform: string | null;
+  sampleData: string | null;
 }
 
 interface DiagnosticsResponse {
@@ -157,7 +158,9 @@ export default function DiagnosticsPanel() {
       </div>
 
       <div className={CARD}>
-        <div className="flex items-center justify-between mb-4">
+        {/* No rangePicker here — the one on the Boost Failures card above drives both
+            cards (see `days` state), so this header has only the one child. */}
+        <div className="flex items-center mb-4">
           <h2 className="text-2xl font-semibold">Client Errors</h2>
         </div>
 
@@ -185,7 +188,10 @@ export default function DiagnosticsPanel() {
               <p className="text-yellow-500 text-xs mb-2">Refresh failed — showing last loaded data, which may be out of date.</p>
             )}
             {errors && errors.recent.length === 0 ? (
-              <p className="text-gray-400 text-sm">No client errors in the last {data?.days} day(s).</p>
+              // "day(s)" here are UTC calendar-day buckets, not exact hours — a "1 day"
+              // range can cover up to 48h (see the route's comment on the asymmetry with
+              // Boost Failures' exact-instant filter). Worded to not overclaim precision.
+              <p className="text-gray-400 text-sm">No client errors in the last {data?.days} calendar day(s) (UTC).</p>
             ) : (
               <div className="space-y-2">
                 {errors?.recent.map(row => (
@@ -197,8 +203,13 @@ export default function DiagnosticsPanel() {
                       <span className="text-gray-500">×{row.count}</span>
                     </div>
                     <div className="text-gray-500 text-xs mt-0.5">
-                      {row.day} · {row.samplePath || 'unknown path'} · {row.samplePlatform || 'unknown platform'}
+                      {row.day} · last seen {new Date(row.lastSeen).toLocaleString()} · {row.samplePath || 'unknown path'} · {row.samplePlatform || 'unknown platform'}
                     </div>
+                    {row.sampleData && (
+                      <div className="text-gray-600 text-xs mt-0.5 font-mono truncate" title={row.sampleData}>
+                        {row.sampleData.slice(0, 200)}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

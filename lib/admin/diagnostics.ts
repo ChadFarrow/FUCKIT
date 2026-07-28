@@ -27,43 +27,12 @@ export function dayKey(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
-function sortSummary<T extends { category: string; count: number }>(rows: T[]): T[] {
-  // Category ascending breaks count ties, so the panel does not reshuffle between refreshes.
+/**
+ * Sorts summary rows by count desc, then category asc, so the panel does not reshuffle
+ * between refreshes on a tie. Shared by both summary shapes, which the diagnostics route
+ * builds directly from unbounded Prisma `groupBy` aggregates (not from the `recent`
+ * arrays, which are capped for display — see the route for why that distinction matters).
+ */
+export function sortSummaryRows<T extends { category: string; count: number }>(rows: T[]): T[] {
   return [...rows].sort((a, b) => b.count - a.count || a.category.localeCompare(b.category));
-}
-
-/** Counts ROWS — one BoostFailure row is one failure. */
-export function summarizeBoostFailures(
-  rows: Array<{ category: string; userActionable: boolean }>
-): BoostFailureSummaryRow[] {
-  const byCategory = new Map<string, BoostFailureSummaryRow>();
-
-  for (const row of rows) {
-    const existing = byCategory.get(row.category);
-    if (existing) {
-      existing.count += 1;
-    } else {
-      byCategory.set(row.category, { category: row.category, userActionable: row.userActionable, count: 1 });
-    }
-  }
-
-  return sortSummary([...byCategory.values()]);
-}
-
-/** SUMS the stored count — rows are already daily aggregates, not single occurrences. */
-export function summarizeClientErrors(
-  rows: Array<{ category: string; count: number }>
-): ClientErrorSummaryRow[] {
-  const byCategory = new Map<string, ClientErrorSummaryRow>();
-
-  for (const row of rows) {
-    const existing = byCategory.get(row.category);
-    if (existing) {
-      existing.count += row.count;
-    } else {
-      byCategory.set(row.category, { category: row.category, count: row.count });
-    }
-  }
-
-  return sortSummary([...byCategory.values()]);
 }

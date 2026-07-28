@@ -13,6 +13,45 @@ function classify(reason: string | null | undefined): { category: string; userAc
   return { category, userActionable, tag: `[${category} ${userActionable ? 'user' : 'fix'}]` };
 }
 
+// This route is unauthenticated and unrate-limited by design one layer up (every real
+// boost hits it, logged-out or not — see the client-log route's rationale), but unlike
+// that route it used to write straight to Postgres with NO length clamp on any field.
+// A 2,000,000-character `recipient` was accepted and stored verbatim. Every string below
+// that reaches a persisted BoostFailure row gets clamped before it does, same discipline
+// as `parseFailedRecipients` already applies to the failedRecipients array.
+const MAX_RECIPIENT = 200;
+const MAX_TITLE = 300;
+const MAX_ARTIST = 200;
+const MAX_FEED_ID = 200;
+const MAX_TRACK_ID = 200;
+const MAX_TYPE = 60;
+
+// Same shape as the client-log route's limiter: in-memory, per Railway instance,
+// with an opportunistic sweep so the map cannot leak across the instance's life.
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX = 30;
+const rateLimits = new Map<string, { count: number; windowStart: number }>();
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const existing = rateLimits.get(ip);
+
+  if (!existing || now - existing.windowStart >= RATE_LIMIT_WINDOW_MS) {
+    rateLimits.set(ip, { count: 1, windowStart: now });
+
+    if (rateLimits.size > 5000) {
+      rateLimits.forEach((value, key) => {
+        if (now - value.windowStart >= RATE_LIMIT_WINDOW_MS) rateLimits.delete(key);
+      });
+    }
+
+    return false;
+  }
+
+  existing.count += 1;
+  return existing.count > RATE_LIMIT_MAX;
+}
+
 /**
  * Records a failure for the /admin diagnostics panel.
  *
@@ -21,6 +60,12 @@ function classify(reason: string | null | undefined): { category: string; userAc
  * the state between deploying this code and running the migration — lands here as a
  * caught error and simply collects nothing.
  */
+// One warning per process is enough to diagnose "the migration hasn't run" — without
+// this, the window between deploying this code and running the BoostFailure migration
+// makes every failed boost emit both Prisma's own error log and this one, up to 22
+// times per request, burying the very lines this endpoint exists to make greppable.
+let warnedBoostFailurePersistError = false;
+
 async function persistBoostFailure(row: {
   category: string;
   userActionable: boolean;
@@ -37,7 +82,10 @@ async function persistBoostFailure(row: {
   try {
     await prisma.boostFailure.create({ data: row });
   } catch (err) {
-    console.warn('⚠️ Failed to persist boost failure (diagnostics only):', err);
+    if (!warnedBoostFailurePersistError) {
+      console.warn('⚠️ Failed to persist boost failure (diagnostics only) — this warning will not repeat:', err);
+      warnedBoostFailurePersistError = true;
+    }
   }
 }
 
@@ -91,14 +139,21 @@ function parseFailedRecipients(value: unknown): Array<{ name: string; amount: nu
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || 'unknown';
+    if (isRateLimited(ip)) {
+      return new NextResponse(null, { status: 429 });
+    }
+
     const body = await req.json();
-    
+
     // Access fields directly from body to avoid destructuring issues
     const trackId = body.trackId;
     const feedId = body.feedId;
     const trackTitle = body.trackTitle;
     const artistName = body.artistName;
-    const amount = body.amount;
+    // Defensive coercion: a caller-supplied non-numeric or negative amount used to
+    // flow straight into a persisted Int column.
+    const amount = Math.max(0, Math.floor(Number(body.amount) || 0));
     const message = body.message;
     const type = body.type;
     const recipient = body.recipient;
@@ -118,11 +173,21 @@ export async function POST(req: NextRequest) {
     
     if (missingFields.length > 0) {
       console.error('❌ Missing required fields:', missingFields);
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: `Missing required fields: ${missingFields.join(', ')}`,
-        received: body 
+        received: body
       }, { status: 400 });
     }
+
+    // Clamped copies for the persisted BoostFailure rows only — the in-memory
+    // ring-buffer `boost` entry below and its log lines keep the original values,
+    // unchanged from before this fix.
+    const safeRecipient = String(recipient).slice(0, MAX_RECIPIENT);
+    const safeTrackTitle = trackTitle !== undefined ? String(trackTitle).slice(0, MAX_TITLE) : undefined;
+    const safeArtistName = artistName !== undefined ? String(artistName).slice(0, MAX_ARTIST) : undefined;
+    const safeFeedId = feedId !== undefined ? String(feedId).slice(0, MAX_FEED_ID) : undefined;
+    const safeTrackId = String(trackId).slice(0, MAX_TRACK_ID);
+    const safeType = String(type).slice(0, MAX_TYPE);
 
     const boost = {
       id: `boost_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -165,12 +230,12 @@ export async function POST(req: NextRequest) {
         userActionable: verdict.userActionable,
         scope: 'boost',
         amount,
-        recipient,
-        trackTitle,
-        artistName,
-        feedId,
-        trackId,
-        paymentType: type,
+        recipient: safeRecipient,
+        trackTitle: safeTrackTitle,
+        artistName: safeArtistName,
+        feedId: safeFeedId,
+        trackId: safeTrackId,
+        paymentType: safeType,
         error: error || 'no reason reported',
       });
     }
@@ -184,23 +249,28 @@ export async function POST(req: NextRequest) {
         ` (${trackTitle || 'unknown track'} / ${artistName || 'unknown artist'}, ${amount} sats, ${type}): ` +
         recipientVerdicts.map(({ r, verdict }) => `${verdict.tag} ${r.name} (${r.amount} sats): ${r.error}`).join(' | ')
       );
-      // One row per unpaid recipient — which recipient failed is the whole point. Fired
-      // concurrently (not awaited) rather than one-by-one, same fire-and-forget rationale as above.
-      for (const { r, verdict } of recipientVerdicts) {
-        void persistBoostFailure({
-          category: verdict.category,
-          userActionable: verdict.userActionable,
-          scope: 'recipient',
-          amount: r.amount,
-          recipient: r.name,
-          trackTitle,
-          artistName,
-          feedId,
-          trackId,
-          paymentType: type,
-          error: r.error,
-        });
-      }
+      // One row per unpaid recipient — which recipient failed is the whole point. Fired as
+      // ONE detached task that awaits each write sequentially (not fanned out concurrently)
+      // so a single request holds at most one connection-pool slot (lib/prisma.ts caps the
+      // pool at 3 outside development) instead of up to 20 at once. Still fire-and-forget
+      // overall — the response does not wait on this task.
+      void (async () => {
+        for (const { r, verdict } of recipientVerdicts) {
+          await persistBoostFailure({
+            category: verdict.category,
+            userActionable: verdict.userActionable,
+            scope: 'recipient',
+            amount: r.amount,
+            recipient: r.name,
+            trackTitle: safeTrackTitle,
+            artistName: safeArtistName,
+            feedId: safeFeedId,
+            trackId: safeTrackId,
+            paymentType: safeType,
+            error: r.error,
+          });
+        }
+      })();
     }
 
     if (feeStatus === 'failed') {
@@ -215,12 +285,12 @@ export async function POST(req: NextRequest) {
         userActionable: verdict.userActionable,
         scope: 'fee',
         amount,
-        recipient,
-        trackTitle,
-        artistName,
-        feedId,
-        trackId,
-        paymentType: type,
+        recipient: safeRecipient,
+        trackTitle: safeTrackTitle,
+        artistName: safeArtistName,
+        feedId: safeFeedId,
+        trackId: safeTrackId,
+        paymentType: safeType,
         error: feeError || 'no reason reported',
       });
     }

@@ -2,7 +2,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { dayKey, summarizeBoostFailures, summarizeClientErrors } from './diagnostics';
+import { dayKey, sortSummaryRows } from './diagnostics';
 
 test('dayKey buckets by UTC calendar day', () => {
   assert.equal(dayKey(new Date('2026-07-27T00:00:00.000Z')), '2026-07-27');
@@ -17,11 +17,10 @@ test('dayKey is UTC, not local — the bucket boundary must not move with the se
   assert.equal(dayKey(new Date('2026-07-28T02:30:00.000Z')), '2026-07-28');
 });
 
-test('summarizeBoostFailures counts ROWS and carries userActionable', () => {
-  const summary = summarizeBoostFailures([
-    { category: 'no-route', userActionable: false },
-    { category: 'no-route', userActionable: false },
-    { category: 'insufficient-balance', userActionable: true },
+test('sortSummaryRows sorts by count desc, carrying through extra fields untouched', () => {
+  const summary = sortSummaryRows([
+    { category: 'no-route', userActionable: false, count: 2 },
+    { category: 'insufficient-balance', userActionable: true, count: 1 },
   ]);
 
   assert.deepEqual(summary, [
@@ -30,23 +29,8 @@ test('summarizeBoostFailures counts ROWS and carries userActionable', () => {
   ]);
 });
 
-test('summarizeClientErrors SUMS the stored count, it does not count rows', () => {
-  // Rows are already daily aggregates, so counting rows would report "2 errors"
-  // for something that happened 412 times.
-  const summary = summarizeClientErrors([
-    { category: 'audio-playback', count: 400 },
-    { category: 'audio-playback', count: 12 },
-    { category: 'data-service', count: 5 },
-  ]);
-
-  assert.deepEqual(summary, [
-    { category: 'audio-playback', count: 412 },
-    { category: 'data-service', count: 5 },
-  ]);
-});
-
-test('summaries sort by count desc, then category asc so output is deterministic', () => {
-  const summary = summarizeClientErrors([
+test('sortSummaryRows breaks a count tie by category asc, so output is deterministic', () => {
+  const summary = sortSummaryRows([
     { category: 'zebra', count: 5 },
     { category: 'alpha', count: 5 },
     { category: 'middle', count: 9 },
@@ -55,7 +39,20 @@ test('summaries sort by count desc, then category asc so output is deterministic
   assert.deepEqual(summary.map(r => r.category), ['middle', 'alpha', 'zebra']);
 });
 
+test('sortSummaryRows does not mutate its input', () => {
+  const input = [
+    { category: 'b', count: 1 },
+    { category: 'a', count: 2 },
+  ];
+  const sorted = sortSummaryRows(input);
+
+  assert.deepEqual(input, [
+    { category: 'b', count: 1 },
+    { category: 'a', count: 2 },
+  ]);
+  assert.deepEqual(sorted.map(r => r.category), ['a', 'b']);
+});
+
 test('empty input yields an empty summary, not a throw', () => {
-  assert.deepEqual(summarizeBoostFailures([]), []);
-  assert.deepEqual(summarizeClientErrors([]), []);
+  assert.deepEqual(sortSummaryRows([]), []);
 });
