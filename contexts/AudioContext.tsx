@@ -23,6 +23,7 @@ import { getObjectUrl as getDownloadObjectUrl } from '@/lib/downloads/downloads-
 import { primaryPlaybackKey } from '@/lib/downloads/playback-key';
 import { PodcastChapter } from '@/lib/podcast-types';
 import { shouldShowAndroidBatteryHint, ANDROID_BATTERY_HINT_DISMISSED_KEY } from '@/lib/android-battery-hint';
+import { resolveAlbumRewindIndex } from '@/lib/album-rewind';
 import {
   PLAYBACK_STATE_KEY,
   PLAYBACK_POSITION_KEY,
@@ -297,6 +298,13 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
   const pendingNextTrackUrlRef = useRef<string | null>(null); // Pre-computed URL for next track
   const iosAdvanceTimerRef = useRef<NodeJS.Timeout | null>(null); // Proactive advance timer
   const trackEndProcessedRef = useRef<boolean>(false); // Prevent double-advance from timer + ended event
+  // True from "album finished with repeat off" until playback restarts. The
+  // foreground-return net below re-triggers playNextTrack for any element still
+  // reporting `ended`; after a completed album currentTrackIndex has been rewound,
+  // so that would silently start TRACK 2 every time the user switches back to the
+  // app. Deliberately NOT trackEndProcessedRef — that is a per-track double-advance
+  // guard with three writers, and giving it a per-album meaning won't survive review.
+  const albumCompleteRef = useRef<boolean>(false);
   const earlyAdvanceTriggeredRef = useRef<boolean>(false); // Android: guard so the pre-end gapless advance fires once per track
   const preloadAudioRef = useRef<HTMLAudioElement | null>(null); // Hidden Audio element for preloading next track
 
@@ -1396,7 +1404,12 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
       const currentElement = (video && !video.paused && !video.ended) ? video : audio;
       if (!currentElement) return;
 
-      if (currentElement.ended) {
+      // albumCompleteRef: a finished album is not a failed background advance. The
+      // index has already been rewound to track 1, so advancing from here would start
+      // TRACK 2 unprompted on every foreground return. A successful cue also clears
+      // `ended` on its own; this ref covers the paths where the cue leaves the
+      // element empty (offline, video, a load that throws).
+      if (currentElement.ended && !albumCompleteRef.current) {
         // Background advance failed — the track ended but nothing new started.
         // Trigger advancement now.
         console.log('📱 Track ended while backgrounded — advancing on foreground return');
@@ -2507,6 +2520,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
       setIsPlaying(true);
       // Reset iOS background advance tracking for next track end
       trackEndProcessedRef.current = false;
+      albumCompleteRef.current = false; // catch-all: audio is playing, so the album isn't over
       earlyAdvanceTriggeredRef.current = false; // re-arm Android pre-end gapless advance for this track
       pendingNextTrackUrlRef.current = null;
       if (iosAdvanceTimerRef.current) {
@@ -2925,6 +2939,24 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         return;
       }
 
+      // A failed end-of-album cue must not auto-skip. The cue loads track 1 with no
+      // play() to fail on, so a dead/CORS-blocked URL surfaces here instead — and
+      // auto-skipping from the rewound index would start TRACK 2 unprompted, which is
+      // the exact bug the rewind exists to fix. (playbackSessionRef doesn't help: the
+      // error arrives after the cue's own bump, so the session still matches.) Leave
+      // the element empty so resume() cold-starts through playAlbum on the next tap.
+      if (albumCompleteRef.current) {
+        console.log('⏭️ Skipping auto-skip: album already finished (cue failed to load)');
+        try {
+          const el = getActiveAudioEl();
+          el?.removeAttribute('src');
+          el?.load();
+        } catch {
+          // Best effort.
+        }
+        return;
+      }
+
       if (playNextTrackRef.current) {
         const currentSession = playbackSessionRef.current;
         console.log(`⏭️ Auto-skipping to next track after error (session ${currentSession})`);
@@ -3274,6 +3306,92 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     }
   };
 
+  /**
+   * Load a track into the active element and leave it PAUSED at its start.
+   *
+   * Used when playback stops but the UI must keep showing a *different* track than
+   * the one that was playing — end of album with repeat off, which rewinds to track 1.
+   * The now-playing bar derives its title from `currentTrackIndex` alone, so moving
+   * the index without moving the media is what made the player show track 1 while
+   * track N kept playing.
+   *
+   * Deliberately NOT playAlbum: that autoplays, sets hasUserInteracted, clears
+   * userInitiatedPauseRef, flips shuffle off, runs the seamless/ping-pong transition
+   * and toasts through the offline gate — none of which is right for a silent cue.
+   *
+   * On ANY failure the element is left EMPTY, which is a designed fallback rather
+   * than a giving-up: resume()'s cold-start check (`hasUsableSrc`) then reads false
+   * and routes the next tap through playAlbum. The one thing this must never do is
+   * leave the previous track's bytes loaded under a new title.
+   */
+  const cueTrackPaused = async (album: RSSAlbum, trackIndex: number): Promise<void> => {
+    const track: any = album?.tracks?.[trackIndex];
+    const active = getActiveAudioEl();
+    const idle = getIdleAudioEl();
+
+    // Both elements must go silent. After a ping-pong swap the idle one can still
+    // hold a live or preloaded source — stop() pauses both for the same reason.
+    try { idle?.pause(); } catch { /* element may be mid-teardown */ }
+    try { active?.pause(); } catch { /* element may be mid-teardown */ }
+
+    // Invalidate any in-flight playback attempt so a late resolve can't restart audio.
+    ++playbackSessionRef.current;
+    cancelPendingAutoSkip();
+
+    const clearElement = (el: HTMLMediaElement | null) => {
+      if (!el) return;
+      try { el.removeAttribute('src'); el.load(); } catch { /* best effort */ }
+    };
+
+    // Video/HLS: don't try to cue. Tear the video element down so the next play
+    // cold-starts through playAlbum, which knows how to set HLS up again.
+    if (isVideoMode || (track && isVideoUrl(getTrackPlaybackUrl(track), track.mediaType))) {
+      try { videoRef.current?.pause(); } catch { /* best effort */ }
+      clearElement(videoRef.current);
+      if (hlsRef.current) {
+        try { hlsRef.current.destroy(); } catch { /* best effort */ }
+        hlsRef.current = null;
+      }
+      setIsVideoMode(false);
+      clearElement(active);
+      return;
+    }
+
+    if (!active || !track?.url) { clearElement(active); return; }
+
+    // Offline mode: never hit the network for a cue, and never toast about it —
+    // the user didn't ask for anything. playAlbum's gate explains itself on the
+    // next tap of play.
+    if (isOfflineModeOn()) {
+      let downloaded = false;
+      try {
+        await downloadManager.init();
+        downloaded = downloadManager.isTrackDownloaded(track);
+      } catch {
+        // If we can't tell, treat as not downloaded — offline mode is intentional.
+      }
+      if (!downloaded) { clearElement(active); return; }
+    }
+
+    await prepareLocalSource(track);
+
+    const raw = getTrackPlaybackUrl(track);
+    // Same first candidate attemptAudioPlayback would pick, so the cued URL and the
+    // eventual play URL agree (and the HTTP cache is warm for the next tap).
+    let url = getAudioUrlsToTry(raw)[0] || raw;
+    if (url.startsWith('http://')) url = url.replace(/^http:/, 'https:');
+    if (!url) { clearElement(active); return; }
+
+    try {
+      active.src = url;
+      // load() also clears `ended`, which is what stops the foreground-return net
+      // from treating a finished album as a failed background advance.
+      active.load();
+    } catch {
+      clearElement(active);
+    }
+  };
+
   // Play album function
   const playAlbum = async (album: RSSAlbum, trackIndex: number = 0): Promise<boolean> => {
     if (!album.tracks || album.tracks.length === 0) {
@@ -3304,6 +3422,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     staleTimeCounterRef.current = 0;
     recoveryAttemptRef.current = 0;
     userInitiatedPauseRef.current = false; // New track = not user-paused
+    albumCompleteRef.current = false; // Playback restarting — re-arm the foreground-return net
     console.log(`🎵 Starting playback session ${sessionId}`);
 
     // Since playAlbum is called from user clicks, we can safely set hasUserInteracted
@@ -3448,6 +3567,8 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
 
     // Offline mode (QoS): don't attempt to stream a non-downloaded track.
     if (await blockNonDownloadedInOfflineMode(track)) return false;
+
+    albumCompleteRef.current = false; // Playback restarting
 
     // Prefer a downloaded copy if this track was saved for offline.
     await prepareLocalSource(track);
@@ -3820,6 +3941,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
   // a toast with Retry so the user is never silently stuck.
   const resume = async () => {
     userInitiatedPauseRef.current = false;
+    albumCompleteRef.current = false;
 
     let currentElement: HTMLAudioElement | HTMLVideoElement | null = isVideoMode
       ? videoRef.current
@@ -4143,8 +4265,20 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
             prefetchUpcomingTracks(upcomingTracks, 0).catch(() => {});
           }
         } else {
-          // repeatMode === 'none' - stop playback but stay in shuffle mode
+          // repeatMode === 'none' - stop playback but stay in shuffle mode.
+          //
+          // No rewind here: a shuffled queue's "first" item is an artifact of the last
+          // shuffle, not something the user recognizes, so we stay on the track that
+          // just played and its title stays correct. But the stop has to be real —
+          // setIsPlaying(false) alone left a manually-skipped track audibly playing,
+          // the same defect as the album case below.
           console.log('⏹️ Shuffle: End of playlist reached, stopping playback');
+          albumCompleteRef.current = true;
+          isAutoTransitioningRef.current = false;
+          trackEndProcessedRef.current = false;
+          userInitiatedPauseRef.current = true;
+          try { getActiveAudioEl()?.pause(); } catch { /* best effort */ }
+          try { getIdleAudioEl()?.pause(); } catch { /* best effort */ }
           setIsPlaying(false);
           // Stay in shuffle mode so user can hit play to restart
         }
@@ -4205,13 +4339,67 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
           setIsPlaying(false);
         }
       } else {
-        // repeatMode === 'none' - stop playback
+        // repeatMode === 'none' — end of album: rewind to the first available track
+        // and STOP there, with that track genuinely loaded and paused at 0:00.
+        //
+        // This used to be `setIsPlaying(false); setCurrentTrackIndex(0);` and nothing
+        // else. Both halves were wrong: setIsPlaying is React state that never pauses
+        // the element (so skipping on the last track kept it audibly playing), and
+        // moving the index without moving the media made every player show track 1's
+        // title while track N's bytes were loaded — the bar derives its title from
+        // currentTrackIndex alone.
         if (process.env.NODE_ENV === 'development') {
-          console.log('⏹️ End of album reached, stopping playback');
+          console.log('⏹️ End of album reached, rewinding to the first track');
         }
+
+        const rewindIndex = resolveAlbumRewindIndex(currentPlayingAlbum.tracks);
+
+        // Refs first — all of these must land before the await below.
+        albumCompleteRef.current = true;
+        // handleEnded set this true; only playAlbum ever clears it, so without this
+        // the next user-initiated play is forced down the seamless/ping-pong path,
+        // which assumes the current element is still playing.
+        isAutoTransitioningRef.current = false;
+        trackEndProcessedRef.current = false;
+        // "Stopped on purpose", not interrupted. The foreground-return net resumes
+        // any element that is paused && src && !userInitiatedPause — after the cue
+        // all three hold, so without this an app-switch auto-plays track 1.
+        userInitiatedPauseRef.current = true;
+        pendingResumeSeekRef.current = null;
+
         setIsPlaying(false);
-        // Optionally reset to first track but don't play
-        setCurrentTrackIndex(0);
+        setCurrentTrackIndex(rewindIndex ?? 0);
+
+        // resume() falls back to lastNonZeroPositionRef when the element's own
+        // currentTime is ~0, which a freshly cued element always is. Left alone, the
+        // first tap on play would start track 1 and immediately seek it to wherever
+        // the LAST track ended.
+        currentTimeRef.current = 0;
+        lastNonZeroPositionRef.current = 0;
+        setCurrentTime(0);
+        setDuration(0);
+
+        // An album that ran to the end has no resume point. The position save effect
+        // fires on the duration change below and would otherwise persist the last
+        // track's end position next to the rewound index — restoring minutes into
+        // the wrong track on the next launch.
+        try {
+          storage.removeItem(PLAYBACK_POSITION_KEY);
+        } catch {
+          // Best-effort; a stale position is rejected by MIN_RESUME_SECONDS anyway.
+        }
+
+        if (rewindIndex !== null) {
+          await cueTrackPaused(currentPlayingAlbum, rewindIndex);
+          // The notification would otherwise keep naming the last track. Duration is
+          // 0 at cue time; handleLoadedMetadata re-issues this with the real one.
+          updateMediaSession(currentPlayingAlbum, currentPlayingAlbum.tracks[rewindIndex]);
+          nativeMedia('setPlaybackState', { isPlaying: false, position: 0 });
+        } else {
+          // Nothing playable to cue — just make sure both elements are silent.
+          try { getActiveAudioEl()?.pause(); } catch { /* best effort */ }
+          try { getIdleAudioEl()?.pause(); } catch { /* best effort */ }
+        }
       }
     }
   }, [currentPlayingAlbum, currentTrackIndex, isShuffleMode, shuffledPlaylist, currentShuffleIndex, playShuffledTrack, playAlbum, repeatMode, chapters, currentChapterIndex, chaptersAreBoostMarkers, seek]);
@@ -4372,6 +4560,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
 
     // Stop any current playback
     stop();
+    albumCompleteRef.current = false; // after stop(), which sets it — playback is restarting
     
     // Set user interaction flag
     setHasUserInteracted(true);
@@ -4416,6 +4605,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
 
   // Stop function
   const stop = () => {
+    albumCompleteRef.current = false; // player state is being wiped
     // Stop both audio elements (ping-pong A + B) and the video element
     if (audioRef.current) {
       audioRef.current.pause();
