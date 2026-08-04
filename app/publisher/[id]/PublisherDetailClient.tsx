@@ -6,7 +6,7 @@ import ArtworkImage from '@/components/ArtworkImage';
 import { Play, Music, Disc, Calendar, Clock, ExternalLink, Info, Share2 } from 'lucide-react';
 import { RSSAlbum, RSSPublisherItem } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
-import { generateAlbumUrl, getPublisherInfo } from '@/lib/url-utils';
+import { generateAlbumHref, getPublisherInfo } from '@/lib/url-utils';
 import ControlsBar, { FilterType, ViewType, SortType } from '@/components/ControlsBar';
 // Removed CDNImage import for performance - using Next.js Image instead
 import { useAudio } from '@/contexts/AudioContext';
@@ -148,8 +148,11 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
         item.title && item.title.trim() !== ''
       );
       return validItems.map((item: any) => ({
-        id: item.id || item.feedGuid || `album-${Math.random()}`,
-        feedId: item.id || item.feedGuid || `album-${Math.random()}`,
+        // Leave these undefined rather than minting `album-${Math.random()}`: the id now
+        // drives the card's href (generateAlbumHref), and a random id is a permanently
+        // dead link, whereas undefined falls back to the title slug.
+        id: item.id || item.feedGuid || undefined,
+        feedId: item.id || item.feedGuid || undefined,
         title: item.title,
         artist: item.artist,
         description: item.description,
@@ -367,8 +370,9 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
             if (validItems.length > 0 && itemsHaveTracks) {
               console.log(`🏢 Processing ${validItems.length} valid items with tracks:`, validItems);
               const albumsFromItems = validItems.map((item: any) => ({
-                id: item.id || item.feedGuid || `album-${Math.random()}`,
-                feedId: item.id || item.feedGuid || `album-${Math.random()}`, // Add feedId for favorite button
+                // Undefined, not a random id — see the note on the same fallback above.
+                id: item.id || item.feedGuid || undefined,
+                feedId: item.id || item.feedGuid || undefined, // Add feedId for favorite button
                 title: item.title,
                 artist: item.artist,
                 description: item.description,
@@ -604,8 +608,9 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
               } else {
                 // For regular publisherItems, convert directly to album format
                 const albumsFromItems = items.map((item: any) => ({
-                  id: item.id || `album-${Math.random()}`,
-                  feedId: item.id || `album-${Math.random()}`, // Add feedId for favorite button
+                  // Undefined, not a random id — see the note on the same fallback above.
+                  id: item.id || undefined,
+                  feedId: item.id || undefined, // Add feedId for favorite button
                   title: item.title || item.feedUrl?.split('/').pop()?.replace('.xml', '') || 'Unknown Album',
                   artist: item.artist || publisherInfo.name || 'Unknown Artist',
                   description: item.description || 'Album from publisher',
@@ -976,7 +981,7 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
       {albumsToRender.map((album, index) => (
         <Link
           key={`${album.title}-${index}`}
-          href={generateAlbumUrl(album.title)}
+          href={generateAlbumHref(album)}
           className="group bg-gray-900/80 rounded-xl overflow-hidden hover:bg-gray-800/90 transition-colors duration-200 border border-white/10 hover:border-white/20 shadow-lg"
         >
           <div className="relative aspect-square">
@@ -1050,7 +1055,7 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
       {albumsToRender.map((album, index) => (
         <Link
           key={`${album.title}-${index}`}
-          href={generateAlbumUrl(album.title)}
+          href={generateAlbumHref(album)}
           className="group flex items-center gap-4 p-4 bg-gray-900/80 rounded-xl hover:bg-gray-800/90 transition-colors duration-200 border border-white/10 hover:border-white/20"
         >
           <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">

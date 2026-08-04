@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import ArtworkImage from '@/components/ArtworkImage';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
-import { generateAlbumUrl, generatePublisherSlug } from '@/lib/url-utils';
+import { generateAlbumHref, generatePublisherSlug } from '@/lib/url-utils';
 
 interface SearchResult {
   tracks: Array<{
@@ -15,6 +15,7 @@ interface SearchResult {
     album?: string;
     image?: string;
     audioUrl: string;
+    feedId: string;
     feedTitle: string;
   }>;
   albums: Array<{
@@ -163,7 +164,7 @@ export default function SearchBar({
     // Check tracks
     if (results.tracks && index < results.tracks.length) {
       const track = results.tracks[index];
-      router.push(`/album/${track.feedTitle}`);
+      router.push(generateAlbumHref({ feedId: track.feedId, title: track.feedTitle }));
       setIsOpen(false);
       return;
     }
@@ -172,7 +173,7 @@ export default function SearchBar({
     // Check albums
     if (results.albums && index < currentIndex + results.albums.length) {
       const album = results.albums[index - currentIndex];
-      router.push(generateAlbumUrl(album.title));
+      router.push(generateAlbumHref(album));
       setIsOpen(false);
       return;
     }
@@ -302,7 +303,7 @@ export default function SearchBar({
               {results.tracks.map((track, index) => (
                 <Link
                   key={track.id}
-                  href={`/album/${track.feedTitle}`}
+                  href={generateAlbumHref({ feedId: track.feedId, title: track.feedTitle })}
                   onClick={() => setIsOpen(false)}
                   className={`flex items-center gap-3 p-2 rounded hover:bg-gray-800/50 transition-colors ${
                     selectedIndex === index ? 'bg-gray-800/50' : ''
@@ -339,7 +340,7 @@ export default function SearchBar({
                 return (
                   <Link
                     key={album.id}
-                    href={generateAlbumUrl(album.title)}
+                    href={generateAlbumHref(album)}
                     onClick={() => setIsOpen(false)}
                     className={`flex items-center gap-3 p-2 rounded hover:bg-gray-800/50 transition-colors ${
                       selectedIndex === globalIndex ? 'bg-gray-800/50' : ''

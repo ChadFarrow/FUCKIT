@@ -8,7 +8,7 @@ import { Play, Pause, SkipBack, SkipForward, Volume2, Video, MoreVertical, Shuff
 import { RSSAlbum } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { pickCanvasBackground } from '@/lib/podcast-images';
-import { generateAlbumUrl, generateAlbumSlug, generatePublisherSlug, generatePublisherUrl, getPublisherInfo } from '@/lib/url-utils';
+import { generateAlbumHref, generateAlbumSlug, generatePublisherSlug, generatePublisherUrl, getPublisherInfo } from '@/lib/url-utils';
 import { useAudio } from '@/contexts/AudioContext';
 import { useScrollDetectionContext } from '@/components/ScrollDetectionProvider';
 import ControlsBar from '@/components/ControlsBar';
@@ -1522,7 +1522,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                   {podrollAlbums.map((podrollAlbum, index) => (
                     <Link
                       key={index}
-                      href={generateAlbumUrl(podrollAlbum.title)}
+                      href={generateAlbumHref(podrollAlbum)}
                       className="group block"
                     >
                       <div className="bg-white/5 hover:bg-white/10 rounded-lg p-3 transition-all duration-200 hover:scale-105">

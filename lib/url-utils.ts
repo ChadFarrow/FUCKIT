@@ -73,6 +73,36 @@ export function generatePodcastUrl(title: string): string {
 }
 
 /**
+ * Build the href for an album card/link. Use this instead of generateAlbumUrl(title).
+ *
+ * Album titles are not unique — four active feeds are literally titled "Singles"
+ * (the-horse-heads-singles, frankie-peroni-singles, nathan-abbott-singles,
+ * singles-1768078067901) — so a title-derived slug can only ever resolve to whichever
+ * of them /api/albums/[slug] ranks highest (max trackCount, first wins on ties). That
+ * is how the Horseheads Singles card ended up loading Frankie Peroni's album (#183).
+ * Linking by the Feed row's primary key is unambiguous, and the resolver's first rung
+ * is already an exact case-insensitive id match, so no route change is needed.
+ *
+ * feedId is preferred over id ON PURPOSE: /api/albums returns a *synthetic* id
+ * (`${generateAlbumSlug(title)}-${feed.id.split('-')[0]}`, e.g. "singles-the") alongside
+ * the real feedId, so preferring id would mint hrefs that resolve to nothing on the
+ * podroll and the publisher-page client fallbacks. Do not flip this ordering.
+ *
+ * Falls back to the title slug when neither id is present, so callers carrying only a
+ * title behave exactly as before. Existing title-slug URLs keep working either way —
+ * the resolver's title rungs are untouched.
+ */
+export function generateAlbumHref(album: {
+  feedId?: string | null;
+  id?: string | null;
+  title?: string | null;
+}): string {
+  const feedId = album.feedId?.trim() || album.id?.trim();
+  if (feedId) return `/album/${encodeURIComponent(feedId)}`;
+  return generateAlbumUrl(album.title ?? '');
+}
+
+/**
  * Generate a clean publisher slug from publisher info
  * Uses title/artist name if available, otherwise falls back to a shortened ID
  */

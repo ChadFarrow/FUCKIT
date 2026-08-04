@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Play, Pause, Music, Zap } from 'lucide-react';
 import { RSSAlbum } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
-import { generateAlbumUrl } from '@/lib/url-utils';
+import { generateAlbumHref, generateAlbumUrl } from '@/lib/url-utils';
 // import CDNImage from './CDNImage'; // Replaced with direct Next.js Image for performance
 import { useScrollDetectionContext } from '@/components/ScrollDetectionProvider';
 import { BoostButton } from '@/components/Lightning/BoostButton';
@@ -153,7 +153,7 @@ function AlbumCard({ album, isPlaying = false, onPlay, className = '', linkFilte
     } else if ((album as any).isPodcast) {
       albumUrl = generateAlbumUrl(album.title, 'podcast');
     } else {
-      albumUrl = generateAlbumUrl(album.title);
+      albumUrl = generateAlbumHref(album);
     }
 
     // Append filter param if provided (e.g., ?filter=videos for video albums)
@@ -162,7 +162,9 @@ function AlbumCard({ album, isPlaying = false, onPlay, className = '', linkFilte
     }
 
     return { isPlaylistCard, isPublisherCard, albumUrl };
-  }, [album.title, album.id, (album as any).isPlaylistCard, (album as any).playlistUrl, (album as any).isPublisherCard, (album as any).publisherUrl, linkFilter]);
+    // album.feedId is in the deps because it now drives the href — without it a recycled
+    // card can keep a stale link across two feeds sharing a title (the #183 collision).
+  }, [album.title, album.id, (album as any).feedId, (album as any).isPlaylistCard, (album as any).playlistUrl, (album as any).isPublisherCard, (album as any).publisherUrl, linkFilter]);
 
   const hasV4V = checkHasV4V(album as any);
   

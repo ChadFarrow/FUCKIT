@@ -6,7 +6,7 @@ import Link from 'next/link';
 import ArtworkImage from '@/components/ArtworkImage';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
-import { generateAlbumUrl, generatePublisherSlug } from '@/lib/url-utils';
+import { generateAlbumHref, generatePublisherSlug } from '@/lib/url-utils';
 import { useAudio } from '@/contexts/AudioContext';
 import SearchBar from '@/components/SearchBar';
 
@@ -244,7 +244,7 @@ function SearchContent() {
                     {filteredAlbums.map((album) => (
                       <Link
                         key={album.id}
-                        href={generateAlbumUrl(album.title)}
+                        href={generateAlbumHref(album)}
                         className="group bg-white/5 backdrop-blur-sm rounded-xl p-4 hover:bg-white/10 transition-all duration-200 border border-white/10 hover:border-white/20"
                       >
                         <div className="aspect-square rounded-lg overflow-hidden mb-3 bg-gray-800">
