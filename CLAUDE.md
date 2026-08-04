@@ -13,7 +13,7 @@ npm run test:downloads                              # lib/downloads/*.test.ts
 npx tsx --test lib/album-detail-routes.test.ts      # which routes render AlbumDetailClient
 npx tsx --test lib/android-battery-hint.test.ts
 npx tsx --test lib/cdn-utils.test.ts                # animated-artwork detection
-npx tsx --test lib/url-utils.test.ts                # feed URL variants (podping lookup ladder)
+npx tsx --test lib/url-utils.test.ts                # feed URL variants (podping ladder) + generateAlbumHref
 npx tsx --test lib/nostr/nwc-backup.test.ts         # NWC backup pure helpers
 node lib/nostr/nwc-backup.browser-probe.mjs         # wallet picker + backup flows (needs `npm run dev`)
 npx tsx --test lib/nostr/community-favorites.test.ts     # Community tab: event parsing, dedupe, relay set
@@ -22,8 +22,9 @@ npx tsx --test lib/caches/community-favorites-cache.test.ts  # Community tab: st
 npx tsx --test lib/client-log.test.ts               # client error reporting: throttle key, clamping, key sweep
 npx tsx --test lib/lightning/boost-failure.test.ts  # boost failure -> [category user|fix] triage tag
 npx tsx --test lib/lightning/sender-name.test.ts    # boost sender name: npub/autofill rejection
-npx tsx --test lib/admin/diagnostics.test.ts      # admin diagnostics: day bucket, summaries
-npx tsx --test lib/album-rewind.test.ts           # end-of-album rewind index (skips unavailable tracks)
+npx tsx --test lib/admin/diagnostics.test.ts        # admin diagnostics: day bucket, summaries
+npx tsx --test lib/playback-state.test.ts           # resume-where-you-left-off: session/position records
+npx tsx --test lib/album-rewind.test.ts             # end-of-album rewind index (skips unavailable tracks)
 
 # `lib/*.test.ts` does NOT recurse — it misses lib/nostr, lib/caches and lib/downloads.
 npx tsx --test lib/*.test.ts lib/*/*.test.ts        # everything
@@ -393,6 +394,16 @@ Save tracks/albums for offline listening. Works in the PWA **and** the native Ca
 - **Cover art offline**: `downloadManager.getCoverObjectUrl` → `getCoverUrl` (context) resolves a cached cover to a blob URL on the /downloads page AND in Now Playing, falling back to the network URL. Cached once per album, evicted with the album's last track. Blob object URLs are revoked on change/unmount — keep that lifecycle.
 - **Manual Offline mode** (`DownloadsContext` + `AudioContext`): `isOnline` is driven **solely** by a persisted user toggle (`localStorage['sk_offline_mode']`) on the /downloads page — the app deliberately does NOT react to real `navigator.onLine` (connection loss must never force offline UI or redirect; playback prefers the downloaded blob regardless). Do not re-add `useOnlineStatus` reactivity. **It's a QoS switch** ("going into a poor-signal area"): when on, (1) new downloads are blocked, and (2) `AudioContext` refuses to *attempt* streaming a non-downloaded track — `blockNonDownloadedInOfflineMode()` (reads `sk_offline_mode` directly, awaits `downloadManager.init()`) gates all three play entry points (`playAlbum`/`playShuffledTrack`/`playTrack`) so a flaky connection can't hang playback; downloaded tracks play normally. It is NOT a hard network block (deliberately — see the declined "block all network" option; browsing still uses the network, falling back to the localStorage `cachedAlbums` + SW-cached shell on a poor connection).
 - **Entry points**: `/downloads` linked from the account menu (`UserMenu`) and a home-header button (desktop + mobile); `/downloads` added to next-pwa precache (`additionalManifestEntries`) so the offline page's CTA reaches it offline.
+
+### Album links — always `generateAlbumHref(album)`, never `generateAlbumUrl(album.title)`
+Album titles are **not unique** — four active feeds are titled exactly `Singles` (`the-horse-heads-singles`, `frankie-peroni-singles`, `nathan-abbott-singles`, `singles-1768078067901`). Every album link used to be `generateAlbumUrl(album.title)`, so all four minted `/album/singles`, and `/api/albums/[slug]` picked the winner by **max track count, first-wins on ties** — Horseheads and Frankie Peroni both have 3 tracks, so the Horseheads publisher card loaded Frankie Peroni's album (issue #183). Link by the Feed row's primary key instead: `generateAlbumHref(album)` in `lib/url-utils.ts` (tests: `npx tsx --test lib/url-utils.test.ts`).
+
+- **`feedId` beats `id`, and that ordering is the whole fix.** `/api/albums` returns a **synthetic** `id` — `` `${generateAlbumSlug(title)}-${feed.id.split('-')[0]}` ``, e.g. `all-thats-haunting-me-ariel` — alongside the real `feedId`. That synthetic id **404s**. Preferring `id` would take the podroll tiles and the publisher-page client fallbacks from "wrong album" to "no album". Same pattern at `app/api/albums/[slug]/route.ts`, `app/api/publishers/[id]/route.ts`, `app/api/publishers-by-id/route.ts`. A unit test pins it.
+- **There is no single place a link is minted** — every surface builds its own href from whatever album object it holds (publisher grid + list, `AlbumCard`, the home list views, `/search`, `SearchBar`'s album *and* track rows, podroll, Now Playing, `RadioPlayer`, boost/share URLs). Adding a new one? Use the helper. Same "derived in N places, so N places can disagree" family as the `currentTrackIndex` problem in [End of Album](#end-of-album--rewind-the-media-not-just-the-index-contextsaudiocontexttsx).
+- **No route change was needed and none should be made.** `/api/albums/[slug]`'s first rung is already an exact case-insensitive `id` match, and **every title rung must stay** so previously-shared `/album/singles`-style links keep resolving.
+- **`/podcast/` links stay title-slug-driven** — they have their own canonical-slug redirect machinery in `lib/podcast-feeds.ts`. `AlbumCard`'s `isPodcast` branch still calls `generateAlbumUrl(title, 'podcast')`. Note `app/page.tsx` strips `isPodcast` when mapping albums-fast results, so podcast cards on the home grid reach `/podcast/` via the `/album/<id>` → `/podcast/<canonical>` redirect — which is why **every curated podcast needs its DB id in `PODCAST_SLUGS`**, not just its canonical slug (Upbeats was missing its own and would have skipped the redirect once links became id-based).
+- Accepted trade-off: PI/Wavlake-imported feeds get a UUID URL (`/album/e19d84d9-…`). Id-based album URLs were already public-facing via `ShareButton`, `AdminPanel` and `/favorites`.
+- **Publisher URLs have the same collision shape and are NOT fixed.** `/publisher/horseheads` is a name slug from `generatePublisherSlug`, and publisher ids are themselves name-derived synthetics (`artist-$2-holla`), so the only unique handle is a raw `feedGuid`. Left deliberately; don't half-fix it.
 
 ### Home Grid Pagination (`app/page.tsx` `loadMoreAlbums`)
 Infinite-scroll offset **must** be the count of items already loaded (`displayedAlbums.length`), NOT `(page-1)*ALBUMS_PER_PAGE`: the albums phase loads variable-size batches (up to `ALBUMS_PER_PAGE * 2`), so page arithmetic drifts behind the real count and re-fetches rows → **duplicate cards** (adjacent after the format-group sort). The publishers path uses `offset=currentCount` for the same reason. A dedup-by-id safety net on merge also halts paging when a fetch returns only duplicates.
