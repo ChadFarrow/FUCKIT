@@ -13,7 +13,7 @@ import { BoostButton } from '@/components/Lightning/BoostButton';
 import FavoriteButton from '@/components/favorites/FavoriteButton';
 import DownloadButton from '@/components/downloads/DownloadButton';
 import { useDownloadsSafe } from '@/contexts/DownloadsContext';
-import { generateAlbumUrl } from '@/lib/url-utils';
+import { generateAlbumHref } from '@/lib/url-utils';
 import { formatValueSplitsForBoost, getPrimaryRecipient } from '@/lib/v4v-utils';
 import UserMenu from '@/components/UserMenu';
 import { useUserSettings } from '@/hooks/useUserSettings';
@@ -539,7 +539,7 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
                 setFullscreenMode(false);
               }
               // Then navigate to album page
-              const albumUrl = generateAlbumUrl(currentPlayingAlbum.title);
+              const albumUrl = generateAlbumHref(currentPlayingAlbum);
               router.push(albumUrl);
             }}
             className="flex-1 min-w-0 truncate text-center text-sm font-medium rounded-lg px-2 py-1 cursor-pointer hover:bg-black/30 active:scale-95 transition-all duration-200"
@@ -665,13 +665,13 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
               ref={titleRef}
               className={`text-2xl font-bold mb-2 whitespace-nowrap ${titleOverflows ? 'animate-marquee hover:animate-none' : ''}`}
             >
-              <Link href={`${generateAlbumUrl(currentPlayingAlbum.title)}${currentTrack.id ? `?track=${currentTrack.id}` : ''}`} className="hover:underline">
+              <Link href={`${generateAlbumHref(currentPlayingAlbum)}${currentTrack.id ? `?track=${currentTrack.id}` : ''}`} className="hover:underline">
                 {currentTrack.title || 'Unknown Track'}
               </Link>
               {titleOverflows && (
                 <>
                   <span className="px-8" />
-                  <Link href={`${generateAlbumUrl(currentPlayingAlbum.title)}${currentTrack.id ? `?track=${currentTrack.id}` : ''}`} className="hover:underline">
+                  <Link href={`${generateAlbumHref(currentPlayingAlbum)}${currentTrack.id ? `?track=${currentTrack.id}` : ''}`} className="hover:underline">
                     {currentTrack.title || 'Unknown Track'}
                   </Link>
                 </>

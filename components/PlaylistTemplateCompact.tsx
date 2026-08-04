@@ -14,7 +14,7 @@ import { Share2, List, Layers } from 'lucide-react';
 import EpisodeSection from '@/components/EpisodeSection';
 import { toast } from '@/components/Toast';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
-import { generateAlbumSlug } from '@/lib/url-utils';
+import { generateAlbumHref } from '@/lib/url-utils';
 import AppLayout from '@/components/AppLayout';
 import HomeButton from '@/components/HomeButton';
 import { BACK_ROW_BUTTON_CLASSES } from '@/components/BackButton';
@@ -1086,8 +1086,14 @@ export default function PlaylistTemplateCompact({ config }: PlaylistTemplateComp
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         const albumTitle = track.albumTitle || track.feedTitle || '';
-                                        const albumSlug = generateAlbumSlug(albumTitle);
-                                        const albumUrl = `${window.location.origin}/album/${albumSlug}`;
+                                        // Prefer the feed guid over a title slug: titles are not
+                                        // unique, so a slug resolves to whichever same-titled feed
+                                        // has the most tracks (#183). The guid resolves on the
+                                        // resolver's guid rung.
+                                        const albumUrl = `${window.location.origin}${generateAlbumHref({
+                                          feedId: track.valueForValue?.feedGuid || track.feedGuid,
+                                          title: albumTitle,
+                                        })}`;
                                         navigator.clipboard.writeText(albumUrl).then(() => {
                                           toast.success('Link copied!');
                                         }).catch(() => {
@@ -1273,8 +1279,11 @@ export default function PlaylistTemplateCompact({ config }: PlaylistTemplateComp
                         onClick={(e) => {
                           e.stopPropagation();
                           const albumTitle = track.albumTitle || track.feedTitle || '';
-                          const albumSlug = generateAlbumSlug(albumTitle);
-                          const albumUrl = `${window.location.origin}/album/${albumSlug}`;
+                          // Feed guid over title slug — see the note on the other share button.
+                          const albumUrl = `${window.location.origin}${generateAlbumHref({
+                            feedId: track.valueForValue?.feedGuid || track.feedGuid,
+                            title: albumTitle,
+                          })}`;
                           navigator.clipboard.writeText(albumUrl).then(() => {
                             toast.success('Link copied!');
                           }).catch(() => {

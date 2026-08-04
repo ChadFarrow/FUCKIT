@@ -591,16 +591,21 @@ export function BoostButton({
             // Always generate URL from track's actual album name (not current page URL)
             // This ensures correct URL when shuffle mode plays a track from a different album
             if (feedId || finalFeedId) {
-              const { generateAlbumSlug } = await import('@/lib/url-utils');
-              // Use the correct album name we fetched from feed data
-              const albumSlug = generateAlbumSlug(actualAlbumName || finalTrackTitle);
+              // Link by feed id, not by an album-title slug — titles are not unique and a
+              // title slug resolves to whichever same-titled feed has the most tracks (#183).
+              // These URLs get published into Nostr events, so a wrong link is permanent.
+              // finalFeedId is preferred: it's a real Track.feedId, whereas the feedId prop
+              // is sometimes a podcast:guid (PlaylistTemplateCompact passes one). Both
+              // resolve — an id on the resolver's exact rung, a guid on the guid rung.
+              const albumIdentifier = finalFeedId || feedId;
               // Include track parameter if trackId is available for direct track linking
               const trackParam = trackId ? `?track=${trackId}` : '';
-              url = `${baseUrl}/album/${albumSlug}${trackParam}`;
-              console.log('🔗 Generated album URL from actual album name:', { 
-                actualAlbumName, 
-                originalAlbumName: albumName, 
-                finalUrl: url 
+              url = `${baseUrl}/album/${encodeURIComponent(albumIdentifier!)}${trackParam}`;
+              console.log('🔗 Generated album URL from feed id:', {
+                albumIdentifier,
+                actualAlbumName,
+                originalAlbumName: albumName,
+                finalUrl: url
               });
             } else if (trackId) {
               url = `${baseUrl}/music-tracks/${trackId}`;

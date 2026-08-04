@@ -29,7 +29,8 @@ export const PODCAST_FEED_URLS: string[] = [
 
 /** Slugs that should redirect from /album/ to /podcast/ */
 export const PODCAST_SLUGS: string[] = [
-  'upbeats',
+  'upbeats',                               // Upbeats (canonical)
+  '3aebb7a8-5942-5ee7-a148-8bdc14f1f3d4',  // Upbeats (DB ID)
   'two-for-tunestr',                       // Two For Tunestr (canonical)
   'silvie-two-for-tunestr',                // Two For Tunestr (DB ID)
   'before-the-sch3m3s',                    // B4TS (canonical)
@@ -62,6 +63,7 @@ export const PODCAST_SLUG_TO_FEED_ID: Record<string, string> = {
 
 /** Map DB feed ID to canonical slug (for redirects) */
 export const PODCAST_CANONICAL_SLUGS: Record<string, string> = {
+  '3aebb7a8-5942-5ee7-a148-8bdc14f1f3d4': 'upbeats',
   'silvie-two-for-tunestr': 'two-for-tunestr',
   'boo-bury-before-the-sch3m3s': 'before-the-sch3m3s',
   'lightning-thrashes-1768079468212': 'lightning-thrashes',

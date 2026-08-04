@@ -8,7 +8,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { RSSAlbum } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
-import { generateAlbumUrl, generatePublisherSlug } from '@/lib/url-utils';
+import { generateAlbumHref, generatePublisherSlug } from '@/lib/url-utils';
 import { useAudio } from '@/contexts/AudioContext';
 import { AppError, ErrorCodes, ErrorCode, getErrorMessage, createErrorLogger } from '@/lib/error-utils';
 import { toast } from '@/components/Toast';
@@ -1787,7 +1787,7 @@ function HomePageContent() {
                             {albumsWithMultipleTracks.map((album) => (
                               <Link
                                 key={album.feedId || album.feedGuid || album.title}
-                                href={generateAlbumUrl(album.title)}
+                                href={generateAlbumHref(album)}
                                 className="group flex items-center gap-4 p-4 bg-black/40 backdrop-blur-md rounded-xl hover:bg-black/50 transition-all duration-300 border border-gray-700/50 hover:border-cyan-400/30 shadow-lg hover:shadow-xl hover:shadow-cyan-400/10"
                               >
                                 <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 relative">
@@ -1867,7 +1867,7 @@ function HomePageContent() {
                             {epsOnly.map((album, index) => (
                               <Link
                                 key={album.feedId || album.feedGuid || album.title}
-                                href={generateAlbumUrl(album.title)}
+                                href={generateAlbumHref(album)}
                                 className="group flex items-center gap-4 p-4 bg-black/40 backdrop-blur-md rounded-xl hover:bg-black/50 transition-all duration-300 border border-gray-700/50 hover:border-cyan-400/30 shadow-lg hover:shadow-xl hover:shadow-cyan-400/10"
                               >
                                 <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 relative">
@@ -1947,7 +1947,7 @@ function HomePageContent() {
                             {singlesOnly.map((album, index) => (
                               <Link
                                 key={album.feedId || album.feedGuid || album.title}
-                                href={generateAlbumUrl(album.title)}
+                                href={generateAlbumHref(album)}
                                 className="group flex items-center gap-4 p-4 bg-black/40 backdrop-blur-md rounded-xl hover:bg-black/50 transition-all duration-300 border border-gray-700/50 hover:border-cyan-400/30 shadow-lg hover:shadow-xl hover:shadow-cyan-400/10"
                               >
                                 <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 relative">
@@ -2034,7 +2034,7 @@ function HomePageContent() {
                       .map((album) => (
                       <Link
                         key={album.feedId || album.feedGuid || album.title}
-                        href={activeFilter === 'videos' ? `${generateAlbumUrl(album.title)}?filter=videos` : generateAlbumUrl(album.title)}
+                        href={activeFilter === 'videos' ? `${generateAlbumHref(album)}?filter=videos` : generateAlbumHref(album)}
                         className="group flex items-center gap-4 p-4 bg-black/40 backdrop-blur-md rounded-xl hover:bg-black/50 transition-all duration-300 border border-gray-700/50 hover:border-cyan-400/30 shadow-lg hover:shadow-xl hover:shadow-cyan-400/10"
                       >
                         <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 relative">

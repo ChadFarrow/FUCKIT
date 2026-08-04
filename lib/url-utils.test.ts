@@ -4,6 +4,7 @@ import {
   buildFeedUrlLooseVariants,
   buildFeedUrlVariants,
   extractUuidFromUrl,
+  generateAlbumHref,
   normalizeUrl,
 } from './url-utils';
 
@@ -144,5 +145,59 @@ test('extractUuidFromUrl returns null for self-hosted urls with no uuid', () => 
   assert.equal(
     extractUuidFromUrl('https://headstarts.uk/msp/nat-hills-music/Nat_Hills_Music.xml'),
     null
+  );
+});
+
+// --- generateAlbumHref (issue #183) ---
+
+test('same-titled albums get distinct hrefs', () => {
+  // Four active feeds are titled exactly "Singles". Under the old title-slug hrefs they
+  // all pointed at /album/singles, which resolved to whichever had the most tracks.
+  assert.equal(
+    generateAlbumHref({ feedId: 'the-horse-heads-singles', title: 'Singles' }),
+    '/album/the-horse-heads-singles'
+  );
+  assert.equal(
+    generateAlbumHref({ feedId: 'frankie-peroni-singles', title: 'Singles' }),
+    '/album/frankie-peroni-singles'
+  );
+});
+
+test('prefers feedId over id, because /api/albums mints a synthetic id', () => {
+  // app/api/albums/route.ts returns id = `${generateAlbumSlug(title)}-${feed.id.split('-')[0]}`
+  // next to the real feedId. Preferring id here would produce /album/singles-the, which
+  // resolves to nothing — a regression from "wrong album" to "404".
+  assert.equal(
+    generateAlbumHref({ id: 'singles-the', feedId: 'the-horse-heads-singles', title: 'Singles' }),
+    '/album/the-horse-heads-singles'
+  );
+});
+
+test('falls back to id when feedId is absent', () => {
+  // /api/search and the publisher server page set only `id`.
+  assert.equal(
+    generateAlbumHref({ id: 'nathan-abbott-singles', title: 'Singles' }),
+    '/album/nathan-abbott-singles'
+  );
+});
+
+test('falls back to the title slug when there is no identifier', () => {
+  assert.equal(
+    generateAlbumHref({ title: 'Bloodshot Lies - The Album' }),
+    '/album/bloodshot-lies'
+  );
+});
+
+test('treats empty and whitespace-only identifiers as absent', () => {
+  assert.equal(
+    generateAlbumHref({ feedId: '', id: '   ', title: 'Stay Awhile' }),
+    '/album/stay-awhile'
+  );
+});
+
+test('passes uuid feed ids through unchanged', () => {
+  assert.equal(
+    generateAlbumHref({ feedId: 'e19d84d9-5916-5095-bc7c-a8ed7bd82f14' }),
+    '/album/e19d84d9-5916-5095-bc7c-a8ed7bd82f14'
   );
 });
