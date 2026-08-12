@@ -21,8 +21,41 @@ application-data event per user, at a fixed, app-neutral address:
 | `title` tag | `Podcast Favorites` — nothing renders it; it keeps the event self-describing |
 | `content` | empty string, and **public** |
 
-`content` being plaintext is worth stating, because most 30078 events are NIP-44
-encrypted to self. This one can't be: a second app has to be able to read it.
+### It is a library, not a like
+
+This list records **what a user has saved to listen to**, so their library follows
+them between apps. It is deliberately *not* an endorsement, and an implementer
+should not render it as one — no public like counts, no "N people saved this",
+no feeding it into recommendations as a positive signal. People save things they
+are unsure about and things they would not recommend.
+
+If you want the public, social version — "I like this episode", countable, shown
+to other people — that already exists and is a different event:
+[NIP-25](https://github.com/nostr-protocol/nips/blob/master/25.md) **kind 17**
+reactions, which carry the same NIP-73 `podcast:guid` / `podcast:item:guid`
+identifiers and are what Fountain uses. Emit both if your app has both concepts.
+Do not derive one from the other.
+
+### On `content` being plaintext
+
+This is a choice, not a constraint, and it is worth being explicit because the
+obvious assumption is wrong in both directions.
+
+**Encryption is available.** NIP-51-style private items are encrypted to the
+user's *own* key, so any app holding their signer can decrypt them — a second
+app reads them fine. "Other apps couldn't read it" is not a reason to skip
+encryption.
+
+**The actual costs are these.** A decrypt on every read: instant on a NIP-07
+browser extension, but seconds or a phone tap on NIP-46/Amber, on every page
+load unless you cache the plaintext against the event's `created_at`. And
+nothing without a signer can read the list at all — no server-side resolution,
+no debugging it from a relay query.
+
+The reference implementations chose plaintext. **Say so in your UI**: the list is
+public and signed by the user's key, so anyone can see what they have saved — the
+same posture as a Nostr follow list. That is a disclosure even though it is not
+an endorsement.
 
 ### Why not a NIP-51 bookmark set?
 
