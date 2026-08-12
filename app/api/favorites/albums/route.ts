@@ -556,8 +556,23 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
+    // feedId is polymorphic — a row may hold a Feed.id, a Feed.guid or a
+    // synthetic artist id, depending on which surface wrote it. The GET above
+    // already resolves all of those, so an exact-match delete could 404 on a
+    // favorite the user can plainly see in their list: the heart would turn on
+    // and then refuse to turn off. Resolve the same equivalence set here.
+    const candidateFeedIds = [feedId];
+    const matchedFeed = await prisma.feed.findFirst({
+      where: { OR: [{ id: feedId }, { guid: feedId }] },
+      select: { id: true, guid: true }
+    });
+    if (matchedFeed) {
+      if (matchedFeed.id && !candidateFeedIds.includes(matchedFeed.id)) candidateFeedIds.push(matchedFeed.id);
+      if (matchedFeed.guid && !candidateFeedIds.includes(matchedFeed.guid)) candidateFeedIds.push(matchedFeed.guid);
+    }
+
     // Build where clause - support both session and user
-    const where: any = { feedId };
+    const where: any = { feedId: { in: candidateFeedIds } };
     if (userId) {
       where.userId = userId;
     } else if (sessionId) {
