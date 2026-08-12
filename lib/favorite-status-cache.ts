@@ -139,6 +139,20 @@ export function selectUnknownIds(
 }
 
 /**
+ * Window event that empties the cache.
+ *
+ * For writers that change favorites in BULK and can't name the ids: the
+ * shared-favorites reconcile (`/api/favorites/sync-shared` returns counts, not
+ * ids) and "delete all favorites" in settings. Per-item writers must use
+ * `setFavoriteStatus` instead — this throws away good answers too, so it is
+ * the blunt instrument, not the default.
+ *
+ * Dispatched at the call sites rather than from here, to keep this module free
+ * of DOM assumptions.
+ */
+export const FAVORITE_STATUSES_INVALIDATED_EVENT = 'favorites-statuses-invalidated';
+
+/**
  * Identity a cached answer belongs to.
  *
  * Mirrors the scoping in `/api/favorites/check` and `/api/favorites/albums`
@@ -154,20 +168,6 @@ export function selectUnknownIds(
  * for favorites that genuinely exist. Without re-keying on this, that `false`
  * outlives login for the lifetime of the page.
  */
-/**
- * Window event that empties the cache.
- *
- * For writers that change favorites in BULK and can't name the ids: the
- * shared-favorites reconcile (`/api/favorites/sync-shared` returns counts, not
- * ids) and "delete all favorites" in settings. Per-item writers must use
- * `setFavoriteStatus` instead — this throws away good answers too, so it is
- * the blunt instrument, not the default.
- *
- * Dispatched at the call sites rather than from here, to keep this module free
- * of DOM assumptions.
- */
-export const FAVORITE_STATUSES_INVALIDATED_EVENT = 'favorites-statuses-invalidated';
-
 export function favoritesIdentityKey(input: {
   userId?: string | null;
   sessionId?: string | null;
