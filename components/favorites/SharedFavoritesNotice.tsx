@@ -22,7 +22,8 @@ import {
  * degraded read and a genuinely empty list are indistinguishable on screen, so
  * the correct behaviour looks exactly like data loss. That cost half an hour of
  * production debugging in the sibling app and nearly a revert of a correct
- * commit. See docs/pc20-favorites.md §4 "And say so", and issue #194.
+ * commit. See the spec's §"And say so"
+ * (github.com/ChadFarrow/PC20-Nostr, specs/pc20-favorites.md), and issue #194.
  *
  * StableKraft is less exposed than a cache-backed app — favorites render from
  * Postgres, so a failed read degrades sync rather than blanking the library —

@@ -3,7 +3,8 @@
  *
  * Owns three things the pure module in `shared-favorites.ts` deliberately does
  * not: where this device's baseline lives, how a DB favorite becomes a portable
- * wire identifier, and the debounce. Spec: docs/pc20-favorites.md.
+ * wire identifier, and the debounce. Spec:
+ * https://github.com/ChadFarrow/PC20-Nostr/blob/main/specs/pc20-favorites.md
  *
  * This is a SECOND channel alongside the per-item kind 30001 events, which are
  * untouched — the Community tab reads those.
@@ -30,7 +31,7 @@ const BASELINE_KEY_PREFIX = 'sk_shared_favorites_baseline';
  * nothing is published, and the favorites on screen are this device's own
  * copy. That silence is the problem this exists to fix — "couldn't reach the
  * relays" and "the list is empty" render identically, so a correct guard reads
- * as data loss. See docs/pc20-favorites.md §4 "And say so".
+ * as data loss. See the spec's §"And say so".
  *
  * Reads and writes surface through ONE flag deliberately — the write half is
  * silent in the same way one screen removed: a favorite toggled while the
