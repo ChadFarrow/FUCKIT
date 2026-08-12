@@ -18,6 +18,7 @@ import {
   type SharedFavoriteItem,
 } from './shared-favorites';
 import { RelayManager, getDefaultRelays, filterReachableRelays } from './relay';
+import { FAVORITE_STATUSES_INVALIDATED_EVENT } from '../favorite-status-cache';
 import { npubToPublicKey } from './keys';
 
 const BASELINE_KEY_PREFIX = 'sk_shared_favorites_baseline';
@@ -346,6 +347,20 @@ export async function pullSharedFavorites(opts: {
     // contribution only), so it is also what establishes the baseline on the
     // very first sync; a no-op push returns 'unchanged' and still records one.
     await syncSharedFavoritesNow(opts);
+
+    // The reconcile can create or delete rows on this user's behalf — a
+    // favorite added in another app arrives here. The batched status cache
+    // would otherwise keep serving the answer it recorded before that, and a
+    // cached `false` is a KNOWN answer, so the heart would stay unfilled with
+    // no request made until a hard reload. Same failure as issue #190, via a
+    // different writer. The route returns counts rather than ids, so this
+    // clears rather than writing through.
+    const changed =
+      (data?.added?.albums ?? 0) + (data?.added?.tracks ?? 0) +
+      (data?.removed?.albums ?? 0) + (data?.removed?.tracks ?? 0) > 0;
+    if (changed && typeof window !== 'undefined') {
+      window.dispatchEvent(new Event(FAVORITE_STATUSES_INVALIDATED_EVENT));
+    }
 
     // Unknown feeds are imported server-side by the route itself (it already
     // has the guids and `addUnresolvedFeeds`); they land on a later pull.

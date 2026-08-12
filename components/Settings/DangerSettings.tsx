@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import { useSession } from '@/contexts/SessionContext';
 import { useNostr } from '@/contexts/NostrContext';
 import { getSessionId } from '@/lib/session-utils';
+import { FAVORITE_STATUSES_INVALIDATED_EVENT } from '@/lib/favorite-status-cache';
 import { AlertTriangle, Trash2, Loader2, X } from 'lucide-react';
 
 interface FavoriteCounts {
@@ -146,6 +147,12 @@ export default function DangerSettings() {
           success: true,
           message: data.message + nostrMessage
         });
+        // Every heart on every mounted surface is now wrong, and the batched
+        // status cache serves a stale `true` without asking the server (a
+        // cached answer is a known answer — issue #190). Nothing here reloads
+        // the page, so say so explicitly.
+        window.dispatchEvent(new Event(FAVORITE_STATUSES_INVALIDATED_EVENT));
+
         // Refresh counts
         await fetchCounts();
       } else {
