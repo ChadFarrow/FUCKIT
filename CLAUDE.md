@@ -26,6 +26,7 @@ npx tsx --test lib/admin/diagnostics.test.ts        # admin diagnostics: day buc
 npx tsx --test lib/playback-state.test.ts           # resume-where-you-left-off: session/position records
 npx tsx --test lib/album-rewind.test.ts             # end-of-album rewind index (skips unavailable tracks)
 npx tsx --test lib/nostr/shared-favorites.test.ts   # cross-app favorites: merge, wire round trip (mirror of BMB's check:favsync)
+npx tsx --test lib/favorite-target.test.ts          # album-vs-track favorite key (one album, one key, every surface)
 npx tsx scripts/backup-favorites.ts dump > fav.json # snapshot favorites before enabling SHARED_FAVORITES_APPLY_DELETES
 
 # `lib/*.test.ts` does NOT recurse — it misses lib/nostr, lib/caches and lib/downloads.
@@ -470,6 +471,22 @@ Its **layout** (inner-scroll column, pinned tabs, overscroll suppression, `data-
 Optimistic unfavorite, auto-sync on page load. **Playlist favorites gotcha**: `isPlaylist()` and `playlistImageFallbacks` must use **lowercased feedId**, not the human name. `playlistSlugOverrides` handles ID-to-slug mismatches. Nostr playlist publishing: Kind 34139 addressable event (`d` tag = `stablekraft-favorites`).
 
 **Three `Feed` `select` blocks gotcha** (`app/api/favorites/tracks/route.ts` GET): tracks are matched by id, then guid, then audioUrl — three separate `prisma.track.findMany` queries whose results are concatenated into one `tracks` array. When adding a `Feed` field, add it to **all three** selects or `tsc` rejects the `[...tracks, ...tracksByGuid]` concat (the arrays have incompatible `Feed` shapes) and the Railway build fails at the type-check step — not caught locally unless you run `npm run build`. Same family as the albums-fast dual-select gotcha above.
+
+### `FavoriteAlbum.feedId` is POLYMORPHIC — every read path must expand it
+A row may hold a `Feed.id`, a `Feed.guid`, or a synthetic `artist-*` id, because the call sites write whichever the album object in hand carried (the home list rows send `album.feedId || album.feedGuid`). **Any path that compares the string it was handed will miss favorites the user can plainly see.**
+
+- **The symptom is an album sitting in `/favorites` with an unfilled heart.** `GET /api/favorites/albums` resolves all three formats (id map → `guid` column fallback → synthetic artist ids), so the album renders; `/api/favorites/check` compared exactly, so its heart read unfavorited on the card and on its own album page. Reported against a **14-track** album — unrelated to the single-track rule below, which is a separate divergence in the same feature.
+- **`/api/favorites/check` expands both kinds now.** The tracks branch already resolved `id`/`guid`/`audioUrl`; albums resolve `id`/`guid` the same way and count a hit on any of them. The asymmetry is what hid this — one branch grew the expansion and the other didn't.
+- **`DELETE /api/favorites/albums` expands too, and must.** Exact-match there 404s on a row stored under the other format, so the heart would turn on after the check fix and then refuse to turn off.
+- When adding a favorites read path, resolve the equivalence set. Do **not** "clean up" by normalizing on write alone — historical rows exist in every format and there is no migration.
+
+### Album vs track favorites — `singleTrackFavoriteData()`, never inlined
+`FavoriteButton` decides which store a favorite goes to from one expression: `const isTrack = !!(singleTrackData?.id || trackId)`. So **whether an item is filed as a track or an album was a property of the SCREEN, not the item.** The home list rows passed `feedId` alone (album favorite) while `AlbumCard` and `AlbumDetailClient` passed track data for a one-track release (track favorite) — so a single favorited from the "New" tab read as *unfavorited* on its own album page. The row was never lost; it was under the other kind. The two id chains had drifted too: `AlbumCard` carried a `track.id` rung the album page lacked, so a track with neither guid nor url resolved to a different key on each surface.
+
+- **Every album-level heart passes `singleTrackFavoriteData(album)`** (`lib/favorite-target.ts`; tests: `npx tsx --test lib/favorite-target.test.ts`). Call sites: `AlbumCard`, `AlbumDetailClient` (**both** the desktop and mobile action rows — same duplication family as `albumBoostProps`), the four home list rows in `app/page.tsx`, and `PublisherDetailClient` (×2). Adding a surface? Use the helper — do not re-inline `tracks.length === 1 ? {...} : undefined`.
+- **Absent `tracks` must NOT be read as "not a single track."** A surface that never loaded them can't tell a single from a ten-track record, and guessing is what split one album across two keys. The helper returns `undefined` for missing/null `tracks`, which means "favorite it as an album".
+- **The check reads BOTH stores and remembers which one answered** (`favoriteSource` in `FavoriteButton`). Rows written before the unification still exist in both shapes, so a heart that only asked about the kind its own surface would write is the original bug. **The DELETE must target where the row actually is** — deleting the kind this surface would have written removes nothing, and the heart comes back on the next load. The optimistic add sets the source too, so an immediate unfavorite hits what was just written.
+- This reaches the cross-app list: an album favorite maps to `podcast:guid:` and a track favorite to `podcast:item:guid:`, so before the fix the same release could ride the shared event as two different identifiers depending on where it was tapped.
 
 ### Community tab (`/favorites?tab=community`, `/api/nostr/global-favorites`)
 Other site users' favorites, read off Nostr and grouped **by person**. Rebuilt 2026-07-26; before that it rendered **empty for everyone since it shipped**, which read as "nobody uses this" — 8 people's favorites had been on relays the whole time, unreachable. Net effect: 26s and 0 people → **~45ms and 6 people** (8 minus two hidden test accounts).

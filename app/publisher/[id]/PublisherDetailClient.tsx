@@ -15,6 +15,7 @@ import dataService from '@/lib/data-service';
 import BackButton from '@/components/BackButton';
 import HomeButton from '@/components/HomeButton';
 import FavoriteButton from '@/components/favorites/FavoriteButton';
+import { singleTrackFavoriteData } from '@/lib/favorite-target';
 
 interface FeedSection {
   feedTitle: string;
@@ -1020,7 +1021,7 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
                 onTouchStart={(e) => { e.preventDefault(); e.stopPropagation(); }}
               >
                 <div className="bg-black/80 rounded-full w-8 h-8 flex items-center justify-center pointer-events-auto touch-manipulation hover:bg-black/90 transition-colors">
-                  <FavoriteButton feedId={album.feedId || album.id} size={18} className="text-white" />
+                  <FavoriteButton feedId={album.feedId || album.id} size={18} className="text-white" singleTrackData={singleTrackFavoriteData(album as any)} />
                 </div>
               </div>
             )}
@@ -1096,7 +1097,7 @@ export default function PublisherDetailClient({ publisherId, initialData }: Publ
           <div className="flex items-center gap-2">
             {(album.id || album.feedId) && (
               <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); }} onTouchStart={(e) => { e.preventDefault(); e.stopPropagation(); }}>
-                <FavoriteButton feedId={album.feedId || album.id} size={18} className="text-white" />
+                <FavoriteButton feedId={album.feedId || album.id} size={18} className="text-white" singleTrackData={singleTrackFavoriteData(album as any)} />
               </div>
             )}
             <Play className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />

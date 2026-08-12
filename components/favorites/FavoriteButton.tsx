@@ -92,7 +92,29 @@ export default function FavoriteButton({
   const effectiveTrackId = singleTrackData?.id || trackId;
   const itemId = effectiveTrackId || feedId;
   const isTrack = !!effectiveTrackId;
+
+  /**
+   * Which store the favorite was actually found in, once checked.
+   *
+   * A single-track album can be filed EITHER way, because whether a surface
+   * passes `singleTrackData` is a property of that surface rather than of the
+   * item: the home list rows pass only `feedId` (album favorite) while
+   * `AlbumCard` and the album page pass track data for a one-track release
+   * (track favorite). Favorite from a list row, open the album page, and it
+   * read as unfavorited — the row existed, under the other kind.
+   *
+   * The call sites are unified now, but rows written before that still exist,
+   * so the check below looks in both stores and this records the answer. The
+   * DELETE must target wherever the row actually is; targeting the kind this
+   * surface would have written removes nothing and the heart comes back on
+   * the next load.
+   */
+  const [favoriteSource, setFavoriteSource] = useState<'track' | 'album' | null>(null);
+
+  const removeAsTrack = favoriteSource ? favoriteSource === 'track' : isTrack;
   const apiBase = isTrack ? '/api/favorites/tracks' : '/api/favorites/albums';
+  const removeApiBase = removeAsTrack ? '/api/favorites/tracks' : '/api/favorites/albums';
+  const removeItemId = removeAsTrack ? effectiveTrackId ?? itemId : feedId ?? itemId;
 
   // Check if item is favorited on mount (skip if isFavorite prop is provided)
   useEffect(() => {
@@ -110,26 +132,38 @@ export default function FavoriteButton({
       return;
     }
 
-    // Check if we already have the status cached
-    const cachedStatus = getFavoriteStatus(effectiveTrackId, feedId);
-    if (cachedStatus !== undefined) {
-      setIsFavorite(cachedStatus);
+    // Check if we already have the status cached. Read the two stores
+    // separately rather than through the combined lookup, so a hit also tells
+    // us WHICH one it came from — that is what the DELETE needs.
+    const cachedTrack = effectiveTrackId ? getFavoriteStatus(effectiveTrackId, undefined) : undefined;
+    const cachedAlbum = feedId ? getFavoriteStatus(undefined, feedId) : undefined;
+    if (cachedTrack || cachedAlbum) {
+      setFavoriteSource(cachedTrack ? 'track' : 'album');
+      setIsFavorite(true);
+      setIsLoadingState(false);
+      return;
+    }
+    if (cachedTrack !== undefined && cachedAlbum !== undefined) {
+      setFavoriteSource(null);
+      setIsFavorite(false);
       setIsLoadingState(false);
       return;
     }
 
-    // Use batched favorites check
+    // Use batched favorites check. Both ids go out when we have both: this is
+    // one item that may be filed either way, so asking about only the kind
+    // this surface would write is what produced the mismatched heart.
     const checkFavorite = async () => {
       try {
         const result = await checkFavorites(
-          isTrack ? [effectiveTrackId!] : [],
-          !isTrack ? [feedId!] : []
+          effectiveTrackId ? [effectiveTrackId] : [],
+          feedId ? [feedId] : []
         );
-        
-        const favoriteStatus = isTrack
-          ? result.tracks[effectiveTrackId!] || false
-          : result.albums[feedId!] || false;
-        setIsFavorite(favoriteStatus);
+
+        const trackHit = effectiveTrackId ? result.tracks[effectiveTrackId] || false : false;
+        const albumHit = feedId ? result.albums[feedId] || false : false;
+        setFavoriteSource(trackHit ? 'track' : albumHit ? 'album' : null);
+        setIsFavorite(trackHit || albumHit);
       } catch (error) {
         console.error('Error checking favorite status:', error);
         // If tables don't exist yet, just show as not favorited
@@ -169,8 +203,11 @@ export default function FavoriteButton({
     setIsToggling(true);
     const newFavoriteState = !isFavorite;
 
-    // Optimistic update
+    // Optimistic update. The source moves with it, so an unfavorite right
+    // after a favorite deletes the row this surface just wrote rather than
+    // whichever kind an earlier check happened to find.
     setIsFavorite(newFavoriteState);
+    setFavoriteSource(newFavoriteState ? (isTrack ? 'track' : 'album') : null);
     if (onToggle) {
       onToggle(newFavoriteState);
     }
@@ -277,14 +314,14 @@ export default function FavoriteButton({
 
         // For DELETE, send trackId/feedId in the body instead of URL path
         // This handles cases where the ID is a full URL (https://...)
-        const response = await fetch(apiBase, {
+        const response = await fetch(removeApiBase, {
           method: 'DELETE',
           headers: {
             ...headers,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            [isTrack ? 'trackId' : 'feedId']: itemId
+            [removeAsTrack ? 'trackId' : 'feedId']: removeItemId
           })
         });
 

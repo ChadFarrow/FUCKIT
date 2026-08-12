@@ -18,6 +18,7 @@ import { useScrollDetectionContext } from '@/components/ScrollDetectionProvider'
 import { Play, Pause } from 'lucide-react';
 import AppLayout from '@/components/AppLayout';
 import FavoriteButton from '@/components/favorites/FavoriteButton';
+import { singleTrackFavoriteData } from '@/lib/favorite-target';
 import { SkeletonGrid } from '@/components/SkeletonCard';
 
 
@@ -1828,7 +1829,7 @@ function HomePageContent() {
 
                                 <div className="flex items-center gap-2 sm:gap-4">
                                   <div onClick={(e) => e.preventDefault()}>
-                                    <FavoriteButton feedId={album.feedId || album.feedGuid} size={20} />
+                                    <FavoriteButton feedId={album.feedId || album.feedGuid} size={20} singleTrackData={singleTrackFavoriteData(album as any)} />
                                   </div>
                                   <div className="hidden sm:flex items-center gap-4 text-sm text-gray-200">
                                     <span className="font-medium">{new Date(album.releaseDate).getFullYear()}</span>
@@ -1908,7 +1909,7 @@ function HomePageContent() {
 
                                 <div className="flex items-center gap-2 sm:gap-4">
                                   <div onClick={(e) => e.preventDefault()}>
-                                    <FavoriteButton feedId={album.feedId || album.feedGuid} size={20} />
+                                    <FavoriteButton feedId={album.feedId || album.feedGuid} size={20} singleTrackData={singleTrackFavoriteData(album as any)} />
                                   </div>
                                   <div className="hidden sm:flex items-center gap-4 text-sm text-gray-200">
                                     <span className="font-medium">{new Date(album.releaseDate).getFullYear()}</span>
@@ -1988,7 +1989,7 @@ function HomePageContent() {
 
                                 <div className="flex items-center gap-2 sm:gap-4">
                                   <div onClick={(e) => e.preventDefault()}>
-                                    <FavoriteButton feedId={album.feedId || album.feedGuid} size={20} />
+                                    <FavoriteButton feedId={album.feedId || album.feedGuid} size={20} singleTrackData={singleTrackFavoriteData(album as any)} />
                                   </div>
                                   <div className="hidden sm:flex items-center gap-4 text-sm text-gray-200">
                                     <span className="font-medium">{new Date(album.releaseDate).getFullYear()}</span>
@@ -2075,7 +2076,7 @@ function HomePageContent() {
 
                         <div className="flex items-center gap-2 sm:gap-4">
                           <div onClick={(e) => e.preventDefault()}>
-                            <FavoriteButton feedId={album.feedId || album.feedGuid} size={20} />
+                            <FavoriteButton feedId={album.feedId || album.feedGuid} size={20} singleTrackData={singleTrackFavoriteData(album as any)} />
                           </div>
                           <div className="hidden sm:flex items-center gap-4 text-sm text-gray-200">
                             <span className="font-medium">{new Date(album.releaseDate).getFullYear()}</span>
