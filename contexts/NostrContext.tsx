@@ -114,7 +114,7 @@ export function NostrProvider({ children }: { children: React.ReactNode }) {
       .catch((err) => console.error('❌ Error running deferred favorites sync:', err));
   }, [user?.id]);
 
-  // Pull the shared cross-app favorites list (docs/pc20-favorites.md) once per
+  // Pull the shared cross-app favorites list (see the PC20-Nostr spec) once per
   // mount, so a favorite made in another app shows up here. Runs on every load
   // rather than only after login: the other app can change the list at any
   // time, and this is what makes it look like one list rather than two.

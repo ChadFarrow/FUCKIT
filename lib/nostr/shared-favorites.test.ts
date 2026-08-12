@@ -7,8 +7,9 @@
  * the two implementations drift apart on a list they share.
  *
  * Why this earns a test file: the shared list is ONE kind:30078 replaceable
- * event at a well-known address (docs/pc20-favorites.md). A replaceable event
- * has no partial update — every publish replaces the whole thing — so a merge
+ * event at a well-known address (github.com/ChadFarrow/PC20-Nostr, in
+ * specs/pc20-favorites.md). A replaceable event has no partial update — every
+ * publish replaces the whole thing — so a merge
  * bug doesn't degrade, it DELETES, silently, on someone else's device, with no
  * undo and no error anywhere. The three ways to get it wrong all type-check:
  *
@@ -34,6 +35,7 @@ import {
   mergeSharedFavorites,
   otherTagsFrom,
   partitionSharedFavorites,
+  preferSharedFavoritesEvent,
   showId,
   tagsForSharedFavorites,
   SHARED_D_TAG,
@@ -333,4 +335,47 @@ test('what partition drops, the merge still carries', () => {
 test('a show identifier is never read as a track', () => {
   const { tracks } = partitionSharedFavorites([{ id: A }, { id: X }]);
   assert.deepEqual(tracks, []);
+});
+
+// --- which event the read trusts -------------------------------------------
+//
+// `preferSharedFavoritesEvent` is the whole trust decision of the relay read,
+// extracted from the subscription closure so it can be exercised without a
+// relay. What it CANNOT cover is signature verification — nostr-tools does
+// that inside SimplePool before our handler runs — so these events are shaped,
+// not signed, and "the user really signed this" is the library's guarantee,
+// not one pinned here.
+
+const MINE = 'a'.repeat(64);
+const THEIRS = 'b'.repeat(64);
+const ev = (pubkey: string, created_at: number) =>
+  ({ pubkey, created_at, kind: 30078, tags: [], content: '', id: '', sig: '' }) as any;
+
+test('the first event from the user is taken', () => {
+  assert.equal(preferSharedFavoritesEvent(null, ev(MINE, 100), MINE)?.created_at, 100);
+});
+
+test('a newer event from the user wins, a stale one does not', () => {
+  // A relay merely BEHIND — serving a real but older version — looks exactly
+  // as reachable as a current one, so "first answer wins" would quietly read
+  // an out-of-date list and then publish a merge on top of it.
+  const best = ev(MINE, 100);
+  assert.equal(preferSharedFavoritesEvent(best, ev(MINE, 200), MINE)?.created_at, 200);
+  assert.equal(preferSharedFavoritesEvent(best, ev(MINE, 50), MINE)?.created_at, 100);
+});
+
+test("an event authored by someone else is never taken", () => {
+  assert.equal(preferSharedFavoritesEvent(null, ev(THEIRS, 100), MINE), null);
+});
+
+test("a foreign event does NOT displace the user's, however new it claims to be", () => {
+  // The reason the author check runs at intake instead of on the winner. With
+  // the order reversed, this foreign event takes the `best` slot on its
+  // created_at, and rejecting it at the end discards the genuine list with it
+  // — a good read reported as an empty one, which is precisely the state
+  // `trustworthy` exists to keep apart from a real empty list.
+  const best = ev(MINE, 100);
+  const kept = preferSharedFavoritesEvent(best, ev(THEIRS, 999_999), MINE);
+  assert.equal(kept?.pubkey, MINE);
+  assert.equal(kept?.created_at, 100);
 });

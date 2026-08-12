@@ -300,7 +300,7 @@ export default function FavoriteButton({
           // republishes the whole list from the DB rather than this one item,
           // so it doesn't need the ids above — and it must not be folded into
           // the per-item queue, whose batching resolves a promise per item.
-          // See docs/pc20-favorites.md.
+          // See the PC20-Nostr spec, specs/pc20-favorites.md.
           requestSharedFavoritesSync({
             userId: user.id,
             pubkey: user.nostrPubkey,

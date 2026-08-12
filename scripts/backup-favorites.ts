@@ -8,8 +8,9 @@
  *   railway run --service StableKraft --environment production \
  *     npx tsx scripts/backup-favorites.ts dump > favorites-$(date +%F).json
  *
- * Why this exists: the cross-app favorites sync (docs/pc20-favorites.md) is the
- * only thing in this app that deletes favorite rows, and these rows are the
+ * Why this exists: the cross-app favorites sync (PC20-Nostr spec,
+ * specs/pc20-favorites.md) is the only thing in this app that deletes favorite
+ * rows, and these rows are the
  * only copy — Boost Me Bitch can rebuild its whole list from the shared Nostr
  * event, a FavoriteTrack cannot. Deletion ships behind
  * SHARED_FAVORITES_APPLY_DELETES for that reason; take a snapshot before you

@@ -3,7 +3,8 @@ import { prisma } from '@/lib/prisma';
 import { SHOW_PREFIX, ITEM_PREFIX } from '@/lib/nostr/shared-favorites';
 
 /**
- * Inbound half of the cross-app favorites sync (docs/pc20-favorites.md).
+ * Inbound half of the cross-app favorites sync. Spec:
+ * https://github.com/ChadFarrow/PC20-Nostr/blob/main/specs/pc20-favorites.md
  *
  * The client reads the shared kind:30078 list off relays — it holds the signer
  * and the relay connections — and POSTs the resolved identifiers here. This

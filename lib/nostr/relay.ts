@@ -246,10 +246,22 @@ export function getDefaultRelays(): string[] {
     // every relay operation (NIP-65 fetch, publish queue, boost notes).
     // filterReachableRelays only pattern-matches localhost-style URLs, so
     // nothing pruned it automatically.
+    //
+    // Dropped 2026-08-12: wss://nostr.oxtr.dev, the same failure a second time
+    // and worse. DNS still resolves (144.76.199.124) but nothing accepts a
+    // connection — 3/3 WebSocket attempts timed out at 8s and its NIP-11 info
+    // document returned nothing. A blackholed host is the expensive kind: it
+    // never refuses, so every caller pays its full connect timeout. It made the
+    // cross-app favorites read take 5s instead of ~1s, and that read runs on
+    // every page load for a signed-in user.
+    //
+    // ADDING ONE? Check it first — nothing here prunes a dead host
+    // automatically, and both removals above were live for months. Connect,
+    // send a REQ, and require a real EOSE; the recipe is in
+    // lib/nostr/shared-favorites.relay.test.ts.
     relays = [
       'wss://nos.lol',              // Popular and stable
       'wss://relay.snort.social',   // Snort's relay
-      'wss://nostr.oxtr.dev',       // Alternative relay
       'wss://relay.primal.net',     // Primal relay
       'wss://theforest.nostr1.com', // Forest relay
       'wss://relay.damus.io',       // Damus relay (moved to end due to frequent rate limiting)
