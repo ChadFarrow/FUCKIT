@@ -38,6 +38,37 @@ interface SharedTrack {
 // portable identifier. Never published, and never reconciled away.
 const UNSYNCED_FAVORITE_TYPES = new Set(['publisher', 'playlist']);
 
+/**
+ * Reconciliation is the ONLY destructive write in the cross-app sync, and this
+ * database is the only copy of a StableKraft favorite. Boost Me Bitch can
+ * re-derive its whole list from the relay event; these rows cannot be.
+ *
+ * So deletion ships OFF and is opted into with
+ * `SHARED_FAVORITES_APPLY_DELETES=true`. Until then a reconcile still runs and
+ * still reports what it *would* remove — which is the point: you get to watch
+ * it be right for a while before it is allowed to be wrong. The cost of leaving
+ * it off is that an unfavorite in another app doesn't propagate here; the cost
+ * of it being wrong once is a library.
+ */
+const DELETES_ENABLED = process.env.SHARED_FAVORITES_APPLY_DELETES === 'true';
+
+/**
+ * Even with deletes enabled, refuse an implausibly large one.
+ *
+ * A mass removal arriving here means another app dropped a large share of the
+ * entries THIS app also holds — which is a plausible bug and an implausible
+ * user action, since the two apps' favorites barely overlap. A user who really
+ * did clear everything gets it applied on the next pull once the set is small
+ * enough, or clears the rest by hand. Cheap insurance against exactly the class
+ * of bug that produced this guard.
+ */
+const DELETE_RATIO_CEILING = 0.5;
+const DELETE_FLOOR = 5;
+
+function deletionBudget(eligibleCount: number): number {
+  return Math.max(DELETE_FLOOR, Math.ceil(eligibleCount * DELETE_RATIO_CEILING));
+}
+
 export async function POST(request: NextRequest) {
   try {
     const userId = request.headers.get('x-nostr-user-id');
@@ -147,6 +178,10 @@ export async function POST(request: NextRequest) {
     // a guid is not on the wire and is therefore NOT a candidate for deletion —
     // that is the difference between "the user unfavorited it elsewhere" and
     // "this app can't represent it".
+    let blocked = false;
+    let wouldRemoveAlbums = 0;
+    let wouldRemoveTracks = 0;
+
     const removedAlbums: string[] = [];
     const eligibleAlbums = existingAlbums.filter(
       (f) => !UNSYNCED_FAVORITE_TYPES.has(f.type || 'album')
@@ -170,7 +205,20 @@ export async function POST(request: NextRequest) {
         if (!baselineFeedGuids.has(guid)) return false; // never agreed ⇒ not ours to delete
         return !wantedFeedGuidSet.has(guid);
       });
-      if (doomed.length) {
+      if (doomed.length > deletionBudget(eligibleAlbums.length)) {
+        blocked = true;
+        console.warn(
+          `🛑 Shared favorites: refusing to delete ${doomed.length} of ${eligibleAlbums.length} album favorites for user ${userId} in one pass — over the sanity cap. Nothing removed.`
+        );
+      } else if (!DELETES_ENABLED) {
+        wouldRemoveAlbums = doomed.length;
+        if (doomed.length) {
+          console.log(
+            `ℹ️ Shared favorites: would remove ${doomed.length} album favorite(s) — set SHARED_FAVORITES_APPLY_DELETES=true to apply:`,
+            doomed.map((d) => d.feedId)
+          );
+        }
+      } else if (doomed.length) {
         await prisma.favoriteAlbum.deleteMany({
           where: { id: { in: doomed.map((d) => d.id) } },
         });
@@ -197,7 +245,20 @@ export async function POST(request: NextRequest) {
         if (!baselineItemGuids.has(guid)) return false; // never agreed ⇒ not ours to delete
         return !wantedItemGuidSet.has(guid);
       });
-      if (doomed.length) {
+      if (doomed.length > deletionBudget(existingTracks.length)) {
+        blocked = true;
+        console.warn(
+          `🛑 Shared favorites: refusing to delete ${doomed.length} of ${existingTracks.length} track favorites for user ${userId} in one pass — over the sanity cap. Nothing removed.`
+        );
+      } else if (!DELETES_ENABLED) {
+        wouldRemoveTracks = doomed.length;
+        if (doomed.length) {
+          console.log(
+            `ℹ️ Shared favorites: would remove ${doomed.length} track favorite(s) — set SHARED_FAVORITES_APPLY_DELETES=true to apply:`,
+            doomed.map((d) => d.trackId)
+          );
+        }
+      } else if (doomed.length) {
         await prisma.favoriteTrack.deleteMany({
           where: { id: { in: doomed.map((d) => d.id) } },
         });
@@ -227,6 +288,11 @@ export async function POST(request: NextRequest) {
       localOnly,
       added: { albums: addedAlbums.length, tracks: addedTracks.length },
       removed: { albums: removedAlbums.length, tracks: removedTracks.length },
+      // Reported whether or not deletes are enabled, so a dry run is legible
+      // from the response and not only from the server log.
+      deletesEnabled: DELETES_ENABLED,
+      wouldRemove: { albums: wouldRemoveAlbums, tracks: wouldRemoveTracks },
+      blocked,
       unresolved: { feedGuids: unresolvedFeedGuids, itemGuids: unresolvedItemGuids },
     });
   } catch (error) {

@@ -137,6 +137,14 @@ because nothing has published to it yet, and that rule reads an empty list as
 "the user cleared everything" and wipes their library. An absent baseline means
 you have never agreed to anything, so you may not delete at all.
 
+Two cheap guards are worth having if your local store is the only copy of a
+favorite. **Cap how much one reconcile may delete** — a mass removal is far more
+likely to be a bug than a user action, and a real clear-all still applies once
+the remaining set is under the cap. And **ship deletion behind a flag**, running
+the reconcile in report-only mode first: you get to watch it be right before it
+is allowed to be wrong. An app whose local list is a pure cache of the event
+needs neither; an app with a database does.
+
 ### Never write on top of a read you didn't get
 
 A relay query returning nothing has two meanings — "nobody has it" and "nothing
