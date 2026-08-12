@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { buildFeedIdEquivalence, feedLookupWhere, flattenFeedIdEquivalence, pickFavoriteRowForWrite } from '@/lib/favorite-feed-ids';
 import { getSessionIdFromRequest } from '@/lib/session-utils';
 import { getPublisherInfo } from '@/lib/url-utils';
 import { podcastIndexAPI } from '@/lib/podcast-index-api';
@@ -10,6 +11,23 @@ import { Prisma } from '@prisma/client';
  * GET /api/favorites/albums
  * Get all favorite albums for the current session
  */
+
+/**
+ * Every `feedId` one album favorite could be stored under.
+ *
+ * `FavoriteAlbum.feedId` is polymorphic with no migration, so POST, DELETE and
+ * PATCH all have to look across the equivalence set rather than the one string
+ * the caller sent. The expansion itself lives in `lib/favorite-feed-ids.ts` —
+ * this is just the query half. See #192.
+ */
+async function expandFeedIdCandidates(feedId: string): Promise<string[]> {
+  const feeds = await prisma.feed.findMany({
+    where: feedLookupWhere([feedId]),
+    select: { id: true, guid: true },
+  });
+  return flattenFeedIdEquivalence(buildFeedIdEquivalence([feedId], feeds));
+}
+
 export async function GET(request: NextRequest) {
   try {
     const sessionId = getSessionIdFromRequest(request);
@@ -429,27 +447,32 @@ export async function POST(request: NextRequest) {
       // We'll just skip the feed validation and proceed
     }
 
-    // Check if already favorited
-    let existing;
+    // Check if already favorited.
+    //
+    // Across the equivalence set, not the exact string (#192). An exact-match
+    // dedupe creates a SECOND row for the same album under a different format
+    // whenever one already exists under another — which is where the
+    // divergence the other paths have to compensate for comes from in the
+    // first place. `findUnique` on the composite key can't express this, so
+    // this queries the candidates.
+    //
+    // Narrowed to one row deterministically, for the same reason as the PATCH
+    // below: this branch may write `nostrEventId` onto whatever it picks, and
+    // an arbitrary pick between duplicates puts it on the wrong one.
+    const existingCandidates = await expandFeedIdCandidates(feedId);
+    const existingWhere: any = { feedId: { in: existingCandidates } };
     if (userId) {
-      existing = await prisma.favoriteAlbum.findUnique({
-        where: {
-          userId_feedId: {
-            userId,
-            feedId
-          }
-        }
-      });
+      existingWhere.userId = userId;
     } else if (sessionId) {
-      existing = await prisma.favoriteAlbum.findUnique({
-        where: {
-          sessionId_feedId: {
-            sessionId: sessionId!,
-            feedId
-          }
-        }
-      });
+      existingWhere.sessionId = sessionId;
     }
+
+    const existing = (userId || sessionId)
+      ? pickFavoriteRowForWrite(
+          await prisma.favoriteAlbum.findMany({ where: existingWhere }),
+          feedId
+        )
+      : null;
 
     if (existing) {
       // If it exists and we have a nostrEventId, update it
@@ -561,15 +584,7 @@ export async function DELETE(request: NextRequest) {
     // already resolves all of those, so an exact-match delete could 404 on a
     // favorite the user can plainly see in their list: the heart would turn on
     // and then refuse to turn off. Resolve the same equivalence set here.
-    const candidateFeedIds = [feedId];
-    const matchedFeed = await prisma.feed.findFirst({
-      where: { OR: [{ id: feedId }, { guid: feedId }] },
-      select: { id: true, guid: true }
-    });
-    if (matchedFeed) {
-      if (matchedFeed.id && !candidateFeedIds.includes(matchedFeed.id)) candidateFeedIds.push(matchedFeed.id);
-      if (matchedFeed.guid && !candidateFeedIds.includes(matchedFeed.guid)) candidateFeedIds.push(matchedFeed.guid);
-    }
+    const candidateFeedIds = await expandFeedIdCandidates(feedId);
 
     // Build where clause - support both session and user
     const where: any = { feedId: { in: candidateFeedIds } };
@@ -579,12 +594,16 @@ export async function DELETE(request: NextRequest) {
       where.sessionId = sessionId;
     }
 
-    // Get the favorite first to retrieve nostrEventId before deleting
-    const favorite = await prisma.favoriteAlbum.findFirst({
-      where
-    });
+    // Get the favorites first to retrieve their nostrEventIds before deleting.
+    //
+    // ALL of them, not one: the `deleteMany` below removes every row in the
+    // widened candidate set, so returning a single id lets the caller publish
+    // one kind-5 and leaves the other rows' kind-30001 events live on relays —
+    // still surfacing in the Community tab for an item the user unfavorited.
+    // Widening the delete without widening this would manufacture orphans.
+    const favorites = await prisma.favoriteAlbum.findMany({ where });
 
-    if (!favorite) {
+    if (favorites.length === 0) {
       return NextResponse.json(
         {
           success: false,
@@ -594,6 +613,10 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
+    const nostrEventIds = favorites
+      .map((row) => row.nostrEventId)
+      .filter((id): id is string => !!id);
+
     // Remove from favorites
     await prisma.favoriteAlbum.deleteMany({
       where
@@ -602,7 +625,10 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: 'Album removed from favorites',
-      nostrEventId: favorite.nostrEventId || null
+      // Kept for callers reading the single-id shape; `nostrEventIds` is the
+      // complete set and is what the deletion publisher should use.
+      nostrEventIds,
+      nostrEventId: nostrEventIds[0] ?? null
     });
   } catch (error) {
     console.error('Error removing album from favorites:', error);
@@ -650,17 +676,33 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    // Find the existing favorite
-    const where: any = { feedId };
+    // Find the existing favorite.
+    //
+    // Expanded like every other path (#192). This was the last exact-match
+    // lookup, and its failure is silent with a tail: a row stored under a
+    // different format than the string this surface holds never receives its
+    // `nostrEventId`, and `queueFavoriteDeletion` needs that id to publish the
+    // kind-5 — so unfavoriting can never propagate on the 30001 channel for
+    // that row. The cross-app kind-30078 list is unaffected (removal there is
+    // absence from the next revision), which is exactly the kind of split that
+    // is hard to notice: one channel keeps working.
+    const feedIdCandidates = await expandFeedIdCandidates(feedId);
+
+    const where: any = { feedId: { in: feedIdCandidates } };
     if (userId) {
       where.userId = userId;
     } else if (sessionId) {
       where.sessionId = sessionId;
     }
 
-    const existing = await prisma.favoriteAlbum.findFirst({
-      where
-    });
+    // This is a WRITE, so the widened set has to be narrowed back down to one
+    // deterministic row — `findFirst` over the `IN` would pick arbitrarily and
+    // relocate the bug this expansion exists to fix. `syncFavoritesToNostr`
+    // PATCHes once per row with that row's own `feedId`, so an arbitrary pick
+    // would give one row the event id published for another's d-tag and leave
+    // the other with none. See `pickFavoriteRowForWrite`.
+    const candidateRows = await prisma.favoriteAlbum.findMany({ where });
+    const existing = pickFavoriteRowForWrite(candidateRows, feedId);
 
     if (!existing) {
       return NextResponse.json(
@@ -672,6 +714,22 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
+    // If this row already carried a DIFFERENT event id, the one it held is now
+    // superseded and must be reported back, not silently dropped.
+    //
+    // Reachable since the lookup was widened: this PATCH sends the surface's
+    // own `itemId`, so it can now land on a row written under another format
+    // that already published under a different `d` tag. Kind 30001 is
+    // addressable, so a republish only replaces the event at the SAME `d` —
+    // two different d tags are two live events. Overwriting the id blindly
+    // left the older one unreachable by `queueFavoriteDeletion` forever, still
+    // showing in the Community tab; keeping the older one instead would strand
+    // the newer. Keep the newest and hand the caller the one to kind-5.
+    const supersededEventId =
+      nostrEventId && existing.nostrEventId && existing.nostrEventId !== nostrEventId
+        ? existing.nostrEventId
+        : null;
+
     // Update with nostrEventId if provided
     const updated = await prisma.favoriteAlbum.update({
       where: { id: existing.id },
@@ -682,6 +740,7 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
+      supersededEventId,
       data: updated
     });
   } catch (error) {

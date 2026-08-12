@@ -324,6 +324,15 @@ export default function FavoriteButton({
                   })
                 });
                 if (patchRes.ok) {
+                  // The row may have already held an event id published under a
+                  // different `d` tag. Kind 30001 is addressable, so that one is
+                  // NOT replaced by this publish — delete it explicitly or it
+                  // stays live and keeps showing in the Community tab.
+                  const patchData = await patchRes.json().catch(() => ({}));
+                  if (patchData?.supersededEventId) {
+                    queueFavoriteDeletion(patchData.supersededEventId, userRelays)
+                      .catch((err) => console.warn('Failed to delete superseded favorite event:', err));
+                  }
                   window.dispatchEvent(new Event('favorites-synced'));
                 }
               } catch (updateError) {
@@ -369,11 +378,18 @@ export default function FavoriteButton({
         // Queue Nostr deletion fire-and-forget
         if (isNostrAuthenticated && user && !isNip05Login) {
           const responseData = await response.json().catch(() => ({}));
-          const nostrEventId = responseData.nostrEventId;
+          // The DELETE removes every row in the feedId equivalence set, so it
+          // can return more than one published event. Publishing a kind-5 for
+          // only the first would leave the others live on relays and still
+          // surfacing in the Community tab. `nostrEventIds` is the complete
+          // set; fall back to the single-id shape for an older response.
+          const nostrEventIds: string[] = Array.isArray(responseData.nostrEventIds)
+            ? responseData.nostrEventIds.filter(Boolean)
+            : (responseData.nostrEventId ? [responseData.nostrEventId] : []);
 
           const userRelays = user.relays && user.relays.length > 0 ? user.relays : undefined;
 
-          // Outside the nostrEventId guard on purpose. A kind-5 needs the id of
+          // Outside the nostrEventIds guard on purpose. A kind-5 needs the id of
           // the event it deletes, so a favorite whose publish once failed can
           // never be unfavorited on the 30001 channel. The shared list has no
           // such dependency — removal is just absence from the next revision —
@@ -384,8 +400,8 @@ export default function FavoriteButton({
             relays: userRelays,
           });
 
-          if (nostrEventId) {
-            queueFavoriteDeletion(nostrEventId, userRelays)
+          for (const eventId of nostrEventIds) {
+            queueFavoriteDeletion(eventId, userRelays)
               .catch((err) => console.warn('Failed to publish favorite deletion to Nostr:', err));
           }
         }
