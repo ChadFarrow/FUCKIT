@@ -17,6 +17,7 @@ import HomeButton from '@/components/HomeButton';
 import { useLightning } from '@/contexts/LightningContext';
 import { BoostButton } from '@/components/Lightning/BoostButton';
 import FavoriteButton from '@/components/favorites/FavoriteButton';
+import { singleTrackFavoriteData } from '@/lib/favorite-target';
 import DownloadButton from '@/components/downloads/DownloadButton';
 import ShareButton from '@/components/Nostr/ShareButton';
 import { hasV4V as checkHasV4V, formatValueSplitsForBoost, getPrimaryRecipient } from '@/lib/v4v-utils';
@@ -975,11 +976,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                     feedId={album.feedId}
                     size={18}
                     className="text-white"
-                    singleTrackData={album.tracks.length === 1 ? {
-                      id: album.tracks[0].guid || album.tracks[0].url || `${album.feedId}-${album.tracks[0].title}`,
-                      title: album.tracks[0].title,
-                      artist: album.artist
-                    } : undefined}
+                    singleTrackData={singleTrackFavoriteData(album as any)}
                   />
                 </div>
               </div>
@@ -1134,11 +1131,7 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                       feedId={album.feedId}
                       size={20}
                       iconClassName="text-white hover:text-red-400"
-                      singleTrackData={album.tracks.length === 1 ? {
-                        id: album.tracks[0].guid || album.tracks[0].url || `${album.feedId}-${album.tracks[0].title}`,
-                        title: album.tracks[0].title,
-                        artist: album.artist
-                      } : undefined}
+                      singleTrackData={singleTrackFavoriteData(album as any)}
                     />
                   </div>
                   <div className="flex items-center justify-center rounded-full bg-black/45 ring-1 ring-white/25 backdrop-blur-md shadow-lg flex-shrink-0 [&>button]:w-full [&>button]:h-full [&>button]:rounded-full" style={{ width: 44, height: 44 }}>

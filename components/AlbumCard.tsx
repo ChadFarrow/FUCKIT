@@ -11,6 +11,7 @@ import { generateAlbumHref, generateAlbumUrl } from '@/lib/url-utils';
 import { useScrollDetectionContext } from '@/components/ScrollDetectionProvider';
 import { BoostButton } from '@/components/Lightning/BoostButton';
 import FavoriteButton from '@/components/favorites/FavoriteButton';
+import { singleTrackFavoriteData } from '@/lib/favorite-target';
 import DownloadButton from '@/components/downloads/DownloadButton';
 import { hasV4V as checkHasV4V } from '@/lib/v4v-utils';
 
@@ -348,11 +349,7 @@ function AlbumCard({ album, isPlaying = false, onPlay, className = '', linkFilte
                 feedId={(album as any).feedId}
                 size={18}
                 className="text-white"
-                singleTrackData={album.tracks?.length === 1 ? {
-                  id: album.tracks[0].guid || album.tracks[0].url || album.tracks[0].id || `${(album as any).feedId}-${album.tracks[0].title}`,
-                  title: album.tracks[0].title,
-                  artist: album.artist
-                } : undefined}
+                singleTrackData={singleTrackFavoriteData(album as any)}
                 favoriteType={isPublisherCard ? 'publisher' : isPlaylistCard ? 'playlist' : 'album'}
               />
             </div>
