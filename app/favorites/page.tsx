@@ -15,6 +15,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import AlbumCard from '@/components/AlbumCard';
 import FavoriteButton from '@/components/favorites/FavoriteButton';
 import SyncToNostrButton from '@/components/favorites/SyncToNostrButton';
+import SharedFavoritesNotice from '@/components/favorites/SharedFavoritesNotice';
 import PublishPlaylistButton from '@/components/favorites/PublishPlaylistButton';
 import { BoostButton } from '@/components/Lightning/BoostButton';
 import { Heart, Music, Disc, Users, Play, Shuffle, ListMusic, Globe, RefreshCw } from 'lucide-react';
@@ -1090,6 +1091,12 @@ function FavoritesPageContent() {
           </div>
           <SyncToNostrButton className="self-start sm:self-auto" />
         </div>
+
+        {/* Sits directly under the sync control because that is what has
+            actually stopped working — the favorites below are this device's
+            copy and are fine. Renders nothing unless the last cross-app sync
+            was degraded. See #194. */}
+        <SharedFavoritesNotice />
 
         {error && (
           <div className="mb-6 p-4 bg-red-900/20 border border-red-500/50 rounded-lg text-red-400">
