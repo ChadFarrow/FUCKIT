@@ -65,6 +65,18 @@ const DELETES_ENABLED = process.env.SHARED_FAVORITES_APPLY_DELETES === 'true';
 const DELETE_RATIO_CEILING = 0.5;
 const DELETE_FLOOR = 5;
 
+/**
+ * Minting Feed rows from another app's favorites is off by default.
+ *
+ * Boost Me Bitch is a general podcast app; StableKraft is music. A shared list
+ * will therefore carry talk podcasts, and importing them would put rows in a
+ * catalogue that has whole subsystems — the blacklist, `medium=podcast`
+ * detection, `fix-podcast-types` — devoted to keeping non-music out. Off during
+ * the trial: unresolved guids are still reported, so you can see what a real
+ * list contains before deciding whether any of it belongs here.
+ */
+const IMPORT_UNKNOWN_FEEDS = process.env.SHARED_FAVORITES_IMPORT_UNKNOWN === 'true';
+
 function deletionBudget(eligibleCount: number): number {
   return Math.max(DELETE_FLOOR, Math.ceil(eligibleCount * DELETE_RATIO_CEILING));
 }
@@ -269,7 +281,7 @@ export async function POST(request: NextRequest) {
     // Import feeds the list references and we've never seen, so the favorite
     // resolves on a later pull rather than being lost. Fire-and-forget and
     // capped: the list is user-controlled in size and each import is a PI call.
-    if (unresolvedFeedGuids.length) {
+    if (unresolvedFeedGuids.length && IMPORT_UNKNOWN_FEEDS) {
       import('@/lib/feed-discovery')
         .then(({ addUnresolvedFeeds }) => addUnresolvedFeeds(unresolvedFeedGuids.slice(0, 10)))
         .catch((e) => console.warn('⚠️ Shared favorites: feed import failed:', e));

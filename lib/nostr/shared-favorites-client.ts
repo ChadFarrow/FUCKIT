@@ -21,6 +21,36 @@ import { RelayManager, getDefaultRelays, filterReachableRelays } from './relay';
 
 const BASELINE_KEY_PREFIX = 'sk_shared_favorites_baseline';
 
+/**
+ * Allowlist gate for the whole cross-app sync, in BOTH directions.
+ *
+ * StableKraft has no preview environment — `git push origin main` IS the
+ * production deploy — so the only way to exercise this against real relays is
+ * to ship it and have it do nothing for anyone who hasn't opted in. Unset (the
+ * default) means the feature is entirely off: no relay read, no publish, no
+ * reconcile, no extra work on any page load.
+ *
+ * Without this, deploying would publish every signed-in user's favorites to a
+ * public `podcast:favorites` list they never asked for. Their favorites are
+ * already public via the per-item kind 30001 events, so it is not a new
+ * disclosure in kind — but a new aggregated artifact under someone else's key
+ * is not a side effect a test gets to have.
+ *
+ * Comma-separated hex pubkeys. NEXT_PUBLIC_ because the gate is read in the
+ * browser, which means it is baked at build time — a Railway redeploy is
+ * required to change it. Delete this gate once the feature is meant for
+ * everyone; it is scaffolding, not a permanent setting.
+ */
+function sharedFavoritesEnabledFor(pubkey: string): boolean {
+  const raw = process.env.NEXT_PUBLIC_SHARED_FAVORITES_PUBKEYS?.trim();
+  if (!raw || !pubkey) return false;
+  return raw
+    .split(',')
+    .map((v) => v.trim().toLowerCase())
+    .filter(Boolean)
+    .includes(pubkey.toLowerCase());
+}
+
 // Longer than the per-item queue's 500ms: this is ONE list republish for the
 // whole burst, and each cycle costs a relay read plus a signing prompt.
 const DEBOUNCE_MS = 1500;
@@ -181,6 +211,7 @@ export async function syncSharedFavoritesNow(opts: {
   pubkey: string;
   relays?: string[];
 }): Promise<void> {
+  if (!sharedFavoritesEnabledFor(opts.pubkey)) return;
   if (inFlight) {
     await inFlight.catch(() => {});
   }
@@ -228,6 +259,7 @@ export function requestSharedFavoritesSync(opts: {
   relays?: string[];
 }): void {
   if (typeof window === 'undefined' || !opts.userId || !opts.pubkey) return;
+  if (!sharedFavoritesEnabledFor(opts.pubkey)) return;
   if (debounceTimer) clearTimeout(debounceTimer);
   debounceTimer = setTimeout(() => {
     debounceTimer = null;
@@ -238,7 +270,8 @@ export function requestSharedFavoritesSync(opts: {
 }
 
 export interface PullResult {
-  status: 'ok' | 'degraded' | 'failed';
+  /** 'off' = not allowlisted for this pubkey; nothing was read or written. */
+  status: 'ok' | 'degraded' | 'failed' | 'off';
   added?: { albums: number; tracks: number };
   removed?: { albums: number; tracks: number };
   unresolvedFeedGuids?: string[];
@@ -257,6 +290,7 @@ export async function pullSharedFavorites(opts: {
   pubkey: string;
   relays?: string[];
 }): Promise<PullResult> {
+  if (!sharedFavoritesEnabledFor(opts.pubkey)) return { status: 'off' };
   const relayUrls = resolveRelays(opts.relays);
   const shared = await fetchSharedFavorites(opts.pubkey, relayUrls);
   if (!shared.trustworthy) {
