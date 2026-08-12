@@ -114,6 +114,44 @@ export function NostrProvider({ children }: { children: React.ReactNode }) {
       .catch((err) => console.error('❌ Error running deferred favorites sync:', err));
   }, [user?.id]);
 
+  // Pull the shared cross-app favorites list (docs/pc20-favorites.md) once per
+  // mount, so a favorite made in another app shows up here. Runs on every load
+  // rather than only after login: the other app can change the list at any
+  // time, and this is what makes it look like one list rather than two.
+  //
+  // Gated on a real signer. A `nip05` session is read-only and anyone can
+  // "log in" as any identifier, so reconciling would let a stranger's list
+  // delete this account's DB favorites.
+  useEffect(() => {
+    if (!user?.id || !user?.nostrPubkey) return;
+    if (user.loginType === 'nip05') return;
+
+    let cancelled = false;
+    import('@/lib/nostr/shared-favorites-client')
+      .then(({ pullSharedFavorites }) =>
+        pullSharedFavorites({
+          userId: user.id,
+          pubkey: user.nostrPubkey,
+          relays: user.relays && user.relays.length > 0 ? user.relays : undefined,
+        })
+      )
+      .then((result) => {
+        if (cancelled || result.status !== 'ok') return;
+        const changed = (result.added?.albums ?? 0) + (result.added?.tracks ?? 0)
+          + (result.removed?.albums ?? 0) + (result.removed?.tracks ?? 0);
+        if (changed > 0) {
+          console.log('✅ Shared favorites reconciled:', result.added, result.removed);
+        }
+      })
+      .catch((err) => console.warn('⚠️ Shared favorites pull failed:', err));
+
+    return () => { cancelled = true; };
+    // `relays` joined rather than passed by reference: it's an array on a state
+    // object, so a profile refresh that returns an equal list would otherwise
+    // re-fire a full relay read + reconcile.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id, user?.nostrPubkey, user?.loginType, (user?.relays || []).join(',')]);
+
   // Load user from localStorage on mount
   useEffect(() => {
     try {
