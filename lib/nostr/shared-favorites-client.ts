@@ -18,6 +18,7 @@ import {
   type SharedFavoriteItem,
 } from './shared-favorites';
 import { RelayManager, getDefaultRelays, filterReachableRelays } from './relay';
+import { npubToPublicKey } from './keys';
 
 const BASELINE_KEY_PREFIX = 'sk_shared_favorites_baseline';
 
@@ -26,8 +27,8 @@ const BASELINE_KEY_PREFIX = 'sk_shared_favorites_baseline';
  *
  * StableKraft has no preview environment — `git push origin main` IS the
  * production deploy — so the only way to exercise this against real relays is
- * to ship it and have it do nothing for anyone who hasn't opted in. Unset (the
- * default) means the feature is entirely off: no relay read, no publish, no
+ * to ship it and have it do nothing for anyone who hasn't opted in. An empty
+ * allowlist means the feature is entirely off: no relay read, no publish, no
  * reconcile, no extra work on any page load.
  *
  * Without this, deploying would publish every signed-in user's favorites to a
@@ -36,19 +37,39 @@ const BASELINE_KEY_PREFIX = 'sk_shared_favorites_baseline';
  * disclosure in kind — but a new aggregated artifact under someone else's key
  * is not a side effect a test gets to have.
  *
- * Comma-separated hex pubkeys. NEXT_PUBLIC_ because the gate is read in the
- * browser, which means it is baked at build time — a Railway redeploy is
- * required to change it. Delete this gate once the feature is meant for
- * everyone; it is scaffolding, not a permanent setting.
+ * Entries may be npub or hex; both normalize to hex. `NEXT_PUBLIC_SHARED_
+ * FAVORITES_PUBKEYS` (comma-separated) adds to the list without a code change,
+ * though being NEXT_PUBLIC_ it is baked at build time either way, so it still
+ * needs a redeploy.
+ *
+ * Delete this gate once the feature is meant for everyone; it is scaffolding,
+ * not a permanent setting.
  */
+const SHARED_FAVORITES_ALLOWLIST: string[] = [
+  // Chad — trialling the cross-app sync against real relays. Paste the npub here.
+];
+
+function normalizePubkey(value: string): string | null {
+  const v = value.trim();
+  if (!v) return null;
+  if (!v.startsWith('npub1')) return v.toLowerCase();
+  try {
+    return npubToPublicKey(v).toLowerCase();
+  } catch {
+    // A malformed entry must not widen the gate — drop it.
+    return null;
+  }
+}
+
 function sharedFavoritesEnabledFor(pubkey: string): boolean {
-  const raw = process.env.NEXT_PUBLIC_SHARED_FAVORITES_PUBKEYS?.trim();
-  if (!raw || !pubkey) return false;
-  return raw
-    .split(',')
-    .map((v) => v.trim().toLowerCase())
-    .filter(Boolean)
-    .includes(pubkey.toLowerCase());
+  if (!pubkey) return false;
+  const allowed = [
+    ...SHARED_FAVORITES_ALLOWLIST,
+    ...(process.env.NEXT_PUBLIC_SHARED_FAVORITES_PUBKEYS?.split(',') ?? []),
+  ]
+    .map(normalizePubkey)
+    .filter((v): v is string => !!v);
+  return allowed.includes(pubkey.toLowerCase());
 }
 
 // Longer than the per-item queue's 500ms: this is ONE list republish for the
