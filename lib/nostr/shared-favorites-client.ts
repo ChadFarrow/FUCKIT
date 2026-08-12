@@ -46,7 +46,8 @@ const BASELINE_KEY_PREFIX = 'sk_shared_favorites_baseline';
  * not a permanent setting.
  */
 const SHARED_FAVORITES_ALLOWLIST: string[] = [
-  // Chad — trialling the cross-app sync against real relays. Paste the npub here.
+  // Chad — trialling the cross-app sync against real relays.
+  'npub177fz5zkm87jdmf0we2nz7mm7uc2e7l64uzqrv6rvdrsg8qkrg7yqx0aaq7',
 ];
 
 function normalizePubkey(value: string): string | null {
