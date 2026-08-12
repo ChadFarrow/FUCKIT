@@ -18,7 +18,7 @@ import { prisma } from '@/lib/prisma';
  * Shaped after `lib/feed-lookup.ts` — ordered rungs, reports which one matched.
  */
 
-export type FavoriteMatchKind = 'track-id' | 'feed-id' | 'track-guid';
+export type FavoriteMatchKind = 'track-id' | 'feed-id' | 'track-guid' | 'feed-guid';
 
 export interface TrackRow {
   id: string;
@@ -51,7 +51,7 @@ export interface FeedRow {
 
 export type FavoriteMatch =
   | { kind: 'track'; matchedVia: 'track-id' | 'track-guid'; track: TrackRow }
-  | { kind: 'album'; matchedVia: 'feed-id'; feed: FeedRow };
+  | { kind: 'album'; matchedVia: 'feed-id' | 'feed-guid'; feed: FeedRow };
 
 const TRACK_SELECT = {
   id: true,
@@ -102,6 +102,7 @@ export function pickFavoriteMatches(
     tracksById: Map<string, TrackRow>;
     feedsById: Map<string, FeedRow>;
     tracksByGuid: Map<string, TrackRow>;
+    feedsByGuid?: Map<string, FeedRow>;
   }
 ): Map<string, FavoriteMatch> {
   const matches = new Map<string, FavoriteMatch>();
@@ -119,6 +120,11 @@ export function pickFavoriteMatches(
     const byGuid = sets.tracksByGuid.get(dTag);
     if (byGuid) {
       matches.set(dTag, { kind: 'track', matchedVia: 'track-guid', track: byGuid });
+      continue;
+    }
+    const feedByGuid = sets.feedsByGuid?.get(dTag);
+    if (feedByGuid) {
+      matches.set(dTag, { kind: 'album', matchedVia: 'feed-guid', feed: feedByGuid });
     }
   }
   return matches;
@@ -127,7 +133,7 @@ export function pickFavoriteMatches(
 /**
  * Resolve favorite `d` tags to DB rows.
  *
- * Bounded at three queries regardless of input size — each rung only asks about the
+ * Bounded at four queries regardless of input size — each rung only asks about the
  * d-tags the previous rungs missed. `Track.guid` is `@unique` and indexed
  * (`@@index([guid])`), so rung 3 is an indexed lookup with no ambiguity; matching is
  * exact-case, which was verified to resolve all 69 guid-style tags in prod.
@@ -168,9 +174,28 @@ export async function resolveFavoriteItems(
     tracksByGuid.map((t) => [(t as any).guid as string, t as TrackRow])
   );
 
+  // Rung 4 — Feed.guid, over what rungs 1-3 missed. LAST on purpose: the first
+  // three rungs are backed by measured production data (7 / 41 / 69 of 121
+  // d-tags), and moving this above them would change which row an existing tag
+  // resolves to. It exists because the write path can emit a Feed.guid — both
+  // `sync-favorites.ts`'s `track.id || track.guid || track.audioUrl` chain and
+  // the cross-app kind:30003 list, whose album entries are `podcast:guid:` by
+  // construction.
+  const afterTrackGuids = afterFeeds.filter((d) => !tracksByGuidMap.has(d));
+  const feedsByGuid = afterTrackGuids.length
+    ? await prisma.feed.findMany({
+        where: { guid: { in: afterTrackGuids } },
+        select: { ...FEED_SELECT, guid: true },
+      })
+    : [];
+  const feedsByGuidMap = new Map(
+    feedsByGuid.map((f) => [(f as any).guid as string, f as FeedRow])
+  );
+
   return pickFavoriteMatches(unique, {
     tracksById: tracksByIdMap,
     feedsById: feedsByIdMap,
     tracksByGuid: tracksByGuidMap,
+    feedsByGuid: feedsByGuidMap,
   });
 }

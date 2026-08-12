@@ -7,6 +7,7 @@ import { useNostr } from '@/contexts/NostrContext';
 import { getSessionId } from '@/lib/session-utils';
 import { toast } from '@/components/Toast';
 import { queueFavoritePublish, queueFavoriteDeletion } from '@/lib/nostr/publish-queue';
+import { requestSharedFavoritesSync } from '@/lib/nostr/shared-favorites-client';
 import { useBatchedFavorites } from '@/contexts/BatchedFavoritesContext';
 
 // Helper hook that safely uses batched favorites, with fallback
@@ -228,6 +229,17 @@ export default function FavoriteButton({
           const publishTitle = isTrack ? singleTrackData?.title : undefined;
           const publishArtist = isTrack ? singleTrackData?.artist : undefined;
 
+          // Second, independent channel: the cross-app kind:30003 list. It
+          // republishes the whole list from the DB rather than this one item,
+          // so it doesn't need the ids above — and it must not be folded into
+          // the per-item queue, whose batching resolves a promise per item.
+          // See docs/pc20-favorites.md.
+          requestSharedFavoritesSync({
+            userId: user.id,
+            pubkey: user.nostrPubkey,
+            relays: userRelays,
+          });
+
           queueFavoritePublish(publishType, publishId, publishTitle, publishArtist, userRelays)
             .then(async (nostrEventId) => {
               if (!nostrEventId) return;
@@ -292,8 +304,20 @@ export default function FavoriteButton({
           const responseData = await response.json().catch(() => ({}));
           const nostrEventId = responseData.nostrEventId;
 
+          const userRelays = user.relays && user.relays.length > 0 ? user.relays : undefined;
+
+          // Outside the nostrEventId guard on purpose. A kind-5 needs the id of
+          // the event it deletes, so a favorite whose publish once failed can
+          // never be unfavorited on the 30001 channel. The shared list has no
+          // such dependency — removal is just absence from the next revision —
+          // so it must still run.
+          requestSharedFavoritesSync({
+            userId: user.id,
+            pubkey: user.nostrPubkey,
+            relays: userRelays,
+          });
+
           if (nostrEventId) {
-            const userRelays = user.relays && user.relays.length > 0 ? user.relays : undefined;
             queueFavoriteDeletion(nostrEventId, userRelays)
               .catch((err) => console.warn('Failed to publish favorite deletion to Nostr:', err));
           }
