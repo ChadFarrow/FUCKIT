@@ -11,22 +11,46 @@ to either — a third app needs only this document.
 
 ## The event
 
-One [NIP-51](https://github.com/nostr-protocol/nips/blob/master/51.md) bookmark
-set per user, at a fixed, app-neutral address:
+One [NIP-78](https://github.com/nostr-protocol/nips/blob/master/78.md)
+application-data event per user, at a fixed, app-neutral address:
 
 | | |
 |---|---|
-| `kind` | `30003` (NIP-51 bookmark set) |
+| `kind` | `30078` (NIP-78 application data) |
 | `d` tag | `podcast:favorites` |
-| `title` tag | `Podcast Favorites` |
-| `content` | empty string |
+| `title` tag | `Podcast Favorites` — nothing renders it; it keeps the event self-describing |
+| `content` | empty string, and **public** |
+
+`content` being plaintext is worth stating, because most 30078 events are NIP-44
+encrypted to self. This one can't be: a second app has to be able to read it.
+
+### Why not a NIP-51 bookmark set?
+
+The obvious home is kind `30003`, and it's wrong. Kind 30003 is *user-named
+bookmark collections* — saved links and articles. Two things follow, and both
+are bad:
+
+- **A generic Nostr client lists someone's podcast favorites among their
+  bookmarks**, which is the wrong category. Podcasts aren't links you saved.
+- **Any bookmark client that lets them edit a set will clobber this list**, and
+  its author is doing nothing wrong. Kind 30003 is theirs to write, and they
+  have no reason to implement the merge discipline below.
+
+The second one is the real problem: it's silent data loss caused by a
+well-behaved third party. Kind 30078 is app-defined data at a `d`-addressed
+slot, so no generic client renders or rewrites it. That's exactly the property
+this needs, and it's available today with no coordination.
+
+A dedicated kind number would be cleaner still, but that needs the NIP process
+and a number nobody else will use. Until there's a reason to spend that, 30078
+is the home.
 
 Items are [NIP-73](https://github.com/nostr-protocol/nips/blob/master/73.md)
 external content identifiers, one `i` tag each:
 
 ```jsonc
 {
-  "kind": 30003,
+  "kind": 30078,
   "tags": [
     ["d", "podcast:favorites"],
     ["title", "Podcast Favorites"],
@@ -68,8 +92,8 @@ external content identifiers, one `i` tag each:
 
 ### Removal
 
-An entry is unfavorited by being **absent from the next revision**. Kind 30003
-is a replaceable event, so the newest one wins outright.
+An entry is unfavorited by being **absent from the next revision**. Kind 30078
+is addressable/replaceable, so the newest event at this `d` wins outright.
 
 Do **not** publish NIP-09 kind-5 deletions for favorites. They are unnecessary
 here and, applied to a shared list, would remove entries belonging to other

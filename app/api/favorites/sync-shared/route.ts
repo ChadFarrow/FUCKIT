@@ -5,7 +5,7 @@ import { SHOW_PREFIX, ITEM_PREFIX } from '@/lib/nostr/shared-favorites';
 /**
  * Inbound half of the cross-app favorites sync (docs/pc20-favorites.md).
  *
- * The client reads the shared kind:30003 list off relays — it holds the signer
+ * The client reads the shared kind:30078 list off relays — it holds the signer
  * and the relay connections — and POSTs the resolved identifiers here. This
  * route maps them onto DB rows and reconciles.
  *

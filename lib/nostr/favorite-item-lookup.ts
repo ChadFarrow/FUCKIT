@@ -179,7 +179,7 @@ export async function resolveFavoriteItems(
   // d-tags), and moving this above them would change which row an existing tag
   // resolves to. It exists because the write path can emit a Feed.guid — both
   // `sync-favorites.ts`'s `track.id || track.guid || track.audioUrl` chain and
-  // the cross-app kind:30003 list, whose album entries are `podcast:guid:` by
+  // the cross-app kind:30078 list, whose album entries are `podcast:guid:` by
   // construction.
   const afterTrackGuids = afterFeeds.filter((d) => !tracksByGuidMap.has(d));
   const feedsByGuid = afterTrackGuids.length

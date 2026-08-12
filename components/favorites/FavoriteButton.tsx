@@ -229,7 +229,7 @@ export default function FavoriteButton({
           const publishTitle = isTrack ? singleTrackData?.title : undefined;
           const publishArtist = isTrack ? singleTrackData?.artist : undefined;
 
-          // Second, independent channel: the cross-app kind:30003 list. It
+          // Second, independent channel: the cross-app kind:30078 list. It
           // republishes the whole list from the DB rather than this one item,
           // so it doesn't need the ids above — and it must not be folded into
           // the per-item queue, whose batching resolves a promise per item.

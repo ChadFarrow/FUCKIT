@@ -6,7 +6,7 @@
  * Me Bitch side by `npm run check:favsync`; if you change one, change both, or
  * the two implementations drift apart on a list they share.
  *
- * Why this earns a test file: the shared list is ONE kind:30003 replaceable
+ * Why this earns a test file: the shared list is ONE kind:30078 replaceable
  * event at a well-known address (docs/pc20-favorites.md). A replaceable event
  * has no partial update — every publish replaces the whole thing — so a merge
  * bug doesn't degrade, it DELETES, silently, on someone else's device, with no
@@ -27,6 +27,7 @@ import assert from 'node:assert/strict';
 
 import {
   baselineFrom,
+  SHARED_FAVORITES_KIND,
   identifierKind,
   itemId,
   itemsFromTags,
@@ -47,6 +48,17 @@ const C = itemId('https://example.com/ep/42');
 const X = 'podcast:publisher:guid:0e8f6a1b-2c3d-4e5f-8a9b-0c1d2e3f4a5b';
 
 const ids = (items: SharedFavoriteItem[]) => items.map((i) => i.id);
+
+test('the shared list is NIP-78 app data, not a NIP-51 bookmark set', () => {
+  // Pinned because a drift here has no visible symptom other than "my favorites
+  // didn't sync": both apps keep working, they just stop seeing each other.
+  //
+  // And specifically NOT 30003. Podcast favorites are not bookmarks, and a
+  // generic bookmark client editing a set would rewrite this list without any
+  // of the merge discipline below.
+  assert.equal(SHARED_FAVORITES_KIND, 30078);
+  assert.notEqual(SHARED_FAVORITES_KIND, 30003);
+});
 
 test('a first publish from a device with no baseline is a pure union', () => {
   assert.deepEqual(

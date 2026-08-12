@@ -1,9 +1,9 @@
 import type { Event, Filter } from 'nostr-tools';
 
 /**
- * Cross-app favorites — one NIP-51 kind:30003 bookmark set at the app-neutral
- * address `podcast:favorites`, shared with Boost Me Bitch and any other app
- * that implements the format.
+ * Cross-app favorites — one NIP-78 kind:30078 application-data event at the
+ * app-neutral address `podcast:favorites`, shared with Boost Me Bitch and any
+ * other app that implements the format.
  *
  * Full spec: docs/pc20-favorites.md (identical copy in the boostmebitch repo).
  * That document, not this file, is what a third app implements against — keep
@@ -17,7 +17,7 @@ import type { Event, Filter } from 'nostr-tools';
  * ---------------------------------------------------------------------------
  * The hazard, stated once
  *
- * kind:30003 is REPLACEABLE and this address has many writers. There is no
+ * kind:30078 is REPLACEABLE and this address has many writers. There is no
  * partial update — every publish replaces the whole event — so a writer that
  * publishes its own view of the list deletes whatever the other apps added.
  * Silently, on someone else's device, with no undo and no error.
@@ -28,9 +28,29 @@ import type { Event, Filter } from 'nostr-tools';
  * ---------------------------------------------------------------------------
  */
 
-/** The shared, app-neutral list address. */
+/**
+ * The shared, app-neutral list address.
+ *
+ * **Kind 30078 (NIP-78 application data), NOT 30003 (NIP-51 bookmark sets)** —
+ * and the difference is the whole reason this moved. Kind 30003 is *user-named
+ * bookmark collections*: saved links and articles. Two things follow from
+ * putting podcast favorites there, and both are bad:
+ *
+ *   - A generic Nostr client lists someone's podcast favorites among their
+ *     bookmarks, which is the wrong category.
+ *   - Any bookmark client that lets them EDIT a set will clobber this list. It
+ *     has no baseline discipline and no reason to have one — 30003 is its to
+ *     write, and its author is doing nothing wrong.
+ *
+ * 30078 is app-defined data at a `d`-addressed slot. No generic client renders
+ * or rewrites it, which is exactly the property this needs. `nwc-backup.ts`
+ * already publishes 30078 from this app, so relay acceptance is known-good.
+ *
+ * `content` stays empty and PUBLIC, unlike most 30078 events (the NWC backup
+ * NIP-44 encrypts to self). A second app has to be able to read this one.
+ */
 export const SHARED_D_TAG = 'podcast:favorites';
-export const SHARED_FAVORITES_KIND = 30003;
+export const SHARED_FAVORITES_KIND = 30078;
 
 export const SHOW_PREFIX = 'podcast:guid:';
 export const ITEM_PREFIX = 'podcast:item:guid:';
