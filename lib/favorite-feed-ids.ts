@@ -87,6 +87,40 @@ export function isFeedIdFavorited(
   return candidates.some((id) => favoritedFeedIds.has(id));
 }
 
+/**
+ * Pick the ONE row a write should target, out of the equivalence set.
+ *
+ * **Reads union; writes must disambiguate.** The widening above is right for
+ * paths that OR (`/api/favorites/check`) or `deleteMany` (`DELETE`), because
+ * every row in the set is the same album. It is wrong for a path that mutates a
+ * single row: handing `findFirst` a widened `IN` has no exact-match preference
+ * and no `orderBy`, so it picks arbitrarily — which is the `feeds.find(...)` bug
+ * relocated rather than fixed.
+ *
+ * Concretely, duplicate rows are the PREMISE of this expansion, and
+ * `syncFavoritesToNostr` PATCHes once per row using that row's own `feedId`.
+ * With R1 (`feedId = Feed.id`) and R2 (`feedId = Feed.guid`), an arbitrary pick
+ * sends both PATCHes to the same row: it ends up holding the `nostrEventId`
+ * published for the OTHER row's d-tag, the other row never gets one, and the
+ * kind-5 then deletes the wrong event.
+ *
+ * So: exact `feedId` match wins. Only when the caller's own string names no row
+ * do we fall back to the set, and then by sorted `feedId` so repeated calls
+ * agree with each other. Same shape as `lib/feed-lookup.ts`, whose rung 1 stays
+ * exact for exactly this reason.
+ */
+export function pickFavoriteRowForWrite<T extends { feedId: string }>(
+  rows: readonly T[],
+  inputId: string
+): T | null {
+  if (rows.length === 0) return null;
+
+  const exact = rows.find((row) => row.feedId === inputId);
+  if (exact) return exact;
+
+  return [...rows].sort((a, b) => (a.feedId < b.feedId ? -1 : a.feedId > b.feedId ? 1 : 0))[0];
+}
+
 /** The Prisma `where` that finds every feed any of these ids could name. */
 export function feedLookupWhere(inputIds: readonly string[]) {
   const ids = [...new Set(inputIds.filter(Boolean))];

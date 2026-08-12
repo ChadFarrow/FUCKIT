@@ -47,6 +47,12 @@ export default function SharedFavoritesNotice() {
 
   const retry = useCallback(async () => {
     if (!user?.id || !user?.nostrPubkey) return;
+    // Same gate `NostrContext` applies to the mount-time pull: a nip05 session
+    // is read-only and proves nothing about key ownership, so reconciling would
+    // let a stranger's list delete this account's DB favorites. Unreachable
+    // today (nip05 users can't toggle favorites, so nothing sets 'degraded' for
+    // them), but the guard belongs with the call, not only at the other site.
+    if (user.loginType === 'nip05') return;
     setRetrying(true);
     try {
       // Single-flight inside the client, so a double-tap joins the run already
@@ -62,10 +68,18 @@ export default function SharedFavoritesNotice() {
     } finally {
       setRetrying(false);
     }
-  }, [user?.id, user?.nostrPubkey, user?.relays]);
+  }, [user?.id, user?.nostrPubkey, user?.relays, user?.loginType]);
 
   if (!isAuthenticated || !user?.nostrPubkey) return null;
-  if (status !== 'degraded') return null;
+
+  // 'syncing' renders too, but ONLY while this component's own retry is in
+  // flight. Otherwise pressing Retry sets 'syncing' and the whole notice
+  // vanishes on the click — which reads as "fixed" and makes the `retrying`
+  // label below unreachable — reappearing seconds later if it failed. Gating on
+  // `retrying` keeps the mount-time pull silent, which is the point of not
+  // rendering 'syncing' in general.
+  const isRetrying = retrying && (status === 'syncing' || status === 'degraded');
+  if (status !== 'degraded' && !isRetrying) return null;
 
   return (
     <div
@@ -73,8 +87,9 @@ export default function SharedFavoritesNotice() {
       className="flex items-center justify-between gap-3 rounded-lg border border-yellow-500/30 bg-yellow-500/10 px-3 py-2 text-xs text-yellow-200"
     >
       <span>
-        Couldn&apos;t reach the relays — your favorites are up to date on this device, but
-        cross-app sync is paused.
+        {retrying
+          ? 'Reaching the relays…'
+          : "Couldn't reach the relays — your favorites are up to date on this device, but cross-app sync is paused."}
       </span>
       <button
         type="button"

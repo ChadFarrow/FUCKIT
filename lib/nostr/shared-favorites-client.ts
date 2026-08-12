@@ -68,6 +68,8 @@ export function subscribeSharedSyncStatus(listener: () => void): () => void {
  * before it, this only ran once per page load from NostrContext.
  */
 let pullInFlight: Promise<PullResult> | null = null;
+/** Whose pull `pullInFlight` belongs to — joining is only correct for the same user. */
+let pullInFlightPubkey: string | null = null;
 
 
 /**
@@ -275,17 +277,24 @@ async function publishToRelays(event: any, relayUrls: string[]): Promise<boolean
  * Serialized through `inFlight`: two concurrent cycles would each read the same
  * event and the loser's merge would be computed against a list the winner has
  * already replaced.
+ *
+ * **Returns the outcome, and callers must branch on it.** `runPull` awaits this
+ * and then reports its own result; if it overwrites the status unconditionally
+ * it erases a `degraded` set here, and the push is the half most likely to fail
+ * — on first run it carries the user's entire existing library, and
+ * `syncSharedFavorites` reports a refused publish or a signer timeout as
+ * `failed` rather than throwing.
  */
 export async function syncSharedFavoritesNow(opts: {
   userId: string;
   pubkey: string;
   relays?: string[];
-}): Promise<void> {
-  if (!sharedFavoritesEnabledFor(opts.pubkey)) return;
+}): Promise<'off' | 'ok' | 'degraded'> {
+  if (!sharedFavoritesEnabledFor(opts.pubkey)) return 'off';
   if (inFlight) {
     await inFlight.catch(() => {});
   }
-  const run = (async () => {
+  const run = (async (): Promise<'ok' | 'degraded'> => {
     const relayUrls = resolveRelays(opts.relays);
     const local = await loadLocalItems(opts.userId);
     const result = await syncSharedFavorites(
@@ -305,9 +314,11 @@ export async function syncSharedFavoritesNow(opts: {
       if (result.status === 'published') {
         console.log(`✅ Shared favorites: published ${result.ids.length} entries`);
       }
+      return 'ok';
     } else if (result.status === 'failed') {
       console.warn('⚠️ Shared favorites: publish failed —', result.error);
       setSyncStatus('degraded');
+      return 'degraded';
     } else {
       // 'degraded' already warned inside syncSharedFavorites, and deliberately
       // leaves the baseline alone so the next attempt retries the same delta.
@@ -317,12 +328,13 @@ export async function syncSharedFavoritesNow(opts: {
       // fills, the row is written locally, and nothing ever reaches the shared
       // list — indistinguishable from a favorite that synced.
       setSyncStatus('degraded');
+      return 'degraded';
     }
   })();
 
   inFlight = run;
   try {
-    await run;
+    return await run;
   } finally {
     if (inFlight === run) inFlight = null;
   }
@@ -375,13 +387,34 @@ export function pullSharedFavorites(opts: {
   }
   // Single-flight: a double-tap on retry joins the run already going rather
   // than starting a second read-merge-publish cycle.
-  if (pullInFlight) return pullInFlight;
+  //
+  // Keyed on the pubkey, because joining is only correct for the SAME user. The
+  // `NostrContext` effect re-fires when `user.relays` resolves, and an account
+  // switch without a reload changes the pubkey — an unkeyed join would hand the
+  // new account the previous one's result and status, and never run its pull.
+  if (pullInFlight && pullInFlightPubkey === opts.pubkey) return pullInFlight;
 
   setSyncStatus('syncing');
-  pullInFlight = runPull(opts).finally(() => {
-    pullInFlight = null;
-  });
-  return pullInFlight;
+  pullInFlightPubkey = opts.pubkey;
+  // Every exit path must settle the status. A throw before the reconcile —
+  // `fetchSharedFavorites` opens with a dynamic `import('nostr-tools/pool')`,
+  // which rejects when the chunk isn't cached and the device is offline,
+  // exactly the population the notice exists for — would otherwise leave it
+  // pinned at 'syncing', which renders as nothing at all.
+  const run = runPull(opts)
+    .catch((error): PullResult => {
+      console.warn('⚠️ Shared favorites: pull threw —', error);
+      setSyncStatus('degraded');
+      return { status: 'failed' };
+    })
+    .finally(() => {
+      if (pullInFlight === run) {
+        pullInFlight = null;
+        pullInFlightPubkey = null;
+      }
+    });
+  pullInFlight = run;
+  return run;
 }
 
 async function runPull(opts: {
@@ -427,7 +460,7 @@ async function runPull(opts: {
     // something. `syncSharedFavoritesNow` sets the baseline correctly (its own
     // contribution only), so it is also what establishes the baseline on the
     // very first sync; a no-op push returns 'unchanged' and still records one.
-    await syncSharedFavoritesNow(opts);
+    const pushed = await syncSharedFavoritesNow(opts);
 
     // The reconcile can create or delete rows on this user's behalf — a
     // favorite added in another app arrives here. The batched status cache
@@ -445,9 +478,20 @@ async function runPull(opts: {
 
     // Unknown feeds are imported server-side by the route itself (it already
     // has the guids and `addUnresolvedFeeds`); they land on a later pull.
-    setSyncStatus('ok');
+    //
+    // Report 'ok' only if the PUSH also succeeded. An unconditional 'ok' here
+    // erases the 'degraded' the push sets, and the push is the half more likely
+    // to fail: on first run it ships the user's entire existing library, and
+    // `syncSharedFavorites` reports a publish no relay accepted — or a NIP-46
+    // signer that timed out — as a status rather than a throw. The read having
+    // worked says nothing about whether this device's favorites got out.
+    //
+    // The reconcile itself still happened, so its counts ride out either way —
+    // only the status changes. `syncSharedFavoritesNow` has already set
+    // 'degraded'; do not touch the flag here in that case.
+    if (pushed !== 'degraded') setSyncStatus('ok');
     return {
-      status: 'ok',
+      status: pushed === 'degraded' ? 'failed' : 'ok',
       added: data?.added,
       removed: data?.removed,
       unresolvedFeedGuids: data?.unresolved?.feedGuids ?? [],
