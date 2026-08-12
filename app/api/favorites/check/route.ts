@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSessionIdFromRequest } from '@/lib/session-utils';
 import { normalizePubkey } from '@/lib/nostr/normalize';
+import { buildFeedIdEquivalence, feedLookupWhere, flattenFeedIdEquivalence, isFeedIdFavorited } from '@/lib/favorite-feed-ids';
 
 /**
  * POST /api/favorites/check
@@ -119,27 +120,16 @@ export async function POST(request: NextRequest) {
     if (feedIds.length > 0) {
       try {
         const feeds = await prisma.feed.findMany({
-          where: {
-            OR: [
-              { id: { in: feedIds } },
-              { guid: { in: feedIds } }
-            ]
-          },
+          where: feedLookupWhere(feedIds),
           select: { id: true, guid: true }
         });
 
-        const feedIdToAllIds = new Map<string, string[]>();
-        for (const inputId of feedIds) {
-          const possibleIds = [inputId];
-          const matched = feeds.find((f) => f.id === inputId || f.guid === inputId);
-          if (matched) {
-            if (matched.id && !possibleIds.includes(matched.id)) possibleIds.push(matched.id);
-            if (matched.guid && !possibleIds.includes(matched.guid)) possibleIds.push(matched.guid);
-          }
-          feedIdToAllIds.set(inputId, possibleIds);
-        }
-
-        const allPossibleFeedIds = [...new Set(Array.from(feedIdToAllIds.values()).flat())];
+        // All matches, not the first. One input string can match two rows —
+        // feed A by `id`, feed B by `guid` — and taking one dropped the other's
+        // identifiers, so a favorite stored under them missed. See
+        // `lib/favorite-feed-ids.ts`.
+        const feedIdToAllIds = buildFeedIdEquivalence(feedIds, feeds);
+        const allPossibleFeedIds = flattenFeedIdEquivalence(feedIdToAllIds);
 
         const expandedAlbumWhere: any = { feedId: { in: allPossibleFeedIds } };
         if (userId) {
@@ -158,8 +148,7 @@ export async function POST(request: NextRequest) {
         const favoritedFeedIds = new Set(favoriteAlbums.map(fa => fa.feedId));
 
         feedIds.forEach((feedId: string) => {
-          const possibleIds = feedIdToAllIds.get(feedId) || [feedId];
-          results.albums[feedId] = possibleIds.some((id) => favoritedFeedIds.has(id));
+          results.albums[feedId] = isFeedIdFavorited(feedId, feedIdToAllIds, favoritedFeedIds);
         });
       } catch (albumError) {
         // If tables don't exist, just set all to false

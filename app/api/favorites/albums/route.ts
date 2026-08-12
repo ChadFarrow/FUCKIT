@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { buildFeedIdEquivalence, feedLookupWhere, flattenFeedIdEquivalence } from '@/lib/favorite-feed-ids';
 import { getSessionIdFromRequest } from '@/lib/session-utils';
 import { getPublisherInfo } from '@/lib/url-utils';
 import { podcastIndexAPI } from '@/lib/podcast-index-api';
@@ -10,6 +11,23 @@ import { Prisma } from '@prisma/client';
  * GET /api/favorites/albums
  * Get all favorite albums for the current session
  */
+
+/**
+ * Every `feedId` one album favorite could be stored under.
+ *
+ * `FavoriteAlbum.feedId` is polymorphic with no migration, so POST, DELETE and
+ * PATCH all have to look across the equivalence set rather than the one string
+ * the caller sent. The expansion itself lives in `lib/favorite-feed-ids.ts` —
+ * this is just the query half. See #192.
+ */
+async function expandFeedIdCandidates(feedId: string): Promise<string[]> {
+  const feeds = await prisma.feed.findMany({
+    where: feedLookupWhere([feedId]),
+    select: { id: true, guid: true },
+  });
+  return flattenFeedIdEquivalence(buildFeedIdEquivalence([feedId], feeds));
+}
+
 export async function GET(request: NextRequest) {
   try {
     const sessionId = getSessionIdFromRequest(request);
@@ -429,27 +447,25 @@ export async function POST(request: NextRequest) {
       // We'll just skip the feed validation and proceed
     }
 
-    // Check if already favorited
-    let existing;
+    // Check if already favorited.
+    //
+    // Across the equivalence set, not the exact string (#192). An exact-match
+    // dedupe creates a SECOND row for the same album under a different format
+    // whenever one already exists under another — which is where the
+    // divergence the other paths have to compensate for comes from in the
+    // first place. `findUnique` on the composite key can't express this, so
+    // this is a `findFirst` over the candidates.
+    const existingCandidates = await expandFeedIdCandidates(feedId);
+    const existingWhere: any = { feedId: { in: existingCandidates } };
     if (userId) {
-      existing = await prisma.favoriteAlbum.findUnique({
-        where: {
-          userId_feedId: {
-            userId,
-            feedId
-          }
-        }
-      });
+      existingWhere.userId = userId;
     } else if (sessionId) {
-      existing = await prisma.favoriteAlbum.findUnique({
-        where: {
-          sessionId_feedId: {
-            sessionId: sessionId!,
-            feedId
-          }
-        }
-      });
+      existingWhere.sessionId = sessionId;
     }
+
+    const existing = (userId || sessionId)
+      ? await prisma.favoriteAlbum.findFirst({ where: existingWhere })
+      : null;
 
     if (existing) {
       // If it exists and we have a nostrEventId, update it
@@ -561,15 +577,7 @@ export async function DELETE(request: NextRequest) {
     // already resolves all of those, so an exact-match delete could 404 on a
     // favorite the user can plainly see in their list: the heart would turn on
     // and then refuse to turn off. Resolve the same equivalence set here.
-    const candidateFeedIds = [feedId];
-    const matchedFeed = await prisma.feed.findFirst({
-      where: { OR: [{ id: feedId }, { guid: feedId }] },
-      select: { id: true, guid: true }
-    });
-    if (matchedFeed) {
-      if (matchedFeed.id && !candidateFeedIds.includes(matchedFeed.id)) candidateFeedIds.push(matchedFeed.id);
-      if (matchedFeed.guid && !candidateFeedIds.includes(matchedFeed.guid)) candidateFeedIds.push(matchedFeed.guid);
-    }
+    const candidateFeedIds = await expandFeedIdCandidates(feedId);
 
     // Build where clause - support both session and user
     const where: any = { feedId: { in: candidateFeedIds } };
@@ -650,8 +658,19 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    // Find the existing favorite
-    const where: any = { feedId };
+    // Find the existing favorite.
+    //
+    // Expanded like every other path (#192). This was the last exact-match
+    // lookup, and its failure is silent with a tail: a row stored under a
+    // different format than the string this surface holds never receives its
+    // `nostrEventId`, and `queueFavoriteDeletion` needs that id to publish the
+    // kind-5 — so unfavoriting can never propagate on the 30001 channel for
+    // that row. The cross-app kind-30078 list is unaffected (removal there is
+    // absence from the next revision), which is exactly the kind of split that
+    // is hard to notice: one channel keeps working.
+    const feedIdCandidates = await expandFeedIdCandidates(feedId);
+
+    const where: any = { feedId: { in: feedIdCandidates } };
     if (userId) {
       where.userId = userId;
     } else if (sessionId) {
