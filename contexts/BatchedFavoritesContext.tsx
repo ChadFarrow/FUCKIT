@@ -4,10 +4,32 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import { useSession } from '@/contexts/SessionContext';
 import { useNostr } from '@/contexts/NostrContext';
 import { getSessionId } from '@/lib/session-utils';
+import {
+  dropClobberedKeys,
+  EMPTY_FAVORITE_STATUSES,
+  FAVORITE_STATUSES_INVALIDATED_EVENT,
+  favoritesIdentityKey,
+  localWriteKey,
+  mergeFavoriteStatuses,
+  selectUnknownIds,
+  withFavoriteStatus,
+  type FavoriteKind,
+  type FavoriteStatusMap,
+} from '@/lib/favorite-status-cache';
 
 interface BatchedFavoritesContextType {
   checkFavorites: (trackIds: string[], feedIds: string[]) => Promise<{ tracks: Record<string, boolean>; albums: Record<string, boolean> }>;
   getFavoriteStatus: (trackId?: string, feedId?: string) => boolean | undefined;
+  /**
+   * Record an answer we already know, without asking the server.
+   *
+   * Anything that changes whether an item is favorited MUST call this. A
+   * cached `false` is a KNOWN answer — `checkFavorites` short-circuits on it —
+   * so a writer that updates only its own component state leaves the cache
+   * lying for the lifetime of the page. That was issue #190: favorite from the
+   * home grid, navigate to /favorites, heart unfilled, and no request made.
+   */
+  setFavoriteStatus: (kind: FavoriteKind, id: string | null | undefined, value: boolean) => void;
 }
 
 const BatchedFavoritesContext = createContext<BatchedFavoritesContextType | null>(null);
@@ -15,11 +37,19 @@ const BatchedFavoritesContext = createContext<BatchedFavoritesContextType | null
 export function BatchedFavoritesProvider({ children }: { children: React.ReactNode }) {
   const { sessionId, isLoading: sessionLoading } = useSession();
   const { user, isAuthenticated: isNostrAuthenticated } = useNostr();
-  const [favoriteStatuses, setFavoriteStatuses] = useState<{
-    tracks: Record<string, boolean>;
-    albums: Record<string, boolean>;
-  }>({ tracks: {}, albums: {} });
-  
+  const [favoriteStatuses, setFavoriteStatuses] = useState<FavoriteStatusMap>(EMPTY_FAVORITE_STATUSES);
+
+  /**
+   * Which identity the cached answers belong to. Derived the same way the API
+   * scopes its queries, so it changes exactly when the answers stop being
+   * valid — see `favoritesIdentityKey`.
+   */
+  const identityKey = favoritesIdentityKey({
+    userId: isNostrAuthenticated && user ? user.id : null,
+    sessionId,
+  });
+  const identityKeyRef = useRef(identityKey);
+
   const pendingChecks = useRef<{
     trackIds: Set<string>;
     feedIds: Set<string>;
@@ -32,8 +62,70 @@ export function BatchedFavoritesProvider({ children }: { children: React.ReactNo
   const batchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isCheckingRef = useRef(false);
 
-  const executeBatchCheck = useCallback(async () => {
-    if (isCheckingRef.current || pendingChecks.current.trackIds.size === 0 && pendingChecks.current.feedIds.size === 0) {
+  /**
+   * Local-write bookkeeping, so an answer that was already in flight when the
+   * user toggled can't overwrite it. See `dropClobberedKeys`. Monotonic across
+   * cache clears — resetting it would let a stale `seqAtStart` compare wrong.
+   */
+  const seqRef = useRef(0);
+  const localWritesRef = useRef<Record<string, number>>({});
+
+  /**
+   * Drop every cached answer when the identity changes.
+   *
+   * The common case is `NostrContext` hydrating after the first checks have
+   * already gone out: those were scoped to the session, and `sync-shared`
+   * writes rows with a `userId` and no `sessionId`, so they came back `false`
+   * for favorites that genuinely exist. Nothing else expires them, so without
+   * this they would outlive the sign-in for the lifetime of the page.
+   *
+   * The first run is a no-op — a fresh mount must not discard a batch that
+   * has already landed.
+   */
+  useEffect(() => {
+    const previous = identityKeyRef.current;
+    identityKeyRef.current = identityKey;
+    if (previous === identityKey) return;
+
+    // Local writes belonged to the old identity too. `seqRef` stays monotonic
+    // so an in-flight request's captured value can't compare wrong.
+    localWritesRef.current = {};
+    setFavoriteStatuses(EMPTY_FAVORITE_STATUSES);
+  }, [identityKey]);
+
+  /**
+   * Bulk writers (the shared-favorites reconcile, delete-all) can change what
+   * is favorited without naming the ids, so they empty the cache instead of
+   * writing through. See FAVORITE_STATUSES_INVALIDATED_EVENT.
+   */
+  useEffect(() => {
+    const onInvalidated = () => {
+      localWritesRef.current = {};
+      setFavoriteStatuses(EMPTY_FAVORITE_STATUSES);
+    };
+    window.addEventListener(FAVORITE_STATUSES_INVALIDATED_EVENT, onInvalidated);
+    return () => window.removeEventListener(FAVORITE_STATUSES_INVALIDATED_EVENT, onInvalidated);
+  }, []);
+
+  const executeBatchCheck = useCallback<() => Promise<void>>(async () => {
+    const hasPending =
+      pendingChecks.current.trackIds.size > 0 || pendingChecks.current.feedIds.size > 0;
+    if (!hasPending) {
+      return;
+    }
+
+    // A batch is already in flight. Re-arm rather than returning: this used to
+    // drop out and leave the queued ids AND their resolvers stranded with no
+    // timer scheduled, so those buttons stayed in their loading state —
+    // rendering nothing at all — until an unrelated check happened to flush
+    // the queue for them.
+    if (isCheckingRef.current) {
+      if (batchTimeoutRef.current) {
+        clearTimeout(batchTimeoutRef.current);
+      }
+      batchTimeoutRef.current = setTimeout(() => {
+        executeBatchCheck();
+      }, 50);
       return;
     }
 
@@ -73,6 +165,14 @@ export function BatchedFavoritesProvider({ children }: { children: React.ReactNo
         headers['x-session-id'] = currentSessionId;
       }
 
+      // The scope this question is being asked under. If it changes while the
+      // request is in flight the answer is about somebody else and must not be
+      // cached — the resolvers still settle so no button hangs, and the
+      // identity change re-runs every check effect, which re-asks correctly.
+      const requestIdentity = identityKeyRef.current;
+      // Anything the user writes locally after this point outranks the answer.
+      const seqAtRequestStart = seqRef.current;
+
       const response = await fetch('/api/favorites/check', {
         method: 'POST',
         headers,
@@ -85,12 +185,13 @@ export function BatchedFavoritesProvider({ children }: { children: React.ReactNo
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
-          // Update state with new favorite statuses
-          setFavoriteStatuses(prev => ({
-            tracks: { ...prev.tracks, ...data.data.tracks },
-            albums: { ...prev.albums, ...data.data.albums }
-          }));
-          
+          if (identityKeyRef.current === requestIdentity) {
+            setFavoriteStatuses(prev => mergeFavoriteStatuses(
+              prev,
+              dropClobberedKeys(data.data, localWritesRef.current, seqAtRequestStart)
+            ));
+          }
+
           // Resolve all pending promises
           resolvers.forEach(({ resolve }) => resolve(data.data));
         } else {
@@ -114,9 +215,10 @@ export function BatchedFavoritesProvider({ children }: { children: React.ReactNo
 
   const checkFavorites = useCallback((trackIds: string[], feedIds: string[]): Promise<{ tracks: Record<string, boolean>; albums: Record<string, boolean> }> => {
     return new Promise((resolve, reject) => {
-      // Filter out IDs we already have in state
-      const newTrackIds = trackIds.filter(id => !(id in favoriteStatuses.tracks));
-      const newFeedIds = feedIds.filter(id => !(id in favoriteStatuses.albums));
+      // Filter out IDs we already have in state. A cached `false` counts as
+      // known — which is why every writer has to go through setFavoriteStatus.
+      const newTrackIds = selectUnknownIds(trackIds, favoriteStatuses.tracks);
+      const newFeedIds = selectUnknownIds(feedIds, favoriteStatuses.albums);
 
       // If we already have all the statuses, return immediately
       if (newTrackIds.length === 0 && newFeedIds.length === 0) {
@@ -145,6 +247,16 @@ export function BatchedFavoritesProvider({ children }: { children: React.ReactNo
     });
   }, [favoriteStatuses, executeBatchCheck]);
 
+  // Stable by construction (the state setter is), so adding this to a
+  // consumer's effect deps can't churn it.
+  const setFavoriteStatus = useCallback((kind: FavoriteKind, id: string | null | undefined, value: boolean) => {
+    if (!id) return;
+
+    seqRef.current += 1;
+    localWritesRef.current[localWriteKey(kind, id)] = seqRef.current;
+    setFavoriteStatuses(prev => withFavoriteStatus(prev, kind, id, value));
+  }, []);
+
   const getFavoriteStatus = useCallback((trackId?: string, feedId?: string): boolean | undefined => {
     if (trackId && trackId in favoriteStatuses.tracks) {
       return favoriteStatuses.tracks[trackId];
@@ -165,7 +277,7 @@ export function BatchedFavoritesProvider({ children }: { children: React.ReactNo
   }, []);
 
   return (
-    <BatchedFavoritesContext.Provider value={{ checkFavorites, getFavoriteStatus }}>
+    <BatchedFavoritesContext.Provider value={{ checkFavorites, getFavoriteStatus, setFavoriteStatus }}>
       {children}
     </BatchedFavoritesContext.Provider>
   );

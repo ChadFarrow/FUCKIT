@@ -9,6 +9,7 @@ import { toast } from '@/components/Toast';
 import { queueFavoritePublish, queueFavoriteDeletion } from '@/lib/nostr/publish-queue';
 import { requestSharedFavoritesSync } from '@/lib/nostr/shared-favorites-client';
 import { useBatchedFavorites } from '@/contexts/BatchedFavoritesContext';
+import type { FavoriteKind } from '@/lib/favorite-status-cache';
 
 // Helper hook that safely uses batched favorites, with fallback
 function useBatchedFavoritesSafe() {
@@ -37,7 +38,9 @@ function useBatchedFavoritesSafe() {
         }
         return { tracks: {}, albums: {} };
       },
-      getFavoriteStatus: () => undefined
+      getFavoriteStatus: () => undefined,
+      // No shared cache to keep honest outside the provider.
+      setFavoriteStatus: () => {}
     };
   }
 }
@@ -81,7 +84,7 @@ export default function FavoriteButton({
 }: FavoriteButtonProps) {
   const { sessionId, isLoading } = useSession();
   const { user, isAuthenticated: isNostrAuthenticated } = useNostr();
-  const { checkFavorites, getFavoriteStatus } = useBatchedFavoritesSafe();
+  const { checkFavorites, getFavoriteStatus, setFavoriteStatus } = useBatchedFavoritesSafe();
   const [isFavorite, setIsFavorite] = useState(initialIsFavorite ?? false);
   const [isLoadingState, setIsLoadingState] = useState(initialIsFavorite === undefined);
   const [isToggling, setIsToggling] = useState(false);
@@ -203,11 +206,38 @@ export default function FavoriteButton({
     setIsToggling(true);
     const newFavoriteState = !isFavorite;
 
+    /**
+     * The store this request actually mutates, resolved once so the cache
+     * write and its rollback can never disagree with the row. An add lands
+     * under `itemId` in the kind this surface writes; a remove targets
+     * wherever the check FOUND it, which is what `removeAsTrack` carries.
+     */
+    const mutatedKind: FavoriteKind = newFavoriteState
+      ? (isTrack ? 'track' : 'album')
+      : (removeAsTrack ? 'track' : 'album');
+    const mutatedId = newFavoriteState ? itemId : removeItemId;
+
     // Optimistic update. The source moves with it, so an unfavorite right
     // after a favorite deletes the row this surface just wrote rather than
     // whichever kind an earlier check happened to find.
     setIsFavorite(newFavoriteState);
     setFavoriteSource(newFavoriteState ? (isTrack ? 'track' : 'album') : null);
+    // Write through to the shared cache, not just this component's state.
+    // Skipping this was issue #190: the `false` cached when the card first
+    // mounted survived the favorite, and because a cached `false` is a KNOWN
+    // answer, the next surface to render this item short-circuited on it and
+    // drew an unfilled heart without ever asking the server. The provider
+    // lives in the root layout, so it outlives client-side navigation and
+    // only a hard reload cleared it.
+    setFavoriteStatus(mutatedKind, mutatedId, newFavoriteState);
+    // On removal, clear the sibling store too. The check ORs the two together,
+    // so a stale `true` left under the other kind — legacy rows can be filed
+    // either way, which is what `favoriteSource` exists for — would make the
+    // next surface draw a filled heart for something just unfavorited.
+    if (!newFavoriteState) {
+      if (effectiveTrackId) setFavoriteStatus('track', effectiveTrackId, false);
+      if (feedId) setFavoriteStatus('album', feedId, false);
+    }
     if (onToggle) {
       onToggle(newFavoriteState);
     }
@@ -361,8 +391,10 @@ export default function FavoriteButton({
         }
       }
     } catch (error) {
-      // Revert optimistic update on error
+      // Revert optimistic update on error — including in the shared cache, or
+      // the failed toggle would be the stale entry every other surface reads.
       setIsFavorite(!newFavoriteState);
+      setFavoriteStatus(mutatedKind, mutatedId, !newFavoriteState);
       if (onToggle) {
         onToggle(!newFavoriteState);
       }
