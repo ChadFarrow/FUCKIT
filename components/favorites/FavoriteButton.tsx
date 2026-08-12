@@ -324,6 +324,15 @@ export default function FavoriteButton({
                   })
                 });
                 if (patchRes.ok) {
+                  // The row may have already held an event id published under a
+                  // different `d` tag. Kind 30001 is addressable, so that one is
+                  // NOT replaced by this publish — delete it explicitly or it
+                  // stays live and keeps showing in the Community tab.
+                  const patchData = await patchRes.json().catch(() => ({}));
+                  if (patchData?.supersededEventId) {
+                    queueFavoriteDeletion(patchData.supersededEventId, userRelays)
+                      .catch((err) => console.warn('Failed to delete superseded favorite event:', err));
+                  }
                   window.dispatchEvent(new Event('favorites-synced'));
                 }
               } catch (updateError) {

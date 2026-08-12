@@ -156,3 +156,21 @@ test('a single row is returned whether or not it matches exactly', () => {
 test('no rows means no row', () => {
   assert.equal(pickFavoriteRowForWrite([], 'anything'), null);
 });
+
+test('the reachable two-row shape: guid-as-id row plus a normally-imported row', () => {
+  // `resolve-mmm-tracks` mints `{ id: G, guid: null }`; a later normal import
+  // of the same show adds `{ id: <slug>, guid: G }`. The value of taking ALL
+  // matches is the SECOND row's slug — `find()` returning the first yields only
+  // `{G}` and a favorite stored under the slug misses.
+  const guidAsId = { id: 'G', guid: null };
+  const normalImport = { id: 'the-doerfels-album', guid: 'G' };
+
+  const map = buildFeedIdEquivalence(['G'], [guidAsId, normalImport]);
+  assert.deepEqual(map.get('G'), ['G', 'the-doerfels-album']);
+
+  // ...and order of the rows from the DB must not matter.
+  const reversed = buildFeedIdEquivalence(['G'], [normalImport, guidAsId]);
+  assert.deepEqual([...(reversed.get('G') ?? [])].sort(), ['G', 'the-doerfels-album']);
+
+  assert.equal(isFeedIdFavorited('G', map, new Set(['the-doerfels-album'])), true);
+});

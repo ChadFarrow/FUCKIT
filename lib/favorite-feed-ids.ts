@@ -29,10 +29,17 @@ export interface FeedIdentity {
  * **All matches, not the first.** `Feed.id` is the primary key and `Feed.guid`
  * is `@unique`, so one input string can match two different rows — feed A by
  * `id` and feed B by `guid`. Taking one (`feeds.find(...)`) drops the other's
- * identifiers, and a favorite stored under them misses. That is reachable
- * today: `app/api/playlist/resolve-mmm-tracks/route.ts` mints a feed whose `id`
- * IS a podcast guid, so a later normal import of the same feed produces exactly
- * that pair.
+ * identifiers, and a favorite stored under them misses.
+ *
+ * That is reachable today. `app/api/playlist/resolve-mmm-tracks/route.ts` mints
+ * a feed whose `id` IS a podcast guid (and leaves `guid` null); a later normal
+ * import of the same show adds a second row with a slug `id` and `guid` set to
+ * that same string. **The identifiers that matter are the SECOND row's** — for
+ * input `G` the union is `{G, the-slug}`, whereas `find(...)` returning the
+ * guid-id row first yields only `{G}` and drops the slug, so a favorite stored
+ * under it misses. Reading only what the guid-id row contributes ("nothing new,
+ * its id IS the input") mistakes this for a no-op; the widening's whole value
+ * is the row `find` didn't return.
  *
  * Note what this means, because it is a widening and not only a fix: when two
  * rows collide on one string, their favorites become interchangeable for that

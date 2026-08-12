@@ -714,6 +714,22 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
+    // If this row already carried a DIFFERENT event id, the one it held is now
+    // superseded and must be reported back, not silently dropped.
+    //
+    // Reachable since the lookup was widened: this PATCH sends the surface's
+    // own `itemId`, so it can now land on a row written under another format
+    // that already published under a different `d` tag. Kind 30001 is
+    // addressable, so a republish only replaces the event at the SAME `d` —
+    // two different d tags are two live events. Overwriting the id blindly
+    // left the older one unreachable by `queueFavoriteDeletion` forever, still
+    // showing in the Community tab; keeping the older one instead would strand
+    // the newer. Keep the newest and hand the caller the one to kind-5.
+    const supersededEventId =
+      nostrEventId && existing.nostrEventId && existing.nostrEventId !== nostrEventId
+        ? existing.nostrEventId
+        : null;
+
     // Update with nostrEventId if provided
     const updated = await prisma.favoriteAlbum.update({
       where: { id: existing.id },
@@ -724,6 +740,7 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
+      supersededEventId,
       data: updated
     });
   } catch (error) {

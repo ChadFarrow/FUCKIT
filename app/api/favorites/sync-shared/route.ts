@@ -158,8 +158,15 @@ export async function POST(request: NextRequest) {
     // --- add what the list has and the DB doesn't --------------------------
     const existingAlbumFeedIds = new Set(existingAlbums.map((f) => f.feedId));
     const addedAlbums: string[] = [];
-    for (const [, feedId] of feedIdByGuid) {
-      if (existingAlbumFeedIds.has(feedId)) continue;
+    for (const [guid, feedId] of feedIdByGuid) {
+      // A FavoriteAlbum.feedId is polymorphic (Feed.id | Feed.guid | synthetic
+      // artist id), so an existing row may hold either form of the same album —
+      // the same reason the track loop below checks both. Matching only on
+      // `Feed.id` here created a SECOND row keyed by the id whenever the user
+      // already had one under the guid, which `@@unique([userId, feedId])`
+      // cannot reject because the strings differ. The album then rendered twice
+      // in /favorites and was reported as newly arrived on every first pull.
+      if (existingAlbumFeedIds.has(feedId) || existingAlbumFeedIds.has(guid)) continue;
       try {
         await prisma.favoriteAlbum.create({
           data: { userId, feedId, type: 'album' },
