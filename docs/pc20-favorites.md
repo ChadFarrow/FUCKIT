@@ -213,6 +213,37 @@ otherwise only an aggregate EOSE counts, and resolving on a timeout means you
 heard nothing. **If the read was degraded, publish nothing.** Losing a republish
 is recoverable — the next toggle retries it — and the alternative is not.
 
+### And say so
+
+The guard above is silent by construction: it keeps local state, publishes
+nothing, and returns. That is correct and it is not enough, because **a degraded
+read and an empty list render identically**. On a device with no cache — a new
+browser, a private tab, a second device — the result is a blank library with no
+explanation, and "we couldn't reach the relays" is visually indistinguishable
+from "your favorites are gone".
+
+The failure mode is not the user's confusion, it's yours. When the reference
+implementation hit this, production looked broken, the correct code was
+suspected twice, and a revert of the safety guard was nearly shipped to fix a
+bug that didn't exist. **The guard is most likely to be doubted on the exact
+occasion it works.**
+
+So: surface it. A non-blocking notice on the favorites surface — *"Couldn't
+reach the relays — showing what's on this device"* — with a retry. Distinguish
+the three states a favorites view otherwise collapses into one:
+
+| | |
+|---|---|
+| **read failed** | say so, offer a retry, show the local copy if you have one |
+| **read succeeded, list is empty** | your ordinary empty state |
+| **not signed in** | never claim a relay failure — there is nothing to sync |
+
+Two details worth copying. The write path is silent in the same way one screen
+removed — a favorite toggled while the relays are unreachable skips its publish
+and looks exactly like one that succeeded — so report both through **one** flag.
+And a retry makes concurrent reads reachable for the first time, so make the
+read single-flight; a double-tap must not run two read-merge-publish cycles.
+
 ### Carry what you can't read
 
 The merge operates on **raw identifier strings**. Never interpret an entry
@@ -290,6 +321,30 @@ anything:
    baseline would read anything already on the shared list as a removal.
 3. Publish the shared list. Leave the old event in place; it costs nothing and
    is the rollback path.
+4. **Record the baseline from your local set, not from the old list.** This is
+   the step that looks like a detail and isn't.
+
+Step 4 is worth spelling out, because "the entries I just moved across" is the
+obvious definition of your contribution and it undoes the migration one line
+later. The baseline is not a record of authorship — it is a promise that `local`
+will keep asserting every id in it, since the next merge computes
+`removes = baseline − local`. If your migration runs before those entries have
+landed in the store you reconcile against (and it usually does — you migrate
+early, you populate late), then a baseline naming the old ids makes your very
+next merge read all of them as local removals and publish them straight back
+out.
+
+The symptom is a migration that reports success forever and never completes:
+"migrated N entries" on every page load, N added and N deleted per load, and
+nothing ever accumulating on the shared list. It is easy to miss precisely
+because it is safe — the old event is untouched, so nothing is lost, and the
+rollback path that protects you is also what hides the bug.
+
+Leaving the migrated ids **out** of the baseline is the correct, conservative
+answer: your merge then treats them as another app's entries and carries them
+verbatim, which is what the format asks for anyway. They join your baseline on
+a later pass, once they have resolved into your store and the promise can be
+kept.
 
 Run it on every hydration rather than once. It is a no-op after the first time,
 and a user signing in on a second device months later still has their pre-sync
@@ -301,8 +356,9 @@ history waiting at the old address.
 
 - **Boost Me Bitch** — `lib/nostr/favorites-merge.ts` (wire format + merge,
   deliberately import-free), `lib/nostr/favorites.ts` (I/O),
-  `lib/nostr/favorites-hydrator.ts` (hydration + migration). The merge is pinned
-  by `npm run check:favsync`.
+  `lib/nostr/favorites-hydrator.ts` (hydration + migration),
+  `components/favorites-sync-notice.tsx` (the degraded-read notice). The merge
+  is pinned by `npm run check:favsync`.
 - **StableKraft** — `lib/nostr/shared-favorites.ts`, tested by
   `npx tsx --test lib/nostr/shared-favorites.test.ts`.
 
