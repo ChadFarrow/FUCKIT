@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { SHOW_PREFIX, ITEM_PREFIX } from '@/lib/nostr/shared-favorites';
 
 /**
  * Inbound half of the cross-app favorites sync (docs/pc20-favorites.md).
@@ -51,6 +52,19 @@ export async function POST(request: NextRequest) {
     const trustworthy = body?.trustworthy === true;
     const shows: SharedShow[] = Array.isArray(body?.shows) ? body.shows : [];
     const tracks: SharedTrack[] = Array.isArray(body?.tracks) ? body.tracks : [];
+    // The ids this device last agreed with the relay on. A removal is
+    // `baseline − incoming`, NEVER `everything in the DB − incoming`: on the
+    // very first run the shared list is empty because nothing has published to
+    // it yet, and the wider rule would read that as "the user cleared
+    // everything" and delete their entire library. An absent baseline means
+    // this device has never agreed to anything, so it may not delete at all.
+    const baseline: string[] = Array.isArray(body?.baseline) ? body.baseline : [];
+    const baselineFeedGuids = new Set(
+      baseline.filter((id) => id.startsWith(SHOW_PREFIX)).map((id) => id.slice(SHOW_PREFIX.length))
+    );
+    const baselineItemGuids = new Set(
+      baseline.filter((id) => id.startsWith(ITEM_PREFIX)).map((id) => id.slice(ITEM_PREFIX.length))
+    );
 
     if (!trustworthy) {
       return NextResponse.json(
@@ -153,6 +167,7 @@ export async function POST(request: NextRequest) {
       const doomed = eligibleAlbums.filter((fav) => {
         const guid = guidByFeedRef.get(fav.feedId);
         if (!guid) return false; // not representable ⇒ never reconciled away
+        if (!baselineFeedGuids.has(guid)) return false; // never agreed ⇒ not ours to delete
         return !wantedFeedGuidSet.has(guid);
       });
       if (doomed.length) {
@@ -179,6 +194,7 @@ export async function POST(request: NextRequest) {
       const doomed = existingTracks.filter((fav) => {
         const guid = guidByTrackRef.get(fav.trackId);
         if (!guid) return false; // audioUrl-keyed or unknown ⇒ not on the wire
+        if (!baselineItemGuids.has(guid)) return false; // never agreed ⇒ not ours to delete
         return !wantedItemGuidSet.has(guid);
       });
       if (doomed.length) {
@@ -198,8 +214,17 @@ export async function POST(request: NextRequest) {
         .catch((e) => console.warn('⚠️ Shared favorites: feed import failed:', e));
     }
 
+    // Favorites this app holds that aren't on the shared list yet. The client
+    // uses this to decide whether to push — on first run it is the user's whole
+    // library, which is exactly what needs to go up.
+    const localOnly =
+      matchedFeeds.length + matchedTracks.length <
+      existingAlbums.filter((f) => !UNSYNCED_FAVORITE_TYPES.has(f.type || 'album')).length +
+        existingTracks.length;
+
     return NextResponse.json({
       success: true,
+      localOnly,
       added: { albums: addedAlbums.length, tracks: addedTracks.length },
       removed: { albums: removedAlbums.length, tracks: removedTracks.length },
       unresolved: { feedGuids: unresolvedFeedGuids, itemGuids: unresolvedItemGuids },

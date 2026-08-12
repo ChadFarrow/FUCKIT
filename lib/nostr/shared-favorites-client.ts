@@ -270,15 +270,26 @@ export async function pullSharedFavorites(opts: {
     const res = await fetch('/api/favorites/sync-shared', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-nostr-user-id': opts.userId },
-      body: JSON.stringify({ trustworthy: true, shows, tracks }),
+      // The baseline goes with the request: a removal is `baseline − incoming`,
+      // so on first run (no baseline) the route deletes nothing rather than
+      // reading the empty shared list as "the user cleared everything".
+      body: JSON.stringify({
+        trustworthy: true,
+        shows,
+        tracks,
+        baseline: getBaseline(opts.pubkey),
+      }),
     });
     if (!res.ok) return { status: 'failed' };
     const data = await res.json();
 
-    // The relay list is now what the DB holds, so record it as the baseline.
-    // Without this the first unfavorite after a pull has nothing to diff
-    // against and silently fails to propagate to the other apps.
-    setBaseline(opts.pubkey, shared.items.map((i) => i.id));
+    // Push straight after a pull when this app holds favorites the list is
+    // missing — on first run that is the user's entire existing library, which
+    // otherwise wouldn't reach the other apps until they happened to toggle
+    // something. `syncSharedFavoritesNow` sets the baseline correctly (its own
+    // contribution only), so it is also what establishes the baseline on the
+    // very first sync; a no-op push returns 'unchanged' and still records one.
+    await syncSharedFavoritesNow(opts);
 
     // Unknown feeds are imported server-side by the route itself (it already
     // has the guids and `addUnresolvedFeeds`); they land on a later pull.

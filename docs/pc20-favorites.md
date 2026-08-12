@@ -90,22 +90,34 @@ Two obvious approaches are both wrong:
 - **Publish the union of local and remote.** Never removes anything, so
   unfavoriting silently stops working — forever, on every device.
 
-Instead, each app keeps a **baseline**: the identifier list it last agreed with
-the relay on, persisted locally per user. It publishes a *delta applied to a
-fresh read*:
+Instead, each app keeps a **baseline**: the identifiers *it itself contributed*
+as of its last sync, persisted locally per user. It publishes a *delta applied
+to a fresh read*:
 
 ```
 publish():
   latest, trustworthy = read()
   if not trustworthy: abort and retry later
 
-  adds    = local      - baseline     # I added these
-  removes = baseline   - local        # I removed these
-  next    = (latest ∪ adds) - removes
+  adds    = local    - baseline     # I added these
+  removes = baseline - local        # I removed these
+  next    = (latest - removes) ∪ adds
 
   write(next)
-  baseline = next
+  baseline = next ∩ local           # MY contribution, not the whole list
 ```
+
+Two details in there are easy to get wrong and both cost data:
+
+- **`∪ adds`, not `∪ local`.** Appending your whole local set puts back
+  anything another app removed while you still had it — the user unfavorites in
+  app A, opens app B, and it returns. Only entries absent from your baseline are
+  genuine local additions.
+- **`baseline = next ∩ local`, not `baseline = next`.** `removes` is
+  `baseline − local`, and `local` can only ever hold what your app can
+  represent. A baseline holding the whole published list therefore turns every
+  foreign identifier into one of your removals on the *next* publish — you delete
+  another app's entries one toggle later. Store only what you contributed.
 
 Which gives exactly the three properties the feature needs:
 
@@ -116,6 +128,14 @@ Which gives exactly the three properties the feature needs:
 3. An empty local set with an empty baseline deletes nothing (a device that has
    not hydrated yet is not making a claim), while an empty local set with a full
    baseline is a real clear-all and is honoured.
+
+**The same asymmetry governs reading.** If your app has its own store to
+reconcile against the list — a database, not just a cache — delete a local
+favorite only when it is in your baseline and absent from the list. Never
+"everything I hold that isn't on the list": on the first run the list is empty
+because nothing has published to it yet, and that rule reads an empty list as
+"the user cleared everything" and wipes their library. An absent baseline means
+you have never agreed to anything, so you may not delete at all.
 
 ### Never write on top of a read you didn't get
 

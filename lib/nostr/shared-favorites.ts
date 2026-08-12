@@ -213,6 +213,7 @@ export function mergeSharedFavorites(args: {
 }): SharedFavoriteItem[] {
   const { latest, lastSynced, local } = args;
   const localById = new Map(local.map((i) => [i.id, i]));
+  const baseline = new Set(lastSynced);
   const removed = new Set(lastSynced.filter((id) => !localById.has(id)));
 
   const out: SharedFavoriteItem[] = [];
@@ -236,10 +237,34 @@ export function mergeSharedFavorites(args: {
   }
   for (const item of local) {
     if (kept.has(item.id)) continue;
+    // In the baseline, but absent from `latest`: another app removed it while
+    // this device still had it. Re-appending is the resurrection bug — the
+    // user unfavorites in the other app, opens this one, and it comes back.
+    // Only a genuine local ADD (not in the baseline) may be appended here.
+    if (baseline.has(item.id)) continue;
     kept.add(item.id);
     out.push(item);
   }
   return out;
+}
+
+/**
+ * The baseline to record after publishing — the ids THIS app contributed, not
+ * the whole published list.
+ *
+ * `removes` is computed as `baseline − local`, and `local` only ever contains
+ * entries this app can represent. So a baseline holding the full list puts
+ * every foreign identifier — Boost Me Bitch's episode favorites, a third app's
+ * publisher entries — into `removes` on the very next publish, and this app
+ * deletes them. That is the exact opposite of the rule the format rests on,
+ * and it fires on the second toggle, not the first.
+ */
+export function baselineFrom(
+  published: SharedFavoriteItem[],
+  local: SharedFavoriteItem[]
+): string[] {
+  const localIds = new Set(local.map((i) => i.id));
+  return published.filter((i) => localIds.has(i.id)).map((i) => i.id);
 }
 
 /** Split a list into the things this app can look up. */
@@ -379,8 +404,8 @@ export interface SyncSharedFavoritesArgs {
 
 export interface SyncSharedFavoritesResult {
   status: 'published' | 'unchanged' | 'degraded' | 'failed';
-  /** The id list now on the relay — the caller's new baseline. Only meaningful
-   *  for 'published' and 'unchanged'. */
+  /** The caller's new baseline: the ids THIS app contributed, not the whole
+   *  published list. Only meaningful for 'published' and 'unchanged'. */
   ids: string[];
   error?: string;
 }
@@ -416,12 +441,14 @@ export async function syncSharedFavorites(
     local: args.local,
   });
   const nextIds = next.map((i) => i.id);
+  // Only our own contribution goes into the baseline — see `baselineFrom`.
+  const nextBaseline = baselineFrom(next, args.local);
 
   // A no-op republish on every page load would bump created_at for nothing and
   // race the user's other devices.
   const relayIds = latest.items.map((i) => i.id);
   if (relayIds.length === nextIds.length && relayIds.every((id, i) => id === nextIds[i])) {
-    return { status: 'unchanged', ids: nextIds };
+    return { status: 'unchanged', ids: nextBaseline };
   }
 
   try {
@@ -433,7 +460,7 @@ export async function syncSharedFavorites(
     });
     const ok = await publish(signed);
     if (!ok) return { status: 'failed', ids: [], error: 'no relay accepted the event' };
-    return { status: 'published', ids: nextIds };
+    return { status: 'published', ids: nextBaseline };
   } catch (error) {
     return {
       status: 'failed',

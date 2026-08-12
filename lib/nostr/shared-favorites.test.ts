@@ -26,6 +26,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
+  baselineFrom,
   identifierKind,
   itemId,
   itemsFromTags,
@@ -116,15 +117,49 @@ test('an identifier kind this app does not implement is never dropped', () => {
   );
 });
 
-test('a foreign id in the baseline but absent locally IS a removal', () => {
-  // The baseline is written from the MERGED list (which includes foreign ids),
-  // so this pins that "in lastSynced but not local" means removal regardless of
-  // whether we understand the id. Building the baseline from `local` instead
-  // would delete X on the very next publish.
+test('an entry another app removed is NOT resurrected by this app', () => {
+  // THE RESURRECTION CASE. Boost Me Bitch unfavorited A and published without
+  // it. This app still has A in its DB and A is in its baseline. Appending
+  // every local item — the obvious way to write the second loop — puts A
+  // straight back, so the user unfavorites there, opens this app, and it
+  // returns. Only a genuine local ADD may be appended.
   assert.deepEqual(
-    ids(mergeSharedFavorites({ latest: [{ id: X }], lastSynced: [X], local: [] })),
-    []
+    ids(mergeSharedFavorites({ latest: [{ id: B }], lastSynced: [A, B], local: [{ id: A }, { id: B }] })),
+    [B]
   );
+});
+
+test('a never-published local add still goes up', () => {
+  // ...and this is what distinguishes it from the case above.
+  assert.deepEqual(
+    ids(mergeSharedFavorites({ latest: [{ id: B }], lastSynced: [B], local: [{ id: A }, { id: B }] })),
+    [B, A]
+  );
+});
+
+test('a foreign id is never written into the baseline', () => {
+  // `removes` is `baseline − local`, and `local` only holds what this app can
+  // represent. A baseline built from the whole published list therefore makes
+  // every foreign identifier a removal on the NEXT publish — this app would
+  // delete Boost Me Bitch's episode favorites one toggle later.
+  assert.deepEqual(baselineFrom([{ id: B }, { id: X }, { id: A }], [{ id: A }]), [A]);
+});
+
+test('so a foreign id survives the SECOND publish too, not just the first', () => {
+  assert.deepEqual(
+    ids(
+      mergeSharedFavorites({
+        latest: [{ id: X }, { id: A }],
+        lastSynced: baselineFrom([{ id: X }, { id: A }], [{ id: A }]),
+        local: [{ id: A }],
+      })
+    ),
+    [X, A]
+  );
+});
+
+test('an entry this app dropped locally leaves the baseline', () => {
+  assert.deepEqual(baselineFrom([{ id: A }, { id: B }], [{ id: B }]), [B]);
 });
 
 test('surviving entries keep relay order; new local entries append', () => {
