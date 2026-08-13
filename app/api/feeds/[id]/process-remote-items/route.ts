@@ -203,6 +203,7 @@ export async function POST(
             originalUrl: normalizedUrl,
             cdnUrl: normalizedUrl,
             type: 'album',
+            medium: parsedFeed.medium?.toLowerCase() || null,
             priority: 'normal',
             title: parsedFeed.title,
             description: parsedFeed.description,

@@ -450,6 +450,9 @@ export async function POST(request: NextRequest) {
           data: {
             id: customFeedId,
             guid: oldFeedData.guid,
+            // Carried across with the rest: this create is a re-key of an existing
+            // row, so anything not copied here is silently dropped.
+            medium: oldFeedData.medium,
             title: oldFeedData.title,
             description: oldFeedData.description,
             originalUrl: oldFeedData.originalUrl,
