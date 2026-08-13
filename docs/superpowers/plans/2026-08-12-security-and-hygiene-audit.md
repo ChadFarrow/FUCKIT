@@ -17,6 +17,7 @@
 - **Stop `npm run dev` before `npm run build`.** Both write `.next`; building over a live dev server 400s every asset. Recovery is kill dev, `rm -rf .next`, `npm run dev`.
 - **Delete `public/sw.js` and `public/workbox-*.js`** after any local build you did not intend to deploy.
 - **Branch is `security-audit-2026-08`.** Never commit to `main` — push to `main` is the production deploy.
+- **`npm run dev` READS AND WRITES THE PRODUCTION DATABASE.** `.env.local` sets `DATABASE_URL` to `shuttle.proxy.rlwy.net` (Railway) and Next.js loads it for dev; `.env` points at localhost but only the Prisma CLI reads it. Every `curl http://localhost:3000/...` in this plan therefore hits live data. **No verification step may call a DELETE or a mutating endpoint** — favorites rows are the only copy. Read-only probes only.
 - **Token format is `v1.<base64url payload>.<base64url hmac>`** and the payload is exactly `{"uid":string,"iat":number,"p":0|1}`. Every task uses these names.
 
 ---
@@ -1800,6 +1801,10 @@ These are gitignored, and leaving them makes any LAN phone testing serve stale c
 
 - [ ] **Step 4: Manual smoke test**
 
+> Dev is pointed at production. Sign in as **your own account** and favorite
+> or unfavorite **your own** items only. This is ordinary app usage against
+> live data, which is fine; acting on another user's rows is not.
+
 Restart dev, then confirm each by hand:
 
 1. Logged out: home grid loads, an album page plays, favoriting works anonymously.
@@ -1808,21 +1813,55 @@ Restart dev, then confirm each by hand:
 4. Unfavorite works and the heart clears.
 5. Log out: the cookie is gone and `/favorites` shows the anonymous list.
 
-- [ ] **Step 5: Confirm the vulnerability is closed**
+- [ ] **Step 5: Confirm the vulnerability is closed — READ-ONLY**
+
+> **`npm run dev` talks to PRODUCTION on this machine.** `.env.local` sets
+> `DATABASE_URL` to `shuttle.proxy.rlwy.net` (Railway) and Next.js loads
+> `.env.local` for dev. `.env` points at localhost but only the Prisma CLI
+> reads it. So `http://localhost:3000` is a local server over **live data**.
+>
+> **Never verify this fix by calling a DELETE endpoint.** Favorites rows are
+> the only copy — that is why `SHARED_FAVORITES_APPLY_DELETES` ships off.
+
+Use the `GET` handler on the same route instead. It counts through the same
+`requireUser` call the `DELETE` does, so it proves whether the legacy header
+still carries authority while writing nothing.
 
 With `SESSION_SECRET` set in `.env.local` and the dev server restarted:
 
 ```bash
-curl -s -o /dev/null -w '%{http_code}\n' -X DELETE \
-  'http://localhost:3000/api/favorites/delete-all?type=nostr' \
-  -H 'x-nostr-user-id: <a real user id from your local DB>'
+# Pick any real user id (it is a hex pubkey) WITHOUT mutating anything:
+npx tsx -e "import{PrismaClient}from'@prisma/client';const p=new PrismaClient();p.favoriteAlbum.groupBy({by:['userId'],_count:{_all:true},where:{userId:{not:null}},take:1}).then(r=>{console.log(r);process.exit(0)})"
+
+# The header must no longer resolve that user:
+curl -s 'http://localhost:3000/api/favorites/delete-all?type=nostr' \
+  -H 'x-nostr-user-id: <that user id>' | python3 -m json.tool
 ```
 
-Expected: the favorites are **not** deleted. Verify by counting rows before and after:
+Expected: `counts.nostr.total` is **0** and `hasNostrUser` is **false** — the
+header was ignored. If it returns that user's real count, `SESSION_SECRET` is
+not loaded and `requireUser` is still failing open.
+
+Then confirm the positive case, that a real session still works: sign in
+through the UI and load `/favorites`. Your own favorites must appear.
+
+- [ ] **Step 5b: Optional — run the destructive check safely on a local DB**
+
+Only if you want the `DELETE` path exercised directly. Point dev at the local
+database for one run, so no production row is reachable:
 
 ```bash
-npx tsx -e "import{PrismaClient}from'@prisma/client';const p=new PrismaClient();p.favoriteAlbum.count({where:{userId:'<id>'}}).then(c=>{console.log(c);process.exit(0)})"
+mv .env.local .env.local.bak
+cp .env .env.local                       # localhost:5432
+# re-add SESSION_SECRET and any other keys dev needs to .env.local
+npm run dev
+# ... run the DELETE probe against seeded local data ...
+mv .env.local.bak .env.local             # RESTORE — do not skip
 ```
+
+Restore `.env.local` before doing anything else. Leaving the local copy in
+place makes every later dev session silently read an empty database, which
+looks like data loss.
 
 - [ ] **Step 6: Commit any fixes and push the branch**
 
