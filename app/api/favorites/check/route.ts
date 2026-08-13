@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { getSessionIdFromRequest } from '@/lib/session-utils';
 import { normalizePubkey } from '@/lib/nostr/normalize';
 import { buildFeedIdEquivalence, feedLookupWhere, flattenFeedIdEquivalence, isFeedIdFavorited } from '@/lib/favorite-feed-ids';
+import { requireUser } from '@/lib/auth/require-user';
 
 /**
  * POST /api/favorites/check
@@ -12,8 +13,8 @@ import { buildFeedIdEquivalence, feedLookupWhere, flattenFeedIdEquivalence, isFe
 export async function POST(request: NextRequest) {
   try {
     const sessionId = getSessionIdFromRequest(request);
-    const userId = request.headers.get('x-nostr-user-id');
-    
+    const userId = requireUser(request);
+
     if (!sessionId && !userId) {
       return NextResponse.json({
         success: true,

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSessionIdFromRequest } from '@/lib/session-utils';
 import { normalizePubkey } from '@/lib/nostr/normalize';
+import { requireUser } from '@/lib/auth/require-user';
 
 /**
  * DELETE /api/favorites/delete-all
@@ -12,7 +13,7 @@ import { normalizePubkey } from '@/lib/nostr/normalize';
 export async function DELETE(request: NextRequest) {
   try {
     const sessionId = getSessionIdFromRequest(request);
-    const userId = request.headers.get('x-nostr-user-id');
+    const userId = requireUser(request, { write: true });
     const { searchParams } = new URL(request.url);
     const deleteType = searchParams.get('type') || 'all';
 
@@ -97,7 +98,7 @@ export async function DELETE(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const sessionId = getSessionIdFromRequest(request);
-    const userId = request.headers.get('x-nostr-user-id');
+    const userId = requireUser(request);
     const { searchParams } = new URL(request.url);
     const countType = searchParams.get('type') || 'all';
     const includeEventIds = searchParams.get('includeEventIds') === 'true';

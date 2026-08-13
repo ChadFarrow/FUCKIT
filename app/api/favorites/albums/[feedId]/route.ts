@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSessionIdFromRequest } from '@/lib/session-utils';
 import { normalizePubkey } from '@/lib/nostr/normalize';
+import { requireUser } from '@/lib/auth/require-user';
 
 /**
  * DELETE /api/favorites/albums/[feedId]
@@ -17,8 +18,8 @@ export async function DELETE(
     feedId = decodeURIComponent(feedId);
     
     const sessionId = getSessionIdFromRequest(request);
-    const userId = request.headers.get('x-nostr-user-id');
-    
+    const userId = requireUser(request, { write: true });
+
     if (!sessionId && !userId) {
       return NextResponse.json(
         {

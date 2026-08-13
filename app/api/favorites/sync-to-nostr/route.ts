@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { normalizePubkey } from '@/lib/nostr/normalize';
+import { requireUser } from '@/lib/auth/require-user';
 
 export interface UnpublishedFavorite {
   type: 'track' | 'album';
@@ -19,7 +20,7 @@ export interface UnpublishedFavorite {
  */
 export async function GET(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-nostr-user-id');
+    const userId = requireUser(request);
     const forceParam = request.nextUrl.searchParams.get('force');
     const forceNip51 = forceParam === 'true';
     const forceAll = forceParam === 'all';
@@ -159,7 +160,7 @@ export async function GET(request: NextRequest) {
  */
 export async function PATCH(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-nostr-user-id');
+    const userId = requireUser(request, { write: true });
 
     if (!userId) {
       return NextResponse.json({

@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { getSessionIdFromRequest } from '@/lib/session-utils';
 import { addUnresolvedFeeds } from '@/lib/feed-discovery';
 import { normalizePubkey } from '@/lib/nostr/normalize';
+import { requireUser } from '@/lib/auth/require-user';
 
 /**
  * GET /api/favorites/tracks
@@ -11,8 +12,8 @@ import { normalizePubkey } from '@/lib/nostr/normalize';
 export async function GET(request: NextRequest) {
   try {
     const sessionId = getSessionIdFromRequest(request);
-    const userId = request.headers.get('x-nostr-user-id');
-    
+    const userId = requireUser(request);
+
     // Build where clause - support both session and user
     const where: any = {};
     if (userId) {
@@ -206,8 +207,8 @@ export async function POST(request: NextRequest) {
   
   try {
     sessionId = getSessionIdFromRequest(request);
-    userId = request.headers.get('x-nostr-user-id');
-    
+    userId = requireUser(request, { write: true });
+
     if (!sessionId && !userId) {
       return NextResponse.json(
         {
@@ -493,8 +494,8 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const sessionId = getSessionIdFromRequest(request);
-    const userId = request.headers.get('x-nostr-user-id');
-    
+    const userId = requireUser(request, { write: true });
+
     if (!sessionId && !userId) {
       return NextResponse.json(
         {
@@ -610,8 +611,8 @@ export async function DELETE(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   try {
     const sessionId = getSessionIdFromRequest(request);
-    const userId = request.headers.get('x-nostr-user-id');
-    
+    const userId = requireUser(request, { write: true });
+
     if (!sessionId && !userId) {
       return NextResponse.json(
         {
