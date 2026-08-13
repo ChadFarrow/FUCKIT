@@ -30,6 +30,7 @@ import {
   mergeSingleList,
   partitionSingleList,
   publishedRecordFrom,
+  suppressOwnRemovals,
   tagsFromGroups,
   templateFromTags,
   type PublishedRecord,
@@ -564,7 +565,33 @@ async function runPull(opts: {
     return { status: 'degraded' };
   }
 
-  const { shows, tracks } = partitionSingleList(shared);
+  const { shows: allShows, tracks: allTracks } = partitionSingleList(shared);
+
+  // Suppress our own in-flight removals before they can be reconciled BACK IN.
+  //
+  // The order in this function is pull → reconcile → push, and that ordering is
+  // what makes this necessary rather than optional. An album unfavorited here
+  // is deleted locally, but the list still carries it until the push lands; the
+  // reconcile in between reads that stale entry, sees a group it is entitled to
+  // treat as a favorite, and re-creates the row. The push then finds the album
+  // local again, produces tags identical to what is already published, and the
+  // digest gate skips it. Nothing ever propagates and the favorite returns on
+  // every load — observed three times, most recently as a row re-created at
+  // 22:36:18Z two minutes after being deleted.
+  //
+  // The published record is what tells the two apart, exactly as it does on the
+  // write side: an entry we put on the list and no longer hold is our removal
+  // in flight, not another app's addition. Anything we never published stays,
+  // which is what keeps a genuine inbound favorite working.
+  const { shows, tracks } = suppressOwnRemovals(
+    { shows: allShows, tracks: allTracks },
+    groupForSingleList(await loadLocalItems(opts.userId)),
+    getPublishedRecord(opts.pubkey)
+  );
+  const suppressed = allShows.length - shows.length + (allTracks.length - tracks.length);
+  if (suppressed > 0) {
+    console.log(`↩️ Favorites: ignoring ${suppressed} entr(ies) this device has removed`);
+  }
 
   try {
     const res = await fetch('/api/favorites/sync-shared', {

@@ -443,6 +443,43 @@ export function partitionSingleList(list: {
   return { shows, tracks };
 }
 
+/**
+ * Drop entries this device removed but has not yet managed to un-publish.
+ *
+ * The inbound path runs before the outbound one — read, reconcile, then push —
+ * so between an unfavorite and its publish the list still carries the entry.
+ * Reconciling it straight back in re-creates the row, and the push that follows
+ * then sees it as local again, produces the tags already on the wire, and is
+ * skipped as unchanged. The removal never propagates and the favorite returns
+ * on every load. Observed three times before this existed.
+ *
+ * Same question as `mergeSingleList`, same answer: an entry we published and no
+ * longer hold is ours removed, not theirs added. Anything we never published is
+ * left alone, so a genuine inbound favorite from another app still arrives.
+ */
+export function suppressOwnRemovals<
+  S extends { feedGuid: string },
+  T extends { itemGuid: string },
+>(
+  incoming: { shows: S[]; tracks: T[] },
+  local: SingleListGroup[],
+  published: PublishedRecord
+): { shows: S[]; tracks: T[] } {
+  const localFeeds = new Set(local.map((g) => g.feedGuid));
+  const localItems = new Set(local.flatMap((g) => g.itemGuids));
+  const publishedFeeds = new Set(published.feeds);
+  const publishedItems = new Set(published.items);
+
+  return {
+    shows: incoming.shows.filter(
+      (s) => !(publishedFeeds.has(s.feedGuid) && !localFeeds.has(s.feedGuid))
+    ),
+    tracks: incoming.tracks.filter(
+      (t) => !(publishedItems.has(t.itemGuid) && !localItems.has(t.itemGuid))
+    ),
+  };
+}
+
 /** Read the user's kind:10333 event. Plain replaceable — no `d` tag. */
 export async function fetchSingleList(pubkey: string, relays: string[]): Promise<SingleList> {
   const filter: Filter = { kinds: [SINGLE_LIST_KIND], authors: [pubkey], limit: 1 };

@@ -27,6 +27,7 @@ import {
   partitionSingleList,
   publishedRecordFrom,
   singleListDigest,
+  suppressOwnRemovals,
   tagsFromGroups,
   singleListTemplate,
 } from './favorites-single-list';
@@ -658,4 +659,64 @@ test('the published record holds OUR contribution only, never what we carried', 
     groupForSingleList([album(MUSIC_A, 'music'), track('t1', MUSIC_A, 'music')])
   );
   assert.deepEqual(record, { feeds: [MUSIC_A], items: ['t1'] });
+});
+
+// --- the inbound half of the same question ---------------------------------
+
+test('an entry we published and removed is NOT reconciled back in', () => {
+  // THE FOURTH ATTEMPT AT THE SAME BUG. Fixing the writer was not enough: the
+  // order is read → reconcile → push, so between an unfavorite and its publish
+  // the list still carries the entry. Reconciling it back in re-creates the
+  // row, and the push then sees it as local, produces the tags already on the
+  // wire, and is skipped as unchanged. Nothing propagates, ever.
+  const incoming = {
+    shows: [{ feedGuid: MUSIC_A }, { feedGuid: MUSIC_C }],
+    tracks: [{ itemGuid: 't1' }, { itemGuid: 't2' }],
+  };
+  const local = groupForSingleList([album(MUSIC_A, 'music'), track('t1', MUSIC_A, 'music')]);
+  const published = publishedRecordFrom(
+    groupForSingleList([
+      album(MUSIC_A, 'music'),
+      album(MUSIC_C, 'music'),
+      track('t1', MUSIC_A, 'music'),
+      track('t2', MUSIC_A, 'music'),
+    ])
+  );
+
+  const kept = suppressOwnRemovals(incoming, local, published);
+  assert.deepEqual(kept.shows.map((s) => s.feedGuid), [MUSIC_A]);
+  assert.deepEqual(kept.tracks.map((t) => t.itemGuid), ['t1']);
+});
+
+test('...but a genuine inbound favorite from another app still arrives', () => {
+  // The half that must not break: we never published these, so they are not
+  // ours to suppress. Getting this wrong turns the app read-only.
+  const incoming = {
+    shows: [{ feedGuid: FOREIGN_E }],
+    tracks: [{ itemGuid: 'their-ep' }],
+  };
+  const local = groupForSingleList([album(MUSIC_A, 'music')]);
+  const published = publishedRecordFrom(local);
+
+  const kept = suppressOwnRemovals(incoming, local, published);
+  assert.deepEqual(kept.shows.map((s) => s.feedGuid), [FOREIGN_E]);
+  assert.deepEqual(kept.tracks.map((t) => t.itemGuid), ['their-ep']);
+});
+
+test('an entry we published and STILL hold is left alone', () => {
+  const incoming = { shows: [{ feedGuid: MUSIC_A }], tracks: [{ itemGuid: 't1' }] };
+  const local = groupForSingleList([album(MUSIC_A, 'music'), track('t1', MUSIC_A, 'music')]);
+  const kept = suppressOwnRemovals(incoming, local, publishedRecordFrom(local));
+  assert.deepEqual(kept.shows.length, 1);
+  assert.deepEqual(kept.tracks.length, 1);
+});
+
+test('an empty published record suppresses nothing', () => {
+  // First run: we have agreed to nothing, so nothing on the list can be our
+  // removal. Suppressing here would hide the user's own library from the
+  // reconcile on a fresh device.
+  const incoming = { shows: [{ feedGuid: MUSIC_C }], tracks: [{ itemGuid: 't9' }] };
+  const kept = suppressOwnRemovals(incoming, [], { feeds: [], items: [] });
+  assert.deepEqual(kept.shows.length, 1);
+  assert.deepEqual(kept.tracks.length, 1);
 });
