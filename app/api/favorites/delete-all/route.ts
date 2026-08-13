@@ -75,13 +75,11 @@ export async function DELETE(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error deleting all favorites:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to delete favorites',
-        details: errorMessage
+        error: 'Failed to delete favorites'
       },
       { status: 500 }
     );
@@ -170,13 +168,11 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error counting favorites:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to count favorites',
-        details: errorMessage
+        error: 'Failed to count favorites'
       },
       { status: 500 }
     );

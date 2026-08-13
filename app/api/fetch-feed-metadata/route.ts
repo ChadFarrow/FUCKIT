@@ -36,7 +36,8 @@ export async function GET(request: NextRequest) {
       if (err?.name === 'AbortError') {
         return NextResponse.json({ error: 'Timed out fetching feed' }, { status: 504 });
       }
-      return NextResponse.json({ error: 'Failed to fetch feed', details: String(err) }, { status: 502 });
+      console.error('Failed to fetch feed:', err);
+      return NextResponse.json({ error: 'Failed to fetch feed' }, { status: 502 });
     } finally {
       clearTimeout(timeout);
     }
@@ -85,7 +86,8 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to parse feed', details: error instanceof Error ? error.message : String(error) }, { status: 500 });
+    console.error('Failed to parse feed:', error);
+    return NextResponse.json({ error: 'Failed to parse feed' }, { status: 500 });
   }
 }
 

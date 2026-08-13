@@ -230,9 +230,8 @@ export async function GET(request: NextRequest) {
     });
     
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to fetch music tracks',
-        details: errorMessage,
         timestamp: new Date().toISOString()
       },
       { status: 500 }

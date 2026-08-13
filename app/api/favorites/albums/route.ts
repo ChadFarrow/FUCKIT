@@ -383,8 +383,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to fetch favorite albums',
-        details: errorMessage
+        error: 'Failed to fetch favorite albums'
       },
       { status: 500 }
     );
@@ -529,18 +528,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Favorites tables not initialized. Please run database migration.',
-          details: errorMessage
+          error: 'Favorites tables not initialized. Please run database migration.'
         },
         { status: 503 } // Service Unavailable
       );
     }
-    
+
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to add album to favorites',
-        details: errorMessage
+        error: 'Failed to add album to favorites'
       },
       { status: 500 }
     );
@@ -636,8 +633,7 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to remove album from favorites',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: 'Failed to remove album from favorites'
       },
       { status: 500 }
     );
@@ -749,8 +745,7 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to update favorite album',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: 'Failed to update favorite album'
       },
       { status: 500 }
     );
