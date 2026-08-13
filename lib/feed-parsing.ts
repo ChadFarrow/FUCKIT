@@ -10,7 +10,7 @@ import { prisma } from '@/lib/prisma';
 import { ValueTagParser } from '@/lib/lightning/value-parser';
 import { isValidFeedUrl, normalizeUrl } from '@/lib/url-utils';
 import { syncOldestItemPubdate } from '@/lib/feed-pubdate';
-import { calculateTrackOrder, parsePodcastGuidFromXML, fetchChapters, parseChannelPersonsFromXML, parseChannelPodcastImagesFromXML, pickSquareArtwork } from '@/lib/rss-parser-db';
+import { calculateTrackOrder, parsePodcastGuidFromXML, parsePodcastMediumFromXML, fetchChapters, parseChannelPersonsFromXML, parseChannelPodcastImagesFromXML, pickSquareArtwork } from '@/lib/rss-parser-db';
 import { decodeHtmlEntities } from '@/lib/decode-entities';
 
 const PODCAST_INDEX_API_KEY = process.env.PODCAST_INDEX_API_KEY;
@@ -249,6 +249,12 @@ export async function importFeedToDatabase(feedData: any, episodes: ParsedEpisod
       console.log(`🔑 Found podcast:guid for feed ${feedId}: ${podcastGuid}`);
     }
 
+    // Extract <podcast:medium> the same way, and from the XML rather than from
+    // `feedData.type`, which is this app's own guess. Published at position 4 of
+    // the shared favorites list, where a guess would be sticky across every app
+    // that reads it — so a feed that declares nothing keeps NULL here.
+    const podcastMedium = xmlText ? parsePodcastMediumFromXML(xmlText) : null;
+
     // Parse channel-level <podcast:person> tags (MSP emits npubs here for bands/hosts)
     const channelPersons = xmlText ? parseChannelPersonsFromXML(xmlText) : [];
     const channelPersonsData = channelPersons.length > 0 ? channelPersons : null;
@@ -286,6 +292,7 @@ export async function importFeedToDatabase(feedData: any, episodes: ParsedEpisod
         ...(feedV4vData && { v4vValue: feedV4vData }),
         ...(feedV4vRecipient && { v4vRecipient: feedV4vRecipient }),
         ...(podcastGuid && { guid: podcastGuid }),
+        ...(podcastMedium && { medium: podcastMedium }),
         ...(channelPersonsData && { persons: channelPersonsData }),
         ...(channelPodcastImagesData && { podcastImages: channelPodcastImagesData })
       },
@@ -304,6 +311,7 @@ export async function importFeedToDatabase(feedData: any, episodes: ParsedEpisod
         ...(feedV4vData && { v4vValue: feedV4vData }),
         ...(feedV4vRecipient && { v4vRecipient: feedV4vRecipient }),
         ...(podcastGuid && { guid: podcastGuid }),
+        ...(podcastMedium && { medium: podcastMedium }),
         ...(channelPersonsData && { persons: channelPersonsData }),
         ...(channelPodcastImagesData && { podcastImages: channelPodcastImagesData })
       }

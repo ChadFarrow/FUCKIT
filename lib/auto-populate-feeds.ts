@@ -78,6 +78,9 @@ export async function autoPopulateFeeds(feedGuids: string[], playlistName: strin
                   image: feedData.image || null,
                   originalUrl: normalizedUrl,
                   type: feedData.medium === 'music' ? 'album' : 'podcast',
+                  // `type` folds every non-music medium into 'podcast'; this keeps
+                  // what the feed actually declared, and NULL when it declared none.
+                  medium: feedData.medium?.toLowerCase() || null,
                   language: feedData.language || null,
                   category: feedData.categories ? Object.keys(feedData.categories)[0] : null,
                   podcastCategories: [], // Will be populated from RSS parsing

@@ -186,6 +186,8 @@ export async function mintAlbumFromPiFeed(
       originalUrl: feedUrl,
       cdnUrl: feedUrl,
       type: 'album',
+      // What Podcast Index says the feed declared; empty stays NULL.
+      medium: piFeed.medium?.toLowerCase() || null,
       priority: 'normal',
       title: piFeed.title,
       description: piFeed.description || null,

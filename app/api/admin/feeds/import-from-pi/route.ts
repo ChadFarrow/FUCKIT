@@ -139,6 +139,7 @@ export async function POST(request: NextRequest) {
         originalUrl: feedUrl,
         cdnUrl: feedUrl,
         type,
+        medium: piFeed.medium?.toLowerCase() || null,
         priority: 'normal',
         title: piFeed.title,
         description: piFeed.description || null,

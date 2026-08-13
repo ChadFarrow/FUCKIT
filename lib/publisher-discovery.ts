@@ -6,7 +6,7 @@
  */
 
 import { prisma } from '@/lib/prisma';
-import { parsePublisherFeedFromXML } from '@/lib/rss-parser-db';
+import { parsePublisherFeedFromXML, parsePodcastMediumFromXML } from '@/lib/rss-parser-db';
 
 export interface PublisherReference {
   feedGuid: string;
@@ -206,6 +206,10 @@ export async function discoverAndStorePublisher(publisherRef: PublisherReference
         image: metadata.image,
         originalUrl: publisherRef.feedUrl,
         type: 'publisher',
+        // From the publisher feed's own XML rather than assumed from `type` —
+        // publisher feeds declare <podcast:medium>publisher</podcast:medium>,
+        // but one that doesn't must not be recorded as if it had.
+        medium: parsePodcastMediumFromXML(xml),
         status: 'active',
         lastFetched: new Date(),
         updatedAt: new Date()
