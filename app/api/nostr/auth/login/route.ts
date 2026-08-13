@@ -4,6 +4,7 @@ import { verifyEvent, getEventHash } from 'nostr-tools';
 import { getSessionIdFromRequest } from '@/lib/session-utils';
 import { normalizePubkey } from '@/lib/nostr/normalize';
 import { publicKeyToNpub } from '@/lib/nostr/keys';
+import { sessionCookie } from '@/lib/auth/require-user';
 
 /**
  * POST /api/nostr/auth/login
@@ -207,7 +208,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       message: 'Login successful',
       user: {
@@ -222,11 +223,19 @@ export async function POST(request: NextRequest) {
         loginType: 'extension',
       },
     });
+
+    // This route verified a signed Nostr event above (getEventHash
+    // reconstruction + verifyEvent), so the session is proven and may write.
+    const cookie = sessionCookie(user.id, true);
+    if (cookie) response.headers.set('Set-Cookie', cookie);
+
+    return response;
   } catch (err: any) {
+    console.error('Nostr login error:', err);
     return NextResponse.json(
       {
         success: false,
-        error: err.message || 'Login failed',
+        error: 'Login failed',
         details: process.env.NODE_ENV === 'development' ? err.stack : undefined,
       },
       { status: 500 }

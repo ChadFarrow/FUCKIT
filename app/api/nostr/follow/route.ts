@@ -5,6 +5,7 @@ import { Contacts } from 'nostr-tools/kinds';
 import { NostrClient } from '@/lib/nostr/client';
 import { getDefaultRelays } from '@/lib/nostr/relay';
 import { normalizePubkey } from '@/lib/nostr/normalize';
+import { requireUser } from '@/lib/auth/require-user';
 
 /**
  * POST /api/nostr/follow
@@ -12,7 +13,7 @@ import { normalizePubkey } from '@/lib/nostr/normalize';
  */
 export async function POST(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-nostr-user-id');
+    const userId = requireUser(request, { write: true });
     if (!userId) {
       return NextResponse.json(
         { success: false, error: 'Missing user ID' },
@@ -233,7 +234,7 @@ export async function POST(request: NextRequest) {
  */
 export async function GET(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-nostr-user-id');
+    const userId = requireUser(request);
     if (!userId) {
       return NextResponse.json(
         { success: false, error: 'Missing user ID' },

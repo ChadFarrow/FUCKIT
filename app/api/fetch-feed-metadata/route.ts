@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { XMLParser } from 'fast-xml-parser';
+import { isSafePublicUrl } from '@/lib/url-security';
 
 export async function GET(request: NextRequest) {
   try {
@@ -7,6 +8,15 @@ export async function GET(request: NextRequest) {
     const feedUrl = url.searchParams.get('feedUrl');
     if (!feedUrl) {
       return NextResponse.json({ error: 'Missing feedUrl' }, { status: 400 });
+    }
+
+    // Fetches a caller-supplied URL, so it must go through the same guard as
+    // /api/chapters, /api/proxy-image and /api/proxy-audio. Without it, any
+    // link-local or RFC-1918 host was reachable AND its body was reflected
+    // back to the caller.
+    const urlCheck = isSafePublicUrl(feedUrl);
+    if (!urlCheck.ok) {
+      return NextResponse.json({ error: urlCheck.error }, { status: 400 });
     }
 
     // Enforce a timeout so the UI isn't stuck if the remote feed is slow
@@ -26,7 +36,8 @@ export async function GET(request: NextRequest) {
       if (err?.name === 'AbortError') {
         return NextResponse.json({ error: 'Timed out fetching feed' }, { status: 504 });
       }
-      return NextResponse.json({ error: 'Failed to fetch feed', details: String(err) }, { status: 502 });
+      console.error('Failed to fetch feed:', err);
+      return NextResponse.json({ error: 'Failed to fetch feed' }, { status: 502 });
     } finally {
       clearTimeout(timeout);
     }
@@ -75,7 +86,8 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to parse feed', details: error instanceof Error ? error.message : String(error) }, { status: 500 });
+    console.error('Failed to parse feed:', error);
+    return NextResponse.json({ error: 'Failed to parse feed' }, { status: 500 });
   }
 }
 

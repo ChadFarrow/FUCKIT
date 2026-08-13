@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSessionIdFromRequest } from '@/lib/session-utils';
 import { normalizePubkey } from '@/lib/nostr/normalize';
+import { requireUser } from '@/lib/auth/require-user';
 
 /**
  * POST /api/favorites/dedupe-tracks
@@ -10,7 +11,7 @@ import { normalizePubkey } from '@/lib/nostr/normalize';
 export async function POST(request: NextRequest) {
   try {
     const sessionId = getSessionIdFromRequest(request);
-    const userId = request.headers.get('x-nostr-user-id');
+    const userId = requireUser(request, { write: true });
 
     if (!sessionId && !userId) {
       return NextResponse.json(
@@ -117,8 +118,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to deduplicate favorites',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: 'Failed to deduplicate favorites'
       },
       { status: 500 }
     );

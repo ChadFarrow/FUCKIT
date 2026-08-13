@@ -230,9 +230,8 @@ export async function GET(request: NextRequest) {
     });
     
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to fetch music tracks',
-        details: errorMessage,
         timestamp: new Date().toISOString()
       },
       { status: 500 }
@@ -411,13 +410,12 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     logger.error('Music tracks database POST failed', { error: (error as Error).message });
-    
+
     return NextResponse.json(
-      { 
-        error: 'Failed to process request',
-        details: error instanceof Error ? error.message : 'Unknown error'
+      {
+        error: 'Failed to process request'
       },
       { status: 500 }
     );
   }
-} 
+}

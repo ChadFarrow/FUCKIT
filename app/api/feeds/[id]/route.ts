@@ -72,7 +72,6 @@ export async function GET(
       {
         success: false,
         error: 'Failed to fetch feed',
-        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

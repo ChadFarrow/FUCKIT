@@ -155,10 +155,9 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error resolving HGH tracks:', error);
     return NextResponse.json(
-      { 
+      {
         success: false,
-        error: 'Failed to resolve tracks',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: 'Failed to resolve tracks'
       },
       { status: 500 }
     );

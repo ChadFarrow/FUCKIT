@@ -123,10 +123,12 @@ export default function LoginModal({ onClose }: LoginModalProps) {
   };
 
   // NIP-05 read-only login. Resolves a name@domain identifier to a pubkey via
-  // the domain's /.well-known/nostr.json (done server-side), loads the profile,
-  // and signs the user in WITHOUT a signer. They can browse as themselves and
-  // see their favorites, but signed actions (boost, publish) stay unavailable
-  // until they connect a real signer.
+  // the domain's /.well-known/nostr.json (done server-side), loads the public
+  // profile, and signs the user in WITHOUT a signer. This proves nothing about
+  // who is asking, so the server issues no session cookie and the account's
+  // stored favorites stay inaccessible — this browser's own sessionId-scoped
+  // favorites are all that show. Signed actions (boost, publish) stay
+  // unavailable until they connect a real signer.
   const handleNip05Login = async () => {
     const identifier = nip05Identifier.trim().toLowerCase();
     const [name, domain] = identifier.split('@');
@@ -153,9 +155,12 @@ export default function LoginModal({ onClose }: LoginModalProps) {
       // Persist as a read-only nip05 session. saveUserData stores nostr_user +
       // nostr_login_type='nip05' and correctly skips savePreferredSigner.
       // Intentionally NOT calling markFavoritesSyncPending — that publishes
-      // favorites to Nostr and needs a signer. The server route already
-      // migrated session favorites into the DB; NostrContext reads them from
-      // the DB on reload.
+      // favorites to Nostr and needs a signer.
+      //
+      // No favorites migration and no session cookie: this login proves no
+      // key ownership, so the server issues no credential and never writes
+      // to the resolved account. Anonymous favorites stay on this browser's
+      // sessionId, where they already were.
       saveUserData(data.user, 'nip05');
 
       onClose();
@@ -855,7 +860,7 @@ export default function LoginModal({ onClose }: LoginModalProps) {
               {isSubmitting ? 'Connecting…' : 'Connect'}
             </button>
             <p className="mt-3 text-xs text-gray-400">
-              Read-only — you can see your profile and favorites. To boost or publish to Nostr, sign in with a signer (extension, Amber, Primal, or bunker).
+              Read-only — shows your public profile only. It does not prove you own this address, so your saved favorites stay private. Connect a signer (extension, Amber, Primal, or bunker) for that.
             </p>
           </div>
         )}

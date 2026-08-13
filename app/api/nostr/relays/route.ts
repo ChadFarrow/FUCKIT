@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { normalizePubkey } from '@/lib/nostr/normalize';
+import { requireUser } from '@/lib/auth/require-user';
 
 /**
  * Validate and sanitize relay URLs.
@@ -44,7 +45,7 @@ function sanitizeRelays(relays: string[]): string[] {
  */
 export async function GET(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-nostr-user-id');
+    const userId = requireUser(request);
     if (!userId) {
       return NextResponse.json(
         { success: false, error: 'User ID required' },
@@ -100,7 +101,7 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-nostr-user-id');
+    const userId = requireUser(request, { write: true });
 
     if (!userId) {
       return NextResponse.json(

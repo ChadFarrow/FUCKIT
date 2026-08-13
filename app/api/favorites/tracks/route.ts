@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { getSessionIdFromRequest } from '@/lib/session-utils';
 import { addUnresolvedFeeds } from '@/lib/feed-discovery';
 import { normalizePubkey } from '@/lib/nostr/normalize';
+import { requireUser } from '@/lib/auth/require-user';
 
 /**
  * GET /api/favorites/tracks
@@ -11,8 +12,8 @@ import { normalizePubkey } from '@/lib/nostr/normalize';
 export async function GET(request: NextRequest) {
   try {
     const sessionId = getSessionIdFromRequest(request);
-    const userId = request.headers.get('x-nostr-user-id');
-    
+    const userId = requireUser(request);
+
     // Build where clause - support both session and user
     const where: any = {};
     if (userId) {
@@ -185,8 +186,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to fetch favorite tracks',
-        details: errorMessage
+        error: 'Failed to fetch favorite tracks'
       },
       { status: 500 }
     );
@@ -206,8 +206,8 @@ export async function POST(request: NextRequest) {
   
   try {
     sessionId = getSessionIdFromRequest(request);
-    userId = request.headers.get('x-nostr-user-id');
-    
+    userId = requireUser(request, { write: true });
+
     if (!sessionId && !userId) {
       return NextResponse.json(
         {
@@ -429,45 +429,41 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Favorites tables not initialized. Please run database migration.',
-          details: errorMessage
+          error: 'Favorites tables not initialized. Please run database migration.'
         },
         { status: 503 } // Service Unavailable
       );
     }
-    
+
     // Check for Prisma schema errors
     if (errorCode === 'P2002' || errorMessage.includes('Unique constraint')) {
       return NextResponse.json(
         {
           success: false,
           error: 'Track is already in favorites',
-          details: errorMessage,
           code: errorCode
         },
         { status: 409 } // Conflict
       );
     }
-    
+
     if (errorMessage.includes('Unknown arg') || errorMessage.includes('Argument') || errorMessage.includes('Field')) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Database schema mismatch. Please run: npx prisma db push',
-          details: errorMessage
+          error: 'Database schema mismatch. Please run: npx prisma db push'
         },
         { status: 500 }
       );
     }
-    
+
     // In development, include more error details
     const isDevelopment = process.env.NODE_ENV === 'development';
-    
+
     return NextResponse.json(
       {
         success: false,
         error: 'Failed to add track to favorites',
-        details: errorMessage,
         ...(errorCode && { code: errorCode }),
         ...(isDevelopment && {
           debug: {
@@ -493,8 +489,8 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const sessionId = getSessionIdFromRequest(request);
-    const userId = request.headers.get('x-nostr-user-id');
-    
+    const userId = requireUser(request, { write: true });
+
     if (!sessionId && !userId) {
       return NextResponse.json(
         {
@@ -594,8 +590,7 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to remove track from favorites',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: 'Failed to remove track from favorites'
       },
       { status: 500 }
     );
@@ -610,8 +605,8 @@ export async function DELETE(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   try {
     const sessionId = getSessionIdFromRequest(request);
-    const userId = request.headers.get('x-nostr-user-id');
-    
+    const userId = requireUser(request, { write: true });
+
     if (!sessionId && !userId) {
       return NextResponse.json(
         {
@@ -674,8 +669,7 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to update favorite track',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: 'Failed to update favorite track'
       },
       { status: 500 }
     );

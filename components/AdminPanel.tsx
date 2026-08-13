@@ -2800,7 +2800,7 @@ export default function AdminPanel() {
                         Publisher Feed Auto-Imported!
                       </h5>
                       <p className="text-sm text-gray-300 mb-3">
-                        Found and automatically imported the artist's publisher feed:
+                        Found and automatically imported the artist&apos;s publisher feed:
                       </p>
                       <div className="bg-white/5 rounded p-3 space-y-2">
                         <div className="flex items-center justify-between">
@@ -2845,7 +2845,7 @@ export default function AdminPanel() {
                         Publisher Feed Detected
                       </p>
                       <p className="text-sm text-gray-300 mb-2">
-                        Found artist's publisher feed: <span className="text-green-300 font-medium">{importResult.publisherFeed.title}</span>
+                        Found artist&apos;s publisher feed: <span className="text-green-300 font-medium">{importResult.publisherFeed.title}</span>
                       </p>
                       {importResult.publisherFeed.episodeCount && (
                         <p className="text-xs text-gray-400">

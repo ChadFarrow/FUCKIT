@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { SHOW_PREFIX, ITEM_PREFIX } from '@/lib/nostr/shared-favorites';
+import { requireUser } from '@/lib/auth/require-user';
 
 /**
  * Inbound half of the cross-app favorites sync. Spec:
@@ -84,7 +85,7 @@ function deletionBudget(eligibleCount: number): number {
 
 export async function POST(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-nostr-user-id');
+    const userId = requireUser(request, { write: true });
     if (!userId) {
       return NextResponse.json(
         { success: false, error: 'Shared favorites sync requires a Nostr user' },

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { buildFeedIdEquivalence, feedLookupWhere, flattenFeedIdEquivalence, pickFavoriteRowForWrite } from '@/lib/favorite-feed-ids';
 import { getSessionIdFromRequest } from '@/lib/session-utils';
+import { requireUser } from '@/lib/auth/require-user';
 import { getPublisherInfo } from '@/lib/url-utils';
 import { podcastIndexAPI } from '@/lib/podcast-index-api';
 import { normalizePubkey } from '@/lib/nostr/normalize';
@@ -31,8 +32,8 @@ async function expandFeedIdCandidates(feedId: string): Promise<string[]> {
 export async function GET(request: NextRequest) {
   try {
     const sessionId = getSessionIdFromRequest(request);
-    const userId = request.headers.get('x-nostr-user-id');
-    
+    const userId = requireUser(request);
+
     // Build where clause - support both session and user
     const where: any = {};
     if (userId) {
@@ -382,8 +383,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to fetch favorite albums',
-        details: errorMessage
+        error: 'Failed to fetch favorite albums'
       },
       { status: 500 }
     );
@@ -398,8 +398,8 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const sessionId = getSessionIdFromRequest(request);
-    const userId = request.headers.get('x-nostr-user-id');
-    
+    const userId = requireUser(request, { write: true });
+
     if (!sessionId && !userId) {
       return NextResponse.json(
         {
@@ -528,18 +528,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Favorites tables not initialized. Please run database migration.',
-          details: errorMessage
+          error: 'Favorites tables not initialized. Please run database migration.'
         },
         { status: 503 } // Service Unavailable
       );
     }
-    
+
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to add album to favorites',
-        details: errorMessage
+        error: 'Failed to add album to favorites'
       },
       { status: 500 }
     );
@@ -554,8 +552,8 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const sessionId = getSessionIdFromRequest(request);
-    const userId = request.headers.get('x-nostr-user-id');
-    
+    const userId = requireUser(request, { write: true });
+
     if (!sessionId && !userId) {
       return NextResponse.json(
         {
@@ -635,8 +633,7 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to remove album from favorites',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: 'Failed to remove album from favorites'
       },
       { status: 500 }
     );
@@ -651,8 +648,8 @@ export async function DELETE(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   try {
     const sessionId = getSessionIdFromRequest(request);
-    const userId = request.headers.get('x-nostr-user-id');
-    
+    const userId = requireUser(request, { write: true });
+
     if (!sessionId && !userId) {
       return NextResponse.json(
         {
@@ -748,8 +745,7 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to update favorite album',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: 'Failed to update favorite album'
       },
       { status: 500 }
     );

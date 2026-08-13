@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { normalizePubkey } from '@/lib/nostr/normalize';
+import { requireUser } from '@/lib/auth/require-user';
 
 /**
  * GET /api/nostr/following
@@ -9,12 +10,11 @@ import { normalizePubkey } from '@/lib/nostr/normalize';
  */
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
+    const currentUserId = requireUser(request);
 
-    const targetUserId = searchParams.get('userId');
-    const currentUserId = request.headers.get('x-nostr-user-id');
-
-    const userId = targetUserId || currentUserId;
+    // No ?userId= override. It used to let any caller read any account's rows
+    // by passing a hex pubkey, which is public information.
+    const userId = currentUserId;
 
     if (!userId) {
       return NextResponse.json(

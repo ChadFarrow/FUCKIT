@@ -1,5 +1,6 @@
 'use client';
 
+import { notFound } from 'next/navigation';
 import { useState, useEffect, Suspense, useRef, useCallback } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { LNURLService } from '@/lib/lightning/lnurl';
@@ -515,6 +516,12 @@ function SandboxAlbumContent() {
 }
 
 export default function SandboxAlbumPage() {
+  // Dev harness. Kept rather than deleted: /sandbox/album renders the real
+  // AlbumDetailClient and is named in lib/album-detail-routes.ts and its test,
+  // and the puppeteer verification recipes in CLAUDE.md run against
+  // `npm run dev`, where this gate is inactive.
+  if (process.env.NODE_ENV === 'production') notFound();
+
   return (
     <Suspense
       fallback={

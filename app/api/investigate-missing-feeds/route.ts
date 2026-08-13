@@ -87,7 +87,7 @@ async function lookupFeedByGuid(guid: string) {
     return {
       guid,
       found: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: 'Lookup failed',
       details: null
     };
   }
@@ -109,12 +109,13 @@ async function testFeedUrl(url: string) {
       lastModified: response.headers.get('last-modified')
     };
   } catch (error) {
+    console.error(`❌ Error testing feed URL ${url}:`, error);
     return {
       accessible: false,
       status: 0,
       contentType: null,
       lastModified: null,
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: 'Failed to test feed URL'
     };
   }
 }
@@ -201,9 +202,9 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('❌ Error investigating feeds:', error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error' 
+      {
+        success: false,
+        error: 'Failed to investigate feeds'
       },
       { status: 500 }
     );

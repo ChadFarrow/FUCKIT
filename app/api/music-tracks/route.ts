@@ -298,11 +298,10 @@ export async function GET(request: NextRequest) {
     
   } catch (error) {
     console.error('Music track extraction failed:', error);
-    
+
     return NextResponse.json(
-      { 
-        error: 'Failed to extract music tracks',
-        details: error instanceof Error ? error.message : 'Unknown error'
+      {
+        error: 'Failed to extract music tracks'
       },
       { status: 500 }
     );
@@ -347,11 +346,10 @@ export async function POST(request: NextRequest) {
     
   } catch (error) {
     console.error('Batch music track extraction failed:', error);
-    
+
     return NextResponse.json(
-      { 
-        error: 'Failed to process batch request',
-        details: error instanceof Error ? error.message : 'Unknown error'
+      {
+        error: 'Failed to process batch request'
       },
       { status: 500 }
     );

@@ -1,5 +1,6 @@
 'use client';
 
+import { notFound } from 'next/navigation';
 import React, { useState, useEffect, useRef } from 'react';
 import { NIP46Client } from '@/lib/nostr/nip46-client';
 import { NIP55Client } from '@/lib/nostr/nip55-client';
@@ -25,6 +26,10 @@ interface LogEntry {
 }
 
 export default function AmberTestPage() {
+  // Dev-only Amber/NIP-46 signer test harness. Gated rather than deleted so it
+  // stays available under `npm run dev`, where NODE_ENV is not 'production'.
+  if (process.env.NODE_ENV === 'production') notFound();
+
   const [testResults, setTestResults] = useState<TestResult[]>([]);
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [nip46Client, setNip46Client] = useState<NIP46Client | null>(null);

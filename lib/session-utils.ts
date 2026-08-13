@@ -6,14 +6,29 @@
 const SESSION_ID_KEY = 'favorites-session-id';
 
 /**
- * Generate a UUID v4
+ * Session IDs key anonymous favorites, so a guessable one exposes another
+ * visitor's list. Math.random() is not a CSPRNG — this uses crypto.
+ *
+ * Exported for tests. The manual fallback exists because crypto.randomUUID is
+ * unavailable in insecure contexts, and CLAUDE.md's phone-testing flow uses a
+ * plain http://<lan-ip>:3000 origin.
  */
-function generateUUID(): string {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = (Math.random() * 16) | 0;
-    const v = c === 'x' ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
+export function generateSessionId(): string {
+  const c: Crypto | undefined =
+    typeof globalThis !== 'undefined' ? (globalThis.crypto as Crypto | undefined) : undefined;
+
+  if (c?.randomUUID) return c.randomUUID();
+
+  if (c?.getRandomValues) {
+    const bytes = new Uint8Array(16);
+    c.getRandomValues(bytes);
+    bytes[6] = (bytes[6] & 0x0f) | 0x40; // version 4
+    bytes[8] = (bytes[8] & 0x3f) | 0x80; // variant 10
+    const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+    return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+  }
+
+  throw new Error('No secure random source available for session ID generation');
 }
 
 /**
@@ -30,15 +45,15 @@ export function getSessionId(): string {
     let sessionId = localStorage.getItem(SESSION_ID_KEY);
     
     if (!sessionId) {
-      sessionId = generateUUID();
+      sessionId = generateSessionId();
       localStorage.setItem(SESSION_ID_KEY, sessionId);
     }
-    
+
     return sessionId;
   } catch (error) {
     console.error('Error getting session ID from localStorage:', error);
     // Fallback: generate a temporary session ID
-    return generateUUID();
+    return generateSessionId();
   }
 }
 

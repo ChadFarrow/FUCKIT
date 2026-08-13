@@ -67,9 +67,8 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Error generating playlist RSS:', error);
     return NextResponse.json(
-      { 
-        error: 'Failed to generate playlist RSS',
-        details: error instanceof Error ? error.message : String(error)
+      {
+        error: 'Failed to generate playlist RSS'
       },
       { status: 500 }
     );
@@ -126,8 +125,7 @@ export async function POST(request: NextRequest) {
     console.error('Error generating playlist RSS (POST):', error);
     return NextResponse.json(
       {
-        error: 'Failed to generate playlist RSS',
-        details: error instanceof Error ? error.message : String(error)
+        error: 'Failed to generate playlist RSS'
       },
       { status: 500 }
     );

@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      # --ignore-scripts skips this repo's postinstall, which runs check-env
+      # and dev-setup and is meant for a developer's machine, not CI.
+      - run: npm ci --ignore-scripts
+      # Prisma Client must exist before tsc; lib/ imports its generated types,
+      # and postinstall would normally have generated it.
+      - run: npx prisma generate
+      - run: npm run typecheck
+      - run: npm run test:all
+      - run: npx next lint

@@ -1,27 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { clearSessionCookie } from '@/lib/auth/require-user';
 
 /**
  * POST /api/nostr/auth/logout
- * Clear Nostr authentication session
+ * Clear the session cookie. The client separately clears localStorage.
  */
-export async function POST(request: NextRequest) {
-  try {
-    // In production, clear server-side session/cookie
-    // For now, the client will handle clearing localStorage
-
-    return NextResponse.json({
-      success: true,
-      message: 'Logout successful',
-    });
-  } catch (error) {
-    console.error('Logout error:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: 'Logout failed',
-      },
-      { status: 500 }
-    );
-  }
+export async function POST(_request: NextRequest) {
+  const response = NextResponse.json({
+    success: true,
+    message: 'Logout successful',
+  });
+  response.headers.set('Set-Cookie', clearSessionCookie());
+  return response;
 }
-

@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma';
 import { getSessionIdFromRequest } from '@/lib/session-utils';
 import { normalizePubkey } from '@/lib/nostr/normalize';
 import { buildFeedIdEquivalence, feedLookupWhere, flattenFeedIdEquivalence, isFeedIdFavorited } from '@/lib/favorite-feed-ids';
+import { requireUser } from '@/lib/auth/require-user';
+import { MAX_CHECK_IDS, parseCheckIds, buildTrackIdIndex } from '@/lib/favorites-check-input';
 
 /**
  * POST /api/favorites/check
@@ -12,8 +14,8 @@ import { buildFeedIdEquivalence, feedLookupWhere, flattenFeedIdEquivalence, isFe
 export async function POST(request: NextRequest) {
   try {
     const sessionId = getSessionIdFromRequest(request);
-    const userId = request.headers.get('x-nostr-user-id');
-    
+    const userId = requireUser(request);
+
     if (!sessionId && !userId) {
       return NextResponse.json({
         success: true,
@@ -25,7 +27,18 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { trackIds = [], feedIds = [] } = body;
+    const trackIds = parseCheckIds(body?.trackIds);
+    const feedIds = parseCheckIds(body?.feedIds);
+
+    if (trackIds === null || feedIds === null) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: `trackIds and feedIds must be arrays of at most ${MAX_CHECK_IDS} strings`,
+        },
+        { status: 400 }
+      );
+    }
 
     const results: {
       tracks: Record<string, boolean>;
@@ -56,14 +69,14 @@ export async function POST(request: NextRequest) {
           select: { id: true, guid: true, audioUrl: true }
         });
 
-        // Build a map: input trackId -> all possible identifiers for that track
+        // One index instead of a linear scan per input. See
+        // lib/favorites-check-input.ts for why this was a DoS.
+        const trackIndex = buildTrackIdIndex(tracks);
+
         const trackIdToAllIds = new Map<string, string[]>();
         for (const inputId of trackIds) {
           const possibleIds = [inputId];
-          // Find if this inputId matches any track
-          const matchedTrack = tracks.find(t =>
-            t.id === inputId || t.guid === inputId || t.audioUrl === inputId
-          );
+          const matchedTrack = trackIndex.get(inputId);
           if (matchedTrack) {
             if (matchedTrack.id && !possibleIds.includes(matchedTrack.id)) possibleIds.push(matchedTrack.id);
             if (matchedTrack.guid && !possibleIds.includes(matchedTrack.guid)) possibleIds.push(matchedTrack.guid);

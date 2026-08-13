@@ -682,8 +682,7 @@ export async function GET(request: Request) {
     // Always log errors, even in production
     console.error('❌ Albums Fast API Error:', error);
     return NextResponse.json({
-      error: 'Failed to load albums',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      error: 'Failed to load albums'
     }, { status: 500 });
   }
 }
