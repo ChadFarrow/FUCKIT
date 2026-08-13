@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { XMLParser } from 'fast-xml-parser';
+import { isSafePublicUrl } from '@/lib/url-security';
 
 export async function GET(request: NextRequest) {
   try {
@@ -7,6 +8,14 @@ export async function GET(request: NextRequest) {
     const feedUrl = url.searchParams.get('feedUrl');
     if (!feedUrl) {
       return NextResponse.json({ error: 'Missing feedUrl' }, { status: 400 });
+    }
+
+    // Fetches a caller-supplied URL, so it must go through the same guard as
+    // /api/chapters, /api/proxy-image and /api/proxy-audio. Without it, any
+    // link-local or RFC-1918 host was reachable AND its body was reflected
+    // back to the caller.
+    if (!isSafePublicUrl(feedUrl)) {
+      return NextResponse.json({ error: 'URL not allowed' }, { status: 400 });
     }
 
     // Enforce a timeout so the UI isn't stuck if the remote feed is slow
