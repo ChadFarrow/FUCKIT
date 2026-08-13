@@ -81,6 +81,19 @@ Playlists use `<podcast:remoteItem>` with `feedGuid` + `itemGuid`. On `?refresh`
 
 ---
 
+## `Feed.medium` — what the feed declared, as opposed to what we concluded
+
+`<podcast:medium>` was parsed for years and thrown away: `parsePodcastMediumFromXML` ran, picked a `Feed.type`, and nothing kept the value. It has a column now because the cross-app favorites list publishes it at tag position 4 — that is how another app tells a music album from a talk show without resolving every entry (`favorites-cross-app`).
+
+- **NULL means "the feed didn't say", and nothing may default it.** Not from `Feed.type`, which defaults to `"album"` and is therefore a guess for anything that never declared. A guess written here reaches the shared Nostr list, where it is **sticky**: no other app will correct it, and by the format's own rules this one may not either. Leaving it NULL costs a missing hint; filling it wrongly costs every app that reads the list.
+- **Ten paths create or upsert a `Feed`; nine of them dropped the medium** on the first pass at this. The ones that carry it now: `lib/feed-parsing.ts` (`importFeedToDatabase` — playlist resolution and podping ingest), `app/api/feeds/route.ts` (×3, including the guid-collision retry upsert and the auto-discovered publisher feed), `feeds/refresh-by-url` (×3), `feeds/[id]/process-remote-items`, `lib/album-import.ts`, `lib/auto-populate-feeds.ts`, `lib/publisher-discovery.ts`, `admin/feeds/import-from-pi`, plus the four reparse **updates** (`admin/reparse-feeds`, `admin/feeds/[id]/reparse`, `admin/feeds`, `admin/refresh-all-feeds`) — which is what makes the nightly cron a backfill.
+- **The re-key path in `refresh-by-url` is the dangerous shape.** It deletes a row and recreates it under a new id from a field-by-field copy, so a column absent from that list is *discarded*, not merely unset. Any new `Feed` column has to be added there too.
+- **The other nine creation sites are deliberately left alone** (`music-tracks/*`, `import-missing-feeds`, `populate-feeds`, …). They mint placeholder rows from shapes that carry no medium; a reparse fills the column later.
+- **Backfill: `scripts/backfill-feed-medium.ts`** (dry run by default, `--apply` to write, `--limit N`, reruns are free — it selects `medium IS NULL`). Two passes: Podcast Index first, then the feeds themselves for anything PI couldn't answer, through the same `parsePodcastMediumFromXML`. Run on production 2026-08-13: **4,409 of 5,003**. What stays NULL is dominated by `status=error` rows that serve no XML and that PI doesn't know.
+- **Podcast Index rate-limits harder than a short trial reveals.** Four unpaced workers passed a 25-feed run and then took HTTP 429 on **3,270 of 5,003**. Pacing at 4/s failed the same way but *invisibly*: Cloudflare fronts the API and answers `retry-after: 9`, so every worker sat in backoff while the process looked alive and the log looked like progress. **1 req/s, single worker**, and let a 429 slow the whole run rather than one request. PI also can't finish this job alone — 247 of these feeds it has never indexed and 1,024 lookups it refuses outright, mostly Wavlake artist feeds.
+
+---
+
 ## Adding Music Podcasts (like Upbeats, Two For Tunestr, B4TS)
 Import via `/admin` (paste RSS URL). Non-Wavlake feeds with `<podcast:medium>podcast</podcast:medium>` automatically get `type: 'podcast'`, appear under the Podcasts filter, hide from the album grid, and are searchable — no config edits needed. `/podcast/[id]` dynamic route handles display.
 

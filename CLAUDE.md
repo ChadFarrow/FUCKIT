@@ -59,8 +59,17 @@ line holds the full story.
   serving field-missing data out of localStorage indefinitely → `catalog-display`.
 - **The same field is often written or read from N places, and fixing one is the standard bug here.**
   `/api/albums-fast` has **two** Track selects; `favorites/tracks` has **three** Feed selects; `podcastImages` has
-  **three** write paths; the release date has **seven** read paths; `AlbumDetailClient` duplicates props across its
-  mobile and desktop rows. Adding or fixing a field means finding all of them → the owning skill.
+  **three** write paths; the release date has **seven** read paths; `Feed.medium` has **ten** create/upsert paths
+  and the first pass at it caught one; `AlbumDetailClient` duplicates props across its mobile and desktop rows.
+  Adding or fixing a field means finding all of them → the owning skill. `grep -rn "prisma.<model>.create\|upsert"`
+  before believing you have. Watch for **re-key** paths especially — `refresh-by-url` deletes a row and recreates it
+  from a field-by-field copy, so a column missing from that list is silently dropped rather than merely unset.
+- **`Feed.type` is this app's classification; `Feed.medium` is what the feed declared.** They are not
+  interchangeable and the difference is load-bearing. `type` defaults to `"album"`, so it always has a value and
+  that value is often a guess; `medium` is NULL until a feed actually says, and **nothing may default it**. Only
+  `medium` goes on the cross-app favorites list, where a guess is sticky and no other app will correct it. Use
+  `type` for local behaviour, `medium` for anything published or shown as fact → `favorites-cross-app`,
+  `feed-ingestion`.
 - **Verify UI changes by measuring, not eyeballing** — puppeteer-core against the real component, asserting all
   four edges. Several bugs here survived a sweep that only checked one → `mobile-layout`.
 
