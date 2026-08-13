@@ -151,9 +151,8 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Error resolving music track:', error);
     return NextResponse.json(
-      { 
-        error: 'Failed to resolve music track',
-        details: error instanceof Error ? error.message : String(error)
+      {
+        error: 'Failed to resolve music track'
       },
       { status: 500 }
     );

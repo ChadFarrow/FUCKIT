@@ -68,8 +68,7 @@ export async function DELETE(
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to remove album from favorites',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: 'Failed to remove album from favorites'
       },
       { status: 500 }
     );

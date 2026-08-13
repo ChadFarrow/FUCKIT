@@ -159,9 +159,8 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error adding playlist to database:', error);
     return NextResponse.json(
-      { 
-        error: 'Failed to add playlist to database',
-        details: error instanceof Error ? error.message : 'Unknown error'
+      {
+        error: 'Failed to add playlist to database'
       },
       { status: 500 }
     );
@@ -302,9 +301,8 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Error retrieving playlist data:', error);
     return NextResponse.json(
-      { 
-        error: 'Failed to retrieve playlist data',
-        details: error instanceof Error ? error.message : 'Unknown error'
+      {
+        error: 'Failed to retrieve playlist data'
       },
       { status: 500 }
     );

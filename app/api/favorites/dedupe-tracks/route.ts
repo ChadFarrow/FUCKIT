@@ -118,8 +118,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to deduplicate favorites',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: 'Failed to deduplicate favorites'
       },
       { status: 500 }
     );

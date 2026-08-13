@@ -63,10 +63,9 @@ export async function GET() {
   } catch (error) {
     console.error('Error fetching HGH playlist:', error);
     return NextResponse.json(
-      { 
+      {
         success: false,
-        error: 'Failed to fetch HGH playlist',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: 'Failed to fetch HGH playlist'
       },
       { status: 500 }
     );

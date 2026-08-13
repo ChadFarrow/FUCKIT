@@ -139,8 +139,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to migrate favorites',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: 'Failed to migrate favorites'
       },
       { status: 500 }
     );

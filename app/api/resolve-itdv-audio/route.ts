@@ -71,9 +71,8 @@ export async function GET() {
   } catch (error) {
     console.error('Error resolving ITDV audio URLs:', error);
     return NextResponse.json(
-      { 
-        error: 'Failed to resolve ITDV audio URLs', 
-        details: error instanceof Error ? error.message : 'Unknown error' 
+      {
+        error: 'Failed to resolve ITDV audio URLs'
       },
       { status: 500 }
     );

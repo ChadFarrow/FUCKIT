@@ -64,9 +64,8 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('❌ Failed to get playlists:', error);
     return NextResponse.json(
-      { 
-        error: 'Failed to get playlists',
-        details: error instanceof Error ? error.message : 'Unknown error'
+      {
+        error: 'Failed to get playlists'
       },
       { status: 500 }
     );

@@ -87,8 +87,7 @@ export async function POST() {
         console.error('❌ Failed to deploy schema:', schemaError);
         return NextResponse.json({
           success: false,
-          error: 'Failed to create database schema',
-          details: schemaError instanceof Error ? schemaError.message : 'Unknown error'
+          error: 'Failed to create database schema'
         }, { status: 500 });
       }
     }
@@ -111,8 +110,7 @@ export async function POST() {
     console.error('❌ Database initialization failed:', error);
     return NextResponse.json({
       success: false,
-      error: 'Database initialization failed',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      error: 'Database initialization failed'
     }, { status: 500 });
   }
 }
