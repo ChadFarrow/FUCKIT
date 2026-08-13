@@ -24,9 +24,11 @@ import {
 } from './pc20-identifiers';
 import {
   fetchSingleList,
+  groupForSingleList,
+  mergeSingleList,
   partitionSingleList,
-  singleListDigest,
-  singleListTemplate,
+  tagsFromGroups,
+  templateFromTags,
 } from './favorites-single-list';
 import { RelayManager, getDefaultRelays, filterReachableRelays } from './relay';
 import { FAVORITE_STATUSES_INVALIDATED_EVENT } from '../favorite-status-cache';
@@ -320,12 +322,29 @@ async function publishSingleList(
   relayUrls: string[]
 ): Promise<boolean> {
   try {
-    const digest = singleListDigest(local);
+    // Read first, ALWAYS. Publishing replaces the event wholesale, so a publish
+    // on top of a read that failed silently is the most expensive mistake this
+    // format allows — one bad read, republished, is the entire list gone. A
+    // skipped publish is retried on the next toggle; this is not recoverable.
+    const read = await fetchSingleList(pubkey, relayUrls);
+    if (!read.trustworthy) {
+      console.warn('⚠️ Favorites: relay read was degraded — not publishing');
+      return false;
+    }
+
+    const merged = mergeSingleList(read, groupForSingleList(local));
+    const tags = tagsFromGroups(merged.groups, merged.orphanItemGuids);
+
+    // The digest is computed on the MERGED tags, not on local state. On local
+    // state it would never notice a foreign entry arriving, so a group another
+    // app added would sit unreplicated until this device's own favorites
+    // happened to change.
+    const digest = JSON.stringify(tags);
     const key = `${SINGLE_LIST_DIGEST_PREFIX}:${pubkey}`;
     // Unchanged is a success, not a skip: the relays already hold exactly this.
     if (typeof window !== 'undefined' && localStorage.getItem(key) === digest) return true;
 
-    const signed = await signSharedEvent(singleListTemplate(local, Math.floor(Date.now() / 1000)));
+    const signed = await signSharedEvent(templateFromTags(tags, Math.floor(Date.now() / 1000)));
     const ok = await publishToRelays(signed, relayUrls);
     if (!ok) {
       console.warn('⚠️ Single-list favorites: no relay accepted the event');

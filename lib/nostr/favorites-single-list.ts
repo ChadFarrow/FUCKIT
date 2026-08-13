@@ -154,9 +154,39 @@ export function groupForSingleList(items: FavoriteEntry[]): SingleListGroup[] {
  * authoritative.
  */
 export function buildSingleListTags(items: FavoriteEntry[]): string[][] {
-  const groups = groupForSingleList(items);
+  return tagsFromGroups(groupForSingleList(items), []);
+}
+
+/**
+ * Render ordered groups as tags.
+ *
+ * Group ORDER is the caller's to decide and is preserved within each medium
+ * block — that is what lets `mergeSingleList` keep the order it read and append
+ * new entries at the end of their block, as the spec asks.
+ *
+ * Where the spec's two ordering rules conflict — "preserve the order you read"
+ * and "keep same-medium feeds contiguous" — contiguity wins. A foreign writer
+ * interleaving media would otherwise force us to choose between reordering
+ * (harmless: items always follow their own group, so nothing is reattached) and
+ * emitting a layout that silently re-labels every entry after the first
+ * boundary. Reordering within a block costs nothing; breaking contiguity
+ * corrupts.
+ */
+export function tagsFromGroups(
+  groups: SingleListGroup[],
+  orphanItemGuids: string[]
+): string[][] {
   const tags: string[][] = [['alt', LIST_ALT]];
   const kinds = new Set<string>();
+
+  // Ahead of every group, so they are still orphans when read back. This app
+  // never originates one; it re-emits what another writer left.
+  for (const guid of orphanItemGuids) {
+    const id = itemId(guid);
+    if (!identifierKind(id)) continue;
+    tags.push(['i', id]);
+    kinds.add(ITEM_KIND);
+  }
 
   const emit = (group: SingleListGroup) => {
     const feed = showId(group.feedGuid);
@@ -202,14 +232,70 @@ export function buildSingleListTags(items: FavoriteEntry[]): string[][] {
   return tags;
 }
 
+/**
+ * Merge what we hold onto what the relays hold — the read-then-carry pass.
+ *
+ * There is no baseline in this format, so this is not the 30078 merge and does
+ * not try to be. It answers one question per entry: is this ours to manage?
+ *
+ *   - **A feed group we hold** is emitted from LOCAL state, in the position it
+ *     was read. Its items are ours, so an unfavorite still propagates.
+ *   - **A feed group we don't hold** is carried verbatim, with its items. This
+ *     is the spec's "don't clobber entries the writing app doesn't understand",
+ *     and without it every publish deletes whatever the other app holds alone.
+ *   - **Groups we hold that weren't on the list** are appended, so a new
+ *     favorite lands at the end of its medium block rather than the top.
+ *   - **Orphan items** — items that appeared before any feed group — are
+ *     carried untouched. We never write one.
+ *
+ * **The one place the missing baseline is visibly load-bearing:** an item under
+ * a feed we hold, which we do NOT have locally, is dropped. It could be a
+ * favorite another app added, or one this device just removed, and nothing on
+ * the wire distinguishes them. Preferring "ours" is what keeps unfavoriting
+ * working at all; preferring "theirs" would make removal impossible and is the
+ * failure the 30078 baseline existed to avoid. It is only safe while one app
+ * writes, which is the assumption the whole format rests on.
+ */
+export function mergeSingleList(
+  read: { groups: SingleListGroup[]; orphanItemGuids: string[] },
+  local: SingleListGroup[]
+): { groups: SingleListGroup[]; orphanItemGuids: string[] } {
+  const localByGuid = new Map(local.map((g) => [g.feedGuid, g]));
+  const groups: SingleListGroup[] = [];
+  const taken = new Set<string>();
+
+  for (const group of read.groups) {
+    if (taken.has(group.feedGuid)) continue; // a duplicate group on the wire
+    taken.add(group.feedGuid);
+    const mine = localByGuid.get(group.feedGuid);
+    if (!mine) {
+      groups.push(group);
+      continue;
+    }
+    groups.push({
+      ...mine,
+      // Prefer what we resolved; fall back to the hint that was already there
+      // rather than blanking it. A hint we didn't write is not ours to delete.
+      medium: mine.medium ?? group.medium,
+    });
+  }
+
+  for (const group of local) {
+    if (taken.has(group.feedGuid)) continue;
+    taken.add(group.feedGuid);
+    groups.push(group);
+  }
+
+  return { groups, orphanItemGuids: read.orphanItemGuids };
+}
+
 /** The unsigned event template. `content` is empty and public, as in the spec. */
 export function singleListTemplate(items: FavoriteEntry[], createdAt: number) {
-  return {
-    kind: SINGLE_LIST_KIND,
-    tags: buildSingleListTags(items),
-    content: '',
-    created_at: createdAt,
-  };
+  return templateFromTags(buildSingleListTags(items), createdAt);
+}
+
+export function templateFromTags(tags: string[][], createdAt: number) {
+  return { kind: SINGLE_LIST_KIND, tags, content: '', created_at: createdAt };
 }
 
 /**

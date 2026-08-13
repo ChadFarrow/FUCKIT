@@ -22,7 +22,7 @@ npx tsx scripts/backup-favorites.ts dump > fav.json      # snapshot favorites be
 
 Spec: [`PC20-Nostr/pc20-favorites-single-list.md`](https://github.com/ChadFarrow/PC20-Nostr/blob/main/pc20-favorites-single-list.md), the canonical app-neutral copy kept outside both implementing repos. **That document, not this code, is what a third app implements against.** One plain (non-`d`-tagged) replaceable event, so exactly one per pubkey; `i` tags grouped under a running `medium`; `content` empty and public. Republishing the whole tag list IS the sync.
 
-It **replaced** the two-list NIP-78 kind:30078 design (`pc20-favorites.md` in the same repo), which proved overcomplicated and is now deleted here. Events at `d:podcast:favorites` and `d:podcast:favorites:items` are still on the relays and are the rollback path; nothing in this app reads or writes them.
+It **replaced** the two-list NIP-78 kind:30078 design, which proved overcomplicated and has been deleted from both this repo and the spec repo. Events at `d:podcast:favorites` and `d:podcast:favorites:items` are still on the relays and are the rollback path; nothing in this app reads or writes them.
 
 Files: `lib/nostr/pc20-identifiers.ts` (the NIP-73 vocabulary, which outlives any one format), `lib/nostr/favorites-single-list.ts` (build + parse + fetch), `lib/nostr/relay-read.ts` (the trusted read), `lib/nostr/favorites-sync-client.ts` (DB→identifier mapping, debounce, publish, pull, sync health), `app/api/favorites/sync-shared/route.ts` (inbound reconcile).
 

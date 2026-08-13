@@ -10,10 +10,11 @@ One plain replaceable event at **kind 10333**, `i` tags grouped under a running
 `medium`, no `d` tag, no baseline, no merge. Republishing the whole tag list is
 the sync.
 
-It supersedes `pc20-favorites.md` in the same repo — the two-list NIP-78
-kind:30078 design, which proved overcomplicated in practice. StableKraft
-implemented that one and no longer does; the events it published are still on
-the relays and are the rollback path, but nothing here reads or writes them.
+It supersedes the two-list NIP-78 kind:30078 design, which proved
+overcomplicated in practice and has since been deleted from that repo along
+with the rest of the old layout. StableKraft implemented it and no longer does;
+the events it published are still on the relays and are the rollback path, but
+nothing here reads or writes them.
 
 Implemented here in:
 

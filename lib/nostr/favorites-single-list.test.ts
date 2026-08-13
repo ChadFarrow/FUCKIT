@@ -22,9 +22,11 @@ import {
   SINGLE_LIST_KIND,
   buildSingleListTags,
   groupForSingleList,
+  mergeSingleList,
   parseSingleList,
   partitionSingleList,
   singleListDigest,
+  tagsFromGroups,
   singleListTemplate,
 } from './favorites-single-list';
 import { itemId, showId, type FavoriteEntry } from './pc20-identifiers';
@@ -425,4 +427,132 @@ test('a group with items cannot be read as a favorited FEED — the reconcile ru
   assert.deepEqual(unambiguous, [MUSIC_A]);
   assert.equal(withItems.has(MUSIC_C), true, 'placement group is excluded');
   assert.equal(withItems.has(POD_B), true, 'ambiguous group is excluded too');
+});
+
+// --- the read-then-carry merge ---------------------------------------------
+
+const FOREIGN_E = 'b1c2d3e4-5f60-5a7b-8c9d-0e1f2a3b4c5d';
+
+/** What our writer would emit for these local favorites, merged onto a read. */
+const mergedTags = (read: ReturnType<typeof parseSingleList>, local: FavoriteEntry[]) => {
+  const merged = mergeSingleList(read, groupForSingleList(local));
+  return tagsFromGroups(merged.groups, merged.orphanItemGuids);
+};
+
+test('a foreign feed group survives a republish, with its items and its position', () => {
+  // THE CLOBBER CASE, and the reason this pass exists. Without it every publish
+  // deletes whatever the other app holds exclusively — silently, on someone
+  // else's device, with no baseline to notice it went missing.
+  const read = parseSingleList([
+    ['medium', 'podcast'],
+    ['i', showId(FOREIGN_E)],
+    ['i', itemId('their-ep')],
+    ['medium', 'music'],
+    ['i', showId(MUSIC_A)],
+  ]);
+  const tags = mergedTags(read, [album(MUSIC_A, 'music')]);
+
+  assert.deepEqual(seq(tags), [
+    `alt:${LIST_ALT}`,
+    'medium:podcast',
+    `i:podcast:guid:${FOREIGN_E}`,
+    'i:podcast:item:guid:their-ep',
+    'medium:music',
+    `i:podcast:guid:${MUSIC_A}`,
+    'k:podcast:guid',
+    'k:podcast:item:guid',
+  ]);
+});
+
+test('an orphan item survives, still ahead of the groups', () => {
+  const read = parseSingleList([
+    ['i', itemId('loose')],
+    ['medium', 'music'],
+    ['i', showId(MUSIC_A)],
+  ]);
+  const tags = mergedTags(read, [album(MUSIC_A, 'music')]);
+  assert.deepEqual(seq(tags).slice(0, 2), [`alt:${LIST_ALT}`, 'i:podcast:item:guid:loose']);
+});
+
+test('a local unfavorite under a feed we hold still disappears', () => {
+  // The other half. Items under OUR feed are ours to manage, or removal stops
+  // working — which is the failure the 30078 baseline existed to prevent, and
+  // the price of not having one is that a foreign item under our own feed is
+  // indistinguishable from one we just removed.
+  const read = parseSingleList([
+    ['medium', 'music'],
+    ['i', showId(MUSIC_A)],
+    ['i', itemId('t1')],
+    ['i', itemId('t2')],
+  ]);
+  const tags = mergedTags(read, [album(MUSIC_A, 'music'), track('t1', MUSIC_A, 'music')]);
+  assert.deepEqual(
+    tags.filter((t) => t[0] === 'i').map((t) => t[1]),
+    [showId(MUSIC_A), itemId('t1')]
+  );
+});
+
+test('a new local group appends to the end of its medium block, not the event', () => {
+  const read = parseSingleList([
+    ['medium', 'music'],
+    ['i', showId(MUSIC_A)],
+    ['medium', 'podcast'],
+    ['i', showId(POD_B)],
+  ]);
+  const tags = mergedTags(read, [
+    album(MUSIC_A, 'music'),
+    album(POD_B, 'podcast'),
+    album(MUSIC_C, 'music'), // new
+  ]);
+  assert.deepEqual(seq(tags), [
+    `alt:${LIST_ALT}`,
+    'medium:music',
+    `i:podcast:guid:${MUSIC_A}`,
+    `i:podcast:guid:${MUSIC_C}`,
+    'medium:podcast',
+    `i:podcast:guid:${POD_B}`,
+    'k:podcast:guid',
+  ]);
+});
+
+test('media stay contiguous even when the read interleaved them', () => {
+  // Where the spec's two ordering rules collide, contiguity wins: reordering
+  // within a block reattaches nothing, while a broken block silently re-labels
+  // every entry after the boundary.
+  const read = parseSingleList([
+    ['medium', 'music'],
+    ['i', showId(MUSIC_A)],
+    ['medium', 'podcast'],
+    ['i', showId(POD_B)],
+    ['medium', 'music'],
+    ['i', showId(MUSIC_C)],
+  ]);
+  const tags = mergedTags(read, [
+    album(MUSIC_A, 'music'),
+    album(POD_B, 'podcast'),
+    album(MUSIC_C, 'music'),
+  ]);
+  assert.equal(tags.filter((t) => t[0] === 'medium').length, 2);
+  const order = seq(tags);
+  assert.equal(order.indexOf('medium:podcast') > order.indexOf(`i:podcast:guid:${MUSIC_C}`), true);
+});
+
+test('a hint we did not write is not blanked by a local entry that lacks one', () => {
+  const read = parseSingleList([
+    ['medium', 'audiobook'],
+    ['i', showId(NO_MEDIUM_D)],
+  ]);
+  const merged = mergeSingleList(read, groupForSingleList([album(NO_MEDIUM_D, undefined)]));
+  assert.equal(merged.groups[0].medium, 'audiobook');
+});
+
+test('idempotence — merging our own output back produces byte-identical tags', () => {
+  // The property that stops two apps rewriting the event against each other
+  // forever, and the one a carry pass is easiest to break.
+  const local = [album(MUSIC_A, 'music'), track('t1', MUSIC_A, 'music'), album(POD_B, 'podcast')];
+  const first = buildSingleListTags(local);
+  const second = mergedTags(parseSingleList(first), local);
+  assert.deepEqual(second, first);
+  const third = mergedTags(parseSingleList(second), local);
+  assert.deepEqual(third, second);
 });
