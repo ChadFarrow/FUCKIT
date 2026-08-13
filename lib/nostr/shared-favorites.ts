@@ -82,7 +82,13 @@ export const SHARED_D_TAG = 'podcast:favorites';
 export const SHARED_FAVORITES_KIND = 30078;
 
 export const SHOW_PREFIX = 'podcast:guid:';
-export const ITEM_PREFIX = 'podcast:item:guid:';
+
+/** The identifier kind for episodes and tracks — the `k` value, no trailing
+ *  colon. Named because placement depends on it: this kind belongs at
+ *  `podcast:favorites:items`, and `mergeSharedFavorites` refuses to originate
+ *  one here. */
+export const ITEM_KIND = 'podcast:item:guid';
+export const ITEM_PREFIX = `${ITEM_KIND}:`;
 
 const LIST_TITLE = 'Podcast Favorites';
 
@@ -112,7 +118,7 @@ const MANAGED_TAGS = new Set(['d', 'title', 'i']);
  */
 const KNOWN_IDENTIFIER_KINDS = [
   'podcast:publisher:guid',
-  'podcast:item:guid',
+  ITEM_KIND,
   'podcast:guid',
 ];
 
@@ -371,6 +377,26 @@ export function mergeSharedFavorites(args: {
     // user unfavorites in the other app, opens this one, and it comes back.
     // Only a genuine local ADD (not in the baseline) may be appended here.
     if (baseline.has(item.id)) continue;
+    // ...and an item entry is never ORIGINATED here at all, whatever the
+    // baseline says. This list is `podcast:favorites`, the spec's feeds
+    // address; episodes and tracks belong at `podcast:favorites:items`, and
+    // "writers must never originate an item entry there" is the rule that
+    // keeps the two lists from fighting.
+    //
+    // This is not a style preference — it is load-bearing while this app still
+    // writes only the one address. Boost Me Bitch migrated its 223 track
+    // entries to the items list on 2026-08-13; every one of them is in this
+    // app's baseline, so the pass that drops them from the baseline is
+    // immediately followed by a pass that reads them as brand-new local adds
+    // and puts them all back on the feeds list. The other app cannot undo that
+    // — the entries are not in ITS baseline, so its own merge is forbidden to
+    // touch them — and the entry then exists on both lists, which is the state
+    // the spec describes as breaking unfavoriting permanently.
+    //
+    // Entries that ARRIVE on this list are a different matter and are carried
+    // verbatim by the loop above: reading a legacy item entry is required,
+    // originating one is forbidden.
+    if (identifierKind(item.id) === ITEM_KIND) continue;
     kept.add(item.id);
     out.push(item);
   }
