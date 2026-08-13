@@ -4,6 +4,8 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 // Note: nostr-tools functions are imported via @/lib/nostr/keys when needed (lazy-loaded)
 import { fetchAndStoreUserRelays, clearStoredUserRelays } from '@/lib/nostr/nip65';
 import { normalizePubkey } from '@/lib/nostr/normalize';
+import { SESSION_EXPIRED_EVENT, notifySessionExpired, isSessionExpiredResponse } from '@/lib/auth/session-expired';
+import { toast } from '@/components/Toast';
 
 export interface NostrUser {
   id: string;
@@ -291,6 +293,44 @@ export function NostrProvider({ children }: { children: React.ReactNode }) {
     }).catch(err => {
       console.error('Logout API error:', err);
     });
+  }, []);
+
+  // Users who logged in before session cookies existed hold `nostr_user` in
+  // localStorage but no cookie. Probe once on mount; if the session is stale,
+  // clear it and let the normal logged-out UI prompt a fresh login. One signer
+  // approval, once. There is deliberately no compatibility window: accepting
+  // the legacy header for a grace period would leave the hole fully open for
+  // its duration, since an attacker simply omits the cookie.
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const res = await fetch('/api/nostr/auth/session');
+        if (cancelled || res.ok) return;
+        const body = await res.json().catch(() => null);
+        if (isSessionExpiredResponse(res.status, body)) {
+          notifySessionExpired();
+          logout();
+        }
+      } catch {
+        // Offline or a transient failure is not an expired session. Leave the
+        // user signed in; the next load re-probes.
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [user, logout]);
+
+  useEffect(() => {
+    const onExpired = () => {
+      toast.info('Please sign in again — we upgraded how sessions are secured.', {
+        duration: 8000,
+      });
+    };
+    window.addEventListener(SESSION_EXPIRED_EVENT, onExpired);
+    return () => window.removeEventListener(SESSION_EXPIRED_EVENT, onExpired);
   }, []);
 
   // Update user

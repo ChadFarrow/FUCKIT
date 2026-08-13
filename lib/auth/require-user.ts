@@ -1,3 +1,4 @@
+import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 import {
@@ -106,4 +107,9 @@ export function clearSessionCookie(): string {
   ];
   if (process.env.NODE_ENV === 'production') attrs.push('Secure');
   return attrs.join('; ');
+}
+
+/** The 401 body the client recognises as "log in again". */
+export function sessionExpiredResponse(): NextResponse {
+  return NextResponse.json({ success: false, error: 'session_expired' }, { status: 401 });
 }
