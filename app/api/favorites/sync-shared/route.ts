@@ -28,12 +28,18 @@ import { requireUser } from '@/lib/auth/require-user';
 interface SharedShow {
   feedGuid: string;
   feedUrl?: string;
+  /** `<podcast:medium>` from tag position 4, when the writing app knew it.
+   *  Advisory and possibly stale — never trusted over a local answer, and
+   *  absent means "not told", never a default. */
+  medium?: string;
 }
 
 interface SharedTrack {
   itemGuid: string;
   feedGuid?: string;
   feedUrl?: string;
+  /** The PARENT feed's medium; Podcasting 2.0 has no per-item one. */
+  medium?: string;
 }
 
 // Out of scope for the shared list — StableKraft-local constructs with no
@@ -126,7 +132,7 @@ export async function POST(request: NextRequest) {
       wantedFeedGuids.length
         ? prisma.feed.findMany({
             where: { guid: { in: wantedFeedGuids } },
-            select: { id: true, guid: true },
+            select: { id: true, guid: true, medium: true },
           })
         : Promise.resolve([]),
       wantedItemGuids.length
@@ -138,6 +144,15 @@ export async function POST(request: NextRequest) {
     ]);
 
     const feedIdByGuid = new Map(matchedFeeds.map((f) => [f.guid as string, f.id]));
+    // What the wire says each incoming show is. Used only to type a favorite we
+    // are about to create — a local `Feed.medium` always wins over it, since a
+    // hint is a cache of what a reader could resolve and can go stale.
+    const mediumByGuid = new Map(
+      shows.filter((s) => s.medium).map((s) => [s.feedGuid, s.medium as string])
+    );
+    const localMediumByGuid = new Map(
+      matchedFeeds.filter((f) => f.medium).map((f) => [f.guid as string, f.medium as string])
+    );
     const trackIdByGuid = new Map(matchedTracks.map((t) => [t.guid as string, t.id]));
 
     // Feed guids we've never seen. Returned so the client can hand them to the
@@ -170,8 +185,15 @@ export async function POST(request: NextRequest) {
       // in /favorites and was reported as newly arrived on every first pull.
       if (existingAlbumFeedIds.has(feedId) || existingAlbumFeedIds.has(guid)) continue;
       try {
+        // What the entry IS, rather than what this app usually holds. The
+        // shared list carries a general podcast app's favorites too, and
+        // creating those as `album` files a talk show in the album grid with
+        // nothing to distinguish it. Prefer the feed's own declared medium;
+        // fall back to the wire hint; default to `album` only when neither
+        // says — which is what this line always did.
+        const medium = localMediumByGuid.get(guid) ?? mediumByGuid.get(guid);
         await prisma.favoriteAlbum.create({
-          data: { userId, feedId, type: 'album' },
+          data: { userId, feedId, type: medium === 'podcast' ? 'podcast' : 'album' },
         });
         addedAlbums.push(feedId);
       } catch {

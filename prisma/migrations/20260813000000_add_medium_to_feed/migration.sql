@@ -1,0 +1,12 @@
+-- Persist the feed's Podcasting 2.0 <podcast:medium>.
+--
+-- It has always been parsed (`parsePodcastMediumFromXML`, lib/rss-parser-db.ts) and then
+-- thrown away: it was read only to pick `Feed.type`, which defaults to "album" and is
+-- therefore a guess for any feed that never declared one.
+--
+-- The cross-app favorites list needs the difference. A music album and a talk show are both
+-- `podcast:guid:<uuid>` on the wire, so without a medium every app renders the other's
+-- favorites mixed into its own. NULL means "we have not been told", which is a different
+-- claim from "music" — nothing may default it, because a wrong medium published to the
+-- shared list is sticky across every app that reads it.
+ALTER TABLE "Feed" ADD COLUMN "medium" TEXT;

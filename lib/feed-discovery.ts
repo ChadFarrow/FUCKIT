@@ -76,7 +76,7 @@ export async function resolveFeedGuid(feedGuid: string): Promise<string | null> 
 }
 
 // New function that returns full feed metadata including medium for type determination
-export async function resolveFeedGuidWithMetadata(feedGuid: string): Promise<{ url: string; title: string; artist: string; image: string | null; medium: string; oldestItemPubdate: number | null } | null> {
+export async function resolveFeedGuidWithMetadata(feedGuid: string): Promise<{ url: string; title: string; artist: string; image: string | null; medium: string; oldestItemPubdate: number | null; declaredMedium: string | null } | null> {
   try {
     console.log(`🔍 Resolving feed GUID with metadata: ${feedGuid}`);
 
@@ -121,6 +121,11 @@ export async function resolveFeedGuidWithMetadata(feedGuid: string): Promise<{ u
         artist: finalFeed.author || finalFeed.ownerName || 'Unknown Artist',
         image: finalFeed.artwork || finalFeed.image || null,
         medium: finalFeed.medium || 'music',
+        // The same value without the default, for `Feed.medium`. `medium` above falls back
+        // to 'music' to pick a `type`, which is a fine guess for a local classification and
+        // a bad one to publish: the shared favorites list carries this to other apps, where
+        // a wrong value is sticky. Empty stays empty.
+        declaredMedium: finalFeed.medium?.toLowerCase() || null,
         oldestItemPubdate: finalFeed.oldestItemPubdate || null
       };
     } else {
@@ -193,6 +198,7 @@ export async function addUnresolvedFeeds(feedGuids: string[]): Promise<number> {
             description: `Auto-discovered from playlist`,
             originalUrl: normalizedUrl,
             type: resolvedFeed.medium === 'music' ? 'album' : 'podcast',
+            medium: resolvedFeed.declaredMedium,
             priority: 'normal',
             status: 'active',
             artist: resolvedFeed.artist,

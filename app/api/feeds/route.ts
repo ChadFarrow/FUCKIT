@@ -490,6 +490,10 @@ export async function POST(request: NextRequest) {
             originalUrl: normalizedOriginalUrl,
             cdnUrl: cdnUrl || normalizedOriginalUrl,
             type: resolvedType,
+            // The declared medium, kept separate from `type`. `type` is this app's own
+            // classification and has a default; `medium` is null until the feed actually
+            // says. The shared favorites list publishes it, so a guess would be sticky.
+            medium: mediumLower || null,
             priority,
             title: parsedFeed.title,
             description: parsedFeed.description,

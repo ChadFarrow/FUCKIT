@@ -160,6 +160,7 @@ export async function POST(request: NextRequest) {
           podcastCategories: parsedFeed.podcastCategories || [],
           explicit: parsedFeed.explicit,
           ...(parsedFeed.podcastGuid && { guid: parsedFeed.podcastGuid }),
+          ...(parsedFeed.medium && { medium: parsedFeed.medium.toLowerCase() }),
           v4vRecipient: parsedFeed.v4vRecipient,
           v4vValue: parsedFeed.v4vValue,
           lastFetched: new Date(),

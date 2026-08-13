@@ -196,11 +196,14 @@ type ApiAlbum = {
   originalUrl?: string | null;
   type?: string | null;
   markedDead?: boolean | null;
+  /** `<podcast:medium>` as the feed declared it. Null when it declared none —
+   *  which is NOT the same as `music`, and must never be defaulted to one. */
+  medium?: string | null;
 };
 
 type ApiTrack = {
   guid?: string | null;
-  Feed?: { guid?: string | null; originalUrl?: string | null } | null;
+  Feed?: { guid?: string | null; originalUrl?: string | null; medium?: string | null } | null;
 };
 
 /**
@@ -227,7 +230,15 @@ export function buildLocalItems(albums: ApiAlbum[], tracks: ApiTrack[]): SharedF
     const id = showId(album.guid);
     if (seen.has(id)) continue;
     seen.add(id);
-    items.push({ id, feedUrl: album.originalUrl || undefined });
+    items.push({
+      id,
+      feedUrl: album.originalUrl || undefined,
+      // Only what the feed actually declared. `Feed.type` is this app's own
+      // classification and defaults to "album", so publishing it would be
+      // guessing — and a guess on this list is sticky: no other app will
+      // correct it, and this one may not either.
+      medium: album.medium || undefined,
+    });
   }
 
   for (const track of tracks) {
@@ -241,6 +252,8 @@ export function buildLocalItems(albums: ApiAlbum[], tracks: ApiTrack[]): SharedF
       // Without the parent feed a consumer can't resolve the item through
       // Podcast Index — /episodes/byguid wants `podcastguid`.
       feedRef: track.Feed?.guid ? showId(track.Feed.guid) : undefined,
+      // The PARENT FEED's medium; Podcasting 2.0 has no per-item one.
+      medium: track.Feed?.medium || undefined,
     });
   }
 

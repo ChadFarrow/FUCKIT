@@ -60,7 +60,13 @@ export async function GET(request: NextRequest) {
             v4vValue: true,
             v4vRecipient: true,
             originalUrl: true,
-            type: true
+            type: true,
+            // The parent feed's declared medium. Published at position 4 of the
+            // track's `i` tag on the shared favorites list, so another app can
+            // tell a song from an episode without resolving it. All THREE Feed
+            // selects in this file need it — a field added to one of them is
+            // missing on whichever lookup path the track happened to take.
+            medium: true
           }
         }
       }
@@ -85,7 +91,8 @@ export async function GET(request: NextRequest) {
               v4vValue: true,
               v4vRecipient: true,
               originalUrl: true,
-              type: true
+              type: true,
+              medium: true
             }
           }
         }
@@ -113,7 +120,8 @@ export async function GET(request: NextRequest) {
                 v4vValue: true,
                 v4vRecipient: true,
                 originalUrl: true,
-                type: true
+                type: true,
+                medium: true
               }
             }
           }

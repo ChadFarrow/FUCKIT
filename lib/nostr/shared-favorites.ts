@@ -11,6 +11,33 @@ import type { Event, Filter } from 'nostr-tools';
  * That document, not this file, is what a third app implements against — keep
  * the two in step.
  *
+ * ---------------------------------------------------------------------------
+ * Where this DELIBERATELY lags the spec, and why
+ *
+ * The spec has since split the list in two (`podcast:favorites` for shows,
+ * `podcast:favorites:items` for episodes and tracks), made tag position 3 a
+ * bare uuid, and frozen position 2. This file does none of those yet, ON
+ * PURPOSE — every one of them would currently make favorites LESS visible to
+ * the app on the other end, which is the whole point of sharing a list:
+ *
+ *   - Boost Me Bitch reads only `d = podcast:favorites`
+ *     (`lib/nostr/favorites-gate.ts`). Writing tracks to the items address
+ *     would put them somewhere it never queries.
+ *   - It resolves an item's parent feed with `parseShowGuid(item.feedRef)`
+ *     (`lib/nostr/favorites-merge.ts`), which requires the `podcast:guid:`
+ *     prefix. A bare position 3 makes its `feedGuid` undefined and breaks its
+ *     episode lookups.
+ *
+ * So: single list, prefixed position 3, position 2 still written. Sequence
+ * those changes in Boost Me Bitch first, then here. Do not "fix" this file to
+ * match the spec on its own — that is the change that silently breaks the
+ * other app.
+ *
+ * What IS adopted from the current spec is overlay-don't-rebuild (see
+ * `tagForSharedFavorite`), because position 4 below cannot be added safely
+ * without it.
+ * ---------------------------------------------------------------------------
+ *
  * This is a SECOND channel, not a replacement. The per-item kind 30001 events
  * (`lib/nostr/favorites.ts`) stay exactly as they are: the Community tab reads
  * them, and its author-scoped filters and d-tag resolution ladder are tuned
@@ -106,6 +133,37 @@ export interface SharedFavoriteItem {
    *  item's parent feed. PI's /episodes/byguid wants `podcastguid`, so an item
    *  guid on its own is not a reliable lookup. */
   feedRef?: string;
+  /**
+   * Additive extension (tag position 4): the entry's Podcasting 2.0
+   * `<podcast:medium>` — `music`, `podcast`, `audiobook`, and whatever the
+   * namespace adds next. The vocabulary is NOT a closed set.
+   *
+   * Without it the list is undifferentiated: an album and a talk show are both
+   * `podcast:guid:<uuid>`, so each app renders the other's favorites mixed into
+   * its own, and the only way to tell them apart is to resolve all of them —
+   * one Podcast Index request per entry, since /podcasts/byguid takes a single
+   * guid. It is also the ONLY answer for an entry that no longer resolves at
+   * all: a delisted feed cannot be categorized any other way.
+   *
+   * ADVISORY, and therefore sticky. It is a cache of what a reader could work
+   * out for itself, it can go stale when a feed retags, and a value another app
+   * wrote is never ours to correct — see `mergeSharedFavorites`. Absent means
+   * "not told", which is NOT a default: this app guessing `music` is wrong for
+   * exactly the half of the list the hint exists to separate.
+   */
+  medium?: string;
+  /**
+   * The `i` tag exactly as it was read, when this entry came off the wire.
+   *
+   * This is what makes positions past the ones above survive a republish. The
+   * natural implementation — parse into a struct, merge the struct, write it
+   * back out — deletes every position past the end of that struct, on every
+   * entry, on every publish, with no error and nothing on screen. This app did
+   * exactly that until position 4 existed to make it visible.
+   *
+   * Undefined for an entry this device is adding, which has no tail yet.
+   */
+  raw?: string[];
 }
 
 export interface SharedFavorites {
@@ -167,9 +225,48 @@ export function itemsFromTags(tags: string[][]): SharedFavoriteItem[] {
       id: tag[1],
       feedUrl: tag[2] || undefined,
       feedRef: tag[3] || undefined,
+      medium: tag[4] || undefined,
+      // Kept whole, including positions nothing here reads. See `raw`.
+      raw: tag.slice(),
     });
   }
   return items;
+}
+
+/**
+ * Rebuild one `i` tag by OVERLAYING onto the tag we read, index by index,
+ * never truncating to the length of our own struct.
+ *
+ * Two rules, and both are about not destroying somebody else's data:
+ *
+ *   - **The tail survives.** Anything past the positions above belongs to an
+ *     app newer than this one, and is copied through untouched.
+ *   - **A non-empty value we didn't write is not ours to change.** Fill
+ *     positions that are empty or absent; leave the rest alone even when we
+ *     resolved a different value and are confident ours is better. "Prefer my
+ *     own value" is what makes two apps rewrite the event against each other on
+ *     every publish, forever, with neither wrong and neither converging.
+ *     Stickiness terminates: after one publish the value stops moving.
+ *
+ * A position left empty while a later one is present is held open with an empty
+ * string, never closed up — shifting a medium into position 3 would claim it as
+ * a parent feed guid.
+ */
+export function tagForSharedFavorite(item: SharedFavoriteItem): string[] {
+  const tag = item.raw ? item.raw.slice() : ['i', item.id];
+  tag[0] = 'i';
+  tag[1] = item.id;
+  fillPosition(tag, 2, item.feedUrl);
+  fillPosition(tag, 3, item.feedRef);
+  fillPosition(tag, 4, item.medium);
+  return tag;
+}
+
+function fillPosition(tag: string[], index: number, value: string | undefined): void {
+  if (!value) return; // absent is not "clear it"
+  if (tag[index]) return; // sticky: what is already there stays
+  while (tag.length < index) tag.push('');
+  tag[index] = value;
 }
 
 /**
@@ -200,12 +297,10 @@ export function tagsForSharedFavorites(
   ];
   const kinds = new Set<string>();
   for (const item of items) {
-    // Position 2 is NIP-73's optional URL hint; position 3 is the parent-feed
-    // extension. An empty string holds position 2 open when only the feed ref
-    // is known — consumers read position 2 as "absent" either way.
-    if (item.feedRef) tags.push(['i', item.id, item.feedUrl ?? '', item.feedRef]);
-    else if (item.feedUrl) tags.push(['i', item.id, item.feedUrl]);
-    else tags.push(['i', item.id]);
+    tags.push(tagForSharedFavorite(item));
+    // From position 1 ONLY. A `k` minted from position 4 would put `music` into
+    // the `#k` discovery filter every app relies on — position 4 is a medium,
+    // not an identifier kind, and it never changes what kind an entry is.
     const kind = identifierKind(item.id);
     if (kind) kinds.add(kind);
   }
@@ -249,15 +344,22 @@ export function mergeSharedFavorites(args: {
     if (removed.has(item.id)) continue;
     if (kept.has(item.id)) continue;
     kept.add(item.id);
-    // Hints improve over time and cost nothing to upgrade, but an existing
-    // hint is never blanked by a local entry that happens to lack one.
+    // Membership is decided above, on raw identifier strings and nothing else.
+    // This is the subordinate pass: it may fill an empty hint and may never
+    // add, remove or re-key an entry.
+    //
+    // The wire value wins wherever it is non-empty, even against a value we
+    // resolved ourselves. That asymmetry is the point — see
+    // `tagForSharedFavorite`. `item.raw` rides along so the tail survives.
     const mine = localById.get(item.id);
     out.push(
       mine
         ? {
             id: item.id,
-            feedUrl: mine.feedUrl ?? item.feedUrl,
-            feedRef: mine.feedRef ?? item.feedRef,
+            feedUrl: item.feedUrl ?? mine.feedUrl,
+            feedRef: item.feedRef ?? mine.feedRef,
+            medium: item.medium ?? mine.medium,
+            raw: item.raw,
           }
         : item
     );
@@ -294,25 +396,43 @@ export function baselineFrom(
   return published.filter((i) => localIds.has(i.id)).map((i) => i.id);
 }
 
+/**
+ * A parent-feed reference (tag position 3) as a bare uuid, accepting BOTH the
+ * prefixed `podcast:guid:<uuid>` form this app writes and the bare form the
+ * current spec asks writers to move to.
+ *
+ * Handing a prefixed value to Podcast Index as `podcastguid` matches nothing,
+ * so an app that treats position 3 as opaque renders the user's whole item
+ * library as unresolved while republishing it faithfully.
+ */
+export function bareFeedGuid(feedRef: string | undefined): string | undefined {
+  if (!feedRef) return undefined;
+  const bare = feedRef.startsWith(SHOW_PREFIX) ? feedRef.slice(SHOW_PREFIX.length) : feedRef;
+  return UUID_RE.test(bare) ? bare : undefined;
+}
+
 /** Split a list into the things this app can look up. */
 export function partitionSharedFavorites(items: SharedFavoriteItem[]): {
-  shows: Array<{ feedGuid: string; feedUrl?: string }>;
-  tracks: Array<{ itemGuid: string; feedGuid?: string; feedUrl?: string }>;
+  shows: Array<{ feedGuid: string; feedUrl?: string; medium?: string }>;
+  tracks: Array<{ itemGuid: string; feedGuid?: string; feedUrl?: string; medium?: string }>;
 } {
-  const shows: Array<{ feedGuid: string; feedUrl?: string }> = [];
-  const tracks: Array<{ itemGuid: string; feedGuid?: string; feedUrl?: string }> = [];
+  const shows: Array<{ feedGuid: string; feedUrl?: string; medium?: string }> = [];
+  const tracks: Array<{ itemGuid: string; feedGuid?: string; feedUrl?: string; medium?: string }> = [];
   for (const item of items) {
     const feedGuid = parseShowGuid(item.id);
     if (feedGuid) {
-      shows.push({ feedGuid, feedUrl: item.feedUrl });
+      shows.push({ feedGuid, feedUrl: item.feedUrl, medium: item.medium });
       continue;
     }
     const itemGuid = parseItemGuid(item.id);
     if (itemGuid) {
       tracks.push({
         itemGuid,
-        feedGuid: item.feedRef ? parseShowGuid(item.feedRef) ?? undefined : undefined,
+        feedGuid: bareFeedGuid(item.feedRef),
         feedUrl: item.feedUrl,
+        // On an item entry this is the PARENT FEED's medium — Podcasting 2.0
+        // has no per-item medium.
+        medium: item.medium,
       });
     }
     // Anything else — a malformed guid, a publisher, a kind we don't know —
@@ -569,6 +689,13 @@ export async function syncSharedFavorites(
 
   // A no-op republish on every page load would bump created_at for nothing and
   // race the user's other devices.
+  //
+  // Compares IDS ONLY, deliberately. Membership is the only thing worth a
+  // publish; a hint we could now fill in is not. Widening this to notice a
+  // missing medium would turn every hydration into "backfill hints onto the
+  // shared list" — an unprompted write to a replaceable multi-writer event, run
+  // by two apps at once, which is the shape of every failure this file guards
+  // against. Hints ride along on a publish we were making anyway.
   const relayIds = latest.items.map((i) => i.id);
   if (relayIds.length === nextIds.length && relayIds.every((id, i) => id === nextIds[i])) {
     return { status: 'unchanged', ids: nextBaseline };

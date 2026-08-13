@@ -61,6 +61,9 @@ export async function POST(request: NextRequest) {
               podcastCategories: parsedFeed.podcastCategories || [],
               explicit: parsedFeed.explicit,
               ...(parsedFeed.podcastGuid && { guid: parsedFeed.podcastGuid }),
+              // Channel-level like the guid above, and backfilled the same way: a feed
+              // that never declared a medium keeps NULL rather than being defaulted.
+              ...(parsedFeed.medium && { medium: parsedFeed.medium.toLowerCase() }),
               lastFetched: new Date(),
               status: 'active',
               lastError: null

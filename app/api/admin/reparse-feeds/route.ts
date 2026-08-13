@@ -253,6 +253,7 @@ async function reparseSingleFeed(feed: {
         podcastCategories: parsedFeed.podcastCategories || [],
         explicit: parsedFeed.explicit,
         ...(parsedFeed.podcastGuid && { guid: parsedFeed.podcastGuid }),
+        ...(parsedFeed.medium && { medium: parsedFeed.medium.toLowerCase() }),
         ...(parsedFeed.podcastImages && { podcastImages: parsedFeed.podcastImages as any }),
         lastFetched: new Date(),
         status: 'active',
