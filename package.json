@@ -111,13 +111,15 @@
     "@next/bundle-analyzer": "^16.0.3",
     "@types/colorthief": "^2.6.1",
     "@types/js-yaml": "^4.0.9",
+    "@types/ws": "^8.18.1",
     "eslint": "^8",
     "eslint-config-next": "^14.0.4",
     "ignore-loader": "^0.1.2",
     "lighthouse": "^12.8.2",
     "task-master-ai": "^0.22.0",
     "ts-node": "^10.9.2",
-    "tsx": "^4.21.0"
+    "tsx": "^4.21.0",
+    "ws": "^8.21.3"
   },
   "engines": {
     "node": ">=18.0.0",

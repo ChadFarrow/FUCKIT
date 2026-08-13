@@ -16,9 +16,12 @@
  * pure tests (a few seconds — some cases must wait out a timeout by
  * construction), which is why it is a separate file.
  *
- * DEPENDENCY NOTE: `ws` is not a declared dependency of this repo; it resolves
- * transitively today. If this file ever fails at the import, `npm i -D ws`.
- * (Same caveat the album-page puppeteer recipe carries in CLAUDE.md.)
+ * NODE VERSION: `nostr-tools` needs a `WebSocket` global, which Node only has by
+ * default from v21 — and this repo targets Node 20 (`.nvmrc`, `node:20-alpine`).
+ * `installNodeWebSocket()` supplies one; without it the seven cases below that
+ * need a relay to ANSWER fail, while every degraded-read case still passes,
+ * because a failed connection looks exactly like the degradation they assert.
+ * Reproduce that on a newer Node with `NODE_OPTIONS=--no-experimental-websocket`.
  *
  * ---------------------------------------------------------------------------
  * The stakes, restated: `trustworthy` is what stands between a relay wobble and
@@ -30,12 +33,17 @@
 
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
-// @ts-ignore -- `ws` bundles no types and is not a declared dependency here (see
-// the DEPENDENCY NOTE above); `@types/ws` would be a second undeclared one.
 import WebSocket from 'ws';
 import { finalizeEvent, generateSecretKey, getPublicKey } from 'nostr-tools/pure';
 
+import { installNodeWebSocket } from './node-websocket';
 import { fetchSharedFavorites, SHARED_D_TAG, SHARED_FAVORITES_KIND, showId } from './shared-favorites';
+
+// See NODE VERSION above. A no-op on Node >= 21; on Node 20 it is the difference
+// between this file testing the read and testing nothing at all.
+before(async () => {
+  await installNodeWebSocket();
+});
 
 // --- keys ------------------------------------------------------------------
 
@@ -97,8 +105,8 @@ async function startRelay(behavior: Behavior): Promise<string> {
 }
 
 after(() => {
-  // `close()` stops the listener but leaves ESTABLISHED sockets open (ws v7),
-  // and an open socket keeps the event loop alive — the file then sits for
+  // `close()` stops the listener but leaves ESTABLISHED sockets open, and an
+  // open socket keeps the event loop alive — the file then sits for
   // ~100s after the last assertion before the runner exits. Terminate the
   // clients, don't just stop listening.
   for (const s of servers) {
