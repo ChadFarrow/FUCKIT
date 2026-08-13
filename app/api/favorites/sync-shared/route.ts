@@ -174,8 +174,30 @@ export async function POST(request: NextRequest) {
 
     // --- add what the list has and the DB doesn't --------------------------
     const existingAlbumFeedIds = new Set(existingAlbums.map((f) => f.feedId));
+
+    // A feed that has an incoming ITEM under it is not evidence the feed itself
+    // was favorited, and in kind:10333 it usually isn't.
+    //
+    // That format carries an item's parent POSITIONALLY: an item belongs to the
+    // feed group most recently opened above it, so naming the parent means
+    // emitting a `podcast:guid` entry for it whether or not the user favorited
+    // the feed. Nothing on the wire tells the two apart. Measured on real data:
+    // 196 groups for 82 favorited feeds, the other 114 opened purely to place a
+    // track — so reconciling this app's OWN list back in would have created 114
+    // album favorites the user never made, on the next page load, silently.
+    //
+    // The conservative reading is the only safe one: a group with no items is
+    // unambiguously a favorited feed, a group with items is unknowable, and
+    // inventing a favorite is worse than missing one. The cost is that another
+    // app favoriting both an album and a track from it propagates only the
+    // track — recoverable, and it corrects itself the moment the album is the
+    // only thing left on that group.
+    const guidsWithIncomingItems = new Set(
+      tracks.map((t) => t.feedGuid).filter((g): g is string => !!g)
+    );
     const addedAlbums: string[] = [];
     for (const [guid, feedId] of feedIdByGuid) {
+      if (guidsWithIncomingItems.has(guid)) continue;
       // A FavoriteAlbum.feedId is polymorphic (Feed.id | Feed.guid | synthetic
       // artist id), so an existing row may hold either form of the same album —
       // the same reason the track loop below checks both. Matching only on
