@@ -5,6 +5,7 @@ import { getDefaultRelays } from '@/lib/nostr/relay';
 import { publicKeyToNpub } from '@/lib/nostr/keys';
 import { normalizePubkey } from '@/lib/nostr/normalize';
 import { getSessionIdFromRequest } from '@/lib/session-utils';
+import { sessionCookie } from '@/lib/auth/require-user';
 
 /**
  * POST /api/nostr/auth/nip05-login
@@ -152,7 +153,7 @@ export async function POST(request: NextRequest) {
       } catch {}
     }
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       user: {
         id: user.id,
@@ -167,6 +168,15 @@ export async function POST(request: NextRequest) {
         loginType: 'nip05'
       }
     });
+
+    // proven=false. This route resolves a pubkey from /.well-known/nostr.json
+    // and never demonstrates key ownership — CLAUDE.md calls out that anyone
+    // can read-only "log in" as any identifier. That was acceptable only while
+    // the session was read-only, so the token must not authorize writes.
+    const cookie = sessionCookie(user.id, false);
+    if (cookie) response.headers.set('Set-Cookie', cookie);
+
+    return response;
   } catch (err: any) {
     return NextResponse.json(
       { success: false, error: err.message ?? 'NIP-05 login failed' },
