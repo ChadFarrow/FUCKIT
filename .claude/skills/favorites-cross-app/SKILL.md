@@ -34,13 +34,20 @@ An item entry carries no parent. It belongs to the feed group most recently open
 - **Unfavoriting a feed while a track of it stays favorited is invisible.** The placement group and the favorite are the same bytes, so the removal cannot be expressed until the last track goes too. Pinned by a test; found because an idempotence assertion failed and was right to.
 - **A track whose feed has no `<podcast:guid>` cannot be expressed** and is dropped on write. The two-list format could carry it parentless. No favorite is in that state today; the fix is an admin reparse, not an invented parent.
 
-## No baseline — so only ONE app may write
+## The event has no baseline, so this DEVICE keeps one
 
-The predecessor diffed against a baseline (the ids this device last agreed with the relay on), which is what let it tell "another app added this" from "I removed this". This format has none: a publish replaces the event with what this app holds.
+The format cannot tell "another app added this" from "I removed this" — a publish replaces the event with what this app holds, and a reader learns nothing about who wrote what. But a writer still has to answer that question, so this app records what it published in `localStorage['sk_single_list_published:<pubkey>']` (`{feeds, items}`, beside the digest). Nothing on the wire changes; it is local memory, not the kind:30078 baseline returning.
 
-- **StableKraft seeds, Boost Me Bitch reads.** Safe exactly while that is true.
-- **Before a second writer exists it needs a read-then-carry pass** — re-emit feed groups read from the event that resolve to no local row. Without it, each publish deletes whatever the other app holds exclusively, silently, with no undo. `publishSingleList` says so at its call site.
-- **Inbound removals do not propagate**, and the reconcile is passed a permanently empty `baseline` for that reason: removals are `baseline − incoming`, so an empty one means the route may add but never delete. That is the only safe reading of a format that cannot tell "another app removed this" from "another app never had it".
+**Four production bugs on 2026-08-13 came from having some of the rules below and not others.** They are individually correct and only work together — check all four before changing any of them.
+
+1. **An itemless group is a real favorite; a group with items is unknowable.** The reconcile creates a `FavoriteAlbum` for incoming feed guids, and a placement group is indistinguishable from a chosen one, so without this it manufactures favorites — reading our own list back would have created **114** (#210).
+2. **The merge drops what we published and no longer hold, and carries what we never published.** Getting "foreign" to mean "not in our favorites" made an unfavorited album carry forever, get read back as an itemless group, and be re-created by rule 1 — unfavoriting undid itself on every load (#212).
+3. **The published record is written on the digest-unchanged path too.** Writing it only after a real publish left it empty forever on a device whose list already matched, so rule 2 could never engage (#213).
+4. **The inbound reconcile applies the same filter** (`suppressOwnRemovals`). `runPull` is read → reconcile → push, so between an unfavorite and its publish the list still carries the entry; the reconcile re-creates the row, the push then sees it as local, produces identical tags, and the digest gate skips it. Nothing ever propagates (#214).
+
+An **empty record must treat nothing as a removal and suppress nothing** — a device that has agreed to nothing may not delete anything, and suppressing on a fresh device would hide the user's own library from the reconcile.
+
+**StableKraft seeds, Boost Me Bitch reads,** and that is what keeps the whole thing safe. The record makes a second writer *survivable*, not safe: two apps publishing concurrently still race, because there is no merge. Inbound removals from another app do not propagate — the reconcile is passed a permanently empty `baseline`, so it may add but never delete.
 
 ## The medium hint
 
@@ -53,7 +60,7 @@ Position: a `["medium", …]` tag applies to every entry that follows it until t
 
 ## `k` tags — one per distinct KIND, trailing
 
-**A deviation from the spec as written, pending a spec update.** The document pairs a `k` with every `i`; this app writes one per kind at the end, and READS both forms. They carry identical information — `k` names an identifier kind and the kind is already the identifier's prefix — but the paired form cost **423 tags holding two distinct values, ~11 KB of a 36 KB event**. Trailing is safe because only `i` and `medium` are positional.
+**The spec's rule since PC20-Nostr #8, which this implementation drove.** An earlier revision paired a `k` with every `i`; this app writes one per kind at the end and READS both forms. They carry identical information — `k` names an identifier kind and the kind is already the identifier's prefix — but the paired form cost **423 tags holding two distinct values, ~11 KB of a 36 KB event**. Trailing is safe because only `i` and `medium` are positional.
 
 A reader must take an entry's kind from position 1. One that walks `i`/`k` in pairs will not read what this writes.
 
