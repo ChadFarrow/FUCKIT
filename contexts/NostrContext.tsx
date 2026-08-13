@@ -129,7 +129,7 @@ export function NostrProvider({ children }: { children: React.ReactNode }) {
     if (user.loginType === 'nip05') return;
 
     let cancelled = false;
-    import('@/lib/nostr/shared-favorites-client')
+    import('@/lib/nostr/favorites-sync-client')
       .then(({ pullSharedFavorites }) =>
         pullSharedFavorites({
           userId: user.id,

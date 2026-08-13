@@ -258,7 +258,7 @@ export function getDefaultRelays(): string[] {
     // ADDING ONE? Check it first — nothing here prunes a dead host
     // automatically, and both removals above were live for months. Connect,
     // send a REQ, and require a real EOSE; the recipe is in
-    // lib/nostr/shared-favorites.relay.test.ts.
+    // lib/nostr/relay-read.test.ts.
     relays = [
       'wss://nos.lol',              // Popular and stable
       'wss://relay.snort.social',   // Snort's relay

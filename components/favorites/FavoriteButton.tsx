@@ -7,7 +7,7 @@ import { useNostr } from '@/contexts/NostrContext';
 import { getSessionId } from '@/lib/session-utils';
 import { toast } from '@/components/Toast';
 import { queueFavoritePublish, queueFavoriteDeletion } from '@/lib/nostr/publish-queue';
-import { requestSharedFavoritesSync } from '@/lib/nostr/shared-favorites-client';
+import { requestSharedFavoritesSync } from '@/lib/nostr/favorites-sync-client';
 import { useBatchedFavorites } from '@/contexts/BatchedFavoritesContext';
 import type { FavoriteKind } from '@/lib/favorite-status-cache';
 

@@ -4,7 +4,7 @@
  * NODE-ONLY. Nothing in `app/`, `components/` or `contexts/` may import this —
  * browsers have always had `WebSocket`, and pulling `ws` into the client bundle
  * would be pure dead weight. Its only callers are the two relay harnesses:
- * `shared-favorites.relay.test.ts` and `shared-favorites.relay-probe.ts`.
+ * `relay-read.test.ts` and `favorites.relay-probe.ts`.
  *
  * WHY IT EXISTS
  * `globalThis.WebSocket` only landed as a default in **Node 21**. This repo

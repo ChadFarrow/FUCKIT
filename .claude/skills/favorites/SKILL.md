@@ -5,7 +5,7 @@ description: "Use when working on favorites: the /favorites page, a favorited al
 
 # favorites
 
-The favorites data model and its surfaces. The shared cross-app kind:30078 list is a separate feature — see the `favorites-cross-app` skill.
+The favorites data model and its surfaces. The shared cross-app kind:10333 list is a separate feature — see the `favorites-cross-app` skill.
 
 ## Tests for this subsystem
 

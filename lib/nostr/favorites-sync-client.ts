@@ -1,29 +1,36 @@
 /**
- * Browser-side driver for the shared cross-app favorites list.
+ * Browser-side driver for the shared cross-app favorites list — kind 10333.
  *
- * Owns three things the pure module in `shared-favorites.ts` deliberately does
- * not: where this device's baseline lives, how a DB favorite becomes a portable
- * wire identifier, and the debounce. Spec:
- * https://github.com/ChadFarrow/PC20-Nostr/blob/main/specs/pc20-favorites.md
+ * Owns what the pure format module deliberately does not: how a DB favorite
+ * becomes a portable identifier, the debounce, and the sync-health flag the UI
+ * reads. Spec: github.com/ChadFarrow/PC20-Nostr,
+ * `pc20-favorites-single-list.md`.
  *
  * This is a SECOND channel alongside the per-item kind 30001 events, which are
  * untouched — the Community tab reads those.
+ *
+ * **There is no baseline here, and that is the format, not an omission.** The
+ * kind:30078 predecessor diffed against the id list this device last agreed
+ * with the relay on, so it could tell "another app added this" from "I removed
+ * it". This event replaces wholesale: what is published is what this app holds.
+ * That is safe exactly while this app is the only writer. Before a second
+ * writer exists it needs a read-then-carry pass — see `publishSingleList`.
  */
 
 import {
-  fetchSharedFavorites,
   itemId,
-  partitionSharedFavorites,
   showId,
-  syncSharedFavorites,
-  type SharedFavoriteItem,
-} from './shared-favorites';
-import { singleListDigest, singleListTemplate } from './favorites-single-list';
+  type FavoriteEntry,
+} from './pc20-identifiers';
+import {
+  fetchSingleList,
+  partitionSingleList,
+  singleListDigest,
+  singleListTemplate,
+} from './favorites-single-list';
 import { RelayManager, getDefaultRelays, filterReachableRelays } from './relay';
 import { FAVORITE_STATUSES_INVALIDATED_EVENT } from '../favorite-status-cache';
 import { npubToPublicKey } from './keys';
-
-const BASELINE_KEY_PREFIX = 'sk_shared_favorites_baseline';
 
 /**
  * What the last cross-app sync attempt did, for the UI.
@@ -163,35 +170,6 @@ const DEBOUNCE_MS = 1500;
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 let inFlight: Promise<unknown> | null = null;
 
-/**
- * The identifier list this device last agreed with the relay on.
- *
- * Not a cache: without it the merge cannot tell "another app added this" from
- * "I removed this". Losing it isn't fatal — an empty baseline yields no
- * removals, so the next publish is a pure union — but it costs one unfavorite
- * its propagation. Keyed by pubkey, so switching accounts can't cross wires.
- */
-export function getBaseline(pubkey: string): string[] {
-  if (typeof window === 'undefined' || !pubkey) return [];
-  try {
-    const raw = localStorage.getItem(`${BASELINE_KEY_PREFIX}:${pubkey}`);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed.filter((v) => typeof v === 'string') : [];
-  } catch {
-    return [];
-  }
-}
-
-export function setBaseline(pubkey: string, ids: string[]): void {
-  if (typeof window === 'undefined' || !pubkey) return;
-  try {
-    localStorage.setItem(`${BASELINE_KEY_PREFIX}:${pubkey}`, JSON.stringify(ids));
-  } catch {
-    /* quota / private browsing — see the note above on losing the baseline */
-  }
-}
-
 type ApiAlbum = {
   guid?: string | null;
   originalUrl?: string | null;
@@ -221,8 +199,8 @@ type ApiTrack = {
  *     ids, not real `podcast:publisher:guid` values.
  *   - **Playlists.** Hard-coded curated slugs with no external identifier.
  */
-export function buildLocalItems(albums: ApiAlbum[], tracks: ApiTrack[]): SharedFavoriteItem[] {
-  const items: SharedFavoriteItem[] = [];
+export function buildLocalItems(albums: ApiAlbum[], tracks: ApiTrack[]): FavoriteEntry[] {
+  const items: FavoriteEntry[] = [];
   const seen = new Set<string>();
 
   for (const album of albums) {
@@ -233,7 +211,6 @@ export function buildLocalItems(albums: ApiAlbum[], tracks: ApiTrack[]): SharedF
     seen.add(id);
     items.push({
       id,
-      feedUrl: album.originalUrl || undefined,
       // Only what the feed actually declared. `Feed.type` is this app's own
       // classification and defaults to "album", so publishing it would be
       // guessing — and a guess on this list is sticky: no other app will
@@ -249,7 +226,6 @@ export function buildLocalItems(albums: ApiAlbum[], tracks: ApiTrack[]): SharedF
     seen.add(id);
     items.push({
       id,
-      feedUrl: track.Feed?.originalUrl || undefined,
       // Without the parent feed a consumer can't resolve the item through
       // Podcast Index — /episodes/byguid wants `podcastguid`.
       feedRef: track.Feed?.guid ? showId(track.Feed.guid) : undefined,
@@ -261,7 +237,7 @@ export function buildLocalItems(albums: ApiAlbum[], tracks: ApiTrack[]): SharedF
   return items;
 }
 
-async function loadLocalItems(userId: string): Promise<SharedFavoriteItem[]> {
+async function loadLocalItems(userId: string): Promise<FavoriteEntry[]> {
   const headers = { 'x-nostr-user-id': userId };
   const [albumsRes, tracksRes] = await Promise.all([
     fetch('/api/favorites/albums', { headers }),
@@ -340,19 +316,20 @@ const SINGLE_LIST_DIGEST_PREFIX = 'sk_single_list_digest';
  */
 async function publishSingleList(
   pubkey: string,
-  local: SharedFavoriteItem[],
+  local: FavoriteEntry[],
   relayUrls: string[]
-): Promise<void> {
+): Promise<boolean> {
   try {
     const digest = singleListDigest(local);
     const key = `${SINGLE_LIST_DIGEST_PREFIX}:${pubkey}`;
-    if (typeof window !== 'undefined' && localStorage.getItem(key) === digest) return;
+    // Unchanged is a success, not a skip: the relays already hold exactly this.
+    if (typeof window !== 'undefined' && localStorage.getItem(key) === digest) return true;
 
     const signed = await signSharedEvent(singleListTemplate(local, Math.floor(Date.now() / 1000)));
     const ok = await publishToRelays(signed, relayUrls);
     if (!ok) {
       console.warn('⚠️ Single-list favorites: no relay accepted the event');
-      return;
+      return false;
     }
 
     // Only after a relay confirmed storage — recording it on a refused publish
@@ -365,9 +342,11 @@ async function publishSingleList(
       }
     }
     const entries = signed.tags.filter((t: string[]) => t[0] === 'i').length;
-    console.log(`✅ Single-list favorites: published ${entries} entries (kind 10333)`);
+    console.log(`✅ Favorites: published ${entries} entries (kind 10333)`);
+    return true;
   } catch (error) {
-    console.warn('⚠️ Single-list favorites: publish failed —', error);
+    console.warn('⚠️ Favorites: publish failed —', error);
+    return false;
   }
 }
 
@@ -397,50 +376,14 @@ export async function syncSharedFavoritesNow(opts: {
   const run = (async (): Promise<'ok' | 'degraded'> => {
     const relayUrls = resolveRelays(opts.relays);
     const local = await loadLocalItems(opts.userId);
+    const published = await publishSingleList(opts.pubkey, local, relayUrls);
 
-    // The kind:10333 single-list event, published from the same local snapshot.
-    //
-    // Deliberately NOT gated on the read below. That event is built from local
-    // state and replaces wholesale — it has no baseline and nothing to merge
-    // against — so a degraded read of the kind:30078 list says nothing about
-    // whether this one can be written. Its own failures are contained here for
-    // the same reason: the two channels fail independently and neither should
-    // take the other down.
-    await publishSingleList(opts.pubkey, local, relayUrls);
-
-    const result = await syncSharedFavorites(
-      {
-        pubkey: opts.pubkey,
-        relays: relayUrls,
-        local,
-        lastSynced: getBaseline(opts.pubkey),
-      },
-      signSharedEvent,
-      (event) => publishToRelays(event, relayUrls)
-    );
-
-    if (result.status === 'published' || result.status === 'unchanged') {
-      setBaseline(opts.pubkey, result.ids);
-      setSyncHealth('write', false);
-      if (result.status === 'published') {
-        console.log(`✅ Shared favorites: published ${result.ids.length} entries`);
-      }
-      return 'ok';
-    } else if (result.status === 'failed') {
-      console.warn('⚠️ Shared favorites: publish failed —', result.error);
-      setSyncHealth('write', true);
-      return 'degraded';
-    } else {
-      // 'degraded' already warned inside syncSharedFavorites, and deliberately
-      // leaves the baseline alone so the next attempt retries the same delta.
-      //
-      // Report it through the SAME flag the read uses. This half is the easier
-      // one to leave silent and the more surprising when it is: the heart
-      // fills, the row is written locally, and nothing ever reaches the shared
-      // list — indistinguishable from a favorite that synced.
-      setSyncHealth('write', true);
-      return 'degraded';
-    }
+    // Report the write half through the SAME flag the read uses. This half is
+    // the easier one to leave silent and the more surprising when it is: the
+    // heart fills, the row is written locally, and nothing ever reaches the
+    // shared list — indistinguishable from a favorite that synced.
+    setSyncHealth('write', !published);
+    return published ? 'ok' : 'degraded';
   })();
 
   inFlight = run;
@@ -534,27 +477,30 @@ async function runPull(opts: {
   relays?: string[];
 }): Promise<PullResult> {
   const relayUrls = resolveRelays(opts.relays);
-  const shared = await fetchSharedFavorites(opts.pubkey, relayUrls);
+  const shared = await fetchSingleList(opts.pubkey, relayUrls);
   if (!shared.trustworthy) {
-    console.warn('⚠️ Shared favorites: relay read was degraded — not reconciling');
+    console.warn('⚠️ Favorites: relay read was degraded — not reconciling');
     setSyncHealth('read', true);
     return { status: 'degraded' };
   }
 
-  const { shows, tracks } = partitionSharedFavorites(shared.items);
+  const { shows, tracks } = partitionSingleList(shared);
 
   try {
     const res = await fetch('/api/favorites/sync-shared', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-nostr-user-id': opts.userId },
-      // The baseline goes with the request: a removal is `baseline − incoming`,
-      // so on first run (no baseline) the route deletes nothing rather than
-      // reading the empty shared list as "the user cleared everything".
+      // The baseline is always EMPTY, and permanently so: kind 10333 has no
+      // baseline to keep. The route computes removals as `baseline − incoming`,
+      // so an empty one means it may add but never delete — which is the only
+      // safe reading of a format that cannot distinguish "another app removed
+      // this" from "another app never had it". Inbound removals therefore do
+      // not propagate; that is a property of the format, not a bug here.
       body: JSON.stringify({
         trustworthy: true,
         shows,
         tracks,
-        baseline: getBaseline(opts.pubkey),
+        baseline: [],
       }),
     });
     if (!res.ok) {
@@ -625,4 +571,4 @@ async function runPull(opts: {
 }
 
 /** Re-exported so callers need only this module. */
-export { fetchSharedFavorites, partitionSharedFavorites };
+export { fetchSingleList, partitionSingleList };
