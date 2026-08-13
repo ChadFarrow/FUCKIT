@@ -1407,13 +1407,25 @@ Immediately after the existing `if (url.protocol !== 'https:')` block, insert:
     // The https + .gif checks above do not stop https://10.0.0.5/x.gif. Any
     // route that fetches a caller-supplied URL must go through this guard —
     // same rule /api/chapters, /api/proxy-image and /api/proxy-audio follow.
-    if (!isSafePublicUrl(gifUrl)) {
+    const urlCheck = isSafePublicUrl(gifUrl);
+    if (!urlCheck.ok) {
       return NextResponse.json({
         success: false,
-        error: 'URL not allowed'
+        error: `URL not allowed: ${urlCheck.error}`
       }, { status: 400 });
     }
 ```
+
+> **CORRECTION (found in review).** This block originally read
+> `if (!isSafePublicUrl(gifUrl))`. That is **dead code**: `isSafePublicUrl`
+> returns `UrlCheckResult = { ok: true; url: URL } | { ok: false; error: string }`
+> (`lib/url-security.ts:10`), never a boolean, so negating the returned object is
+> always `false` and the guard never fires. Verified empirically —
+> `https://10.0.0.5/x.gif` returns `{ok:false,...}`, and `!` of it is `false`.
+> **`tsc --noEmit` cannot catch this**; negating an object is legal TypeScript,
+> so a clean typecheck gave false confidence. Always destructure `.ok`, the way
+> `chapters/route.ts:91-93`, `proxy-image/route.ts:179-180` and
+> `proxy-audio/route.ts:15-17` already do.
 
 - [ ] **Step 4: Verify the guard rejects private hosts**
 
