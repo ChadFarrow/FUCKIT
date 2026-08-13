@@ -94,7 +94,7 @@ export function BatchedFavoritesProvider({ children }: { children: React.ReactNo
   }, [identityKey]);
 
   /**
-   * Bulk writers (the shared-favorites reconcile, delete-all) can change what
+   * Bulk writers (the favorites reconcile, delete-all) can change what
    * is favorited without naming the ids, so they empty the cache instead of
    * writing through. See FAVORITE_STATUSES_INVALIDATED_EVENT.
    */

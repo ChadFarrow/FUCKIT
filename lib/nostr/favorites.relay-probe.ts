@@ -1,9 +1,9 @@
 /**
- * npx tsx lib/nostr/shared-favorites.relay-probe.ts [npub|hex]
+ * npx tsx lib/nostr/favorites.relay-probe.ts [npub|hex]
  *
- * Real-relay smoke check for the cross-app favorites read. Complements
- * `shared-favorites.relay.test.ts`, which scripts LOCAL relays — the two cover
- * different things and neither replaces the other:
+ * Real-relay smoke check for the kind:10333 favorites read. Complements
+ * `relay-read.test.ts`, which scripts LOCAL relays — the two cover different
+ * things and neither replaces the other:
  *
  *   - The test file covers what a correct relay will never do on request: hang,
  *     serve another user's event, serve a tampered one, refuse to connect. That
@@ -11,15 +11,15 @@
  *   - This probe covers what fake relays can't tell you: whether the relays the
  *     app actually ships still work, today, from this machine.
  *
- * The second is the failure that has now bitten twice — `relay.nsec.app`
- * returning 502 for months, then `nostr.oxtr.dev` blackholing connections —
- * because nothing prunes a dead default automatically (`filterReachableRelays`
- * only pattern-matches localhost-style URLs). Neither showed up as an error;
- * both just made every read slower until someone measured.
+ * The second is the failure that has bitten twice — `relay.nsec.app` returning
+ * 502 for months, then `nostr.oxtr.dev` blackholing connections — because
+ * nothing prunes a dead default automatically (`filterReachableRelays` only
+ * pattern-matches localhost-style URLs). Neither showed up as an error; both
+ * just made every read slower until someone measured.
  *
  * READ-ONLY. It never signs and never publishes — there is deliberately no
- * import of the sync/publish path here, so running it against a real key
- * cannot alter that key's list.
+ * import of the publish path here, so running it against a real key cannot
+ * alter that key's list.
  *
  * Not part of `npx tsx --test` runs: it needs the network, and a relay having a
  * bad afternoon should not fail an unrelated test suite. Run it when touching
@@ -34,13 +34,7 @@ import { generateSecretKey, getPublicKey } from 'nostr-tools/pure';
 
 import { installNodeWebSocket } from './node-websocket';
 import { getDefaultRelays } from './relay';
-import {
-  fetchSharedFavorites,
-  identifierKind,
-  partitionSharedFavorites,
-  SHARED_D_TAG,
-  SHARED_FAVORITES_KIND,
-} from './shared-favorites';
+import { fetchSingleList, SINGLE_LIST_KIND } from './favorites-single-list';
 
 // Chad's key — the account trialling the sync. Override with an argument.
 const DEFAULT_NPUB = 'npub177fz5zkm87jdmf0we2nz7mm7uc2e7l64uzqrv6rvdrsg8qkrg7yqx0aaq7';
@@ -75,18 +69,15 @@ async function healthCheck(relays: string[]) {
       });
       const connectedMs = Date.now() - started;
       const eosed = await new Promise<boolean>((resolve) => {
-        const sub = relay.subscribe(
-          [{ kinds: [SHARED_FAVORITES_KIND], authors: [nobody], '#d': [SHARED_D_TAG] }],
-          {
-            // Disable the library's synthetic EOSE: only a real one counts here,
-            // for the same reason it doesn't count in fetchSharedFavorites.
-            eoseTimeout: CONNECT_BUDGET_MS * 10,
-            oneose() {
-              sub.close();
-              resolve(true);
-            },
-          }
-        );
+        const sub = relay.subscribe([{ kinds: [SINGLE_LIST_KIND], authors: [nobody] }], {
+          // Disable the library's synthetic EOSE: only a real one counts here,
+          // for the same reason it doesn't count in `readReplaceableEvent`.
+          eoseTimeout: CONNECT_BUDGET_MS * 10,
+          oneose() {
+            sub.close();
+            resolve(true);
+          },
+        });
         setTimeout(() => {
           try {
             sub.close();
@@ -120,12 +111,14 @@ async function healthCheck(relays: string[]) {
 async function emptyRead(relays: string[]) {
   console.log('\n② A key with no list — must be a TRUSTED empty read');
   const started = Date.now();
-  const r = await fetchSharedFavorites(getPublicKey(generateSecretKey()), relays);
+  const r = await fetchSingleList(getPublicKey(generateSecretKey()), relays);
   const ms = Date.now() - started;
 
-  if (r.exists) bad(`a fresh key somehow has a list (${r.items.length} items)`);
+  if (r.exists) bad(`a fresh key somehow has a list (${r.groups.length} groups)`);
   else if (!r.trustworthy) {
-    bad(`trustworthy=false in ${ms}ms — a genuine empty list reads as a failure, so this app could never make its FIRST publish`);
+    bad(
+      `trustworthy=false in ${ms}ms — a genuine empty list reads as a failure, so this app could never make its FIRST publish`
+    );
   } else ok(`trustworthy empty in ${ms}ms`);
 }
 
@@ -133,7 +126,7 @@ async function emptyRead(relays: string[]) {
 async function realRead(relays: string[], pubkey: string) {
   console.log(`\n③ The live list for ${pubkey.slice(0, 12)}…`);
   const started = Date.now();
-  const r = await fetchSharedFavorites(pubkey, relays);
+  const r = await fetchSingleList(pubkey, relays);
   const ms = Date.now() - started;
 
   if (!r.trustworthy) {
@@ -145,25 +138,26 @@ async function realRead(relays: string[], pubkey: string) {
     return;
   }
 
-  ok(`read ${r.items.length} items in ${ms}ms (updated ${new Date(r.updatedAt * 1000).toISOString()})`);
+  const items = r.groups.reduce((n, g) => n + g.itemGuids.length, 0);
+  ok(
+    `read ${r.groups.length} feed groups and ${items} items in ${ms}ms (updated ${new Date(
+      r.updatedAt * 1000
+    ).toISOString()})`
+  );
 
-  const { shows, tracks } = partitionSharedFavorites(r.items);
-  const carried = r.items.length - shows.length - tracks.length;
-  console.log(`     shows ${shows.length} · tracks ${tracks.length} · carried-but-unresolvable ${carried}`);
+  const byMedium = r.groups.reduce<Record<string, number>>((acc, g) => {
+    const key = g.medium ?? '(not told)';
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+  console.log(`     groups by medium: ${JSON.stringify(byMedium)}`);
 
-  // Wire-format sanity. A drift here has no visible symptom other than another
-  // app quietly failing to see these favorites.
-  const unknown = r.items.filter((i) => !identifierKind(i.id));
-  if (unknown.length) {
-    console.log(`     ⚠️  ${unknown.length} identifier(s) of a kind this app doesn't recognize — carried verbatim, which is correct; listed in case it's a typo on our side:`);
-    for (const u of unknown.slice(0, 3)) console.log(`        ${u.id}`);
-  }
-
-  // Position 3 is a SHOULD in the spec: without the parent feed guid, another
-  // app can't resolve the item through PI's /episodes/byguid.
-  const missingParent = tracks.filter((t) => !t.feedGuid).length;
-  if (missingParent) {
-    console.log(`     ℹ️  ${missingParent}/${tracks.length} tracks lack the position-3 parent feed guid (their Feed.guid is null in the DB — fix is an admin reparse, not a code change)`);
+  // This app never writes one. Another writer might, and they resolve less well
+  // — no parent feed means no /episodes/byguid lookup.
+  if (r.orphanItemGuids.length) {
+    console.log(
+      `     ℹ️  ${r.orphanItemGuids.length} item(s) sit before any feed group, so they carry no parent`
+    );
   }
 }
 
@@ -178,7 +172,7 @@ async function main() {
   const pubkey = toPubkey(arg || DEFAULT_NPUB);
   const relays = getDefaultRelays();
 
-  console.log('Cross-app favorites — real-relay smoke check (read-only, never publishes)');
+  console.log('Favorites (kind 10333) — real-relay smoke check (read-only, never publishes)');
 
   await healthCheck(relays);
   await emptyRead(relays);

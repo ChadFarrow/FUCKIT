@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { SHOW_PREFIX, ITEM_PREFIX } from '@/lib/nostr/shared-favorites';
+import { SHOW_PREFIX, ITEM_PREFIX } from '@/lib/nostr/pc20-identifiers';
 import { requireUser } from '@/lib/auth/require-user';
 
 /**

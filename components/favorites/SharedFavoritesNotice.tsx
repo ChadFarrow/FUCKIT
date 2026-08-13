@@ -6,7 +6,7 @@ import {
   getSharedSyncStatus,
   pullSharedFavorites,
   subscribeSharedSyncStatus,
-} from '@/lib/nostr/shared-favorites-client';
+} from '@/lib/nostr/favorites-sync-client';
 
 /**
  * "We couldn't reach the relays" made visible.

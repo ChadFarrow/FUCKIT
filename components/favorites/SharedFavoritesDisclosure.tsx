@@ -2,7 +2,7 @@
 
 import { Globe } from 'lucide-react';
 import { useNostr } from '@/contexts/NostrContext';
-import { sharedFavoritesEnabledFor } from '@/lib/nostr/shared-favorites-client';
+import { sharedFavoritesEnabledFor } from '@/lib/nostr/favorites-sync-client';
 
 /**
  * "Your favorites are public" — said out loud, on the screen where favoriting

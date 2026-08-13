@@ -142,7 +142,7 @@ export function selectUnknownIds(
  * Window event that empties the cache.
  *
  * For writers that change favorites in BULK and can't name the ids: the
- * shared-favorites reconcile (`/api/favorites/sync-shared` returns counts, not
+ * favorites reconcile (`/api/favorites/sync-shared` returns counts, not
  * ids) and "delete all favorites" in settings. Per-item writers must use
  * `setFavoriteStatus` instead — this throws away good answers too, so it is
  * the blunt instrument, not the default.

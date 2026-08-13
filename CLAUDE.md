@@ -71,11 +71,16 @@ line holds the full story.
   `type` for local behaviour, `medium` for anything published or shown as fact → `favorites-cross-app`,
   `feed-ingestion`.
 - **The shared favorites wire format is sequenced reader-first, across two repos and a spec.** The order is: land
-  it in [PC20-Nostr](https://github.com/ChadFarrow/PC20-Nostr/blob/main/specs/pc20-favorites.md), teach **both**
-  apps to *read* the new form, and only then start *writing* it. Writing a form the other app can't read doesn't
-  fail — it silently makes favorites invisible on the far side, which is worse than the format it replaced. Right
-  now StableKraft still writes the single list and a prefixed position 3 for exactly that reason, and adopting the
-  split before Boost Me Bitch ships its reader is the mistake to avoid → `favorites-cross-app`.
+  it in [PC20-Nostr](https://github.com/ChadFarrow/PC20-Nostr/blob/main/pc20-favorites-single-list.md), teach
+  **both** apps to *read* the new form, and only then start *writing* it. Writing a form the other app can't read
+  doesn't fail — it silently makes favorites invisible on the far side, which is worse than the format it
+  replaced. The channel is now **kind 10333**, one plain replaceable event with no baseline and no merge; the
+  kind:30078 two-list design it replaced is deleted, and its events survive on the relays only as a rollback
+  path → `favorites-cross-app`.
+- **Kind 10333 has no baseline, so it is only safe while ONE app writes it.** Publishing replaces the whole event
+  with what this app holds. StableKraft seeds it and Boost Me Bitch reads it; before any second writer exists it
+  needs a read-then-carry pass, or each publish deletes whatever the other app holds exclusively — with nothing to
+  notice it happened. Inbound removals do not propagate for the same reason → `favorites-cross-app`.
 - **Verify UI changes by measuring, not eyeballing** — puppeteer-core against the real component, asserting all
   four edges. Several bugs here survived a sweep that only checked one → `mobile-layout`.
 
@@ -91,7 +96,7 @@ Each is a skill under `.claude/skills/`; invoke it when the work touches its are
 | `auth-and-security` | `ADMIN_SECRET`, `SESSION_SECRET`, the SSRF guard, CORS/CSP/response headers, CI |
 | `nostr-signer` | NIP-46/55/07 signers, the login modal, post-login flow, the publish queue |
 | `favorites` | The favorites data model, polymorphic `feedId`, album-vs-track, the status cache, the Community tab |
-| `favorites-cross-app` | The shared kind:30078 list synced with Boost Me Bitch |
+| `favorites-cross-app` | The shared kind:10333 list StableKraft seeds and Boost Me Bitch reads |
 | `audio-playback` | `AudioContext` playback: end of album, background audio, Android ping-pong, VTS |
 | `android-native` | The Capacitor/zapstore APK: foreground service, wake lock, MediaSession, back button |
 | `mobile-layout` | Safe-area insets, the player bar reserve, Now Playing, the mobile album page |
