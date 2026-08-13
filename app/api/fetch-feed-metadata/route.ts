@@ -14,8 +14,9 @@ export async function GET(request: NextRequest) {
     // /api/chapters, /api/proxy-image and /api/proxy-audio. Without it, any
     // link-local or RFC-1918 host was reachable AND its body was reflected
     // back to the caller.
-    if (!isSafePublicUrl(feedUrl)) {
-      return NextResponse.json({ error: 'URL not allowed' }, { status: 400 });
+    const urlCheck = isSafePublicUrl(feedUrl);
+    if (!urlCheck.ok) {
+      return NextResponse.json({ error: urlCheck.error }, { status: 400 });
     }
 
     // Enforce a timeout so the UI isn't stuck if the remote feed is slow

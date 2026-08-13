@@ -40,10 +40,11 @@ export async function GET(request: NextRequest) {
     // The https + .gif checks above do not stop https://10.0.0.5/x.gif. Any
     // route that fetches a caller-supplied URL must go through this guard —
     // same rule /api/chapters, /api/proxy-image and /api/proxy-audio follow.
-    if (!isSafePublicUrl(gifUrl)) {
+    const urlCheck = isSafePublicUrl(gifUrl);
+    if (!urlCheck.ok) {
       return NextResponse.json({
         success: false,
-        error: 'URL not allowed'
+        error: urlCheck.error
       }, { status: 400 });
     }
 
