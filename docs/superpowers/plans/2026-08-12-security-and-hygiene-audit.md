@@ -1362,8 +1362,16 @@ the issue #190 symptom."
 ### Task 9: Fix the two SSRF routes
 
 **Files:**
-- Delete: `app/api/fetch-feed-metadata/route.ts`
+- Modify: `app/api/fetch-feed-metadata/route.ts`
 - Modify: `app/api/gif-placeholder/route.ts`
+
+> **CORRECTION (applied during implementation).** This task originally said to
+> DELETE `fetch-feed-metadata` because it had "no callers". That was wrong —
+> `app/playlist/maker/page.tsx` calls it at lines 38 and 64, and `/playlist/maker`
+> is a live routable page. The claim came from a grep that errored on a shell
+> glob and returned empty output, which was misread as a clean result. The route
+> is **hardened with `isSafePublicUrl`** exactly like `gif-placeholder`, not
+> deleted. Step 1's caller check below is what caught this — keep gates like it.
 
 **Interfaces:**
 - Consumes: `isSafePublicUrl` from `lib/url-security`.

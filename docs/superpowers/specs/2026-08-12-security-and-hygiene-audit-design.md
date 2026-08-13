@@ -54,7 +54,14 @@ Roughly 20 routes are affected.
 **2. Unauthenticated SSRF with response reflection — `app/api/fetch-feed-metadata`.**
 No allowlist, no protocol restriction, no `isSafePublicUrl`. It fetches any URL the
 caller names and returns the parsed body, so link-local and RFC-1918 hosts are both
-reachable and readable. The route has **no callers** anywhere in the app.
+reachable and readable.
+
+**Correction (2026-08-12, during implementation):** this section originally said the
+route has "no callers" and planned to delete it. That was wrong. `app/playlist/maker/page.tsx`
+calls it at lines 38 and 64, and `/playlist/maker` is a live routable page. The
+"no callers" claim came from a grep that failed on a shell glob error and returned
+empty output, which was misread as a clean result. The route is **hardened with
+`isSafePublicUrl`**, not deleted.
 
 **3. SSRF — `app/api/gif-placeholder`.** Requires `https:` and a `.gif` substring, but
 nothing rejects private hosts, so `https://10.0.0.5/x.gif` is fetched. Live: called
