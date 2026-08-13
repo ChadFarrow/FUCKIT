@@ -1,0 +1,91 @@
+---
+name: feed-ingestion
+description: "Use when working on how feeds get INTO the catalog: feed import, the podping consumer (msp-podping-service) and its four public endpoints, /api/feeds, /api/feeds/exists, /api/feeds/refresh-by-url, /api/feeds/opml, the shared feed-by-URL lookup ladder in lib/feed-lookup.ts, duplicate or encoding-variant feed rows, a reparse that reports success but writes nothing, a null Feed.guid that no reparse fills, missing podcast:guid / podcast:medium / podcast:publisher / categories, channel tags that sit after the <item>s, the nightly refresh-playlists.yml cron, targeted podcast reparse, playlist remoteItem resolution, or adding a new music podcast such as Upbeats or Two For Tunestr."
+---
+
+# feed-ingestion
+
+How feeds get into the catalog: the podping consumer, the shared URL lookup ladder, the nightly cron, and RSS parsing gotchas. For hiding, blacklisting or deleting feeds see the `feed-curation` skill.
+
+## Tests for this subsystem
+
+```
+npx tsx --test lib/url-utils.test.ts                # feed URL variants (podping ladder) + generateAlbumHref
+npx tsx --test lib/rss-channel-metadata.test.ts     # channel tags found before AND after the <item>s
+```
+
+---
+
+## Two-Repo Setup
+- **musicL-playlist-updater** - Generates playlist XML feeds
+- **stablekraft-app** (this repo) - Consumes and displays playlists
+
+---
+
+## Daily Workflow (`.github/workflows/refresh-playlists.yml`)
+Runs at 4 AM EST: clears cache → reparses feeds → refreshes playlists → parses publishers → imports missing albums from publisher feeds (Step 5b via PI API) → reparses each newly imported feed from its real RSS (Step 5c, driven by `importedFeedIds` in the Step 5b response). Step 5c exists because PI's episodes API doesn't surface `<podcast:episode>`/`<podcast:season>` ordering, chapters, or VTS — only the RSS has them. The `PLAYLISTS` array must include ALL playlist IDs — missing ones won't get nightly processing.
+
+---
+
+## Podping Consumer Integration
+External service `msp-podping-service` (repo `ChadFarrow/msp-podping-service`) tails Hive for `pp_music_*` / `pp_podcast_*` podpings. For each ping the consumer (`consumer/src/index.ts:handleIri`) calls `/api/feeds/exists`; if it exists, calls `/api/feeds/refresh-by-url` **regardless of signer**. Only `/api/feeds` (new-feed minting) is gated to signer=`chadf` via `fromMsp` check in the consumer.
+
+Four public endpoints (intentionally exempt from the `ADMIN_SECRET` middleware gate — see Admin API Auth below; consumer-side auth only). `refresh-by-url` is rate-limited 30 req/min/IP (in-memory, per Railway instance):
+- `GET /api/feeds/exists?url=<URL>` or `?guid=<GUID>` → `{ exists: boolean }`. Blacklisted URLs always return `false` (reuses `isBlacklistedFeedUrl()` from `lib/feed-exclusions.ts`). URL lookup delegates to the shared ladder in `lib/feed-lookup.ts` (see below). The `?guid=` branch is a plain `Feed.guid` query and doesn't use the ladder.
+- `POST /api/feeds/refresh-by-url` with `{ originalUrl }` — same shared ladder, then a primary-key `findUnique` for the full row. **Does NOT mint new feeds** unless caller passes explicit `feedId` in body (guards against rogue unauthed POSTs creating garbage rows). Must stay fast + idempotent. Current `feedId` callers: LNURL and Podtards test-feed buttons in `AdminPanel.tsx`.
+- `POST /api/feeds` with `{ originalUrl, type: 'album' }` — **consumer-gated to signer=`chadf`** (only our MSP can mint new feed records). Stranger podpings drop at the consumer's `!exists && fromMsp` branch. Server-side has no auth. Its pre-existence 409 check uses the **same shared ladder** — this is the endpoint that mints, so a lookup narrower than the consumer's `exists` check turns a case-variant URL into a duplicate row. The two `feed.upsert` `where: { originalUrl: normalizedOriginalUrl }` clauses below it are only reached when the ladder found nothing — leave them exact.
+- `GET /api/feeds/opml?type=<album|podcast|publisher>&grouped=<false>` → OPML 2.0 XML of every active, non-blacklisted feed. Filters `BLACKLISTED_FEED_IDS`/`BLACKLISTED_FEED_URLS` (does **not** filter `PLAYLIST_SOURCE_FEED_URLS`). 15-min in-memory cache keyed off full feed list; `type` filter applies in-memory. `?refresh=true` bypasses.
+
+**Shared feed-by-URL lookup ladder (`lib/feed-lookup.ts`)** — `findFeedIdByUrl(...urls)` returns `{ id, matchedVia }` or null. Three rungs, and the **order is load-bearing**:
+1. Exact `originalUrl` match on any variant from `buildFeedUrlVariants()` (pure, in `lib/url-utils.ts`, tested by `npx tsx --test lib/url-utils.test.ts`) — normalized form first, raw form when it differs. Uses the `@unique` btree index.
+2. **Loose** match — `mode: 'insensitive'` over `buildFeedUrlLooseVariants()`, so it is case- *and* encoding-insensitive in one query. Logs `🔠 feed-lookup:` on hit. Two dimensions, both of which produced silent duplicate mints:
+   - **Case** — `normalizeUrl` lowercases the hostname but leaves **path and query casing alone**, and self-hosted hosts have no UUID for rung 3, so for them exact-string was the only signal (`headstarts.uk` mixes conventions: `/msp/nat-hills-music/Nat_Hills_Music.xml` vs `/msp/Nathan Abbott/…`). RFC 3986 does treat paths as case-sensitive; accepted deviation, since rung 1 still wins whenever both rows exist.
+   - **Encoding** — `buildFeedUrlLooseVariants` adds a **percent-decoded** form (path/query/hash only; the origin is never decoded, so a `%2F` can't rewrite the host). Only the decode direction is new — `normalizeUrl` already encodes an incoming literal space to `%20`. It's needed because ~69 rows store `originalUrl` with **literal spaces**, written by the paths deliberately left off the ladder, so a podping broadcasting the correct `%20` form couldn't see them. That minted **17 duplicate rows** (deleted 2026-07-25) before it was caught; the gap survived PR #172, which closed only the case dimension.
+3. `extractUuidFromUrl()` → `Feed.guid`/`Feed.id`. **Keep this** — without it, Podhome podpings for UpBeats (broadcasts `serve.podhome.fm/rss/<uuid>` while DB stores `feeds.rssblue.com/upbeats`) silently no-op.
+
+Three callers: `exists`, `refresh-by-url`, `POST /api/feeds`. **Do not re-inline the ladder into a route** — it used to be copy-pasted into the first two and the divergence caused the Podhome/UpBeats silent-skip bug. **Rung 1 must stay exact on `buildFeedUrlVariants`** — folding the loose variants into its `IN` list would make `findFirst` pick arbitrarily between two rows that differ only by case or encoding, instead of each resolving to itself. No index backs rung 2 (a case-insensitive compare can't use the btree, so it's a seq scan over ~4.5k rows) — deliberate, to avoid the issue #122 Railway `db:migrate` gotcha; it only runs after rung 1 misses and `refresh-by-url` is capped at 30 req/min/IP. `isBlacklistedFeedUrl()`/`isPlaylistSourceFeedUrl()` compare over the same lowercased loose-variant set and **must stay in sync** with rung 2 — otherwise a URL can be un-findable as an existing feed yet still not recognized as blacklisted. Feed-by-URL lookups elsewhere (admin tooling, bulk-import, playlist import, `lib/feed-discovery.ts`) are intentionally **not** on the ladder — which is *why* rows keep arriving un-normalized and the decode rung has to exist.
+
+When modifying these endpoints, check consumer expectations in `msp-podping-service/consumer/src/index.ts` — if adding auth, wire a shared-secret env var into the consumer too.
+
+**Host latency summary:** Fountain ≈ real-time via podping; Wavlake + self-hosted music sites = nightly 4 AM reparse only. Full per-host table and HafSQL provenance in `reference_podping_host_coverage.md` memory.
+
+---
+
+## Targeted Podcast Reparse (`.github/workflows/refresh-podcasts-targeted.yml`)
+Every 30 min from 11:00–13:59 UTC on Sundays (UpBeats) and Tuesdays (Two For Tunestr) — the observed publish windows (7 AM Eastern year-round, UTC shifts ±1h on DST). Belt-and-suspenders safety net for consumer outages or Podhome emission gaps; catches new episodes within ~30 min of publish. Day-of-week check inside the workflow means off-day cron ticks early-exit at zero cost. When adding a curated podcast with a predictable publish schedule, update both this file's `PODCAST_FEEDS` array (and day switch if a new weekday) **and** `refresh-playlists.yml` Step 2b.
+
+---
+
+## Playlist Resolution
+Playlists use `<podcast:remoteItem>` with `feedGuid` + `itemGuid`. On `?refresh`: discover feeds via PI API → parse → discover publishers → resolve tracks. Resolution rate ~80-90%.
+
+**Feed deduplication pattern**: multi-check dedup (normalized URL, raw URL, feedGuid as ID, feedGuid as GUID column, feedGuid-in-URL substring, then secondary `podcastGuid` check). New feeds get slug-based IDs via `generateAlbumSlug`. When modifying feed import code, follow this pattern — weak dedup causes duplicate entries.
+
+**Podcast type detection**: Non-Wavlake feeds with `<podcast:medium>podcast</podcast:medium>` auto-detect as `type: 'podcast'` on import. Wavlake feeds are excluded (they use `medium=podcast` for music). Feeds with `type: 'podcast'` auto-appear under the Podcasts filter (direct `type='podcast'` query bypassing the blacklist) and hide from the album grid. **`POST /api/admin/fix-podcast-types` flips `type: 'podcast'` → `'album'` for any feed NOT in the curated `PODCAST_FEED_IDS`/`PODCAST_FEED_URLS` allowlist** (`lib/podcast-feeds.ts`) — use to clean up misdetected podcasts, NOT to promote albums (use admin Podcast dropdown for that).
+
+**PI API status gotcha**: `normalizeFeedResponse` in `lib/podcast-index-api.ts` must accept both `status: 'true'` (string) and `status: true` (boolean). Use `data.status !== 'true' && data.status !== true` for rejection checks.
+
+**Podroll exclusion**: `process-remote-items/route.ts` strips `<podcast:podroll>` before extracting `<podcast:remoteItem>` tags — without this, podroll-referenced feeds get imported as albums.
+
+---
+
+## Channel-level tags may sit AFTER the `<item>`s (`channelMetadataXml`, `lib/rss-parser-db.ts`)
+**Element order inside `<channel>` is unconstrained by RSS, and real feeds use both layouts** — the MSP-generated music feeds put `<podcast:guid>`, `<podcast:medium>` and friends *after* the last item (measured on a live feed: guid at byte **17041**, first `<item>` at **664**). Four readers used to take `channelContent.split(/<item[\s>]/)[0]` — everything before the first item — and so returned **nothing at all** for those feeds: `parsePodcastGuidFromXML` (→ `Feed.guid`), `parsePodcastMediumFromXML` (→ album-vs-podcast typing), the `<podcast:publisher>` reader (→ publisher detection), and `parsePodcastCategoriesFromXML`.
+
+- **It fails silently and looks like the feed's fault.** The parse succeeds; the feed simply appears to declare no guid, no medium, no categories. A feed that clearly ships `<podcast:medium>music</podcast:medium>` reads as declaring nothing.
+- **The tell is a reparse that reports success and changes nothing.** Seven feeds sat with a null `Feed.guid` no reparse could fill — each one returned `success: true` and wrote no guid, because the parser never found one. If a reparse "works" but the column is still null, suspect this before suspecting the data.
+- All four now go through **one** `channelMetadataXml` helper that **strips `<item>…</item>` blocks** rather than slicing at the first one. Correct for both layouts, and it still can't pick up an item-level tag. An **unclosed `<item>`** falls back to the old pre-item slice — narrower, but never wrong. Adding a fifth channel-level reader? Use the helper.
+- Tests: `npx tsx --test lib/rss-channel-metadata.test.ts` (before/after/interleaved, item-level tag ignored, unclosed-item fallback). Pinned because the failure is invisible — the mutation that restores the old slice fails only the after-items cases.
+
+**Setting a guid can still fail on `@unique`.** `Feed.guid` is unique, so if a duplicate row already holds it the update throws `Unique constraint failed on the fields: (guid)` and the reparse 400s. Both cases found were **empty duplicates** (0 tracks, 0 favorites) minted from the `%20` form of a literal-space URL, holding the guid the real row needed; the fix was `DELETE /api/feeds?id=<empty row>` then reparse. Note these were created **2026-07-25/26, after the PR #173 ladder fix** — so something still mints encoding-duplicate pairs; the ladder covers *lookups*, not whatever creation path this is.
+
+---
+
+## Adding Music Podcasts (like Upbeats, Two For Tunestr, B4TS)
+Import via `/admin` (paste RSS URL). Non-Wavlake feeds with `<podcast:medium>podcast</podcast:medium>` automatically get `type: 'podcast'`, appear under the Podcasts filter, hide from the album grid, and are searchable — no config edits needed. `/podcast/[id]` dynamic route handles display.
+
+**If the feed is also a playlist source** (B4TS, MMM, HGH, LT, Upbeats, IAM, ITDV, Two For Tunestr): it's in `PLAYLIST_SOURCE_FEED_URLS`, which blocks nightly auto-import but leaves admin add open. After import, register it as a curated podcast in `lib/podcast-feeds.ts`: add to `PODCAST_FEED_IDS` + `PODCAST_FEED_URLS` so `fix-podcast-types` can't flip it back to album, plus `PODCAST_SLUGS` + `PODCAST_SLUG_TO_FEED_ID` + `PODCAST_CANONICAL_SLUGS` to redirect `/album/<slug>` → `/podcast/<canonical-slug>`.
+
+**Slug redirects**: if the auto-generated feed ID differs from the desired URL slug (e.g., `silvie-two-for-tunestr` vs `two-for-tunestr`), add mappings to `PODCAST_SLUG_TO_FEED_ID` and `PODCAST_CANONICAL_SLUGS`.
+
+**After import**: reparse from the admin page to ensure chapters and VTS are populated (initial import may miss them if the chapters proxy is down).
