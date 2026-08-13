@@ -78,9 +78,24 @@ line holds the full story.
   kind:30078 two-list design it replaced is deleted, and its events survive on the relays only as a rollback
   path → `favorites-cross-app`.
 - **Kind 10333 has no baseline, so it is only safe while ONE app writes it.** Publishing replaces the whole event
-  with what this app holds. StableKraft seeds it and Boost Me Bitch reads it; before any second writer exists it
-  needs a read-then-carry pass, or each publish deletes whatever the other app holds exclusively — with nothing to
-  notice it happened. Inbound removals do not propagate for the same reason → `favorites-cross-app`.
+  with what this app holds. StableKraft seeds it and Boost Me Bitch reads it; a second writer would delete
+  whatever the other app holds exclusively on every publish, with nothing to notice it happened. Inbound removals
+  from another app do not propagate for the same reason → `favorites-cross-app`.
+- **A favorites entry is ambiguous in TWO directions, and each guard is wrong without the others.** Naming a
+  track's parent means emitting a feed entry, so a group appears whether or not the feed was favorited (196 groups
+  for 82 favorited feeds), and an entry on the list we don't hold locally is either another app's or one we just
+  removed. Four rules answer that, and 2026-08-13 shipped four production bugs by having some but not all of
+  them (#210–#214): an **itemless** group is a real favorite and one with items is unknowable; the merge drops
+  what we published and no longer hold but carries what we never published; the device-local
+  `sk_single_list_published:<pubkey>` record that makes those answerable is written on the digest-**unchanged**
+  path too, or it never bootstraps; and the **inbound reconcile applies the same filter**, because it runs
+  *before* the push and otherwise re-creates what the publish has not yet removed → `favorites-cross-app`.
+- **Favorites bugs are verified against the relay and the database, never the UI.** The heart clearing, the row
+  being gone, and the entry leaving the list are three different facts, and on 2026-08-13 they disagreed three
+  times in a row — a removed favorite still sitting in Postgres, then one deleted and silently re-created two
+  minutes later while the published event never moved. Read the event with
+  `npx tsx lib/nostr/favorites.relay-probe.ts` and the rows with `railway run`, and compare `createdAt` before
+  believing anything changed → `favorites-cross-app`.
 - **Verify UI changes by measuring, not eyeballing** — puppeteer-core against the real component, asserting all
   four edges. Several bugs here survived a sweep that only checked one → `mobile-layout`.
 
