@@ -64,6 +64,26 @@ from `components/CDNImage.tsx:178`.
 `script-src`, `object-src`, `base-uri`, or `frame-ancestors`. Framing is separately
 covered by `X-Frame-Options: DENY`, but the policy otherwise constrains nothing.
 
+**4a. Unauthenticated DoS — `POST /api/favorites/check`.** Takes `trackIds` and
+`feedIds` from the body with no size cap, no `Array.isArray` check and no rate limit.
+The tracks branch is quadratic: `trackIds.forEach(...)` wraps `tracks.find(...)`
+(`route.ts:62-71`), so n inputs against m matched tracks is n·m comparisons over three
+fields each. Track ids are semi-public — `/api/albums-fast` returns them — so 10k
+scraped ids are ~100M comparisons on the event loop from a single request. No identity
+is required: the guard is `if (!sessionId && !userId)` and `x-session-id` is an
+arbitrary caller-supplied string, so `-H 'x-session-id: x'` passes it. With
+`connection_limit=3` (`lib/prisma.ts:19`) a few concurrent requests saturate the pool
+while the loop is already blocked.
+
+Bounded by two things, which is why this is High and not Critical: `feedLookupWhere` is
+two indexed `IN`s, so the album branch is linear and the amplification is confined to
+the tracks branch; and the impact is availability only — no data loss, no privilege
+escalation, recovers on restart.
+
+This was originally filed under Low/performance as part of finding 12. That was wrong:
+finding 12 is about queries that are merely unbounded by construction, whereas this one
+is attacker-controlled, unauthenticated and amplifying.
+
 ### Medium
 
 **5. `Access-Control-Allow-Origin: *` on all of `/api/*`** (`next.config.js:632`). Lets
@@ -92,7 +112,9 @@ itself an XSS vector in older browsers. The modern value is `0`.
 log-flood incidents already (`/api/proxy-image` twice).
 
 **12. Unbounded `findMany`** on user-facing favorites routes (`sync-shared` ×6,
-`check` ×4, `tracks` ×4). Fine at current scale, unbounded by construction.
+`tracks` ×4). Fine at current scale, unbounded by construction. These read a user's own
+rows and are not attacker-amplifiable — unlike finding 4a, which was originally filed
+here in error.
 
 ### Verified sound
 
@@ -152,6 +174,13 @@ endpoints (`/api/feeds/exists`, `/api/feeds/refresh-by-url`, `POST /api/feeds`,
   first**, because a wrong `script-src` white-screens the entire app and there is no
   preview environment to catch it.
 - `X-XSS-Protection: 0` (finding 10).
+- Bound `POST /api/favorites/check` (finding 4a): reject non-array bodies, cap both
+  arrays at a documented limit, and replace the nested `tracks.find` with a Map keyed
+  by id, guid and audioUrl so the branch is linear. The cap must sit above the largest
+  batch the client actually sends — `BatchedFavoritesContext` is the only caller, so
+  the real batch size is measured from it rather than guessed, and a request over the
+  cap is rejected outright rather than silently truncated (a truncated response would
+  read as "not favorited" and re-create the issue #190 symptom).
 - Replace client-facing `details: errorMessage` with a generic message, keeping the
   detail in the server log (finding 6).
 
@@ -187,6 +216,9 @@ and the Nostr signing paths (`lib/nostr/nip46-client.ts`, `lib/nostr/signer.ts`)
 - Unit tests in this repo's `node:test` + `tsx` pattern: token sign/verify round trip,
   expiry, signature tampering, malformed input, and the missing-secret fail-open path.
 - A test asserting `gif-placeholder` rejects private hosts.
+- A test for the `favorites/check` cap: an over-cap request is rejected, a non-array
+  body is rejected, and an at-cap request still returns correct favorited status for
+  every id (the linearisation must not change results).
 - `npm run build` for the typecheck. Dev server stopped first — both write `.next`, and
   `CLAUDE.md` documents the resulting asset 400s.
 - Full existing suite before and after:
