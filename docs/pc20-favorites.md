@@ -4,7 +4,7 @@ This spec lives at its own canonical, app-neutral home — not inside either
 participating app's repo, so there's one copy to link to instead of several
 that can silently drift apart:
 
-**→ [github.com/ChadFarrow/PC20-Nostr/blob/main/pc20-favorites-single-list.md](https://github.com/ChadFarrow/PC20-Nostr/blob/main/pc20-favorites-single-list.md)**
+**→ [github.com/ChadFarrow/PC20-Nostr/blob/main/pc20-favorites.md](https://github.com/ChadFarrow/PC20-Nostr/blob/main/pc20-favorites.md)**
 
 One plain replaceable event at **kind 10333**, `i` tags grouped under a running
 `medium`, no `d` tag, no baseline, no merge. Republishing the whole tag list is

@@ -4,17 +4,19 @@
  * Owns what the pure format module deliberately does not: how a DB favorite
  * becomes a portable identifier, the debounce, and the sync-health flag the UI
  * reads. Spec: github.com/ChadFarrow/PC20-Nostr,
- * `pc20-favorites-single-list.md`.
+ * `pc20-favorites.md`.
  *
  * This is a SECOND channel alongside the per-item kind 30001 events, which are
  * untouched — the Community tab reads those.
  *
- * **There is no baseline here, and that is the format, not an omission.** The
- * kind:30078 predecessor diffed against the id list this device last agreed
- * with the relay on, so it could tell "another app added this" from "I removed
- * it". This event replaces wholesale: what is published is what this app holds.
- * That is safe exactly while this app is the only writer. Before a second
- * writer exists it needs a read-then-carry pass — see `publishSingleList`.
+ * **The event carries no baseline, but this device keeps one anyway.** Nothing
+ * on the wire changes: kind 10333 replaces wholesale, and a reader is told
+ * nothing about who wrote what. But a writer still has to answer the question
+ * the format cannot — an entry on the list that we do not hold locally is
+ * either another app's or one we just removed — so `publishSingleList` records
+ * what it published and consults it on the next merge. Getting that wrong made
+ * unfavoriting an album undo itself on the next page load; see
+ * `mergeSingleList`.
  */
 
 import {
@@ -27,8 +29,10 @@ import {
   groupForSingleList,
   mergeSingleList,
   partitionSingleList,
+  publishedRecordFrom,
   tagsFromGroups,
   templateFromTags,
+  type PublishedRecord,
 } from './favorites-single-list';
 import { RelayManager, getDefaultRelays, filterReachableRelays } from './relay';
 import { FAVORITE_STATUSES_INVALIDATED_EVENT } from '../favorite-status-cache';
@@ -296,10 +300,32 @@ async function publishToRelays(event: any, relayUrls: string[]): Promise<boolean
 }
 
 const SINGLE_LIST_DIGEST_PREFIX = 'sk_single_list_digest';
+const SINGLE_LIST_PUBLISHED_PREFIX = 'sk_single_list_published';
+
+/**
+ * What this device last published, so the merge can tell an entry it removed
+ * from an entry another app added. See `PublishedRecord`.
+ *
+ * Anything unreadable reads as empty, which is the safe direction: an empty
+ * record treats nothing as a removal.
+ */
+function getPublishedRecord(pubkey: string): PublishedRecord {
+  if (typeof window === 'undefined' || !pubkey) return { feeds: [], items: [] };
+  try {
+    const raw = localStorage.getItem(`${SINGLE_LIST_PUBLISHED_PREFIX}:${pubkey}`);
+    if (!raw) return { feeds: [], items: [] };
+    const parsed = JSON.parse(raw);
+    const strings = (v: unknown) =>
+      Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : [];
+    return { feeds: strings(parsed?.feeds), items: strings(parsed?.items) };
+  } catch {
+    return { feeds: [], items: [] };
+  }
+}
 
 /**
  * Publish the kind:10333 single-list event (PC20-Nostr,
- * `pc20-favorites-single-list.md`) from the local favorites snapshot.
+ * `pc20-favorites.md`) from the local favorites snapshot.
  *
  * This app SEEDS that list; Boost Me Bitch reads it. There is no read before
  * the write and no baseline — republishing the whole tag list is the sync, which
@@ -332,7 +358,8 @@ async function publishSingleList(
       return false;
     }
 
-    const merged = mergeSingleList(read, groupForSingleList(local));
+    const localGroups = groupForSingleList(local);
+    const merged = mergeSingleList(read, localGroups, getPublishedRecord(pubkey));
     const tags = tagsFromGroups(merged.groups, merged.orphanItemGuids);
 
     // The digest is computed on the MERGED tags, not on local state. On local
@@ -356,6 +383,14 @@ async function publishSingleList(
     if (typeof window !== 'undefined') {
       try {
         localStorage.setItem(key, digest);
+        // OUR contribution only, so entries carried on another app's behalf
+        // stay foreign next time. Losing this record is not fatal: an empty one
+        // means this device may not treat anything as a removal, which costs an
+        // unfavorite its propagation rather than deleting someone else's data.
+        localStorage.setItem(
+          `${SINGLE_LIST_PUBLISHED_PREFIX}:${pubkey}`,
+          JSON.stringify(publishedRecordFrom(localGroups))
+        );
       } catch {
         /* quota / private browsing — costs a redundant publish, nothing worse */
       }

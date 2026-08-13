@@ -71,7 +71,7 @@ line holds the full story.
   `type` for local behaviour, `medium` for anything published or shown as fact → `favorites-cross-app`,
   `feed-ingestion`.
 - **The shared favorites wire format is sequenced reader-first, across two repos and a spec.** The order is: land
-  it in [PC20-Nostr](https://github.com/ChadFarrow/PC20-Nostr/blob/main/pc20-favorites-single-list.md), teach
+  it in [PC20-Nostr](https://github.com/ChadFarrow/PC20-Nostr/blob/main/pc20-favorites.md), teach
   **both** apps to *read* the new form, and only then start *writing* it. Writing a form the other app can't read
   doesn't fail — it silently makes favorites invisible on the far side, which is worse than the format it
   replaced. The channel is now **kind 10333**, one plain replaceable event with no baseline and no merge; the

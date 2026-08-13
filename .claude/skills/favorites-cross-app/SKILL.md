@@ -20,7 +20,7 @@ npx tsx scripts/backup-favorites.ts dump > fav.json      # snapshot favorites be
 
 ## The format — kind 10333, one flat list
 
-Spec: [`PC20-Nostr/pc20-favorites-single-list.md`](https://github.com/ChadFarrow/PC20-Nostr/blob/main/pc20-favorites-single-list.md), the canonical app-neutral copy kept outside both implementing repos. **That document, not this code, is what a third app implements against.** One plain (non-`d`-tagged) replaceable event, so exactly one per pubkey; `i` tags grouped under a running `medium`; `content` empty and public. Republishing the whole tag list IS the sync.
+Spec: [`PC20-Nostr/pc20-favorites.md`](https://github.com/ChadFarrow/PC20-Nostr/blob/main/pc20-favorites.md), the canonical app-neutral copy kept outside both implementing repos. **That document, not this code, is what a third app implements against.** One plain (non-`d`-tagged) replaceable event, so exactly one per pubkey; `i` tags grouped under a running `medium`; `content` empty and public. Republishing the whole tag list IS the sync.
 
 It **replaced** the two-list NIP-78 kind:30078 design, which proved overcomplicated and has been deleted from both this repo and the spec repo. Events at `d:podcast:favorites` and `d:podcast:favorites:items` are still on the relays and are the rollback path; nothing in this app reads or writes them.
 
