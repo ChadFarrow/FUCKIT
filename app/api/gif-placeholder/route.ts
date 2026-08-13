@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import sharp from 'sharp';
+import { isSafePublicUrl } from '@/lib/url-security';
 
 /**
  * API endpoint to extract the first frame of a GIF as a WebP image
@@ -30,9 +31,19 @@ export async function GET(request: NextRequest) {
 
     // Only allow HTTPS URLs for security
     if (url.protocol !== 'https:') {
-      return NextResponse.json({ 
-        success: false, 
-        error: 'Only HTTPS URLs are allowed' 
+      return NextResponse.json({
+        success: false,
+        error: 'Only HTTPS URLs are allowed'
+      }, { status: 400 });
+    }
+
+    // The https + .gif checks above do not stop https://10.0.0.5/x.gif. Any
+    // route that fetches a caller-supplied URL must go through this guard —
+    // same rule /api/chapters, /api/proxy-image and /api/proxy-audio follow.
+    if (!isSafePublicUrl(gifUrl)) {
+      return NextResponse.json({
+        success: false,
+        error: 'URL not allowed'
       }, { status: 400 });
     }
 
