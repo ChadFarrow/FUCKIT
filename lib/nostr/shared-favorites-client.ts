@@ -138,7 +138,13 @@ function normalizePubkey(value: string): string | null {
   }
 }
 
-function sharedFavoritesEnabledFor(pubkey: string): boolean {
+/**
+ * Exported for `SharedFavoritesDisclosure`, which has to tell the user which
+ * list their favorites actually go to. Everything else in this module is a
+ * caller of the gate rather than a reader of it — keep it that way, and delete
+ * this export along with the gate when the trial ends.
+ */
+export function sharedFavoritesEnabledFor(pubkey: string): boolean {
   if (!pubkey) return false;
   const allowed = [
     ...SHARED_FAVORITES_ALLOWLIST,
