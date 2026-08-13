@@ -43,10 +43,18 @@ import {
 } from './shared-favorites';
 
 // Real-shaped identifiers. A is an album this app favorited, B a show another
-// app added, C a track, X an identifier kind this app doesn't implement.
+// app added, C a track, D a second album, X an identifier kind this app doesn't
+// implement.
+//
+// The merge vectors below append D, never C, and that is deliberate: C is an
+// item identifier, and an item is never originated on THIS list — see "an item
+// entry is never originated on the feeds list". Using a track to assert
+// append ORDER would make the ordering vector fail for a reason that has
+// nothing to do with ordering.
 const A = showId('9b024349-ccf0-5f69-a609-6b82873eab3c');
 const B = showId('c31ad2f6-1b7e-5b34-a2a4-6b06d5b0b4e2');
 const C = itemId('https://example.com/ep/42');
+const D = showId('4a7c1e58-2d93-5f04-b6e1-8c5a90d3f2b7');
 const X = 'podcast:publisher:guid:0e8f6a1b-2c3d-4e5f-8a9b-0c1d2e3f4a5b';
 
 const ids = (items: SharedFavoriteItem[]) => items.map((i) => i.id);
@@ -116,10 +124,10 @@ test('a local add and a local removal apply on top of a concurrent foreign add',
       mergeSharedFavorites({
         latest: [{ id: A }, { id: X }],
         lastSynced: [A],
-        local: [{ id: C }],
+        local: [{ id: D }],
       })
     ),
-    [X, C]
+    [X, D]
   );
 });
 
@@ -200,10 +208,74 @@ test('surviving entries keep relay order; new local entries append', () => {
       mergeSharedFavorites({
         latest: [{ id: B }, { id: X }, { id: A }],
         lastSynced: [B, X, A],
-        local: [{ id: A }, { id: B }, { id: X }, { id: C }],
+        local: [{ id: A }, { id: B }, { id: X }, { id: D }],
       })
     ),
-    [B, X, A, C]
+    [B, X, A, D]
+  );
+});
+
+test('an item entry is never originated on the feeds list', () => {
+  // PLACEMENT. This list is `podcast:favorites`; episodes and tracks belong at
+  // `podcast:favorites:items`. A track favorited locally and never published
+  // must not be appended here, baseline or no baseline — the spec's "writers
+  // must never originate an item entry there".
+  //
+  // The live case this closes: Boost Me Bitch moved 223 track entries to the
+  // items list, which drops them out of this app's baseline, and the very next
+  // merge would otherwise read all 223 as genuine local adds and put them back
+  // on the feeds list. The other app is forbidden to remove them again (not in
+  // its baseline), so the entries end up on both lists at once.
+  assert.deepEqual(
+    ids(mergeSharedFavorites({ latest: [{ id: A }], lastSynced: [A], local: [{ id: A }, { id: C }] })),
+    [A]
+  );
+  // ...and the baseline being empty doesn't make it a fresh publish's business
+  // either. This is the first-run shape, where every local id looks new.
+  assert.deepEqual(
+    ids(mergeSharedFavorites({ latest: [], lastSynced: [], local: [{ id: C }, { id: A }] })),
+    [A]
+  );
+});
+
+test('an item entry already on the feeds list is still carried verbatim', () => {
+  // The other half, and the one that costs data if it goes missing: refusing to
+  // ORIGINATE an item entry here is not licence to drop the ones already
+  // present. Every event on the wire written before the split has its tracks on
+  // this list — including the four Boost Me Bitch left behind — and they are
+  // the user's favorites, written correctly against the spec as it stood.
+  assert.deepEqual(
+    ids(
+      mergeSharedFavorites({
+        latest: [{ id: A }, { id: C }],
+        lastSynced: [A],
+        local: [{ id: A }],
+      })
+    ),
+    [A, C]
+  );
+  // Even when it is one of ours, still in our baseline, and still favorited
+  // locally — carried by the first loop, not re-added by the second.
+  assert.deepEqual(
+    ids(
+      mergeSharedFavorites({
+        latest: [{ id: C }],
+        lastSynced: [C],
+        local: [{ id: C }],
+      })
+    ),
+    [C]
+  );
+});
+
+test('an item entry in the baseline that the user unfavorited is still removed', () => {
+  // The removal path is untouched by the placement guard. `removes` is
+  // `baseline − local`, so a track this app put on the feeds list and the user
+  // has now unfavorited must still come off it — otherwise the guard would
+  // strand every legacy entry this app is responsible for.
+  assert.deepEqual(
+    ids(mergeSharedFavorites({ latest: [{ id: A }, { id: C }], lastSynced: [A, C], local: [{ id: A }] })),
+    [A]
   );
 });
 

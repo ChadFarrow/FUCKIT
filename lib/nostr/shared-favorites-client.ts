@@ -18,6 +18,7 @@ import {
   syncSharedFavorites,
   type SharedFavoriteItem,
 } from './shared-favorites';
+import { singleListDigest, singleListTemplate } from './favorites-single-list';
 import { RelayManager, getDefaultRelays, filterReachableRelays } from './relay';
 import { FAVORITE_STATUSES_INVALIDATED_EVENT } from '../favorite-status-cache';
 import { npubToPublicKey } from './keys';
@@ -316,6 +317,60 @@ async function publishToRelays(event: any, relayUrls: string[]): Promise<boolean
   }
 }
 
+const SINGLE_LIST_DIGEST_PREFIX = 'sk_single_list_digest';
+
+/**
+ * Publish the kind:10333 single-list event (PC20-Nostr,
+ * `pc20-favorites-single-list.md`) from the local favorites snapshot.
+ *
+ * This app SEEDS that list; Boost Me Bitch reads it. There is no read before
+ * the write and no baseline — republishing the whole tag list is the sync, which
+ * is the entire point of the variant. That is safe exactly while this app is the
+ * only writer. **Before a second writer exists**, this needs a read-then-carry
+ * pass so a publish re-emits feed groups it read but has no local row for;
+ * without one, two writers delete each other's exclusive entries on every
+ * toggle, and there is no baseline here to notice.
+ *
+ * Skipped when the tag list is unchanged since the last successful publish. Not
+ * an optimization for its own sake: every publish costs a signing prompt, this
+ * one runs beside the kind:30078 sync so a toggle already costs two, and a
+ * remote signer makes each of those a round trip to the user's phone.
+ *
+ * Never throws. A failure here must not take down the 30078 sync that follows.
+ */
+async function publishSingleList(
+  pubkey: string,
+  local: SharedFavoriteItem[],
+  relayUrls: string[]
+): Promise<void> {
+  try {
+    const digest = singleListDigest(local);
+    const key = `${SINGLE_LIST_DIGEST_PREFIX}:${pubkey}`;
+    if (typeof window !== 'undefined' && localStorage.getItem(key) === digest) return;
+
+    const signed = await signSharedEvent(singleListTemplate(local, Math.floor(Date.now() / 1000)));
+    const ok = await publishToRelays(signed, relayUrls);
+    if (!ok) {
+      console.warn('⚠️ Single-list favorites: no relay accepted the event');
+      return;
+    }
+
+    // Only after a relay confirmed storage — recording it on a refused publish
+    // would skip every retry from here on.
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem(key, digest);
+      } catch {
+        /* quota / private browsing — costs a redundant publish, nothing worse */
+      }
+    }
+    const entries = signed.tags.filter((t: string[]) => t[0] === 'i').length;
+    console.log(`✅ Single-list favorites: published ${entries} entries (kind 10333)`);
+  } catch (error) {
+    console.warn('⚠️ Single-list favorites: publish failed —', error);
+  }
+}
+
 /**
  * Read → merge → publish the shared list for this user.
  *
@@ -342,6 +397,17 @@ export async function syncSharedFavoritesNow(opts: {
   const run = (async (): Promise<'ok' | 'degraded'> => {
     const relayUrls = resolveRelays(opts.relays);
     const local = await loadLocalItems(opts.userId);
+
+    // The kind:10333 single-list event, published from the same local snapshot.
+    //
+    // Deliberately NOT gated on the read below. That event is built from local
+    // state and replaces wholesale — it has no baseline and nothing to merge
+    // against — so a degraded read of the kind:30078 list says nothing about
+    // whether this one can be written. Its own failures are contained here for
+    // the same reason: the two channels fail independently and neither should
+    // take the other down.
+    await publishSingleList(opts.pubkey, local, relayUrls);
+
     const result = await syncSharedFavorites(
       {
         pubkey: opts.pubkey,
