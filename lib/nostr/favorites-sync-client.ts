@@ -33,6 +33,7 @@ import {
   tagsFromGroups,
   templateFromTags,
   type PublishedRecord,
+  type SingleListGroup,
 } from './favorites-single-list';
 import { RelayManager, getDefaultRelays, filterReachableRelays } from './relay';
 import { FAVORITE_STATUSES_INVALIDATED_EVENT } from '../favorite-status-cache';
@@ -309,6 +310,26 @@ const SINGLE_LIST_PUBLISHED_PREFIX = 'sk_single_list_published';
  * Anything unreadable reads as empty, which is the safe direction: an empty
  * record treats nothing as a removal.
  */
+/**
+ * Record OUR contribution to what is now on the relays.
+ *
+ * Called on both paths out of a successful publish — the one that wrote an
+ * event and the one that found the relays already holding it. Entries carried
+ * on another app's behalf are deliberately absent, so they stay foreign next
+ * time; recording them would invert the resurrection bug into a clobber.
+ */
+function rememberPublished(pubkey: string, localGroups: SingleListGroup[]): void {
+  if (typeof window === 'undefined' || !pubkey) return;
+  try {
+    localStorage.setItem(
+      `${SINGLE_LIST_PUBLISHED_PREFIX}:${pubkey}`,
+      JSON.stringify(publishedRecordFrom(localGroups))
+    );
+  } catch {
+    /* quota / private browsing — an empty record only costs a propagation */
+  }
+}
+
 function getPublishedRecord(pubkey: string): PublishedRecord {
   if (typeof window === 'undefined' || !pubkey) return { feeds: [], items: [] };
   try {
@@ -369,7 +390,19 @@ async function publishSingleList(
     const digest = JSON.stringify(tags);
     const key = `${SINGLE_LIST_DIGEST_PREFIX}:${pubkey}`;
     // Unchanged is a success, not a skip: the relays already hold exactly this.
-    if (typeof window !== 'undefined' && localStorage.getItem(key) === digest) return true;
+    //
+    // The published record is still recorded here, and that is what BOOTSTRAPS
+    // it. Writing it only after a real publish left it empty forever on a
+    // device whose list already matched — the digest matched on every load, the
+    // early return fired, and the record never got written, so the merge went
+    // on treating this device's own removals as another app's entries. The fix
+    // for the resurrection loop could not engage at all. When the digest
+    // matches, the relays hold exactly what we would have published, so
+    // recording our contribution is simply true.
+    if (typeof window !== 'undefined' && localStorage.getItem(key) === digest) {
+      rememberPublished(pubkey, localGroups);
+      return true;
+    }
 
     const signed = await signSharedEvent(templateFromTags(tags, Math.floor(Date.now() / 1000)));
     const ok = await publishToRelays(signed, relayUrls);
@@ -383,17 +416,10 @@ async function publishSingleList(
     if (typeof window !== 'undefined') {
       try {
         localStorage.setItem(key, digest);
-        // OUR contribution only, so entries carried on another app's behalf
-        // stay foreign next time. Losing this record is not fatal: an empty one
-        // means this device may not treat anything as a removal, which costs an
-        // unfavorite its propagation rather than deleting someone else's data.
-        localStorage.setItem(
-          `${SINGLE_LIST_PUBLISHED_PREFIX}:${pubkey}`,
-          JSON.stringify(publishedRecordFrom(localGroups))
-        );
       } catch {
         /* quota / private browsing — costs a redundant publish, nothing worse */
       }
+      rememberPublished(pubkey, localGroups);
     }
     const entries = signed.tags.filter((t: string[]) => t[0] === 'i').length;
     console.log(`✅ Favorites: published ${entries} entries (kind 10333)`);
