@@ -59,9 +59,40 @@ const LIMIT = limitArg > -1 ? parseInt(process.argv[limitArg + 1], 10) : undefin
 // of the app that need Podcast Index in real time.
 const concArg = process.argv.indexOf('--concurrency');
 const CONCURRENCY = concArg > -1 ? parseInt(process.argv[concArg + 1], 10) : 1;
-// The XML pass talks to hundreds of different hosts rather than one API, so
-// nothing here is a shared limiter — this is just politeness to any one origin.
+// The XML pass looked like it talked to hundreds of hosts. It does not: 573 of
+// the 594 feeds this pass exists for are wavlake.com, so "different origins, no
+// shared limiter" was wrong in exactly the case that mattered — Wavlake answered
+// 429 to four-at-a-time and the pass recorded that as "refused".
+//
+// Which is the symptom, not the problem. CLAUDE.md's stack rule is "Podcast
+// Index API for all feed lookups and resolution (never fetch directly from
+// Wavlake — use PI API)", and this pass was doing exactly that. The 429s are
+// what the rule exists to prevent. So Wavlake is not asked directly, at any
+// rate: if Podcast Index has no answer for one of its feeds, the answer is that
+// we don't have one.
+//
+// For other hosts the pass stays, because it works and it is the only source
+// for a feed PI hasn't indexed. Workers run parallel ACROSS hosts and serialize
+// WITHIN one, since "hundreds of hosts" was an assumption worth not repeating.
 const XML_CONCURRENCY = 4;
+const xmlRpsArg = process.argv.indexOf('--xml-rps');
+const XML_RPS_PER_HOST = xmlRpsArg > -1 ? parseFloat(process.argv[xmlRpsArg + 1]) : 1;
+
+const hostSlots = new Map<string, number>();
+function hostOf(url: string): string {
+  try {
+    return new URL(url).host;
+  } catch {
+    return 'unparseable';
+  }
+}
+async function paceHost(host: string): Promise<void> {
+  const gap = 1000 / XML_RPS_PER_HOST;
+  const now = Date.now();
+  const slot = Math.max(now, hostSlots.get(host) ?? 0);
+  hostSlots.set(host, slot + gap);
+  if (slot > now) await sleep(slot - now);
+}
 const rpsArg = process.argv.indexOf('--rps');
 const RPS = rpsArg > -1 ? parseFloat(process.argv[rpsArg + 1]) : 1;
 
@@ -84,6 +115,7 @@ type Outcome =
   | { kind: 'none' } // PI knows the feed; the feed declares no medium
   | { kind: 'unknown' } // PI has never heard of it
   | { kind: 'rejected'; message: string } // PI refused the query; rerunning won't help
+  | { kind: 'pi-only'; message: string } // PI had no answer and we may not ask the host
   | { kind: 'error'; message: string };
 
 async function lookup(row: Row, attempt = 0): Promise<Outcome> {
@@ -135,12 +167,32 @@ async function lookup(row: Row, attempt = 0): Promise<Outcome> {
  * channel-level tags can sit after the `<item>`s and a naive regex would pick
  * up an item's medium instead.
  */
-async function lookupFromFeed(row: Row): Promise<Outcome> {
+// Hosts this script may not fetch directly, whatever the reason PI came up
+// empty. Podcast Index is the interface to these, per CLAUDE.md.
+const PI_ONLY_HOSTS = ['wavlake.com'];
+
+async function lookupFromFeed(row: Row, attempt = 0): Promise<Outcome> {
+  const host = hostOf(row.originalUrl);
+  if (PI_ONLY_HOSTS.some((h) => host === h || host.endsWith(`.${h}`))) {
+    return { kind: 'pi-only', message: host };
+  }
+  await paceHost(host);
   const res = await fetch(row.originalUrl, {
     headers: { 'User-Agent': 'StableKraft/1.0' },
     signal: AbortSignal.timeout(20_000),
     redirect: 'follow',
   });
+
+  if (res.status === 429) {
+    // Same rule as the Podcast Index pass: a 429 is "later", not "no". Recording
+    // it as a refusal is what wrote off feeds that were serving fine.
+    if (attempt >= 5) return { kind: 'error', message: 'feed HTTP 429 after 5 retries' };
+    const retryAfter = parseFloat(res.headers.get('retry-after') ?? '');
+    const wait = Number.isFinite(retryAfter) ? retryAfter * 1000 : 2000 * 2 ** attempt;
+    hostSlots.set(host, Date.now() + wait); // slow this host, not the whole run
+    await sleep(wait);
+    return lookupFromFeed(row, attempt + 1);
+  }
   if (!res.ok) return { kind: 'rejected', message: `feed HTTP ${res.status}` };
 
   const xml = await res.text();
@@ -169,7 +221,7 @@ async function main() {
     return;
   }
 
-  const counts = { declared: 0, none: 0, unknown: 0, rejected: 0, error: 0 };
+  const counts = { declared: 0, none: 0, unknown: 0, rejected: 0, error: 0, 'pi-only': 0 };
   const byMedium = new Map<string, number>();
   const errors: string[] = [];
   const resolved = new Set<string>(); // ids the PI pass settled, either way
@@ -261,6 +313,9 @@ async function main() {
   console.log(`\nLeft NULL, correctly:`);
   console.log(`  ${counts.none} feeds Podcast Index knows that declare no medium`);
   console.log(`  ${counts.unknown} feeds Podcast Index has never seen`);
+  if (counts['pi-only']) {
+    console.log(`  ${counts['pi-only']} feeds on a PI-only host — Podcast Index had no answer and we don't ask the host`);
+  }
   if (counts.rejected) {
     console.log(`  ${counts.rejected} feeds Podcast Index refused to look up (rerunning won't help)`);
   }
