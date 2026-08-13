@@ -175,7 +175,7 @@ export default function NostrSettings() {
                 <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-80 bg-gray-900 border border-purple-700/50 rounded-lg p-3 shadow-xl z-10">
                   <p className="font-semibold mb-1 text-purple-200 text-sm">Now Playing Status (NIP-38)</p>
                   <p className="text-purple-300/80 text-xs mb-2">
-                    Share what you're listening to on Nostr
+                    Share what you&apos;re listening to on Nostr
                   </p>
                   {settings.nip38AutoStatus ? (
                     <>
@@ -183,14 +183,14 @@ export default function NostrSettings() {
                       <p className="text-purple-300/80 text-xs">
                         Your currently playing track will be shared to your Nostr relays.
                         This status is visible to anyone following you on Nostr and will persist
-                        as "last played" until you play a different track or the expiration time is reached.
+                        as &quot;last played&quot; until you play a different track or the expiration time is reached.
                       </p>
                     </>
                   ) : (
                     <>
                       <p className="font-medium mb-1 text-purple-200 text-sm">Status publishing is disabled</p>
                       <p className="text-purple-300/80 text-xs">
-                        Enable this to automatically share what you're listening to on Nostr.
+                        Enable this to automatically share what you&apos;re listening to on Nostr.
                         Your currently playing track will be visible to anyone following you.
                       </p>
                     </>

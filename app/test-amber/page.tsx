@@ -1,5 +1,6 @@
 'use client';
 
+import { notFound } from 'next/navigation';
 import React, { useState, useEffect, useRef } from 'react';
 import { NIP46Client } from '@/lib/nostr/nip46-client';
 import { NIP55Client } from '@/lib/nostr/nip55-client';
@@ -25,6 +26,12 @@ interface LogEntry {
 }
 
 export default function AmberTestPage() {
+  // Dev harness. Kept rather than deleted: /sandbox/album renders the real
+  // AlbumDetailClient and is named in lib/album-detail-routes.ts and its test,
+  // and the puppeteer verification recipes in CLAUDE.md run against
+  // `npm run dev`, where this gate is inactive.
+  if (process.env.NODE_ENV === 'production') notFound();
+
   const [testResults, setTestResults] = useState<TestResult[]>([]);
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [nip46Client, setNip46Client] = useState<NIP46Client | null>(null);
