@@ -70,6 +70,12 @@ line holds the full story.
   `medium` goes on the cross-app favorites list, where a guess is sticky and no other app will correct it. Use
   `type` for local behaviour, `medium` for anything published or shown as fact → `favorites-cross-app`,
   `feed-ingestion`.
+- **The shared favorites wire format is sequenced reader-first, across two repos and a spec.** The order is: land
+  it in [PC20-Nostr](https://github.com/ChadFarrow/PC20-Nostr/blob/main/specs/pc20-favorites.md), teach **both**
+  apps to *read* the new form, and only then start *writing* it. Writing a form the other app can't read doesn't
+  fail — it silently makes favorites invisible on the far side, which is worse than the format it replaced. Right
+  now StableKraft still writes the single list and a prefixed position 3 for exactly that reason, and adopting the
+  split before Boost Me Bitch ships its reader is the mistake to avoid → `favorites-cross-app`.
 - **Verify UI changes by measuring, not eyeballing** — puppeteer-core against the real component, asserting all
   four edges. Several bugs here survived a sweep that only checked one → `mobile-layout`.
 
