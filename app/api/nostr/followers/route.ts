@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { normalizePubkey } from '@/lib/nostr/normalize';
+import { requireUser } from '@/lib/auth/require-user';
 
 /**
  * GET /api/nostr/followers
@@ -12,7 +13,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
 
     const targetUserId = searchParams.get('userId');
-    const currentUserId = request.headers.get('x-nostr-user-id');
+    const currentUserId = requireUser(request);
 
     const userId = targetUserId || currentUserId;
 

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { NostrClient } from '@/lib/nostr/client';
 import { getDefaultRelays } from '@/lib/nostr/relay';
+import { requireUser } from '@/lib/auth/require-user';
 
 /**
  * GET /api/nostr/auth/me
@@ -10,7 +11,7 @@ import { getDefaultRelays } from '@/lib/nostr/relay';
 export async function GET(request: NextRequest) {
   try {
     // Get user ID from request header
-    const userId = request.headers.get('x-nostr-user-id');
+    const userId = requireUser(request);
 
     if (!userId) {
       return NextResponse.json(
