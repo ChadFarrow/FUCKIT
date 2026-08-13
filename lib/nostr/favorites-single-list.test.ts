@@ -401,3 +401,28 @@ test('a degraded read is not an empty list — parse never invents that distinct
   // distinguishable by the caller rather than here.
   assert.deepEqual(parseSingleList([['alt', LIST_ALT]]), { groups: [], orphanItemGuids: [] });
 });
+
+test('a group with items cannot be read as a favorited FEED — the reconcile rule', () => {
+  // Pins the property `/api/favorites/sync-shared` now depends on. A group is
+  // opened to place a track whether or not the feed is favorited, and nothing
+  // on the wire tells the two apart, so only an ITEMLESS group is unambiguous.
+  //
+  // Without this the reconcile read this app's own list back and created an
+  // album favorite for every track parent: 196 groups for 82 favorited feeds.
+  const written = buildSingleListTags([
+    album(MUSIC_A, 'music'), // favorited feed, no favorited tracks
+    track('t9', MUSIC_C, 'music'), // placement only — MUSIC_C is not favorited
+    album(POD_B, 'podcast'), // favorited feed AND a favorited track under it
+    track('t1', POD_B, 'podcast'),
+  ]);
+  const { shows, tracks } = partitionSingleList(parseSingleList(written));
+
+  const withItems = new Set(tracks.map((t) => t.feedGuid));
+  const unambiguous = shows.filter((s) => !withItems.has(s.feedGuid)).map((s) => s.feedGuid);
+
+  // Only the itemless group survives the rule. MUSIC_C is correctly excluded;
+  // POD_B is the accepted cost — a real favorite this app declines to infer.
+  assert.deepEqual(unambiguous, [MUSIC_A]);
+  assert.equal(withItems.has(MUSIC_C), true, 'placement group is excluded');
+  assert.equal(withItems.has(POD_B), true, 'ambiguous group is excluded too');
+});
