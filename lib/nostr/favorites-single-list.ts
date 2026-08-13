@@ -1,7 +1,7 @@
 /**
  * The single-list favorites format — kind 10333, "PC 2.0 Favorites".
  *
- * Spec: github.com/ChadFarrow/PC20-Nostr, `pc20-favorites-single-list.md`. It
+ * Spec: github.com/ChadFarrow/PC20-Nostr, `pc20-favorites.md`. It
  * replaces the two-list kind:30078 format, which proved overcomplicated: one
  * plain (non-`d`-tagged) replaceable event, `i` tags grouped under a running
  * `medium`, no baseline and no merge. Republishing the whole tag list IS the
@@ -33,14 +33,12 @@
  *     admin reparse to populate `Feed.guid`, not an invented parent.
  * ---------------------------------------------------------------------------
  *
- * **Deviation from the spec as written, pending a spec update:** the document
- * pairs a `k` tag with every `i` tag. This WRITES one `k` per distinct kind, at
- * the end, and READS both forms. The two carry identical information — `k`
- * names an identifier kind, and the kind is already the prefix of the
- * identifier — but the paired form cost 423 tags holding two distinct values on
- * the first real event, ~11 KB of 36 KB. A reader must take an entry's kind
- * from position 1; one that walks `i`/`k` in pairs will not read what this
- * writes.
+ * `k` tags are ONE PER DISTINCT KIND, trailing — the spec's rule since PC20-Nostr
+ * #8, which this implementation drove: the paired form cost 423 tags holding two
+ * distinct values on the first real event, ~11 KB of 36 KB. An earlier revision
+ * paired a `k` with every `i`, so the reader accepts BOTH forms and takes an
+ * entry's kind from position 1, never from an adjacent tag. A reader that walks
+ * `i`/`k` in pairs sees an empty library rather than an error.
  */
 
 import type { Filter } from 'nostr-tools';
@@ -233,6 +231,35 @@ export function tagsFromGroups(
 }
 
 /**
+ * What THIS DEVICE last put on the list.
+ *
+ * Not a wire concept and not the kind:30078 baseline coming back — nothing
+ * about the event changes. It is this app remembering which identifiers it
+ * published, which is the only way to answer the question the format cannot:
+ * an entry on the list that we do not hold locally is either something another
+ * app added or something we just removed, and those need opposite treatment.
+ *
+ * Empty means "this device has never agreed to anything", so it may not treat
+ * anything as a removal — the conservative direction, and the same rule the
+ * predecessor used for an absent baseline.
+ */
+export interface PublishedRecord {
+  feeds: string[];
+  items: string[];
+}
+
+const EMPTY_PUBLISHED: PublishedRecord = { feeds: [], items: [] };
+
+/** The record to store after a successful publish: OUR contribution only.
+ *  Entries carried on another app's behalf must stay foreign next time. */
+export function publishedRecordFrom(local: SingleListGroup[]): PublishedRecord {
+  return {
+    feeds: local.map((g) => g.feedGuid),
+    items: local.flatMap((g) => g.itemGuids),
+  };
+}
+
+/**
  * Merge what we hold onto what the relays hold — the read-then-carry pass.
  *
  * There is no baseline in this format, so this is not the 30078 merge and does
@@ -248,19 +275,22 @@ export function tagsFromGroups(
  *   - **Orphan items** — items that appeared before any feed group — are
  *     carried untouched. We never write one.
  *
- * **The one place the missing baseline is visibly load-bearing:** an item under
- * a feed we hold, which we do NOT have locally, is dropped. It could be a
- * favorite another app added, or one this device just removed, and nothing on
- * the wire distinguishes them. Preferring "ours" is what keeps unfavoriting
- * working at all; preferring "theirs" would make removal impossible and is the
- * failure the 30078 baseline existed to avoid. It is only safe while one app
- * writes, which is the assumption the whole format rests on.
+ * **"Foreign" means we cannot account for it, NOT that we don't favorite it.**
+ * Getting that backwards shipped a resurrection loop: an album the user
+ * unfavorited left `local`, was read as another app's entry, carried on every
+ * republish, and then read back by the reconcile — which takes an itemless
+ * group as a feed favorite — and re-created. Unfavoriting an album undid itself
+ * on the next page load, permanently, because each pass re-established the
+ * state the previous one had removed. `published` is what tells the two apart.
  */
 export function mergeSingleList(
   read: { groups: SingleListGroup[]; orphanItemGuids: string[] },
-  local: SingleListGroup[]
+  local: SingleListGroup[],
+  published: PublishedRecord = EMPTY_PUBLISHED
 ): { groups: SingleListGroup[]; orphanItemGuids: string[] } {
   const localByGuid = new Map(local.map((g) => [g.feedGuid, g]));
+  const publishedFeeds = new Set(published.feeds);
+  const publishedItems = new Set(published.items);
   const groups: SingleListGroup[] = [];
   const taken = new Set<string>();
 
@@ -269,6 +299,13 @@ export function mergeSingleList(
     taken.add(group.feedGuid);
     const mine = localByGuid.get(group.feedGuid);
     if (!mine) {
+      // We put it there and no longer hold it: that is a removal, and dropping
+      // it is how an unfavorite propagates. Carrying it instead makes removal
+      // impossible — the group survives every republish, a reader takes an
+      // itemless group as a feed favorite, and the favorite comes back on the
+      // next hydration. That loop shipped once; see the module header.
+      if (publishedFeeds.has(group.feedGuid)) continue;
+      // Never published by us, so it is another app's. Carry it verbatim.
       groups.push(group);
       continue;
     }
@@ -277,6 +314,15 @@ export function mergeSingleList(
       // Prefer what we resolved; fall back to the hint that was already there
       // rather than blanking it. A hint we didn't write is not ours to delete.
       medium: mine.medium ?? group.medium,
+      // Ours in our order, then any item under this feed that we never
+      // published — another app's, and not ours to delete just because it
+      // sits beneath a feed we happen to hold.
+      itemGuids: [
+        ...mine.itemGuids,
+        ...group.itemGuids.filter(
+          (guid) => !publishedItems.has(guid) && !mine.itemGuids.includes(guid)
+        ),
+      ],
     });
   }
 

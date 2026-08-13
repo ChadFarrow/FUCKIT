@@ -2,7 +2,7 @@
  * npx tsx --test lib/nostr/favorites-single-list.test.ts
  *
  * Pins the kind:10333 single-list format (PC20-Nostr,
- * `pc20-favorites-single-list.md`) — Podcasting 2.0 data shared over Nostr.
+ * `pc20-favorites.md`) — Podcasting 2.0 data shared over Nostr.
  *
  * Why this earns a test file: in this format an entry's parent feed and its
  * medium are both carried by tag ORDER, not by the tag itself. A reordering
@@ -25,6 +25,7 @@ import {
   mergeSingleList,
   parseSingleList,
   partitionSingleList,
+  publishedRecordFrom,
   singleListDigest,
   tagsFromGroups,
   singleListTemplate,
@@ -475,19 +476,25 @@ test('an orphan item survives, still ahead of the groups', () => {
 });
 
 test('a local unfavorite under a feed we hold still disappears', () => {
-  // The other half. Items under OUR feed are ours to manage, or removal stops
-  // working — which is the failure the 30078 baseline existed to prevent, and
-  // the price of not having one is that a foreign item under our own feed is
-  // indistinguishable from one we just removed.
+  // The other half. Removal has to keep working, and what makes it possible is
+  // knowing we put `t2` there ourselves — without the published record an entry
+  // we removed is indistinguishable from one another app added, and the
+  // conservative reading (carry it) is what resurrected an unfavorited album.
   const read = parseSingleList([
     ['medium', 'music'],
     ['i', showId(MUSIC_A)],
     ['i', itemId('t1')],
     ['i', itemId('t2')],
   ]);
-  const tags = mergedTags(read, [album(MUSIC_A, 'music'), track('t1', MUSIC_A, 'music')]);
+  const local = [album(MUSIC_A, 'music'), track('t1', MUSIC_A, 'music')];
+  const published = publishedRecordFrom(
+    groupForSingleList([...local, track('t2', MUSIC_A, 'music')])
+  );
+  const merged = mergeSingleList(read, groupForSingleList(local), published);
   assert.deepEqual(
-    tags.filter((t) => t[0] === 'i').map((t) => t[1]),
+    tagsFromGroups(merged.groups, merged.orphanItemGuids)
+      .filter((t) => t[0] === 'i')
+      .map((t) => t[1]),
     [showId(MUSIC_A), itemId('t1')]
   );
 });
@@ -555,4 +562,100 @@ test('idempotence — merging our own output back produces byte-identical tags',
   assert.deepEqual(second, first);
   const third = mergedTags(parseSingleList(second), local);
   assert.deepEqual(third, second);
+});
+
+test('an entry WE published and no longer hold is a removal, not a foreign entry', () => {
+  // THE RESURRECTION CASE, and it shipped. Treating "not in our favorites" as
+  // "another app's" meant an unfavorited album was carried on every republish,
+  // read back by the reconcile, taken as a feed favorite because the group had
+  // no items, and re-created. Unfavoriting undid itself on the next page load.
+  const read = parseSingleList([
+    ['medium', 'music'],
+    ['i', showId(MUSIC_A)],
+    ['i', showId(MUSIC_C)], // we published this one and have now unfavorited it
+  ]);
+  const published = publishedRecordFrom(
+    groupForSingleList([album(MUSIC_A, 'music'), album(MUSIC_C, 'music')])
+  );
+  const merged = mergeSingleList(read, groupForSingleList([album(MUSIC_A, 'music')]), published);
+
+  assert.deepEqual(merged.groups.map((g) => g.feedGuid), [MUSIC_A]);
+});
+
+test('...while an entry we never published is still carried', () => {
+  // The other side of the same rule. Without it the fix above becomes a
+  // clobber: everything we don't favorite would look like our own removal.
+  const read = parseSingleList([
+    ['medium', 'podcast'],
+    ['i', showId(FOREIGN_E)],
+    ['i', itemId('their-ep')],
+  ]);
+  const published = publishedRecordFrom(groupForSingleList([album(MUSIC_A, 'music')]));
+  const merged = mergeSingleList(read, groupForSingleList([album(MUSIC_A, 'music')]), published);
+
+  assert.deepEqual(merged.groups.map((g) => g.feedGuid), [FOREIGN_E, MUSIC_A]);
+  assert.deepEqual(merged.groups[0].itemGuids, ['their-ep']);
+});
+
+test('an item under OUR feed that we never published survives', () => {
+  // Another app favoriting a track of an album we also hold. Ours are emitted
+  // first, theirs follow — dropping them would delete their data just because
+  // the feed happens to be one we know.
+  const read = parseSingleList([
+    ['medium', 'music'],
+    ['i', showId(MUSIC_A)],
+    ['i', itemId('t1')],
+    ['i', itemId('theirs')],
+  ]);
+  const published = publishedRecordFrom(
+    groupForSingleList([album(MUSIC_A, 'music'), track('t1', MUSIC_A, 'music')])
+  );
+  const merged = mergeSingleList(
+    read,
+    groupForSingleList([album(MUSIC_A, 'music'), track('t1', MUSIC_A, 'music')]),
+    published
+  );
+  assert.deepEqual(merged.groups[0].itemGuids, ['t1', 'theirs']);
+});
+
+test('an item we published and unfavorited is removed, not carried', () => {
+  const read = parseSingleList([
+    ['medium', 'music'],
+    ['i', showId(MUSIC_A)],
+    ['i', itemId('t1')],
+    ['i', itemId('t2')],
+  ]);
+  const published = publishedRecordFrom(
+    groupForSingleList([
+      album(MUSIC_A, 'music'),
+      track('t1', MUSIC_A, 'music'),
+      track('t2', MUSIC_A, 'music'),
+    ])
+  );
+  const merged = mergeSingleList(
+    read,
+    groupForSingleList([album(MUSIC_A, 'music'), track('t1', MUSIC_A, 'music')]),
+    published
+  );
+  assert.deepEqual(merged.groups[0].itemGuids, ['t1']);
+});
+
+test('an empty published record treats nothing as a removal', () => {
+  // First run on a new device: we have agreed to nothing, so we may delete
+  // nothing. The same rule the kind:30078 baseline used for an absent baseline.
+  const read = parseSingleList([
+    ['medium', 'music'],
+    ['i', showId(MUSIC_C)],
+  ]);
+  const merged = mergeSingleList(read, groupForSingleList([album(MUSIC_A, 'music')]));
+  assert.deepEqual(merged.groups.map((g) => g.feedGuid), [MUSIC_C, MUSIC_A]);
+});
+
+test('the published record holds OUR contribution only, never what we carried', () => {
+  // A carried entry recorded as ours would be deleted on the next pass — the
+  // resurrection bug inverted into a clobber.
+  const record = publishedRecordFrom(
+    groupForSingleList([album(MUSIC_A, 'music'), track('t1', MUSIC_A, 'music')])
+  );
+  assert.deepEqual(record, { feeds: [MUSIC_A], items: ['t1'] });
 });
