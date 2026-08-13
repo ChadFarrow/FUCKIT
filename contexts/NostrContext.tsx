@@ -303,6 +303,13 @@ export function NostrProvider({ children }: { children: React.ReactNode }) {
   // its duration, since an attacker simply omits the cookie.
   useEffect(() => {
     if (!user) return;
+    // A nip05 session deliberately has no cookie: that login resolves a pubkey
+    // from a caller-named /.well-known/nostr.json and proves nothing about who
+    // is asking, so issuing a credential for it would let anyone read any
+    // account. It is a public-data-only convenience, so there is no session to
+    // probe — and a 401 here is expected, not stale. Probing anyway would log
+    // these users out on every load once SESSION_SECRET is set.
+    if (user.loginType === 'nip05') return;
     let cancelled = false;
 
     (async () => {
