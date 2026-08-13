@@ -606,8 +606,11 @@ const nextConfig = {
             value: 'DENY',
           },
           {
+            // 0, not 1. The legacy auditor is deprecated everywhere and its
+            // blocking mode was itself an XSS vector in older browsers. CSP
+            // below is the real control.
             key: 'X-XSS-Protection',
-            value: '1; mode=block',
+            value: '0',
           },
           {
             // No 'preload': radio.* subdomain must stay reachable if it ever
@@ -701,8 +704,30 @@ const nextConfig = {
             value: 'on',
           },
           {
-            key: 'Content-Security-Policy',
-            value: "connect-src 'self' https: ws: wss: wss://localrelay.link:28443 wss://relay.nsec.app wss://nos.lol wss://relay.snort.social wss://nostr.oxtr.dev wss://relay.primal.net wss://theforest.nostr1.com wss://relay.damus.io;",
+            // REPORT-ONLY FIRST, deliberately. A wrong script-src white-screens
+            // the entire app, this repo has no preview environment, and
+            // app/layout.tsx ships an inline <script> alongside Next's own
+            // inline bootstrap. Watch the browser console for violations on
+            // every major surface (home, album, favorites, admin, radio,
+            // Now Playing, the login modal and a real boost) before switching
+            // the key to 'Content-Security-Policy'.
+            //
+            // connect-src is copied verbatim from the previous enforcing
+            // policy so no relay or wallet socket changes behaviour.
+            key: 'Content-Security-Policy-Report-Only',
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+              "font-src 'self' https://fonts.gstatic.com data:",
+              "img-src 'self' data: blob: https:",
+              "media-src 'self' blob: https:",
+              "frame-ancestors 'none'",
+              "object-src 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+              "connect-src 'self' https: ws: wss: wss://localrelay.link:28443 wss://relay.nsec.app wss://nos.lol wss://relay.snort.social wss://nostr.oxtr.dev wss://relay.primal.net wss://theforest.nostr1.com wss://relay.damus.io",
+            ].join('; '),
           },
         ],
       },
