@@ -19,7 +19,7 @@ import SharedFavoritesNotice from '@/components/favorites/SharedFavoritesNotice'
 import SharedFavoritesDisclosure from '@/components/favorites/SharedFavoritesDisclosure';
 import PublishPlaylistButton from '@/components/favorites/PublishPlaylistButton';
 import { BoostButton } from '@/components/Lightning/BoostButton';
-import { Heart, Music, Disc, Users, Play, Shuffle, ListMusic, Globe, RefreshCw } from 'lucide-react';
+import { Heart, Music, Disc, Users, Play, Shuffle, ListMusic, Globe, RefreshCw, Mic } from 'lucide-react';
 import { toast } from '@/components/Toast';
 import AppLayout from '@/components/AppLayout';
 import BackButton from '@/components/BackButton';
@@ -69,6 +69,10 @@ interface FavoriteTrack {
   };
 }
 
+type AlbumSort = 'date-desc' | 'date-asc' | 'title-asc' | 'title-desc' | 'artist-asc' | 'artist-desc';
+
+type FavoritesTab = 'albums' | 'podcasts' | 'tracks' | 'publishers' | 'playlists' | 'community';
+
 interface FavoriteAlbum {
   id: string;
   title: string;
@@ -76,6 +80,11 @@ interface FavoriteAlbum {
   artist: string | null;
   image: string | null;
   type: string;
+  /** `<podcast:medium>` as the feed declared it — null when it declared none,
+   *  which is "we haven't been told", not "music". Cross-app favorites arrive
+   *  carrying this at position 4 of their `i` tag, so a podcast someone saved
+   *  in another app can be told from an album without resolving it first. */
+  medium?: string | null;
   favoritedAt: string;
   trackCount?: number;
   v4vValue?: any;
@@ -136,10 +145,10 @@ function FavoritesPageContent() {
   const { playAlbum: globalPlayAlbum, setFullscreenMode } = useAudio();
 
   // Get tab from URL or default to 'albums'
-  const tabFromUrl = searchParams?.get('tab') as 'albums' | 'tracks' | 'publishers' | 'playlists' | 'community' | null;
-  const validTabs = ['albums', 'tracks', 'publishers', 'playlists', 'community'];
+  const tabFromUrl = searchParams?.get('tab') as FavoritesTab | null;
+  const validTabs = ['albums', 'podcasts', 'tracks', 'publishers', 'playlists', 'community'];
   const initialTab = tabFromUrl && validTabs.includes(tabFromUrl) ? tabFromUrl : 'albums';
-  const [activeTab, setActiveTab] = useState<'albums' | 'tracks' | 'publishers' | 'playlists' | 'community'>(initialTab);
+  const [activeTab, setActiveTab] = useState<FavoritesTab>(initialTab);
 
   // Update URL when tab changes (without full navigation)
   const handleTabChange = (tab: typeof activeTab) => {
@@ -150,6 +159,7 @@ function FavoritesPageContent() {
     window.history.replaceState({}, '', url.toString());
   };
   const [favoriteAlbums, setFavoriteAlbums] = useState<FavoriteAlbum[]>([]);
+  const [favoritePodcasts, setFavoritePodcasts] = useState<FavoriteAlbum[]>([]);
   const [favoriteTracks, setFavoriteTracks] = useState<FavoriteTrack[]>([]);
   const [favoritePublishers, setFavoritePublishers] = useState<FavoriteAlbum[]>([]);
   const [favoritePlaylists, setFavoritePlaylists] = useState<FavoriteAlbum[]>([]);
@@ -166,7 +176,7 @@ function FavoritesPageContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [trackSortBy, setTrackSortBy] = useState<'date-desc' | 'date-asc' | 'title-asc' | 'title-desc' | 'artist-asc' | 'artist-desc'>('date-desc');
-  const [albumSortBy, setAlbumSortBy] = useState<'date-desc' | 'date-asc' | 'title-asc' | 'title-desc' | 'artist-asc' | 'artist-desc'>('artist-asc');
+  const [albumSortBy, setAlbumSortBy] = useState<AlbumSort>('artist-asc');
   const [publisherSortBy, setPublisherSortBy] = useState<'date-desc' | 'date-asc' | 'title-asc' | 'title-desc'>('title-asc');
   const [playlistSortBy, setPlaylistSortBy] = useState<'date-desc' | 'date-asc' | 'title-asc' | 'title-desc'>('title-asc');
 
@@ -276,8 +286,22 @@ function FavoritesPageContent() {
           return null;
         };
 
+        // A shared cross-app list carries podcasts and music at once by design,
+        // so something has to say which. `medium` is what the feed declared;
+        // `type` is this app's own classification and is only consulted as a
+        // fallback for rows whose medium we haven't parsed yet.
+        //
+        // Note what is NOT here: a default. An entry we know nothing about
+        // stays where it has always been rather than being called music, which
+        // would be wrong for exactly the half of the list this separates.
+        const isPodcast = (album: any) =>
+          album.medium === 'podcast' || (!album.medium && album.type === 'podcast');
+
         const albums = allAlbums.filter((album: any) =>
-          album.type !== 'publisher' && !isPlaylist(album)
+          album.type !== 'publisher' && !isPlaylist(album) && !isPodcast(album)
+        );
+        const podcasts = allAlbums.filter((album: any) =>
+          album.type !== 'publisher' && !isPlaylist(album) && isPodcast(album)
         );
         const publishers = allAlbums.filter((album: any) => album.type === 'publisher');
         const playlists = allAlbums.filter((album: any) => isPlaylist(album)).map((album: any) => ({
@@ -286,6 +310,7 @@ function FavoritesPageContent() {
         }));
 
         setFavoriteAlbums(albums);
+        setFavoritePodcasts(podcasts);
         setFavoritePublishers(publishers);
         setFavoritePlaylists(playlists);
       }
@@ -782,9 +807,10 @@ function FavoritesPageContent() {
     }
   }, [favoriteTracks, trackSortBy]);
 
-  // Sort albums based on selected sort option
-  const sortedAlbums = useMemo(() => {
-    const albums = [...favoriteAlbums];
+  // Sort albums based on selected sort option. Shared by the Albums and
+  // Podcasts tabs — they are the same grid over a different half of the list.
+  const sortAlbumList = useCallback((list: FavoriteAlbum[], albumSortBy: AlbumSort) => {
+    const albums = [...list];
 
     switch (albumSortBy) {
       case 'date-desc':
@@ -812,7 +838,16 @@ function FavoritesPageContent() {
       default:
         return albums;
     }
-  }, [favoriteAlbums, albumSortBy]);
+  }, []);
+
+  const sortedAlbums = useMemo(
+    () => sortAlbumList(favoriteAlbums, albumSortBy),
+    [sortAlbumList, favoriteAlbums, albumSortBy]
+  );
+  const sortedPodcasts = useMemo(
+    () => sortAlbumList(favoritePodcasts, albumSortBy),
+    [sortAlbumList, favoritePodcasts, albumSortBy]
+  );
 
   // Sort publishers based on selected sort option
   const sortedPublishers = useMemo(() => {
@@ -1025,6 +1060,22 @@ function FavoritesPageContent() {
             <span className="text-sm sm:text-base">Albums & EPs</span>
             <span className="text-xs sm:text-sm text-gray-500">({favoriteAlbums.length})</span>
           </button>
+          {/* Podcasts only earn a tab once there is one — a cross-app list may
+              hold none at all, and an empty tab is just noise on a music app. */}
+          {favoritePodcasts.length > 0 && (
+            <button
+              onClick={() => handleTabChange('podcasts')}
+              className={`px-3 sm:px-4 py-2 font-medium transition-colors flex items-center gap-1.5 sm:gap-2 whitespace-nowrap flex-shrink-0 ${
+                activeTab === 'podcasts'
+                  ? 'text-white border-b-2 border-stablekraft-teal'
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              <Mic className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="text-sm sm:text-base">Podcasts</span>
+              <span className="text-xs sm:text-sm text-gray-500">({favoritePodcasts.length})</span>
+            </button>
+          )}
           <button
             onClick={() => handleTabChange('publishers')}
             className={`px-3 sm:px-4 py-2 font-medium transition-colors flex items-center gap-1.5 sm:gap-2 whitespace-nowrap flex-shrink-0 ${
@@ -1112,14 +1163,30 @@ function FavoritesPageContent() {
           </div>
         )}
 
-        {/* Albums Tab */}
-        {activeTab === 'albums' && (
+        {/* Albums and Podcasts are the same grid over the two halves of the
+            list, split by `<podcast:medium>`. Rendered from one block so a fix
+            to the card mapping can't land on only one of them. */}
+        {(activeTab === 'albums' || activeTab === 'podcasts') && (
           <div>
-            {favoriteAlbums.length === 0 ? (
+            {(activeTab === 'podcasts' ? favoritePodcasts : favoriteAlbums).length === 0 ? (
               <div className="text-center py-12">
-                <Disc className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                <h2 className="text-2xl font-bold mb-2">No Favorite Albums & EPs</h2>
-                <p className="text-gray-400 mb-4">Start favoriting albums to see them here!</p>
+                {activeTab === 'podcasts' ? (
+                  <>
+                    {/* Reachable by unfavoriting the last one while standing on
+                        the tab, which then disappears from under you. */}
+                    <Mic className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+                    <h2 className="text-2xl font-bold mb-2">No Favorite Podcasts</h2>
+                    <p className="text-gray-400 mb-4">
+                      Podcasts you save in another app show up here.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <Disc className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+                    <h2 className="text-2xl font-bold mb-2">No Favorite Albums & EPs</h2>
+                    <p className="text-gray-400 mb-4">Start favoriting albums to see them here!</p>
+                  </>
+                )}
                 <Link
                   href="/"
                   className="inline-block px-4 py-2 bg-stablekraft-teal text-white rounded-lg hover:bg-stablekraft-orange transition-colors"
@@ -1148,7 +1215,7 @@ function FavoritesPageContent() {
                   </label>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                  {sortedAlbums.map((album) => {
+                  {(activeTab === 'podcasts' ? sortedPodcasts : sortedAlbums).map((album) => {
                   const albumForCard = {
                     id: album.id,
                     title: album.title,

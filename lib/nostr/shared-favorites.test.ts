@@ -51,6 +51,24 @@ const X = 'podcast:publisher:guid:0e8f6a1b-2c3d-4e5f-8a9b-0c1d2e3f4a5b';
 
 const ids = (items: SharedFavoriteItem[]) => items.map((i) => i.id);
 
+/**
+ * Compare items field by field, in a fixed order, with absent keys and explicit
+ * `undefined` treated the same. The wire draws no such distinction — a missing
+ * hint is a missing hint — so an assertion about it shouldn't either.
+ */
+const fields = (items: SharedFavoriteItem[]) =>
+  items.map((i) =>
+    JSON.parse(
+      JSON.stringify({
+        id: i.id,
+        feedUrl: i.feedUrl,
+        feedRef: i.feedRef,
+        medium: i.medium,
+        raw: i.raw,
+      })
+    )
+  );
+
 test('the shared list is NIP-78 app data, not a NIP-51 bookmark set', () => {
   // Pinned because a drift here has no visible symptom other than "my favorites
   // didn't sync": both apps keep working, they just stop seeing each other.
@@ -191,23 +209,67 @@ test('surviving entries keep relay order; new local entries append', () => {
 
 test('a local hint upgrades a relay entry that has none', () => {
   assert.deepEqual(
-    mergeSharedFavorites({
-      latest: [{ id: A }],
-      lastSynced: [A],
-      local: [{ id: A, feedUrl: 'https://example.com/feed.xml' }],
-    }),
-    [{ id: A, feedUrl: 'https://example.com/feed.xml', feedRef: undefined }]
+    fields(
+      mergeSharedFavorites({
+        latest: [{ id: A }],
+        lastSynced: [A],
+        local: [{ id: A, feedUrl: 'https://example.com/feed.xml', medium: 'music' }],
+      })
+    ),
+    [{ id: A, feedUrl: 'https://example.com/feed.xml', medium: 'music' }]
   );
 });
 
 test('a relay hint is never blanked by a local entry that lacks one', () => {
   assert.deepEqual(
-    mergeSharedFavorites({
-      latest: [{ id: A, feedUrl: 'https://example.com/feed.xml' }],
-      lastSynced: [A],
-      local: [{ id: A }],
-    }),
-    [{ id: A, feedUrl: 'https://example.com/feed.xml', feedRef: undefined }]
+    fields(
+      mergeSharedFavorites({
+        latest: [{ id: A, feedUrl: 'https://example.com/feed.xml', medium: 'music' }],
+        lastSynced: [A],
+        local: [{ id: A }],
+      })
+    ),
+    [{ id: A, feedUrl: 'https://example.com/feed.xml', medium: 'music' }]
+  );
+});
+
+test("a hint this app didn't write is not replaced by one it resolved itself", () => {
+  // THE STICKINESS CASE, and the one that looks most like a bug when you read
+  // it. This app knows the feed says `podcast`; the wire says `music`; the wire
+  // wins anyway.
+  //
+  // "Prefer my own resolved value" is what makes two apps rewrite the event
+  // against each other on every publish, forever — neither is wrong, and
+  // neither converges. Stickiness terminates. A medium has no evidence channel
+  // (unlike a URL, which can be shown to 404), so it is strictly sticky, and a
+  // disagreement is a stale hint rather than an error: render your own value,
+  // don't republish to correct the wire.
+  assert.deepEqual(
+    fields(
+      mergeSharedFavorites({
+        latest: [{ id: A, medium: 'music' }],
+        lastSynced: [A],
+        local: [{ id: A, medium: 'podcast' }],
+      })
+    ),
+    [{ id: A, medium: 'music' }]
+  );
+});
+
+test('a medium this app has never heard of survives contact with it', () => {
+  // Not overwritten, not dropped, not case-normalized. The Podcasting 2.0
+  // medium vocabulary is not a closed set — a value you don't recognize is one
+  // a newer app does, and "I don't recognize this, so it's junk" is a judgement
+  // only the user gets to make.
+  assert.deepEqual(
+    fields(
+      mergeSharedFavorites({
+        latest: [{ id: A, medium: 'somethingL' }],
+        lastSynced: [A],
+        local: [{ id: A, medium: 'music' }],
+      })
+    ),
+    [{ id: A, medium: 'somethingL' }]
   );
 });
 
@@ -280,12 +342,16 @@ test("but another app's k tag for that kind is preserved, not stripped", () => {
 test('tags → items → tags is lossless', () => {
   // What this app writes, a second app must be able to read back identically.
   //
-  // Compared through JSON rather than assert.deepEqual, which treats an absent
-  // key and an explicit `undefined` as different. The wire has no such
-  // distinction — a missing hint is a missing hint — so the strict form would
-  // fail on a round trip that is in fact lossless.
+  // NOTE what this test cannot do on its own: its fixture is built from the
+  // fields this file knows about, so it is vacuously true about every position
+  // past them. It passed for months while the code deleted position 4 and
+  // beyond on every publish. The tail-preservation vector below is the one that
+  // can actually fail.
   const roundTripped = itemsFromTags(tagsForSharedFavorites(WIRE_ITEMS));
-  assert.equal(JSON.stringify(roundTripped), JSON.stringify(WIRE_ITEMS));
+  assert.deepEqual(
+    fields(roundTripped).map(({ raw: _raw, ...rest }) => rest),
+    fields(WIRE_ITEMS)
+  );
   // And the tags themselves must survive a second pass unchanged, which is the
   // property another app actually depends on.
   assert.deepEqual(tagsForSharedFavorites(roundTripped), tagsForSharedFavorites(WIRE_ITEMS));
@@ -298,9 +364,100 @@ test('a feed ref with no URL hint holds position 2 open', () => {
     '',
     A,
   ]);
-  assert.deepEqual(itemsFromTags([['i', C, '', A]]), [
-    { id: C, feedUrl: undefined, feedRef: A },
+  assert.deepEqual(fields(itemsFromTags([['i', C, '', A]])), [
+    { id: C, feedRef: A, raw: ['i', C, '', A] },
   ]);
+});
+
+// --- position 4: the medium hint -------------------------------------------
+
+test('a medium rides at position 4, holding the positions before it open', () => {
+  // Shifting `music` up into position 3 would claim it as a parent feed guid,
+  // and every reader would hand it to Podcast Index as `podcastguid`.
+  assert.deepEqual(tagsForSharedFavorites([{ id: A, medium: 'music' }])[2], [
+    'i',
+    A,
+    '',
+    '',
+    'music',
+  ]);
+  assert.deepEqual(
+    tagsForSharedFavorites([{ id: C, feedUrl: 'https://example.com/feed.xml', feedRef: A, medium: 'podcast' }])[2],
+    ['i', C, 'https://example.com/feed.xml', A, 'podcast']
+  );
+});
+
+test('no k tag is ever minted from a medium', () => {
+  // Position 4 is a medium, not an identifier kind. A ["k","music"] pollutes
+  // the #k discovery filter every app on this list relies on, and an entry
+  // hinted `publisher` is still whatever its position-1 identifier says.
+  const tags = tagsForSharedFavorites([
+    { id: A, medium: 'music' },
+    { id: C, feedRef: A, medium: 'podcast' },
+    { id: B, medium: 'publisher' },
+  ]);
+  assert.deepEqual(
+    tags.filter((t) => t[0] === 'k'),
+    [['k', 'podcast:guid'], ['k', 'podcast:item:guid']]
+  );
+});
+
+test('a position this parser has no field for survives a republish', () => {
+  // TAIL PRESERVATION — the vector that catches what the round-trip test above
+  // structurally cannot. The fixture has to contain something no field here can
+  // hold, or it pins nothing: a round trip built from your own struct passes
+  // while the code truncates everything past it, which is exactly what this
+  // file did before.
+  //
+  // Position 5 belongs to an app newer than this one. Rebuilding the tag from
+  // {id, feedUrl, feedRef, medium} deletes it, on every entry, on every
+  // publish, with no error and nothing on screen.
+  const fromTheWire = [
+    ['i', A, 'https://example.com/feed.xml', A, 'music', 'something-new'],
+    ['d', SHARED_D_TAG],
+  ];
+  const republished = tagsForSharedFavorites(
+    itemsFromTags(fromTheWire),
+    otherTagsFrom(fromTheWire)
+  );
+  assert.deepEqual(republished.find((t) => t[1] === A), [
+    'i',
+    A,
+    'https://example.com/feed.xml',
+    A,
+    'music',
+    'something-new',
+  ]);
+});
+
+test('the same inputs twice produce the same event', () => {
+  // IDEMPOTENCE. A hint that flip-flops is invisible to any single-pass
+  // assertion: each publish looks locally reasonable, and the only symptom is
+  // that it never stops. Two apps running "prefer my own value" pass every
+  // other test in this file and rewrite the event against each other forever.
+  const local = [{ id: A, medium: 'podcast' }];
+  const onTheWire = [['i', A, '', '', 'music', 'something-new']];
+
+  const first = tagsForSharedFavorites(
+    mergeSharedFavorites({ latest: itemsFromTags(onTheWire), lastSynced: [A], local })
+  );
+  const second = tagsForSharedFavorites(
+    mergeSharedFavorites({
+      latest: itemsFromTags(first.filter((t) => t[0] === 'i')),
+      lastSynced: [A],
+      local,
+    })
+  );
+  assert.deepEqual(second, first);
+  assert.deepEqual(first.find((t) => t[1] === A), ['i', A, '', '', 'music', 'something-new']);
+});
+
+test('an entry with no medium stays without one', () => {
+  // Absent means "not told", not a default. This app defaulting to `music`
+  // would be wrong about exactly the half of the list the hint exists to
+  // separate — the list carries podcasts and music at once by design.
+  assert.deepEqual(tagsForSharedFavorites([{ id: A }])[2], ['i', A]);
+  assert.equal(itemsFromTags([['i', A]])[0].medium, undefined);
 });
 
 // --- resolution ------------------------------------------------------------
@@ -313,15 +470,49 @@ test('partition splits shows from tracks and drops what it cannot look up', () =
     { id: showId('not-a-uuid') },
   ]);
   assert.deepEqual(shows, [
-    { feedGuid: '9b024349-ccf0-5f69-a609-6b82873eab3c', feedUrl: 'https://example.com/feed.xml' },
+    {
+      feedGuid: '9b024349-ccf0-5f69-a609-6b82873eab3c',
+      feedUrl: 'https://example.com/feed.xml',
+      medium: undefined,
+    },
   ]);
   assert.deepEqual(tracks, [
     {
       itemGuid: 'https://example.com/ep/42',
       feedGuid: '9b024349-ccf0-5f69-a609-6b82873eab3c',
       feedUrl: 'https://example.com/feed.xml',
+      medium: undefined,
     },
   ]);
+});
+
+test('a parent feed guid resolves whether or not it carries the prefix', () => {
+  // This app writes the prefixed form and Boost Me Bitch requires it, so that
+  // is what it keeps writing (see the header of shared-favorites.ts). But the
+  // current spec asks writers to move to a bare uuid, so both forms will be on
+  // the wire. Handing a prefixed value to Podcast Index as `podcastguid`
+  // matches nothing — the entry silently resolves to nothing while this app
+  // republishes it faithfully.
+  const bare = '9b024349-ccf0-5f69-a609-6b82873eab3c';
+  const { tracks } = partitionSharedFavorites([
+    { id: C, feedRef: A },
+    { id: itemId('https://example.com/ep/43'), feedRef: bare },
+  ]);
+  assert.deepEqual(
+    tracks.map((t) => t.feedGuid),
+    [bare, bare]
+  );
+});
+
+test('the medium reaches the resolver, on shows and on items alike', () => {
+  const { shows, tracks } = partitionSharedFavorites([
+    { id: A, medium: 'music' },
+    // On an item entry the medium describes the PARENT feed; Podcasting 2.0
+    // has no per-item medium.
+    { id: C, feedRef: A, medium: 'podcast' },
+  ]);
+  assert.equal(shows[0].medium, 'music');
+  assert.equal(tracks[0].medium, 'podcast');
 });
 
 test('what partition drops, the merge still carries', () => {

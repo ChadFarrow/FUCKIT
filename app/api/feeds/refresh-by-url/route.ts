@@ -105,6 +105,11 @@ async function processRemoteItems(feedUrl: string, publisherFeedId: string): Pro
             originalUrl: albumFeedUrl,
             cdnUrl: albumFeedUrl,
             type: albumType,
+            // What the feed declares, not what we concluded. `type` above folds
+            // music/album together and defaults when nothing is declared; `medium`
+            // stays null in that case, because the shared favorites list publishes
+            // it and a guessed value is sticky across every app that reads it.
+            medium: parsedAlbum.medium?.toLowerCase() ?? null,
             priority: 'normal',
             title: parsedAlbum.title,
             description: parsedAlbum.description,
@@ -298,6 +303,10 @@ export async function POST(request: NextRequest) {
             originalUrl: normalizedResolvedUrl,
             cdnUrl: normalizedResolvedUrl,
             type: feedType,
+            // `feedType` may have come from `customType` or from the default above;
+            // `medium` records only what the feed itself declared, and stays null
+            // when it declared nothing. See the shared favorites list.
+            medium: parsedFeed.medium?.toLowerCase() ?? null,
             priority: 'normal',
             title: parsedFeed.title,
             description: parsedFeed.description,

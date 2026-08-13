@@ -112,6 +112,7 @@ model Feed {
   persons             Json?
   podcastImages       Json?
   musicShowOnly       Boolean   @default(false)
+  medium              String?
   lastNewTrackAt      DateTime?
   markedDead          Boolean   @default(false)
   Feed              Feed?     @relation("FeedToFeed", fields: [publisherId], references: [id])
