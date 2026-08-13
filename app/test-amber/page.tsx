@@ -26,10 +26,8 @@ interface LogEntry {
 }
 
 export default function AmberTestPage() {
-  // Dev harness. Kept rather than deleted: /sandbox/album renders the real
-  // AlbumDetailClient and is named in lib/album-detail-routes.ts and its test,
-  // and the puppeteer verification recipes in CLAUDE.md run against
-  // `npm run dev`, where this gate is inactive.
+  // Dev-only Amber/NIP-46 signer test harness. Gated rather than deleted so it
+  // stays available under `npm run dev`, where NODE_ENV is not 'production'.
   if (process.env.NODE_ENV === 'production') notFound();
 
   const [testResults, setTestResults] = useState<TestResult[]>([]);

@@ -10,12 +10,11 @@ import { requireUser } from '@/lib/auth/require-user';
  */
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-
-    const targetUserId = searchParams.get('userId');
     const currentUserId = requireUser(request);
 
-    const userId = targetUserId || currentUserId;
+    // No ?userId= override. It used to let any caller read any account's rows
+    // by passing a hex pubkey, which is public information.
+    const userId = currentUserId;
 
     if (!userId) {
       return NextResponse.json(

@@ -231,10 +231,11 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (err: any) {
+    console.error('Nostr login error:', err);
     return NextResponse.json(
       {
         success: false,
-        error: err.message || 'Login failed',
+        error: 'Login failed',
         details: process.env.NODE_ENV === 'development' ? err.stack : undefined,
       },
       { status: 500 }

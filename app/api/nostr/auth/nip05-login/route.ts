@@ -4,8 +4,6 @@ import { NostrClient } from '@/lib/nostr/client';
 import { getDefaultRelays } from '@/lib/nostr/relay';
 import { publicKeyToNpub } from '@/lib/nostr/keys';
 import { normalizePubkey } from '@/lib/nostr/normalize';
-import { getSessionIdFromRequest } from '@/lib/session-utils';
-import { sessionCookie } from '@/lib/auth/require-user';
 
 /**
  * POST /api/nostr/auth/nip05-login
@@ -97,6 +95,12 @@ export async function POST(request: NextRequest) {
     const nip05Relays = nip05Data.relays?.[hexPubkey] || [];
     const relays = relayList.length > 0 ? relayList : nip05Relays;
 
+    // Look up or create the User row for this pubkey. Deliberately no UPDATE
+    // path for an existing row — see the no-cookie note below. This handler
+    // has no proof the caller owns hexPubkey, so it must not overwrite an
+    // existing account's profile (displayName/avatar/bio/lightningAddress) or
+    // its `relays` list, which is the server-side publish target for boosts
+    // and shares and is sourced here from unsanitised nip05Data.relays.
     let user = await prisma.user.findUnique({ where: { nostrPubkey: hexPubkey } });
 
     if (!user) {
@@ -113,44 +117,6 @@ export async function POST(request: NextRequest) {
           updatedAt: new Date()
         }
       });
-    } else {
-      user = await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          nostrNpub: npub,
-          displayName: displayName ?? user.displayName,
-          avatar: avatar ?? user.avatar,
-          bio: bio ?? user.bio,
-          lightningAddress: lightningAddress ?? user.lightningAddress,
-          relays: relays.length > 0 ? relays : user.relays,
-          updatedAt: new Date()
-        }
-      });
-    }
-
-    const sessionId = getSessionIdFromRequest(request);
-    if (sessionId) {
-      try {
-        const tracks = await prisma.favoriteTrack.findMany({ where: { sessionId, userId: null } });
-        for (const fav of tracks) {
-          const exists = await prisma.favoriteTrack.findUnique({ where: { userId_trackId: { userId: user.id, trackId: fav.trackId } } });
-          if (!exists) {
-            await prisma.favoriteTrack.update({ where: { id: fav.id }, data: { userId: user.id, sessionId: null } });
-          } else {
-            await prisma.favoriteTrack.delete({ where: { id: fav.id } });
-          }
-        }
-
-        const albums = await prisma.favoriteAlbum.findMany({ where: { sessionId, userId: null } });
-        for (const fav of albums) {
-          const exists = await prisma.favoriteAlbum.findUnique({ where: { userId_feedId: { userId: user.id, feedId: fav.feedId } } });
-          if (!exists) {
-            await prisma.favoriteAlbum.update({ where: { id: fav.id }, data: { userId: user.id, sessionId: null } });
-          } else {
-            await prisma.favoriteAlbum.delete({ where: { id: fav.id } });
-          }
-        }
-      } catch {}
     }
 
     const response = NextResponse.json({
@@ -169,17 +135,25 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    // proven=false. This route resolves a pubkey from /.well-known/nostr.json
-    // and never demonstrates key ownership — CLAUDE.md calls out that anyone
-    // can read-only "log in" as any identifier. That was acceptable only while
-    // the session was read-only, so the token must not authorize writes.
-    const cookie = sessionCookie(user.id, false);
-    if (cookie) response.headers.set('Set-Cookie', cookie);
+    // NO SESSION COOKIE IS ISSUED HERE, deliberately.
+    //
+    // The pubkey above came from /.well-known/nostr.json on a domain the
+    // CALLER named, and nothing binds that document to the caller. Anyone can
+    // host one claiming any pubkey. Issuing a signed cookie for it would hand
+    // out a durable, 90-day, server-issued read credential for an account the
+    // requester never proved they own — every read route would then serve that
+    // account's private data.
+    //
+    // This stays a client-side read-only convenience: the browser renders a
+    // profile, and any request needing real authority fails the way it does
+    // for a signed-out user. Giving it a real session requires real proof —
+    // i.e. a signed event, which is what /api/nostr/auth/login already does.
 
     return response;
   } catch (err: any) {
+    console.error('NIP-05 login error:', err);
     return NextResponse.json(
-      { success: false, error: err.message ?? 'NIP-05 login failed' },
+      { success: false, error: 'NIP-05 login failed' },
       { status: 500 }
     );
   }

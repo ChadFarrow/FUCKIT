@@ -307,7 +307,12 @@ export function NostrProvider({ children }: { children: React.ReactNode }) {
 
     (async () => {
       try {
-        const res = await fetch('/api/nostr/auth/session');
+        // Send the legacy header so this probe fails open exactly like every
+        // migrated route does when SESSION_SECRET is unset. Without it the
+        // probe 401s in that configuration and logs the user out in a loop.
+        const res = await fetch('/api/nostr/auth/session', {
+          headers: { 'x-nostr-user-id': user.id },
+        });
         if (cancelled || res.ok) return;
         const body = await res.json().catch(() => null);
         if (isSessionExpiredResponse(res.status, body)) {
