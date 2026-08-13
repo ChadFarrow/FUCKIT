@@ -638,17 +638,11 @@ function extractRemoteItemAttributes(content: string): { feedGuid: string; feedU
 // 2. Wavlake: <podcast:remoteItem medium="publisher" .../> at channel level
 export function parsePublisherFeedFromXML(xmlText: string): { feedGuid: string; feedUrl: string; title?: string; medium?: string } | null {
   try {
-    // Extract channel section from XML
-    const channelMatch = xmlText.match(/<channel[^>]*>(.*?)<\/channel>/s);
-    if (!channelMatch) {
+    // Channel metadata may sit before OR after the items — see channelMetadataXml.
+    const beforeItems = channelMetadataXml(xmlText);
+    if (!beforeItems) {
       return null;
     }
-
-    const channelContent = channelMatch[1];
-
-    // Look for publisher info at channel level (not in items)
-    // Extract it before the first <item> tag
-    const beforeItems = channelContent.split(/<item[\s>]/)[0];
 
     // Method 1: Look for <podcast:publisher><podcast:remoteItem/></podcast:publisher> (nested format)
     const publisherMatch = beforeItems.match(/<podcast:publisher[^>]*>(.*?)<\/podcast:publisher>/s);
@@ -685,10 +679,10 @@ export function parsePublisherFeedFromXML(xmlText: string): { feedGuid: string; 
 // Helper function to extract podcast:medium from channel level
 export function parsePodcastMediumFromXML(xmlText: string): string | null {
   try {
-    const channelMatch = xmlText.match(/<channel[^>]*>(.*?)<\/channel>/s);
-    if (!channelMatch) return null;
-
-    const beforeItems = channelMatch[1].split(/<item[\s>]/)[0];
+    // Channel metadata may sit before OR after the items — see channelMetadataXml.
+    // This one decides album-vs-podcast typing, so a miss here mistypes the feed.
+    const beforeItems = channelMetadataXml(xmlText);
+    if (!beforeItems) return null;
     const mediumMatch = beforeItems.match(/<podcast:medium>([^<]+)<\/podcast:medium>/);
 
     if (mediumMatch && mediumMatch[1]) {
@@ -701,20 +695,46 @@ export function parsePodcastMediumFromXML(xmlText: string): string | null {
   }
 }
 
+/**
+ * The channel's own metadata, with every `<item>` block removed.
+ *
+ * **Channel-level tags are NOT required to precede the items.** Element order
+ * inside `<channel>` is unconstrained by RSS, and real feeds use both layouts —
+ * the MSP-generated music feeds put `<podcast:guid>`, `<podcast:medium>` and
+ * friends *after* the last item (measured: guid at byte 17041, first `<item>`
+ * at 664).
+ *
+ * Every reader here used to take `channelContent.split(/<item[\s>]/)[0]` —
+ * "everything before the first item" — which silently returns nothing at all
+ * for those feeds. It fails quietly, in the worst way: the feed parses fine and
+ * simply has no guid, no medium and no categories, so an album that declares
+ * `<podcast:medium>music</podcast:medium>` looks like it declared nothing.
+ * That is why 7 feeds sat with a null `Feed.guid` no reparse could fill, and
+ * their tracks couldn't carry the parent-feed hint on the shared favorites list.
+ *
+ * Stripping the items instead is correct for both layouts, and still can't pick
+ * up an item-level tag by mistake.
+ */
+function channelMetadataXml(xmlText: string): string | null {
+  const channelMatch = xmlText.match(/<channel[^>]*>([\s\S]*?)<\/channel>/);
+  if (!channelMatch) return null;
+  const channelContent = channelMatch[1];
+  const stripped = channelContent.replace(/<item[\s>][\s\S]*?<\/item>/gi, '');
+  // An unclosed <item> means the strip did nothing and item bodies are still in
+  // there. Fall back to the old pre-item slice rather than risk reading an
+  // item-level tag as channel metadata — narrower, but never wrong.
+  if (/<item[\s>]/i.test(stripped)) return channelContent.split(/<item[\s>]/)[0];
+  return stripped;
+}
+
 // Helper function to extract podcast:guid from channel level
 export function parsePodcastGuidFromXML(xmlText: string): string | null {
   try {
-    // Extract channel section from XML
-    const channelMatch = xmlText.match(/<channel[^>]*>(.*?)<\/channel>/s);
-    if (!channelMatch) {
+    // Channel metadata may sit before OR after the items — see channelMetadataXml.
+    const beforeItems = channelMetadataXml(xmlText);
+    if (!beforeItems) {
       return null;
     }
-
-    const channelContent = channelMatch[1];
-
-    // Look for podcast:guid tag at channel level (not in items)
-    // We need to extract it before the first <item> tag
-    const beforeItems = channelContent.split(/<item[\s>]/)[0];
     const guidRegex = /<podcast:guid>([^<]+)<\/podcast:guid>/;
     const guidMatch = beforeItems.match(guidRegex);
 
@@ -987,13 +1007,9 @@ function extractPodcastCategories(xmlText: string): string[] {
   const categories: string[] = [];
 
   try {
-    // Extract the channel section (before items)
-    const channelMatch = xmlText.match(/<channel[^>]*>([\s\S]*?)<\/channel>/);
-    if (!channelMatch) return categories;
-
-    const channelContent = channelMatch[1];
-    // Get only channel-level content before items
-    const beforeItems = channelContent.split(/<item[\s>]/)[0];
+    // Channel metadata may sit before OR after the items — see channelMetadataXml.
+    const beforeItems = channelMetadataXml(xmlText);
+    if (!beforeItems) return categories;
 
     // Match all podcast:category tags with their content
     // Handles both self-closing and tags with children

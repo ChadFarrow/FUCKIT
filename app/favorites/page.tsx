@@ -16,6 +16,7 @@ import AlbumCard from '@/components/AlbumCard';
 import FavoriteButton from '@/components/favorites/FavoriteButton';
 import SyncToNostrButton from '@/components/favorites/SyncToNostrButton';
 import SharedFavoritesNotice from '@/components/favorites/SharedFavoritesNotice';
+import SharedFavoritesDisclosure from '@/components/favorites/SharedFavoritesDisclosure';
 import PublishPlaylistButton from '@/components/favorites/PublishPlaylistButton';
 import { BoostButton } from '@/components/Lightning/BoostButton';
 import { Heart, Music, Disc, Users, Play, Shuffle, ListMusic, Globe, RefreshCw } from 'lucide-react';
@@ -1097,6 +1098,13 @@ function FavoritesPageContent() {
             copy and are fine. Renders nothing unless the last cross-app sync
             was degraded. See #194. */}
         <SharedFavoritesNotice />
+
+        {/* Sits with the sync control for the same reason the notice does: this
+            is the thing that publishes, so this is where its consequence
+            belongs. Renders nothing when signed out or on a read-only nip05
+            session. Prerequisite for removing the trial allowlist — see the
+            component. */}
+        <SharedFavoritesDisclosure />
 
         {error && (
           <div className="mb-6 p-4 bg-red-900/20 border border-red-500/50 rounded-lg text-red-400">
