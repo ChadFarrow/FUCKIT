@@ -19,7 +19,11 @@ function mapRecipients(recipients: any[], fallbackName: string) {
     type: detectRecipientType(r.address || ''),
     address: r.address || '',
     split: parseInt(r.split) || 100,
-    fee: false
+    fee: false,
+    // Routing TLV — the receiving node needs this to know which account to credit, and it is
+    // what identifies a Fountain recipient published as a plain node entry.
+    customKey: r.customKey ?? undefined,
+    customValue: r.customValue ?? undefined
   }));
 }
 

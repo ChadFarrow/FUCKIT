@@ -8,7 +8,7 @@ import { ValueRecipient } from '@/lib/lightning/value-parser';
 import { reportBoost } from '@/lib/lightning/report-boost';
 import { resolveAutoBoostSenderName, resolveBoostSenderName } from '@/lib/lightning/sender-name';
 import { toast } from '@/components/Toast';
-import { hasV4V as checkHasV4V, getV4VRecipients, getPrimaryRecipient } from '@/lib/v4v-utils';
+import { hasV4V as checkHasV4V, getV4VRecipients, getPrimaryRecipient, getPrimaryRecipientObject } from '@/lib/v4v-utils';
 
 interface TrackInfo {
   id?: string;
@@ -117,6 +117,8 @@ export function useAutoBoost() {
           type: r.type === 'lnaddress' ? 'lnaddress' : 'node',
           address: r.address,
           split: r.split || 100,
+          customKey: r.customKey,
+          customValue: r.customValue,
         }));
 
         console.log(`⚡ Auto-boost: sending to ${recipients.length} recipients`);
@@ -139,11 +141,50 @@ export function useAutoBoost() {
           result = { error: multiResult.errors.join(', ') };
         }
       } else {
-        // Single recipient keysend (fallback to v4vRecipient)
-        const primaryRecipient = getPrimaryRecipient(track);
-        if (primaryRecipient) {
-          console.log(`⚡ Auto-boost: sending to single recipient ${primaryRecipient}`);
-          result = await sendKeysend(primaryRecipient, boostAmount, undefined, helipadMetadata);
+        // Single recipient (fallback to v4vRecipient). Routed through the same dispatch as the
+        // multi-recipient case rather than calling sendKeysend directly — that is what applies
+        // the Fountain LNURL rule and the routing-TLV handling to auto-boost too.
+        const primaryObject = getPrimaryRecipientObject(track);
+        const primaryAddress = getPrimaryRecipient(track);
+
+        if (primaryObject || primaryAddress) {
+          const recipient: ValueRecipient = primaryObject
+            ? {
+                name: primaryObject.name || 'Unknown',
+                type: primaryObject.type === 'lnaddress' ? 'lnaddress' : 'node',
+                address: primaryObject.address,
+                split: 100,
+                customKey: primaryObject.customKey,
+                customValue: primaryObject.customValue,
+              }
+            : {
+                name: 'Unknown',
+                // v4vRecipient is a bare string, so infer from its shape the way
+                // /api/lightning/value-splits does.
+                type: primaryAddress!.includes('@') ? 'lnaddress' : 'node',
+                address: primaryAddress!,
+                split: 100,
+              };
+
+          console.log(`⚡ Auto-boost: sending to single recipient ${recipient.address}`);
+
+          const singleResult = await ValueSplitsService.sendMultiRecipientPayment(
+            [recipient],
+            boostAmount,
+            sendPayment,
+            sendKeysend,
+            undefined, // No message for auto-boost
+            helipadMetadata,
+            undefined, // No progress callback for auto-boost
+            undefined, // walletType
+            supportsKeysend
+          );
+
+          if (singleResult.success || singleResult.isPartialSuccess) {
+            result = { preimage: singleResult.primaryPreimage };
+          } else {
+            result = { error: singleResult.errors.join(', ') };
+          }
         }
       }
 

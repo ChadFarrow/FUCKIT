@@ -25,6 +25,9 @@ interface BoostButtonProps {
     split: number;
     type: 'node' | 'lnaddress';
     isHost?: boolean;
+    // Routing TLV for node recipients — identifies which account the receiving node credits.
+    customKey?: string;
+    customValue?: string;
   }>;
   lightningAddress?: string; // Primary Lightning Address for this track/artist
   className?: string;
@@ -206,7 +209,9 @@ export function BoostButton({
                   name: r.name || 'Unknown',
                   type: r.type || 'node',
                   address: r.address,
-                  split: Number(r.split) || 0
+                  split: Number(r.split) || 0,
+                  customKey: r.customKey,
+                  customValue: r.customValue
                 }));
 
               if (splits.length > 0) {
@@ -991,6 +996,10 @@ export function BoostButton({
         address: split.address,
         split: Number(split.split) || 0,
         fee: false,
+        // Carried through so payKeysend can emit them as TLV records, and so Fountain
+        // recipients stay detectable by their routing key.
+        customKey: split.customKey,
+        customValue: split.customValue,
         keysendFallback: undefined as { pubkey: string; customKey?: string; customValue?: string } | undefined,
         nostrPubkey: undefined as string | undefined
       }));

@@ -1,5 +1,6 @@
 import { ValueRecipient, ValueTag } from './value-parser';
 import { LNURLService } from './lnurl';
+import { isFountainRecipient, deriveFountainLightningAddress } from './fountain';
 import { LIGHTNING_CONFIG } from './config';
 import { BoostBoxService } from './boostbox';
 import type { WalletProviderType } from './wallet-detection';
@@ -115,13 +116,34 @@ export class ValueSplitsService {
       try {
         // Add timeout wrapper for faster failures
         const paymentPromise = (async () => {
+          // Fountain asked to be paid over LNURL rather than keysend. Their recipients are
+          // published as node entries pointing at a shared pubkey, so this has to be checked
+          // before the type dispatch below — by the time we're inside the `node` branch the
+          // recipient is indistinguishable from any other keysend destination.
+          if (isFountainRecipient(recipient)) {
+            const fountainAddress = deriveFountainLightningAddress(recipient);
+            if (fountainAddress) {
+              console.log(`⚡ Paying Fountain recipient ${fountainAddress} over LNURL (keysend skipped by request)`);
+              return await this.payLightningAddress(
+                { ...recipient, type: 'lnaddress', address: fountainAddress },
+                amount,
+                message,
+                sendPayment,
+                helipadMetadata
+              );
+            }
+            // No Lightning Address anywhere in the feed entry — only an opaque account id. Fall
+            // through to keysend so the artist is still paid; payKeysend carries customKey/
+            // customValue as TLV records so Fountain can still tell whose account to credit.
+            console.log(`⚡ Fountain recipient ${recipient.name || recipient.address.slice(0, 20)} has no Lightning Address, falling back to keysend`);
+          }
+
           if (recipient.type === 'lnaddress' && LNURLService.isLightningAddress(recipient.address)) {
             // If we have keysend fallback info from Lightning Address lookup, try keysend first
             // Keysend is preferred because it includes Helipad metadata for podcast apps
             // This enables better integration with podcast players that support Helipad protocol
             // Skip keysend if wallet doesn't support it (e.g., Cashu wallets)
-            const isFountain = recipient.address.toLowerCase().endsWith('@fountain.fm');
-            if (recipient.keysendFallback && supportsKeysend !== false && !isFountain) {
+            if (recipient.keysendFallback && supportsKeysend !== false) {
               console.log(`⚡ Trying keysend first for ${recipient.address} (has keysend fallback)`);
 
               // Merge keysend custom records with Helipad metadata
@@ -381,9 +403,23 @@ export class ValueSplitsService {
     helipadMetadata?: any
   ): Promise<PaymentResult> {
     try {
+      // A node recipient's customKey/customValue is how the receiving node knows which account to
+      // credit (Fountain's 906608, Alby's routing key, …). sendKeysend only promotes records it
+      // finds under `customRecords` into individual TLV entries, so without this merge the sats
+      // arrive at a shared node with nothing identifying the artist.
+      const metadata = recipient.customKey && recipient.customValue
+        ? {
+            ...helipadMetadata,
+            customRecords: {
+              ...(helipadMetadata?.customRecords ?? {}),
+              [String(recipient.customKey)]: String(recipient.customValue),
+            },
+          }
+        : helipadMetadata;
+
       // Keysend with Helipad metadata
-      const result = await sendKeysend(recipient.address, amount, message, helipadMetadata);
-      
+      const result = await sendKeysend(recipient.address, amount, message, metadata);
+
       return {
         success: !result.error,
         preimage: result.preimage,
