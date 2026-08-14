@@ -17,6 +17,13 @@ export interface V4VRecipient {
   type?: 'node' | 'lnaddress';
   split?: number;
   fee?: boolean | string | null;
+  /**
+   * Routing TLV the receiving node uses to identify the account (Fountain's 906608, Alby's
+   * routing key, …). These must survive every hop from the feed to the payment layer — a keysend
+   * that loses them lands on a shared node with no artist attached to it.
+   */
+  customKey?: string;
+  customValue?: string;
 }
 
 export interface V4VValue {
@@ -103,8 +110,35 @@ export function getV4VRecipients(item: V4VItem | null | undefined): V4VRecipient
       name: r.name || 'Unknown',
       address: r.address || '',
       type: r.type || 'node',
-      split: typeof r.split === 'number' ? r.split : parseInt(r.split as any) || 100
+      split: typeof r.split === 'number' ? r.split : parseInt(r.split as any) || 100,
+      customKey: r.customKey,
+      customValue: r.customValue
     }));
+}
+
+/**
+ * Get the primary recipient as a full object rather than just its address.
+ *
+ * getPrimaryRecipient returns a bare string, which loses `type`, `customKey` and `customValue` —
+ * everything the payment layer needs to decide between LNURL and keysend and to route a keysend
+ * to the right account. Single-recipient payment paths need this one.
+ */
+export function getPrimaryRecipientObject(item: V4VItem | null | undefined): V4VRecipient | undefined {
+  if (!item?.v4vValue) return undefined;
+
+  const v4v = item.v4vValue;
+  const recipients = v4v.recipients || v4v.destinations || [];
+  const primary = recipients.find((r: V4VRecipient) => !r.fee && r.address);
+  if (!primary) return undefined;
+
+  return {
+    name: primary.name,
+    address: primary.address,
+    type: primary.type || 'node',
+    split: typeof primary.split === 'number' ? primary.split : parseInt(primary.split as any) || 100,
+    customKey: primary.customKey,
+    customValue: primary.customValue
+  };
 }
 
 /**
@@ -122,6 +156,8 @@ export function formatValueSplitsForBoost(item: V4VItem | null | undefined, fall
   address: string;
   split: number;
   type: 'node' | 'lnaddress';
+  customKey?: string;
+  customValue?: string;
 }> | undefined {
   const recipients = getV4VRecipients(item);
 
@@ -131,6 +167,8 @@ export function formatValueSplitsForBoost(item: V4VItem | null | undefined, fall
     name: r.name || fallbackArtistName || 'Unknown',
     address: r.address,
     split: r.split || 100,
-    type: (r.type === 'lnaddress' ? 'lnaddress' : 'node') as 'node' | 'lnaddress'
+    type: (r.type === 'lnaddress' ? 'lnaddress' : 'node') as 'node' | 'lnaddress',
+    customKey: r.customKey,
+    customValue: r.customValue
   }));
 }
