@@ -74,13 +74,24 @@ line holds the full story.
   it in [PC20-Nostr](https://github.com/ChadFarrow/PC20-Nostr/blob/main/pc20-favorites.md), teach
   **both** apps to *read* the new form, and only then start *writing* it. Writing a form the other app can't read
   doesn't fail — it silently makes favorites invisible on the far side, which is worse than the format it
-  replaced. The channel is now **kind 10333**, one plain replaceable event with no baseline and no merge; the
-  kind:30078 two-list design it replaced is deleted, and its events survive on the relays only as a rollback
-  path → `favorites-cross-app`.
-- **Kind 10333 has no baseline, so it is only safe while ONE app writes it.** Publishing replaces the whole event
-  with what this app holds. StableKraft seeds it and Boost Me Bitch reads it; a second writer would delete
-  whatever the other app holds exclusively on every publish, with nothing to notice it happened. Inbound removals
-  from another app do not propagate for the same reason → `favorites-cross-app`.
+  replaced. The channel is now **kind 10333**, one plain replaceable event; the kind:30078 two-list design it
+  replaced is deleted, and its events survive on the relays only as a rollback path → `favorites-cross-app`.
+- **Kind 10333 has TWO live writers, so every publish must read first and merge.** Publishing replaces the whole
+  event, so a writer that sends what it holds without reading deletes everything the other app added — silently,
+  on someone else's device, with no undo. Boost Me Bitch started publishing 2026-08-13, which retired the
+  single-writer assumption this file used to state. `publishSingleList` therefore reads, merges via
+  `mergeSingleList` against the device-local `sk_single_list_published:<pubkey>` record, and refuses to publish on
+  a degraded read → `favorites-cross-app`.
+- **Our merge still drops what it cannot model, which the spec forbids.** `parseSingleList` reads only `i` and
+  `medium`, so a republish destroys foreign tag types, foreign `k` values, `podcast:publisher:guid` entries, any
+  third element on an `i` tag, and the items of a duplicate group. Worst, a non-UUID `podcast:guid:` is dropped
+  and the item tags following it silently **reparent to the previous feed group**. Spec §4 *Carry what you can't
+  read* requires carrying the whole tag; Boost Me Bitch already does. Fix before relying on concurrent writes →
+  `favorites-cross-app`.
+- **Inbound removals do not propagate.** `favorites-sync-client.ts` hardcodes `baseline: []` on the
+  `/api/favorites/sync-shared` call and `SHARED_FAVORITES_APPLY_DELETES` defaults off, so unfavoriting in the
+  other app never reaches this one. This fails safe — nothing is destroyed — but it is not symmetric with our
+  outbound removals, which do work → `favorites-cross-app`.
 - **A favorites entry is ambiguous in TWO directions, and each guard is wrong without the others.** Naming a
   track's parent means emitting a feed entry, so a group appears whether or not the feed was favorited (196 groups
   for 82 favorited feeds), and an entry on the list we don't hold locally is either another app's or one we just

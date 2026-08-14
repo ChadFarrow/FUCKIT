@@ -349,13 +349,28 @@ function getPublishedRecord(pubkey: string): PublishedRecord {
  * Publish the kind:10333 single-list event (PC20-Nostr,
  * `pc20-favorites.md`) from the local favorites snapshot.
  *
- * This app SEEDS that list; Boost Me Bitch reads it. There is no read before
- * the write and no baseline — republishing the whole tag list is the sync, which
- * is the entire point of the variant. That is safe exactly while this app is the
- * only writer. **Before a second writer exists**, this needs a read-then-carry
- * pass so a publish re-emits feed groups it read but has no local row for;
- * without one, two writers delete each other's exclusive entries on every
- * toggle, and there is no baseline here to notice.
+ * Both this app and Boost Me Bitch write it (BMB since 2026-08-13), so the
+ * single-writer assumption this comment used to make is gone. Republishing
+ * replaces the whole tag list, so the sequence is read → merge → publish, and
+ * never any two of those:
+ *
+ *   1. `fetchSingleList`, and bail if the read is degraded. A publish on top of
+ *      a read that failed silently is the most expensive mistake this format
+ *      allows — one bad read, republished, is the entire list.
+ *   2. `mergeSingleList` folds local state into what was read, using
+ *      `getPublishedRecord` (`sk_single_list_published:<pubkey>`) to tell a
+ *      foreign entry from one we removed. Nothing on the wire records which app
+ *      added an entry, so without that record "on the list, absent locally" is
+ *      ambiguous and both naive answers destroy something.
+ *   3. Publish only if the merged tags differ from the tags we read.
+ *
+ * KNOWN GAP: the merge carries foreign feed groups and their items, but
+ * `parseSingleList` only models `i` and `medium`, so a republish still drops
+ * foreign tag types, foreign `k` values, `podcast:publisher:guid` entries and
+ * any third element on an `i` tag — and a non-UUID `podcast:guid:` is dropped
+ * with its following items reparented to the previous group. Spec §4 requires
+ * carrying the whole tag. Until that lands, concurrent writes lose data this
+ * app cannot see.
  *
  * Skipped when the tag list is unchanged since the last successful publish. Not
  * an optimization for its own sake: every publish costs a signing prompt, this
