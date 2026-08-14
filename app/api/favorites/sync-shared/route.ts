@@ -5,9 +5,9 @@ import { requireUser } from '@/lib/auth/require-user';
 
 /**
  * Inbound half of the cross-app favorites sync. Spec:
- * https://github.com/ChadFarrow/PC20-Nostr/blob/main/specs/pc20-favorites.md
+ * https://github.com/ChadFarrow/PC20-Nostr/blob/main/pc20-favorites.md
  *
- * The client reads the shared kind:30078 list off relays — it holds the signer
+ * The client reads the shared kind:10333 list off relays — it holds the signer
  * and the relay connections — and POSTs the resolved identifiers here. This
  * route maps them onto DB rows and reconciles.
  *
@@ -28,7 +28,10 @@ import { requireUser } from '@/lib/auth/require-user';
 interface SharedShow {
   feedGuid: string;
   feedUrl?: string;
-  /** `<podcast:medium>` from tag position 4, when the writing app knew it.
+  /** `<podcast:medium>` from the running `['medium', v]` tag above this
+   *  entry, when the writing app knew it. (Under kind:30078 it rode at tag
+   *  position 4 inside the `i` tag; in 10333 the `i` tags are bare and the
+   *  medium is carried by position in the tag array instead.)
    *  Advisory and possibly stale — never trusted over a local answer, and
    *  absent means "not told", never a default. */
   medium?: string;

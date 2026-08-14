@@ -27,6 +27,18 @@ export const ITEM_PREFIX = `${ITEM_KIND}:`;
  */
 const KNOWN_IDENTIFIER_KINDS = ['podcast:publisher:guid', ITEM_KIND, SHOW_KIND];
 
+/**
+ * Is this a kind from the table — i.e. one a `k` tag could name that we also
+ * emit ourselves?
+ *
+ * For reading `k` tags, which name kinds bare (`podcast:guid`) rather than as
+ * identifiers (`podcast:guid:<uuid>`). A `k` naming anything else belongs to a
+ * writer newer or older than us and is carried rather than dropped.
+ */
+export function isKnownIdentifierKind(value: string): boolean {
+  return KNOWN_IDENTIFIER_KINDS.includes(value);
+}
+
 /** Podcasting 2.0 `<podcast:guid>` is a UUID (v5 in spec, any version tolerated). */
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

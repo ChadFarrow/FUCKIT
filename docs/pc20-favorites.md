@@ -7,8 +7,11 @@ that can silently drift apart:
 **→ [github.com/ChadFarrow/PC20-Nostr/blob/main/pc20-favorites.md](https://github.com/ChadFarrow/PC20-Nostr/blob/main/pc20-favorites.md)**
 
 One plain replaceable event at **kind 10333**, `i` tags grouped under a running
-`medium`, no `d` tag, no baseline, no merge. Republishing the whole tag list is
-the sync.
+`medium`, no `d` tag. Republishing the whole tag list is the sync — which is
+why every publish has to read the current event first and merge into it, using
+a device-local baseline of what this app last put there. Both this app and
+Boost Me Bitch write it as of 2026-08-13; a blind publish would delete the
+other one's entries.
 
 It supersedes the two-list NIP-78 kind:30078 design, which proved
 overcomplicated in practice and has since been deleted from that repo along

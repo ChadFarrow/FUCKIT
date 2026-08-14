@@ -31,7 +31,7 @@ import {
   partitionSingleList,
   publishedRecordFrom,
   suppressOwnRemovals,
-  tagsFromGroups,
+  tagsFromNodes,
   templateFromTags,
   type PublishedRecord,
   type SingleListGroup,
@@ -349,13 +349,26 @@ function getPublishedRecord(pubkey: string): PublishedRecord {
  * Publish the kind:10333 single-list event (PC20-Nostr,
  * `pc20-favorites.md`) from the local favorites snapshot.
  *
- * This app SEEDS that list; Boost Me Bitch reads it. There is no read before
- * the write and no baseline — republishing the whole tag list is the sync, which
- * is the entire point of the variant. That is safe exactly while this app is the
- * only writer. **Before a second writer exists**, this needs a read-then-carry
- * pass so a publish re-emits feed groups it read but has no local row for;
- * without one, two writers delete each other's exclusive entries on every
- * toggle, and there is no baseline here to notice.
+ * Both this app and Boost Me Bitch write it (BMB since 2026-08-13), so the
+ * single-writer assumption this comment used to make is gone. Republishing
+ * replaces the whole tag list, so the sequence is read → merge → publish, and
+ * never any two of those:
+ *
+ *   1. `fetchSingleList`, and bail if the read is degraded. A publish on top of
+ *      a read that failed silently is the most expensive mistake this format
+ *      allows — one bad read, republished, is the entire list.
+ *   2. `mergeSingleList` folds local state into what was read, using
+ *      `getPublishedRecord` (`sk_single_list_published:<pubkey>`) to tell a
+ *      foreign entry from one we removed. Nothing on the wire records which app
+ *      added an entry, so without that record "on the list, absent locally" is
+ *      ambiguous and both naive answers destroy something.
+ *   3. Publish only if the merged tags differ from the tags we read.
+ *
+ * The tags are rendered from `merged.nodes`, NOT from `merged.groups`. The
+ * group list is a projection holding only what this app can model; the node
+ * list is what also carries the entries it cannot — foreign tag types, foreign
+ * `k` values, publisher entries, malformed guids — whole and in position.
+ * Rendering the projection here compiles and silently deletes all of them.
  *
  * Skipped when the tag list is unchanged since the last successful publish. Not
  * an optimization for its own sake: every publish costs a signing prompt, this
@@ -382,7 +395,10 @@ async function publishSingleList(
 
     const localGroups = groupForSingleList(local);
     const merged = mergeSingleList(read, localGroups, getPublishedRecord(pubkey));
-    const tags = tagsFromGroups(merged.groups, merged.orphanItemGuids);
+    // From NODES, not from `merged.groups` — the node list is what holds the
+    // entries this app cannot model, and their positions. Re-rendering the
+    // group projection here would drop every one of them on republish.
+    const tags = tagsFromNodes(merged.nodes, merged.foreignTags, merged.foreignKinds);
 
     // The digest is computed on the MERGED tags, not on local state. On local
     // state it would never notice a foreign entry arriving, so a group another
