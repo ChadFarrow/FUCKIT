@@ -124,6 +124,46 @@ test('derives the LNURL address directly when already an lnaddress', () => {
   );
 });
 
+test('corrects the fountain.me typo to the domain that actually resolves', () => {
+  // Same artist, same customValue, same node — the catalog carries both spellings, so .me is a
+  // typo rather than a second Fountain domain. Passing it through unchanged would resolve LNURL
+  // against a domain that does not serve the account, leaving the artist unpaid.
+  assert.equal(
+    deriveFountainLightningAddress({
+      name: 'makeheroism@fountain.me',
+      type: 'node',
+      address: FOUNTAIN_PUBKEY_ALT,
+      customKey: '112111100',
+      customValue: 'Ek7o8H3hZJor1uWXd3hb',
+    }),
+    'makeheroism@fountain.fm'
+  );
+
+  assert.equal(
+    deriveFountainLightningAddress({
+      name: 'x',
+      type: 'lnaddress',
+      address: 'MakeHeroism@Fountain.ME',
+    }),
+    'MakeHeroism@fountain.fm'
+  );
+});
+
+test('refuses to redirect a Fountain node entry to a non-Fountain wallet', () => {
+  // The feed asked for a keysend to Fountain crediting a specific account. A different wallet in
+  // `name` is not permission to pay that wallet instead — fall through to keysend.
+  assert.equal(
+    deriveFountainLightningAddress({
+      name: 'artist@getalby.com',
+      type: 'node',
+      address: FOUNTAIN_PUBKEY,
+      customKey: '906608',
+      customValue: '01abc',
+    }),
+    undefined
+  );
+});
+
 test('returns undefined when only an account id identifies the artist', () => {
   // This is the case that must keysend rather than silently pay nobody.
   assert.equal(deriveFountainLightningAddress(ACCOUNT_ID_ONLY_RECIPIENT), undefined);

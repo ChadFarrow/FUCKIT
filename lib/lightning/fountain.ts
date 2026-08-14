@@ -37,13 +37,39 @@ export const FOUNTAIN_NODE_PUBKEYS = new Set([
  */
 export const FOUNTAIN_CUSTOM_KEYS = new Set(['906608', '112111100']);
 
-/** Domains whose Lightning Addresses are Fountain accounts. */
-export const FOUNTAIN_DOMAINS = ['fountain.fm', 'fountain.me'];
+/** The domain Fountain actually serves Lightning Addresses on. */
+export const FOUNTAIN_CANONICAL_DOMAIN = 'fountain.fm';
+
+/**
+ * Misspellings of the canonical domain that appear in real feeds.
+ *
+ * `fountain.me` is a typo, not a second Fountain domain: the catalog has the same artist, same
+ * `customValue` (`Ek7o8H3hZJor1uWXd3hb`) and same node, published under both spellings. Left
+ * as-is it would be handed to LNURL resolution against a domain that does not serve these
+ * accounts, so the recipient would go unpaid where keysend used to work — the typo has to be
+ * corrected, not merely recognised.
+ */
+export const FOUNTAIN_TYPO_DOMAINS = ['fountain.me'];
+
+/** Every domain that identifies a Fountain account, canonical or misspelled. */
+export const FOUNTAIN_DOMAINS = [FOUNTAIN_CANONICAL_DOMAIN, ...FOUNTAIN_TYPO_DOMAINS];
+
+function fountainDomainOf(value: string | undefined | null): string | undefined {
+  if (!value) return undefined;
+  const lower = value.trim().toLowerCase();
+  return FOUNTAIN_DOMAINS.find(domain => lower.endsWith(`@${domain}`));
+}
 
 function isFountainAddress(value: string | undefined | null): boolean {
-  if (!value) return false;
-  const lower = value.trim().toLowerCase();
-  return FOUNTAIN_DOMAINS.some(domain => lower.endsWith(`@${domain}`));
+  return fountainDomainOf(value) !== undefined;
+}
+
+/** Rewrite a misspelled Fountain domain to the one that actually resolves. */
+function canonicalizeFountainAddress(address: string): string {
+  const trimmed = address.trim();
+  const domain = fountainDomainOf(trimmed);
+  if (!domain || domain === FOUNTAIN_CANONICAL_DOMAIN) return trimmed;
+  return `${trimmed.slice(0, trimmed.length - domain.length)}${FOUNTAIN_CANONICAL_DOMAIN}`;
 }
 
 type FountainRecipient = Pick<ValueRecipient, 'name' | 'type' | 'address'> &
@@ -73,6 +99,11 @@ export function isFountainRecipient(recipient: FountainRecipient | null | undefi
  * account id in `customValue` and a plain display name ("Elijah Lied"). There is nothing to build
  * a `.well-known/lnurlp/` URL out of for those, so this returns undefined and the caller keysends
  * instead — an artist being paid the old way beats an artist not being paid.
+ *
+ * Only addresses on a Fountain domain are returned. A Fountain node entry naming some other
+ * wallet ("artist@getalby.com") is not an invitation to pay that wallet instead: the feed asked
+ * for a keysend to Fountain crediting a specific account, and redirecting it elsewhere would pay
+ * the wrong destination.
  */
 export function deriveFountainLightningAddress(
   recipient: FountainRecipient | null | undefined
@@ -81,14 +112,18 @@ export function deriveFountainLightningAddress(
 
   // Already published as a Lightning Address — use it as-is.
   const address = (recipient.address || '').trim();
-  if (recipient.type === 'lnaddress' && LNURLService.isLightningAddress(address)) {
-    return address;
+  if (
+    recipient.type === 'lnaddress' &&
+    LNURLService.isLightningAddress(address) &&
+    isFountainAddress(address)
+  ) {
+    return canonicalizeFountainAddress(address);
   }
 
   // The common case: a node recipient whose `name` is the artist's Lightning Address.
   const name = (recipient.name || '').trim();
-  if (LNURLService.isLightningAddress(name)) {
-    return name;
+  if (LNURLService.isLightningAddress(name) && isFountainAddress(name)) {
+    return canonicalizeFountainAddress(name);
   }
 
   return undefined;
