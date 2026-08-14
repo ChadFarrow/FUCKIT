@@ -29,6 +29,7 @@ import {
   singleListDigest,
   suppressOwnRemovals,
   tagsFromGroups,
+  tagsFromNodes,
   singleListTemplate,
 } from './favorites-single-list';
 import { itemId, showId, type FavoriteEntry } from './pc20-identifiers';
@@ -378,15 +379,26 @@ test('an item before any feed group is KEPT as an orphan, not dropped', () => {
   assert.deepEqual(tracks, [{ itemGuid: 't-loose' }]);
 });
 
-test('an unrecognized identifier kind is skipped, never guessed at', () => {
-  const { groups, orphanItemGuids } = parseSingleList([
+test('an unrecognized identifier kind is never guessed at — and never dropped', () => {
+  // It is not placed (it has no meaning here) but it IS carried, whole. The
+  // `groups` projection deliberately excludes it: "we can't model this" and
+  // "this isn't on the list" are different claims, and only the first is ours
+  // to make.
+  const read = parseSingleList([
     ['i', 'podcast:publisher:guid:0e8f6a1b-2c3d-4e5f-8a9b-0c1d2e3f4a5b'],
     ['i', 'something:else:entirely'],
     ['medium', 'music'],
     ['i', showId(MUSIC_A)],
   ]);
-  assert.deepEqual(groups.map((g) => g.feedGuid), [MUSIC_A]);
-  assert.deepEqual(orphanItemGuids, []);
+  assert.deepEqual(read.groups.map((g) => g.feedGuid), [MUSIC_A]);
+  assert.deepEqual(read.orphanItemGuids, []);
+  assert.deepEqual(
+    read.nodes.filter((n) => n.t === 'loose').map((n) => (n.t === 'loose' ? n.loose.tag : [])),
+    [
+      ['i', 'podcast:publisher:guid:0e8f6a1b-2c3d-4e5f-8a9b-0c1d2e3f4a5b'],
+      ['i', 'something:else:entirely'],
+    ]
+  );
 });
 
 test('partition carries the group medium onto every track under it', () => {
@@ -403,7 +415,13 @@ test('a degraded read is not an empty list — parse never invents that distinct
   // The trust flag lives in `relay-read.ts`; this only pins that an event with
   // no entries parses as empty rather than throwing, so the two states stay
   // distinguishable by the caller rather than here.
-  assert.deepEqual(parseSingleList([['alt', LIST_ALT]]), { groups: [], orphanItemGuids: [] });
+  assert.deepEqual(parseSingleList([['alt', LIST_ALT]]), {
+    nodes: [],
+    foreignTags: [],
+    foreignKinds: [],
+    groups: [],
+    orphanItemGuids: [],
+  });
 });
 
 test('a group with items cannot be read as a favorited FEED — the reconcile rule', () => {
@@ -438,7 +456,7 @@ const FOREIGN_E = 'b1c2d3e4-5f60-5a7b-8c9d-0e1f2a3b4c5d';
 /** What our writer would emit for these local favorites, merged onto a read. */
 const mergedTags = (read: ReturnType<typeof parseSingleList>, local: FavoriteEntry[]) => {
   const merged = mergeSingleList(read, groupForSingleList(local));
-  return tagsFromGroups(merged.groups, merged.orphanItemGuids);
+  return tagsFromNodes(merged.nodes, merged.foreignTags, merged.foreignKinds);
 };
 
 test('a foreign feed group survives a republish, with its items and its position', () => {
@@ -493,7 +511,7 @@ test('a local unfavorite under a feed we hold still disappears', () => {
   );
   const merged = mergeSingleList(read, groupForSingleList(local), published);
   assert.deepEqual(
-    tagsFromGroups(merged.groups, merged.orphanItemGuids)
+    tagsFromNodes(merged.nodes, merged.foreignTags, merged.foreignKinds)
       .filter((t) => t[0] === 'i')
       .map((t) => t[1]),
     [showId(MUSIC_A), itemId('t1')]
@@ -719,4 +737,161 @@ test('an empty published record suppresses nothing', () => {
   const kept = suppressOwnRemovals(incoming, [], { feeds: [], items: [] });
   assert.deepEqual(kept.shows.length, 1);
   assert.deepEqual(kept.tracks.length, 1);
+});
+
+// --- carrying what this app cannot read ------------------------------------
+//
+// Spec §4, "Carry what you can't read". Every fixture below is a literal WIRE
+// tag array — what a relay could hand us — and never a struct rendered back
+// out. A round trip built from our own fields cannot fail: we write the
+// positions we know, read them back, and the comparison is vacuously true
+// while everything else is silently truncated. That is exactly the shape of
+// the bug these pin, so the inputs have to come from outside the model.
+//
+// All four failed against the implementation that preceded them.
+
+test('a foreign tag type survives a republish, whole', () => {
+  // A writer newer or older than us put something here that we have no meaning
+  // for. "I can't render this" is not the same claim as "this is junk".
+  const read = parseSingleList([
+    ['alt', LIST_ALT],
+    ['title', "Chad's favorites"],
+    ['zzz', 'payload', 'second element'],
+    ['medium', 'music'],
+    ['i', showId(MUSIC_A)],
+  ]);
+  const tags = mergedTags(read, [album(MUSIC_A, 'music')]);
+
+  assert.deepEqual(tags, [
+    ['alt', LIST_ALT],
+    ['title', "Chad's favorites"],
+    ['zzz', 'payload', 'second element'],
+    ['medium', 'music'],
+    ['i', showId(MUSIC_A)],
+    ['k', 'podcast:guid'],
+  ]);
+});
+
+test('a k naming a kind we never emit rides along', () => {
+  const read = parseSingleList([
+    ['medium', 'music'],
+    ['i', showId(MUSIC_A)],
+    ['k', 'podcast:guid'],
+    ['k', 'future:kind'],
+  ]);
+  const tags = mergedTags(read, [album(MUSIC_A, 'music')]);
+  assert.deepEqual(
+    tags.filter((t) => t[0] === 'k'),
+    [['k', 'podcast:guid'], ['k', 'future:kind']]
+  );
+});
+
+test('an unreadable i does NOT re-parent the items after it', () => {
+  // The corruption case, and the reason a loose node must not close the open
+  // group. `920666` is not a UUID, so it is not a feed group we can open — but
+  // dropping it silently hands `t-after` to whichever feed happened to be open
+  // before it, which is well-formed, invisible, and wrong.
+  const read = parseSingleList([
+    ['medium', 'music'],
+    ['i', showId(MUSIC_A)],
+    ['i', itemId('t-before')],
+    ['i', 'podcast:guid:920666'],
+    ['i', itemId('t-after')],
+  ]);
+
+  // Both items stay under MUSIC_A — the entry we couldn't read moved nothing.
+  assert.deepEqual(read.groups.map((g) => g.feedGuid), [MUSIC_A]);
+  assert.deepEqual(read.groups[0]?.itemGuids, ['t-before', 't-after']);
+
+  // It survives, inside its own medium block.
+  //
+  // KNOWN LIMITATION, and pinned as it really behaves rather than as we would
+  // like: a group holds its items as a list, so a loose entry that sat BETWEEN
+  // two of them is re-emitted after both. Boost Me Bitch's model is the same
+  // shape and does the same thing (its own vector asserts only "still inside
+  // the music block" for exactly this reason), so the two agree and the layout
+  // is a fixed point after one rewrite rather than a rewrite war. Nothing is
+  // lost and nothing is re-parented under the reading both apps use. Making it
+  // exact means items becoming nodes in their own right.
+  const tags = mergedTags(read, []);
+  assert.deepEqual(seq(tags), [
+    `alt:${LIST_ALT}`,
+    'medium:music',
+    `i:podcast:guid:${MUSIC_A}`,
+    'i:podcast:item:guid:t-before',
+    'i:podcast:item:guid:t-after',
+    'i:podcast:guid:920666',
+    'k:podcast:guid',
+    'k:podcast:item:guid',
+  ]);
+
+  // Whatever its index, it is still there and still under `music`.
+  const at = tags.findIndex((t) => t[1] === 'podcast:guid:920666');
+  assert.ok(at > tags.findIndex((t) => t[0] === 'medium' && t[1] === 'music'));
+
+  // And the layout it settles on is stable — one rewrite, not an argument.
+  assert.deepEqual(mergedTags(parseSingleList(tags), []), tags);
+});
+
+test('the same feed twice on the wire keeps BOTH groups’ items', () => {
+  // Skipping the duplicate takes its items with it: nothing else on the event
+  // names their parent, so they are not recoverable from anywhere afterwards.
+  const read = parseSingleList([
+    ['medium', 'music'],
+    ['i', showId(MUSIC_A)],
+    ['i', itemId('t1')],
+    ['i', showId(MUSIC_A)],
+    ['i', itemId('t2')],
+  ]);
+  const tags = mergedTags(read, []);
+  assert.deepEqual(
+    tags.filter((t) => t[0] === 'i').map((t) => t[1]),
+    [showId(MUSIC_A), itemId('t1'), itemId('t2')]
+  );
+});
+
+test('idempotence — merging our own output reproduces it byte for byte', () => {
+  // Spec test vector 3, run over everything above at once. If this is not a
+  // fixed point, two apps rewrite the event against each other forever, each
+  // publish locally reasonable and the only symptom being that it never stops.
+  const wire: string[][] = [
+    ['alt', LIST_ALT],
+    ['zzz', 'payload', 'second element'],
+    ['i', showId(NO_MEDIUM_D)],
+    ['medium', 'music'],
+    ['i', showId(MUSIC_A)],
+    ['i', itemId('t1')],
+    ['i', 'podcast:guid:920666'],
+    ['i', 'podcast:publisher:guid:0e8f6a1b-2c3d-4e5f-8a9b-0c1d2e3f4a5b'],
+    ['medium', 'podcast'],
+    ['i', showId(POD_B)],
+    ['k', 'podcast:guid'],
+    ['k', 'podcast:item:guid'],
+    // We carry the publisher entry, so we also name its kind — `k` is derived
+    // from the identifiers actually emitted, which is what keeps a `#k` filter
+    // able to find the entry we just carried on someone else's behalf.
+    ['k', 'podcast:publisher:guid'],
+    ['k', 'future:kind'],
+  ];
+  const local = [album(MUSIC_A, 'music'), track('t1', MUSIC_A, 'music'), album(POD_B, 'podcast')];
+
+  const once = mergedTags(parseSingleList(wire), local);
+  assert.deepEqual(once, wire, 'the read is already a fixed point');
+
+  const twice = mergedTags(parseSingleList(once), local);
+  assert.deepEqual(twice, once);
+});
+
+test('the group projection still excludes what we merely carried', () => {
+  // `groups` drives the reconcile, which creates DB rows. A loose entry
+  // appearing there would manufacture a favorite out of a tag we admit we
+  // cannot read.
+  const read = parseSingleList([
+    ['i', 'podcast:guid:920666'],
+    ['i', 'something:else:entirely'],
+    ['medium', 'music'],
+    ['i', showId(MUSIC_A)],
+  ]);
+  assert.deepEqual(read.groups.map((g) => g.feedGuid), [MUSIC_A]);
+  assert.equal(read.nodes.filter((n) => n.t === 'loose').length, 2);
 });

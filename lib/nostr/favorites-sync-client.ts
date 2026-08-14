@@ -31,7 +31,7 @@ import {
   partitionSingleList,
   publishedRecordFrom,
   suppressOwnRemovals,
-  tagsFromGroups,
+  tagsFromNodes,
   templateFromTags,
   type PublishedRecord,
   type SingleListGroup,
@@ -364,13 +364,11 @@ function getPublishedRecord(pubkey: string): PublishedRecord {
  *      ambiguous and both naive answers destroy something.
  *   3. Publish only if the merged tags differ from the tags we read.
  *
- * KNOWN GAP: the merge carries foreign feed groups and their items, but
- * `parseSingleList` only models `i` and `medium`, so a republish still drops
- * foreign tag types, foreign `k` values, `podcast:publisher:guid` entries and
- * any third element on an `i` tag — and a non-UUID `podcast:guid:` is dropped
- * with its following items reparented to the previous group. Spec §4 requires
- * carrying the whole tag. Until that lands, concurrent writes lose data this
- * app cannot see.
+ * The tags are rendered from `merged.nodes`, NOT from `merged.groups`. The
+ * group list is a projection holding only what this app can model; the node
+ * list is what also carries the entries it cannot — foreign tag types, foreign
+ * `k` values, publisher entries, malformed guids — whole and in position.
+ * Rendering the projection here compiles and silently deletes all of them.
  *
  * Skipped when the tag list is unchanged since the last successful publish. Not
  * an optimization for its own sake: every publish costs a signing prompt, this
@@ -397,7 +395,10 @@ async function publishSingleList(
 
     const localGroups = groupForSingleList(local);
     const merged = mergeSingleList(read, localGroups, getPublishedRecord(pubkey));
-    const tags = tagsFromGroups(merged.groups, merged.orphanItemGuids);
+    // From NODES, not from `merged.groups` — the node list is what holds the
+    // entries this app cannot model, and their positions. Re-rendering the
+    // group projection here would drop every one of them on republish.
+    const tags = tagsFromNodes(merged.nodes, merged.foreignTags, merged.foreignKinds);
 
     // The digest is computed on the MERGED tags, not on local state. On local
     // state it would never notice a foreign entry arriving, so a group another

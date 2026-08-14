@@ -82,11 +82,13 @@ line holds the full story.
   single-writer assumption this file used to state. `publishSingleList` therefore reads, merges via
   `mergeSingleList` against the device-local `sk_single_list_published:<pubkey>` record, and refuses to publish on
   a degraded read → `favorites-cross-app`.
-- **Our merge still drops what it cannot model, which the spec forbids.** `parseSingleList` reads only `i` and
-  `medium`, so a republish destroys foreign tag types, foreign `k` values, `podcast:publisher:guid` entries, any
-  third element on an `i` tag, and the items of a duplicate group. Worst, a non-UUID `podcast:guid:` is dropped
-  and the item tags following it silently **reparent to the previous feed group**. Spec §4 *Carry what you can't
-  read* requires carrying the whole tag; Boost Me Bitch already does. Fix before relying on concurrent writes →
+- **The parsed list is an ORDERED NODE LIST, and a republish must be rendered from `nodes` — never from
+  `groups`.** `groups`/`orphanItemGuids` are a *projection* holding only what this app can model; the node list is
+  what also carries foreign tag types, foreign `k` values, `podcast:publisher:guid` entries and malformed
+  `podcast:guid:` values, whole and in position (spec §4, *Carry what you can't read*). Rendering the projection
+  instead compiles, type-checks and silently deletes every one of them on the other app's behalf — which is what
+  shipped until 2026-08-14. A loose node also must **not** close the open feed group: dropping a non-UUID
+  `podcast:guid:` reparented every item after it to the previous feed, well-formed and invisible →
   `favorites-cross-app`.
 - **Inbound removals do not propagate.** `favorites-sync-client.ts` hardcodes `baseline: []` on the
   `/api/favorites/sync-shared` call and `SHARED_FAVORITES_APPLY_DELETES` defaults off, so unfavoriting in the

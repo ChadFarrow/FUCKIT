@@ -44,10 +44,9 @@
 import type { Filter } from 'nostr-tools';
 
 import {
-  ITEM_KIND,
-  SHOW_KIND,
   bareFeedGuid,
   identifierKind,
+  isKnownIdentifierKind,
   itemId,
   parseItemGuid,
   parseShowGuid,
@@ -82,16 +81,92 @@ export interface SingleListGroup {
   favorited: boolean;
 }
 
-export interface SingleList {
+/**
+ * A tag we read and cannot place, carried WHOLE.
+ *
+ * An identifier kind outside our table, a `podcast:guid:` whose guid is
+ * malformed, an `i` a newer writer gave a meaning we don't have — all of it
+ * belongs to a writer older or newer than this one. `tag` is the array as it
+ * arrived, so a third element (which the spec reserves and nothing uses yet)
+ * survives a round trip; re-rendering it from our own model would not.
+ *
+ * A loose node deliberately does NOT close the open feed group. An `i` we
+ * can't read sitting between a feed and its items must not re-parent the ones
+ * after it: the entries around it belong to a writer that knew what it meant,
+ * and our not understanding one of them is no licence to move the others.
+ */
+export interface LooseNode {
+  tag: string[];
+  medium?: string;
+}
+
+/**
+ * The parsed list as an ORDERED node list rather than a bag of groups.
+ *
+ * Position is the data here, so the model has to be able to hold it. A group
+ * array cannot say where an unreadable entry sat, and re-emitting those at a
+ * fixed place instead of where they were makes two apps rewrite the event
+ * against each other forever — each publish locally reasonable, the only
+ * symptom being that it never stops.
+ */
+export type ListNode =
+  | { t: 'group'; group: SingleListGroup }
+  | { t: 'loose'; loose: LooseNode };
+
+export interface ParsedSingleList {
+  nodes: ListNode[];
+  /** Tag types we have no meaning for, whole and in read order. */
+  foreignTags: string[][];
+  /** `k` values naming kinds outside our table. Re-emitted, never acted on. */
+  foreignKinds: string[];
+  /** Derived from `nodes`, for callers that only want what we can model. */
   groups: SingleListGroup[];
   /** Items that appeared before any feed group. This app never writes them;
    *  another writer might, and dropping them would lose favorites. */
   orphanItemGuids: string[];
+}
+
+export interface SingleList extends ParsedSingleList {
   updatedAt: number;
   exists: boolean;
   /** See `TrustedRead` — false means "nothing answered", not "no favorites". */
   trustworthy: boolean;
 }
+
+/** The medium a node sits under — the running value at its position. */
+function mediumOfNode(node: ListNode): string | undefined {
+  return node.t === 'group' ? node.group.medium : node.loose.medium;
+}
+
+/** `groups` / `orphanItemGuids` as projections of the node list, so the two can
+ *  never disagree about what was read. */
+function projectNodes(nodes: ListNode[]): {
+  groups: SingleListGroup[];
+  orphanItemGuids: string[];
+} {
+  const groups: SingleListGroup[] = [];
+  const orphanItemGuids: string[] = [];
+  for (const node of nodes) {
+    if (node.t === 'group') {
+      groups.push(node.group);
+      continue;
+    }
+    // An item with no group above it is unplaceable, not unreadable: we know
+    // exactly what it is and can still match it to a local row by its guid.
+    const guid = node.loose.tag[0] === 'i' ? parseItemGuid(node.loose.tag[1] ?? '') : null;
+    if (guid && !orphanItemGuids.includes(guid)) orphanItemGuids.push(guid);
+  }
+  return { groups, orphanItemGuids };
+}
+
+/** An empty parse, for an absent event and for callers building one by hand. */
+export const EMPTY_PARSED: ParsedSingleList = {
+  nodes: [],
+  foreignTags: [],
+  foreignKinds: [],
+  groups: [],
+  orphanItemGuids: [],
+};
 
 // --- writing ---------------------------------------------------------------
 
@@ -170,64 +245,93 @@ export function buildSingleListTags(items: FavoriteEntry[]): string[][] {
  * boundary. Reordering within a block costs nothing; breaking contiguity
  * corrupts.
  */
-export function tagsFromGroups(
-  groups: SingleListGroup[],
-  orphanItemGuids: string[]
+export function tagsFromNodes(
+  nodes: ListNode[],
+  foreignTags: string[][] = [],
+  foreignKinds: string[] = []
 ): string[][] {
   const tags: string[][] = [['alt', LIST_ALT]];
-  const kinds = new Set<string>();
 
-  // Ahead of every group, so they are still orphans when read back. This app
-  // never originates one; it re-emits what another writer left.
-  for (const guid of orphanItemGuids) {
-    const id = itemId(guid);
-    if (!identifierKind(id)) continue;
-    tags.push(['i', id]);
-    kinds.add(ITEM_KIND);
-  }
+  // Tag types we have no meaning for, replayed whole and in read order. They
+  // take no part in grouping, so position among themselves is all they need.
+  for (const tag of foreignTags) tags.push(tag.slice());
 
-  const emit = (group: SingleListGroup) => {
-    const feed = showId(group.feedGuid);
-    if (identifierKind(feed)) {
-      tags.push(['i', feed]);
-      kinds.add(SHOW_KIND);
+  const emit = (node: ListNode) => {
+    if (node.t === 'loose') {
+      // The tag WHOLE, never rebuilt from what we understood of it.
+      tags.push(node.loose.tag.slice());
+      return;
     }
+    const group = node.group;
+    const feed = showId(group.feedGuid);
+    if (identifierKind(feed)) tags.push(['i', feed]);
     for (const guid of group.itemGuids) {
       const id = itemId(guid);
-      // From position 1 ONLY, and via the kinds table rather than a scan: item
-      // guids are routinely permalink URLs, so "everything before the last
-      // colon" yields `podcast:item:guid:https` — a `k` no relay filter
-      // matches, which breaks discovery with nothing visibly wrong.
       if (!identifierKind(id)) continue;
       tags.push(['i', id]);
-      kinds.add(ITEM_KIND);
     }
   };
 
-  for (const group of groups) {
-    if (!group.medium) emit(group);
+  for (const node of nodes) {
+    if (!mediumOfNode(node)) emit(node);
   }
 
   // First-appearance order, so the grouping is stable across republishes.
   const mediums: string[] = [];
-  for (const group of groups) {
-    if (group.medium && !mediums.includes(group.medium)) mediums.push(group.medium);
+  for (const node of nodes) {
+    const m = mediumOfNode(node);
+    if (m && !mediums.includes(m)) mediums.push(m);
   }
 
   for (const medium of mediums) {
     tags.push(['medium', medium]);
     // Same-medium feeds must stay contiguous: the tag applies to everything
     // that follows it, so interleaving media would silently re-label entries.
-    for (const group of groups) {
-      if (group.medium === medium) emit(group);
+    for (const node of nodes) {
+      if (mediumOfNode(node) === medium) emit(node);
     }
   }
 
+  // Derived from what we ACTUALLY emitted, in emission order — never from the
+  // model, or a `k` could name a kind that isn't on the list. From position 1
+  // via the kinds table rather than a scan: item guids are routinely permalink
+  // URLs, so "everything before the last colon" yields `podcast:item:guid:https`
+  // — a `k` no relay filter matches, which breaks discovery with nothing
+  // visibly wrong.
+  //
   // Trailing, and one per distinct kind. Safe to append because `k` takes no
   // part in grouping — only `i` and `medium` are positional.
+  const kinds: string[] = [];
+  for (const tag of tags) {
+    if (tag[0] !== 'i' || !tag[1]) continue;
+    const kind = identifierKind(tag[1]);
+    if (kind && !kinds.includes(kind)) kinds.push(kind);
+  }
   for (const kind of kinds) tags.push(['k', kind]);
+  for (const kind of foreignKinds) {
+    if (!kinds.includes(kind)) tags.push(['k', kind]);
+  }
 
   return tags;
+}
+
+/**
+ * The group-array entry point, for callers building a list from local state
+ * only (`buildSingleListTags`) — there is nothing foreign to carry there.
+ * Anything derived from a READ must go through `tagsFromNodes`, or the
+ * entries this app cannot model are dropped on republish.
+ */
+export function tagsFromGroups(
+  groups: SingleListGroup[],
+  orphanItemGuids: string[]
+): string[][] {
+  const nodes: ListNode[] = orphanItemGuids
+    .filter((guid) => identifierKind(itemId(guid)))
+    // Ahead of every group, so they are still orphans when read back. This app
+    // never originates one; it re-emits what another writer left.
+    .map((guid): ListNode => ({ t: 'loose', loose: { tag: ['i', itemId(guid)] } }));
+  for (const group of groups) nodes.push({ t: 'group', group });
+  return tagsFromNodes(nodes);
 }
 
 /**
@@ -284,19 +388,39 @@ export function publishedRecordFrom(local: SingleListGroup[]): PublishedRecord {
  * state the previous one had removed. `published` is what tells the two apart.
  */
 export function mergeSingleList(
-  read: { groups: SingleListGroup[]; orphanItemGuids: string[] },
+  read: ParsedSingleList,
   local: SingleListGroup[],
   published: PublishedRecord = EMPTY_PUBLISHED
-): { groups: SingleListGroup[]; orphanItemGuids: string[] } {
+): ParsedSingleList {
   const localByGuid = new Map(local.map((g) => [g.feedGuid, g]));
   const publishedFeeds = new Set(published.feeds);
   const publishedItems = new Set(published.items);
-  const groups: SingleListGroup[] = [];
-  const taken = new Set<string>();
+  const nodes: ListNode[] = [];
+  const emitted = new Map<string, SingleListGroup>();
 
-  for (const group of read.groups) {
-    if (taken.has(group.feedGuid)) continue; // a duplicate group on the wire
-    taken.add(group.feedGuid);
+  for (const node of read.nodes) {
+    // Not ours to read, so not ours to touch. Kept where it was: moving it is
+    // how two writers end up reordering the event against each other forever.
+    if (node.t === 'loose') {
+      nodes.push(node);
+      continue;
+    }
+
+    const group = node.group;
+
+    // The same feed twice on the wire. Fold the second one's items into the
+    // first rather than skipping it — the duplicate's items are real favorites
+    // and are named nowhere else, so dropping the group drops them too.
+    const already = emitted.get(group.feedGuid);
+    if (already) {
+      for (const guid of group.itemGuids) {
+        if (publishedItems.has(guid)) continue;
+        if (!already.itemGuids.includes(guid)) already.itemGuids.push(guid);
+      }
+      if (!already.medium && group.medium) already.medium = group.medium;
+      continue;
+    }
+
     const mine = localByGuid.get(group.feedGuid);
     if (!mine) {
       // We put it there and no longer hold it: that is a removal, and dropping
@@ -304,12 +428,23 @@ export function mergeSingleList(
       // impossible — the group survives every republish, a reader takes an
       // itemless group as a feed favorite, and the favorite comes back on the
       // next hydration. That loop shipped once; see the module header.
-      if (publishedFeeds.has(group.feedGuid)) continue;
+      //
+      // But only once nothing is left to place under it: the group is the only
+      // thing naming its items' parent, so dropping one that still carries
+      // another app's tracks takes those tracks with it.
+      const survivors = group.itemGuids.filter((guid) => !publishedItems.has(guid));
+      if (publishedFeeds.has(group.feedGuid) && survivors.length === 0) continue;
       // Never published by us, so it is another app's. Carry it verbatim.
-      groups.push(group);
+      const carried: SingleListGroup =
+        survivors.length === group.itemGuids.length
+          ? group
+          : { ...group, itemGuids: survivors };
+      emitted.set(group.feedGuid, carried);
+      nodes.push({ t: 'group', group: carried });
       continue;
     }
-    groups.push({
+
+    const merged: SingleListGroup = {
       ...mine,
       // Prefer what we resolved; fall back to the hint that was already there
       // rather than blanking it. A hint we didn't write is not ours to delete.
@@ -323,16 +458,23 @@ export function mergeSingleList(
           (guid) => !publishedItems.has(guid) && !mine.itemGuids.includes(guid)
         ),
       ],
-    });
+    };
+    emitted.set(group.feedGuid, merged);
+    nodes.push({ t: 'group', group: merged });
   }
 
   for (const group of local) {
-    if (taken.has(group.feedGuid)) continue;
-    taken.add(group.feedGuid);
-    groups.push(group);
+    if (emitted.has(group.feedGuid)) continue;
+    emitted.set(group.feedGuid, group);
+    nodes.push({ t: 'group', group });
   }
 
-  return { groups, orphanItemGuids: read.orphanItemGuids };
+  return {
+    nodes,
+    foreignTags: read.foreignTags,
+    foreignKinds: read.foreignKinds,
+    ...projectNodes(nodes),
+  };
 }
 
 /** The unsigned event template. `content` is empty and public, as in the spec. */
@@ -380,41 +522,64 @@ export function singleListDigest(items: FavoriteEntry[]): string {
  * music release under Podcasts. The hint is advisory and a resolved answer
  * wins, so unknown is both safer and truer.
  */
-export function parseSingleList(tags: string[][]): {
-  groups: SingleListGroup[];
-  orphanItemGuids: string[];
-} {
-  const groups: SingleListGroup[] = [];
-  const orphanItemGuids: string[] = [];
+export function parseSingleList(tags: string[][]): ParsedSingleList {
+  const nodes: ListNode[] = [];
+  const foreignTags: string[][] = [];
+  const foreignKinds: string[] = [];
   let medium: string | undefined;
   let current: SingleListGroup | null = null;
 
   for (const tag of tags) {
-    if (tag[0] === 'medium') {
+    const type = tag[0];
+
+    // Ours, and regenerated on the way out — a foreign `alt` is replaced
+    // rather than carried, since the event can only have one label.
+    if (type === 'alt') continue;
+
+    if (type === 'k') {
+      const value = tag[1];
+      // `k` takes no part in placement and is ignored when parsing entries.
+      // A value naming a kind we never emit belongs to another writer, so it
+      // rides along rather than being dropped.
+      if (value && !isKnownIdentifierKind(value) && !foreignKinds.includes(value)) {
+        foreignKinds.push(value);
+      }
+      continue;
+    }
+
+    if (type === 'medium') {
+      // An empty value is "not told", never the empty-string medium.
       medium = tag[1] || undefined;
       continue;
     }
-    if (tag[0] !== 'i' || !tag[1]) continue;
+
+    if (type !== 'i' || !tag[1]) {
+      foreignTags.push(tag.slice());
+      continue;
+    }
 
     const id = tag[1];
     const feedGuid = parseShowGuid(id);
     if (feedGuid) {
       current = { feedGuid, medium, itemGuids: [], favorited: false };
-      groups.push(current);
+      nodes.push({ t: 'group', group: current });
       continue;
     }
 
     const itemGuid = parseItemGuid(id);
-    if (!itemGuid) continue; // a kind this app has no placement for
-
-    if (!current) {
-      orphanItemGuids.push(itemGuid);
+    if (itemGuid && current) {
+      if (!current.itemGuids.includes(itemGuid)) current.itemGuids.push(itemGuid);
       continue;
     }
-    if (!current.itemGuids.includes(itemGuid)) current.itemGuids.push(itemGuid);
+
+    // Either a kind we have no placement for, or an item with no group open.
+    // Both are carried whole, in position, and NEITHER closes `current` — see
+    // `LooseNode`. A malformed `podcast:guid:` dropped here would silently
+    // reparent every item after it to the previous feed.
+    nodes.push({ t: 'loose', loose: { tag: tag.slice(), medium } });
   }
 
-  return { groups, orphanItemGuids };
+  return { nodes, foreignTags, foreignKinds, ...projectNodes(nodes) };
 }
 
 /**
@@ -486,8 +651,12 @@ export async function fetchSingleList(pubkey: string, relays: string[]): Promise
   const { event, trustworthy } = await readReplaceableEvent({ pubkey, relays, filter });
 
   if (!event) {
-    return { groups: [], orphanItemGuids: [], updatedAt: 0, exists: false, trustworthy };
+    return { ...EMPTY_PARSED, updatedAt: 0, exists: false, trustworthy };
   }
-  const { groups, orphanItemGuids } = parseSingleList(event.tags);
-  return { groups, orphanItemGuids, updatedAt: event.created_at, exists: true, trustworthy: true };
+  return {
+    ...parseSingleList(event.tags),
+    updatedAt: event.created_at,
+    exists: true,
+    trustworthy: true,
+  };
 }
