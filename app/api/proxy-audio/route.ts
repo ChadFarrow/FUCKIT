@@ -49,10 +49,25 @@ export async function GET(request: NextRequest) {
     console.log('⏳ [Audio Proxy] Fetching from origin...');
     const startTime = Date.now();
 
-    const response = await fetch(url, {
-      headers: fetchHeaders,
-      signal: AbortSignal.timeout(30000), // 30 second timeout
-    });
+    // Time out on an origin that never RESPONDS, not on one that responds slowly.
+    // `AbortSignal.timeout(30000)` bounds the whole request including the body,
+    // and `response.body` is streamed straight to the client below — so a large
+    // file on a slow origin was destroyed mid-transfer at 30s. Playback never
+    // noticed (short Range requests each finish well inside the window); offline
+    // downloads pull the entire file in one request and died on it. Clearing the
+    // timer once the headers land keeps the dead-origin protection without
+    // capping how long a healthy transfer may take.
+    const controller = new AbortController();
+    const headerTimeout = setTimeout(() => controller.abort(), 30000);
+    let response: Response;
+    try {
+      response = await fetch(url, {
+        headers: fetchHeaders,
+        signal: controller.signal,
+      });
+    } finally {
+      clearTimeout(headerTimeout);
+    }
 
     const fetchDuration = Date.now() - startTime;
     console.log(`✅ [Audio Proxy] Origin responded in ${fetchDuration}ms - Status: ${response.status}`);

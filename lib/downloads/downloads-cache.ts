@@ -6,12 +6,12 @@
  * downloads and is only ever emptied by explicit removal / clear-all.
  *
  * Entries are keyed by the canonical `primaryPlaybackKey` (the original secure
- * media URL) but FETCHED via `getProxiedAudioUrl` so CORS-problematic hosts
- * still work — the same decoupling lib/audio-prefetch.ts uses. At play time the
- * bytes are handed back as a same-origin `blob:` URL, so playback needs zero
- * network and never hits CORS.
+ * media URL) but FETCHED via `audioUrlCandidates` — the same ordered
+ * proxy-first-then-direct list playback uses — so CORS-problematic hosts still
+ * work. At play time the bytes are handed back as a same-origin `blob:` URL, so
+ * playback needs zero network and never hits CORS.
  */
-import { getProxiedAudioUrl } from '../audio-url-utils';
+import { audioUrlCandidates } from '../audio-url-utils';
 
 // PERSISTENCE INVARIANT: this bucket name is load-bearing. Renaming it (e.g.
 // bumping `-v1` → `-v2`) orphans every downloaded track and forces limited-
@@ -30,6 +30,68 @@ export interface DownloadProgress {
   fraction: number | null;
 }
 
+function isAbort(err: unknown): boolean {
+  return (
+    (err instanceof DOMException && err.name === 'AbortError') ||
+    (err instanceof Error && err.name === 'AbortError')
+  );
+}
+
+/**
+ * Fetch the first candidate URL that yields a readable body.
+ *
+ * Playback has always had this fallback (`getAudioUrlsToTry` returns an ordered
+ * list and AudioContext walks it); the download path fired a single shot at a
+ * hand-maintained allowlist, so any host outside it was fetched cross-origin
+ * with no retry. On a CDN without `Access-Control-Allow-Origin` that rejects
+ * with a bare `TypeError: Failed to fetch` — which is exactly the "streams but
+ * won't download" report, with nothing useful recorded anywhere.
+ */
+async function fetchFirstReadable(
+  sourceUrl: string,
+  signal?: AbortSignal
+): Promise<Response & { body: ReadableStream<Uint8Array> }> {
+  const candidates = audioUrlCandidates(sourceUrl);
+  if (candidates.length === 0) throw new Error('downloadBytes: no fetch candidates');
+
+  const failures: string[] = [];
+
+  for (const candidate of candidates) {
+    // A cancel mid-list must stop the walk, not fall through to the next
+    // candidate: download-manager reads AbortError as "user cancelled" (→ idle)
+    // and anything else as a failure (→ error state).
+    if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
+
+    const viaProxy = candidate.startsWith('/api/proxy-audio');
+    try {
+      const response = await fetch(candidate, {
+        mode: 'cors',
+        credentials: 'omit',
+        signal,
+      });
+      if (response.ok && response.body) {
+        return response as Response & { body: ReadableStream<Uint8Array> };
+      }
+      failures.push(`${viaProxy ? 'proxy' : 'direct'} HTTP ${response.status}`);
+    } catch (err) {
+      if (isAbort(err)) throw err;
+      failures.push(
+        `${viaProxy ? 'proxy' : 'direct'} ${err instanceof Error ? err.message : String(err)}`
+      );
+    }
+  }
+
+  // Name the host: the whole point is that the next "it won't download" report
+  // arrives with the hostname already in it.
+  let host = sourceUrl;
+  try {
+    host = new URL(sourceUrl).hostname;
+  } catch {
+    /* unparseable — keep the raw string */
+  }
+  throw new Error(`downloadBytes: all ${candidates.length} attempts failed for ${host} (${failures.join('; ')})`);
+}
+
 /**
  * Fetch a track's bytes and store them under `key`. Reports streaming progress
  * when the server sends Content-Length. Returns the stored byte size.
@@ -38,23 +100,23 @@ export interface DownloadProgress {
  */
 export async function downloadBytes(
   key: string,
-  opts: { onProgress?: (p: DownloadProgress) => void; signal?: AbortSignal } = {}
+  opts: {
+    onProgress?: (p: DownloadProgress) => void;
+    signal?: AbortSignal;
+    /** The track's RAW media URL. Candidates are built from this, not from
+     *  `key`: `primaryPlaybackKey` upgrades http→https for keying purposes,
+     *  while playback proxies the URL as the feed wrote it (the proxy accepts
+     *  http). Building candidates from the key would make an http-only host
+     *  stream fine and fail to download. Falls back to `key` when absent. */
+    sourceUrl?: string;
+  } = {}
 ): Promise<number> {
   if (!cacheApiAvailable()) {
     throw new Error('Cache API unavailable — downloads not supported here');
   }
   if (!key) throw new Error('downloadBytes: empty key');
 
-  const fetchUrl = getProxiedAudioUrl(key);
-  const response = await fetch(fetchUrl, {
-    mode: 'cors',
-    credentials: 'omit',
-    signal: opts.signal,
-  });
-
-  if (!response.ok || !response.body) {
-    throw new Error(`downloadBytes: HTTP ${response.status} for ${key.slice(-60)}`);
-  }
+  const response = await fetchFirstReadable(opts.sourceUrl || key, opts.signal);
 
   const totalBytes = Number(response.headers.get('Content-Length')) || null;
   const reader = response.body.getReader();

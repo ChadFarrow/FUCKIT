@@ -12,6 +12,7 @@ import { primaryPlaybackKey, isNonDownloadableUrl } from './playback-key';
 import type { DownloadRecord, DownloadOwner } from './downloads-db';
 import * as cache from './downloads-cache';
 import * as db from './downloads-db';
+import { monitoring } from '../monitoring';
 
 // Fields accept `| null` so RSS types (whose coverArt/etc. can be null) are
 // assignable without casts at call sites.
@@ -93,8 +94,22 @@ function albumOwner(album: DownloadableAlbum): DownloadOwner {
 function trackKey(track: DownloadableTrack): string {
   return primaryPlaybackKey(track.url);
 }
-function isDownloadable(track: DownloadableTrack): boolean {
+/**
+ * Whether the manager will actually save this track. The DownloadButton MUST
+ * gate on this too — it used to check only `!!track.url`, so an album of video
+ * or HLS tracks rendered a download arrow that filtered to zero tracks and left
+ * the button idle forever with no feedback.
+ */
+export function isDownloadable(track: DownloadableTrack): boolean {
   return Boolean(track.url) && track.mediaType !== 'video' && !isNonDownloadableUrl(track.url);
+}
+function hostOf(url: string | undefined | null): string | undefined {
+  if (!url) return undefined;
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return undefined;
+  }
 }
 function parseDuration(d: number | string | null | undefined): number | undefined {
   if (typeof d === 'number') return d;
@@ -369,6 +384,7 @@ export class DownloadManager {
       let lastEmitted = -1;
       const sizeBytes = await this.backend.downloadBytes(key, {
         signal: controller.signal,
+        sourceUrl: track.url ?? undefined,
         onProgress: (p) => {
           const bucket = p.fraction == null ? -2 : Math.floor(p.fraction * 20);
           if (bucket !== lastEmitted) {
@@ -412,12 +428,28 @@ export class DownloadManager {
       }
       return true;
     } catch (err) {
-      const aborted = err instanceof DOMException && err.name === 'AbortError';
+      const aborted =
+        (err instanceof DOMException || err instanceof Error) && err.name === 'AbortError';
+      const message = err instanceof Error ? err.message : String(err);
       this.setState(key, {
         status: aborted ? 'idle' : 'error',
         fraction: null,
-        error: aborted ? undefined : err instanceof Error ? err.message : String(err),
+        error: aborted ? undefined : message,
       });
+      if (!aborted) {
+        // Report it. A failed download used to be silent everywhere — no toast,
+        // no client log, and the button rendered the plain idle arrow — so the
+        // only way it ever surfaced was a listener saying "it won't download",
+        // with no way to learn which host. The message string is deliberately
+        // CONSTANT: monitoring throttles on the message, so interpolating the
+        // host would blow the throttle key. Host goes in the metadata.
+        monitoring.error('downloads', 'Track download failed', {
+          host: hostOf(track.url),
+          title: track.title ?? undefined,
+          albumId: meta.albumId ?? undefined,
+          message,
+        });
+      }
       return false;
     } finally {
       this.controllers.delete(key);
