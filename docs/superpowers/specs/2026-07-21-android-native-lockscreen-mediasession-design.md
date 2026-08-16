@@ -1,9 +1,13 @@
 # Android Native Lock-Screen Media Controls (MediaSession) — Design
 
 **Date:** 2026-07-21
-**Status:** Approved (design), pending spec review
+**Status:** Shipped
 **Target release:** zapstore native app, versionCode 4 / versionName 1.3
 **Scope:** native Capacitor Android app only. iOS, desktop, and the browser PWA are untouched.
+
+> **Shipped.** The design below was implemented and is in production. This document is a
+> historical record of the design as approved — it is not a description of current
+> behaviour, which has moved on. For that, see the `android-native` skill; the MediaSession classes under `android/app/src/main/java/app/stablekraft/`.
 
 ## Context / Problem
 

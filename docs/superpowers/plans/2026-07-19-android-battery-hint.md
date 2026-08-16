@@ -1,6 +1,11 @@
 # Android Battery-Optimization Hint Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Shipped — do not execute this plan.** The work described below is implemented and in
+> production. This document is a historical record of the plan as written on 2026-07-19; the
+> unchecked `- [ ]` boxes reflect its state at authoring, not work outstanding. Nobody ticked
+> them as they went, so they were left as written rather than filled in retroactively.
+>
+> Current behaviour: the `android-native` skill; `lib/android-battery-hint.ts`.
 
 **Goal:** Show Android browser users, exactly once on first playback, a modal explaining how to set their browser to Unrestricted battery so locked-screen audio survives.
 

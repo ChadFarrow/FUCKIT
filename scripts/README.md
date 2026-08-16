@@ -1,38 +1,38 @@
 # Scripts
 
-256 files accumulated over the life of the project. Most are one-off fixes that have already been
+255 files accumulated over the life of the project. Most are one-off fixes that have already been
 applied. Read this before running anything here.
 
-## Three warnings
+## Two warnings
 
-**1. Many `npm run` shortcuts are broken.** Sixteen entries in `package.json` point at files that
-no longer exist in `scripts/`:
+> Sixteen `npm run` entries used to point at files that were never committed (`dev-setup`,
+> `fix-all`, `check-artwork`, `ensure-publisher-feeds`, …). They were removed from `package.json`
+> rather than restored — no commit ever added the scripts, so there was nothing to restore. If you
+> find a reference to one in an old doc or issue, that is why it is gone. **Every `npm run` entry
+> now points at a file that exists**, and the check that enforces it is in the next section.
 
-```
-dev-setup                 auto-add-publishers        parse-and-add-publishers
-test-feeds                ensure-publisher-feeds     post-parse-cleanup
-test-removed              discover-publishers        integrate-publishers
-fix-images                check-artwork              fix-artwork
-clear-sw-cache            fix-all                    update-music
-migrate-to-db
-```
-
-They fail with "Cannot find module". `postinstall` calls two of them (`check-env`, `dev-setup`) but
-swallows failures with `|| true`, which is why a fresh `npm install` still succeeds — `check-env.js`
-exists, `dev-setup.js` does not.
-
-Deleting the dead entries would be a good cleanup; nothing here depends on them.
-
-**2. Many scripts still target the JSON database.** They read `data/music-tracks.json` and
+**1. Many scripts still target the JSON database.** They read `data/music-tracks.json` and
 `data/enhanced-music-tracks.json`, which stopped being the source of truth when the app moved to
 PostgreSQL. **Neither file is in the repo**, so these scripts now fail outright with `ENOENT`
 rather than quietly acting on stale data — which is the better failure, but means they are dead
 code either way. See [`DEPRECATED_SCRIPTS.md`](DEPRECATED_SCRIPTS.md).
 
-**3. Almost none of this is the maintenance path anymore.** Feed import, publisher album import,
+**2. Almost none of this is the maintenance path anymore.** Feed import, publisher album import,
 reparse, dead-feed sweeps and playlist refresh are all **admin API routes** driven by the nightly
 GitHub Action. Reach for those first — see [`../docs/PLAYLIST_REFRESH.md`](../docs/PLAYLIST_REFRESH.md)
 and [`../docs/PUBLISHER_FEED_MANAGEMENT.md`](../docs/PUBLISHER_FEED_MANAGEMENT.md).
+
+## Keeping the manifest honest
+
+Every `npm run` entry should point at a file that exists. This catches it:
+
+```bash
+node -e "
+const p=require('./package.json'), fs=require('fs');
+const bad=Object.entries(p.scripts).filter(([,v])=>{const m=v.match(/(scripts\/[A-Za-z0-9_.-]+)/);return m&&!fs.existsSync(m[1]);});
+console.log(bad.length ? 'BROKEN: '+bad.map(([k])=>k).join(' ') : 'all script paths resolve');
+"
+```
 
 ## What still works, by job
 

@@ -1,6 +1,11 @@
 # Android Locked-Screen Blob-Prefetch Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Shipped — do not execute this plan.** The work described below is implemented and in
+> production. This document is a historical record of the plan as written on 2026-07-19; the
+> unchecked `- [ ]` boxes reflect its state at authoring, not work outstanding. Nobody ticked
+> them as they went, so they were left as written rather than filled in retroactively.
+>
+> Current behaviour: the `audio-playback` and `android-native` skills; `lib/audio-blob-prefetch.ts`.
 
 **Goal:** Make Android locked-screen track transitions reliable by prefetching the next track into an in-memory `blob:` URL during the current track's playback and feeding that blob to the idle audio element at the boundary.
 

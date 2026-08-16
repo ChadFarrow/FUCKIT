@@ -1,7 +1,11 @@
 # Android Battery-Optimization Hint — Design Spec
 
 **Date:** 2026-07-19
-**Status:** Approved (design), pending implementation plan
+**Status:** Shipped
+
+> **Shipped.** The design below was implemented and is in production. This document is a
+> historical record of the design as approved — it is not a description of current
+> behaviour, which has moved on. For that, see the `android-native` skill; `lib/android-battery-hint.ts`.
 
 ## Problem
 

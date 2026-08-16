@@ -1,6 +1,13 @@
 # Security and Hygiene Audit Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Shipped — do not execute this plan.** The work described below is implemented and in
+> production. This document is a historical record of the plan as written on 2026-08-12; the
+> unchecked `- [ ]` boxes reflect its state at authoring, not work outstanding. Nobody ticked
+> them as they went, so they were left as written rather than filled in retroactively.
+>
+> Current behaviour: the `auth-and-security` skill; `lib/auth/`, `lib/url-security.ts`, `.github/workflows/ci.yml`.
+>
+> **One follow-up from this plan is still open**, by design: the CSP shipped as `Content-Security-Policy-Report-Only` (`next.config.js`) and has not been promoted to enforcing. That was the plan's own staged rollout, not unfinished work — see its final verification step.
 
 **Goal:** Close an account-takeover hole caused by trusting an unverified identity header, fix two SSRF routes and an unauthenticated DoS, and add the typecheck gate the repo has never had.
 
