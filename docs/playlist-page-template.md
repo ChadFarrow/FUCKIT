@@ -125,6 +125,14 @@ export interface PlaylistConfig {
 
 ## Checklist for New Playlist
 
+> This page config is only one of the four registrations a playlist needs. See
+> [`ADDING_PLAYLISTS.md`](ADDING_PLAYLISTS.md) for the full list — the route config in
+> `lib/playlist/configs.ts`, the homepage grid entry in `app/api/playlists-fast/route.ts`, and the
+> nightly refresh array are all separate, and missing one leaves the playlist half-wired.
+>
+> Note the name collision: the `PlaylistConfig` below (from `types/playlist.ts`) is the **page**
+> config. `lib/playlist/types.ts` exports a different interface with the same name for **routes**.
+
 - [ ] Create page file at `app/playlist/[name]/page.tsx`
 - [ ] Create API endpoint at `app/api/playlist/[name]/route.ts`
 - [ ] Configure PlaylistConfig with unique cache key

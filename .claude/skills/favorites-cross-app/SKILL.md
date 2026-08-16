@@ -34,6 +34,21 @@ An item entry carries no parent. It belongs to the feed group most recently open
 - **Unfavoriting a feed while a track of it stays favorited is invisible.** The placement group and the favorite are the same bytes, so the removal cannot be expressed until the last track goes too. Pinned by a test; found because an idempotence assertion failed and was right to.
 - **A track whose feed has no `<podcast:guid>` cannot be expressed** and is dropped on write. The two-list format could carry it parentless. No favorite is in that state today; the fix is an admin reparse, not an invented parent.
 
+## A republish renders from `nodes`, never from `groups`
+
+The parse returns an **ordered node list**. `groups` and `orphanItemGuids` are a *projection* of it (`projectNodes`) holding only what this app can model; `nodes` is what also carries foreign tag types, foreign `k` values, `podcast:publisher:guid` entries and malformed `podcast:guid:` values — whole and in position. Spec §4, *Carry what you can't read*.
+
+**Rendering the projection compiles, type-checks and silently deletes every one of them on the other app's behalf.** That is what shipped until 2026-08-14 (#216). There is no failing test, no error and no visible symptom on this device; the entries are simply gone from someone else's app.
+
+- **`tagsFromNodes(nodes, foreignTags, foreignKinds)` is the only entry point for anything derived from a READ.** `tagsFromGroups` exists solely for `buildSingleListTags`, which builds from local state where there is nothing foreign to carry. Reaching for it after a read is the bug.
+- **A `LooseNode` re-emits `tag` WHOLE** — never rebuilt from what we understood of it — so a third element the spec reserves and nothing uses yet survives the round trip.
+- **A loose node does NOT close the open feed group.** An `i` we can't read sitting between a feed and its items must not re-parent the ones after it. Dropping a non-UUID `podcast:guid:` here reparented every item after it to the previous feed — well-formed, and invisible.
+- **Position is the data, which is why the model has to hold it.** Re-emitting unreadable entries at a fixed place rather than where they sat makes two apps rewrite the event against each other forever, each publish locally reasonable, the only symptom being that it never stops.
+- `foreignTags` replay in read order ahead of the entries (they take no part in grouping); `foreignKinds` append after the `k` tags we derived.
+- **`k` tags are derived from what was ACTUALLY emitted**, in emission order — never from the model, or a `k` could name a kind that isn't on the list.
+
+Where the spec's two ordering rules conflict — preserve read order vs. keep same-medium feeds contiguous — **contiguity wins**. Reordering within a medium block costs nothing because items always follow their own group; breaking contiguity silently re-labels every entry after the boundary.
+
 ## The event has no baseline, so this DEVICE keeps one
 
 The format cannot tell "another app added this" from "I removed this" — a publish replaces the event with what this app holds, and a reader learns nothing about who wrote what. But a writer still has to answer that question, so this app records what it published in `localStorage['sk_single_list_published:<pubkey>']` (`{feeds, items}`, beside the digest). Nothing on the wire changes; it is local memory, not the kind:30078 baseline returning.

@@ -1,21 +1,31 @@
 # Pending Major Upgrades
 
-Last reviewed: 2025-12-07
+Last reviewed: 2026-08-16
 
 ## Summary
 
 These packages have major version updates available that require careful migration planning.
 
-| Package | Current | Latest | Priority |
-|---------|---------|--------|----------|
-| Prisma | 6.16.2 | 7.1.0 | Medium |
-| React | 18.3.1 | 19.2.1 | Low |
-| Next.js | 15.5.7 | 16.0.7 | Low |
-| TailwindCSS | 3.4.18 | 4.1.17 | Low |
-| ESLint | 8.57.1 | 9.39.1 | Low |
-| lucide-react | 0.294.0 | 0.556.0 | Low |
-| node-fetch | 2.7.0 | 3.3.2 | Low |
-| task-master-ai | 0.22.0 | 0.37.1 | Low (dev) |
+"Range" is the constraint in `package.json`; "Resolves to" is what that range installs today.
+Re-check with `npm outdated` rather than trusting the numbers below — they drift within days.
+
+| Package | Range | Resolves to | Latest | Priority |
+|---------|-------|-------------|--------|----------|
+| Prisma / @prisma/client | `6.16.2` / `^6.16.2` | 6.16.2 / 6.19.3 | 7.9.1 | Medium |
+| React / React DOM | `^18` | 18.3.1 | 19.2.8 | Low |
+| Next.js | `^15.5.9` | 15.5.23 | 16.3.1 | Low |
+| TailwindCSS | `^3.4.19` | 3.4.19 | 4.3.3 | Low |
+| ESLint | `^8` | 8.57.1 | 9.x | Low |
+| eslint-config-next | `^14.0.4` | 14.x | 16.x | Low — lags Next by two majors |
+| TypeScript | `^5` | 5.9.3 | 7.0.2 | Low |
+| lucide-react | `^0.294.0` | 0.294.0 | 1.31.0 | Low |
+| node-fetch | `^2.7.0` | 2.7.0 | 3.3.2 | Low |
+| sharp | — | 0.34.5 | 0.35.3 | Low |
+| task-master-ai | `^0.22.0` | 0.22.0 | 0.37.1 | Low (dev) |
+
+**Node is pinned at 20** (`.nvmrc`, `node:20-alpine` in the Dockerfile). Several of these majors
+raise their Node floor, so check that before starting one — and note `lib/nostr/node-websocket.ts`
+exists specifically because Node 20 lacks a global `WebSocket`.
 
 ---
 

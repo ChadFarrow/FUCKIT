@@ -2,228 +2,162 @@
 
 ## Overview
 
-This application uses **Nostr relays for social features only** (sharing, follows, profile). The Railway PostgreSQL database stores all non-social data (favorites, tracks, albums, etc.) as it does now.
+Nostr does three separate jobs in this app, and conflating them is the usual source of confusion:
 
-## Core Principle
+1. **Identity** — who the user is, established by a signer and carried by a signed session cookie.
+2. **Social features** — profile, follows, shares, zaps. Published to relays, cached in Postgres.
+3. **Favorites portability** — favorites live in Postgres and are *also* published to relays, on
+   two independent channels with different formats and different audiences.
 
-**Nostr is for social features. Database is for app data.**
+PostgreSQL is the source of truth for anything the app renders. Relays are how that data becomes
+portable and how social features reach the wider Nostr ecosystem.
 
-- **Nostr Relays**: Social features (shares, follows, profile metadata)
-- **Railway Database**: App data (favorites, tracks, albums, listening history)
+> An earlier version of this document said "Nostr is for social features. Database is for app
+> data." That was never quite true and is now plainly wrong — favorites are published to relays on
+> two channels, one of which exists specifically so *other apps* can read them.
 
-This ensures:
-- ✅ Social features are decentralized and portable
-- ✅ App data remains fast and reliable in the database
-- ✅ Users can share their listening activity on Nostr
-- ✅ Favorites and other app data stay in the database for performance
+---
 
-## Data Flow
+## Identity and authorization
 
-### Social Features (Nostr)
-```
-User Action (Share/Follow/Profile)
-    ↓
-Publish to Nostr Relays (kind events)
-    ↓
-Cache in Database (for performance)
-    ↓
-Return Success
-```
+**A route learns who is calling from the signed session cookie, and from nothing else.**
 
-### App Data (Database)
-```
-User Action (Favorite/Playlist)
-    ↓
-Store in Railway Database
-    ↓
-Return Success
-```
+- `lib/auth/session.ts` — `signSession` / `verifySession`, cookie `sk_session`, 90-day max age.
+- `lib/auth/require-user.ts` — `requireUser(request, { write?: boolean })` returns the verified
+  user id or `null`.
+- Login issues the cookie (`POST /api/nostr/auth/login`, `/nip05-login`); logout clears it
+  (`/logout`).
 
-## Event Types
+Two rules that are load-bearing:
 
-### Social Features (Nostr Relays)
+- **`x-nostr-user-id` is never trusted.** Clients still send the header and several components set
+  it, but no route handler reads it — only `lib/auth/` does, and only on the fail-open path below.
+  `grep -rn "x-nostr-user-id" app/api` must stay empty.
+- **`requireUser` fails open when `SESSION_SECRET` is unset**, falling back to that header. This is
+  deliberate and documented in the source, but it means anyone can act as any user until the
+  variable is set. Setting it in Railway is step 1 of a deploy, not a follow-up.
 
-#### Profile Updates (Kind 0)
-- **Event**: `kind: 0` (Metadata)
-- **Stored in**: Nostr relays + `User` table (cache)
-- **API**: `POST /api/nostr/profile/update`
-- **Flow**: Publish kind 0 → Update database cache
+Pass `{ write: true }` on any route that mutates. That rejects read-only NIP-05 sessions, which
+prove no key ownership.
 
-#### Follows (Kind 3)
-- **Event**: `kind: 3` (Contact List)
-- **Stored in**: Nostr relays + `Follow` table (cache)
-- **API**: `POST /api/nostr/follow`
-- **Flow**: Update database → Rebuild contact list → Publish kind 3 → Cache in database
+Admin authorization is separate and unrelated: `middleware.ts` checks an `ADMIN_SECRET` bearer
+token. See the `auth-and-security` skill.
 
-#### Shares (Kind 1)
-- **Event**: `kind: 1` (Text Note)
-- **Stored in**: Nostr relays + `NostrPost` table (cache)
-- **API**: `POST /api/nostr/share`
-- **Flow**: Publish kind 1 → Cache in database
-- **Purpose**: Share what you're listening to on Nostr
+---
 
-#### Boosts (Kind 9735/9736)
-- **Events**: 
-  - `kind: 9735` (Zap Request)
-  - `kind: 9736` (Zap Receipt)
-- **Stored in**: Nostr relays + `BoostEvent` table (cache)
-- **API**: `POST /api/nostr/boost`
-- **Flow**: Publish kind 9735 → Cache in database
-- **Purpose**: Share Lightning boosts on Nostr
+## Signing methods
 
-### App Data (Railway Database + Nostr)
+All signing goes through the unified signer in `lib/nostr/signer.ts`, which detects what's
+available and falls back between methods.
 
-#### Favorites
-- **Stored in**: 
-  - Nostr relays (kind 30001 for tracks, kind 30002 for albums)
-  - `FavoriteTrack` and `FavoriteAlbum` tables (database for fast queries)
-- **API**: `POST /api/favorites/tracks` or `/api/favorites/albums`
-- **Flow**: Store in database → Publish to Nostr → Return success
-- **Note**: Stored on both Nostr relays (decentralized) and database (fast queries)
+| Method | Supported by | Notes |
+|---|---|---|
+| **NIP-07** | Alby, nos2x, other browser extensions | Desktop browsers. Preferred when present. |
+| **NIP-46** | Amber, Primal, any bunker | Remote signer over WebSocket, via `bunker://` or `nostrconnect://`. Connection persisted in localStorage. |
+| **NIP-55** | Amber | Android intent-based signing, for the native/TWA build. |
+| **NIP-05** | any verified identifier | **Read-only.** No key access, so nothing can be signed. Rejected by `requireUser(..., { write: true })`. |
 
-#### Tracks & Albums
-- **Stored in**: `Track` and `Feed` tables (database only)
-- **Note**: Core app data, not social features
+Signing paths worth knowing: `components/Nostr/LoginModal.tsx` (auth),
+`components/Lightning/BoostButton.tsx` (boosts), `lib/nostr/favorites.ts` (favorites),
+`components/Nostr/ShareButton.tsx` (shares).
 
-## Database Schema
+Signer setup, timeouts, reconnection and the post-login deferred-work flags are covered in depth by
+the `nostr-signer` skill.
 
-### Social Features (Cached from Nostr)
-- `User` - Caches kind 0 metadata events
-- `Follow` - Caches kind 3 contact list events
-- `NostrPost` - Caches kind 1 note events
-- `BoostEvent` - Caches kind 9735/9736 zap events
+---
 
-### App Data (Database + Nostr)
-- `FavoriteTrack` - User favorites (stored in database + published to Nostr)
-- `FavoriteAlbum` - User favorites (stored in database + published to Nostr)
-- `Track` - Music tracks (database only)
-- `Feed` - Music albums/feeds (database only)
+## Event kinds
 
-## Implementation Details
+### Social features
 
-### Publishing to Nostr (Social Features Only)
+| Kind | What | API | Cached in |
+|---|---|---|---|
+| 0 | Profile metadata | `POST /api/nostr/profile/update` | `User` |
+| 3 | Contact list (follows) | `POST /api/nostr/follow` | `Follow` |
+| 1 | Text note (shares, boost posts) | `POST /api/nostr/share` | `NostrPost` |
+| 9735 / 9736 | Zap request / receipt | `POST /api/nostr/boost` | `BoostEvent` |
+| 30315 | User status | — | — |
 
-Social feature endpoints (profile, follows, shares, boosts):
-1. **Require private key** (for signing events)
-2. **Publish to Nostr relays first** (source of truth)
-3. **Cache in database second** (performance optimization)
-4. **Return event ID** (for reference)
+Flow: publish to relays, then cache in Postgres. A failed publish does not fail the operation —
+warnings are logged, the database write stands, and the app keeps working with relays down.
 
-### App Data (Database + Nostr)
+### Favorites — two channels, do not collapse them
 
-Favorites endpoints:
-1. **Store in Railway database first** (fast queries)
-2. **Publish to Nostr relays** (decentralized storage)
-3. **Hybrid approach** - database for speed, Nostr for portability
+**Channel 1 — per-item, kind 30001 / 30002 (NIP-51).** One event per favorited item. This is what
+the **Community tab** reads (`/api/nostr/global-favorites`, `lib/nostr/community-favorites.ts`).
+Its author-scoped filters and d-tag ladder are tuned against real production data.
 
-Other app data endpoints (tracks, albums):
-1. **Store directly in Railway database**
-2. **No Nostr publishing** (not user-generated data)
-3. **Fast and reliable** (no relay dependency)
+**Channel 2 — the cross-app shared list, kind 10333.** One plain replaceable event per pubkey,
+carrying the whole library as NIP-73 `podcast:guid` / `podcast:item:guid` identifiers grouped under
+a running `medium`. Other Podcasting 2.0 apps read it; Boost Me Bitch also *writes* it.
 
-### Error Handling
+Channel 2 has properties that make it unlike anything else here:
 
-- If Nostr publish fails, the operation still succeeds (database cache is updated)
-- Warnings are logged but don't block user actions
-- Database cache ensures app continues working even if relays are down
-- App data (favorites) always works regardless of Nostr relay status
+- **Republishing the whole tag list IS the sync**, so every publish must read the current event
+  first and merge — a blind publish deletes the other app's entries.
+- The wire format is specified in a third, app-neutral repo:
+  [PC20-Nostr/pc20-favorites.md](https://github.com/ChadFarrow/PC20-Nostr/blob/main/pc20-favorites.md).
+  That document, not this code, is what a third app implements against.
+- It is **allowlist-gated** (`NEXT_PUBLIC_SHARED_FAVORITES_PUBKEYS`) and its destructive reconcile
+  is off by default (`SHARED_FAVORITES_APPLY_DELETES`).
+- It replaced a two-list NIP-78 kind:30078 design. Those events are still on relays as a rollback
+  path; nothing reads or writes them.
 
-## Benefits
+Files: `lib/nostr/favorites-single-list.ts`, `pc20-identifiers.ts`, `relay-read.ts`,
+`favorites-sync-client.ts`, `app/api/favorites/sync-shared/route.ts`.
 
-### Social Features (Nostr)
-1. **User Ownership**: Users control their social data through their Nostr keys
-2. **Portability**: Social data can be accessed from any Nostr client
-3. **Resilience**: Social data distributed across multiple relays
-4. **Interoperability**: Works with the broader Nostr ecosystem
-5. **Sharing**: Users can share what they're listening to on Nostr
+**Read the `favorites-cross-app` skill before touching any of it.** The positional tag layout, the
+ordered node list, the device-local published record and the trusted relay read each have failure
+modes that are silent, and several of them produced production bugs in a single day.
 
-### App Data (Database + Nostr)
-1. **Performance**: Fast queries from database
-2. **Portability**: Favorites stored on Nostr relays (accessible from any client)
-3. **Reliability**: Database ensures favorites always work even if relays are down
-4. **Decentralization**: Favorites are user-owned and portable via Nostr
+### Playlists
 
-## Signing Methods
+Kind **34139**, addressable per NIP-33, with tracks referenced by Podcast Index GUIDs. Spec draft
+in [`nip-music-playlists.md`](nip-music-playlists.md); implementation in
+`lib/nostr/playlist-events.ts`.
 
-The app supports multiple methods for signing Nostr events:
+---
 
-### NIP-07 (Browser Extensions)
-- **Supported**: Alby, nos2x, and other NIP-07 compatible extensions
-- **Platform**: Desktop browsers (Chrome, Firefox, etc.)
-- **Usage**: Automatically detected and used when available
-- **Priority**: Highest (preferred method)
+## Relay reads are not simply "fetch"
 
-### NIP-46 (Remote Signing)
-- **Supported**: Amber and other NIP-46 compatible signers
-- **Platform**: Android devices (PWA, TWA, and web)
-- **Usage**: 
-  1. User selects "Amber" login method
-  2. App generates connection token
-  3. User connects via QR code or deep link
-  4. All subsequent signing uses NIP-46 client
-- **Priority**: Secondary (used when NIP-07 not available)
-- **Connection**: WebSocket-based communication with remote signer
-- **Persistence**: Connection tokens stored in localStorage
+`lib/nostr/relay-read.ts` exists because **"nothing answered" and "the list is empty" are
+indistinguishable at exactly one point in the pipeline, and getting it wrong wipes a library.**
 
-### NIP-05 (Read-Only)
-- **Supported**: Any NIP-05 verified identifier
-- **Platform**: All platforms
-- **Usage**: Read-only mode for viewing favorites
-- **Limitation**: Cannot sign events (no private key access)
+A read reports `trustworthy: false` unless relays actually connected *and* returned a real EOSE
+inside the window. It cannot be built on `pool.subscribeMany`'s aggregate `oneose` — both a
+synthesized EOSE timeout and a failed connection fold into that callback and report as a successful
+read. A degraded read is surfaced to the user (`components/favorites/SharedFavoritesNotice.tsx`),
+because a degraded read and an empty list render identically and correct behaviour otherwise looks
+exactly like data loss.
 
-### Unified Signer Interface
+Full detail, including the two dead default relays this has already caught, is in the
+`favorites-cross-app` skill.
 
-All signing operations use a unified signer interface (`lib/nostr/signer.ts`) that:
-- Automatically detects available signing methods
-- Falls back gracefully between methods
-- Provides consistent API for all signing operations
-- Handles connection persistence for NIP-46
+---
 
-**Files using unified signer:**
-- `components/Nostr/ShareButton.tsx` - Share to Nostr
-- `components/Lightning/BoostButton.tsx` - Lightning boosts
-- `lib/nostr/favorites.ts` - Favorite tracks/albums
-- `components/Nostr/LoginModal.tsx` - Authentication
+## Database schema
 
-## Android / Amber Integration
+Cached from Nostr:
 
-### Setup
-1. Install Amber app on Android device
-2. Open the app and go to login
-3. Select "Amber" login method (automatically shown on Android)
-4. Scan QR code or use deep link to connect
-5. Approve connection in Amber app
+- `User` — kind 0 metadata
+- `Follow` — kind 3 contact lists
+- `NostrPost` — kind 1 notes
+- `BoostEvent` — kind 9735 / 9736 zaps
 
-### Deep Linking
-- **Scheme**: `amber://nip46?token=<token>&relay=<relay>`
-- **Callback**: `nostrconnect://` or `amber://`
-- **Configuration**: Android manifest includes intent filters for both schemes
+Owned by the app, published to Nostr:
 
-### Connection Flow
-```
-User clicks "Connect with Amber"
-    ↓
-App generates connection token
-    ↓
-QR code displayed / Deep link generated
-    ↓
-User scans/opens in Amber
-    ↓
-Amber connects via WebSocket
-    ↓
-App authenticates with signer
-    ↓
-Connection saved to localStorage
-    ↓
-All signing operations use NIP-46 client
-```
+- `FavoriteTrack`, `FavoriteAlbum` — note `FavoriteAlbum.feedId` is **polymorphic** (`Feed.id`,
+  `Feed.guid`, or a synthetic `artist-*` id). See the `favorites` skill.
 
-## Future Enhancements
+Database only:
 
-- [ ] Sync from Nostr on login (pull latest social events)
-- [ ] Background sync job to keep social cache fresh
-- [ ] Conflict resolution (Nostr events take precedence for social data)
-- [ ] Event ID storage for deletion tracking
-- [ ] Relay health monitoring
-- [ ] NIP-47 (Nostr Wallet Connect) integration for Lightning payments via Amber
+- `Track`, `Feed` — catalog data, never published.
 
+---
+
+## Further reading
+
+- `nostr-signer` skill — signers, the login modal, the publish queue
+- `favorites` skill — the data model, polymorphic ids, the Community tab
+- `favorites-cross-app` skill — the kind 10333 channel end to end
+- `auth-and-security` skill — session cookie, admin gate, SSRF, CORS/CSP
