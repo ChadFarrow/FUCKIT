@@ -8,6 +8,8 @@
 > Current behaviour: the `auth-and-security` skill; `lib/auth/`, `lib/url-security.ts`, `.github/workflows/ci.yml`.
 >
 > **One follow-up from this plan is still open**, by design: the CSP shipped as `Content-Security-Policy-Report-Only` (`next.config.js`) and has not been promoted to enforcing. That was the plan's own staged rollout, not unfinished work — see its final verification step.
+>
+> Since then the policy gained `worker-src 'self' blob:` (without it, enforcing would have silently killed HLS playback) and a `report-uri` feeding `/api/csp-report`, so violations from real traffic now land on the `/admin` diagnostics panel under category `csp`. Promotion is gated on that panel being clean, rather than on the manual console-watching this plan's step 3 describes — which was never actionable, because the policy shipped with no reporting destination at all. See the `auth-and-security` skill.
 
 **Goal:** Close an account-takeover hole caused by trusting an unverified identity header, fix two SSRF routes and an unauthenticated DoS, and add the typecheck gate the repo has never had.
 

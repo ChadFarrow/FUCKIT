@@ -704,16 +704,27 @@ const nextConfig = {
             value: 'on',
           },
           {
-            // REPORT-ONLY FIRST, deliberately. A wrong script-src white-screens
+            // REPORT-ONLY STILL, deliberately. A wrong script-src white-screens
             // the entire app, this repo has no preview environment, and
             // app/layout.tsx ships an inline <script> alongside Next's own
-            // inline bootstrap. Watch the browser console for violations on
-            // every major surface (home, album, favorites, admin, radio,
-            // Now Playing, the login modal and a real boost) before switching
-            // the key to 'Content-Security-Policy'.
+            // inline bootstrap.
             //
-            // connect-src is copied verbatim from the previous enforcing
-            // policy so no relay or wallet socket changes behaviour.
+            // Promotion to 'Content-Security-Policy' is gated on
+            // /api/admin/diagnostics showing no `csp` category reports from real
+            // traffic. The `report-uri` below is what makes that observable —
+            // until it was added, this header had no reporting destination at
+            // all, so "watch the browser console for violations" meant someone
+            // browsing eight surfaces by hand, and nothing was ever collected.
+            //
+            // worker-src is NOT redundant with default-src. Without it, workers
+            // fall back to `default-src 'self'` and a blob: worker is refused —
+            // measured in Chromium, and the Worker constructor does NOT throw, so
+            // it fails silently. contexts/AudioContext.tsx builds hls.js with
+            // `enableWorker: true`, so enforcing without this line would kill HLS
+            // playback with no error anywhere.
+            //
+            // connect-src is copied verbatim from the previous enforcing policy
+            // so no relay or wallet socket changes behaviour.
             key: 'Content-Security-Policy-Report-Only',
             value: [
               "default-src 'self'",
@@ -722,11 +733,13 @@ const nextConfig = {
               "font-src 'self' https://fonts.gstatic.com data:",
               "img-src 'self' data: blob: https:",
               "media-src 'self' blob: https:",
+              "worker-src 'self' blob:",
               "frame-ancestors 'none'",
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self'",
               "connect-src 'self' https: ws: wss: wss://localrelay.link:28443 wss://relay.nsec.app wss://nos.lol wss://relay.snort.social wss://nostr.oxtr.dev wss://relay.primal.net wss://theforest.nostr1.com wss://relay.damus.io",
+              'report-uri /api/csp-report',
             ].join('; '),
           },
         ],
