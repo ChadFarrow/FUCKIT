@@ -1,69 +1,122 @@
-# Scripts Directory
+# Scripts
 
-This directory contains utility scripts and test files for the StableKraft project.
+256 files accumulated over the life of the project. Most are one-off fixes that have already been
+applied. Read this before running anything here.
 
-## Directory Structure
+## Three warnings
 
-### `/scripts/tests/`
-Test scripts for validating various components and functionality:
-- `test-album-pages.js` - Album page functionality tests
-- `test-all-feeds-background.js` - Background feed processing tests
-- `test-client-data-service.js` - Client-side data service tests
-- `test-missing-albums.js` - Missing album detection tests
-- `test-music-parser.js` - Music parsing functionality tests
-- `test-podcastindex-v4v.js` - Podcast Index V4V integration tests
-- `test-publisher-feed.js` - Publisher feed tests
-- `test-quick-feeds.js` - Quick feed validation tests
-- `test-rss-debug.js` - RSS parsing debug tests
-- `test-stay-awhile.js` - Stay Awhile feed tests
-- `test-stay-awhile-debug.js` - Stay Awhile debug tests
-- `test-with-app-parser.js` - Application parser tests
+**1. Many `npm run` shortcuts are broken.** Sixteen entries in `package.json` point at files that
+no longer exist in `scripts/`:
 
-### `/scripts/utils/`
-Utility scripts for maintenance and fixes:
-- `check-missing-albums.js` - Identify albums missing metadata
-- `check-missing-albums-and-cdn.js` - Check albums and CDN status
-- `cleanup-and-consolidate-scripts.js` - Script consolidation utility
-- `clear-v4v-cache.js` - Clear Value4Value cache
-- `fix-dane-ray-coleman.js` - Specific artist metadata fix
-- `fix-titles-now.js` - Title metadata correction
-- `force-v4v-resolution.js` - Force V4V metadata resolution
-- `lookup-ep54-feeds.js` - Episode 54 feed lookup
-- `lookup-ep56-feeds.js` - Episode 56 feed lookup
-- `lookup-missing-feed.js` - Missing feed detection
-- `preview-itdv.js` - Preview ITDV feed content
-- `quick-duration-fix.js` - Fix track duration metadata
-- `search-podcast-index-for-placeholders.js` - Find placeholder content
-
-### Root `/scripts/`
-Production-ready scripts for database operations and feed management:
-- `fix-missing-track-metadata.ts` - Populate missing album/artist metadata
-- `resync-feeds-missing-audio.ts` - Resync feeds with missing audio URLs
-- `identify-missing-publisher-albums.ts` - Find missing publisher content
-- `sync-missing-publisher-albums.ts` - Sync missing publisher albums
-- `resync-errored-feeds.ts` - Retry failed feed fetches
-- `generate-feed-report.ts` - Generate comprehensive feed reports
-
-## Usage
-
-### Running Test Scripts
-```bash
-node scripts/tests/test-album-pages.js
+```
+dev-setup                 auto-add-publishers        parse-and-add-publishers
+test-feeds                ensure-publisher-feeds     post-parse-cleanup
+test-removed              discover-publishers        integrate-publishers
+fix-images                check-artwork              fix-artwork
+clear-sw-cache            fix-all                    update-music
+migrate-to-db
 ```
 
-### Running Utility Scripts
+They fail with "Cannot find module". `postinstall` calls two of them (`check-env`, `dev-setup`) but
+swallows failures with `|| true`, which is why a fresh `npm install` still succeeds — `check-env.js`
+exists, `dev-setup.js` does not.
+
+Deleting the dead entries would be a good cleanup; nothing here depends on them.
+
+**2. Many scripts still target the JSON database.** They read `data/music-tracks.json` and
+`data/enhanced-music-tracks.json`, which stopped being the source of truth when the app moved to
+PostgreSQL. **Neither file is in the repo**, so these scripts now fail outright with `ENOENT`
+rather than quietly acting on stale data — which is the better failure, but means they are dead
+code either way. See [`DEPRECATED_SCRIPTS.md`](DEPRECATED_SCRIPTS.md).
+
+**3. Almost none of this is the maintenance path anymore.** Feed import, publisher album import,
+reparse, dead-feed sweeps and playlist refresh are all **admin API routes** driven by the nightly
+GitHub Action. Reach for those first — see [`../docs/PLAYLIST_REFRESH.md`](../docs/PLAYLIST_REFRESH.md)
+and [`../docs/PUBLISHER_FEED_MANAGEMENT.md`](../docs/PUBLISHER_FEED_MANAGEMENT.md).
+
+## What still works, by job
+
+### Environment
+
+| Script | Purpose |
+|---|---|
+| `check-env.js` | Validate required env vars. Runs on `postinstall`. |
+
+### Performance measurement
+
+Run via npm; all four exist and are current:
+
 ```bash
-node scripts/utils/clear-v4v-cache.js
+npm run perf:db          # scripts/perf-db.ts
+npm run perf:api         # scripts/perf-api.ts
+npm run perf:memory      # scripts/perf-memory.ts
+npm run perf:lighthouse  # scripts/perf-lighthouse.ts
+npm run perf:all         # db + api + memory
 ```
 
-### Running Production Scripts (TypeScript)
+### Favorites backup
+
+The only safe way to snapshot favorites before enabling `SHARED_FAVORITES_APPLY_DELETES`:
+
 ```bash
-npx tsx scripts/fix-missing-track-metadata.ts
+railway run --service StableKraft --environment production \
+  npx tsx scripts/backup-favorites.ts dump > favorites-$(date +%F).json
+
+npx tsx scripts/backup-favorites.ts restore favorites-2026-08-16.json   # additive, idempotent
 ```
 
-## Notes
+### Discovery & import
 
-- Test scripts are for development/debugging and not part of the automated test suite
-- Utility scripts are one-off tools for specific maintenance tasks
-- Production scripts use TypeScript and Prisma for database operations
-- Always backup the database before running fix/sync scripts
+| Script | Purpose |
+|---|---|
+| `comprehensive-music-discovery.js` | Discover new music feeds via the Podcast Index API |
+| `properly-resolve-iam-tracks.js` | Resolve imported IAM tracks |
+| `parse-publisher-remote-items.js` | Extract `<podcast:remoteItem>` entries from publisher feeds |
+
+### Metadata repair
+
+| Script | Purpose |
+|---|---|
+| `assign-default-durations.js` | Smart default durations for tracks missing one |
+| `update-duration-to-9999.js` | Placeholder 99:99 duration, for spotting gaps |
+| `update-artwork-to-main-bg.js` | Site background as placeholder artwork |
+
+### Deploy
+
+| Script | Purpose |
+|---|---|
+| `deploy.sh` | `npm run deploy` — build a deployment package locally |
+| `auto-deploy.sh` | `npm run auto-deploy` — version bump then deploy |
+| `auto-version-update.js` | `npm run update-version` |
+
+Note that none of these are how production deploys. **`git push origin main` is the deploy** —
+Railway builds the Dockerfile. These are local packaging helpers.
+
+### Android
+
+```bash
+npm run android:sync      # npx cap sync android
+npm run android:icons     # regenerate icons/splash
+npm run android:debug     # assembleDebug
+npm run android:release   # assembleRelease
+```
+
+See the `android-native` skill for keystore, versionCode and zapstore publishing.
+
+## Subdirectories
+
+| Directory | Contents |
+|---|---|
+| `tests/` | Standalone feed/parser test scripts (`test-album-pages.js`, `test-music-parser.js`, `test-publisher-feed.js`, …). Not the app's test suite — that is `npm run test:all`. |
+| `utils/` | One-off lookups and fixes, mostly named after the specific feed or episode they were written for (`lookup-ep54-feeds.js`, `fix-dane-ray-coleman.js`). |
+| `root-scripts/` | Older scripts moved out of the repo root. |
+| `archived-migration-scripts/` | Completed migrations. Historical only. |
+
+## Before writing a new script
+
+Check whether an admin route already does it. The nightly workflow calls fourteen of them, and a
+route gets the connection pooling, the SSRF guard and the admin gate for free — a script gets none
+of that and needs a `DATABASE_URL` in the environment you run it from.
+
+If you do add one, put it in the right subdirectory and add a row above. A script whose purpose
+isn't written down becomes one of the 256.

@@ -4,10 +4,10 @@
 
 | Package | Version | Purpose |
 |---------|---------|---------|
-| [`@getalby/bitcoin-connect`](https://github.com/getAlby/bitcoin-connect) | ^3.11.0 | Wallet connection modal, WebLN provider abstraction, NWC support |
+| [`@getalby/bitcoin-connect`](https://github.com/getAlby/bitcoin-connect) | ^3.12.2 | Wallet connection modal, WebLN provider abstraction, NWC support |
 | [`webln`](https://github.com/joule-labs/webln) | ^0.3.2 | WebLN type definitions and interface for browser Lightning wallets |
 | [`@webbtc/webln-types`](https://github.com/nickhamer/webbtc-webln-types) | ^3.0.0 | Extended WebLN TypeScript types (keysend, makeInvoice, getBalance) |
-| [`nostr-tools`](https://github.com/nbd-wtf/nostr-tools) | ^2.15.0 | Nostr event signing/verification, NIP-19 encoding, NIP-44 encryption, relay connections |
+| [`nostr-tools`](https://github.com/nbd-wtf/nostr-tools) | ^2.23.1 | Nostr event signing/verification, NIP-19 encoding, NIP-44 encryption, relay connections |
 
 ### How They Fit Together
 
@@ -32,6 +32,7 @@ The system is built around **3 payment methods** with intelligent fallback chain
 | **Wallet Detection** | `lib/lightning/wallet-detection.ts` — provider identification (Coinos, Alby, Alby Hub, NWC, extension) |
 | **V4V Parsing** | `lib/lightning/value-parser.ts` — parses `<podcast:value>` tags from RSS feeds |
 | **Value Splits** | `lib/lightning/value-splits.ts` — multi-recipient payment distribution with fallback logic |
+| **Fountain routing** | `lib/lightning/fountain.ts` — detects Fountain recipients by node pubkey + routing custom key, and pays them over LNURL as Fountain asked |
 | **LNURL** | `lib/lightning/lnurl.ts` — Lightning Address resolution, invoice generation, payment verification |
 | **BoostBox** | `lib/lightning/boostbox.ts` — stores boost metadata for LNURL payments (client-only, uses server proxy) |
 | **Boost UI** | `components/Lightning/BoostButton.tsx` — complete boost modal with amount, message, sender name, split details |
@@ -89,6 +90,23 @@ User clicks Boost →
   Log boost → Post to Nostr →
   Show success
 ```
+
+## Fountain Routing
+
+Fountain asked to be paid over LNURL-pay rather than keysend. The catch is that a Fountain
+recipient almost never *looks* like a Lightning Address in a feed — it is published as a **node**
+recipient pointing at Fountain's shared node, with the account identified by a custom TLV record
+and the Lightning Address, if present at all, sitting in the human-readable `name`:
+
+```json
+{ "name": "middleseasonmusic@fountain.fm", "type": "node",
+  "address": "03b6f613…54b79", "split": 10,
+  "customKey": "906608", "customValue": "01h4XlHtbf6uDlRYEcHnlR" }
+```
+
+So an `address.endsWith('@fountain.fm')` test matches **nothing** — `address` is a hex pubkey.
+Detection keys off the shared node pubkey (`FOUNTAIN_NODE_PUBKEYS`) and the routing custom key
+instead. `lib/lightning/fountain.ts`, added in #217.
 
 ## BoostBox Integration
 
@@ -206,7 +224,7 @@ Retry logic: 2-3 retries for routing failures (1s delay), 1-2 retries for timeou
 - Two rows: Browser Extension (only when `window.webln` exists) and Nostr Wallet Connect
 - Plus a "Restore from Nostr" row when the session can decrypt a saved backup
 - Rendered once by `BitcoinConnectProvider`, so every `connect()` caller shares it
-- See CLAUDE.md → "Wallet Connection UI" for the invariants
+- See the `lightning-boost` skill → "Wallet Connection UI" for the invariants
 
 ### Wallet actions (`components/UserMenu.tsx`)
 - Switch Wallet → NWC Backup (with status) → Disconnect Wallet, destructive last

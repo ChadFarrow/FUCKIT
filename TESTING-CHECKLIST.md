@@ -1,14 +1,26 @@
-# Testing Checklist - Quick Wins Implementation
+# Manual UI Testing Checklist
 
-## ✅ Site Status
-- **Loaded Successfully**: ✅ Yes
-- **No Console Errors**: ✅ Confirmed
-- **No Failed Network Requests**: ✅ Confirmed
-- **Performance**: Good (FCP: 436ms, LCP: 8.1s)
+Manual smoke tests for browser-facing behaviour that automated tests don't cover — keyboard
+shortcuts, scroll behaviour, share targets, responsiveness, theming.
+
+**This is not the test suite.** Automated checks are:
+
+```bash
+npm run typecheck    # tsc --noEmit
+npm run test:all     # tsx --test lib/*.test.ts lib/*/*.test.ts
+npx next lint
+```
+
+CI runs all three on every push and PR. Run them first; use this checklist for what they can't see.
+
+> **Verify layout changes by measuring, not eyeballing.** For anything involving safe-area insets,
+> the player bar, or mobile layout, drive puppeteer-core against the real component and assert all
+> four edges — several bugs here survived a sweep that only checked one. See the `mobile-layout`
+> skill.
 
 ---
 
-## 📋 Feature Testing Guide
+## Feature Testing Guide
 
 ### 1. **Keyboard Shortcuts** ⌨️
 
@@ -259,44 +271,35 @@ Take screenshots to verify:
 
 ---
 
-## 🐛 Known Issues
+## Where these features live
 
-None currently known. Report any issues found!
+| Feature | File |
+|---------|------|
+| Keyboard Shortcuts | `hooks/useKeyboardShortcuts.ts` |
+| Back-to-Top Button | `components/BackToTop.tsx` |
+| Share Button | `components/ShareButton.tsx` |
+| Skeleton Loaders | `components/SkeletonCard.tsx` |
+| SEO Metadata | `components/SEOHead.tsx` |
+| Error Messages | `components/ErrorMessage.tsx` |
+| Shared Types | `types/common.ts` |
+| Constants | `lib/constants.ts` |
 
----
+## Testing on a phone over the LAN
 
-## 📝 Test Results
+Two traps, both of which look like "my change didn't apply":
 
-Use this template to record your findings:
+1. **The service worker serves stale content.** A production `npm run build` writes `public/sw.js`
+   and `public/workbox-*.js`, and Next serves `public/` statically even in dev — so a phone that
+   registered the worker keeps getting its cached HTML shell and CSS. A plain reload does not fix
+   it. Delete both files (they're gitignored build artifacts) so `/sw.js` 404s, then reload twice,
+   or use a private tab.
 
-**Test**: [Test Name]  
-**Result**: ✅ Pass / ⚠️ Warning / ❌ Fail  
-**Notes**: [Any observations]
+2. **Building over a live dev server breaks asset loading.** Both write `.next/`. Stop
+   `npm run dev` before `npm run build`, or every asset request 400s until you
+   `rm -rf .next` and restart.
 
-Example:
-```
-**Test**: Keyboard Shortcut - Space to Play
-**Result**: ✅ Pass
-**Notes**: Works smoothly, track plays/pauses on space
-```
+## Reporting what you find
 
----
-
-## ✨ Features Summary
-
-| Feature | Status | File |
-|---------|--------|------|
-| Keyboard Shortcuts | ✅ Ready | `hooks/useKeyboardShortcuts.ts` |
-| Back-to-Top Button | ✅ Ready | `components/BackToTop.tsx` |
-| Share Button | ✅ Ready | `components/ShareButton.tsx` |
-| Skeleton Loaders | ✅ Ready | `components/SkeletonCard.tsx` |
-| SEO Metadata | ✅ Ready | `components/SEOHead.tsx` |
-| Error Messages | ✅ Ready | `components/ErrorMessage.tsx` |
-| TypeScript Types | ✅ Ready | `types/common.ts` |
-| Constants | ✅ Ready | `lib/constants.ts` |
-
----
-
-**Happy Testing! 🚀**
-
-Report any issues or bugs in the testing results section above.
+File an issue rather than recording results in this file — a checklist that accumulates one run's
+findings stops being a checklist. For boost failures and client-side errors, check
+`/api/admin/diagnostics` first; they're already captured there. See the `diagnostics` skill.

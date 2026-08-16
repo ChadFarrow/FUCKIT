@@ -2,6 +2,27 @@
 
 This guide will help you test all the Nostr features we've implemented.
 
+## How authenticated requests work
+
+**Read this before running any curl below.** Identity comes from the signed `sk_session` cookie
+and nothing else. The `x-nostr-user-id` header these examples used to send is no longer trusted by
+any route — `requireUser` reads it only on the fail-open path taken when `SESSION_SECRET` is unset,
+which is a vulnerability, not a testing mode.
+
+To get a session for curl:
+
+1. Sign in through the UI at `http://localhost:3000`.
+2. Copy the `sk_session` cookie value from DevTools → Application → Cookies.
+3. Export it, and pass it with `-b`:
+
+```bash
+export SK_SESSION='<the sk_session value>'
+curl -b "sk_session=$SK_SESSION" http://localhost:3000/api/nostr/auth/me
+```
+
+Routes that mutate call `requireUser(request, { write: true })`, which rejects read-only NIP-05
+sessions. If a write 401s while a read succeeds, that is the reason.
+
 ## Prerequisites
 
 1. **Start the development server:**
@@ -11,9 +32,12 @@ This guide will help you test all the Nostr features we've implemented.
 
 2. **Ensure database is connected:**
    - Verify `DATABASE_URL` is set in `.env.local`
-   - Database migration should already be applied
+   - Migrations applied: `npm run db:migrate:dev`
 
-3. **Generate a test Nostr key pair** (optional, for manual testing):
+3. **Set `SESSION_SECRET` in `.env.local`.** Without it `requireUser` fails open and every test
+   below passes for the wrong reason.
+
+4. **Generate a test Nostr key pair** (optional, for manual testing):
    - You can use an online tool like https://nostr-keygen.com/
    - Or use the browser console to generate one (see below)
 
@@ -128,12 +152,12 @@ This guide will help you test all the Nostr features we've implemented.
 # Get favorites (should work for both session and user)
 curl -X GET http://localhost:3000/api/favorites/tracks \
   -H "x-session-id: your-session-id" \
-  -H "x-nostr-user-id: your-user-id"
+  -b "sk_session=$SK_SESSION"
 
 # Add favorite
 curl -X POST http://localhost:3000/api/favorites/tracks \
   -H "Content-Type: application/json" \
-  -H "x-nostr-user-id: your-user-id" \
+  -b "sk_session=$SK_SESSION" \
   -d '{"trackId": "test-track-id"}'
 ```
 
@@ -150,7 +174,7 @@ curl -X POST http://localhost:3000/api/favorites/tracks \
    # Follow user B from user A
    curl -X POST http://localhost:3000/api/nostr/follow \
      -H "Content-Type: application/json" \
-     -H "x-nostr-user-id: user-a-id" \
+     -b "sk_session=$SK_SESSION_A" \
      -d '{"followingId": "user-b-id"}'
    ```
 
@@ -174,7 +198,7 @@ curl -X POST http://localhost:3000/api/favorites/tracks \
    ```bash
    curl -X POST http://localhost:3000/api/nostr/share \
      -H "Content-Type: application/json" \
-     -H "x-nostr-user-id: your-user-id" \
+     -b "sk_session=$SK_SESSION" \
      -d '{
        "trackId": "test-track-id",
        "content": "Check out this track!"
@@ -228,7 +252,7 @@ curl -X POST http://localhost:3000/api/favorites/tracks \
 ```bash
 curl -X POST http://localhost:3000/api/nostr/boost \
   -H "Content-Type: application/json" \
-  -H "x-nostr-user-id: your-user-id" \
+  -b "sk_session=$SK_SESSION" \
   -H "x-nostr-private-key: your-private-key-hex" \
   -d '{
     "trackId": "test-track-id",
@@ -256,7 +280,7 @@ curl -X POST http://localhost:3000/api/nostr/boost \
    ```bash
    curl -X POST http://localhost:3000/api/nostr/profile/update \
      -H "Content-Type: application/json" \
-     -H "x-nostr-user-id: your-user-id" \
+     -b "sk_session=$SK_SESSION" \
      -d '{
        "displayName": "Test User",
        "bio": "This is a test bio",
@@ -283,7 +307,7 @@ curl -X GET http://localhost:3000/api/nostr/relays?userId=your-user-id
 ```bash
 curl -X POST http://localhost:3000/api/nostr/relays \
   -H "Content-Type: application/json" \
-  -H "x-nostr-user-id: your-user-id" \
+  -b "sk_session=$SK_SESSION" \
   -d '{
     "relays": [
       "wss://relay.damus.io",
@@ -305,18 +329,20 @@ curl -X POST http://localhost:3000/api/nostr/relays \
 ### Issue: Favorites not persisting after login
 
 **Solution:**
-- Check that `userId` is being sent in API requests
-- Verify database has correct `userId` in favorites table
-- Check that session favorites are being migrated (if implemented)
+- Verify the `sk_session` cookie is being sent, and that it verifies (`GET /api/nostr/auth/me`)
+- Verify the database has the expected `userId` on the favorites rows
+- Check that session favorites were migrated to the user on login
 
 ### Issue: Boost not posting to Nostr
 
 **Solution:**
-- Verify `NEXT_PUBLIC_NOSTR_ENABLED=true` in environment
-- Check that user is authenticated
-- Verify relays are configured
-- Check browser console for errors
-- Verify private key is accessible in localStorage
+- Check that the user is authenticated and the signer is connected — a NIP-05 read-only session
+  cannot sign, so nothing is ever posted
+- Verify `nostrIntegration` is enabled in `LIGHTNING_CONFIG.features` (`lib/lightning/config.ts`)
+- Verify relays are configured (`NEXT_PUBLIC_NOSTR_RELAYS`)
+- Check the browser console, and `/api/admin/diagnostics` for captured client errors
+- Posting to Nostr is non-fatal — the payment succeeds even when the post fails, so a "successful"
+  boost with no note is this, not a payment problem
 
 ### Issue: Events not appearing on relays
 

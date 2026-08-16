@@ -1,368 +1,123 @@
-# Stablekraft App - AI System Prompt
-
-You are an AI assistant helping develop and maintain the Stablekraft app, a decentralized music streaming platform powered by RSS feeds, Nostr, and the Lightning Network.
-
----
-
-## App Overview
-
-**Stablekraft** is a music discovery and streaming application that:
-- Extracts music tracks from podcast RSS feeds using the Podcast Index API
-- Streams audio with full player controls (shuffle, repeat, background playback)
-- Manages curated playlists (MMM, HGH, ITDV, IAM, SAS, MMT, B4TS, Upbeats)
-- Enables Bitcoin Lightning payments ("boosts") to artists via Value4Value (V4V)
-- Uses Nostr for authentication, favorites sync, and social features (zaps)
-- Provides album browsing, publisher pages, and fuzzy search
-
----
-
-## Two-Repo Architecture
-
-This project uses a separation of concerns with two repositories:
-
-### 1. Playlist Generator (musicL-playlist-updater)
-- **Repo**: https://github.com/ChadFarrow/musicL-playlist-updater
-- **Purpose**: Generates and updates playlist XML feeds
-- **Output**: https://github.com/ChadFarrow/chadf-musicl-playlists
-- **Schedule**: Runs daily via GitHub Actions
-
-### 2. This Repo (stablekraft-app)
-- **Purpose**: Consumes playlist feeds and displays them in the app
-- **Does NOT generate playlists** - only fetches and caches them
-- **Feed Sync**: Daily at 2 AM UTC via `.github/workflows/refresh-playlists.yml`
-
----
-
-## Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| Framework | Next.js 15 (App Router) |
-| Language | TypeScript |
-| Database | PostgreSQL with Prisma ORM |
-| Authentication | Nostr (NIP-07, NIP-46, NIP-55) |
-| Payments | WebLN, LNURL, Lightning Network, Keysend |
-| RSS Parsing | rss-parser, fast-xml-parser, Podcast Index API |
-| Image Processing | Sharp, color-thief |
-| Frontend | React 18, Tailwind CSS, Lucide icons |
-| PWA | next-pwa with service workers |
-| Audio | HLS.js for streaming, Web Audio API |
-
----
-
-## Directory Structure
-
-```
-stablekraft-app/
-├── app/
-│   ├── api/                    # ~95+ API routes
-│   │   ├── playlist/           # Playlist endpoints (mmm, hgh, itdv, etc.)
-│   │   ├── tracks/             # Track listing and search
-│   │   ├── feeds/              # Feed management
-│   │   ├── admin/              # Admin operations (Nostr auth protected)
-│   │   ├── lightning/          # Boost payments, lnurl, value splits
-│   │   ├── nostr/              # Auth challenge, login, activity
-│   │   └── parse-feeds/        # Playlist parsing workflow
-│   ├── album/[id]/             # Album detail pages
-│   ├── publisher/[id]/         # Publisher/artist pages
-│   ├── playlist/               # Playlist views
-│   └── layout.tsx              # Root layout with context providers
-│
-├── lib/
-│   ├── lightning/              # WebLN, LNURL, value splits, keysend
-│   ├── nostr/                  # Client, signer, auth, favorites, zaps
-│   ├── music-track-parser/     # RSS parsing and track extraction
-│   ├── rss-parser/             # RSS/Podcast feed parsing
-│   ├── podcast-index-api.ts    # Podcast Index API client
-│   ├── v4v-resolver.ts         # Value4Value resolution
-│   ├── fuzzy-search.ts         # Search with pg_trgm
-│   └── prisma.ts               # Prisma client singleton
-│
-├── components/
-│   ├── GlobalNowPlayingBar.tsx # Persistent audio player
-│   ├── NowPlayingScreen.tsx    # Full-screen now playing
-│   ├── PlaylistTemplate.tsx    # Unified playlist view
-│   ├── BoostButton.tsx         # Lightning payment UI
-│   ├── CDNImage.tsx            # Optimized image loading
-│   ├── Lightning/              # Lightning components
-│   ├── Nostr/                  # Nostr auth components
-│   └── favorites/              # Favorite button components
-│
-├── contexts/
-│   ├── AudioContext.tsx        # Global audio player state
-│   ├── NostrContext.tsx        # Nostr auth state
-│   ├── LightningContext.tsx    # Lightning wallet state
-│   ├── UserSettingsContext.tsx # User preferences
-│   └── BatchedFavoritesContext.tsx # Favorites batching
-│
-├── types/                      # TypeScript type definitions
-├── prisma/schema.prisma        # Database schema
-└── scripts/                    # Automation scripts
-```
-
----
-
-## Database Schema (Key Models)
-
-### Track
-Music tracks extracted from RSS feeds.
-```
-- id, guid, title, artist, album, audioUrl, duration
-- itunesAuthor, itunesSummary, itunesImage
-- v4vRecipient, v4vValue (JSON) - Lightning payment data
-- feedId (FK to Feed), status, trackOrder
-```
-
-### Feed
-RSS feeds representing albums or artists.
-```
-- id, guid, title, description, originalUrl, cdnUrl
-- type (album/artist), artist, image
-- status (active/inactive), lastFetched
-- v4vRecipient, v4vValue (JSON)
-- publisherId (FK to Feed for artist relationship)
-```
-
-### User
-Nostr-authenticated users.
-```
-- id, nostrPubkey, nostrNpub
-- displayName, avatar, lightningAddress
-- relays (string array)
-```
-
-### FavoriteTrack / FavoriteAlbum
-User favorites (supports both session-based and Nostr-authenticated).
-```
-- userId, trackId/feedId, sessionId
-- nostrEventId, nip51Format (Nostr list storage)
-```
-
----
-
-## Critical API Endpoints
-
-### Playlists
-- `GET /api/playlist/{type}` - Get playlist (mmm, hgh, itdv, top100, b4ts, sas, iam, mmt, upbeats)
-- `POST /api/playlist/parse-feeds` - Import/parse new tracks from feeds
-- `POST /api/playlist-cache?refresh=all` - Clear all caches
-
-### Tracks & Feeds
-- `GET /api/tracks` - List tracks with search/filters/pagination
-- `GET /api/feeds/[id]` - Get feed details
-- `POST /api/feeds/[id]/refresh` - Refresh individual feed
-- `POST /api/admin/feeds/[id]/reparse` - Reparse feed from source
-
-### Lightning Payments
-- `POST /api/lightning/boost` - Send boost payment
-- `GET /api/lightning/value-splits` - Get V4V payment splits
-- `GET /api/lightning/lnurl/resolve` - Resolve LNURL
-
-### Nostr
-- `POST /api/nostr/auth/challenge` - Get auth challenge
-- `GET /api/nostr/auth/me` - Get current user
-- `POST /api/nostr/auth/logout` - Logout
-
----
-
-## Feed Consumption Workflow
-
-1. **GitHub Actions** runs daily at 2 AM UTC (`.github/workflows/refresh-playlists.yml`)
-2. Calls `/api/playlist-cache?refresh=all` to clear cache
-3. Calls each playlist endpoint with `?refresh=true` parameter
-4. Calls `/api/playlist/parse-feeds` to import new tracks to database
-5. Tracks are stored in PostgreSQL with V4V payment data
-
-### Track Resolution (2-Phase)
-1. **Database lookup** - Check if track already exists (fast)
-2. **Podcast Index API** - Resolve missing tracks using `feedGuid` + `itemGuid` (slower)
-3. Filter out tracks without valid `audioUrl` (unavailable content)
-
----
-
-## Podcast Index API
-
-**CRITICAL**: Always use the Podcast Index API to look up and parse RSS feeds.
-- API keys are in `.env` (check for `PODCASTINDEX_API_KEY` and `PODCASTINDEX_API_SECRET`)
-- Documentation: https://podcastindex-org.github.io/docs-api/
-- Client implementation: `lib/podcast-index-api.ts`
-
-Playlists use `<podcast:remoteItem>` tags with `feedGuid` and `itemGuid` attributes to reference tracks.
-
----
-
-## Nostr Integration
-
-### Authentication Methods
-- **NIP-07**: Browser extension (Alby, nos2x)
-- **NIP-46**: Remote signer / bunker connection
-- **NIP-55**: Android app integration
-
-### Features
-- User authentication and session management
-- Favorites sync to Nostr lists (NIP-51)
-- Zaps (Nostr Lightning payments)
-- Now-playing status publishing (NIP-38)
-- Musician tagging in boost posts
-
-### Key Files
-- `lib/nostr/client.ts` - Core Nostr client
-- `lib/nostr/signer.ts` - NIP-07/NIP-46/NIP-55 signing
-- `lib/nostr/auth-utils.ts` - Authentication logic
-- `lib/nostr/favorites.ts` - Favorites sync
-- `components/Nostr/LoginModal.tsx` - Multi-method auth UI
-
----
-
-## Lightning / V4V Integration
-
-### Payment Methods
-- **WebLN**: Browser wallet integration
-- **LNURL**: Lightning URL protocol
-- **Keysend**: Direct node payments (Coinos now supports this)
-
-### V4V Workflow
-```
-Track → hasV4V() check → getV4VRecipients() → ValueSplitsService
-   ↓
-BoostButton displays split details
-   ↓
-Payment execution with progress tracking
-   ↓
-Publish to Nostr with musician p-tags
-```
-
-### Key Files
-- `lib/lightning/webln.ts` - WebLN wallet integration
-- `lib/lightning/lnurl.ts` - LNURL support
-- `lib/lightning/value-splits.ts` - V4V payment distribution
-- `lib/v4v-resolver.ts` - Value4Value resolution
-- `components/BoostButton.tsx` - Payment UI (66KB, largest component)
-
----
-
-## Audio Player Architecture
-
-### AudioContext (`contexts/AudioContext.tsx`)
-Central state management for audio playback (~3400+ lines):
-- Current playing album and track
-- Playback state (playing, loading, shuffle, repeat)
-- Controls (play, pause, seek, next, previous)
-- Prefetches upcoming tracks
-- Supports audio and video playback
-- Publishes now-playing to Nostr
-
-### Key Components
-- `GlobalNowPlayingBar.tsx` - Fixed bottom bar
-- `NowPlayingScreen.tsx` - Full-screen player with artwork, controls, V4V
-
----
-
-## UI Patterns & Performance
-
-### Context Providers (wrap app in layout.tsx)
-- AudioProvider - Global audio state
-- NostrProvider - Authentication
-- BatchedFavoritesProvider - Optimized favorites checking
-- LightningWrapper - Bitcoin Connect integration
-- UserSettingsProvider - User preferences
-
-### Performance Optimizations
-- **Memoization**: AudioContext value, AlbumCard
-- **Dynamic imports**: Heavy components loaded on-demand
-- **Intersection Observer**: Smart prefetching
-- **Batched API calls**: Favorites status checking
-- **Image optimization**: CDN, proxy, lazy loading
-- **Debouncing**: Search queries
-
----
-
-## Common Development Tasks
-
-### Adding a New Playlist
-1. Create endpoint at `app/api/playlist/{name}/route.ts`
-2. Add to playlist generator repo (musicL-playlist-updater)
-3. Update parse-feeds workflow to include new playlist
-4. Add UI route at `app/playlist/{name}/page.tsx`
-
-### Debugging Feed Parsing Issues
-1. Check Podcast Index API for feed availability
-2. Verify `feedGuid` and `itemGuid` are valid
-3. Check `lib/music-track-parser/` for extraction logic
-4. Use admin panel or `/api/admin/feeds/[id]/reparse`
-
-### Working with V4V Payments
-1. V4V data comes from podcast:value tags in RSS
-2. Check `lib/v4v-resolver.ts` for resolution logic
-3. `lib/lightning/value-splits.ts` handles payment distribution
-4. BoostButton component manages UI and payment flow
-
-### Nostr Authentication
-1. LoginModal supports multiple methods (NIP-07, NIP-46, NIP-55)
-2. NostrContext manages user state
-3. Favorites sync uses NIP-51 lists
-4. Zaps use NIP-57 protocol
-
----
-
-## Important Conventions
-
-1. **Always use Podcast Index API** instead of Wavlake website for feed info
-2. **Expected behavior**: Some tracks from XML feeds may not resolve (API doesn't have them)
-3. **Feed parsing is required** before any content displays in the app
-4. **Coinos supports keysend** - this was recently added
-5. **Repo was renamed** from FUCKIT to stablekraft-app
-6. **All feeds need parsing** including publisher feeds
-
----
-
-## Environment Variables
-
-Located in `.env.local`:
-```
-PODCASTINDEX_API_KEY=...
-PODCASTINDEX_API_SECRET=...
-DATABASE_URL=postgresql://...
-NOSTR_*=...                    # Various Nostr config
-```
-
----
-
-## Build & Development
+# Stablekraft App — AI Orientation
+
+Context for an AI assistant working on this repo from a tool that can't read `.claude/`.
+
+> **If your tool *can* read `.claude/`, use those instead.** [`CLAUDE.md`](CLAUDE.md) holds the
+> authoritative project instructions and cross-cutting invariants; `.claude/skills/*/SKILL.md`
+> holds 13 per-subsystem deep dives loaded on demand. This file is a short standalone summary that
+> defers to them on every point. It is deliberately not a copy — an earlier 368-line duplicate of
+> CLAUDE.md went three weeks stale and started contradicting it, which is the failure mode this
+> shape exists to avoid.
+
+## What the app is
+
+A Next.js 15 music app for Podcasting 2.0. It ingests music from podcast RSS feeds via the Podcast
+Index API, stores it in PostgreSQL, and adds Value4Value Lightning payments, Nostr identity, and
+musicL playlists. Ships as a web app, a PWA, and a Capacitor Android build on zapstore.
+
+**Stack:** Next.js 15 (App Router), React 18, TypeScript, Prisma + PostgreSQL, Nostr
+(NIP-07/46/55), WebLN/NWC/LNURL.
+
+**Layout:** no `src/`. Source is `app/`, `lib/`, `components/`, `contexts/`, `hooks/`.
+
+See [`README.md`](README.md) for the directory tree, feature list, environment variables and API
+surface.
+
+## Rules that are not negotiable
+
+These are the ones where getting it wrong causes damage rather than a failed build.
+
+- **Never commit secrets.** `SESSION_SECRET` and `ADMIN_SECRET` live in Railway env and
+  `.env.local` only. Same for the Android keystore at `~/keystores/stablekraft-release.jks` —
+  losing it means losing the ability to ship updates to installed users.
+- **`git push origin main` IS the production deploy.** There is no preview environment. Anything
+  merged is live.
+- **Railway does not run migrations.** The Dockerfile has no `prisma migrate deploy`. After merging
+  a migration, run `railway run --service StableKraft --environment production npm run db:migrate`
+  **before** the code reading the new column goes live, or every query selecting it 500s.
+- **All feed lookups go through the Podcast Index API.** Never fetch Wavlake directly.
+- **No JSON-file databases.** All data is PostgreSQL via Prisma. Scripts that read
+  `data/music-tracks.json` are deprecated leftovers.
+- **User identity is the signed session cookie, never a request header.** `requireUser(request)` is
+  the only way a route learns who is calling. `grep -rn "x-nostr-user-id" app/api` must stay empty.
+- **`isSafePublicUrl()` returns `{ ok, ... }`, not a boolean.** `if (!isSafePublicUrl(u))` negates
+  an object, is always false, silently turns the SSRF guard into dead code — and `tsc --noEmit`
+  stays clean. Always `const c = isSafePublicUrl(u); if (!c.ok)`.
+- **A grep that returns nothing is not evidence that nothing exists.** Quote your globs and check
+  the exit status. An unquoted `--include=*.tsx` under zsh errors and prints nothing, which is
+  indistinguishable from a clean result. This produced three wrong conclusions during a security
+  audit, including "this route has no callers" about a live endpoint that was nearly deleted.
+
+## The pattern that causes most bugs here
+
+**The same field is often written or read from N places, and fixing one of them is the standard
+bug.** Real examples: `/api/albums-fast` has **two** Track selects; `favorites/tracks` has **three**
+Feed selects; `podcastImages` has **three** write paths; the release date has **seven** read paths;
+`Feed.medium` has **ten** create/upsert paths.
+
+Before believing you've found them all: `grep -rn "prisma.<model>.create\|upsert"`. Watch **re-key**
+paths especially — `refresh-by-url` deletes a row and recreates it from a field-by-field copy, so a
+column missing from that list is silently dropped rather than merely unset.
+
+Two more of the same shape, outside Prisma: a playlist must be registered in four places
+(`docs/ADDING_PLAYLISTS.md`), and `AlbumDetailClient` duplicates props across its mobile and desktop
+rows.
+
+## Two columns that both answer "what kind of thing is this feed"
+
+`Feed.type` is **this app's classification**; `Feed.medium` is **what the feed declared**. Not
+interchangeable, and the difference is load-bearing:
+
+- `type` defaults to `"album"`, so it always has a value and that value is often a guess.
+- `medium` is NULL until a feed actually says so, and **nothing may default it**.
+- Only `medium` goes on the cross-app favorites list, where a guess is sticky and no other app will
+  correct it.
+
+Use `type` for local behaviour, `medium` for anything published or shown as fact.
+
+## Commands
 
 ```bash
-npm run dev          # Development server
-npm run build        # Production build (runs Prisma generate)
-npm run db:migrate   # Run migrations
-npm run db:push      # Push schema changes
-npm run db:studio    # Open Prisma Studio
+npm run dev          # dev server
+npm run build        # production build — stop `npm run dev` first, both write .next/
+npm run typecheck    # tsc --noEmit
+npm run test:all     # tsx --test lib/*.test.ts lib/*/*.test.ts
+npx next lint
+npm run db:studio    # Prisma Studio
+npm run db:migrate:dev
 ```
 
----
+CI runs `typecheck`, `test:all` and `next lint`. **There is no jest or vitest** — tests are
+`node:test` through `tsx`, and the glob does not recurse past one directory.
 
-## Debugging Tips
+## Two repos, plus a spec
 
-1. **Track not appearing**: Check if feed is parsed, verify audioUrl exists
-2. **V4V not working**: Check value block in RSS, verify Lightning addresses resolve
-3. **Auth issues**: Check browser console for Nostr extension errors
-4. **Playback issues**: Check HLS.js errors, verify audio URL accessibility
-5. **Feed sync failing**: Check GitHub Actions logs, verify Podcast Index API keys
+- **[musicL-playlist-updater](https://github.com/ChadFarrow/musicL-playlist-updater)** generates
+  playlist XML feeds.
+- **stablekraft-app** (this one) consumes them.
+- **[PC20-Nostr](https://github.com/ChadFarrow/PC20-Nostr/blob/main/pc20-favorites.md)** holds the
+  cross-app favorites wire format — app-neutral on purpose, so the two implementing apps can't
+  drift from a copy each.
 
----
+## Where the detail lives
 
-## Key Files Quick Reference
+Each subsystem has a skill under `.claude/skills/`. If you can read them, do; if not, these names
+tell you what territory a question belongs to:
 
-| Purpose | File |
-|---------|------|
-| Audio player state | `contexts/AudioContext.tsx` |
-| Nostr client | `lib/nostr/client.ts` |
-| Podcast Index API | `lib/podcast-index-api.ts` |
-| V4V resolution | `lib/v4v-resolver.ts` |
-| Feed parsing | `lib/music-track-parser/index.ts` |
-| Playlist handling | `lib/api/playlist-handler.ts` |
-| Lightning payments | `lib/lightning/webln.ts` |
-| Database schema | `prisma/schema.prisma` |
-| Root layout | `app/layout.tsx` |
-| Now playing UI | `components/NowPlayingScreen.tsx` |
-| Boost payments | `components/BoostButton.tsx` |
-| Auth modal | `components/Nostr/LoginModal.tsx` |
+| Skill | Covers |
+|---|---|
+| `feed-ingestion` | How feeds get in: podping consumer, the URL lookup ladder, nightly cron, RSS parsing |
+| `feed-curation` | How feeds get hidden or removed: `markedDead`, blacklists, dead-feed sweep, orphan cleanup |
+| `catalog-display` | What the catalog shows: `albums-fast`, sorting, release date, search, publisher pages, artwork |
+| `auth-and-security` | `ADMIN_SECRET`, `SESSION_SECRET`, the SSRF guard, CORS/CSP, CI |
+| `nostr-signer` | NIP-46/55/07 signers, the login modal, the publish queue |
+| `favorites` | The favorites data model, polymorphic `feedId`, album-vs-track, the Community tab |
+| `favorites-cross-app` | The shared kind:10333 list StableKraft seeds and Boost Me Bitch reads |
+| `audio-playback` | `AudioContext`: end of album, background audio, Android ping-pong, VTS |
+| `android-native` | The Capacitor/zapstore APK: foreground service, wake lock, MediaSession |
+| `mobile-layout` | Safe-area insets, the player bar reserve, Now Playing, the mobile album page |
+| `lightning-boost` | Wallets, NWC backup, BoostBox/Helipad, value splits, AutoBoost, failure triage |
+| `downloads` | Offline downloads and manual Offline mode |
+| `diagnostics` | Client error reporting and the admin diagnostics panel |
+
+Longer-form architecture notes are in [`docs/`](docs/).

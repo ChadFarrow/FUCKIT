@@ -1,37 +1,73 @@
 # Adding New Playlists to StableKraft
 
-## Quick Start (5 minutes to 96%+ resolution!)
+## A playlist is registered in FOUR places
 
-### 1. Copy the Template
-```bash
-cp app/api/playlist/template.example.ts app/api/playlist/YOUR_PLAYLIST_NAME/route.ts
-```
+Nothing fails if you miss one — the playlist just half-exists, and which half depends on which
+registration you skipped. `top100` is the live example: it has a route and a page, but is absent
+from both `PLAYLIST_CONFIGS` and the nightly workflow array, so it is the one playlist that never
+auto-refreshes.
 
-### 2. Update the Playlist Configuration
-Edit your new route file and update the TODO sections:
+| # | File | What breaks if you skip it |
+|---|---|---|
+| 1 | `lib/playlist/configs.ts` → `PLAYLIST_CONFIGS` | The route has no config to hand the handler; also absent from `getAllPlaylistIds()` and playlist search |
+| 2 | `app/api/playlist/<name>/route.ts` + `app/playlist/<name>/page.tsx` | Nothing to fetch, nothing to link to |
+| 3 | `app/api/playlists-fast/route.ts` | Missing from the homepage playlist grid — that endpoint holds a hardcoded list and does **not** enumerate the route directory |
+| 4 | `.github/workflows/refresh-playlists.yml` → `PLAYLISTS` array | Never refreshed by the nightly job; goes stale until someone forces a cache miss |
 
-- `PLAYLIST_URL`: Your playlist XML URL
-- Playlist metadata (id, title, description, etc.)
-- Source name identifier
+> Two unrelated types are both called `PlaylistConfig`. `lib/playlist/types.ts` is the **route**
+> config (`id`, `url`, `name`, `cacheDuration`, `maxDuration`, …); `types/playlist.ts` is the
+> **page** config (`cacheKey`, `apiEndpoint`, `title`, …). You need one of each.
 
-### 3. Create the Playlist Page (Optional)
-```bash
-cp app/playlist/iam/page.tsx app/playlist/YOUR_PLAYLIST_NAME/page.tsx
-```
+## Quick Start
 
-Update the configuration in the page file.
+### 1. Add the route config
 
-### 4. Add to Main Page Loading
-Edit `app/page.tsx` and add your playlist to the `loadPlaylists` function:
+Add an entry to `PLAYLIST_CONFIGS` in `lib/playlist/configs.ts`:
 
 ```typescript
-const [itdvResponse, hghResponse, iamResponse, yourResponse] = await Promise.allSettled([
-  fetch('/api/playlist/itdv'),
-  fetch('/api/playlist/hgh'),
-  fetch('/api/playlist/iam'),
-  fetch('/api/playlist/YOUR_PLAYLIST_NAME') // Add this
-]);
+yourPlaylist: {
+  id: 'your-playlist',
+  url: `${GITHUB_BASE}/YOUR-music-playlist.xml`,
+  name: 'Your Playlist Name',
+  shortName: 'YRS',
+  author: 'ChadF',
+  description: 'Curated Value4Value selections',
+  cacheDuration: CACHE_6_HOURS,
+  maxDuration: TIMEOUT_STANDARD,
+  playlistUrl: '/playlist/your-playlist',
+  albumUrl: '/album/your-playlist',
+},
 ```
+
+### 2. Create the route
+
+12 of the 13 playlists are four lines — the handler factory does everything:
+
+```typescript
+// app/api/playlist/your-playlist/route.ts
+import { createPlaylistHandler, PLAYLIST_CONFIGS } from '@/lib/playlist';
+
+export const maxDuration = 300;
+
+export const GET = createPlaylistHandler(PLAYLIST_CONFIGS.yourPlaylist);
+```
+
+`app/api/playlist/template.example.ts` is the older hand-rolled approach, kept for the one route
+(`top100`) that needs behaviour the factory doesn't cover. Prefer the factory.
+
+### 3. Create the playlist page
+
+```bash
+cp app/playlist/iam/page.tsx app/playlist/your-playlist/page.tsx
+```
+
+Pages use `PlaylistTemplateCompact` with a page-level `PlaylistConfig` — see
+[`playlist-page-template.md`](playlist-page-template.md).
+
+### 4. Add it to the homepage grid and the nightly refresh
+
+Add an entry to the array in `app/api/playlists-fast/route.ts`, and add the name to the `PLAYLISTS`
+array in `.github/workflows/refresh-playlists.yml` (see [`PLAYLIST_REFRESH.md`](PLAYLIST_REFRESH.md)).
 
 ## How It Works
 
@@ -60,7 +96,9 @@ Feeds are stored with their GUID as the feed ID for compatibility. Tracks are ex
 - `addUnresolvedFeeds()` - Resolves GUIDs via Podcast Index API and adds to database
 - `resolveFeedGuidWithMetadata()` - Fetches complete feed metadata including type determination
 
-**Integration:** Feed discovery is automatically called in playlist routes (flowgnar, iam, itdv) after track resolution, ensuring all referenced feeds are available for future processing.
+**Integration:** `createPlaylistHandler` (`lib/playlist/handler.ts`) calls
+`processPlaylistFeedDiscovery` after track resolution, so every playlist built on the factory gets
+feed discovery for free. A hand-rolled route must call it itself.
 
 ## Resolution Rates
 
@@ -71,14 +109,14 @@ With the current implementation, you can expect:
 
 ## Key Components
 
-### `/lib/playlist-resolver.ts`
+### `lib/playlist-resolver.ts`
 Core resolution logic that achieves 96%+ resolution rates:
 - Database lookup for existing tracks
 - Podcast Index API resolution with multiple approaches
 - Automatic progress tracking
 - Rate limiting protection
 
-### `/lib/feed-discovery.ts`
+### `lib/feed-discovery.ts`
 Automated feed discovery and episode resolution via Podcast Index API:
 - **Feed Discovery**: Automatically discovers feeds from playlists and adds them to the database
 - **GUID Resolution**: Resolves feed GUIDs to full metadata (URL, title, artist, image, type)
@@ -141,11 +179,12 @@ Some tracks may be:
 </rss>
 ```
 
-## Success Metrics
+## Expected resolution
 
-Current playlist resolution rates:
-- **ITDV**: 99% (125/126 tracks)
-- **HGH**: 97% (822/841 tracks)
-- **IAM**: 96% (329/342 tracks)
+Established playlists sit in the 96–99% range once their feeds have been through a nightly parse.
+A new playlist reaches that over its first day or two rather than on first load — the unresolved
+items are what feed discovery mints feeds from, and those feeds are parsed by the nightly job
+afterwards.
 
-Your new playlist should achieve similar rates automatically!
+Check a specific playlist's current rate from its API response rather than from a number written
+down here; the counts move every time the source XML does.
