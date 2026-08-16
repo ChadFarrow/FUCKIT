@@ -1,6 +1,11 @@
 # Android Native Lock-Screen Media Controls Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Shipped — do not execute this plan.** The work described below is implemented and in
+> production. This document is a historical record of the plan as written on 2026-07-21; the
+> unchecked `- [ ]` boxes reflect its state at authoring, not work outstanding. Nobody ticked
+> them as they went, so they were left as written rather than filled in retroactively.
+>
+> Current behaviour: the `android-native` skill; the MediaSession classes under `android/app/src/main/java/app/stablekraft/`.
 
 **Goal:** Give the native zapstore Android app a stable lock-screen media player (art, title/artist/album, Prev / Play-Pause / Next, draggable seek bar) that persists across the app's ping-pong track transitions and while paused.
 

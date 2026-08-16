@@ -1,7 +1,11 @@
 # Admin diagnostics panel — boost failures and client errors
 
 **Date:** 2026-07-27
-**Status:** approved, not yet implemented
+**Status:** Shipped
+
+> **Shipped.** The design below was implemented and is in production. This document is a
+> historical record of the design as approved — it is not a description of current
+> behaviour, which has moved on. For that, see the `diagnostics` skill; `app/api/admin/diagnostics/` (shipped in #182).
 
 ## Problem
 

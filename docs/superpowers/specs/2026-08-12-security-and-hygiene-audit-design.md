@@ -1,7 +1,11 @@
 # Security and hygiene audit — design
 
 Date: 2026-08-12
-Status: approved for planning
+Status: Shipped
+
+> **Shipped.** The design below was implemented and is in production. This document is a
+> historical record of the design as approved — it is not a description of current
+> behaviour, which has moved on. For that, see the `auth-and-security` skill; `lib/auth/`, `lib/url-security.ts`, `.github/workflows/ci.yml`.
 
 ## Purpose
 

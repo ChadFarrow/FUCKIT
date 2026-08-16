@@ -4,6 +4,10 @@
 **Area:** `contexts/AudioContext.tsx` (Android background audio)
 **Supersedes the premise of:** commit `70ddded7` ("ping-pong" dual-element fix)
 
+> **Shipped.** The design below was implemented and is in production. This document is a
+> historical record of the design as approved — it is not a description of current
+> behaviour, which has moved on. For that, see the `audio-playback` and `android-native` skills; `lib/audio-blob-prefetch.ts`.
+
 ## Problem
 
 On Android, when the PWA (tested in Vanadium; applies to Chromium PWAs generally) plays

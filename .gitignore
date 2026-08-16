@@ -149,7 +149,6 @@ logs
 dev-debug.log
 # Dependency directories
 node_modules/
-skills/node_modules/
 # Environment variables
 # Editor directories and files
 .idea

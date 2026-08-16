@@ -1,6 +1,11 @@
 # Admin Diagnostics Panel Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Shipped — do not execute this plan.** The work described below is implemented and in
+> production. This document is a historical record of the plan as written on 2026-07-27; the
+> unchecked `- [ ]` boxes reflect its state at authoring, not work outstanding. Nobody ticked
+> them as they went, so they were left as written rather than filled in retroactively.
+>
+> Current behaviour: the `diagnostics` skill; `app/api/admin/diagnostics/`. Shipped in #182 (`8191d09`).
 
 **Goal:** Surface boost payment failures and browser-side errors on `/admin`, durably across deploys, so triage no longer means trawling Railway logs.
 

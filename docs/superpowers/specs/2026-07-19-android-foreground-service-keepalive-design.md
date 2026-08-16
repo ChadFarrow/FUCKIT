@@ -4,6 +4,10 @@
 **Area:** `android/` (native Capacitor 8 app) + a thin guarded hook in `contexts/AudioContext.tsx`
 **Follows from:** [[project_android_background_audio_limits]] — the deployed blob-prefetch + gapless-overlap web fixes cannot beat GrapheneOS's background-media output suspension from the web layer. This spec addresses only the **native zapstore app**.
 
+> **Shipped.** The design below was implemented and is in production. This document is a
+> historical record of the design as approved — it is not a description of current
+> behaviour, which has moved on. For that, see the `android-native` skill; `android/app/src/main/java/app/stablekraft/PlaybackKeepAliveService.java`.
+
 ## Problem
 
 On the user's Pixel running **GrapheneOS**, the native zapstore app (a Capacitor 8 WebView loading the live site via `server.url`) loses audio **within a few seconds of the first track** when the screen is locked — *worse* than the browser PWA, which at least plays track 1 fully. The app has **no foreground service** and only the `INTERNET` permission, so GrapheneOS suspends the backgrounded app process. That process suspension — not the deeper Chromium browser-tab output-mute policy — is the native app's failure mode, and it is the one thing we fully control.
