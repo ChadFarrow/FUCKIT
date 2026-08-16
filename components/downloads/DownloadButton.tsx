@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Download, Loader2, Check } from 'lucide-react';
+import { Download, Loader2, Check, AlertCircle } from 'lucide-react';
 import { toast } from '@/components/Toast';
 import { useDownloadsSafe } from '@/contexts/DownloadsContext';
+import { isDownloadable } from '@/lib/downloads/download-manager';
 import type {
   DownloadableTrack,
   DownloadableAlbum,
@@ -38,10 +39,14 @@ export default function DownloadButton({
   const downloads = useDownloadsSafe();
   const [touchHandled, setTouchHandled] = useState(false);
 
+  // Must match what the manager will actually save, not merely "has a URL".
+  // Gating on `!!url` alone rendered an arrow for video/HLS albums that
+  // `downloadAlbum` then filtered to zero tracks — a button that did nothing,
+  // forever, with no explanation.
   const hasDownloadableContent =
     downloadTarget.type === 'track'
-      ? !!downloadTarget.track?.url
-      : !!downloadTarget.album.tracks?.some((t) => !!t?.url);
+      ? isDownloadable(downloadTarget.track ?? {})
+      : !!downloadTarget.album.tracks?.some((t) => !!t && isDownloadable(t));
   const downloadEnabled = hasDownloadableContent && !!downloads;
 
   if (!downloadEnabled) return null;
@@ -53,15 +58,31 @@ export default function DownloadButton({
 
   const isDownloaded = agg.status === 'downloaded';
   const isDownloading = agg.status === 'downloading' || agg.status === 'queued';
+  const isError = agg.status === 'error';
 
-  const startDownload = () => {
+  const startDownload = async () => {
     if (!downloads!.isOnline) {
       toast.error("You're offline — connect to download for offline listening.");
       return;
     }
-    // Fire-and-forget: the button reflects progress via context re-renders.
-    if (downloadTarget.type === 'track') downloads!.downloadTrack(downloadTarget.track);
-    else downloads!.downloadAlbum(downloadTarget.album);
+    // A failure used to be invisible here: 'error' fell through to the idle
+    // arrow, so a download that never worked looked identical to one never
+    // started, and the only report we got was "it won't download".
+    if (downloadTarget.type === 'track') {
+      const ok = await downloads!.downloadTrack(downloadTarget.track);
+      if (!ok && downloads!.getTrackState(downloadTarget.track).status === 'error') {
+        toast.error("Couldn't download this track — its host refused the request.");
+      }
+    } else {
+      const result = await downloads!.downloadAlbum(downloadTarget.album);
+      if (result.status === 'error') {
+        toast.error(
+          result.done > 0
+            ? `Downloaded ${result.done} of ${result.total} tracks — the rest were refused by the host.`
+            : "Couldn't download this album — its host refused the request."
+        );
+      }
+    }
   };
 
   const removeDownload = async () => {
@@ -69,10 +90,10 @@ export default function DownloadButton({
     else await downloads!.removeAlbum(downloadTarget.album);
   };
 
-  // idle → start; downloading/queued → cancel; downloaded → remove.
+  // idle → start; downloading/queued → cancel; downloaded → remove; error → retry.
   const activate = async () => {
     if (isDownloaded || isDownloading) await removeDownload();
-    else startDownload();
+    else await startDownload();
   };
 
   const handleClick = async (e: React.MouseEvent) => {
@@ -105,7 +126,9 @@ export default function DownloadButton({
     ? 'Downloaded for offline — tap to remove'
     : isDownloading
       ? 'Downloading — tap to cancel'
-      : 'Download for offline';
+      : isError
+        ? 'Download failed — tap to retry'
+        : 'Download for offline';
 
   return (
     <button
@@ -121,6 +144,8 @@ export default function DownloadButton({
         <Loader2 size={size} className="animate-spin text-amber-400 flex-shrink-0" />
       ) : isDownloaded ? (
         <Check size={size} className="text-green-500 flex-shrink-0" />
+      ) : isError ? (
+        <AlertCircle size={size} className="text-red-400 flex-shrink-0" />
       ) : (
         <Download size={size} className={`${iconClassName} flex-shrink-0`} />
       )}

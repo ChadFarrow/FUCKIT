@@ -17,6 +17,7 @@ import { reportBoost } from '@/lib/lightning/report-boost';
 import { resolveAutoBoostSenderName, resolveBoostSenderName } from '@/lib/lightning/sender-name';
 import { hasV4V as checkHasV4V, getV4VRecipients, getPrimaryRecipient, getPrimaryRecipientObject, formatValueSplitsForBoost } from '@/lib/v4v-utils';
 import { prefetchUpcomingTracks, prefetchAudio } from '@/lib/audio-prefetch';
+import { isCorsProblematicHost, isDirectFirstHost } from '@/lib/audio-url-utils';
 import { NextTrackBlobCache } from '@/lib/audio-blob-prefetch';
 import { downloadManager } from '@/lib/downloads/download-manager';
 import { getObjectUrl as getDownloadObjectUrl } from '@/lib/downloads/downloads-cache';
@@ -1800,46 +1801,15 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         // Normalize hostname for case-insensitive matching
         const hostname = url.hostname.toLowerCase();
 
-        // Domains that should try direct first (known to have CORS enabled)
-        const directFirstDomains = [
-          'rssblue.com',
-          'strangetextures.com',
-          'thisisjdog.com',
-          'heycitizen.xyz',
-          'bitpunk.fm',
-          'thebearsnare.com'
-        ];
+        // The domain lists live in lib/audio-url-utils.ts so the download path
+        // makes the SAME proxy decision. They used to be duplicated here with a
+        // "keep in sync" comment; they drifted by two entries, and because
+        // downloads had no fallback the drift surfaced as albums that streamed
+        // fine and refused to download. Don't re-inline them.
+        const isDirectFirst = isDirectFirstHost(hostname);
 
-        // Check if URL is from a known CORS-problematic domain
-        const corsProblematicDomains = [
-          'cloudfront.net',
-          'amazonaws.com',
-          'wavlake.com',
-          'buzzsprout.com',
-          'anchor.fm',
-          'libsyn.com',
-          'whitetriangles.com',
-          'falsefinish.club',
-          'behindthesch3m3s.com',
-          'doerfelverse.com',
-          'sirtjthewrathful.com',
-          'digitaloceanspaces.com',
-          'rocknrollbreakheart.com',
-          'mmmusic.show',
-          'cypherpunk.today',
-          'thunderroad.media'
-        ];
-
-        const isDirectFirst = directFirstDomains.some(domain =>
-          hostname.includes(domain.toLowerCase())
-        );
-
-        // Case-insensitive domain matching
-        const isDomainProblematic = corsProblematicDomains.some(domain =>
-          hostname.includes(domain.toLowerCase())
-        );
-
-        // Extra check for CloudFront subdomains explicitly
+        // isCorsProblematicHost folds in the explicit CloudFront subdomain check.
+        const isDomainProblematic = isCorsProblematicHost(hostname);
         const isCloudFront = hostname.endsWith('.cloudfront.net') || hostname === 'cloudfront.net';
 
         console.log(`🔍 [URL Strategy] Domain check - hostname: ${hostname}, problematic: ${isDomainProblematic}, isCloudFront: ${isCloudFront}, directFirst: ${isDirectFirst}`);
