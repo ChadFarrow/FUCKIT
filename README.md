@@ -145,6 +145,13 @@ Each has a `/api/playlist/<name>` route (most also have a `-fast` variant) and a
 
 ## Environment Variables
 
+[`.env.example`](.env.example) is the manifest — copy it to `.env.local` and fill it in.
+`npm run check-env` validates one against the other, and `postinstall` runs it.
+
+**Every uncommented key in `.env.example` is required and must be non-empty**; optional settings
+are listed there as comments, which is what makes them optional. Adding a required variable means
+adding it there, not only here.
+
 ```bash
 # Database
 DATABASE_URL="postgresql://..."
