@@ -11,7 +11,32 @@ Layout and chrome, mostly mobile. Verification here is measurement with puppetee
 
 ```
 npx tsx --test lib/album-detail-routes.test.ts      # which routes render AlbumDetailClient
+node lib/ui-menu-scroll.browser-probe.mjs           # UserMenu dropdown + LoginModal reachability (needs `npm run dev`)
 ```
+
+---
+
+## Every `position: fixed` panel needs a height bound and its own scroll
+A fixed overlay that outgrows the screen is not merely cut off — it is **unreachable**. The document cannot scroll a
+fixed element into view, so without `overflow-y: auto` on the element itself there is no gesture that gets to its
+last row. `UserMenu`'s dropdown was `top: 80px` with no `max-height`, and its last row is **Sign in with Nostr**: on
+a Pixel 4a with Android's Display size turned up and a wallet connected, logging in was impossible (measured: the
+button at y≈1247 in a 693px viewport). Nothing about this is visible at desktop sizes or at a 1.0 font scale.
+
+- **The form is `maxHeight: calc(100dvh - <top offset> - var(--sk-safe-bottom) - 1rem)` + `overflow-y-auto
+  overscroll-contain`.** The `1rem` gutter keeps the last row off the screen edge; `overscroll-contain` stops a
+  flick at either end from chaining out to the page behind the backdrop.
+- **`dvh`, never `vh`.** `vh` is the viewport with mobile browser chrome *hidden*, so a `max-h-[90vh]` card still
+  overflowed the visible area while Chrome's toolbar was up — which is exactly what `LoginModal` did. A centred
+  card in a non-scrolling `fixed inset-0` backdrop then clips at **both** ends, so the overflow isn't even all in
+  one place.
+- **A fixed panel anchored to a `--sk-safe-top`-offset trigger must include that inset in its own offset.** The
+  dropdown's hardcoded `top: 80px` drifted away from its trigger (`top: calc(1rem + var(--sk-safe-top))` in
+  `AppLayout`) under the native app's status bar.
+- **Measuring this: `isMobile: false` in `setViewport`.** With mobile emulation on, Chrome shrink-to-fits the
+  layout viewport as soon as content overflows horizontally, so `getBoundingClientRect()` stops being in
+  visual-viewport coordinates and **every edge assertion compares against the wrong number** — a correct fix
+  measures as still broken. Sweep the root font-size 1.0→2.0× at 320×693; the bug does not appear at 1.0×.
 
 ---
 
