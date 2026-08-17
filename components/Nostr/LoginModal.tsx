@@ -680,9 +680,16 @@ export default function LoginModal({ onClose }: LoginModalProps) {
     }
   };
 
+  // The card is height-bounded in `dvh`, not `vh`: `vh` is the viewport with
+  // mobile browser chrome *hidden*, so `max-h-[90vh]` still overflowed the
+  // visible area while Chrome's toolbar was up — and because this backdrop
+  // centres the card without scrolling itself, the overflow was clipped at both
+  // ends with no way to reach the cards at the bottom. The safe-area insets are
+  // in both the padding and the bound so the card clears the status and gesture
+  // bars in the native app.
   const modalContent = (
     <div
-      className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center px-4 pt-[calc(1rem+var(--sk-safe-top))] pb-[calc(1rem+var(--sk-safe-bottom))]"
       style={{ zIndex: 2147483647 }}
       onClick={(e) => {
         // Close modal when clicking backdrop
@@ -692,7 +699,7 @@ export default function LoginModal({ onClose }: LoginModalProps) {
       }}
     >
       <div
-        className="bg-gray-950 rounded-xl p-6 max-w-md w-full shadow-2xl border border-gray-700 relative max-h-[90vh] overflow-y-auto"
+        className="bg-gray-950 rounded-xl p-6 max-w-md w-full shadow-2xl border border-gray-700 relative max-h-[calc(100dvh-2rem-var(--sk-safe-top)-var(--sk-safe-bottom))] overflow-y-auto overscroll-contain"
         style={{ zIndex: 2147483647 }}
         onClick={(e) => e.stopPropagation()}
       >

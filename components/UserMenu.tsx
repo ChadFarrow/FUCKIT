@@ -242,13 +242,36 @@ export default function UserMenu({ className = '' }: UserMenuProps) {
               onClick={() => setShowDropdown(false)}
             />
 
-            {/* Dropdown Menu */}
+            {/* Dropdown Menu
+
+                This is `position: fixed`, so anything taller than the space
+                between its top edge and the bottom of the screen is simply
+                unreachable: the document can't scroll it into view and the
+                menu itself has nowhere to go. The last row here is "Sign in
+                with Nostr", so on a small phone — a Pixel 4a with Android's
+                Display size / Font size turned up, where the rem-sized rows
+                grow while the viewport shrinks — logging in became impossible
+                once a wallet was connected and the wallet block pushed the
+                bottom of the menu off screen.
+
+                Hence the explicit height bound plus internal scrolling.
+                `100dvh` (not `vh`) so mobile browser chrome is accounted for,
+                minus the top offset and a `--sk-safe-bottom` + 1rem gutter so
+                the last row clears the gesture bar. `overscroll-contain` keeps
+                a flick at either end from chaining out to the page behind the
+                backdrop.
+
+                `--sk-safe-top` is in the offset because the trigger button in
+                AppLayout is at `top: calc(1rem + var(--sk-safe-top))` — under
+                the native app's status bar inset the two used to drift apart. */}
             <div
-              className="w-72 sm:w-72 max-w-[calc(100vw-2rem)] bg-gray-900 border-2 border-gray-700 rounded-lg shadow-lg z-[61]"
+              className="w-72 sm:w-72 max-w-[calc(100vw-2rem)] bg-gray-900 border-2 border-gray-700 rounded-lg shadow-lg z-[61] overflow-y-auto overscroll-contain"
               style={{
                 position: 'fixed',
-                top: '80px',
+                top: 'calc(var(--sk-safe-top) + 80px)',
                 right: '1rem',
+                maxHeight:
+                  'calc(100dvh - var(--sk-safe-top) - 80px - var(--sk-safe-bottom) - 1rem)',
                 isolation: 'isolate'
               }}
             >
