@@ -5,6 +5,22 @@ Next.js 15 music app for Podcasting 2.0 — RSS feeds, V4V/Lightning payments, N
 **Most of what was in this file now lives in project skills** (`.claude/skills/*/SKILL.md`), loaded on demand
 rather than on every turn. See *Where things are documented* below. The detail is unchanged — it moved, verbatim.
 
+## Reporting Language
+
+Write every reply to the user in ASD-STE100 Simplified Technical English.
+
+- Use only approved STE words, and use one meaning for each word.
+- Write short sentences: 20 words maximum for an instruction, 25 for a
+  description.
+- Give one instruction in each sentence.
+- Use the active voice and simple verb tenses.
+- Do not use a noun cluster of more than three words.
+- Keep the articles. Do not use slang, idioms, or jargon.
+
+This rule applies to chat replies only. Code, code comments, commit messages,
+pull request text, file contents, and quoted material keep their normal style —
+do not rewrite existing prose into STE.
+
 ## Commands
 ```
 npm run dev          # Start dev server
