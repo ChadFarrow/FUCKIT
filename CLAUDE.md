@@ -40,6 +40,11 @@ Per-subsystem test commands live in the skill that owns the subsystem — each s
 
 ## Boundaries
 - Never commit secrets (`.env`, API keys). `SESSION_SECRET` and `ADMIN_SECRET` live in Railway env + `.env.local` only.
+- **`console.log` does not exist in production.** `next.config.js` sets `compiler.removeConsole` with
+  `exclude: ['error', 'warn']`, so every `console.log` is compiled out of a production build and survives in dev.
+  A diagnostic added with `log` is therefore absent from the one environment worth diagnosing — this cost a
+  deploy-and-retest cycle on 2026-08-20, when stage timings added to chase a slow signing prompt printed nothing
+  on stablekraft.app. Use `console.warn` for anything you intend to read in production.
 - **A grep that returns nothing is not evidence that nothing exists.** Under zsh, an unquoted `--include=*.tsx` errors with `no matches found` and prints nothing — indistinguishable from a clean result. This produced three wrong conclusions during the security audit, including "this route has no callers" about a live endpoint that was nearly deleted. Quote the globs, and check the exit status before believing an empty result.
 - Run `npm run build` before committing — but **stop `npm run dev` first**. Both write `.next/`, so building over a live dev server replaces the chunks its running client already fetched, and every asset request 400s (`ERR_ABORTED` on `_next/static/...`) until the dev server is restarted. Symptom is a page stuck on its loading state with no obvious error. Recovery: kill dev, `rm -rf .next`, `npm run dev`. Any phone testing over the LAN needs a hard reload afterwards.
 - **Testing on a phone over the LAN? The service worker will serve it stale content.** `next-pwa` is disabled in dev, but a production `npm run build` writes `public/sw.js` + `public/workbox-*.js`, and Next serves `public/` statically **even in dev** — so any device that registered the worker keeps getting its cached HTML shell and CSS from `http://<lan-ip>:3000`. Symptom: the phone shows a layout you already changed, often with CSS partly missing (flex `gap`s collapsing, so text runs together) because the shell and the stylesheet come from different builds. A plain reload does not fix it. Delete `public/sw.js` and `public/workbox-*.js` (both gitignored build artifacts) so `/sw.js` 404s — the browser then drops the registration on next load — and reload twice, or use a private tab. Worth deleting them after every local `npm run build` you didn't intend to deploy.
@@ -74,12 +79,17 @@ line holds the full story.
 - **Bump `API_VERSION` in `app/page.tsx`** whenever the `/api/albums-fast` response shape changes, or clients keep
   serving field-missing data out of localStorage indefinitely → `catalog-display`.
 - **The same field is often written or read from N places, and fixing one is the standard bug here.**
-  `/api/albums-fast` has **two** Track selects; `favorites/tracks` has **three** Feed selects; `podcastImages` has
+  `/api/albums-fast` has **two** Track selects; `podcastImages` has
   **three** write paths; the release date has **seven** read paths; `Feed.medium` has **ten** create/upsert paths
   and the first pass at it caught one; `AlbumDetailClient` duplicates props across its mobile and desktop rows.
   Adding or fixing a field means finding all of them → the owning skill. `grep -rn "prisma.<model>.create\|upsert"`
   before believing you have. Watch for **re-key** paths especially — `refresh-by-url` deletes a row and recreates it
   from a field-by-field copy, so a column missing from that list is silently dropped rather than merely unset.
+  The favorites id ladders were three such copies and are now **one** — `lib/favorites/resolve-favorite-rows.ts`,
+  used by `favorites/albums`, `favorites/tracks` and `favorites/sync-items`. Keep new readers on it: both stored ids
+  are polymorphic (`Feed.id` vs `Feed.guid`; `Track.id` vs `Track.guid` vs `audioUrl`), every rung carries real
+  rows, and a rung present on one path and not another means a favorite that renders on the page and is missing
+  from the published Nostr list → `favorites-cross-app`.
 - **`Feed.type` is this app's classification; `Feed.medium` is what the feed declared.** They are not
   interchangeable and the difference is load-bearing. `type` defaults to `"album"`, so it always has a value and
   that value is often a guess; `medium` is NULL until a feed actually says, and **nothing may default it**. Only
