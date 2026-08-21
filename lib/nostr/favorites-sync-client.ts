@@ -34,6 +34,7 @@ import {
   tagsFromNodes,
   templateFromTags,
   type PublishedRecord,
+  type SingleList,
   type SingleListGroup,
 } from './favorites-single-list';
 import { RelayManager, getDefaultRelays, filterReachableRelays } from './relay';
@@ -245,15 +246,65 @@ export function buildLocalItems(albums: ApiAlbum[], tracks: ApiTrack[]): Favorit
   return items;
 }
 
+/**
+ * Stage timings for one sync, emitted as a single line.
+ *
+ * The wait a user feels is the gap between the toggle and the signing prompt,
+ * and it is made of a few independent pieces that each grow for different
+ * reasons. Guessing which one grew is what this exists to stop: the first
+ * investigation blamed the relays, and the relays were answering in under
+ * 700ms — the cost was an API endpoint returning 50 track rows per favorited
+ * feed to a caller that reads two fields.
+ *
+ * `time()` never alters the value or the rejection it wraps, so it can be
+ * dropped around any await without changing behaviour.
+ */
+function stageTimer() {
+  const t0 = performance.now();
+  const stages: string[] = [];
+  return {
+    time<T>(label: string, p: Promise<T>): Promise<T> {
+      const start = performance.now();
+      const record = () => {
+        stages.push(`${label} ${Math.round(performance.now() - start)}ms`);
+      };
+      return p.then(
+        (value) => { record(); return value; },
+        (error) => { record(); throw error; },
+      );
+    },
+    log(prefix: string) {
+      const total = Math.round(performance.now() - t0);
+      console.log(`⏱️ ${prefix}: ${stages.join(' · ')} · total ${total}ms`);
+    },
+  };
+}
+
+type StageTimer = ReturnType<typeof stageTimer>;
+
+/**
+ * The favorites this device holds, as portable identifiers.
+ *
+ * Deliberately NOT the endpoints `/favorites` renders from. Those resolve
+ * publisher artwork through Podcast Index, count tracks, and include up to 50
+ * full track rows per favorited feed — none of which survives
+ * `buildLocalItems`, which keeps a guid, a medium and a type. That payload sat
+ * directly in front of the signing prompt.
+ *
+ * `/api/favorites/sync-items` runs the same id ladders against the same rows
+ * and selects only those fields. One request, no enrichment.
+ */
 async function loadLocalItems(userId: string): Promise<FavoriteEntry[]> {
   const headers = { 'x-nostr-user-id': userId };
-  const [albumsRes, tracksRes] = await Promise.all([
-    fetch('/api/favorites/albums', { headers }),
-    fetch('/api/favorites/tracks', { headers }),
-  ]);
-  const albums = albumsRes.ok ? ((await albumsRes.json()).data ?? []) : [];
-  const tracks = tracksRes.ok ? ((await tracksRes.json()).data ?? []) : [];
-  return buildLocalItems(albums, tracks);
+  const res = await fetch('/api/favorites/sync-items', { headers });
+  // THROW, never return an empty list. A publish replaces the event wholesale,
+  // and the merge reads "published once, absent locally" as a removal — so a
+  // failed request answered with `[]` would delete the user's entire shared
+  // list, silently, on the next toggle. The caller turns this into a degraded
+  // sync, which is the same answer a degraded relay read gets.
+  if (!res.ok) throw new Error(`sync-items responded ${res.status}`);
+  const payload = await res.json();
+  return buildLocalItems(payload.albums ?? [], payload.tracks ?? []);
 }
 
 function resolveRelays(userRelays?: string[]): string[] {
@@ -380,14 +431,20 @@ function getPublishedRecord(pubkey: string): PublishedRecord {
 async function publishSingleList(
   pubkey: string,
   local: FavoriteEntry[],
-  relayUrls: string[]
+  relayUrls: string[],
+  read: SingleList,
+  timer?: StageTimer
 ): Promise<boolean> {
   try {
     // Read first, ALWAYS. Publishing replaces the event wholesale, so a publish
     // on top of a read that failed silently is the most expensive mistake this
     // format allows — one bad read, republished, is the entire list gone. A
     // skipped publish is retried on the next toggle; this is not recoverable.
-    const read = await fetchSingleList(pubkey, relayUrls);
+    //
+    // The read is now STARTED by the caller, beside the local load it does not
+    // depend on, and handed in here already settled. Only its start moved: it
+    // is still complete before the merge below and before anything is signed or
+    // published, and a degraded one still bails before either.
     if (!read.trustworthy) {
       console.warn('⚠️ Favorites: relay read was degraded — not publishing');
       return false;
@@ -421,8 +478,13 @@ async function publishSingleList(
       return true;
     }
 
-    const signed = await signSharedEvent(templateFromTags(tags, Math.floor(Date.now() / 1000)));
-    const ok = await publishToRelays(signed, relayUrls);
+    const template = templateFromTags(tags, Math.floor(Date.now() / 1000));
+    const signed = timer
+      ? await timer.time('sign', signSharedEvent(template))
+      : await signSharedEvent(template);
+    const ok = timer
+      ? await timer.time('publish', publishToRelays(signed, relayUrls))
+      : await publishToRelays(signed, relayUrls);
     if (!ok) {
       console.warn('⚠️ Single-list favorites: no relay accepted the event');
       return false;
@@ -471,9 +533,36 @@ export async function syncSharedFavoritesNow(opts: {
     await inFlight.catch(() => {});
   }
   const run = (async (): Promise<'ok' | 'degraded'> => {
+    const timer = stageTimer();
     const relayUrls = resolveRelays(opts.relays);
-    const local = await loadLocalItems(opts.userId);
-    const published = await publishSingleList(opts.pubkey, local, relayUrls);
+
+    // Started together, because neither needs the other: the read is keyed on
+    // the pubkey and the relay list, both known here, and the local load is a
+    // request to our own API. Serialized, the relay read waited out an API
+    // round trip for nothing — and every millisecond here is a millisecond
+    // before the user is asked to sign.
+    //
+    // Both are caught. `publishSingleList` used to own the read and swallow
+    // everything it threw; hoisting the read out here moved that exit path, and
+    // an escaping throw would leave the status pinned at 'syncing', which
+    // renders as nothing at all. Neither failure may publish: an empty local
+    // list and an unread event each republish to a deleted list.
+    let local: FavoriteEntry[];
+    let read: SingleList;
+    try {
+      [local, read] = await Promise.all([
+        timer.time('local', loadLocalItems(opts.userId)),
+        timer.time('read', fetchSingleList(opts.pubkey, relayUrls)),
+      ]);
+    } catch (error) {
+      console.warn('⚠️ Favorites: could not load what to publish —', error);
+      setSyncHealth('write', true);
+      timer.log('favorites sync (failed)');
+      return 'degraded';
+    }
+
+    const published = await publishSingleList(opts.pubkey, local, relayUrls, read, timer);
+    timer.log('favorites sync');
 
     // Report the write half through the SAME flag the read uses. This half is
     // the easier one to leave silent and the more surprising when it is: the

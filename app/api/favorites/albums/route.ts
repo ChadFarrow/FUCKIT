@@ -6,6 +6,7 @@ import { requireUser } from '@/lib/auth/require-user';
 import { getPublisherInfo } from '@/lib/url-utils';
 import { podcastIndexAPI } from '@/lib/podcast-index-api';
 import { normalizePubkey } from '@/lib/nostr/normalize';
+import { resolveFavoriteFeeds } from '@/lib/favorites/resolve-favorite-rows';
 import { Prisma } from '@prisma/client';
 
 /**
@@ -53,59 +54,49 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' }
     });
 
-    // Get feed details for each favorite
+    // Get feed details for each favorite. `FavoriteAlbum.feedId` is polymorphic
+    // — `Feed.id` for some rows, `Feed.guid` for others — so the lookup goes
+    // through the shared ladder, which `/api/favorites/sync-items` also uses.
+    // Keep them on one ladder: a rung added or lost on only one side is how a
+    // favorite ends up visible on the page and missing from the shared list.
     const feedIds = favoriteAlbums.map(fa => fa.feedId);
-    const feeds = await prisma.feed.findMany({
-      where: { id: { in: feedIds } },
-      include: {
-        Track: {
-          where: { audioUrl: { not: '' }, status: 'active' },
-          take: 50,
-          orderBy: { trackOrder: 'asc' },
-          select: {
-            id: true,
-            guid: true,
-            title: true,
-            artist: true,
-            duration: true,
-            image: true,
-            audioUrl: true,
-            mediaType: true,
-            trackOrder: true
-          }
-        },
-        _count: {
-          select: { Track: true }
-        }
-      }
-    });
-
-    // Create a map of feedId -> feed for quick lookup
-    const feedMap = new Map(feeds.map(feed => [feed.id, feed]));
-
-    // For unmatched feedIds, try looking up by the `guid` column as a fallback
-    const unmatchedIds = feedIds.filter(id => !feedMap.has(id) && !id.startsWith('artist-'));
-    if (unmatchedIds.length > 0) {
-      const guidMatches = await prisma.feed.findMany({
-        where: { guid: { in: unmatchedIds } },
+    //
+    // The `Track` include is the largest thing this route sends — 593 KB of a
+    // 1.27 MB page load, measured on a 94-feed account (1,007 track rows).
+    // It is NOT removable on its own, and this comment exists so the next
+    // person does not try: `AlbumCard` reads `album.tracks` at render time for
+    // the album download button, which needs the track list to show whether
+    // the album is downloaded, and for the "videos" vs "tracks" label. Dropping
+    // it makes the download button vanish from every card here. Shrinking that
+    // payload means giving the downloads context a way to resolve an album's
+    // tracks by feed id, which is a change to `lib/downloads/`, not to this
+    // select.
+    const feedMap = await resolveFavoriteFeeds(feedIds, (where) =>
+      prisma.feed.findMany({
+        where,
         include: {
           Track: {
             where: { audioUrl: { not: '' }, status: 'active' },
             take: 50,
             orderBy: { trackOrder: 'asc' },
-            select: { id: true, guid: true, title: true, artist: true, duration: true, image: true, audioUrl: true, mediaType: true, trackOrder: true }
+            select: {
+              id: true,
+              guid: true,
+              title: true,
+              artist: true,
+              duration: true,
+              image: true,
+              audioUrl: true,
+              mediaType: true,
+              trackOrder: true
+            }
           },
-          _count: { select: { Track: true } }
+          _count: {
+            select: { Track: true }
+          }
         }
-      });
-      for (const feed of guidMatches) {
-        // Map the favorite's feedId (which matched the guid column) to this feed
-        const matchedFavId = unmatchedIds.find(id => id === feed.guid);
-        if (matchedFavId && !feedMap.has(matchedFavId)) {
-          feedMap.set(matchedFavId, feed);
-        }
-      }
-    }
+      })
+    );
 
     // Collect synthetic artist IDs (from /api/publishers) that need DB resolution
     const syntheticArtistIds = new Set<string>();

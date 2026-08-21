@@ -236,3 +236,6 @@ __pycache__/
 
 # Subagent-driven-development scratch (ledger, briefs, review packages)
 .superpowers/
+
+# Favorites snapshots from scripts/backup-favorites.ts — real pubkeys, never commit
+favorites-*.json

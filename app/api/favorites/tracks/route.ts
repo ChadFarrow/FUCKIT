@@ -4,6 +4,7 @@ import { getSessionIdFromRequest } from '@/lib/session-utils';
 import { addUnresolvedFeeds } from '@/lib/feed-discovery';
 import { normalizePubkey } from '@/lib/nostr/normalize';
 import { requireUser } from '@/lib/auth/require-user';
+import { favoriteForTrack, resolveFavoriteTracks } from '@/lib/favorites/resolve-favorite-rows';
 
 /**
  * GET /api/favorites/tracks
@@ -41,45 +42,17 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Get track details for each favorite
-    // trackId might be: id, guid, or a full URL
-    // Try to match by id first, then by guid
+    // Get track details for each favorite. `FavoriteTrack.trackId` is
+    // polymorphic — it may hold a `Track.id`, a `Track.guid`, or a full audio
+    // URL — so the lookup goes through the shared ladder, which
+    // `/api/favorites/sync-items` also uses. Keep them on one ladder: a rung
+    // added or lost on only one side is how a favorite ends up visible on the
+    // page and missing from the shared list.
     const trackIds = favoriteTracks.map(ft => ft.trackId);
-    
-    // First, try to find tracks by id
-    let tracks = await prisma.track.findMany({
-      where: { id: { in: trackIds } },
-      include: {
-        Feed: {
-          select: {
-            title: true,
-            artist: true,
-            image: true,
-            id: true,
-            guid: true,
-            v4vValue: true,
-            v4vRecipient: true,
-            originalUrl: true,
-            type: true,
-            // The parent feed's declared medium. Published at position 4 of the
-            // track's `i` tag on the shared favorites list, so another app can
-            // tell a song from an episode without resolving it. All THREE Feed
-            // selects in this file need it — a field added to one of them is
-            // missing on whichever lookup path the track happened to take.
-            medium: true
-          }
-        }
-      }
-    });
 
-    // Find which trackIds weren't matched by id
-    const matchedIds = new Set(tracks.map(t => t.id));
-    const unmatchedTrackIds = trackIds.filter(id => !matchedIds.has(id));
-
-    // If there are unmatched trackIds, try to match by guid
-    if (unmatchedTrackIds.length > 0) {
-      const tracksByGuid = await prisma.track.findMany({
-        where: { guid: { in: unmatchedTrackIds } },
+    const tracks = await resolveFavoriteTracks(trackIds, (where) =>
+      prisma.track.findMany({
+        where,
         include: {
           Feed: {
             select: {
@@ -92,54 +65,20 @@ export async function GET(request: NextRequest) {
               v4vRecipient: true,
               originalUrl: true,
               type: true,
+              // The parent feed's declared medium. Published at position 4 of
+              // the track's `i` tag on the shared favorites list, so another
+              // app can tell a song from an episode without resolving it.
               medium: true
             }
           }
         }
-      });
-
-      // Combine tracks found by id and guid
-      tracks = [...tracks, ...tracksByGuid];
-      
-      // Find which trackIds still weren't matched
-      const matchedGuids = new Set(tracksByGuid.map(t => t.guid));
-      const stillUnmatched = unmatchedTrackIds.filter(id => !matchedGuids.has(id));
-      
-      // If there are still unmatched trackIds, try to match by audioUrl (in case trackId is a full URL)
-      if (stillUnmatched.length > 0) {
-        const tracksByAudioUrl = await prisma.track.findMany({
-          where: { audioUrl: { in: stillUnmatched } },
-          include: {
-            Feed: {
-              select: {
-                title: true,
-                artist: true,
-                image: true,
-                id: true,
-                guid: true,
-                v4vValue: true,
-                v4vRecipient: true,
-                originalUrl: true,
-                type: true,
-                medium: true
-              }
-            }
-          }
-        });
-
-        // Combine all tracks
-        tracks = [...tracks, ...tracksByAudioUrl];
-      }
-    }
+      })
+    );
 
     // Map tracks with favorite metadata
     // Match by id, guid, or audioUrl since trackId could be any of these
     const tracksWithFavorites = tracks.map(track => {
-      const favorite = favoriteTracks.find(ft =>
-        ft.trackId === track.id ||
-        ft.trackId === track.guid ||
-        ft.trackId === track.audioUrl
-      );
+      const favorite = favoriteForTrack(track, favoriteTracks);
       return {
         ...track,
         favoritedAt: favorite?.createdAt,

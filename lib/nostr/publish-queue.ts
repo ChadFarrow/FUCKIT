@@ -133,23 +133,29 @@ async function flushQueue() {
     const defaultRelays = getDefaultRelays();
     const relayUrls = [...new Set([...userRelays, ...defaultRelays])];
 
-    // Connect ONE RelayManager for the entire batch
+    // Connect ONE RelayManager for the entire batch — and START connecting
+    // without waiting. Nothing in an event template depends on a relay, so
+    // awaiting the connections here bought nothing and delayed the signing
+    // prompt by however long the SLOWEST relay took: ~550ms with all five
+    // healthy, and the full 5s connect timeout with one bad one.
+    //
+    // The trade-off is that "could not reach any relay" is now discovered
+    // after the first signature rather than before it, so an offline user is
+    // asked to sign an event that cannot be sent. FAILURE_COOLDOWN_MS keeps
+    // that to once per 30s, which is the better of the two costs.
     relayManager = new RelayManager();
-    const connectionResults = await Promise.allSettled(
+    const connecting = Promise.allSettled(
       relayUrls.map(url => relayManager!.connect(url, { read: false, write: true }))
     );
 
-    const successfulConnections = connectionResults.filter(r => r.status === 'fulfilled').length;
-    if (successfulConnections === 0 && relayUrls.length > 0) {
-      console.warn(`⚠️ Publish queue: Could not connect to any relay (0/${relayUrls.length}). Cooling down ${FAILURE_COOLDOWN_MS / 1000}s.`);
-      toast.error('Could not reach any Nostr relay — favorites not synced.', { duration: 8000 });
-      lastFailureTime = Date.now();
-      items.forEach(item => item.resolve(null));
-      flushing = false;
-      return;
-    }
-
-    console.log(`📤 Publish queue: flushing ${items.length} item(s) through ${successfulConnections} relay(s)`);
+    let connectedCount: number | null = null;
+    const relaysReady = async (): Promise<number> => {
+      if (connectedCount === null) {
+        connectedCount = (await connecting).filter(r => r.status === 'fulfilled').length;
+        console.log(`📤 Publish queue: flushing ${items.length} item(s) through ${connectedCount} relay(s)`);
+      }
+      return connectedCount;
+    };
 
     let signFailures = 0;
     let publishFailures = 0;
@@ -173,6 +179,16 @@ async function flushQueue() {
         }
 
         const signedEvent = await signer.signEvent(event);
+
+        // Awaited here, after signing, rather than before it.
+        if ((await relaysReady()) === 0 && relayUrls.length > 0) {
+          console.warn(`⚠️ Publish queue: Could not connect to any relay (0/${relayUrls.length}). Cooling down ${FAILURE_COOLDOWN_MS / 1000}s.`);
+          toast.error('Could not reach any Nostr relay — favorites not synced.', { duration: 8000 });
+          lastFailureTime = Date.now();
+          for (let j = i; j < items.length; j++) items[j].resolve(null);
+          return;
+        }
+
         const results = await relayManager!.publish(signedEvent);
         const hasSuccess = results.some(r => r.status === 'fulfilled');
 

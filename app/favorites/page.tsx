@@ -600,7 +600,7 @@ function FavoritesPageContent() {
           }
         }
       }
-      
+
       // Try multiple methods to fetch album data
       let albumData: any = null;
       let response: Response | null = null;
@@ -631,46 +631,58 @@ function FavoritesPageContent() {
         }
       }
       
-      // Method 3: If we have feedId, try using that
-      if (!albumData && album.feedId) {
-        console.log('🔍 Trying to fetch by feedId:', album.feedId);
-        // Try to get album from feed
-        const feedResponse = await fetch(`/api/feeds/${album.feedId}`);
-        if (feedResponse.ok) {
-          const feedData = await feedResponse.json();
-          if (feedData.feed) {
-            // Construct album from feed data
-            const feed = feedData.feed;
-            if (feed.Track && feed.Track.length > 0) {
-              albumData = {
-                id: feed.id,
-                title: feed.title,
-                artist: feed.artist || 'Unknown Artist',
-                description: feed.description || '',
-                coverArt: feed.image || '',
-                releaseDate: feed.lastFetched || feed.createdAt,
-                tracks: feed.Track.map((track: any, index: number) => ({
-                  title: track.title,
-                  duration: track.duration ? `${Math.floor(track.duration / 60)}:${String(track.duration % 60).padStart(2, '0')}` : '0:00',
-                  url: track.audioUrl || track.url || '',
-                  trackNumber: index + 1,
-                  subtitle: track.subtitle || '',
-                  summary: track.description || track.summary || '',
-                  image: track.image || feed.image || '',
-                  explicit: track.explicit || false,
-                  keywords: track.keywords || [],
-                  v4vRecipient: track.v4vRecipient,
-                  v4vValue: track.v4vValue,
-                  guid: track.guid,
-                  id: track.id,
-                  startTime: track.startTime,
-                  endTime: track.endTime
-                })),
-                link: feed.originalUrl || '',
-                feedUrl: feed.originalUrl || ''
-              };
-              console.log('✅ Constructed album from feed data');
-            }
+      // Method 3: fetch this feed's tracks directly.
+      //
+      // The two methods above are guesses — one derives a slug from the title,
+      // the other hands an id to a route that expects a slug. This one is not:
+      // `album.id` IS the Feed row, and `/api/tracks` filters on it. It is the
+      // backstop that makes the two guesses above safe to fail.
+      //
+      // It replaces a call to `/api/feeds/${album.feedId}`, which could never
+      // work: `album.feedId` is not a field this page's albums carry, that
+      // route answers under `data` rather than `feed`, and it returns a track
+      // COUNT and no tracks. Three reasons, so nothing about it ever ran.
+      if (!albumData && album.id) {
+        console.log('🔍 Trying to fetch tracks by feed id:', album.id);
+        const params = new URLSearchParams({
+          feedId: album.id,
+          limit: '500',
+          sortBy: 'trackOrder',
+          sortOrder: 'asc',
+        });
+        const tracksResponse = await fetch(`/api/tracks?${params}`);
+        if (tracksResponse.ok) {
+          const { tracks: feedTracks } = await tracksResponse.json();
+          const playable = (feedTracks || []).filter((track: any) => track.audioUrl);
+          if (playable.length > 0) {
+            albumData = {
+              id: album.id,
+              title: album.title,
+              artist: album.artist || 'Unknown Artist',
+              description: album.description || '',
+              coverArt: album.image || '',
+              releaseDate: album.lastFetched || album.createdAt,
+              tracks: playable.map((track: any, index: number) => ({
+                title: track.title,
+                duration: track.duration ? `${Math.floor(track.duration / 60)}:${String(track.duration % 60).padStart(2, '0')}` : '0:00',
+                url: track.audioUrl || '',
+                trackNumber: index + 1,
+                subtitle: track.subtitle || '',
+                summary: track.description || track.summary || '',
+                image: track.image || album.image || '',
+                explicit: track.explicit || false,
+                keywords: track.keywords || [],
+                v4vRecipient: track.v4vRecipient,
+                v4vValue: track.v4vValue,
+                guid: track.guid,
+                id: track.id,
+                startTime: track.startTime,
+                endTime: track.endTime
+              })),
+              link: album.originalUrl || '',
+              feedUrl: album.originalUrl || ''
+            };
+            console.log(`✅ Constructed album from ${playable.length} feed tracks`);
           }
         }
       }
