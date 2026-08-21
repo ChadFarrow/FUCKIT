@@ -275,7 +275,11 @@ function stageTimer() {
     },
     log(prefix: string) {
       const total = Math.round(performance.now() - t0);
-      console.log(`⏱️ ${prefix}: ${stages.join(' · ')} · total ${total}ms`);
+      // `console.warn`, NOT `console.log`. next.config.js strips `log` from
+      // production builds and keeps only `error` and `warn`, so a `log` here is
+      // absent from the one environment worth measuring — which is exactly how
+      // this line failed the first time it was needed.
+      console.warn(`⏱️ ${prefix}: ${stages.join(' · ')} · total ${total}ms`);
     },
   };
 }
