@@ -1,4 +1,14 @@
 import type { Event, Filter } from 'nostr-tools';
+import {
+  clearRelayNotes,
+  noteUnreachableRelays,
+  partitionByRecentHealth,
+} from './relay-health';
+
+/** `wss://relay.damus.io/` → `relay.damus.io`, for the diagnostic line. */
+function short(url: string): string {
+  return url.replace(/^wss?:\/\//, '').replace(/\/$/, '');
+}
 
 /**
  * Reading one replaceable event across a relay set, and knowing whether an
@@ -22,6 +32,27 @@ const RELAY_QUERY_TIMEOUT_MS = 5_000;
  * the real default list, live relays connect and EOSE inside ~1s.
  */
 const CONNECT_TIMEOUT_MS = 2_000;
+
+/**
+ * Per-relay budget for the EOSE, once connected.
+ *
+ * This used to be "whatever is left of the overall deadline", which meant ONE
+ * relay that accepted the socket and then went silent held the whole read open
+ * for the full 5s — on every read, forever, because nothing remembers. Measured
+ * in production: reads pinned at 5006-5007ms while the same relays answer in
+ * 600-700ms from a machine that can reach all of them.
+ *
+ * A relay that has not answered a single-event query in this long is not about
+ * to. It drops out exactly as before — unanswered, so still degrading an empty
+ * read — just sooner.
+ *
+ * MUST stay below `AbstractRelay.baseEoseTimeout` (4400ms), and the `eoseTimeout`
+ * passed to `subscribe` must stay above it: nostr-tools SYNTHESIZES an EOSE on a
+ * timer when a relay never sends one, and the pool reports it as a real answer.
+ * If that fake ever lands inside our window, a silent relay reads as trustworthy
+ * — the exact regression `relay-read.test.ts` was written to catch.
+ */
+const EOSE_TIMEOUT_MS = 2_000;
 
 export interface TrustedRead {
   /** The newest event authored by `pubkey`, or null when none was found. */
@@ -116,17 +147,28 @@ export async function readReplaceableEvent(opts: {
   const empty: TrustedRead = { event: null, trustworthy: false };
   if (!pubkey || relays.length === 0) return empty;
 
+  // Relays that failed us in the last few minutes, held back so they cannot
+  // spend this read's budget failing again. Capped at half the set and inert
+  // outside a browser — see `relay-health.ts` for why each limit is there.
+  const { use: toQuery, skipped } = partitionByRecentHealth(relays);
+
   const { SimplePool } = await import('nostr-tools/pool');
   const pool = new SimplePool();
 
-  const deadline = Date.now() + timeoutMs;
+  const startedAt = Date.now();
+  const deadline = startedAt + timeoutMs;
   let best: Event | null = null;
   let reached = 0; // relays that accepted a connection
   let answered = 0; // ...of those, the ones that sent a REAL eose in time
+  const failed: string[] = []; // never connected, or connected and stayed silent
+  const succeeded: string[] = [];
+  const outcomes: string[] = []; // for the diagnostic line only
 
   try {
     await Promise.all(
-      relays.map(async (url) => {
+      toQuery.map(async (url) => {
+        const relayStartedAt = Date.now();
+        const took = () => Date.now() - relayStartedAt;
         let relay: any;
         try {
           relay = await (pool as any).ensureRelay(url, {
@@ -141,13 +183,20 @@ export async function readReplaceableEvent(opts: {
         } catch {
           // Never connected. Not an answer — and specifically NOT counted as
           // one, which is what made an offline device look trustworthy.
+          failed.push(url);
+          outcomes.push(`${short(url)} ✗ unreachable ${took()}ms`);
           return;
         }
         reached += 1;
 
+        // Capped per relay rather than sized to the whole remaining budget, so
+        // one silent relay can no longer hold the read open to the deadline.
+        const eoseWait = Math.max(0, Math.min(EOSE_TIMEOUT_MS, deadline - Date.now()));
+
         await new Promise<void>((resolve) => {
           let done = false;
           let sub: { close: () => void } | null = null;
+          let sawEose = false;
           const finish = () => {
             if (done) return;
             done = true;
@@ -157,9 +206,18 @@ export async function readReplaceableEvent(opts: {
             } catch {
               /* already closed */
             }
+            if (sawEose) {
+              succeeded.push(url);
+              outcomes.push(`${short(url)} ${took()}ms`);
+            } else {
+              // Connected, then said nothing. Useless in exactly the way an
+              // unreachable relay is useless, and it costs more.
+              failed.push(url);
+              outcomes.push(`${short(url)} ✗ silent ${took()}ms`);
+            }
             resolve();
           };
-          const timer = setTimeout(finish, Math.max(0, deadline - Date.now()));
+          const timer = setTimeout(finish, eoseWait);
           try {
             sub = relay.subscribe([filter], {
               // Just past our own deadline, so the library's synthetic EOSE can
@@ -169,12 +227,17 @@ export async function readReplaceableEvent(opts: {
               // long after the read has returned (a 110s value here kept the
               // Node event loop alive for the full 110s, and would sit in a
               // browser tab just as long).
-              eoseTimeout: timeoutMs + 1_000,
+              // Sized off OUR per-relay wait, not the overall timeout: it must
+              // stay above `eoseWait` so the synthetic EOSE can never land
+              // inside our window and pose as an answer, and staying close to
+              // it keeps the dangling timer short.
+              eoseTimeout: eoseWait + 1_000,
               onevent(e: Event) {
                 best = preferAuthoredEvent(best, e, pubkey);
               },
               oneose() {
                 answered += 1;
+                sawEose = true;
                 finish();
               },
             });
@@ -184,6 +247,20 @@ export async function readReplaceableEvent(opts: {
         });
       })
     );
+
+    // Remember what failed, but only because something else worked — a device
+    // that is merely offline must not write off every relay it has.
+    noteUnreachableRelays(failed, succeeded.length > 0);
+    clearRelayNotes(succeeded);
+
+    if (typeof window !== 'undefined') {
+      const held = skipped.length ? ` · skipped ${skipped.map(short).join(', ')}` : '';
+      // `warn`, not `log`: production strips `log`, and this line exists for
+      // production.
+      console.warn(
+        `🛰️ relay read ${Date.now() - startedAt}ms — ${outcomes.join(' · ') || 'nothing queried'}${held}`
+      );
+    }
 
     const event = best as Event | null;
     if (!event) {
@@ -198,7 +275,7 @@ export async function readReplaceableEvent(opts: {
     return empty;
   } finally {
     try {
-      pool.close(relays);
+      pool.close(toQuery);
     } catch {
       /* nothing to close */
     }
