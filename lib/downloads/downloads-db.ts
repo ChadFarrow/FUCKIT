@@ -36,6 +36,13 @@ export interface DownloadRecord {
    *  Downloads page can list/play an album in real track order rather than the
    *  order downloads happened to finish. Absent for individually-saved tracks. */
   trackOrder?: number;
+  /** How many downloadable tracks the album had when it was saved, captured so
+   *  an album's state can be read back from its records alone — otherwise an
+   *  album interrupted at 3 of 10 has 3 records, all downloaded, and reads as
+   *  complete. Absent for individually-saved tracks and for records written
+   *  before this field existed; `getAlbumStateByOwner` falls back. Adding a
+   *  property needs no DB_VERSION bump — IndexedDB stores whole objects. */
+  albumTotal?: number;
   createdAt: number;
   /** Owners that requested this track — reference counting for shared tracks. */
   refs: DownloadOwner[];

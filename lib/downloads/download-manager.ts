@@ -126,6 +126,14 @@ export class DownloadManager {
   private states = new Map<string, DownloadState>();
   private downloaded = new Set<string>();
   private controllers = new Map<string, AbortController>();
+  /**
+   * Track keys an album download is working through, while it is working.
+   *
+   * In memory only, and deliberately: it exists so `getAlbumStateByOwner` can
+   * report progress for tracks that have no record yet. After a reload the
+   * records themselves are the answer.
+   */
+  private albumKeys = new Map<DownloadOwner, string[]>();
   // Keyed by track key: a fetch that is queued or downloading. Concurrent
   // owners of the same track join this instead of starting a second fetch.
   // `owners` is the set of owners still waiting; the shared fetch is aborted
@@ -217,7 +225,18 @@ export class DownloadManager {
   /** Aggregate state across an album/playlist's downloadable tracks. */
   private aggregate(tracks: DownloadableTrack[]): AggregateState {
     const downloadable = tracks.filter(isDownloadable);
-    const total = downloadable.length;
+    return this.aggregateKeys(downloadable.map(trackKey), downloadable.length);
+  }
+
+  /**
+   * The same aggregate, computed from playback keys rather than track objects.
+   *
+   * Split out so an album's state can be answered WITHOUT its track list — see
+   * `getAlbumStateByOwner`. `total` is passed in because it is not always
+   * `keys.length`: a partly-downloaded album knows about fewer tracks than it
+   * has.
+   */
+  private aggregateKeys(keys: string[], total: number): AggregateState {
     if (total === 0) return { status: 'idle', done: 0, total: 0, fraction: 0 };
 
     let done = 0;
@@ -226,8 +245,8 @@ export class DownloadManager {
     let error = false;
     let fractionSum = 0;
 
-    for (const t of downloadable) {
-      const st = this.getDownloadState(trackKey(t));
+    for (const key of keys) {
+      const st = this.getDownloadState(key);
       if (st.status === 'downloaded') {
         done++;
         fractionSum += 1;
@@ -252,6 +271,55 @@ export class DownloadManager {
 
   getAlbumState(album: DownloadableAlbum): AggregateState {
     return this.aggregate(album.tracks ?? []);
+  }
+
+  /**
+   * An album's aggregate state from its FEED ID alone, with no track list.
+   *
+   * Why this exists: `getAlbumState` needs the tracks, and `AlbumCard` calls it
+   * on every render. That forced every listing endpoint to ship a track list
+   * for every album so a button could decide which icon to draw — 593 KB of a
+   * 1.27 MB `/favorites` payload, on an account with 94 favorited feeds, for
+   * data nothing rendered.
+   *
+   * The manager already knows the answer. Every downloaded track records the
+   * owners that asked for it, and an album owner is `album:<feedId>`.
+   *
+   * `total` is resolved in three steps, and the order matters:
+   *
+   *  1. An album being downloaded right now has its key set in `albumKeys`,
+   *     which is exact — including the tracks that have not started yet, so a
+   *     fresh album reports progress instead of jumping from idle to done.
+   *  2. Otherwise the records themselves carry `albumTotal`, written when the
+   *     album was saved. Without it, an album interrupted at 3 of 10 tracks has
+   *     3 records, all downloaded, and would claim to be complete.
+   *  3. Records written before `albumTotal` existed fall back to how many there
+   *     are, which reads a complete album correctly and an interrupted one
+   *     optimistically. It self-heals on the next download.
+   *
+   * `totalHint` (the caller's track count) is used only when nothing is known
+   * at all, where it changes an idle album's `total` and nothing else.
+   */
+  getAlbumStateByOwner(albumId: string, totalHint?: number): AggregateState {
+    const owner: DownloadOwner = `album:${albumId}`;
+
+    const live = this.albumKeys.get(owner);
+    if (live) return this.aggregateKeys(live, live.length);
+
+    const keys: string[] = [];
+    let recordedTotal = 0;
+    for (const record of this.records.values()) {
+      if (!record.refs.includes(owner)) continue;
+      keys.push(record.key);
+      if (record.albumTotal && record.albumTotal > recordedTotal) {
+        recordedTotal = record.albumTotal;
+      }
+    }
+
+    if (keys.length === 0) {
+      return { status: 'idle', done: 0, total: totalHint ?? 0, fraction: 0 };
+    }
+    return this.aggregateKeys(keys, Math.max(recordedTotal, keys.length));
   }
 
   listDownloads(): DownloadRecord[] {
@@ -303,6 +371,7 @@ export class DownloadManager {
       albumTitle?: string | null;
       coverArt?: string | null;
       trackOrder?: number | null;
+      albumTotal?: number | null;
     }
   ): Promise<boolean> {
     if (!isDownloadable(track)) return false;
@@ -314,8 +383,18 @@ export class DownloadManager {
     if (existing) {
       // Backfill album position if this owner (an album) knows it and the
       // record — saved individually first — didn't.
+      // Backfill from the owner that knows: a track saved individually first
+      // has neither its album position nor the album's size.
+      let backfilled = false;
       if (existing.trackOrder == null && meta.trackOrder != null) {
         existing.trackOrder = meta.trackOrder;
+        backfilled = true;
+      }
+      if (existing.albumTotal == null && meta.albumTotal != null) {
+        existing.albumTotal = meta.albumTotal;
+        backfilled = true;
+      }
+      if (backfilled) {
         await this.backend.putRecord(existing);
         this.records.set(key, existing);
       }
@@ -361,6 +440,7 @@ export class DownloadManager {
       albumTitle?: string | null;
       coverArt?: string | null;
       trackOrder?: number | null;
+      albumTotal?: number | null;
     }
   ): Promise<boolean> {
     this.setState(key, { status: 'queued', fraction: null });
@@ -413,6 +493,7 @@ export class DownloadManager {
         sizeBytes,
         durationSecs: parseDuration(track.duration),
         trackOrder: meta.trackOrder ?? undefined,
+        albumTotal: meta.albumTotal ?? undefined,
         createdAt: Date.now(),
         refs: [...owners],
         mediaType: 'audio',
@@ -471,11 +552,24 @@ export class DownloadManager {
       coverArt: album.coverArt,
     };
     const tracks = (album.tracks ?? []).filter(isDownloadable);
+    // Published for the duration of the download so a card can show progress
+    // for tracks that have no record yet — see `getAlbumStateByOwner`.
+    this.albumKeys.set(owner, tracks.map(trackKey));
     // Kick them all off; the pool caps real concurrency. Tolerate partials.
     // Pass each track's album position so the Downloads page can restore order.
-    const results = await Promise.all(
-      tracks.map((t, i) => this.downloadOne(t, owner, { ...meta, trackOrder: i }))
-    );
+    // `albumTotal` is what later lets an album's state be read back without its
+    // track list, and tells a complete album from an interrupted one.
+    let results: boolean[];
+    try {
+      results = await Promise.all(
+        tracks.map((t, i) =>
+          this.downloadOne(t, owner, { ...meta, trackOrder: i, albumTotal: tracks.length })
+        )
+      );
+    } finally {
+      // Hand the question back to the records, which outlive this call.
+      this.albumKeys.delete(owner);
+    }
     // Cache the cover once so the album shows art offline — only if at least one
     // track actually persisted, so a fully-failed album never orphans a cover.
     // Best-effort: a failed art fetch must never fail the album download.

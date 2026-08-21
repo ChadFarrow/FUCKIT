@@ -61,42 +61,51 @@ export async function GET(request: NextRequest) {
     // favorite ends up visible on the page and missing from the shared list.
     const feedIds = favoriteAlbums.map(fa => fa.feedId);
     //
-    // The `Track` include is the largest thing this route sends — 593 KB of a
-    // 1.27 MB page load, measured on a 94-feed account (1,007 track rows).
-    // It is NOT removable on its own, and this comment exists so the next
-    // person does not try: `AlbumCard` reads `album.tracks` at render time for
-    // the album download button, which needs the track list to show whether
-    // the album is downloaded, and for the "videos" vs "tracks" label. Dropping
-    // it makes the download button vanish from every card here. Shrinking that
-    // payload means giving the downloads context a way to resolve an album's
-    // tracks by feed id, which is a change to `lib/downloads/`, not to this
-    // select.
+    // NO `Track` include. It was the largest thing this route sent — 593 KB of
+    // a 1.27 MB page load on a 94-feed account, 1,007 track rows — and the page
+    // rendered none of them. `AlbumCard` read `album.tracks` only to decide
+    // which icon the download button should draw and whether to say "videos",
+    // and playback re-fetched the album anyway. Both now work from counts:
+    // `DownloadButton` asks the download manager by feed id, and the two counts
+    // below come from ONE grouped query over ~94 feeds instead of their rows.
     const feedMap = await resolveFavoriteFeeds(feedIds, (where) =>
       prisma.feed.findMany({
         where,
         include: {
-          Track: {
-            where: { audioUrl: { not: '' }, status: 'active' },
-            take: 50,
-            orderBy: { trackOrder: 'asc' },
-            select: {
-              id: true,
-              guid: true,
-              title: true,
-              artist: true,
-              duration: true,
-              image: true,
-              audioUrl: true,
-              mediaType: true,
-              trackOrder: true
-            }
-          },
           _count: {
             select: { Track: true }
           }
         }
       })
     );
+
+    // What the card needs to know ABOUT the tracks, without the tracks.
+    // `downloadableTrackCount` mirrors `isDownloadable` as far as SQL can: the
+    // URL-shape half (`isNonDownloadableUrl`, i.e. HLS) cannot be expressed
+    // here, so this can over-count, and `DownloadButton` reports an album that
+    // resolves to nothing rather than sitting idle.
+    const trackFacts = await prisma.track.groupBy({
+      by: ['feedId', 'mediaType'],
+      where: {
+        feedId: { in: [...new Set([...feedMap.values()].map(f => f.id))] },
+        audioUrl: { not: '' },
+        status: 'active',
+      },
+      _count: { _all: true },
+    });
+    const downloadableByFeed = new Map<string, number>();
+    const videoByFeed = new Set<string>();
+    for (const row of trackFacts) {
+      if (!row.feedId) continue;
+      if (row.mediaType === 'video') {
+        videoByFeed.add(row.feedId);
+      } else {
+        downloadableByFeed.set(
+          row.feedId,
+          (downloadableByFeed.get(row.feedId) ?? 0) + row._count._all
+        );
+      }
+    }
 
     // Collect synthetic artist IDs (from /api/publishers) that need DB resolution
     const syntheticArtistIds = new Set<string>();
@@ -177,7 +186,10 @@ export async function GET(request: NextRequest) {
           type: feedType,
           artist: artistName || feed.artist,
           favoritedAt: favorite.createdAt,
-          trackCount: (feed as any)._count?.Track || 0
+          trackCount: (feed as any)._count?.Track || 0,
+          // Stand-ins for the track list this route no longer sends.
+          downloadableTrackCount: downloadableByFeed.get(feed.id) ?? 0,
+          hasVideoTracks: videoByFeed.has(feed.id)
         };
       } else if (syntheticPublisherData.has(favorite.feedId)) {
         // Synthetic artist ID from /api/publishers — resolve from album feeds

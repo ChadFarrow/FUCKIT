@@ -22,6 +22,15 @@ interface DownloadsContextType {
   isTrackDownloaded: (track: DownloadableTrack) => boolean;
   getTrackState: (track: DownloadableTrack) => DownloadState;
   getAlbumState: (album: DownloadableAlbum) => AggregateState;
+  /**
+   * An album's state from its feed id, for callers that do not hold its tracks.
+   *
+   * `AlbumCard` renders on listing pages, and needing the track list here is
+   * what forced those endpoints to ship one per album — 593 KB of a 1.27 MB
+   * `/favorites` payload that nothing displayed. Pass `totalTracks` when known
+   * (the card has it); it only affects an album with nothing downloaded.
+   */
+  getAlbumStateByFeedId: (feedId: string, totalTracks?: number) => AggregateState;
   downloadTrack: (track: DownloadableTrack) => Promise<boolean>;
   downloadAlbum: (album: DownloadableAlbum) => Promise<AggregateState>;
   removeTrack: (track: DownloadableTrack) => Promise<void>;
@@ -96,8 +105,10 @@ export function DownloadsProvider({ children }: { children: React.ReactNode }) {
     isTrackDownloaded: (t) => downloadManager.isTrackDownloaded(t),
     getTrackState: (t) => downloadManager.getDownloadState(primaryKeyOf(t)),
     getAlbumState: (a) => downloadManager.getAlbumState(a),
+    getAlbumStateByFeedId: (feedId, totalTracks) =>
+      downloadManager.getAlbumStateByOwner(feedId, totalTracks),
     downloadTrack: (t) => downloadManager.downloadTrack(t),
-    downloadAlbum: (a) => downloadManager.downloadAlbum(a),
+    downloadAlbum: async (a) => downloadManager.downloadAlbum(await withResolvedTracks(a)),
     removeTrack: (t) => downloadManager.removeTrack(t),
     removeAlbum: (a) => downloadManager.removeAlbum(a),
     removeByKey: (k) => downloadManager.removeByKey(k),
@@ -112,6 +123,54 @@ export function DownloadsProvider({ children }: { children: React.ReactNode }) {
 
 function primaryKeyOf(track: DownloadableTrack): string {
   return primaryPlaybackKey(track.url);
+}
+
+/**
+ * Fill in an album's tracks at DOWNLOAD time, if the caller did not carry them.
+ *
+ * Listing pages hand `AlbumCard` an album with no track list on purpose — see
+ * `getAlbumStateByFeedId`. Downloading still needs the real tracks, with their
+ * titles and durations, or the Downloads page lists rows called "Unknown".
+ * Fetching them here costs one request on the click that starts a download,
+ * instead of one track list per album on every page load.
+ *
+ * A caller that already has tracks is passed straight through, so album detail
+ * and Now Playing are unchanged.
+ */
+async function withResolvedTracks(album: DownloadableAlbum): Promise<DownloadableAlbum> {
+  if (album.tracks && album.tracks.length > 0) return album;
+  const feedId = album.feedId ?? album.id;
+  if (!feedId) return album;
+
+  try {
+    const params = new URLSearchParams({
+      feedId,
+      limit: '500',
+      sortBy: 'trackOrder',
+      sortOrder: 'asc',
+    });
+    const res = await fetch(`/api/tracks?${params}`);
+    if (!res.ok) return album;
+    const { tracks } = await res.json();
+    if (!Array.isArray(tracks) || tracks.length === 0) return album;
+
+    return {
+      ...album,
+      tracks: tracks.map((t: any) => ({
+        url: t.audioUrl ?? null,
+        title: t.title ?? null,
+        artist: t.artist ?? album.artist ?? null,
+        guid: t.guid ?? null,
+        id: t.id ?? null,
+        mediaType: t.mediaType ?? null,
+        duration: t.duration ?? null,
+      })),
+    };
+  } catch {
+    // Offline, or the lookup failed. Returning the album unchanged lets
+    // `downloadAlbum` report an empty result rather than throwing at the click.
+    return album;
+  }
 }
 
 export function useDownloads(): DownloadsContextType {

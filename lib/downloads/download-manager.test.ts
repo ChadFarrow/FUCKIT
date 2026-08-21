@@ -297,3 +297,112 @@ test('cancelling one owner of a shared in-flight download keeps it for the other
   const recA = records.get('https://cdn.example.com/a.mp3')!;
   assert.deepEqual(recA.refs, ['album:album-1'], 'only the album owns A after the cancel');
 });
+
+// --- reading an album's state WITHOUT its track list -------------------------
+//
+// `AlbumCard` renders on listing pages and asks for this on every render. Making
+// it need the tracks is what forced those endpoints to ship a track list per
+// album — 593 KB of a 1.27 MB /favorites payload for data nothing displayed.
+// The manager already knows the answer, because every record names its owners.
+
+test('an album downloaded earlier reads back from its feed id alone', async () => {
+  const { backend } = makeFakeBackend();
+  const mgr = new DownloadManager(backend);
+  await mgr.downloadAlbum(album);
+
+  const state = mgr.getAlbumStateByOwner('album-1');
+  assert.equal(state.status, 'downloaded');
+  assert.equal(state.done, 2);
+  assert.equal(state.total, 2);
+});
+
+test('the by-feed-id answer matches the by-track-list answer', async () => {
+  const { backend } = makeFakeBackend();
+  const mgr = new DownloadManager(backend);
+  await mgr.downloadAlbum(album);
+
+  assert.deepEqual(mgr.getAlbumStateByOwner('album-1'), mgr.getAlbumState(album));
+});
+
+test('an album nobody downloaded is idle, and reports the hinted total', async () => {
+  const { backend } = makeFakeBackend();
+  const mgr = new DownloadManager(backend);
+  await mgr.init();
+
+  const state = mgr.getAlbumStateByOwner('album-never-touched', 9);
+  assert.equal(state.status, 'idle');
+  assert.equal(state.done, 0);
+  assert.equal(state.total, 9, 'so a card can say 0 of 9 rather than 0 of 0');
+});
+
+test('an INTERRUPTED album does not claim to be complete', async () => {
+  // The failure this exists to prevent: 3 records for a 10-track album are all
+  // downloaded, so counting records alone reads as "album downloaded". The size
+  // the album had when it was saved is recorded, so it reads as partial.
+  const { backend, records } = makeFakeBackend();
+  const mgr = new DownloadManager(backend);
+  await mgr.downloadAlbum(album);
+
+  // Drop one of the two, as an interrupted download or a manage-storage delete
+  // would leave things.
+  const [firstKey] = [...records.keys()];
+  records.delete(firstKey);
+
+  const fresh = new DownloadManager(backend);
+  await fresh.init();
+  const state = fresh.getAlbumStateByOwner('album-1');
+  assert.equal(state.total, 2, 'albumTotal survived on the remaining record');
+  assert.equal(state.done, 1);
+  assert.notEqual(state.status, 'downloaded');
+});
+
+test('records written before albumTotal existed still read sensibly', async () => {
+  const { backend, records } = makeFakeBackend();
+  const mgr = new DownloadManager(backend);
+  await mgr.downloadAlbum(album);
+  for (const [key, rec] of records) {
+    records.set(key, { ...rec, albumTotal: undefined });
+  }
+
+  const fresh = new DownloadManager(backend);
+  await fresh.init();
+  const state = fresh.getAlbumStateByOwner('album-1');
+  assert.equal(state.status, 'downloaded', 'a complete album still reads complete');
+  assert.equal(state.total, 2);
+});
+
+test('a track saved individually is not mistaken for its album', async () => {
+  const { backend } = makeFakeBackend();
+  const mgr = new DownloadManager(backend);
+  await mgr.downloadTrack(trackA); // owner 'track', not 'album:album-1'
+
+  const state = mgr.getAlbumStateByOwner('album-1', 2);
+  assert.equal(state.status, 'idle');
+  assert.equal(state.done, 0);
+});
+
+test('an album being downloaded reports progress, not idle', async () => {
+  // Tracks in flight have no record yet, so records alone would read as idle
+  // until the first one finished.
+  const ctl = makeControllableBackend();
+  const mgr = new DownloadManager(ctl.backend);
+  const pending = mgr.downloadAlbum(album);
+  await tick();
+
+  const mid = mgr.getAlbumStateByOwner('album-1');
+  assert.equal(mid.total, 2, 'both tracks are known, including the unstarted one');
+  assert.notEqual(mid.status, 'idle');
+
+  ctl.releaseAll();
+  await pending;
+  assert.equal(mgr.getAlbumStateByOwner('album-1').status, 'downloaded');
+});
+
+test('removing an album returns it to idle', async () => {
+  const { backend } = makeFakeBackend();
+  const mgr = new DownloadManager(backend);
+  await mgr.downloadAlbum(album);
+  await mgr.removeAlbum({ feedId: 'album-1' });
+
+  assert.equal(mgr.getAlbumStateByOwner('album-1').status, 'idle');
+});

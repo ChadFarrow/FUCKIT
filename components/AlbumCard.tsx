@@ -302,10 +302,16 @@ function AlbumCard({ album, isPlaying = false, onPlay, className = '', linkFilte
               : (() => {
                   const count = (album as any).trackCount || album.tracks?.length || 0;
                   const isPodcast = (album as any).isPodcast === true;
-                  const hasVideo = album.tracks?.some((t: any) =>
-                    t.mediaType === 'video' ||
-                    (t.alternateEnclosures && t.alternateEnclosures.some((enc: any) => enc.type?.includes('video')))
-                  );
+                  // `hasVideoTracks` is for callers that omit `album.tracks`
+                  // — listing pages, which no longer ship a track list per
+                  // album. When the tracks ARE present that answer is exact and
+                  // still wins.
+                  const hasVideo = album.tracks?.length
+                    ? album.tracks.some((t: any) =>
+                        t.mediaType === 'video' ||
+                        (t.alternateEnclosures && t.alternateEnclosures.some((enc: any) => enc.type?.includes('video')))
+                      )
+                    : (album as any).hasVideoTracks === true;
                   const label = isPodcast
                     ? (count !== 1 ? 'episodes' : 'episode')
                     : hasVideo ? (count !== 1 ? 'videos' : 'video') : (count !== 1 ? 'tracks' : 'track');
@@ -335,10 +341,19 @@ function AlbumCard({ album, isPlaying = false, onPlay, className = '', linkFilte
               e.stopPropagation();
             }}
           >
-            {!isPublisherCard && !isPlaylistCard && (album as any).feedId && album.tracks?.length ? (
+            {/* The `album.tracks?.length` gate this used to carry is gone on
+                purpose: a listing page no longer sends a track list, so it hid
+                the download button on every card. DownloadButton makes the
+                decision itself now, from the track list when there is one and
+                from `downloadableTrackCount` when there is not. */}
+            {!isPublisherCard && !isPlaylistCard && (album as any).feedId ? (
               <div className="bg-black/80 rounded-full w-8 h-8 flex items-center justify-center pointer-events-auto touch-manipulation hover:bg-black/90 transition-colors">
                 <DownloadButton
-                  downloadTarget={{ type: 'album', album: album as any }}
+                  downloadTarget={{
+                    type: 'album',
+                    album: album as any,
+                    downloadableTrackCount: (album as any).downloadableTrackCount,
+                  }}
                   size={18}
                   className="text-white"
                 />
@@ -460,6 +475,10 @@ export default memo(AlbumCard, (prevProps, nextProps) => {
     prevProps.isPlaying === nextProps.isPlaying &&
     prevProps.className === nextProps.className &&
     (prevProps.album.tracks?.length || 0) === (nextProps.album.tracks?.length || 0) &&
+    // Listing pages send this instead of a track list, so on those pages the
+    // line above compares 0 to 0 and would never notice a change.
+    (prevProps.album as any).downloadableTrackCount ===
+      (nextProps.album as any).downloadableTrackCount &&
     (prevProps.album as any).v4vRecipient === (nextProps.album as any).v4vRecipient &&
     (prevProps.album as any).v4vValue === (nextProps.album as any).v4vValue
   );

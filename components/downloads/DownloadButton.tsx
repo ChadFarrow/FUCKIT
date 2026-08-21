@@ -19,7 +19,27 @@ import type {
  */
 export type DownloadTarget =
   | { type: 'track'; track: DownloadableTrack }
-  | { type: 'album'; album: DownloadableAlbum };
+  | {
+      type: 'album';
+      album: DownloadableAlbum;
+      /**
+       * How many of the album's tracks the manager could save, for callers that
+       * do not carry `album.tracks`.
+       *
+       * Listing pages omit the track list on purpose — shipping one per album
+       * cost 593 KB of a 1.27 MB `/favorites` load for data nothing rendered.
+       * Without it this button cannot count downloadable tracks itself, so the
+       * server counts them instead: `audioUrl` present, `status` active,
+       * `mediaType` not video.
+       *
+       * It is a COUNT, not a promise. The server cannot apply
+       * `isNonDownloadableUrl`, so an album of HLS streams can still count
+       * above zero here — which is why `handleClick` reports an album that
+       * resolves to nothing rather than sitting idle, the failure this gate was
+       * originally added to prevent.
+       */
+      downloadableTrackCount?: number;
+    };
 
 interface DownloadButtonProps {
   downloadTarget: DownloadTarget;
@@ -43,10 +63,21 @@ export default function DownloadButton({
   // Gating on `!!url` alone rendered an arrow for video/HLS albums that
   // `downloadAlbum` then filtered to zero tracks — a button that did nothing,
   // forever, with no explanation.
+  // When the album carries its tracks, that answer is exact and is still used.
+  // Only a caller that omitted them falls back to the server's count.
+  const albumFeedId =
+    downloadTarget.type === 'album'
+      ? downloadTarget.album.feedId ?? downloadTarget.album.id ?? null
+      : null;
+  const albumHasTracks =
+    downloadTarget.type === 'album' && (downloadTarget.album.tracks?.length ?? 0) > 0;
+
   const hasDownloadableContent =
     downloadTarget.type === 'track'
       ? isDownloadable(downloadTarget.track ?? {})
-      : !!downloadTarget.album.tracks?.some((t) => !!t && isDownloadable(t));
+      : albumHasTracks
+        ? !!downloadTarget.album.tracks?.some((t) => !!t && isDownloadable(t))
+        : !!albumFeedId && (downloadTarget.downloadableTrackCount ?? 0) > 0;
   const downloadEnabled = hasDownloadableContent && !!downloads;
 
   if (!downloadEnabled) return null;
@@ -54,7 +85,12 @@ export default function DownloadButton({
   const agg =
     downloadTarget.type === 'track'
       ? downloads!.getTrackState(downloadTarget.track)
-      : downloads!.getAlbumState(downloadTarget.album);
+      : albumHasTracks
+        ? downloads!.getAlbumState(downloadTarget.album)
+        : downloads!.getAlbumStateByFeedId(
+            albumFeedId!,
+            downloadTarget.downloadableTrackCount
+          );
 
   const isDownloaded = agg.status === 'downloaded';
   const isDownloading = agg.status === 'downloading' || agg.status === 'queued';
@@ -81,6 +117,12 @@ export default function DownloadButton({
             ? `Downloaded ${result.done} of ${result.total} tracks — the rest were refused by the host.`
             : "Couldn't download this album — its host refused the request."
         );
+      } else if (result.total === 0) {
+        // The gate above may have believed a server-side count that could not
+        // apply `isNonDownloadableUrl`, or the track lookup failed. Either way
+        // the button must SAY so: an arrow that does nothing forever, with no
+        // explanation, is the failure this whole path exists to avoid.
+        toast.error("Nothing here can be saved offline — this album streams only.");
       }
     }
   };

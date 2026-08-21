@@ -553,54 +553,12 @@ function FavoritesPageContent() {
     try {
       console.log('🎵 Attempting to play album from favorites:', album.title, album.id, 'feedId:', album.feedId);
       
-      // If we have original album data with tracks, try using that first
-      if (album.originalAlbum && album.originalAlbum.Track && album.originalAlbum.Track.length > 0) {
-        const tracks = album.originalAlbum.Track.filter((track: any) => track.audioUrl);
-        if (tracks.length > 0) {
-          console.log('✅ Using tracks from original album data');
-          const rssAlbum: RSSAlbum = {
-            id: album.originalAlbum.id,
-            title: album.originalAlbum.title,
-            artist: album.originalAlbum.artist || 'Unknown Artist',
-            description: album.originalAlbum.description || '',
-            coverArt: album.originalAlbum.image || '',
-            releaseDate: album.originalAlbum.favoritedAt,
-            tracks: tracks.map((track: any, index: number) => ({
-              title: track.title,
-              duration: track.duration ? `${Math.floor(track.duration / 60)}:${String(track.duration % 60).padStart(2, '0')}` : '0:00',
-              url: track.audioUrl || '',
-              trackNumber: index + 1,
-              subtitle: track.subtitle || '',
-              summary: track.description || track.summary || '',
-              image: track.image || album.originalAlbum.image || '',
-              explicit: track.explicit || false,
-              keywords: track.keywords || [],
-              v4vRecipient: track.v4vRecipient,
-              v4vValue: track.v4vValue,
-              guid: track.guid,
-              id: track.id,
-              startTime: track.startTime,
-              endTime: track.endTime
-            })),
-            link: '',
-            feedUrl: album.originalAlbum.originalUrl || '',
-            feedId: album.originalAlbum.id,
-            feedGuid: album.originalAlbum.guid || undefined,
-            v4vRecipient: album.originalAlbum.v4vRecipient || undefined,
-            v4vValue: album.originalAlbum.v4vValue || undefined,
-          };
-
-          console.log('🎵 Attempting to play RSSAlbum from original data:', rssAlbum.title, 'with', rssAlbum.tracks.length, 'tracks');
-          const success = await globalPlayAlbum(rssAlbum, 0);
-          if (success) {
-            console.log('✅ Successfully started playback');
-            // Open the fullscreen Now Playing screen
-            setFullscreenMode(true);
-            return;
-          }
-        }
-      }
-
+      // The fast path that used to sit here played straight from
+      // `album.originalAlbum.Track`. Those tracks rode along with the favorites
+      // list, so every page load carried up to 50 rows for each of 94 favorited
+      // feeds on the chance that one album was played. The list no longer sends
+      // them; the album is fetched below, once, for the album being played.
+      //
       // Try multiple methods to fetch album data
       let albumData: any = null;
       let response: Response | null = null;
@@ -1235,17 +1193,14 @@ function FavoritesPageContent() {
                     description: album.description || '',
                     coverArt: album.image || '',
                     releaseDate: album.favoritedAt,
-                    tracks: (album.Track || []).map(track => ({
-                      title: track.title,
-                      artist: track.artist || undefined,
-                      duration: track.duration ? `${Math.floor(track.duration / 60)}:${String(track.duration % 60).padStart(2, '0')}` : '0:00',
-                      url: track.audioUrl || '',
-                      id: track.id,
-                      guid: track.guid || undefined,
-                      image: track.image || undefined,
-                      mediaType: (track.mediaType as 'audio' | 'video' | undefined) || undefined
-                    })),
-                    trackCount: album.trackCount || album.Track?.length || 0,
+                    // `/api/favorites/albums` no longer sends a track list —
+                    // it was 593 KB of a 1.27 MB load that nothing rendered.
+                    // The card gets counts instead, and resolves the real
+                    // tracks only when someone downloads or plays.
+                    tracks: [],
+                    trackCount: album.trackCount || 0,
+                    downloadableTrackCount: (album as any).downloadableTrackCount ?? 0,
+                    hasVideoTracks: (album as any).hasVideoTracks ?? false,
                     feedId: album.id, // Use album.id as feedId for lookup
                     type: album.type,
                     // V4V data for boost button
