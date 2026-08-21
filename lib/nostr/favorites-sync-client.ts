@@ -174,7 +174,21 @@ export function sharedFavoritesEnabledFor(pubkey: string): boolean {
 
 // Longer than the per-item queue's 500ms: this is ONE list republish for the
 // whole burst, and each cycle costs a relay read plus a signing prompt.
-const DEBOUNCE_MS = 1500;
+//
+// Was 1500ms, chosen when the work behind it took seconds and the wait was
+// hidden by it. Once the local load fell to ~95ms and the relay read to ~700ms,
+// this became roughly two thirds of everything a user waits through before
+// their signer even asks — so it was cut to the smallest value that still
+// collapses the burst it exists for.
+//
+// 600ms is not arbitrary. The burst this must absorb is favoriting an ALBUM,
+// which writes one FavoriteTrack per track: measured in production, three rows
+// landed within 12ms of each other. That has two orders of magnitude of room
+// here. What it no longer covers is a user deliberately favoriting separate
+// albums less than 600ms apart, which costs a second prompt — and a prompt is
+// the thing being spent, so do not shave this further without a reason as
+// concrete as that 12ms.
+const DEBOUNCE_MS = 600;
 
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 let inFlight: Promise<unknown> | null = null;
