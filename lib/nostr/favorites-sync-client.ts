@@ -496,7 +496,11 @@ async function publishSingleList(
       return true;
     }
 
-    const template = templateFromTags(tags, Math.floor(Date.now() / 1000));
+    // `read.content` verbatim. This app does not use `content`, but kind:10333
+    // is one event with many writers and `content` is the only free slot in it
+    // — so republishing `''` deletes whatever another app put there, silently
+    // and with no undo. See `SingleList.content`.
+    const template = templateFromTags(tags, Math.floor(Date.now() / 1000), read.content);
     const signed = timer
       ? await timer.time('sign', signSharedEvent(template))
       : await signSharedEvent(template);

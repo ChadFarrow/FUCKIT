@@ -31,6 +31,7 @@ import {
   tagsFromGroups,
   tagsFromNodes,
   singleListTemplate,
+  templateFromTags,
 } from './favorites-single-list';
 import { itemId, showId, type FavoriteEntry } from './pc20-identifiers';
 
@@ -63,6 +64,63 @@ test('the event is a plain replaceable kind with an alt tag and empty content', 
     false
   );
   assert.deepEqual(template.tags[0], ['alt', LIST_ALT]);
+});
+
+/**
+ * An opaque `content` this app did not write. Base64, because that is what a
+ * NIP-44 payload looks like, but the point is that its meaning is none of our
+ * business — only its bytes are.
+ */
+const FOREIGN_CONTENT =
+  'AkQBc1lPZ0hlYVh1WkJqc0hRZmpOUFlZQXpQMkVmVkxRPT0/dGhpcw==';
+
+test('`content` written by another app survives this app\'s republish', () => {
+  // THE CARRY RULE FOR `content`, AND THE SPEC DOES NOT STATE IT.
+  //
+  // Rule 4 — carry what you can't read — is written about TAGS. So a writer
+  // following the document to the letter republishes the empty string the
+  // format has specified from the start, and erases whatever another app put
+  // in `content`: silently, on someone else's device, with no undo, while
+  // behaving correctly by the document it was written against. kind:10333 is
+  // replaceable and keeps no history, so there is nothing to recover from.
+  //
+  // This app does not use `content` and does not need to. It only has to put
+  // back what it found.
+  const read = {
+    ...parseSingleList([
+      ['alt', LIST_ALT],
+      ['medium', 'music'],
+      ['i', showId(MUSIC_A)],
+      ['k', 'podcast:guid'],
+    ]),
+    updatedAt: 1_700_000_000,
+    exists: true,
+    trustworthy: true,
+    content: FOREIGN_CONTENT,
+  };
+
+  const merged = mergeSingleList(read, groupForSingleList([album(MUSIC_A, 'music')]));
+  const tags = tagsFromNodes(merged.nodes, merged.foreignTags, merged.foreignKinds);
+  const template = templateFromTags(tags, 1_700_000_100, read.content);
+
+  assert.equal(template.content, FOREIGN_CONTENT);
+});
+
+test('carrying `content` is idempotent — a second republish does not touch it', () => {
+  // A carry that mutates on each pass is not a carry. If this ever drifts, two
+  // apps rewrite the event at each other forever and the only symptom is that
+  // it never stops.
+  const first = templateFromTags([['alt', LIST_ALT]], 1_700_000_100, FOREIGN_CONTENT);
+  const second = templateFromTags([['alt', LIST_ALT]], 1_700_000_200, first.content);
+  assert.equal(second.content, FOREIGN_CONTENT);
+});
+
+test('an empty `content` is only ever what the read actually held', () => {
+  // The inverse, and the reason `templateFromTags` takes no default. A list
+  // built from scratch has nothing to carry and is legitimately empty; a
+  // republish is empty only because the event we read was.
+  assert.equal(singleListTemplate([album(MUSIC_A, 'music')], 1_700_000_000).content, '');
+  assert.equal(templateFromTags([['alt', LIST_ALT]], 1_700_000_000, '').content, '');
 });
 
 test('an album with no favorited tracks emits a feed group and nothing else', () => {
