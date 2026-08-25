@@ -46,7 +46,21 @@ Per-subsystem test commands live in the skill that owns the subsystem — each s
   deploy-and-retest cycle on 2026-08-20, when stage timings added to chase a slow signing prompt printed nothing
   on stablekraft.app. Use `console.warn` for anything you intend to read in production.
 - **A grep that returns nothing is not evidence that nothing exists.** Under zsh, an unquoted `--include=*.tsx` errors with `no matches found` and prints nothing — indistinguishable from a clean result. This produced three wrong conclusions during the security audit, including "this route has no callers" about a live endpoint that was nearly deleted. Quote the globs, and check the exit status before believing an empty result.
-- Run `npm run build` before committing — but **stop `npm run dev` first**. Both write `.next/`, so building over a live dev server replaces the chunks its running client already fetched, and every asset request 400s (`ERR_ABORTED` on `_next/static/...`) until the dev server is restarted. Symptom is a page stuck on its loading state with no obvious error. Recovery: kill dev, `rm -rf .next`, `npm run dev`. Any phone testing over the LAN needs a hard reload afterwards.
+- **There is a local relay now, and a write can be tested without touching production.** `npm run
+  relay` (127.0.0.1, in-memory, replaceable-event semantics), `npm run seed:relay -- <npub>` (copies
+  the real kind:10333 in, read-only), `npm run e2e:favorites` (the whole loop on a throwaway key).
+  Point the app at it with `NEXT_PUBLIC_NOSTR_RELAYS=ws://127.0.0.1:7777` — `getDefaultRelays()`
+  returns an explicitly configured list **without** `filterReachableRelays`, which drops every
+  loopback URL. Override `DATABASE_URL` from `.env` in the same command: **`.env.local` points
+  `npm run dev` at Railway production**, and never edit `.env.local` to change that.
+- Run `npm run build` before committing — but **stop `npm run dev` first**, *or* build into a
+  different directory with `NEXT_DIST_DIR=.next-build npm run build`, which is what to do when a dev
+  server is running. Changing the dev PORT does not help; the collision is the directory. Next
+  rewrites `tsconfig.json` on every build, so `git checkout tsconfig.json` afterwards.
+  Building over a live dev server replaces the chunks its running client already fetched, and every
+  asset request 400s (`ERR_ABORTED` on `_next/static/...`) until the dev server is restarted. Symptom
+  is a page stuck on its loading state with no obvious error. Recovery: kill dev, `rm -rf .next`,
+  `npm run dev`. Any phone testing over the LAN needs a hard reload afterwards.
 - **Testing on a phone over the LAN? The service worker will serve it stale content.** `next-pwa` is disabled in dev, but a production `npm run build` writes `public/sw.js` + `public/workbox-*.js`, and Next serves `public/` statically **even in dev** — so any device that registered the worker keeps getting its cached HTML shell and CSS from `http://<lan-ip>:3000`. Symptom: the phone shows a layout you already changed, often with CSS partly missing (flex `gap`s collapsing, so text runs together) because the shell and the stylesheet come from different builds. A plain reload does not fix it. Delete `public/sw.js` and `public/workbox-*.js` (both gitignored build artifacts) so `/sw.js` 404s — the browser then drops the registration on next load — and reload twice, or use a private tab. Worth deleting them after every local `npm run build` you didn't intend to deploy.
 - No `src/` directory — all source lives in `app/`, `lib/`, `components/`, `contexts/`
 - No `deploy-*/` artifacts in the repo — add to `.gitignore` if generated
@@ -116,6 +130,23 @@ line holds the full story.
   shipped until 2026-08-14. A loose node also must **not** close the open feed group: dropping a non-UUID
   `podcast:guid:` reparented every item after it to the previous feed, well-formed and invisible →
   `favorites-cross-app`.
+- **Favorites have a public/private/off choice, and the private half is a SECOND list in `content`.**
+  Public entries are `i` tags; private ones are a NIP-44 encrypt-to-self of a tag array. Three rules
+  only work together, and each shipped as a production bug in the sibling app: the digest compares
+  **decrypted tags, never ciphertext** (NIP-44's nonce makes ciphertext differ every time, so a
+  ciphertext digest republishes forever); the baseline is **two records**, with the inactive half's
+  claims **carried forward and cleared by the move, never re-derived** (nothing feeds that half, so a
+  derived claim goes unbacked and cycle 2 deletes what cycle 1 merely carried — it takes **two
+  cycles** to show); and the inactive half is carried on the wire but **never painted into local
+  state**, because local state comes back as `local` and is republished into the *active* half, which
+  private→public is a disclosure. Seeding a device's mode from the wire must have **each half answer
+  only for itself** — public-first fails open and republishes a private list as plaintext, indexed
+  tags → `favorites-cross-app`.
+- **An unreadable private half is a degraded read, not an empty one.** Same exit as a silent relay.
+  `decodePrivateFavorites` returns `null` rather than `[]` for valid JSON that is not a tag array —
+  a `JSON.parse` that succeeds on a non-array marks the blob readable-and-empty, and the next
+  republish rewrites `content` from those empty lists. NIP-55 and read-only nip05 sessions **cannot
+  encrypt at all**, which is a normal state, not an error → `favorites-cross-app`, `nostr-signer`.
 - **Inbound removals do not propagate.** `favorites-sync-client.ts` hardcodes `baseline: []` on the
   `/api/favorites/sync-shared` call and `SHARED_FAVORITES_APPLY_DELETES` defaults off, so unfavoriting in the
   other app never reaches this one. This fails safe — nothing is destroyed — but it is not symmetric with our
