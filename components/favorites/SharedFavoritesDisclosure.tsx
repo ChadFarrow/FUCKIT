@@ -1,8 +1,14 @@
 'use client';
 
-import { Globe } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Globe, Lock, CircleSlash } from 'lucide-react';
 import { useNostr } from '@/contexts/NostrContext';
-import { sharedFavoritesEnabledFor } from '@/lib/nostr/favorites-sync-client';
+import {
+  FAVORITES_PRIVACY_CHANGED_EVENT,
+  getFavoritesPrivacy,
+  sharedFavoritesEnabledFor,
+} from '@/lib/nostr/favorites-sync-client';
+import type { FavoritesPrivacy } from '@/lib/nostr/favorites-privacy';
 
 /**
  * "Your favorites are public" — said out loud, on the screen where favoriting
@@ -40,21 +46,62 @@ import { sharedFavoritesEnabledFor } from '@/lib/nostr/favorites-sync-client';
  */
 export default function SharedFavoritesDisclosure() {
   const { user, isAuthenticated } = useNostr();
+  const pubkey = user?.nostrPubkey ?? '';
+  const [mode, setMode] = useState<FavoritesPrivacy | null>(null);
 
-  if (!isAuthenticated || !user?.nostrPubkey) return null;
+  useEffect(() => {
+    if (!pubkey) return;
+    setMode(getFavoritesPrivacy(pubkey));
+    const onChange = () => setMode(getFavoritesPrivacy(pubkey));
+    window.addEventListener(FAVORITES_PRIVACY_CHANGED_EVENT, onChange);
+    return () => window.removeEventListener(FAVORITES_PRIVACY_CHANGED_EVENT, onChange);
+  }, [pubkey]);
+
+  if (!isAuthenticated || !pubkey) return null;
   // Read-only session: no signer, so nothing of theirs is ever published.
-  if (user.loginType === 'nip05') return null;
+  if (user?.loginType === 'nip05') return null;
 
-  const crossApp = sharedFavoritesEnabledFor(user.nostrPubkey);
+  const crossApp = sharedFavoritesEnabledFor(pubkey);
+
+  // The per-item kind 30001 events are public whatever the shared list does, so
+  // the first sentence is unconditional. Only the SHARED list has a mode, which
+  // is why the two are described separately rather than as one claim.
+  const Icon = mode === 'private' ? Lock : mode === 'off' ? CircleSlash : Globe;
 
   return (
     <p className="flex items-start gap-2 text-xs text-gray-500">
-      <Globe className="w-3.5 h-3.5 flex-shrink-0 mt-px" aria-hidden="true" />
+      <Icon className="w-3.5 h-3.5 flex-shrink-0 mt-px" aria-hidden="true" />
       <span>
         Favorites you sync are published to Nostr as public events signed by your key — anyone can
         see what you&apos;ve saved, the same way your follow list is public.
-        {crossApp && ' They also form a shared list that other podcast apps you sign into can read.'}
+        {crossApp && sharedListSentence(mode)}
       </span>
     </p>
   );
+}
+
+/**
+ * What the SHARED list is doing, which is the only part the mode changes.
+ *
+ * Each branch has to be true of the state it describes, or this stops being a
+ * disclosure. In particular `'private'` does not say "your favorites are
+ * private" — the 30001 events above are still public, and the pubkey, the kind,
+ * the timestamp and the event SIZE stay public on the shared list too. What is
+ * hidden is which feeds are in it.
+ *
+ * `null` — the user has not answered yet — must not imply a default. Nothing is
+ * published to the shared list until they choose, and saying so is the honest
+ * version of an empty state.
+ */
+function sharedListSentence(mode: FavoritesPrivacy | null): string {
+  switch (mode) {
+    case 'public':
+      return ' They also form a shared list that other podcast apps you sign into can read, and relays index it — anyone can search for who saved a feed.';
+    case 'private':
+      return ' Your shared cross-app list is encrypted to your own key, so other apps you sign into can read it and nobody else can. Its size and timing stay visible.';
+    case 'off':
+      return ' You have turned off the shared cross-app list, so nothing new is published to it.';
+    default:
+      return ' A shared list that other podcast apps can read is available, and nothing is published to it until you choose below.';
+  }
 }

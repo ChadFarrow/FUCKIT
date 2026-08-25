@@ -6,6 +6,7 @@ import ErrorBoundary from '@/components/ErrorBoundary'
 import ClientErrorBoundary from '@/components/ClientErrorBoundary'
 import { ToastContainer } from '@/components/Toast'
 import AndroidBatteryHintModal from '@/components/AndroidBatteryHintModal'
+import FavoritesPrivacyPrompt from '@/components/favorites/FavoritesPrivacyPrompt'
 import AndroidBackButton from '@/components/AndroidBackButton'
 import { AudioProvider } from '@/contexts/AudioContext'
 import { SessionProvider } from '@/contexts/SessionContext'
@@ -309,6 +310,12 @@ export default function RootLayout({
                           <BackToTop />
                           <ToastContainer />
                           <AndroidBatteryHintModal />
+                          {/* Asked once, after the first favorite is saved.
+                              Mounted here rather than in FavoriteButton because
+                              a page can hold hundreds of those and the question
+                              belongs to the account. Renders nothing until a
+                              favorite is made by someone who has not answered. */}
+                          <FavoritesPrivacyPrompt />
                           <AndroidBackButton />
                           <ServiceWorkerRegistration />
                           </KeyboardShortcutsProvider>
