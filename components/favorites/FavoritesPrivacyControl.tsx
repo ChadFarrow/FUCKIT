@@ -204,6 +204,18 @@ export default function FavoritesPrivacyControl() {
         {active ? active.hint : 'Not set yet — choose where new favorites go.'}
       </p>
 
+      {/* WHY THIS IS NOT JUST THE `title` ATTRIBUTE. A phone has no hover, so a
+          tooltip on the disabled button is unreachable for exactly the users
+          most likely to hit this — Amber over NIP-55 is an Android signer. A
+          greyed option with no stated reason reads as a broken app. */}
+      {canEncrypt === false && (
+        <p className="mt-1 text-xs text-gray-500">
+          Private needs a signer that can encrypt (NIP-44). Amber connected over{' '}
+          <span className="whitespace-nowrap">bunker://</span> can; the Android app-to-app signer
+          and a read-only NIP-05 login cannot.
+        </p>
+      )}
+
       {message && <p className="mt-2 text-xs text-gray-400">{message}</p>}
 
       {leaving && (
