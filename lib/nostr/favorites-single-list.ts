@@ -517,6 +517,97 @@ export function templateFromTags(tags: string[][], createdAt: number, content: s
   return { kind: SINGLE_LIST_KIND, tags, content, created_at: createdAt };
 }
 
+// ---------------------------------------------------------------------------
+// The private half's plaintext
+// ---------------------------------------------------------------------------
+
+/**
+ * The largest plaintext we will hand a signer to encrypt.
+ *
+ * NIP-44 v2 as originally published capped plaintext at 65535 bytes. The
+ * current text allows far more and switches to a 6-byte length prefix at 65536,
+ * so a library built against the older text REJECTS a payload across that line.
+ * A private list that grows past 64 KB is then unreadable in an app whose
+ * `nip44` is a year old — and unreadable is indistinguishable from empty, which
+ * is the failure this whole subsystem is arranged to avoid.
+ *
+ * Sized under it with room to spare rather than at it. NIP-44 also pads to a
+ * power-of-two chunk and base64-encodes, so `content` runs about 1.5× this.
+ */
+export const PRIVATE_PLAINTEXT_MAX = 60_000;
+
+/** UTF-8 byte length, which is what the NIP-44 limit counts. */
+export function plaintextBytes(text: string): number {
+  return new TextEncoder().encode(text).length;
+}
+
+/**
+ * The private entries, as the bytes we hand a signer to encrypt.
+ *
+ * A stringified tag array, per the spec — the SAME shape as `event.tags`, so
+ * the grouping rules apply inside it unchanged and `parseSingleList` reads it
+ * without knowing which half it came from.
+ *
+ * The one deviation is the escaping, and it is not cosmetic: `?` is written as
+ * its six-character JSON escape, backslash-u-0-0-3-f.
+ *
+ * This app's Amber path is NIP-46, which is not affected — but Boost Me Bitch
+ * reads what we write and may be on NIP-55, where Amber URL-decodes the WHOLE
+ * `nostrsigner:` URI and only then splits it on `?`. A plaintext carrying one
+ * is silently truncated there and comes back "Amber received a malformed
+ * nostrsigner request". Percent-encoding does not help — the `%3F` decodes back
+ * into the character it splits on. And this payload is full of candidates: an
+ * RSS `<guid>` is an arbitrary publisher-chosen string, and item guids are
+ * routinely permalink URLs. One favorited track with a query string in its guid
+ * would otherwise break every private publish on Android, forever, with a
+ * message that reads as "Amber isn't installed".
+ *
+ * The escape has to be one every JSON reader already understands, which that
+ * is: `JSON.parse` gives back the same string, byte for byte, in any
+ * implementation. An app-specific wrapper would put our own marker inside the
+ * ciphertext, and the other app would find something it was never told about.
+ *
+ * `?` can only ever appear inside a string literal here — every element of
+ * every tag is a string, and the structural characters are `[`, `]`, `,` and
+ * `"` — so a global replace over the stringified output cannot corrupt the
+ * syntax. A `?` preceded by a backslash is preceded by an ESCAPED backslash
+ * (`\\`), so the replacement lands after it correctly.
+ */
+export function encodePrivateFavorites(tags: string[][]): string {
+  return JSON.stringify(tags).replace(/\?/g, '\\u003f');
+}
+
+/**
+ * Read a decrypted private half back into a tag array.
+ *
+ * Returns null when the plaintext is not an array of tag arrays. **Null means
+ * "this is not a private favorites list", and the caller MUST treat it exactly
+ * as it treats a decrypt that failed**: park the ciphertext, publish nothing
+ * derived from it, and report a degraded read.
+ *
+ * The hole this closes is a `JSON.parse` that SUCCEEDS on something that is not
+ * a tag array — a number, a string, an object. That leaves the blob marked
+ * readable and empty, and the next republish rewrites `content` from those
+ * empty lists and destroys it. "I parsed it and it was empty" and "I could not
+ * read it" have to be different answers here.
+ */
+export function decodePrivateFavorites(plaintext: string): string[][] | null {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(plaintext);
+  } catch {
+    return null;
+  }
+  if (!Array.isArray(parsed)) return null;
+  const tags: string[][] = [];
+  for (const tag of parsed) {
+    if (!Array.isArray(tag)) return null;
+    if (!tag.every((v) => typeof v === 'string')) return null;
+    tags.push(tag as string[]);
+  }
+  return tags;
+}
+
 /**
  * A stable digest of what would be published.
  *

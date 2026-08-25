@@ -27,6 +27,11 @@
 
 import { getDefaultRelays } from './relay';
 import { getUserWriteRelays } from './nip65';
+import { NIP44_TIMEOUT_MS, nip44Decrypt, nip44Encrypt, signerSupportsNip44 } from './nip44';
+
+// Re-exported: three components import it from here, and the encryption itself
+// moved to ./nip44 so the favorites private half shares one implementation.
+export { signerSupportsNip44 };
 
 export const NWC_BACKUP_KIND = 30078;
 export const NWC_BACKUP_D_TAG = 'stablekraft:wallet:nwc';
@@ -34,24 +39,6 @@ export const NWC_BACKUP_D_TAG = 'stablekraft:wallet:nwc';
 /** Pubkeys that answered "Not now", so the post-login offer doesn't nag on every sign-in. */
 export const NWC_BACKUP_DECLINED_KEY = 'sk_nwc_backup_declined';
 
-/**
- * NIP-44 encrypt/decrypt goes through the user's signer, and a REMOTE signer
- * means a human tapping Approve on their phone. This was 10s — a figure taken
- * from "iOS killed the extension's background worker" — and it silently broke
- * Amber: the relay query found the backup, the decrypt request went out, and
- * we gave up long before the user could reach for their phone
- * ("Decryption timed out").
- *
- * 120s matches what the rest of the codebase already assumes about remote
- * signers: nip46-client's own request timeout and withSignerNudge's 125s hard
- * fail. The nudge toast (below) appears after 4s so the wait is never silent.
- */
-// Sits OUTSIDE withSignerNudge's 125s hard fail, which itself sits outside
-// nip46-client's 120s request timeout. That ordering is deliberate and
-// documented: the innermost layer has the most specific error, so it must be
-// the one that fires. An outer wrapper at exactly 120s raced the client and
-// replaced its diagnosis with a bare "timed out".
-const NIP44_TIMEOUT_MS = 130_000;
 
 const RELAY_QUERY_TIMEOUT_MS = 8_000;
 const MAX_READ_RELAYS = 20;
@@ -229,73 +216,7 @@ export async function checkBackupExists(
   return status;
 }
 
-/**
- * Can the current session encrypt at all? False for NIP-55, for a read-only
- * nip05 session, and for extensions without window.nostr.nip44. Callers should
- * hide the backup UI rather than let it fail at use time.
- */
-export async function signerSupportsNip44(): Promise<boolean> {
-  // A real extension's nip44 is a reliable yes. Anything else has to ask the
-  // app's own signer — see getWindowNip44 for why window presence is not proof.
-  if (getWindowNip44()) return true;
-  try {
-    const { getUnifiedSigner } = await import('./signer');
-    const signer = getUnifiedSigner();
-    await signer.ensureInitialized();
-    return signer.supportsNip44();
-  } catch {
-    return false;
-  }
-}
 
-/**
- * The nip44 interface from a REAL NIP-07 extension.
- *
- * The login-type gate is essential and was learned the hard way. nostr-login
- * installs its own `window.nostr` shim that advertises nip44.encrypt/decrypt
- * whether or not it has a signer behind it — and when it doesn't, calling one
- * pops its "Welcome to Nostr!" login dialog instead of encrypting. `noBanner`
- * doesn't suppress that; it only hides the passive banner.
- *
- * So presence on window proves nothing. Only trust it when the user actually
- * signed in with an extension. For nip46 (Amber, Primal, bunker) the app's own
- * UnifiedSigner holds the live connection and must be used instead — it was
- * connected the whole time while this shim was hijacking the call.
- */
-function getWindowNip44(): { encrypt: Function; decrypt: Function } | null {
-  if (typeof window === 'undefined') return null;
-  if (localStorage.getItem('nostr_login_type') !== 'extension') return null;
-  const n44 = (window as any).nostr?.nip44;
-  return n44 && typeof n44.encrypt === 'function' && typeof n44.decrypt === 'function' ? n44 : null;
-}
-
-async function nip44Encrypt(pubkey: string, plaintext: string): Promise<string> {
-  const win = getWindowNip44();
-  if (win) {
-    const { withSignerNudge } = await import('./signer-nudge');
-    return withSignerNudge(() => win.encrypt(pubkey, plaintext) as Promise<string>, {
-      op: 'encrypt',
-    });
-  }
-  const { getUnifiedSigner } = await import('./signer');
-  const signer = getUnifiedSigner();
-  await signer.ensureInitialized();
-  return signer.nip44Encrypt(pubkey, plaintext);
-}
-
-async function nip44Decrypt(pubkey: string, ciphertext: string): Promise<string> {
-  const win = getWindowNip44();
-  if (win) {
-    const { withSignerNudge } = await import('./signer-nudge');
-    return withSignerNudge(() => win.decrypt(pubkey, ciphertext) as Promise<string>, {
-      op: 'decrypt',
-    });
-  }
-  const { getUnifiedSigner } = await import('./signer');
-  const signer = getUnifiedSigner();
-  await signer.ensureInitialized();
-  return signer.nip44Decrypt(pubkey, ciphertext);
-}
 
 /**
  * Fetch and decrypt the stored connection string. Prompts the signer, so only
