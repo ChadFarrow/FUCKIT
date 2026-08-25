@@ -17,11 +17,36 @@ npx tsx lib/nostr/favorites.relay-probe.ts               # read-only smoke check
 npx tsx scripts/backup-favorites.ts dump > fav.json      # snapshot favorites before enabling SHARED_FAVORITES_APPLY_DELETES
 ```
 
+**The local harness — because there is nowhere else to test a WRITE.** This repo has no preview
+environment, and a dev server on localhost publishes to the real relays under the user's real npub.
+A replaceable event keeps no history, so a bad publish while testing is not recoverable.
+
+```
+npm run relay                    # ws://127.0.0.1:7777, in-memory, REPLACEABLE-event semantics
+npm run seed:relay -- <npub>     # copies the real kind:10333 in — read-only against production
+npm run seed:relay -- <npub> --content 'AkQB…'   # force a private half to test the carry against
+npm run e2e:favorites            # the whole loop on a throwaway key: read → merge → publish → assert
+npx tsx lib/nostr/favorites.relay-probe.ts --relay ws://127.0.0.1:7777
+```
+
+Point the app at it with `NEXT_PUBLIC_NOSTR_RELAYS=ws://127.0.0.1:7777`. That works because
+`getDefaultRelays()` returns an explicitly configured list **without** `filterReachableRelays` —
+which drops every loopback URL, and used to leave the app with an empty relay list rather than an
+error. Also override `DATABASE_URL` from `.env`: **`.env.local` points `npm run dev` at Railway
+production**, and the shared-favorites reconcile is the only destructive write in this subsystem.
+Do not edit `.env.local` — override it per-command.
+
+The e2e is where the bugs are. Every unit vector here is a pure function, and the ones that shipped
+— the blanked `content`, the republish from `groups`, the baseline defects — all passed the unit
+suite and failed in the wiring between the pieces.
+
 ---
 
 ## The format — kind 10333, one flat list
 
-Spec: [`PC20-Nostr/pc20-favorites.md`](https://github.com/ChadFarrow/PC20-Nostr/blob/main/pc20-favorites.md), the canonical app-neutral copy kept outside both implementing repos. **That document, not this code, is what a third app implements against.** One plain (non-`d`-tagged) replaceable event, so exactly one per pubkey; `i` tags grouped under a running `medium`; `content` empty and public. Republishing the whole tag list IS the sync.
+Spec: [`PC20-Nostr/pc20-favorites.md`](https://github.com/ChadFarrow/PC20-Nostr/blob/main/pc20-favorites.md), the canonical app-neutral copy kept outside both implementing repos. **That document, not this code, is what a third app implements against.** One plain (non-`d`-tagged) replaceable event, so exactly one per pubkey; `i` tags grouped under a running `medium`. Republishing the whole tag list IS the sync.
+
+**`content` is CARRIED, never written.** This app puts nothing there and reads nothing from it, and it must still return `event.content` byte-for-byte on every republish — `fetchSingleList` captures it and `templateFromTags` takes it with **no default**. The rule is not in the spec: rule 4, *carry what you can't read*, is written about **tags** and says nothing about `content`, so a writer following the document to the letter republishes the empty string the format has specified from the start. `content` is the only free slot in a one-event, many-writer format, and Boost Me Bitch puts a NIP-44 private half there. Blanking it deletes another app's data silently, on someone else's device, with no undo, on an event that keeps no history. A default parameter is how a `''` gets written back in by habit, which is why there isn't one; `singleListTemplate` builds a list from scratch and legitimately passes `''`. The digest gate is unaffected — unchanged tags publish nothing, so `content` is not rewritten either.
 
 It **replaced** the two-list NIP-78 kind:30078 design, which proved overcomplicated and has been deleted from both this repo and the spec repo. Events at `d:podcast:favorites` and `d:podcast:favorites:items` are still on the relays and are the rollback path; nothing in this app reads or writes them.
 
