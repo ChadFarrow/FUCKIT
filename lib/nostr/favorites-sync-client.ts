@@ -36,7 +36,7 @@ import {
   type SingleList,
   type SingleListGroup,
 } from './favorites-single-list';
-import { RelayManager, getDefaultRelays, filterReachableRelays } from './relay';
+import { RelayManager, resolvePublishRelays } from './relay';
 import { FAVORITE_STATUSES_INVALIDATED_EVENT } from '../favorite-status-cache';
 import { npubToPublicKey } from './keys';
 import { isUsable, readPrivateHalf, type PrivateHalf } from './favorites-private-half';
@@ -338,9 +338,12 @@ async function loadLocalItems(userId: string): Promise<FavoriteEntry[]> {
 }
 
 function resolveRelays(userRelays?: string[]): string[] {
-  // Defaults are always unioned in: a dead or AUTH-gated relay in a user's
-  // NIP-65 list otherwise produces "published to 0 relays".
-  return [...new Set([...filterReachableRelays(userRelays || []), ...getDefaultRelays()])];
+  // Defaults are unioned in — a dead or AUTH-gated relay in a user's NIP-65 list
+  // otherwise produces "published to 0 relays" — EXCEPT when the build is
+  // pointed at a local relay, where the union would silently add the user's real
+  // relays back and turn a local test into a real publish. See
+  // `resolvePublishRelays`.
+  return resolvePublishRelays(userRelays);
 }
 
 async function signSharedEvent(template: {

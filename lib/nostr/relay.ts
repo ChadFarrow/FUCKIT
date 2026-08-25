@@ -222,6 +222,47 @@ export function filterReachableRelays(urls: string[]): string[] {
 }
 
 /**
+ * Is this build pointed exclusively at a LOCAL relay?
+ *
+ * True only when every configured default is a loopback address, which nothing
+ * but a deliberate test setup ever is. It means "publish nowhere but here".
+ */
+export function relaysAreIsolated(): boolean {
+  const relays = getDefaultRelays();
+  return (
+    relays.length > 0 &&
+    relays.every((url) => {
+      const u = url.toLowerCase();
+      return u.includes('127.0.0.1') || u.includes('localhost');
+    })
+  );
+}
+
+/**
+ * The relay set for an operation that publishes under the user's key: their own
+ * relays, plus the defaults.
+ *
+ * **Defaults are unioned in** because a dead or AUTH-gated relay in someone's
+ * NIP-65 list otherwise produces "published to 0 relays".
+ *
+ * **Unless the build is pointed at a local relay, in which case ONLY that is
+ * returned** — and this exception is the whole reason the helper exists.
+ * Pointing `NEXT_PUBLIC_NOSTR_RELAYS` at 127.0.0.1 looks like it isolates the
+ * app, and without this it does not: the union quietly adds the user's real
+ * NIP-65 relays back, so a "local" test publishes a real event under their real
+ * key, to their real relays, on a replaceable event that keeps no history. That
+ * is the exact accident the local relay exists to prevent, and it fails silently
+ * — the publish succeeds and looks like the test working.
+ *
+ * Use this for anything that PUBLISHES. A read can union freely.
+ */
+export function resolvePublishRelays(userRelays?: string[]): string[] {
+  const defaults = getDefaultRelays();
+  if (relaysAreIsolated()) return defaults;
+  return [...new Set([...filterReachableRelays(userRelays || []), ...defaults])];
+}
+
+/**
  * Get default relay URLs from environment or use common defaults
  * Automatically filters out unreachable relays (localhost, .local, etc.)
  * @returns Array of relay URLs

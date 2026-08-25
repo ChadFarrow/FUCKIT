@@ -124,14 +124,15 @@ async function flushQueue() {
     }
 
     // Collect all relay URLs from queued items
-    const { filterReachableRelays } = await import('./relay');
+    const { resolvePublishRelays } = await import('./relay');
     const allUserRelays = items.flatMap(item => {
       const relays = 'relays' in item ? item.relays : undefined;
       return relays || [];
     });
-    const userRelays = filterReachableRelays([...new Set(allUserRelays)]);
-    const defaultRelays = getDefaultRelays();
-    const relayUrls = [...new Set([...userRelays, ...defaultRelays])];
+    // Publishes under the user's key, so it honours a local-relay build: the
+    // plain union would add their real NIP-65 relays back and send real events
+    // from what was meant to be an isolated test. See `resolvePublishRelays`.
+    const relayUrls = resolvePublishRelays([...new Set(allUserRelays)]);
 
     // Connect ONE RelayManager for the entire batch — and START connecting
     // without waiting. Nothing in an event template depends on a relay, so
