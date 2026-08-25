@@ -152,6 +152,25 @@ async function realRead(relays: string[], pubkey: string) {
   }, {});
   console.log(`     groups by medium: ${JSON.stringify(byMedium)}`);
 
+  // `content` — the private half, which this app carries and does not read.
+  //
+  // Reported because it is the only way to check the carry from outside: read
+  // here, toggle a favorite in the app, read again, and the bytes must be
+  // identical while `updated` moves. Without this line the tool built for
+  // verifying this list could not answer the one question it was blocking on.
+  //
+  // A prefix, never the whole thing. It is someone's encrypted favorites; the
+  // length and the first few characters are enough to compare two reads, and
+  // dumping the payload into a terminal that gets pasted into an issue is not.
+  if (r.content.length === 0) {
+    console.log('     content: empty — no private half on this list');
+  } else {
+    console.log(
+      `     content: ${r.content.length} bytes, starts ${JSON.stringify(r.content.slice(0, 12))}` +
+        ' — carried verbatim, never parsed'
+    );
+  }
+
   // This app never writes one. Another writer might, and they resolve less well
   // — no parent feed means no /episodes/byguid lookup.
   if (r.orphanItemGuids.length) {
@@ -168,11 +187,20 @@ async function main() {
   // declaring all of them dead. See lib/nostr/node-websocket.ts.
   await installNodeWebSocket();
 
-  const arg = process.argv[2];
+  const args = process.argv.slice(2);
+  const relayAt = args.indexOf('--relay');
+  const arg = args.find((a) => !a.startsWith('--') && args[relayAt + 1] !== a);
   const pubkey = toPubkey(arg || DEFAULT_NPUB);
-  const relays = getDefaultRelays();
 
-  console.log('Favorites (kind 10333) — real-relay smoke check (read-only, never publishes)');
+  // `--relay ws://127.0.0.1:7777` points the probe at the local test relay.
+  // `getDefaultRelays()` reads NEXT_PUBLIC_NOSTR_RELAYS only in a browser, so
+  // there is otherwise no way to run this against anything but production —
+  // and the local relay is where a publish can be tested at all. See
+  // scripts/local-relay.mjs.
+  const relays = relayAt === -1 ? getDefaultRelays() : [args[relayAt + 1]];
+
+  console.log('Favorites (kind 10333) — read-only smoke check (never publishes)');
+  console.log(`relays: ${relays.join(', ')}`);
 
   await healthCheck(relays);
   await emptyRead(relays);

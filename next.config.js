@@ -180,6 +180,26 @@ const nextConfig = {
   // trailingSlash: true,
   // distDir: 'out',
 
+  /**
+   * Where the build writes. `.next` everywhere except when you say otherwise.
+   *
+   * `next dev` and `next build` write the SAME directory, so a build started
+   * while a dev server is running replaces the chunks its client already
+   * fetched: every asset request 400s, the page hangs on its loading state with
+   * no obvious error, and the only cure is killing dev, `rm -rf .next` and
+   * starting again. Any phone testing over the LAN then needs a hard reload
+   * too. Changing the dev PORT does not help — the collision is the directory.
+   *
+   * So: `NEXT_DIST_DIR=.next-build npm run build` verifies a build without
+   * touching a running dev server. Nothing in production sets this, so the
+   * deployed build is byte-identical to what it was before this existed.
+   *
+   * One side effect to undo afterwards: Next rewrites `tsconfig.json` on every
+   * build, and with this set it adds `.next-build/types` to `include` and
+   * reformats the file. `git checkout tsconfig.json` once the build is done.
+   */
+  distDir: process.env.NEXT_DIST_DIR || '.next',
+
   // Standalone output for smaller Docker images (~40% reduction)
   output: 'standalone',
 

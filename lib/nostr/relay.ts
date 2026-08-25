@@ -234,6 +234,20 @@ export function getDefaultRelays(): string[] {
     const envRelays = process.env.NEXT_PUBLIC_NOSTR_RELAYS;
     if (envRelays) {
       relays = envRelays.split(',').map(url => url.trim()).filter(Boolean);
+      // Returned WITHOUT filterReachableRelays, and that is the point.
+      //
+      // The filter exists to prune junk out of relay lists we did not write —
+      // a user's NIP-65 list, a relay's own recommendations. This list is
+      // deliberate build-time configuration, so second-guessing it is wrong on
+      // its face, and it silently broke the only way to test this app offline:
+      // the filter drops every loopback URL, so NEXT_PUBLIC_NOSTR_RELAYS set to
+      // ws://127.0.0.1:7777 resolved to an EMPTY relay list. Not an error — an
+      // empty list, which reads as "no relay answered", i.e. a degraded read.
+      //
+      // This repo has no preview environment, so a local relay is the only
+      // place a favorites publish can be tested without writing to the real
+      // event under the user's real key. See scripts/local-relay.mjs.
+      return relays;
     }
   }
 

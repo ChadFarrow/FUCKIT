@@ -131,6 +131,22 @@ export interface SingleList extends ParsedSingleList {
   exists: boolean;
   /** See `TrustedRead` — false means "nothing answered", not "no favorites". */
   trustworthy: boolean;
+  /**
+   * `event.content` EXACTLY as it arrived, always.
+   *
+   * kind:10333 is ONE event with many writers, and `content` is the only free
+   * slot in it. The spec's rule 4 — carry what you can't read — is written
+   * about TAGS and says nothing about `content`, so a writer following the
+   * document to the letter republishes the empty string the format has
+   * specified from the start. That erases whatever another app put there:
+   * silently, on someone else's device, with no undo, while behaving correctly
+   * by the document it was written against.
+   *
+   * This app does not use `content` and does not need to understand it. It
+   * only has to not destroy it. There is nothing to decrypt and nothing to
+   * parse — keep the bytes and put them back.
+   */
+  content: string;
 }
 
 /** The medium a node sits under — the running value at its position. */
@@ -477,13 +493,28 @@ export function mergeSingleList(
   };
 }
 
-/** The unsigned event template. `content` is empty and public, as in the spec. */
+/**
+ * The unsigned event template for a list built from scratch.
+ *
+ * `content` is empty here because there is nothing to carry: this builds a
+ * fresh list rather than republishing one that was read. Every republish goes
+ * through {@link templateFromTags} with the bytes the read returned.
+ */
 export function singleListTemplate(items: FavoriteEntry[], createdAt: number) {
-  return templateFromTags(buildSingleListTags(items), createdAt);
+  return templateFromTags(buildSingleListTags(items), createdAt, '');
 }
 
-export function templateFromTags(tags: string[][], createdAt: number) {
-  return { kind: SINGLE_LIST_KIND, tags, content: '', created_at: createdAt };
+/**
+ * The unsigned event template for a republish.
+ *
+ * `content` is REQUIRED and has no default. It used to be hardcoded to `''`,
+ * which is correct only while no app in the world puts anything there — and
+ * one now does. Whatever reaches this function must have come from the read,
+ * verbatim. A `''` written by habit is another app's data deleted, and a
+ * default parameter is how that habit gets written.
+ */
+export function templateFromTags(tags: string[][], createdAt: number, content: string) {
+  return { kind: SINGLE_LIST_KIND, tags, content, created_at: createdAt };
 }
 
 /**
@@ -651,12 +682,14 @@ export async function fetchSingleList(pubkey: string, relays: string[]): Promise
   const { event, trustworthy } = await readReplaceableEvent({ pubkey, relays, filter });
 
   if (!event) {
-    return { ...EMPTY_PARSED, updatedAt: 0, exists: false, trustworthy };
+    return { ...EMPTY_PARSED, updatedAt: 0, exists: false, trustworthy, content: '' };
   }
   return {
     ...parseSingleList(event.tags),
     updatedAt: event.created_at,
     exists: true,
     trustworthy: true,
+    // Verbatim, and never parsed. See `SingleList.content`.
+    content: event.content,
   };
 }
