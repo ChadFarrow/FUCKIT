@@ -25,21 +25,33 @@ import {
   type FavoriteEntry,
 } from './pc20-identifiers';
 import {
+  encodePrivateFavorites,
   fetchSingleList,
   groupForSingleList,
-  mergeSingleList,
   partitionSingleList,
-  publishedRecordFrom,
+  plaintextBytes,
   suppressOwnRemovals,
-  tagsFromNodes,
   templateFromTags,
-  type PublishedRecord,
+  PRIVATE_PLAINTEXT_MAX,
   type SingleList,
   type SingleListGroup,
 } from './favorites-single-list';
 import { RelayManager, getDefaultRelays, filterReachableRelays } from './relay';
 import { FAVORITE_STATUSES_INVALIDATED_EVENT } from '../favorite-status-cache';
 import { npubToPublicKey } from './keys';
+import { isUsable, readPrivateHalf, type PrivateHalf } from './favorites-private-half';
+import {
+  EMPTY_BASELINE,
+  parseBaseline,
+  publishPlan,
+  reconcileInput,
+  seedModeFromWire,
+  withdrawalPlan,
+  type FavoritesPrivacy,
+  type ListHalf,
+  type PrivacyBaseline,
+} from './favorites-privacy';
+import { nip44Encrypt } from './nip44';
 
 /**
  * What the last cross-app sync attempt did, for the UI.
@@ -374,12 +386,26 @@ const SINGLE_LIST_DIGEST_PREFIX = 'sk_single_list_digest';
 const SINGLE_LIST_PUBLISHED_PREFIX = 'sk_single_list_published';
 
 /**
- * What this device last published, so the merge can tell an entry it removed
- * from an entry another app added. See `PublishedRecord`.
+ * What this device last published, PER HALF, so the merge can tell an entry it
+ * removed from an entry another app added. See `PrivacyBaseline`.
+ *
+ * Two records rather than one, because a public-to-private move is a removal on
+ * one side and an addition on the other; against a single record those cancel
+ * and the entry is deleted outright. `parseBaseline` reads the old
+ * single-record shape as the PUBLIC half, which is true by construction.
  *
  * Anything unreadable reads as empty, which is the safe direction: an empty
- * record treats nothing as a removal.
+ * record treats nothing as a removal and suppresses nothing.
  */
+function getPublishedRecord(pubkey: string): PrivacyBaseline {
+  if (typeof window === 'undefined' || !pubkey) return EMPTY_BASELINE;
+  try {
+    return parseBaseline(localStorage.getItem(`${SINGLE_LIST_PUBLISHED_PREFIX}:${pubkey}`));
+  } catch {
+    return EMPTY_BASELINE;
+  }
+}
+
 /**
  * Record OUR contribution to what is now on the relays.
  *
@@ -387,31 +413,97 @@ const SINGLE_LIST_PUBLISHED_PREFIX = 'sk_single_list_published';
  * event and the one that found the relays already holding it. Entries carried
  * on another app's behalf are deliberately absent, so they stay foreign next
  * time; recording them would invert the resurrection bug into a clobber.
+ *
+ * The baseline comes from `publishPlan`, NOT from local state here, and that is
+ * the difference between the two halves: the active half's claims are backed by
+ * local state next cycle, the inactive half's are not, so claiming what we
+ * merely carried there deletes it on the following pass. See
+ * `favorites-privacy.ts`, defect 3.
  */
-function rememberPublished(pubkey: string, localGroups: SingleListGroup[]): void {
+function rememberPublished(pubkey: string, baseline: PrivacyBaseline): void {
   if (typeof window === 'undefined' || !pubkey) return;
   try {
-    localStorage.setItem(
-      `${SINGLE_LIST_PUBLISHED_PREFIX}:${pubkey}`,
-      JSON.stringify(publishedRecordFrom(localGroups))
-    );
+    localStorage.setItem(`${SINGLE_LIST_PUBLISHED_PREFIX}:${pubkey}`, JSON.stringify(baseline));
   } catch {
     /* quota / private browsing — an empty record only costs a propagation */
   }
 }
 
-function getPublishedRecord(pubkey: string): PublishedRecord {
-  if (typeof window === 'undefined' || !pubkey) return { feeds: [], items: [] };
+// ── the privacy mode ───────────────────────────────────────────────────────
+
+const PRIVACY_MODE_PREFIX = 'sk_favorites_privacy';
+
+/**
+ * Where this device puts new favorites, or null when the user has not been
+ * asked yet.
+ *
+ * Per-pubkey and per-device. It is a local preference about what this app does,
+ * not a claim about the account — a second device answers for itself, and
+ * `seedFavoritesMode` reads the answer off the wire so it usually does not have
+ * to ask at all.
+ */
+export function getFavoritesPrivacy(pubkey: string): FavoritesPrivacy | null {
+  if (typeof window === 'undefined' || !pubkey) return null;
+  const raw = localStorage.getItem(`${PRIVACY_MODE_PREFIX}:${pubkey}`);
+  return raw === 'public' || raw === 'private' || raw === 'off' ? raw : null;
+}
+
+export function setFavoritesPrivacy(pubkey: string, mode: FavoritesPrivacy): void {
+  if (typeof window === 'undefined' || !pubkey) return;
   try {
-    const raw = localStorage.getItem(`${SINGLE_LIST_PUBLISHED_PREFIX}:${pubkey}`);
-    if (!raw) return { feeds: [], items: [] };
-    const parsed = JSON.parse(raw);
-    const strings = (v: unknown) =>
-      Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : [];
-    return { feeds: strings(parsed?.feeds), items: strings(parsed?.items) };
+    localStorage.setItem(`${PRIVACY_MODE_PREFIX}:${pubkey}`, mode);
+    window.dispatchEvent(new CustomEvent(FAVORITES_PRIVACY_CHANGED_EVENT, { detail: { mode } }));
   } catch {
-    return { feeds: [], items: [] };
+    /* private browsing — the mode falls back to asking again, which is safe */
   }
+}
+
+/** Dispatched when the mode changes, so the page can re-render without a reload. */
+export const FAVORITES_PRIVACY_CHANGED_EVENT = 'favorites-privacy-changed';
+
+/**
+ * Which half this publish writes into — or `'off'`, meaning do not publish.
+ *
+ * Three ways to get `'off'`, and only one of them is the user opting out:
+ *
+ *   - they chose "not on Nostr", which is the real opt-out;
+ *   - they have not been asked yet AND the wire cannot answer for them;
+ *   - they would have to be asked, and asking is the UI's job, not this one's.
+ *
+ * The seeding is what stops the question being asked of someone who already has
+ * a list, and it is delegated to `seedModeFromWire` because getting it wrong
+ * FAILS OPEN — see that function. Each half answers only for itself: a device
+ * that guessed `'public'` over a private account would paint the decrypted
+ * entries into its store and republish every one as a plaintext, relay-indexed
+ * tag. That is a disclosure, so an ambiguous wire has to mean "ask", and until
+ * the user answers this device publishes nothing.
+ *
+ * A seeded answer is WRITTEN DOWN, so the wire is consulted once rather than on
+ * every sync. Re-deriving it each time would flip a device's mode the moment
+ * another app added an entry to the other half.
+ */
+function resolveMode(pubkey: string, read: SingleList, privateHalf: PrivateHalf): FavoritesPrivacy {
+  const stored = getFavoritesPrivacy(pubkey);
+  if (stored) return stored;
+
+  // Never seed from a half we could not read: "no private entries" and "the
+  // private entries are unreadable" are the same bytes to `seedModeFromWire`,
+  // and the second one would seed `'public'` over a private account.
+  if (!isUsable(privateHalf)) return 'off';
+
+  const hasPublic = read.groups.length > 0 || read.orphanItemGuids.length > 0;
+  const hasPrivate = privateHalf.list.groups.length > 0 || privateHalf.list.orphanItemGuids.length > 0;
+
+  const seeded = seedModeFromWire(hasPublic, hasPrivate);
+  if (!seeded) return 'off';
+  setFavoritesPrivacy(pubkey, seeded);
+  console.log(`ℹ️ Favorites: adopted ${seeded} mode from the list already on the relays`);
+  return seeded;
+}
+
+/** Whether the user still owes us an answer, for the UI to ask at the right time. */
+export function needsPrivacyAnswer(pubkey: string): boolean {
+  return sharedFavoritesEnabledFor(pubkey) && getFavoritesPrivacy(pubkey) === null;
 }
 
 /**
@@ -451,6 +543,8 @@ async function publishSingleList(
   local: FavoriteEntry[],
   relayUrls: string[],
   read: SingleList,
+  privateHalf: PrivateHalf,
+  mode: ListHalf,
   timer?: StageTimer
 ): Promise<boolean> {
   try {
@@ -468,18 +562,39 @@ async function publishSingleList(
       return false;
     }
 
-    const localGroups = groupForSingleList(local);
-    const merged = mergeSingleList(read, localGroups, getPublishedRecord(pubkey));
-    // From NODES, not from `merged.groups` — the node list is what holds the
-    // entries this app cannot model, and their positions. Re-rendering the
-    // group projection here would drop every one of them on republish.
-    const tags = tagsFromNodes(merged.nodes, merged.foreignTags, merged.foreignKinds);
+    // A private half we could not read is a degraded read of the SAME kind, and
+    // gets the same answer. We hold the ciphertext and could put it back — but
+    // the merge below would still be deriving the public half from a list whose
+    // other half is unknown, and in private mode we would be replacing entries
+    // we never saw with an empty array. Carry, publish nothing, say so.
+    if (!isUsable(privateHalf)) {
+      console.warn(
+        `⚠️ Favorites: the private half is ${privateHalf.status} — not publishing`
+      );
+      return false;
+    }
 
-    // The digest is computed on the MERGED tags, not on local state. On local
-    // state it would never notice a foreign entry arriving, so a group another
-    // app added would sit unreplicated until this device's own favorites
-    // happened to change.
-    const digest = JSON.stringify(tags);
+    const localGroups = groupForSingleList(local);
+    const plan = publishPlan({
+      mode,
+      publicRead: read,
+      privateRead: privateHalf.list,
+      local: localGroups,
+      baseline: getPublishedRecord(pubkey),
+    });
+
+    // THE DIGEST IS OVER BOTH HALVES, AND OVER THE PRIVATE HALF'S TAGS RATHER
+    // THAN ITS CIPHERTEXT. NIP-44 draws a fresh nonce per encryption, so the
+    // same entries encrypt to different bytes every time — a digest over
+    // ciphertext never matches, every load republishes, and two apps rewrite
+    // the event against each other forever with no symptom but that it never
+    // stops.
+    //
+    // Computed on the MERGED output, not on local state. On local state it
+    // would never notice a foreign entry arriving, so a group another app added
+    // would sit unreplicated until this device's own favorites happened to
+    // change.
+    const digest = JSON.stringify([plan.tags, plan.privateTags]);
     const key = `${SINGLE_LIST_DIGEST_PREFIX}:${pubkey}`;
     // Unchanged is a success, not a skip: the relays already hold exactly this.
     //
@@ -492,15 +607,14 @@ async function publishSingleList(
     // matches, the relays hold exactly what we would have published, so
     // recording our contribution is simply true.
     if (typeof window !== 'undefined' && localStorage.getItem(key) === digest) {
-      rememberPublished(pubkey, localGroups);
+      rememberPublished(pubkey, plan.baseline);
       return true;
     }
 
-    // `read.content` verbatim. This app does not use `content`, but kind:10333
-    // is one event with many writers and `content` is the only free slot in it
-    // — so republishing `''` deletes whatever another app put there, silently
-    // and with no undo. See `SingleList.content`.
-    const template = templateFromTags(tags, Math.floor(Date.now() / 1000), read.content);
+    const content = await buildContent(pubkey, plan.privateTags, privateHalf, timer);
+    if (content === null) return false;
+
+    const template = templateFromTags(plan.tags, Math.floor(Date.now() / 1000), content);
     const signed = timer
       ? await timer.time('sign', signSharedEvent(template))
       : await signSharedEvent(template);
@@ -520,14 +634,70 @@ async function publishSingleList(
       } catch {
         /* quota / private browsing — costs a redundant publish, nothing worse */
       }
-      rememberPublished(pubkey, localGroups);
+      rememberPublished(pubkey, plan.baseline);
     }
     const entries = signed.tags.filter((t: string[]) => t[0] === 'i').length;
-    console.log(`✅ Favorites: published ${entries} entries (kind 10333)`);
+    const hidden = plan.privateTags?.filter((t) => t[0] === 'i').length ?? 0;
+    console.log(
+      `✅ Favorites: published ${entries} public and ${hidden} private entries (kind 10333)`
+    );
     return true;
   } catch (error) {
     console.warn('⚠️ Favorites: publish failed —', error);
     return false;
+  }
+}
+
+/**
+ * What `content` must be for this publish: the ciphertext we read, or a fresh
+ * encryption of the private half.
+ *
+ * Returns null to ABORT the publish. An empty string would be a valid `content`
+ * and a catastrophic one, so a failure here must never fall through to it.
+ *
+ * Re-encrypting an unchanged half is unavoidable whenever the public half
+ * changed — one event, one `content` — and it is why the digest above compares
+ * plaintext. It costs one signer round trip, which on a remote signer is a
+ * second prompt on the user's phone.
+ */
+async function buildContent(
+  pubkey: string,
+  privateTags: string[][] | null,
+  privateHalf: PrivateHalf,
+  timer?: StageTimer
+): Promise<string | null> {
+  // Nothing in the private half and nothing was ever there: `content` stays as
+  // we found it, which for a list that never had one is the empty string.
+  const hasEntries = !!privateTags?.some((t) => t[0] === 'i');
+  if (!hasEntries && privateHalf.status === 'none') return '';
+
+  // Entries dropped to zero on a half that DID exist. Publishing `''` here is
+  // correct and is the only place it is: the user emptied their private list,
+  // and the alternative — carrying the old ciphertext — resurrects it.
+  if (!hasEntries && privateHalf.status === 'readable') return '';
+
+  if (!privateTags) return privateHalf.ciphertext;
+
+  const plaintext = encodePrivateFavorites(privateTags);
+  const bytes = plaintextBytes(plaintext);
+  if (bytes > PRIVATE_PLAINTEXT_MAX) {
+    // Refuse rather than publish something a conforming reader may reject.
+    // NIP-44 v2 as first published capped plaintext at 65535 bytes, and a
+    // library built to that text rejects anything past it — which reads as an
+    // empty private list, not as an error, in whichever app hits it.
+    console.warn(
+      `⚠️ Favorites: the private half is ${bytes} bytes, over the ${PRIVATE_PLAINTEXT_MAX} limit — not publishing`
+    );
+    return null;
+  }
+
+  try {
+    return timer
+      ? await timer.time('encrypt', nip44Encrypt(pubkey, plaintext))
+      : await nip44Encrypt(pubkey, plaintext);
+  } catch (error) {
+    console.warn('⚠️ Favorites: could not encrypt the private half —', error);
+    return null;
   }
 }
 
@@ -583,7 +753,30 @@ export async function syncSharedFavoritesNow(opts: {
       return 'degraded';
     }
 
-    const published = await publishSingleList(opts.pubkey, local, relayUrls, read, timer);
+    // Decrypting is a SECOND signer round trip on a remote signer, so it runs
+    // only once the read has actually come back with something in `content`.
+    // `readPrivateHalf` short-circuits an empty one without touching the signer.
+    const privateHalf = await timer.time('decrypt', readPrivateHalf(opts.pubkey, read.content));
+
+    // Which half new favorites go into. `resolveMode` answers 'off' for a user
+    // who opted out and for one who has not been asked yet — neither may
+    // publish, and the second is why the question is asked before the first
+    // favorite rather than after it.
+    const mode = resolveMode(opts.pubkey, read, privateHalf);
+    if (mode === 'off') {
+      timer.log('favorites sync (mode off)');
+      return 'ok';
+    }
+
+    const published = await publishSingleList(
+      opts.pubkey,
+      local,
+      relayUrls,
+      read,
+      privateHalf,
+      mode,
+      timer
+    );
     timer.log('favorites sync');
 
     // Report the write half through the SAME flag the read uses. This half is
@@ -606,6 +799,88 @@ export async function syncSharedFavoritesNow(opts: {
  * Debounced sync. Call it after any favorite change; a burst collapses into one
  * read-merge-publish cycle, and so one signing prompt.
  */
+/**
+ * Leave Nostr: take down what THIS DEVICE put on the list, and nothing else.
+ *
+ * Publishes once and then stops. Both halves are merged against their own
+ * claims with no local state, so every entry this device contributed goes and
+ * every entry another app added stays — a withdrawal is not a delete button for
+ * the account, and there is no way to make it one that would be honest.
+ *
+ * The mode is set to `'off'` FIRST, so a failure part-way through leaves the
+ * device not publishing rather than publishing as before. Losing the withdrawal
+ * costs one retry; a device that keeps syncing after the user said stop is the
+ * failure that matters.
+ *
+ * Declining to withdraw is a real choice and the caller must offer it: the
+ * relay copy simply stays, and a relay cannot be asked to forget.
+ */
+export async function withdrawFromSharedFavorites(opts: {
+  pubkey: string;
+  relays?: string[];
+}): Promise<'ok' | 'degraded' | 'nothing-to-do'> {
+  setFavoritesPrivacy(opts.pubkey, 'off');
+
+  const relayUrls = resolveRelays(opts.relays);
+  const read = await fetchSingleList(opts.pubkey, relayUrls);
+  if (!read.trustworthy) {
+    console.warn('⚠️ Favorites: relay read was degraded — not withdrawing');
+    setSyncHealth('write', true);
+    return 'degraded';
+  }
+  if (!read.exists) return 'nothing-to-do';
+
+  const privateHalf = await readPrivateHalf(opts.pubkey, read.content);
+  if (!isUsable(privateHalf)) {
+    // Withdrawing over an unreadable private half would replace someone's
+    // private entries with an empty array — the exact loss this whole path
+    // exists to avoid causing on another app's behalf.
+    console.warn(`⚠️ Favorites: the private half is ${privateHalf.status} — not withdrawing`);
+    setSyncHealth('write', true);
+    return 'degraded';
+  }
+
+  const baseline = getPublishedRecord(opts.pubkey);
+  const plan = withdrawalPlan({
+    publicRead: read,
+    privateRead: privateHalf.list,
+    baseline,
+  });
+
+  const content = await buildContent(opts.pubkey, plan.privateTags, privateHalf);
+  if (content === null) {
+    setSyncHealth('write', true);
+    return 'degraded';
+  }
+
+  try {
+    const template = templateFromTags(plan.tags, Math.floor(Date.now() / 1000), content);
+    const signed = await signSharedEvent(template);
+    if (!(await publishToRelays(signed, relayUrls))) {
+      setSyncHealth('write', true);
+      return 'degraded';
+    }
+  } catch (error) {
+    console.warn('⚠️ Favorites: withdrawal failed —', error);
+    setSyncHealth('write', true);
+    return 'degraded';
+  }
+
+  // Claims nothing in either half now, so re-opting-in later starts clean
+  // rather than immediately treating another app's entries as its own removals.
+  rememberPublished(opts.pubkey, plan.baseline);
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.removeItem(`${SINGLE_LIST_DIGEST_PREFIX}:${opts.pubkey}`);
+    } catch {
+      /* private browsing — costs one redundant publish if they opt back in */
+    }
+  }
+  const left = plan.tags.filter((t) => t[0] === 'i').length;
+  console.log(`✅ Favorites: withdrew this device's entries, ${left} left from other apps`);
+  return 'ok';
+}
+
 export function requestSharedFavoritesSync(opts: {
   userId: string;
   pubkey: string;
@@ -692,7 +967,45 @@ async function runPull(opts: {
     return { status: 'degraded' };
   }
 
-  const { shows: allShows, tracks: allTracks } = partitionSingleList(shared);
+  // The private half, decrypted. An unreadable one is a degraded read of the
+  // same kind as an unreachable relay, and gets the same answer — because
+  // reconciling from a half we could not read would drop every private favorite
+  // from this device's view and then, on the push that follows, off the list.
+  const privateHalf = await readPrivateHalf(opts.pubkey, shared.content);
+  if (!isUsable(privateHalf)) {
+    console.warn(`⚠️ Favorites: the private half is ${privateHalf.status} — not reconciling`);
+    setSyncHealth('read', true);
+    return { status: 'degraded' };
+  }
+
+  const baseline = getPublishedRecord(opts.pubkey);
+  const mode = resolveMode(opts.pubkey, shared, privateHalf);
+
+  // WHAT THE RECONCILE MAY SEE: the active half whole, plus only the part of
+  // the inactive half this device claims.
+  //
+  // The filter is a disclosure rule, not tidiness. Local state writes through
+  // and is read back as `local`, which goes wholly into the ACTIVE half — so an
+  // entry adopted out of the other one is republished into this one. For our
+  // own entries that is how a mode switch completes, and they have to be here
+  // or they vanish from the page between the switch and the publish. For
+  // another writer's it is a migration nobody asked for, and private→public it
+  // discloses a favorite they chose to hide, because relays index `i`.
+  //
+  // `mode === 'off'` means nothing is active: the user opted out, or has not
+  // been asked. Reconciling then would adopt entries this device may be about
+  // to withdraw, so it reads the public half only and claims nothing.
+  const scoped =
+    mode === 'off'
+      ? { groups: shared.groups, orphanItemGuids: shared.orphanItemGuids }
+      : reconcileInput({
+          mode,
+          publicRead: shared,
+          privateRead: privateHalf.list,
+          baseline,
+        });
+
+  const { shows: allShows, tracks: allTracks } = partitionSingleList(scoped);
 
   // Suppress our own in-flight removals before they can be reconciled BACK IN.
   //
@@ -713,7 +1026,11 @@ async function runPull(opts: {
   const { shows, tracks } = suppressOwnRemovals(
     { shows: allShows, tracks: allTracks },
     groupForSingleList(await loadLocalItems(opts.userId)),
-    getPublishedRecord(opts.pubkey)
+    // The half this device is feeding. A removal in flight is a removal from
+    // the ACTIVE half — the inactive half's claims are what a mode switch is
+    // still taking down, and treating those as in-flight removals here would
+    // suppress the very entries the switch is moving.
+    mode === 'off' ? baseline.public : baseline[mode]
   );
   const suppressed = allShows.length - shows.length + (allTracks.length - tracks.length);
   if (suppressed > 0) {

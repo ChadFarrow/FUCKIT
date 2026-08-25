@@ -24,6 +24,7 @@
 
 import WebSocket from 'ws';
 import { finalizeEvent, generateSecretKey, getPublicKey, type Event } from 'nostr-tools/pure';
+import { nip44 } from 'nostr-tools';
 import { installNodeWebSocket } from '../lib/nostr/node-websocket';
 import {
   SINGLE_LIST_KIND,
@@ -35,6 +36,12 @@ import {
   templateFromTags,
   publishedRecordFrom,
 } from '../lib/nostr/favorites-single-list';
+import {
+  encodePrivateFavorites,
+  decodePrivateFavorites,
+  parseSingleList,
+} from '../lib/nostr/favorites-single-list';
+import { publishPlan, EMPTY_BASELINE } from '../lib/nostr/favorites-privacy';
 import { itemId, showId, type FavoriteEntry } from '../lib/nostr/pc20-identifiers';
 
 const RELAY = process.env.E2E_RELAY || `ws://127.0.0.1:${process.env.PORT || 7777}`;
@@ -59,6 +66,8 @@ const FOREIGN_CONTENT = 'AkQBc1lPZ0hlYVh1WkJqc0hRZmpOUFlZQXpQMkVmVkxRPT0/dGhpcw=
 // Real-shaped guids, matching the fixtures in favorites-single-list.test.ts.
 const MUSIC_A = '9b024349-ccf0-5f69-a609-6b82873eab3c';
 const PUBLISHER_B = 'c31ad2f6-1b7e-5b34-a2a4-6b06d5b0b4e2';
+// A feed favorited PRIVATELY, so its guid must never appear in the public tags.
+const MUSIC_B = '791338e2-77bc-579e-8c7c-4c996cf73305';
 
 const album = (guid: string, medium?: string): FavoriteEntry => ({ id: showId(guid), medium });
 const track = (guid: string, parent: string, medium?: string): FavoriteEntry => ({
@@ -187,6 +196,69 @@ async function main() {
   const tags2 = tagsFromNodes(merged2.nodes, merged2.foreignTags, merged2.foreignKinds);
   check(JSON.stringify(tags2) === JSON.stringify(tags), 'the tags are byte-identical, so nothing republishes');
   check(after.content === read.content, 'content is unchanged, so nothing rewrites it');
+
+  // -------------------------------------------------------------------------
+  console.log('\n⑥ A real private half: encrypt, publish, read back, decrypt');
+  // -------------------------------------------------------------------------
+  // Real NIP-44 to the key's own pubkey — the same encrypt-to-self the app does
+  // through the signer. The signer itself cannot run outside a browser, so this
+  // covers everything on either side of it: the codec, the plan, the relay
+  // round trip, and the decrypt.
+  const convo = nip44.getConversationKey(sk, pubkey);
+
+  const privateLocal = groupForSingleList([album(MUSIC_B, 'music')]);
+  const privatePlan = publishPlan({
+    mode: 'private',
+    publicRead: after,
+    privateRead: parseSingleList([]),
+    local: privateLocal,
+    baseline: EMPTY_BASELINE,
+  });
+
+  const plaintext = encodePrivateFavorites(privatePlan.privateTags!);
+  const ciphertext = nip44.encrypt(plaintext, convo);
+  await publish(
+    finalizeEvent(
+      {
+        kind: SINGLE_LIST_KIND,
+        created_at: Math.floor(Date.now() / 1000) + 1,
+        content: ciphertext,
+        tags: privatePlan.tags,
+      },
+      sk
+    )
+  );
+  ok(`published ${plaintext.length} bytes of plaintext as ${ciphertext.length} of ciphertext`);
+
+  const encrypted = await fetchSingleList(pubkey, relays);
+  const roundTripped = decodePrivateFavorites(nip44.decrypt(encrypted.content, convo));
+  check(roundTripped !== null, 'the private half decrypts and parses as a tag array');
+  check(
+    JSON.stringify(roundTripped) === JSON.stringify(privatePlan.privateTags),
+    'and is byte-identical to what was encrypted'
+  );
+  check(
+    parseSingleList(roundTripped ?? []).groups.some((g) => g.feedGuid === MUSIC_B),
+    'the favorite is in there, and readable only with the key'
+  );
+  check(
+    !JSON.stringify(encrypted.nodes).includes(MUSIC_B),
+    'and its guid appears NOWHERE in the public half — `i` is relay-indexed'
+  );
+
+  // -------------------------------------------------------------------------
+  console.log('\n⑦ Encrypting the same entries twice produces different bytes');
+  // -------------------------------------------------------------------------
+  // The reason the digest compares plaintext. A writer comparing ciphertext
+  // sees a change on every pass and republishes forever — two apps rewriting
+  // the event against each other, self-inflicted, with no symptom but that it
+  // never stops.
+  const again = nip44.encrypt(plaintext, convo);
+  check(again !== ciphertext, 'fresh nonce, so the ciphertext differs');
+  check(
+    nip44.decrypt(again, convo) === plaintext,
+    'while the plaintext is identical — which is what must be compared'
+  );
 
   console.log(failures === 0 ? '\nAll checks passed.' : `\n${failures} check(s) FAILED.`);
   process.exit(failures === 0 ? 0 : 1);
