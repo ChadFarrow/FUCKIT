@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit",
     "test:all": "tsx --test lib/*.test.ts lib/*/*.test.ts",
     "relay": "node scripts/local-relay.mjs",
+    "dev:isolated": "NEXT_PUBLIC_NOSTR_RELAYS=ws://127.0.0.1:7777 next dev",
     "seed:relay": "node scripts/seed-local-relay.mjs",
     "e2e:favorites": "tsx scripts/e2e-favorites.ts",
     "check-env": "node scripts/check-env.js",

@@ -49,10 +49,13 @@ Per-subsystem test commands live in the skill that owns the subsystem — each s
 - **There is a local relay now, and a write can be tested without touching production.** `npm run
   relay` (127.0.0.1, in-memory, replaceable-event semantics), `npm run seed:relay -- <npub>` (copies
   the real kind:10333 in, read-only), `npm run e2e:favorites` (the whole loop on a throwaway key).
-  Point the app at it with `NEXT_PUBLIC_NOSTR_RELAYS=ws://127.0.0.1:7777` — `getDefaultRelays()`
-  returns an explicitly configured list **without** `filterReachableRelays`, which drops every
-  loopback URL. Override `DATABASE_URL` from `.env` in the same command: **`.env.local` points
-  `npm run dev` at Railway production**, and never edit `.env.local` to change that.
+  Use **`npm run dev:isolated`**, not a hand-set `NEXT_PUBLIC_NOSTR_RELAYS` — the variable alone is
+  not isolation. The publish path unions the user's NIP-65 relays with the defaults, so a "local"
+  test by a signed-in user published a real event under their real key, silently. `resolvePublishRelays`
+  now returns only the defaults when every one is loopback; production is unchanged and pinned by
+  `relay-isolation.test.ts`. **The database is still production** — `.env.local` points there — so
+  snapshot with `scripts/backup-favorites.ts` first, or override `DATABASE_URL` from `.env` on the
+  command line. Never edit `.env.local` to change it.
 - Run `npm run build` before committing — but **stop `npm run dev` first**, *or* build into a
   different directory with `NEXT_DIST_DIR=.next-build npm run build`, which is what to do when a dev
   server is running. Changing the dev PORT does not help; the collision is the directory. Next

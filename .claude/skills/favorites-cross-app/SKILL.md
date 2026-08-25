@@ -25,9 +25,31 @@ A replaceable event keeps no history, so a bad publish while testing is not reco
 npm run relay                    # ws://127.0.0.1:7777, in-memory, REPLACEABLE-event semantics
 npm run seed:relay -- <npub>     # copies the real kind:10333 in — read-only against production
 npm run seed:relay -- <npub> --content 'AkQB…'   # force a private half to test the carry against
+npm run dev:isolated             # dev, publishing ONLY to the local relay
 npm run e2e:favorites            # the whole loop on a throwaway key: read → merge → publish → assert
 npx tsx lib/nostr/favorites.relay-probe.ts --relay ws://127.0.0.1:7777
 ```
+
+**`NEXT_PUBLIC_NOSTR_RELAYS` alone is NOT isolation, and that is why `dev:isolated` exists.** Setting
+it points `getDefaultRelays()` at the local relay, and the publish path used to union the user's real
+NIP-65 relays straight back in — so a "local" test by a signed-in user published a real event under
+their real key, to their real relays, on an event that keeps no history. It failed silently: the
+publish succeeded and looked like the test working. `resolvePublishRelays` (`relay.ts`) now returns
+**only** the defaults when every one of them is loopback, and both publish paths use it — the
+kind:10333 list and the kind:30001 per-item queue, because one heart toggle writes both. Pinned by
+`relay-isolation.test.ts`, including the vector that production behaviour is unchanged.
+
+**What still reaches the network, by design:** nostr-login's own hardcoded relays
+(`purplepag.es`, `user.kindpag.es`, `relay.nos.social`, `relay.snort.social`) for profile metadata
+and NIP-46 transport. A remote signer has to be reachable to sign, so isolating that would make the
+signer path untestable. Nothing of yours is published there.
+
+**The DATABASE is not isolated by `dev:isolated`** — `.env.local` still points it at Railway
+production. That is deliberate: testing a mode switch needs real favorites to move. The reconcile
+can only ADD (`baseline` is `[]`, `SHARED_FAVORITES_APPLY_DELETES` off), so nothing is destroyed, but
+snapshot first with `scripts/backup-favorites.ts` and expect any favorite you toggle to be a real
+one. To isolate it too, override `DATABASE_URL` from `.env` on the command line — never by editing
+`.env.local`.
 
 Point the app at it with `NEXT_PUBLIC_NOSTR_RELAYS=ws://127.0.0.1:7777`. That works because
 `getDefaultRelays()` returns an explicitly configured list **without** `filterReachableRelays` —
