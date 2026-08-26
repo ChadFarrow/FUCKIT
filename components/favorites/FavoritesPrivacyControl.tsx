@@ -85,6 +85,11 @@ export default function FavoritesPrivacyControl() {
         setLeaving(true);
         return;
       }
+      // Changing your mind closes the withdrawal question. Without this it
+      // stays open behind the new selection, so the screen reads "Private" and
+      // "remove your entries?" at the same time — two contradictory states, and
+      // the destructive button is the prominent one.
+      setLeaving(false);
 
       setBusy(true);
       try {
@@ -179,7 +184,7 @@ export default function FavoritesPrivacyControl() {
             {busy && <Loader2 className="h-3 w-3 animate-spin text-gray-400" aria-hidden="true" />}
           </span>
         }
-        description="Where new favorites go on the shared list other podcast apps can read."
+        description="Where new favorites go on the shared list other podcast apps can read. Your individual favorite events stay public either way — this is only about the shared list."
       >
         <div
           role="radiogroup"

@@ -70,11 +70,10 @@ export default function SharedFavoritesDisclosure() {
   const Icon = mode === 'private' ? Lock : mode === 'off' ? CircleSlash : Globe;
 
   return (
-    <p className="flex items-start gap-2 text-xs text-gray-500">
+    <p className="mb-2 flex max-w-3xl items-start gap-2 text-xs text-gray-500">
       <Icon className="w-3.5 h-3.5 flex-shrink-0 mt-px" aria-hidden="true" />
       <span>
-        Favorites you sync are published to Nostr as public events signed by your key — anyone can
-        see what you&apos;ve saved, the same way your follow list is public.
+        Your favorites are public on Nostr, signed by your key.
         {crossApp && sharedListSentence(mode)}
         {/* The link is the whole reason the control could move to Settings. A
             setting nobody can find is not a choice, and this sentence is where
@@ -112,12 +111,12 @@ export default function SharedFavoritesDisclosure() {
 function sharedListSentence(mode: FavoritesPrivacy | null): string {
   switch (mode) {
     case 'public':
-      return ' Your shared cross-app list is Public: other podcast apps you sign into can read it, relays index it, and anyone can search for who saved a feed.';
+      return ' The shared cross-app list is public too.';
     case 'private':
-      return ' Your shared cross-app list is Private — encrypted to your own key, so other apps you sign into can read it and nobody else can. Its size and timing stay visible.';
+      return ' The shared cross-app list is encrypted.';
     case 'off':
-      return ' Your shared cross-app list is off, so nothing new is published to it.';
+      return ' The shared cross-app list is off.';
     default:
-      return ' A shared list that other podcast apps can read is available, and nothing is published to it until you choose.';
+      return ' The shared cross-app list is not set up.';
   }
 }
