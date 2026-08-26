@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { RateLimiter, clientIp } from '@/lib/rate-limit';
 import { persistClientReport } from '@/lib/admin/client-error-store';
 import { parseCspReport, violationKey, CSP_CATEGORY } from '@/lib/csp-report';
 
@@ -32,7 +33,8 @@ import { parseCspReport, violationKey, CSP_CATEGORY } from '@/lib/csp-report';
 const RATE_LIMIT_WINDOW_MS = 60_000;
 /** Lower than client-log's 30: a browser sending more than this is a policy bug we already know about. */
 const RATE_LIMIT_MAX = 10;
-const rateLimits = new Map<string, { count: number; windowStart: number }>();
+const limiter = new RateLimiter(RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_MS);
+const isRateLimited = (ip: string) => limiter.isLimited(ip);
 
 /** A Reporting API batch can carry many; more than this from one POST is not diagnostic. */
 const MAX_VIOLATIONS_PER_REQUEST = 10;
@@ -51,25 +53,6 @@ const MAX_BODY_BYTES = 16_000;
 const LOG_WINDOW_MS = 60_000;
 const loggedRecently = new Map<string, number>();
 
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const existing = rateLimits.get(ip);
-
-  if (!existing || now - existing.windowStart >= RATE_LIMIT_WINDOW_MS) {
-    rateLimits.set(ip, { count: 1, windowStart: now });
-
-    // Opportunistic sweep — without it the map is a slow leak across an instance's life.
-    if (rateLimits.size > 5000) {
-      rateLimits.forEach((value, key) => {
-        if (now - value.windowStart >= RATE_LIMIT_WINDOW_MS) rateLimits.delete(key);
-      });
-    }
-    return false;
-  }
-
-  existing.count += 1;
-  return existing.count > RATE_LIMIT_MAX;
-}
 
 function shouldLog(key: string): boolean {
   const now = Date.now();
@@ -87,8 +70,7 @@ function shouldLog(key: string): boolean {
 
 export async function POST(req: NextRequest) {
   try {
-    const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || 'unknown';
-    if (isRateLimited(ip)) {
+    if (isRateLimited(clientIp(req.headers))) {
       return new NextResponse(null, { status: 429 });
     }
 

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { safeFetch, readCappedText, MAX_FEED_BYTES } from '@/lib/safe-fetch';
 import { MusicTrackParser } from '@/lib/music-track-parser';
 import { XMLParser } from 'fast-xml-parser';
 
@@ -134,16 +135,23 @@ export async function POST(request: NextRequest) {
 
 // Fast extractor: only finds podcast:remoteItem GUID references with a short timeout
 async function quickExtractRemoteItems(feedUrl: string): Promise<any[]> {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 10000);
   try {
-    const res = await fetch(feedUrl, {
-      signal: controller.signal,
-      cache: 'no-store',
+    // safeFetch, not fetch: `feedUrl` is caller-supplied (the playlist maker
+    // posts it), so a raw fetch here read any URL the server could reach.
+    const fetched = await safeFetch(feedUrl, {
+      allowHttp: true,
+      timeoutMs: 10000,
       headers: { 'user-agent': 'ITDV-PlaylistMaker/preview' },
     });
+    if (!fetched.ok) {
+      console.warn(`⚠️ Playlist preview refused ${feedUrl}: ${fetched.error}`);
+      return [];
+    }
+    const res = fetched.response;
     if (!res.ok) return [];
-    const xml = await res.text();
+    const read = await readCappedText(res, MAX_FEED_BYTES);
+    if (!read.ok) return [];
+    const xml = read.value;
     const parser = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: '', trimValues: true });
     const json = parser.parse(xml);
     const channel = json?.rss?.channel;
@@ -184,9 +192,8 @@ async function quickExtractRemoteItems(feedUrl: string): Promise<any[]> {
 
     return tracks;
   } catch (_) {
+    // safeFetch owns the timeout now, so there is no timer to clear here.
     return [];
-  } finally {
-    clearTimeout(timeout);
   }
 }
 

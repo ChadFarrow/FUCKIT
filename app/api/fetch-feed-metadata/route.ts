@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { XMLParser } from 'fast-xml-parser';
 import { isSafePublicUrl } from '@/lib/url-security';
+import { safeFetch, readCappedText, MAX_FEED_BYTES } from '@/lib/safe-fetch';
 
 export async function GET(request: NextRequest) {
   try {
@@ -19,32 +20,30 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: urlCheck.error }, { status: 400 });
     }
 
-    // Enforce a timeout so the UI isn't stuck if the remote feed is slow
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 10000);
-    let res: Response;
-    try {
-      res = await fetch(feedUrl, {
-        signal: controller.signal,
-        // Avoid any caching surprises while developing
-        cache: 'no-store',
-        headers: {
-          'user-agent': 'ITDV-PlaylistMaker/1.0 (+https://example.com)'
-        }
-      } as RequestInit);
-    } catch (err: any) {
-      if (err?.name === 'AbortError') {
-        return NextResponse.json({ error: 'Timed out fetching feed' }, { status: 504 });
-      }
-      console.error('Failed to fetch feed:', err);
+    // safeFetch owns the timeout, and re-runs the guard above on every redirect
+    // hop — the guard alone saw only the first URL, so a 302 into the private
+    // range reached it and the body was reflected back to the caller.
+    const fetched = await safeFetch(feedUrl, {
+      timeoutMs: 10000,
+      headers: {
+        'user-agent': 'ITDV-PlaylistMaker/1.0 (+https://example.com)'
+      },
+    });
+
+    if (!fetched.ok) {
+      console.warn(`⚠️ Feed metadata fetch refused for ${feedUrl}: ${fetched.error}`);
       return NextResponse.json({ error: 'Failed to fetch feed' }, { status: 502 });
-    } finally {
-      clearTimeout(timeout);
     }
+
+    const res = fetched.response;
     if (!res.ok) {
       return NextResponse.json({ error: `Failed to fetch feed (${res.status})` }, { status: 502 });
     }
-    const xml = await res.text();
+    const readXml = await readCappedText(res, MAX_FEED_BYTES);
+    if (!readXml.ok) {
+      return NextResponse.json({ error: 'Feed too large' }, { status: 413 });
+    }
+    const xml = readXml.value;
 
     const parser = new XMLParser({
       ignoreAttributes: false,

@@ -1,10 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { safeFetch, readCappedText, MAX_FEED_BYTES } from '@/lib/safe-fetch';
+import { RateLimiter, clientIp, rateLimitHeaders } from '@/lib/rate-limit';
 
 // In-memory cache for RSS feeds
 const cache = new Map<string, { data: string; timestamp: number; ttl: number }>();
 
 // Cache TTL: 5 minutes (increased for better performance)
 const CACHE_TTL = 5 * 60 * 1000;
+
+// The cache used to be unbounded: a caller rotating URLs could grow it until the
+// instance ran out of memory. Entries are capped in count as well as in bytes
+// (each body is already limited to MAX_FEED_BYTES by readCappedText).
+const MAX_CACHE_ENTRIES = 500;
+
+/**
+ * Per-CALLER limit.
+ *
+ * `isRateLimited` below keys on the TARGET domain, which is politeness toward
+ * the upstream feed host — it does nothing to slow a caller rotating targets,
+ * which is exactly what abuse of this route looks like.
+ */
+const callerLimiter = new RateLimiter(60, 60_000);
 
 // Rate limiting: track requests per domain
 const rateLimit = new Map<string, { count: number; resetTime: number }>();
@@ -19,6 +35,16 @@ function cleanupCache() {
       cache.delete(key);
     }
   });
+
+  // Still over capacity after dropping expired entries? Evict oldest-first.
+  if (cache.size > MAX_CACHE_ENTRIES) {
+    const byAge = Array.from(cache.entries()).sort(
+      (a, b) => a[1].timestamp - b[1].timestamp
+    );
+    for (const [key] of byAge.slice(0, cache.size - MAX_CACHE_ENTRIES)) {
+      cache.delete(key);
+    }
+  }
 }
 
 // Clean up rate limit data on demand
@@ -74,12 +100,23 @@ async function fetchWithRetry(url: string, maxRetries = 3): Promise<Response> {
         await new Promise(resolve => setTimeout(resolve, delay));
       }
       
-      const response = await fetch(url, {
+      // safeFetch, not fetch: this route takes the URL straight from the query
+      // string. Before this it was an open proxy — any caller could read
+      // http://169.254.169.254/ or an internal service and get the body back.
+      const result = await safeFetch(url, {
+        allowHttp: true, // some podcast feeds are still plain HTTP
+        timeoutMs: 10000,
         headers: {
           'User-Agent': 'DoerfelVerse/1.0 (Music RSS Reader)',
         },
-        signal: AbortSignal.timeout(10000), // 10 second timeout
       });
+
+      if (!result.ok) {
+        // A refusal is not retryable — the URL is not going to become safe.
+        throw new Error(result.error);
+      }
+
+      const response = result.response;
 
       // If we get a 429, wait and retry
       if (response.status === 429) {
@@ -123,6 +160,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'URL parameter is required' }, { status: 400 });
   }
 
+  const callerCheck = callerLimiter.check(clientIp(request.headers));
+  if (!callerCheck.allowed) {
+    return NextResponse.json(
+      { error: 'Too many requests' },
+      { status: 429, headers: rateLimitHeaders(callerCheck) }
+    );
+  }
+
   // Check cache first
   const cacheKey = url;
   const cached = cache.get(cacheKey);
@@ -134,9 +179,6 @@ export async function GET(request: NextRequest) {
       status: 200,
       headers: {
         'Content-Type': 'application/xml',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET',
-        'Access-Control-Allow-Headers': 'Content-Type',
         'X-Cache': 'HIT',
         'X-Cache-Age': Math.floor((now - cached.timestamp) / 1000).toString(),
       },
@@ -152,7 +194,14 @@ export async function GET(request: NextRequest) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const xmlContent = await response.text();
+    // Capped, not response.text(): an unbounded read here went straight into
+    // the in-memory cache below, so a handful of large URLs was an OOM.
+    const read = await readCappedText(response, MAX_FEED_BYTES);
+    if (!read.ok) {
+      console.warn(`⚠️ Refused oversized RSS body for ${url}: ${read.error}`);
+      return NextResponse.json({ error: 'Feed too large' }, { status: 502 });
+    }
+    const xmlContent = read.value;
 
     // Store in cache
     cache.set(cacheKey, {
@@ -167,9 +216,6 @@ export async function GET(request: NextRequest) {
       status: 200,
       headers: {
         'Content-Type': 'application/xml',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET',
-        'Access-Control-Allow-Headers': 'Content-Type',
         'X-Cache': 'MISS',
         'Cache-Control': `public, max-age=${Math.floor(CACHE_TTL / 1000)}`,
       },

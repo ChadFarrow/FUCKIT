@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { RateLimiter, clientIp } from '@/lib/rate-limit';
 import { persistClientReport } from '@/lib/admin/client-error-store';
 
 /**
@@ -18,7 +19,10 @@ import { persistClientReport } from '@/lib/admin/client-error-store';
 // Same shape as the refresh-by-url limiter: in-memory, so per Railway instance.
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX = 30;
-const rateLimits = new Map<string, { count: number; windowStart: number }>();
+// Shared limiter (lib/rate-limit.ts). This route's own copy was the one that
+// swept expired entries correctly; that behaviour is what the shared class took.
+const limiter = new RateLimiter(RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_MS);
+const isRateLimited = (ip: string) => limiter.isLimited(ip);
 
 /**
  * Worst case is MAX_ENTRIES * RATE_LIMIT_MAX log lines per minute per IP per instance.
@@ -47,26 +51,6 @@ const MAX_CONTEXT_FIELD = 200;
  * overflow impossible regardless of this cap.
  */
 const MAX_COUNT_PER_ENTRY = 10_000;
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const existing = rateLimits.get(ip);
-
-  if (!existing || now - existing.windowStart >= RATE_LIMIT_WINDOW_MS) {
-    rateLimits.set(ip, { count: 1, windowStart: now });
-
-    // Opportunistic sweep — without it the map is a slow leak across an instance's life.
-    if (rateLimits.size > 5000) {
-      rateLimits.forEach((value, key) => {
-        if (now - value.windowStart >= RATE_LIMIT_WINDOW_MS) rateLimits.delete(key);
-      });
-    }
-
-    return false;
-  }
-
-  existing.count += 1;
-  return existing.count > RATE_LIMIT_MAX;
-}
 
 function clamp(value: unknown, max: number, fallback = ''): string {
   if (typeof value !== 'string') return fallback;
@@ -88,8 +72,7 @@ function formatData(data: unknown): string {
 
 export async function POST(req: NextRequest) {
   try {
-    const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || 'unknown';
-    if (isRateLimited(ip)) {
+    if (isRateLimited(clientIp(req.headers))) {
       return new NextResponse(null, { status: 429 });
     }
 

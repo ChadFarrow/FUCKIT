@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { safeFetch, readCappedText, MAX_JSON_BYTES } from '@/lib/safe-fetch';
 
 interface LNURLPayResponse {
   pr: string; // Lightning invoice
@@ -27,8 +28,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Build callback URL with parameters
-    const callbackUrl = new URL(callback);
+    // Build callback URL with parameters.
+    // `new URL(callback)` only proves the string parses. The caller also
+    // controls the query params appended below, so before the safeFetch call
+    // this was a parameterised request forgery: any internal host, any port,
+    // with the response handed straight back.
+    let callbackUrl: URL;
+    try {
+      callbackUrl = new URL(callback);
+    } catch {
+      return NextResponse.json({ error: 'Invalid callback URL' }, { status: 400 });
+    }
     callbackUrl.searchParams.set('amount', amount.toString());
 
     if (comment) {
@@ -41,24 +51,43 @@ export async function POST(req: NextRequest) {
 
     // Fetch invoice from the callback URL
     // This happens server-side, so CORS doesn't apply
-    const response = await fetch(callbackUrl.toString(), {
+    const result = await safeFetch(callbackUrl.toString(), {
+      timeoutMs: 15000,
       headers: {
         'Accept': 'application/json',
         'User-Agent': 'StableKraft-Lightning/1.0',
       },
     });
 
+    if (!result.ok) {
+      console.warn(`⚠️ LNURL invoice callback refused: ${result.error}`);
+      return NextResponse.json({ error: 'Invoice request failed' }, { status: 400 });
+    }
+
+    const response = result.response;
+
     if (!response.ok) {
       return NextResponse.json(
-        { error: `HTTP ${response.status}: ${response.statusText}` },
+        { error: `Invoice request failed (HTTP ${response.status})` },
         { status: response.status }
       );
     }
 
-    const data = await response.json();
+    const body = await readCappedText(response, MAX_JSON_BYTES);
+    if (!body.ok) {
+      return NextResponse.json({ error: 'Invoice response too large' }, { status: 502 });
+    }
 
-    // Log the full response for debugging
-    console.log('[LNURL Invoice] Response from provider:', JSON.stringify(data, null, 2));
+    let data: LNURLPayResponse & { status?: string; reason?: string };
+    try {
+      data = JSON.parse(body.value);
+    } catch {
+      return NextResponse.json({ error: 'Invalid invoice response' }, { status: 502 });
+    }
+
+    // Not the full body: it carries the bolt11 invoice and payer metadata, and
+    // this line put all of it into the Railway logs on every boost.
+    console.warn(`[LNURL Invoice] provider responded, pr present: ${Boolean(data.pr)}`);
 
     if (data.status === 'ERROR') {
       return NextResponse.json(
@@ -79,7 +108,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('LNURL invoice request error:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Internal server error' },
+      { error: 'Invoice request failed' },
       { status: 500 }
     );
   }

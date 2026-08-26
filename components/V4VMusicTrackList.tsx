@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import { adminFetch } from '@/lib/admin-fetch';
 import { useRouter } from 'next/navigation';
 import { ExtendedTrack } from '@/lib/track-adapter';
 import V4VMusicTrackCard from './V4VMusicTrackCard';
@@ -120,7 +121,11 @@ export default function V4VMusicTrackList({
     setError(null);
     
     try {
-      const response = await fetch('/api/music-tracks/database', {
+      // adminFetch, not fetch: POST /api/music-tracks/database creates Feed and
+      // Track rows from caller-supplied URLs, so it is now behind the admin
+      // bearer gate. adminFetch attaches the stored secret and prompts once on
+      // a 401.
+      const response = await adminFetch('/api/music-tracks/database', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

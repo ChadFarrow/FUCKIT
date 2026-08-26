@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isSafePublicUrl } from '@/lib/url-security';
+import { safeFetch, readCappedArrayBuffer, MAX_IMAGE_BYTES } from '@/lib/safe-fetch';
 
 // Dynamic import sharp with fallback for serverless environments
 let sharp: typeof import('sharp') | null = null;
@@ -199,17 +200,28 @@ export async function GET(request: NextRequest) {
     const looksAnimated = url.pathname.toLowerCase().endsWith('.gif');
     const fetchTimeoutMs = looksAnimated ? 12000 : 3000;
 
-    // Fetch the image with better error handling
-    const response = await fetch(fetchUrl, {
+    // Fetch the image.
+    //
+    // safeFetch, not fetch. `redirect: 'follow'` used to hand the redirect to
+    // the platform, so `isSafePublicUrl` above only ever saw the FIRST url:
+    // https://attacker.example/a.png -> 302 -> http://169.254.169.254/ reached
+    // the metadata endpoint. safeFetch re-runs the guard on every hop.
+    const fetched = await safeFetch(fetchUrl, {
+      allowHttp: true, // the HTTPS upgrade above is best-effort, not a guarantee
+      timeoutMs: fetchTimeoutMs,
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; PodtardsImageProxy/1.0)',
         'Accept': 'image/*',
         'Accept-Encoding': 'gzip, deflate, br',
       },
-      // Reduce timeout to prevent long-hanging requests
-      signal: AbortSignal.timeout(fetchTimeoutMs),
-      redirect: 'follow', // Follow redirects (including HTTP -> HTTPS)
     });
+
+    if (!fetched.ok) {
+      console.warn(`⚠️ Image fetch refused (${fetched.error}) for ${imageUrl}, returning placeholder`);
+      return returnPlaceholderImage();
+    }
+
+    const response = fetched.response;
 
     if (!response.ok) {
       console.warn(`⚠️ Failed to fetch image: ${response.status} ${response.statusText} for ${imageUrl}, returning placeholder`);
@@ -220,8 +232,26 @@ export async function GET(request: NextRequest) {
     const contentType = response.headers.get('content-type');
     const isValidImageType = contentType && contentType.startsWith('image/');
     
+    // SVG is refused, not proxied.
+    //
+    // An SVG is a script container. Served from THIS origin with an
+    // image/svg+xml content type and no sandbox, /api/proxy-image?url=...x.svg
+    // executed attacker JavaScript as stablekraft.app — which reaches
+    // localStorage['admin_secret'] and the wallet material. The site CSP is
+    // report-only, so it did not stop this. next.config.js already handles the
+    // same risk correctly for /_next/image (dangerouslyAllowSVG PLUS
+    // contentDispositionType 'attachment' PLUS a sandbox CSP); this route never
+    // got the equivalent. Nothing in the catalog needs SVG cover art, so the
+    // simplest safe answer is to decline.
+    const declaredSvg = Boolean(contentType && contentType.toLowerCase().includes('svg'));
+    const looksSvg = url.pathname.toLowerCase().endsWith('.svg');
+    if (declaredSvg || looksSvg) {
+      console.warn(`⚠️ Refused SVG through the image proxy: ${imageUrl}`);
+      return returnPlaceholderImage();
+    }
+
     // If content-type is not image/*, check if URL looks like an image file
-    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.bmp'];
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp'];
     const hasImageExtension = imageExtensions.some(ext => imageUrl.toLowerCase().includes(ext));
     
     if (!isValidImageType && !hasImageExtension) {
@@ -229,9 +259,16 @@ export async function GET(request: NextRequest) {
       return returnPlaceholderImage();
     }
 
-    // Get the image data (read once, reuse for validation and processing)
-    const arrayBuffer = await response.arrayBuffer();
-    
+    // Get the image data (read once, reuse for validation and processing).
+    // Capped: arrayBuffer() used to buffer whatever arrived, so one large URL
+    // could take the instance down.
+    const readImage = await readCappedArrayBuffer(response, MAX_IMAGE_BYTES);
+    if (!readImage.ok) {
+      console.warn(`⚠️ Image too large (${readImage.error}) for ${imageUrl}, returning placeholder`);
+      return returnPlaceholderImage();
+    }
+    const arrayBuffer = readImage.value;
+
     // Validate buffer before processing
     if (!arrayBuffer || arrayBuffer.byteLength === 0) {
       console.warn(`⚠️ Received empty image data for ${imageUrl}, returning placeholder`);

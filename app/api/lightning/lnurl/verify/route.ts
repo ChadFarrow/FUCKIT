@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { safeFetch, readCappedText, MAX_JSON_BYTES } from '@/lib/safe-fetch';
 
 export async function POST(request: NextRequest) {
   try {
@@ -8,29 +9,43 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'verifyUrl is required' }, { status: 400 });
     }
 
-    // Validate URL
-    try {
-      new URL(verifyUrl);
-    } catch {
-      return NextResponse.json({ error: 'Invalid verifyUrl' }, { status: 400 });
-    }
-
-    const response = await fetch(verifyUrl, {
+    // safeFetch, not fetch. `new URL(verifyUrl)` proved only that the string
+    // parsed — it did not stop `http://127.0.0.1:5432/` or a redirect into the
+    // private range, which made this a blind internal port scanner.
+    const result = await safeFetch(verifyUrl, {
+      timeoutMs: 10000,
       headers: {
         'Accept': 'application/json',
         'User-Agent': 'StableKraft-Lightning/1.0',
       },
     });
 
+    if (!result.ok) {
+      console.warn(`⚠️ LNURL verify refused ${verifyUrl}: ${result.error}`);
+      return NextResponse.json({ settled: false });
+    }
+
+    const response = result.response;
     if (!response.ok) {
       return NextResponse.json({ settled: false });
     }
 
-    const data = await response.json();
+    const body = await readCappedText(response, MAX_JSON_BYTES);
+    if (!body.ok) {
+      console.warn(`⚠️ LNURL verify response too large from ${verifyUrl}`);
+      return NextResponse.json({ settled: false });
+    }
+
+    let data: { settled?: unknown; preimage?: unknown };
+    try {
+      data = JSON.parse(body.value);
+    } catch {
+      return NextResponse.json({ settled: false });
+    }
 
     return NextResponse.json({
       settled: data.settled === true,
-      preimage: data.preimage,
+      preimage: typeof data.preimage === 'string' ? data.preimage : undefined,
     });
   } catch (error) {
     console.error('LNURL verify error:', error);

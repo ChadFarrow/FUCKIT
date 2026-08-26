@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import sharp from 'sharp';
 import { isSafePublicUrl } from '@/lib/url-security';
+import { safeFetch, readCappedArrayBuffer, MAX_IMAGE_BYTES } from '@/lib/safe-fetch';
 
 /**
  * API endpoint to extract the first frame of a GIF as a WebP image
@@ -56,14 +57,25 @@ export async function GET(request: NextRequest) {
       }, { status: 400 });
     }
 
-    // Fetch the GIF with timeout
-    const response = await fetch(gifUrl, {
+    // safeFetch, not fetch: the guard above validates only the URL it is given,
+    // and this fetch followed redirects, so a 302 into the private range was
+    // never re-checked. It also caps the body.
+    const fetched = await safeFetch(gifUrl, {
+      timeoutMs: 10000,
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; PodtardsImageProxy/1.0)',
         'Accept': 'image/*',
       },
-      signal: AbortSignal.timeout(10000), // 10 second timeout
     });
+
+    if (!fetched.ok) {
+      return NextResponse.json({
+        success: false,
+        error: 'Failed to fetch GIF'
+      }, { status: 400 });
+    }
+
+    const response = fetched.response;
 
     if (!response.ok) {
       return NextResponse.json({ 
@@ -73,7 +85,11 @@ export async function GET(request: NextRequest) {
     }
 
     // Get the GIF data
-    const gifBuffer = Buffer.from(await response.arrayBuffer());
+    const readGif = await readCappedArrayBuffer(response, MAX_IMAGE_BYTES);
+    if (!readGif.ok) {
+      return NextResponse.json({ success: false, error: 'GIF too large' }, { status: 413 });
+    }
+    const gifBuffer = Buffer.from(readGif.value);
 
     // Extract first frame and convert to WebP
     // By setting animated: false, sharp will only process the first frame
