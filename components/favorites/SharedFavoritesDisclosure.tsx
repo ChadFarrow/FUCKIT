@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { Globe, Lock, CircleSlash } from 'lucide-react';
 import { useNostr } from '@/contexts/NostrContext';
 import {
@@ -75,6 +76,21 @@ export default function SharedFavoritesDisclosure() {
         Favorites you sync are published to Nostr as public events signed by your key — anyone can
         see what you&apos;ve saved, the same way your follow list is public.
         {crossApp && sharedListSentence(mode)}
+        {/* The link is the whole reason the control could move to Settings. A
+            setting nobody can find is not a choice, and this sentence is where
+            someone is already reading about the consequence. */}
+        {crossApp && (
+          <>
+            {' '}
+            <Link
+              href="/settings"
+              className="underline underline-offset-2 hover:text-gray-300"
+            >
+              Change in Settings
+            </Link>
+            .
+          </>
+        )}
       </span>
     </p>
   );
@@ -96,12 +112,12 @@ export default function SharedFavoritesDisclosure() {
 function sharedListSentence(mode: FavoritesPrivacy | null): string {
   switch (mode) {
     case 'public':
-      return ' They also form a shared list that other podcast apps you sign into can read, and relays index it — anyone can search for who saved a feed.';
+      return ' Your shared cross-app list is Public: other podcast apps you sign into can read it, relays index it, and anyone can search for who saved a feed.';
     case 'private':
-      return ' Your shared cross-app list is encrypted to your own key, so other apps you sign into can read it and nobody else can. Its size and timing stay visible.';
+      return ' Your shared cross-app list is Private — encrypted to your own key, so other apps you sign into can read it and nobody else can. Its size and timing stay visible.';
     case 'off':
-      return ' You have turned off the shared cross-app list, so nothing new is published to it.';
+      return ' Your shared cross-app list is off, so nothing new is published to it.';
     default:
-      return ' A shared list that other podcast apps can read is available, and nothing is published to it until you choose below.';
+      return ' A shared list that other podcast apps can read is available, and nothing is published to it until you choose.';
   }
 }

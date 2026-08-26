@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Globe, Lock, CircleSlash, Loader2 } from 'lucide-react';
 import { useNostr } from '@/contexts/NostrContext';
+import { SettingsRow } from '@/components/Settings/SettingsLayout';
 import {
   FAVORITES_PRIVACY_CHANGED_EVENT,
   getFavoritesPrivacy,
@@ -22,6 +23,15 @@ import type { FavoritesPrivacy } from '@/lib/nostr/favorites-privacy';
  * pubkeys favorited this feed*. The list is searchable in reverse, not merely
  * readable by someone who already has the pubkey. "Public" here is a stronger
  * claim than most people assume, so it has to be one they actually make.
+ *
+ * WHERE IT LIVES: Settings › Nostr, beside the other things that publish under
+ * the user's key. It began on /favorites directly under the disclosure, on the
+ * reasoning that a consequence belongs beside the thing that causes it. In
+ * practice that put a bordered settings panel above the user's albums, on the
+ * page they open to look at their albums, competing with the content for the
+ * top of the screen. `SharedFavoritesDisclosure` stays there and names the
+ * current mode with a link here — that sentence is the part that has to be
+ * seen, and it is one line.
  *
  * Three things this component must not do:
  *
@@ -161,51 +171,56 @@ export default function FavoritesPrivacyControl() {
   const active = options.find((o) => o.value === mode);
 
   return (
-    <div className="w-full max-w-md rounded-lg border border-white/10 bg-white/5 p-2.5">
-      <div className="mb-2 flex items-center gap-2">
-        <p className="text-xs font-medium text-gray-300">Favorites on Nostr</p>
-        {busy && <Loader2 className="h-3 w-3 animate-spin text-gray-400" aria-hidden="true" />}
-      </div>
-
-      <div role="radiogroup" aria-label="Favorites on Nostr" className="flex flex-wrap gap-1">
-        {options.map((option) => {
-          const Icon = option.icon;
-          const selected = mode === option.value;
-          return (
-            <button
-              key={option.value}
-              type="button"
-              role="radio"
-              aria-checked={selected}
-              aria-describedby={selected ? 'sk-privacy-hint' : undefined}
-              disabled={busy || !!option.disabled}
-              title={option.disabled}
-              onClick={() => choose(option.value)}
-              // min-h-[44px]: WCAG 2.5.8 asks 24px, and a segmented control the
-              // user taps on a phone gets the platform 44px instead.
-              // flex-1 on a phone so the three split the width and each stays a
-              // comfortable target; auto width above that, or the row stretches
-              // across a desktop page and reads as a banner rather than a
-              // setting. 44px is the phone target (WCAG 2.5.8 asks 24); a
-              // pointer does not need it.
-              className={`flex min-h-[44px] flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-md px-2 text-xs transition-colors disabled:cursor-not-allowed disabled:opacity-40 sm:min-h-[32px] sm:flex-none sm:px-3 ${
-                selected
-                  ? 'bg-white/15 font-medium text-white'
-                  : 'text-gray-400 hover:bg-white/10 hover:text-gray-200'
-              }`}
-            >
-              <Icon className="h-3.5 w-3.5 flex-shrink-0" aria-hidden="true" />
-              {option.label}
-            </button>
-          );
-        })}
-      </div>
+    <div className="border-t border-gray-700 pt-6">
+      <SettingsRow
+        label={
+          <span className="flex items-center gap-2">
+            Favorites on Nostr
+            {busy && <Loader2 className="h-3 w-3 animate-spin text-gray-400" aria-hidden="true" />}
+          </span>
+        }
+        description="Where new favorites go on the shared list other podcast apps can read."
+      >
+        <div
+          role="radiogroup"
+          aria-label="Favorites on Nostr"
+          className="flex flex-wrap justify-end gap-1"
+        >
+          {options.map((option) => {
+            const Icon = option.icon;
+            const selected = mode === option.value;
+            return (
+              <button
+                key={option.value}
+                type="button"
+                role="radio"
+                aria-checked={selected}
+                aria-describedby={selected ? 'sk-privacy-hint' : undefined}
+                disabled={busy || !!option.disabled}
+                title={option.disabled}
+                onClick={() => choose(option.value)}
+                // 44px is the phone target — WCAG 2.5.8 asks 24, and a segmented
+                // control tapped with a thumb gets the platform figure instead.
+                // A pointer does not need it, hence the smaller sm: height.
+                className={`flex min-h-[44px] items-center justify-center gap-1.5 whitespace-nowrap rounded-md px-2 text-xs transition-colors disabled:cursor-not-allowed disabled:opacity-40 sm:min-h-[32px] sm:px-3 ${
+                  selected
+                    ? 'bg-white/15 font-medium text-white'
+                    : 'text-gray-400 hover:bg-white/10 hover:text-gray-200'
+                }`}
+              >
+                <Icon className="h-3.5 w-3.5 flex-shrink-0" aria-hidden="true" />
+                {option.label}
+              </button>
+            );
+          })}
+        </div>
+      </SettingsRow>
 
       {/* The hint describes the SELECTED option, not whatever is hovered — this
           is a consequence the user is choosing, so it has to stay legible while
-          they read it. Nothing is selected until they answer, and the prompt
-          below says so rather than implying a default. */}
-      <p id="sk-privacy-hint" className="mt-2 text-xs text-gray-500">
+          they read it. Nothing is selected until they answer, and the text below
+          says so rather than implying a default. */}
+      <p id="sk-privacy-hint" className="mt-2 text-xs text-gray-400">
         {active ? active.hint : 'Not set yet — choose where new favorites go.'}
       </p>
 
@@ -221,10 +236,10 @@ export default function FavoritesPrivacyControl() {
         </p>
       )}
 
-      {message && <p className="mt-2 text-xs text-gray-400">{message}</p>}
+      {message && <p className="mt-2 text-xs text-gray-300">{message}</p>}
 
       {leaving && (
-        <div className="mt-3 rounded-md border border-white/10 bg-black/30 p-3">
+        <div className="mt-3 rounded-md border border-gray-700 bg-black/30 p-3">
           <p className="text-xs text-gray-300">
             Your favorites are already published. Nostr has no delete that can be guaranteed, but
             this app can publish an update removing the entries it added.
@@ -237,7 +252,7 @@ export default function FavoritesPrivacyControl() {
               type="button"
               disabled={busy}
               onClick={() => leave(true)}
-              className="min-h-[44px] rounded-md bg-white/15 px-3 text-xs text-white hover:bg-white/25 disabled:opacity-40"
+              className="min-h-[44px] rounded-md bg-white/15 px-3 text-xs text-white hover:bg-white/25 disabled:opacity-40 sm:min-h-[32px]"
             >
               Remove them and stop
             </button>
@@ -245,7 +260,7 @@ export default function FavoritesPrivacyControl() {
               type="button"
               disabled={busy}
               onClick={() => leave(false)}
-              className="min-h-[44px] rounded-md px-3 text-xs text-gray-400 hover:text-gray-200 disabled:opacity-40"
+              className="min-h-[44px] rounded-md px-3 text-xs text-gray-400 hover:text-gray-200 disabled:opacity-40 sm:min-h-[32px]"
             >
               Just stop syncing
             </button>
@@ -253,7 +268,7 @@ export default function FavoritesPrivacyControl() {
               type="button"
               disabled={busy}
               onClick={() => setLeaving(false)}
-              className="min-h-[44px] rounded-md px-3 text-xs text-gray-500 hover:text-gray-300 disabled:opacity-40"
+              className="min-h-[44px] rounded-md px-3 text-xs text-gray-500 hover:text-gray-300 disabled:opacity-40 sm:min-h-[32px]"
             >
               Cancel
             </button>

@@ -17,7 +17,6 @@ import FavoriteButton from '@/components/favorites/FavoriteButton';
 import SyncToNostrButton from '@/components/favorites/SyncToNostrButton';
 import SharedFavoritesNotice from '@/components/favorites/SharedFavoritesNotice';
 import SharedFavoritesDisclosure from '@/components/favorites/SharedFavoritesDisclosure';
-import FavoritesPrivacyControl from '@/components/favorites/FavoritesPrivacyControl';
 import PublishPlaylistButton from '@/components/favorites/PublishPlaylistButton';
 import { BoostButton } from '@/components/Lightning/BoostButton';
 import { Heart, Music, Disc, Users, Play, Shuffle, ListMusic, Globe, RefreshCw, Mic } from 'lucide-react';
@@ -1128,12 +1127,6 @@ function FavoritesPageContent() {
             component. */}
         <SharedFavoritesDisclosure />
 
-        {/* Directly under the disclosure, because the disclosure is what makes
-            the choice meaningful — reading "relays index this list" and then
-            being able to act on it in the same glance. Renders nothing when
-            signed out, on a read-only nip05 session, or outside the trial
-            allowlist, where there is no shared list to govern. */}
-        <FavoritesPrivacyControl />
 
         {error && (
           <div className="mb-6 p-4 bg-red-900/20 border border-red-500/50 rounded-lg text-red-400">
