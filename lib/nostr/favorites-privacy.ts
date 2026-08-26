@@ -68,6 +68,29 @@ import {
  */
 export type FavoritesPrivacy = 'public' | 'private' | 'off';
 
+/**
+ * Does going private take the WHOLE list, including entries this app did not
+ * write and cannot resolve?
+ *
+ * The spec says it must — the choice belongs to the list, not to the app — and
+ * the alternative was measured: a real account went private and 13 of 449
+ * entries stayed in the tags, public and relay-indexed, because a second app
+ * had written them. Nothing on screen said which. A user who has made a privacy
+ * choice and got 97% of it is worse off than one told plainly that they have to
+ * make it again elsewhere.
+ *
+ * OFF UNTIL BOSTMEBITCH CAN READ THE PRIVATE HALF. The sequencing is the same
+ * shape as the carry rule, one step along: an app must be able to READ and
+ * RENDER `content` before anything moves entries into it on that app's behalf,
+ * or the move is indistinguishable from a deletion on its screen. BMB's reader
+ * is in ChadFarrow/boostmebitch#222. Flipping this is a one-line commit once it
+ * ships.
+ *
+ * Only ever public → private. The reverse is a disclosure and stays limited to
+ * what this device's baseline claims — see `publishPlan`.
+ */
+export const WHOLE_LIST_PRIVACY_MOVE = false;
+
 /** The half a set of claims belongs to. `'off'` claims neither. */
 export type ListHalf = 'public' | 'private';
 
@@ -184,6 +207,17 @@ export interface PublishPlan {
   privateTags: string[][] | null;
   /** The baseline to store IF the relays accept the event, and only then. */
   baseline: PrivacyBaseline;
+  /**
+   * Entries left PUBLIC by a switch to private, because another app wrote them
+   * and this build cannot move them yet.
+   *
+   * Surfaced rather than counted and forgotten: a user who chose Private and
+   * got 97% of it must be told which part did not move, or the format has
+   * quietly made a promise it did not keep. Zero once
+   * {@link WHOLE_LIST_PRIVACY_MOVE} is on, and zero in public mode, where
+   * nothing was supposed to move.
+   */
+  strandedInPublicHalf: number;
 }
 
 /**
@@ -235,9 +269,41 @@ export function publishPlan(input: {
     inactiveMerged.foreignKinds
   );
 
+  // GOING PRIVATE TAKES THE WHOLE LIST.
+  //
+  // Everything left in the public half after the merge above is another app's —
+  // ours was just removed from it — and it moves too. That is the spec's rule
+  // and it is the difference between "private" and "97% private".
+  //
+  // Safe in this direction only. It strictly reduces exposure, the entries are
+  // carried WHOLE rather than re-rendered, and anything that can decrypt can
+  // put them back. The reverse is a disclosure and is not done: switching to
+  // public moves only what `baseline.private` claims, which is what the merge
+  // above already computes.
+  //
+  // The moved entries are NOT claimed in the baseline. Nothing local backs
+  // them, so a claim would read as our own removal next cycle and delete them —
+  // defect 3, arriving by a different road. They stay foreign, in the other
+  // half, and are carried from there exactly as they were carried here.
+  const movingWholeList = WHOLE_LIST_PRIVACY_MOVE && mode === 'private';
+  const privateNodes = movingWholeList
+    ? [...activeMerged.nodes, ...inactiveMerged.nodes]
+    : activeMerged.nodes;
+  const privateTags = movingWholeList
+    ? tagsFromNodes(
+        privateNodes,
+        [...activeMerged.foreignTags, ...inactiveMerged.foreignTags],
+        [...activeMerged.foreignKinds, ...inactiveMerged.foreignKinds]
+      )
+    : activeTags;
+
   return {
-    tags: mode === 'public' ? activeTags : inactiveTags,
-    privateTags: mode === 'private' ? activeTags : inactiveTags,
+    tags: mode === 'public' ? activeTags : movingWholeList ? [] : inactiveTags,
+    privateTags: mode === 'private' ? privateTags : inactiveTags,
+    strandedInPublicHalf:
+      mode === 'private' && !movingWholeList
+        ? inactiveTags.filter((t) => t[0] === 'i').length
+        : 0,
     baseline:
       mode === 'public'
         ? { public: publishedRecordFrom(local), private: EMPTY_RECORD }
@@ -269,6 +335,8 @@ export function withdrawalPlan(input: {
   return {
     tags: tagsFromNodes(pub.nodes, pub.foreignTags, pub.foreignKinds),
     privateTags: tagsFromNodes(priv.nodes, priv.foreignTags, priv.foreignKinds),
+    // A withdrawal moves nothing, so nothing is stranded by it.
+    strandedInPublicHalf: 0,
     baseline: EMPTY_BASELINE,
   };
 }

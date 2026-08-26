@@ -464,6 +464,35 @@ export function setFavoritesPrivacy(pubkey: string, mode: FavoritesPrivacy): voi
 /** Dispatched when the mode changes, so the page can re-render without a reload. */
 export const FAVORITES_PRIVACY_CHANGED_EVENT = 'favorites-privacy-changed';
 
+const STRANDED_PREFIX = 'sk_favorites_stranded';
+
+/**
+ * How many entries a switch to private left in the public half.
+ *
+ * They belong to another app, and until every reader can render the private
+ * half this build carries them where they are rather than moving them — see
+ * `WHOLE_LIST_PRIVACY_MOVE`. The count is kept so the UI can say so out loud.
+ * Silence here is the actual defect: a user who chose Private and got most of
+ * it, with nothing on screen naming the rest, has been told something untrue by
+ * omission.
+ */
+function setStranded(pubkey: string, count: number): void {
+  if (typeof window === 'undefined' || !pubkey) return;
+  try {
+    localStorage.setItem(`${STRANDED_PREFIX}:${pubkey}`, String(count));
+    window.dispatchEvent(new CustomEvent(FAVORITES_PRIVACY_CHANGED_EVENT, { detail: { count } }));
+  } catch {
+    /* private browsing — the count is a nicety, the carry is not */
+  }
+}
+
+export function getStrandedCount(pubkey: string): number {
+  if (typeof window === 'undefined' || !pubkey) return 0;
+  const raw = localStorage.getItem(`${STRANDED_PREFIX}:${pubkey}`);
+  const n = raw ? Number(raw) : 0;
+  return Number.isFinite(n) && n > 0 ? n : 0;
+}
+
 /**
  * Which half this publish writes into — or `'off'`, meaning do not publish.
  *
@@ -644,6 +673,11 @@ async function publishSingleList(
     console.log(
       `✅ Favorites: published ${entries} public and ${hidden} private entries (kind 10333)`
     );
+    // Entries a switch to private could NOT move, because another app wrote
+    // them and this build cannot move them yet. Recorded for the UI rather than
+    // only logged: a user who chose Private and got 97% of it has to be told
+    // which part is still public, or the app has quietly not kept a promise.
+    setStranded(pubkey, plan.strandedInPublicHalf);
     return true;
   } catch (error) {
     console.warn('⚠️ Favorites: publish failed —', error);

@@ -94,6 +94,20 @@ by someone who has the pubkey.
   through and comes back as `local`, which goes wholly into the active half — so an adopted entry is
   republished into this one. `reconcileInput` filters it through `claimedByBaseline`: our own entries
   (mid-move) yes, another writer's no. Private→public that would be a **disclosure**.
+- **The privacy choice belongs to the LIST, not to this app.** Whichever half holds entries is the
+  mode, and going private takes everything — including entries this app did not write and cannot
+  resolve. The alternative was measured on a real account: 436 entries encrypted, **13 left public**
+  and relay-indexed because Boost Me Bitch had written them, with nothing on screen saying which.
+  97% private is worse than a clear no. **`WHOLE_LIST_PRIVACY_MOVE` is OFF** until BMB can read the
+  private half (boostmebitch#222) — an app must be able to render `content` before entries are moved
+  into it on its behalf, or the move looks like a deletion there. `PublishPlan.strandedInPublicHalf`
+  carries the count meanwhile, and the control says it out loud. Spec: PC20-Nostr#24.
+- **The move is ONE DIRECTION.** public→private may take another app's entries: it only reduces
+  exposure, carries them whole, and anything that can decrypt can undo it. private→public may not —
+  it publishes an `i` tag relays index and cannot be taken back, so it moves only what
+  `baseline.private` claims. **Moved foreign entries are NOT claimed in the baseline**: nothing local
+  backs the claim, so it would read as our own removal next cycle and delete them (defect 3 by
+  another road). Pinned across two cycles, with the suite green under BOTH flag settings.
 - **`seedModeFromWire` has each half answer only for itself.** Public-first fails open: a device
   seeded `'public'` over a private account republishes every decrypted entry as a plaintext, indexed
   tag. Both halves, or neither, means **ask the user**.

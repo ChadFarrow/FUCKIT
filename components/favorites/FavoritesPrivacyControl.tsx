@@ -8,6 +8,7 @@ import {
   FAVORITES_PRIVACY_CHANGED_EVENT,
   getFavoritesPrivacy,
   setFavoritesPrivacy,
+  getStrandedCount,
   sharedFavoritesEnabledFor,
   withdrawFromSharedFavorites,
   requestSharedFavoritesSync,
@@ -55,11 +56,16 @@ export default function FavoritesPrivacyControl() {
   const [busy, setBusy] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [stranded, setStranded] = useState(0);
 
   useEffect(() => {
     if (!pubkey) return;
     setMode(getFavoritesPrivacy(pubkey));
-    const onChange = () => setMode(getFavoritesPrivacy(pubkey));
+    setStranded(getStrandedCount(pubkey));
+    const onChange = () => {
+      setMode(getFavoritesPrivacy(pubkey));
+      setStranded(getStrandedCount(pubkey));
+    };
     window.addEventListener(FAVORITES_PRIVACY_CHANGED_EVENT, onChange);
     return () => window.removeEventListener(FAVORITES_PRIVACY_CHANGED_EVENT, onChange);
   }, [pubkey]);
@@ -238,6 +244,21 @@ export default function FavoritesPrivacyControl() {
           Private needs a signer that can encrypt (NIP-44). Amber connected over{' '}
           <span className="whitespace-nowrap">bunker://</span> can; the Android app-to-app signer
           and a read-only NIP-05 login cannot.
+        </p>
+      )}
+
+      {/* WHAT PRIVATE DOES NOT COVER, said out loud.
+          The choice belongs to the list, so going private should take all of
+          it — but an app must be able to READ the private half before entries
+          are moved into it on its behalf, or the move looks like a deletion on
+          its screen. Until then these stay public, and a user who chose Private
+          and got 97% of it has to be told which part did not move. Measured on
+          a real account: 436 moved, 13 did not, and nothing said so. */}
+      {mode === 'private' && stranded > 0 && (
+        <p className="mt-2 text-xs text-amber-300/80">
+          {stranded} {stranded === 1 ? 'favorite is' : 'favorites are'} still public — added by
+          another app, so this one cannot move {stranded === 1 ? 'it' : 'them'} yet. Set Private in
+          that app too, or wait for it to support the encrypted list.
         </p>
       )}
 

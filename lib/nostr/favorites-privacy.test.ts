@@ -14,6 +14,7 @@ import assert from 'node:assert/strict';
 
 import {
   EMPTY_BASELINE,
+  WHOLE_LIST_PRIVACY_MOVE,
   claimedByBaseline,
   parseBaseline,
   publishPlan,
@@ -136,7 +137,11 @@ test('a public-mode device carries a foreign private half untouched', () => {
   assert.deepEqual(feedsOf(plan.privateTags!), [showId(FOREIGN)], 'not ours, not touched');
 });
 
-test('a private-mode device carries a foreign public half untouched', () => {
+test('a private-mode device takes the foreign public half WITH it', () => {
+  // Flag-aware on purpose. This vector asserted the pre-spec rule — carry the
+  // other half untouched — and that rule is what left a real account 97%
+  // private. Written to hold under both settings so flipping the flag does not
+  // "break" the suite and invite someone to weaken it.
   const plan = publishPlan({
     mode: 'private',
     publicRead: halfWith(FOREIGN),
@@ -144,8 +149,14 @@ test('a private-mode device carries a foreign public half untouched', () => {
     local: groupForSingleList([album(MUSIC_A, 'music')]),
     baseline: EMPTY_BASELINE,
   });
-  assert.deepEqual(feedsOf(plan.tags), [showId(FOREIGN)], 'not ours, not touched');
-  assert.deepEqual(feedsOf(plan.privateTags!), [showId(MUSIC_A)]);
+
+  if (WHOLE_LIST_PRIVACY_MOVE) {
+    assert.deepEqual(feedsOf(plan.tags), [], 'the public half is emptied');
+    assert.deepEqual(feedsOf(plan.privateTags!), [showId(MUSIC_A), showId(FOREIGN)]);
+  } else {
+    assert.deepEqual(feedsOf(plan.tags), [showId(FOREIGN)], 'stranded until the move ships');
+    assert.deepEqual(feedsOf(plan.privateTags!), [showId(MUSIC_A)]);
+  }
 });
 
 // ---------------------------------------------------------------------------
@@ -252,8 +263,17 @@ test('a switch moves ours and leaves the other writer alone in the same pass', (
     local,
     baseline,
   });
-  assert.deepEqual(feedsOf(plan.tags), [showId(FOREIGN)], 'ours left, theirs stayed');
-  assert.deepEqual(feedsOf(plan.privateTags!), [showId(MUSIC_A)]);
+
+  // OURS moves because we claim it. THEIRS moves only once the whole-list rule
+  // is on — and either way it is never dropped, which is the assertion that
+  // matters in both branches.
+  assert.deepEqual(feedsOf(plan.privateTags!)[0], showId(MUSIC_A), 'ours went private');
+  const theirs = WHOLE_LIST_PRIVACY_MOVE ? plan.privateTags! : plan.tags;
+  assert.equal(
+    feedsOf(theirs).includes(showId(FOREIGN)),
+    true,
+    "the other app's entry is somewhere on the list, never dropped"
+  );
 });
 
 // ---------------------------------------------------------------------------
@@ -390,4 +410,107 @@ test('a withdrawal on a device that claims nothing deletes nothing', () => {
   });
   assert.deepEqual(feedsOf(plan.tags), [showId(MUSIC_A), showId(FOREIGN)]);
   assert.deepEqual(feedsOf(plan.privateTags!), [showId(MUSIC_B)]);
+});
+
+// ---------------------------------------------------------------------------
+// Going private takes the whole list — spec test vector 13
+// ---------------------------------------------------------------------------
+
+test('a switch to private reports what it could NOT move', () => {
+  // The measured failure, as a number the UI can show. A real account went
+  // private and 13 of 449 entries stayed in the tags because a second app had
+  // written them — public, relay-indexed, and nothing on screen said which.
+  // While the move is gated, the count is the honest substitute for it.
+  const plan = publishPlan({
+    mode: 'private',
+    publicRead: halfWith(FOREIGN),
+    privateRead: EMPTY_PARSED,
+    local: groupForSingleList([album(MUSIC_A, 'music')]),
+    baseline: EMPTY_BASELINE,
+  });
+
+  if (WHOLE_LIST_PRIVACY_MOVE) {
+    assert.equal(plan.strandedInPublicHalf, 0, 'nothing is stranded once the move is on');
+    assert.deepEqual(feedsOf(plan.tags), [], 'the public half is emptied');
+    assert.equal(
+      feedsOf(plan.privateTags!).includes(showId(FOREIGN)),
+      true,
+      "the other app's entry moved too"
+    );
+  } else {
+    assert.equal(plan.strandedInPublicHalf, 1);
+    assert.deepEqual(feedsOf(plan.tags), [showId(FOREIGN)]);
+  }
+});
+
+test('going public strands nothing, because nothing was meant to move', () => {
+  const plan = publishPlan({
+    mode: 'public',
+    publicRead: EMPTY_PARSED,
+    privateRead: halfWith(FOREIGN),
+    local: groupForSingleList([album(MUSIC_A, 'music')]),
+    baseline: EMPTY_BASELINE,
+  });
+  assert.equal(plan.strandedInPublicHalf, 0);
+  // And the foreign PRIVATE entry stays private. This is the direction that
+  // must never move: publishing it as a tag is a disclosure, relays index `i`,
+  // and it cannot be taken back.
+  assert.deepEqual(feedsOf(plan.privateTags!), [showId(FOREIGN)]);
+  assert.equal(feedsOf(plan.tags).includes(showId(FOREIGN)), false);
+});
+
+test('a moved foreign entry is NOT claimed, so cycle 2 does not delete it', () => {
+  // Defect 3 arriving by a different road. Claiming what we moved would look
+  // reasonable — we did put it there — but nothing local backs the claim, so
+  // the removal test fires on it next cycle. Two cycles to see it, as ever.
+  const local = groupForSingleList([album(MUSIC_A, 'music')]);
+
+  const cycle1 = publishPlan({
+    mode: 'private',
+    publicRead: halfWith(FOREIGN),
+    privateRead: EMPTY_PARSED,
+    local,
+    baseline: EMPTY_BASELINE,
+  });
+  assert.deepEqual(
+    cycle1.baseline.private.feeds,
+    [MUSIC_A],
+    'we claim OUR entry and nothing else, however the move went'
+  );
+
+  const cycle2 = publishPlan({
+    mode: 'private',
+    publicRead: parseSingleList(cycle1.tags),
+    privateRead: parseSingleList(cycle1.privateTags!),
+    local,
+    baseline: cycle1.baseline,
+  });
+  const stillThere =
+    feedsOf(cycle2.privateTags!).includes(showId(FOREIGN)) ||
+    feedsOf(cycle2.tags).includes(showId(FOREIGN));
+  assert.equal(stillThere, true, "the other app's entry survives a second cycle");
+});
+
+test('the whole-list move is one direction only, whatever the flag says', () => {
+  // The asymmetry IS the rule, so it is asserted rather than left to the flag.
+  // public→private reduces exposure and is reversible by anything that can
+  // decrypt. private→public publishes an `i` tag relays index and cannot be
+  // taken back, so it is limited to what this device claims — always.
+  //
+  // MUSIC_B is ours and still held locally, so switching to public brings it
+  // back to the tags. FOREIGN is another app's, and nothing brings it there.
+  const plan = publishPlan({
+    mode: 'public',
+    publicRead: EMPTY_PARSED,
+    privateRead: halfWith(FOREIGN, MUSIC_B),
+    local: groupForSingleList([album(MUSIC_B, 'music')]),
+    baseline: { public: { feeds: [], items: [] }, private: { feeds: [MUSIC_B], items: [] } },
+  });
+
+  assert.deepEqual(feedsOf(plan.tags), [showId(MUSIC_B)], 'ours moved back to the tags');
+  assert.deepEqual(
+    feedsOf(plan.privateTags!),
+    [showId(FOREIGN)],
+    "another app's private entry is NEVER disclosed by our switch to public"
+  );
 });
