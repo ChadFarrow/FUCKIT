@@ -244,6 +244,7 @@ export default function RadioPlayer() {
         <div className="flex items-center justify-center gap-8">
           {/* Previous Button */}
           <button
+            aria-label="Previous track"
             onClick={playPreviousTrack}
             className="p-4 rounded-full transition-all duration-200 hover:scale-105 active:scale-95"
             style={{
@@ -256,6 +257,7 @@ export default function RadioPlayer() {
 
           {/* Play/Pause Button - Large */}
           <button
+            aria-label={isPlaying ? 'Pause' : 'Play'}
             onClick={isPlaying ? pause : resume}
             className="p-6 rounded-full transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg"
             style={{
@@ -272,6 +274,7 @@ export default function RadioPlayer() {
 
           {/* Next Button */}
           <button
+            aria-label="Next track"
             onClick={playNextTrack}
             className="p-4 rounded-full transition-all duration-200 hover:scale-105 active:scale-95"
             style={{

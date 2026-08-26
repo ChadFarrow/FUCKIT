@@ -84,6 +84,7 @@ export default function ExportPlaylistPage() {
           )}
 
           <button
+            aria-label="Download playlist"
             onClick={downloadPlaylist}
             disabled={downloading}
             className="w-full py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
@@ -119,6 +120,7 @@ export default function ExportPlaylistPage() {
           </div>
 
           <button
+            aria-label="Copy playlist link"
             onClick={copyToClipboard}
             className="w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
           >

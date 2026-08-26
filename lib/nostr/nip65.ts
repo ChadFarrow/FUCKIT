@@ -135,7 +135,7 @@ export function getStoredUserRelays(pubkey?: string): UserRelays | null {
 
     // Validate pubkey if provided
     if (pubkey && data.pubkey !== pubkey) {
-      console.log('⚠️ NIP-65: Stored relays are for different user');
+      console.warn('⚠️ NIP-65: Stored relays are for different user');
       return null;
     }
 

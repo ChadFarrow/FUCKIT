@@ -53,6 +53,7 @@ export default function BackButton({
   if (onClick) {
     return (
       <button
+        aria-label="Go back"
         onClick={onClick}
         className={combinedClasses}
       >
@@ -66,6 +67,7 @@ export default function BackButton({
   if (useHistory) {
     return (
       <button
+        aria-label="Go back"
         onClick={handleBack}
         className={combinedClasses}
       >

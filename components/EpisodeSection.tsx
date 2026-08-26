@@ -51,6 +51,7 @@ export default function EpisodeSection({
         <div className="flex items-center gap-3 min-w-0">
           {/* Play Episode Button */}
           <button
+            aria-label={hasPlayingTrack && isPlaying ? 'Pause episode' : 'Play episode'}
             onClick={handlePlayEpisode}
             disabled={tracks.length === 0}
             className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-colors ${

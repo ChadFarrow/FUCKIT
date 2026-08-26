@@ -171,7 +171,7 @@ export class ValueSplitsService {
               }
 
               // Keysend failed, fall back to LNURL
-              console.log(`⚠️ Keysend failed for ${recipient.address}, falling back to LNURL: ${keysendResult.error}`);
+              console.warn(`⚠️ Keysend failed for ${recipient.address}, falling back to LNURL: ${keysendResult.error}`);
             }
 
             // Pay via Lightning Address (LNURL) - either as fallback or primary method
@@ -203,7 +203,7 @@ export class ValueSplitsService {
 
             // If keysend fails and recipient has a Lightning Address fallback, try LNURL
             if (!keysendResult.success && recipient.lnurlFallback) {
-              console.log(`⚠️ Keysend failed for ${recipient.name || recipient.address.slice(0, 20)}, trying LNURL fallback: ${recipient.lnurlFallback}`);
+              console.warn(`⚠️ Keysend failed for ${recipient.name || recipient.address.slice(0, 20)}, trying LNURL fallback: ${recipient.lnurlFallback}`);
               const lnurlRecipient: ValueRecipient = {
                 ...recipient,
                 type: 'lnaddress',

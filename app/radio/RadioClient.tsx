@@ -93,6 +93,7 @@ export default function RadioClient() {
       <div className="absolute inset-0 z-10 flex flex-col items-center justify-center px-8">
         {/* Play Button - pill shape matching logo colors */}
         <button
+          aria-label="Start radio"
           onClick={handleStartRadio}
           disabled={isStarting}
           className="group flex items-center gap-3 px-8 py-4 md:px-10 md:py-5 rounded-full transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
