@@ -4,7 +4,7 @@ import { parseRSSFeedWithSegments, calculateTrackOrder, detectTrackMediaType, ap
 import { resolvePodcastIndexUrl } from '@/lib/podcast-index-api';
 import { normalizeUrl } from '@/lib/url-utils';
 import { findFeedIdByUrl } from '@/lib/feed-lookup';
-import { RateLimiter } from '@/lib/api-utils';
+import { RateLimiter, clientIp } from '@/lib/rate-limit';
 
 // Public endpoint (podping consumer) that triggers expensive RSS reparses —
 // cap per-IP request rate. In-memory, so the cap is per Railway instance;
@@ -195,8 +195,9 @@ async function processRemoteItems(feedUrl: string, publisherFeedId: string): Pro
 // POST /api/feeds/refresh-by-url - Refresh a feed by its originalUrl
 export async function POST(request: NextRequest) {
   try {
-    const clientIp = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
-    if (!refreshLimiter.isAllowed(clientIp)) {
+    // clientIp(), not x-forwarded-for[0]: the first entry is what the CALLER
+    // sent, so varying it minted a fresh bucket per request.
+    if (refreshLimiter.isLimited(clientIp(request.headers))) {
       return NextResponse.json(
         { error: 'Too many refresh requests, slow down' },
         { status: 429, headers: { 'Retry-After': '60' } }

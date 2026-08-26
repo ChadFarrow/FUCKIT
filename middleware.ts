@@ -1,60 +1,13 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { checkAdminAuth } from '@/lib/admin-auth';
-
-// Decide whether an API request must present the admin bearer secret.
-// Keep in sync with the matcher below. Intentionally PUBLIC (podping
-// consumer, see CLAUDE.md): GET /api/feeds/exists, POST /api/feeds/refresh-by-url,
-// POST /api/feeds, GET /api/feeds/opml.
-function requiresAdminAuth(request: NextRequest): boolean {
-  const { pathname, searchParams } = request.nextUrl;
-  const method = request.method.toUpperCase();
-
-  // CORS preflight always passes.
-  if (method === 'OPTIONS') return false;
-
-  if (pathname.startsWith('/api/admin/')) {
-    // npub-whitelist login check used by AdminPanel before it has the secret.
-    return pathname !== '/api/admin/verify';
-  }
-
-  // GET (list) and POST (podping consumer mints feeds) stay public.
-  if (pathname === '/api/feeds') {
-    return method === 'PUT' || method === 'DELETE';
-  }
-
-  if (pathname === '/api/tracks') {
-    return method === 'DELETE';
-  }
-
-  // Expensive maintenance endpoints — only callers are the nightly workflows
-  // and the admin panel.
-  if (pathname === '/api/parse-feeds' || pathname === '/api/playlist-cache') {
-    return true;
-  }
-
-  if (
-    pathname === '/api/playlist/parse-feeds' ||
-    pathname === '/api/playlist/parse-feeds-stream'
-  ) {
-    return true;
-  }
-
-  // Public playlist reads stay open; only the expensive ?refresh=true variant
-  // is gated (the public app never sends it — if a future client feature adds
-  // refresh=true, it will 401 once ADMIN_SECRET is set).
-  if (pathname.startsWith('/api/playlist/')) {
-    return searchParams.get('refresh') === 'true';
-  }
-
-  return false;
-}
+import { requiresAdminAuth } from '@/lib/admin-route-policy';
 
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, searchParams } = request.nextUrl;
 
   if (pathname.startsWith('/api/')) {
-    if (requiresAdminAuth(request)) {
+    if (requiresAdminAuth(pathname, request.method, searchParams)) {
       const denied = checkAdminAuth(request);
       if (denied) return denied;
     }
@@ -73,7 +26,7 @@ export function middleware(request: NextRequest) {
   const isRadioSubdomain = hostname.startsWith('radio.');
 
   if (isRadioSubdomain) {
-    // Rewrite all radio subdomain requests to /radio route
+    // Rewrite all radio subdomain requests to /radio page
     // This keeps the URL as radio.stablekraft.app but serves /radio page
     url.pathname = '/radio';
     return NextResponse.rewrite(url);
@@ -82,6 +35,13 @@ export function middleware(request: NextRequest) {
   return NextResponse.next();
 }
 
+/**
+ * Next.js requires this to be a statically analysable literal, so the API
+ * entries below are a hand-copy of `ADMIN_GATED_MATCHER` in
+ * `lib/admin-route-policy.ts`. `admin-route-policy.test.ts` asserts the two
+ * agree — a rule added to the policy but not here would never run, because
+ * middleware is not invoked for an unmatched path.
+ */
 export const config = {
   matcher: [
     // Match all paths except static files, api routes, and Next.js internals
@@ -89,7 +49,20 @@ export const config = {
     // Admin-auth-gated API surfaces (requiresAdminAuth decides per method/query)
     '/api/admin/:path*',
     '/api/feeds',
+    '/api/feeds/:id/refresh',
+    '/api/feeds/:id/process-remote-items',
     '/api/tracks',
+    '/api/playlists',
+    '/api/artwork-colors',
+    '/api/artwork-colors/batch-process',
+    '/api/add-playlist-to-database',
+    '/api/music-tracks',
+    '/api/music-tracks/database',
+    '/api/music-tracks/clear-cache',
+    '/api/cache',
+    '/api/resolve-hgh-tracks',
+    '/api/find-missing-feeds',
+    '/api/resolve-missing-feeds',
     '/api/parse-feeds',
     '/api/playlist-cache',
     '/api/playlist/:path*',

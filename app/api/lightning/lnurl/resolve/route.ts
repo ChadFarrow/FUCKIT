@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { bech32 } from 'bech32';
+import { safeFetch, readCappedText, MAX_JSON_BYTES } from '@/lib/safe-fetch';
 
 interface LNURLPayParams {
   callback: string;
@@ -37,9 +38,12 @@ export async function POST(req: NextRequest) {
     let url: string;
 
     if (address) {
-      // Validate Lightning Address format
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(address)) {
+      // Validate Lightning Address format.
+      // The old regex was `^[^\s@]+@[^\s@]+\.[^\s@]+$`, which accepts
+      // `x@127.0.0.1` — a dot is not a domain. safeFetch below is the real
+      // stop, but keep the shape check honest too.
+      const addressRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$/;
+      if (!addressRegex.test(address)) {
         return NextResponse.json(
           { error: 'Invalid Lightning Address format' },
           { status: 400 }
@@ -48,7 +52,7 @@ export async function POST(req: NextRequest) {
 
       // Convert Lightning Address to URL
       const [username, domain] = address.split('@');
-      url = `https://${domain}/.well-known/lnurlp/${username}`;
+      url = `https://${domain}/.well-known/lnurlp/${encodeURIComponent(username)}`;
     } else {
       // Decode LNURL to URL
       try {
@@ -69,23 +73,42 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Fetch LNURL-pay parameters from the remote server
-    // This happens server-side, so CORS doesn't apply
-    const response = await fetch(url, {
+    // Fetch LNURL-pay parameters from the remote server.
+    // safeFetch, not fetch: a bech32 `lnurl` decodes to an ARBITRARY url of any
+    // scheme and any host, and the whole JSON body was returned to the caller.
+    const result = await safeFetch(url, {
+      timeoutMs: 15000,
       headers: {
         'Accept': 'application/json',
         'User-Agent': 'StableKraft-Lightning/1.0',
       },
     });
 
+    if (!result.ok) {
+      console.warn(`⚠️ LNURL resolve refused: ${result.error}`);
+      return NextResponse.json({ error: 'LNURL-pay request failed' }, { status: 400 });
+    }
+
+    const response = result.response;
+
     if (!response.ok) {
       return NextResponse.json(
-        { error: `HTTP ${response.status}: ${response.statusText}` },
+        { error: `LNURL-pay request failed (HTTP ${response.status})` },
         { status: response.status }
       );
     }
 
-    const data = await response.json();
+    const body = await readCappedText(response, MAX_JSON_BYTES);
+    if (!body.ok) {
+      return NextResponse.json({ error: 'LNURL-pay response too large' }, { status: 502 });
+    }
+
+    let data: LNURLPayParams & { status?: string; reason?: string };
+    try {
+      data = JSON.parse(body.value);
+    } catch {
+      return NextResponse.json({ error: 'Invalid LNURL-pay response' }, { status: 502 });
+    }
 
     if (data.status === 'ERROR') {
       return NextResponse.json(
@@ -106,7 +129,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('LNURL resolution error:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Internal server error' },
+      { error: 'LNURL resolution failed' },
       { status: 500 }
     );
   }

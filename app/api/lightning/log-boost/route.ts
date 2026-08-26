@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { RateLimiter, clientIp } from '@/lib/rate-limit';
 import { classifyBoostFailure } from '@/lib/lightning/boost-failure';
 import { prisma } from '@/lib/prisma';
 import type { BoostFailureScope } from '@/lib/admin/diagnostics';
@@ -30,27 +31,8 @@ const MAX_TYPE = 60;
 // with an opportunistic sweep so the map cannot leak across the instance's life.
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX = 30;
-const rateLimits = new Map<string, { count: number; windowStart: number }>();
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const existing = rateLimits.get(ip);
-
-  if (!existing || now - existing.windowStart >= RATE_LIMIT_WINDOW_MS) {
-    rateLimits.set(ip, { count: 1, windowStart: now });
-
-    if (rateLimits.size > 5000) {
-      rateLimits.forEach((value, key) => {
-        if (now - value.windowStart >= RATE_LIMIT_WINDOW_MS) rateLimits.delete(key);
-      });
-    }
-
-    return false;
-  }
-
-  existing.count += 1;
-  return existing.count > RATE_LIMIT_MAX;
-}
+const limiter = new RateLimiter(RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_MS);
+const isRateLimited = (ip: string) => limiter.isLimited(ip);
 
 // One warning per process is enough to diagnose "the migration hasn't run" — without
 // this, the window between deploying this code and running the BoostFailure migration
@@ -150,8 +132,7 @@ function parseFailedRecipients(value: unknown): Array<{ name: string; amount: nu
 
 export async function POST(req: NextRequest) {
   try {
-    const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || 'unknown';
-    if (isRateLimited(ip)) {
+    if (isRateLimited(clientIp(req.headers))) {
       return new NextResponse(null, { status: 429 });
     }
 

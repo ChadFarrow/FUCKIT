@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isSafePublicUrl } from '@/lib/url-security';
+import { safeFetch, declaredLengthExceeds, MAX_AUDIO_BYTES } from '@/lib/safe-fetch';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -57,17 +58,23 @@ export async function GET(request: NextRequest) {
     // downloads pull the entire file in one request and died on it. Clearing the
     // timer once the headers land keeps the dead-origin protection without
     // capping how long a healthy transfer may take.
-    const controller = new AbortController();
-    const headerTimeout = setTimeout(() => controller.abort(), 30000);
-    let response: Response;
-    try {
-      response = await fetch(url, {
-        headers: fetchHeaders,
-        signal: controller.signal,
-      });
-    } finally {
-      clearTimeout(headerTimeout);
+    //
+    // safeFetch keeps exactly that behaviour — it clears its timer as soon as
+    // `fetch` resolves, which is when the headers land — and adds the redirect
+    // re-validation this route was missing: `isSafePublicUrl` above only saw
+    // the first URL, so a 302 into the private range went through.
+    const fetched = await safeFetch(url, {
+      allowHttp: true,
+      timeoutMs: 30000,
+      headers: fetchHeaders,
+    });
+
+    if (!fetched.ok) {
+      console.error(`❌ [Audio Proxy] Refused (${fetched.error}):`, url.substring(0, 150));
+      return NextResponse.json({ error: 'Failed to fetch audio file' }, { status: 502 });
     }
+
+    const response = fetched.response;
 
     const fetchDuration = Date.now() - startTime;
     console.log(`✅ [Audio Proxy] Origin responded in ${fetchDuration}ms - Status: ${response.status}`);
@@ -85,6 +92,34 @@ export async function GET(request: NextRequest) {
           }
         }
       );
+    }
+
+    // The upstream content-type used to be echoed verbatim alongside
+    // `Access-Control-Allow-Origin: *`, which made this a general-purpose open
+    // CORS proxy: any site could read any third-party response through us.
+    // Restricting the type to media keeps the wildcard usable for the audio
+    // element (it is needed for cross-origin media in the WebView) while
+    // closing the read-anything hole.
+    const upstreamType = (response.headers.get('content-type') || '').toLowerCase();
+    const isMediaType =
+      upstreamType === '' ||
+      upstreamType.startsWith('audio/') ||
+      upstreamType.startsWith('video/') ||
+      upstreamType.startsWith('application/octet-stream') ||
+      upstreamType.startsWith('application/ogg') ||
+      upstreamType.startsWith('binary/');
+    if (!isMediaType) {
+      console.warn(`⚠️ [Audio Proxy] Refused non-media content-type "${upstreamType}" for ${url.substring(0, 150)}`);
+      return NextResponse.json({ error: 'Not an audio resource' }, { status: 415 });
+    }
+
+    // Refuse an oversized body on its declared length. Deliberately NOT a
+    // per-byte counting stream: this is the playback hot path, and the body is
+    // piped straight through rather than buffered, so the header check is the
+    // protection that costs nothing.
+    if (declaredLengthExceeds(response, MAX_AUDIO_BYTES)) {
+      console.warn(`⚠️ [Audio Proxy] Refused oversized body for ${url.substring(0, 150)}`);
+      return NextResponse.json({ error: 'Audio file too large' }, { status: 413 });
     }
 
     // Get the response headers with comprehensive CORS support

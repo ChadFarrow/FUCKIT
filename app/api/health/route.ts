@@ -34,7 +34,15 @@ export async function GET() {
         status: 'unhealthy',
         timestamp: new Date().toISOString(),
         database: 'disconnected',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        // NOT the raw error. A Prisma connection failure embeds the host, port
+        // and database name from DATABASE_URL, and this route is public and
+        // unauthenticated. Same dev-only pattern as app/api/proxy-audio.
+        error:
+          process.env.NODE_ENV === 'development'
+            ? error instanceof Error
+              ? error.message
+              : 'Unknown error'
+            : 'Database unavailable',
       },
       { status: 503 }
     );

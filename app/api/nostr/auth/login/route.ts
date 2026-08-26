@@ -5,6 +5,11 @@ import { getSessionIdFromRequest } from '@/lib/session-utils';
 import { normalizePubkey } from '@/lib/nostr/normalize';
 import { publicKeyToNpub } from '@/lib/nostr/keys';
 import { sessionCookie } from '@/lib/auth/require-user';
+import {
+  verifyChallenge,
+  isCreatedAtAcceptable,
+  markChallengeUsed,
+} from '@/lib/auth/challenge';
 
 /**
  * POST /api/nostr/auth/login
@@ -39,6 +44,46 @@ export async function POST(request: NextRequest) {
         { success: false, error: 'Invalid pubkey format (must be hex or npub)' },
         { status: 400 }
       );
+    }
+
+    // Replay protection. Verifying the signature proves the holder of the key
+    // signed THIS event; it does not prove they signed it recently, or that the
+    // challenge came from us. Without the two checks below, one captured login
+    // body minted a fresh 90-day proven session forever.
+    //
+    // FAIL-OPEN when SESSION_SECRET is unset, matching the challenge route and
+    // lib/auth/require-user.ts — an unsigned challenge cannot be verified, and
+    // a hard failure here would lock everyone out of an unconfigured deploy.
+    const sessionSecret = process.env.SESSION_SECRET;
+    if (sessionSecret) {
+      const nowMs = Date.now();
+
+      const challengeCheck = verifyChallenge(challenge, sessionSecret, nowMs);
+      if (!challengeCheck.ok) {
+        console.warn(`⚠️ Login rejected: challenge ${challengeCheck.reason}`);
+        return NextResponse.json(
+          { success: false, error: 'Challenge expired or invalid — please try again' },
+          { status: 401 }
+        );
+      }
+
+      if (!isCreatedAtAcceptable(Number(createdAt), nowMs)) {
+        console.warn('⚠️ Login rejected: created_at outside the accepted window');
+        return NextResponse.json(
+          { success: false, error: 'Login event timestamp is out of range' },
+          { status: 401 }
+        );
+      }
+
+      // Best-effort single use. Per-instance, so the TTL above is the real
+      // guarantee; this closes automated same-instance replay.
+      if (!markChallengeUsed(challengeCheck.nonce, nowMs)) {
+        console.warn('⚠️ Login rejected: challenge already redeemed');
+        return NextResponse.json(
+          { success: false, error: 'Challenge already used — please try again' },
+          { status: 401 }
+        );
+      }
     }
 
     let calculatedNpub = npub;

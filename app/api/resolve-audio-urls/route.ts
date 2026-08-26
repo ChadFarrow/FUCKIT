@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { safeFetch, readCappedText, MAX_FEED_BYTES } from '@/lib/safe-fetch';
 
 interface ResolvedAudioTrack {
   feedGuid: string;
@@ -16,6 +17,9 @@ interface ResolvedAudioTrack {
 const audioUrlCache = new Map<string, { url: string | null; artworkUrl?: string | null; timestamp: number; duration?: number }>();
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
+/** Outbound fetches one request may trigger. */
+const MAX_SONGS_PER_REQUEST = 200;
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -23,6 +27,16 @@ export async function POST(request: NextRequest) {
 
     if (!Array.isArray(songs)) {
       return NextResponse.json({ error: 'Invalid songs array' }, { status: 400 });
+    }
+
+    // The array was unbounded, so one request could fan out to arbitrarily many
+    // outbound fetches. This route is called by components/PlaylistAlbum.tsx,
+    // where a real playlist is well under this.
+    if (songs.length > MAX_SONGS_PER_REQUEST) {
+      return NextResponse.json(
+        { error: `Too many songs (limit ${MAX_SONGS_PER_REQUEST})` },
+        { status: 400 }
+      );
     }
 
     console.log(`🔄 Resolving audio URLs for ${songs.length} tracks`);
@@ -53,25 +67,34 @@ export async function POST(request: NextRequest) {
 
           console.log(`🔍 Fetching RSS feed for: ${song.title} from ${song.feedUrl}`);
           
-          // Fetch the RSS feed with timeout
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 15000);
-          
-          const response = await fetch(song.feedUrl, {
-            signal: controller.signal,
+          // safeFetch, not fetch: `song.feedUrl` comes straight from the
+          // request body, so this was an unauthenticated SSRF fan-out.
+          const fetched = await safeFetch(song.feedUrl, {
+            allowHttp: true, // some podcast feeds are still plain HTTP
+            timeoutMs: 15000,
             headers: {
               'User-Agent': 'StableKraft-Music-Resolver/1.0',
               'Accept': 'application/rss+xml, application/xml, text/xml',
             },
           });
-          
-          clearTimeout(timeoutId);
-          
+
+          if (!fetched.ok) {
+            console.warn(`⚠️ Refused feed URL for "${song.title}": ${fetched.error}`);
+            throw new Error('Feed URL refused');
+          }
+
+          const response = fetched.response;
+
           if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
           }
           
-          const xmlText = await response.text();
+          const readFeed = await readCappedText(response, MAX_FEED_BYTES);
+          if (!readFeed.ok) {
+            console.warn(`⚠️ Feed too large for "${song.title}": ${readFeed.error}`);
+            throw new Error('Feed too large');
+          }
+          const xmlText = readFeed.value;
           
           // Parse XML to find the specific item by GUID
           const mediaData = extractMediaDataFromXML(xmlText, song.itemGuid);

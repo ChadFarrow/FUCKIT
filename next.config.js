@@ -646,6 +646,24 @@ const nextConfig = {
             key: 'Referrer-Policy',
             value: 'strict-origin-when-cross-origin',
           },
+          {
+            // Nothing here uses these, and an injected iframe or script should
+            // not be able to either. Deliberately NOT disabling `autoplay` —
+            // the audio element and the Android WebView need it.
+            key: 'Permissions-Policy',
+            value: [
+              'accelerometer=()',
+              'camera=()',
+              'display-capture=()',
+              'geolocation=()',
+              'gyroscope=()',
+              'magnetometer=()',
+              'microphone=()',
+              'payment=()',
+              'usb=()',
+              'interest-cohort=()',
+            ].join(', '),
+          },
         ],
       },
       {

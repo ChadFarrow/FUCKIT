@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { parseChaptersJSON } from '@/lib/rss-parser-db';
 import { isSafePublicUrl } from '@/lib/url-security';
+import { safeFetch, readCappedText, MAX_JSON_BYTES } from '@/lib/safe-fetch';
 
 /**
  * GET /api/chapters?url=<chaptersUrl>
@@ -72,12 +73,22 @@ function isReflexProxyUrl(url: string): boolean {
 
 async function fetchAndParse(url: string) {
   try {
-    const response = await fetch(url, {
+    // safeFetch, not fetch: validateChaptersUrl above checks only the URL it is
+    // handed, and this fetch followed redirects, so the guard could be walked
+    // past with a 302. It also caps the body.
+    const fetched = await safeFetch(url, {
+      timeoutMs: 10000,
       headers: { 'User-Agent': 'StableKraft/1.0' },
-      signal: AbortSignal.timeout(10000),
     });
+    if (!fetched.ok) {
+      console.warn(`⚠️ Chapters fetch refused for ${url}: ${fetched.error}`);
+      return null;
+    }
+    const response = fetched.response;
     if (!response.ok) return null;
-    const data = await response.json();
+    const body = await readCappedText(response, MAX_JSON_BYTES);
+    if (!body.ok) return null;
+    const data = JSON.parse(body.value);
     return parseChaptersJSON(data);
   } catch (error) {
     console.warn(`⚠️ Failed to fetch chapters from ${url}:`, error instanceof Error ? error.message : error);

@@ -1,5 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { npubToPublicKey } from '@/lib/nostr/keys';
+import { RateLimiter, clientIp, rateLimitHeaders } from '@/lib/rate-limit';
+
+/**
+ * This route is deliberately OUTSIDE the admin bearer gate — AdminPanel calls it
+ * before it has the secret (see lib/admin-route-policy.ts). That makes it an
+ * oracle: POST an npub, learn from the 200-vs-403 whether it is an operator.
+ * Nothing bounded how fast a caller could walk a list of npubs through it.
+ */
+const verifyLimiter = new RateLimiter(20, 60_000);
 
 /**
  * POST /api/admin/verify
@@ -7,6 +16,14 @@ import { npubToPublicKey } from '@/lib/nostr/keys';
  */
 export async function POST(request: NextRequest) {
   try {
+    const limit = verifyLimiter.check(clientIp(request.headers));
+    if (!limit.allowed) {
+      return NextResponse.json(
+        { success: false, error: 'Too many requests' },
+        { status: 429, headers: rateLimitHeaders(limit) }
+      );
+    }
+
     const body = await request.json();
     const { npub, pubkey } = body;
 

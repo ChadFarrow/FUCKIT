@@ -166,11 +166,48 @@ export async function POST(request: NextRequest) {
   }
 }
 
+/**
+ * Columns a PUT may set.
+ *
+ * This used to be `const { id, ...updateData } = body`, which let any caller
+ * write ANY Track column. The ones deliberately absent are the ones that make
+ * that dangerous: `audioUrl` (what the user actually plays), `v4vRecipient` and
+ * `v4vValue` (where their sats go), `feedId` and `guid` (row identity, and the
+ * favorites id ladders resolve against both), and `searchVector` / `createdAt` /
+ * `updatedAt`, which the app owns. Add to this list deliberately, never by
+ * spreading the body.
+ */
+const TRACK_UPDATABLE_FIELDS = [
+  'title',
+  'subtitle',
+  'description',
+  'artist',
+  'album',
+  'duration',
+  'explicit',
+  'image',
+  'publishedAt',
+  'itunesAuthor',
+  'itunesSummary',
+  'itunesImage',
+  'itunesDuration',
+  'itunesKeywords',
+  'itunesCategories',
+  'startTime',
+  'endTime',
+  'trackOrder',
+  'status',
+  'podcastCategories',
+  'mediaType',
+  'mimeType',
+  'chaptersUrl',
+] as const;
+
 // PUT /api/tracks - Update a track
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { id, ...updateData } = body;
+    const { id } = body;
     
     if (!id) {
       return NextResponse.json(
@@ -178,10 +215,32 @@ export async function PUT(request: NextRequest) {
         { status: 400 }
       );
     }
-    
+
+    const updateData: Record<string, unknown> = {};
+    for (const field of TRACK_UPDATABLE_FIELDS) {
+      if (Object.prototype.hasOwnProperty.call(body, field)) {
+        updateData[field] = body[field];
+      }
+    }
+
+    const rejected = Object.keys(body).filter(
+      (k) => k !== 'id' && !(TRACK_UPDATABLE_FIELDS as readonly string[]).includes(k)
+    );
+    if (rejected.length > 0) {
+      // console.warn, not log: removeConsole strips `log` from production builds.
+      console.warn(`⚠️ PUT /api/tracks ignored non-updatable fields: ${rejected.join(', ')}`);
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json(
+        { error: 'No updatable fields supplied' },
+        { status: 400 }
+      );
+    }
+
     const track = await prisma.track.update({
       where: { id },
-      data: updateData,
+      data: { ...updateData, updatedAt: new Date() },
       include: {
         Feed: {
           select: {
