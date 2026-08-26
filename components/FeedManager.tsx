@@ -356,6 +356,7 @@ export default function FeedManager() {
                   disabled={addingFeed}
                 />
                 <button
+                  aria-label="Add feed"
                   type="submit"
                   disabled={addingFeed || !newFeed.originalUrl.trim()}
                   className="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 font-medium"

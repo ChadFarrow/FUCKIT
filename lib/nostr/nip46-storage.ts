@@ -166,7 +166,7 @@ export function loadNIP46Connection(userPubkey?: string): NIP46Connection | null
 
     // Check if connection has expired
     if (parsed.expiresAt && Date.now() > parsed.expiresAt) {
-      console.log('⚠️ NIP-46 connection expired, removing');
+      console.warn('⚠️ NIP-46 connection expired, removing');
       clearNIP46Connection();
       return null;
     }
@@ -174,7 +174,7 @@ export function loadNIP46Connection(userPubkey?: string): NIP46Connection | null
     // If userPubkey was provided but doesn't match, return null
     // This ensures we only use connections for the correct user account
     if (userPubkey && parsed.pubkey && parsed.pubkey !== userPubkey) {
-      console.log(`⚠️ NIP-46: Stored connection is for different user pubkey (stored: ${parsed.pubkey.slice(0, 16)}..., requested: ${userPubkey.slice(0, 16)}...). Returning null.`);
+      console.warn(`⚠️ NIP-46: Stored connection is for different user pubkey (stored: ${parsed.pubkey.slice(0, 16)}..., requested: ${userPubkey.slice(0, 16)}...). Returning null.`);
       return null;
     }
 
@@ -263,7 +263,7 @@ export function hasValidConnection(): boolean {
   );
 
   if (!hasRequiredFields) {
-    console.log('ℹ️ NIP-46: Stored connection is missing required fields');
+    console.warn('ℹ️ NIP-46: Stored connection is missing required fields');
     return false;
   }
 

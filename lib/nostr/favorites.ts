@@ -88,7 +88,7 @@ export async function publishFavoriteToNostr(
             console.log('✅ Favorites: NIP-55 reconnected successfully!');
           } catch (reconnectError) {
             console.warn('⚠️ Favorites: Failed to reconnect NIP-55:', reconnectError);
-            console.log(`ℹ️ Favorite ${type} not posted to Nostr: NIP-55 reconnection failed`);
+            console.warn(`ℹ️ Favorite ${type} not posted to Nostr: NIP-55 reconnection failed`);
             return null;
           }
         } else {
@@ -250,7 +250,7 @@ export async function deleteFavoriteFromNostr(
             console.log('✅ Favorites: NIP-55 reconnected successfully!');
           } catch (reconnectError) {
             console.warn('⚠️ Favorites: Failed to reconnect NIP-55:', reconnectError);
-            console.log('ℹ️ Favorite deletion not posted to Nostr: NIP-55 reconnection failed');
+            console.warn('ℹ️ Favorite deletion not posted to Nostr: NIP-55 reconnection failed');
             return null;
           }
         } else {
@@ -480,6 +480,6 @@ export async function batchPublishFavoritesToNostr(
   }
 
   await relayManager.disconnectAll();
-  console.log(`📊 Batch sync complete: ${result.successful.length} successful, ${result.failed.length} failed`);
+  console.warn(`📊 Batch sync complete: ${result.successful.length} successful, ${result.failed.length} failed`);
   return result;
 }

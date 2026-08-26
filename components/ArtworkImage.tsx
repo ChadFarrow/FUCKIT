@@ -15,5 +15,12 @@ import { isAnimatedArtworkUrl } from '@/lib/cdn-utils';
  */
 export default function ArtworkImage({ src, unoptimized, ...props }: ImageProps) {
   const animated = typeof src === 'string' && isAnimatedArtworkUrl(src);
+  /*
+   * `alt` is required by ImageProps and arrives through {...props}. jsx-a11y
+   * cannot see through a spread, so it reports a missing alt on every render of
+   * this wrapper. Every call site passes one, and TypeScript enforces it — the
+   * rule is wrong here, not the code.
+   */
+  // eslint-disable-next-line jsx-a11y/alt-text
   return <Image src={src} unoptimized={unoptimized ?? animated} {...props} />;
 }

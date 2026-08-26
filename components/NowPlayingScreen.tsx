@@ -756,6 +756,8 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
             {/* Shuffle Button */}
             <button
               onClick={toggleShuffle}
+              aria-label={isShuffleMode ? 'Turn shuffle off' : 'Turn shuffle on'}
+              aria-pressed={isShuffleMode}
               className="rounded-full transition-all duration-200 flex items-center justify-center flex-shrink-0"
               style={{
                 width: 40, height: 40,
@@ -773,6 +775,7 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
             {/* Previous Button */}
             <button
               onClick={playPreviousTrack}
+              aria-label="Previous track"
               className="rounded-full transition-all duration-200 hover:scale-105 active:scale-95 flex items-center justify-center flex-shrink-0"
               style={{
                 width: 52, height: 52,
@@ -786,6 +789,7 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
             {/* Play/Pause Button */}
             <button
               onClick={isPlaying ? pause : resume}
+              aria-label={isPlaying ? 'Pause' : 'Play'}
               className="rounded-full transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg flex items-center justify-center flex-shrink-0"
               style={{
                 width: 64, height: 64,
@@ -803,6 +807,7 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
             {/* Next Button */}
             <button
               onClick={playNextTrack}
+              aria-label="Next track"
               className="rounded-full transition-all duration-200 hover:scale-105 active:scale-95 flex items-center justify-center flex-shrink-0"
               style={{
                 width: 52, height: 52,
