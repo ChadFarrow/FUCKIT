@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { getSessionId } from '@/lib/session-utils';
 
 interface SessionContextType {
@@ -30,8 +30,10 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const sessionValue = useMemo(() => ({ sessionId, isLoading }), [sessionId, isLoading]);
+
   return (
-    <SessionContext.Provider value={{ sessionId, isLoading }}>
+    <SessionContext.Provider value={sessionValue}>
       {children}
     </SessionContext.Provider>
   );

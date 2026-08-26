@@ -86,35 +86,35 @@ model FavoriteTrack {
 }
 
 model Feed {
-  id                  String    @id
-  title               String
-  description         String?
-  originalUrl         String    @unique
-  cdnUrl              String?
-  type                String    @default("album")
-  artist              String?
-  image               String?
-  language            String?
-  category            String?
-  explicit            Boolean   @default(false)
-  priority            String    @default("normal")
-  status              String    @default("active")
-  lastFetched         DateTime?
-  lastError           String?
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime
-  guid                String?   @unique
-  publisherId         String?
-  v4vRecipient        String?
-  v4vValue            Json?
-  podcastCategories   String[]  @default([])
-  oldestItemPubdate   DateTime?
-  persons             Json?
-  podcastImages       Json?
-  musicShowOnly       Boolean   @default(false)
-  medium              String?
-  lastNewTrackAt      DateTime?
-  markedDead          Boolean   @default(false)
+  id                String    @id
+  title             String
+  description       String?
+  originalUrl       String    @unique
+  cdnUrl            String?
+  type              String    @default("album")
+  artist            String?
+  image             String?
+  language          String?
+  category          String?
+  explicit          Boolean   @default(false)
+  priority          String    @default("normal")
+  status            String    @default("active")
+  lastFetched       DateTime?
+  lastError         String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime
+  guid              String?   @unique
+  publisherId       String?
+  v4vRecipient      String?
+  v4vValue          Json?
+  podcastCategories String[]  @default([])
+  oldestItemPubdate DateTime?
+  persons           Json?
+  podcastImages     Json?
+  musicShowOnly     Boolean   @default(false)
+  medium            String?
+  lastNewTrackAt    DateTime?
+  markedDead        Boolean   @default(false)
   Feed              Feed?     @relation("FeedToFeed", fields: [publisherId], references: [id])
   other_Feed        Feed[]    @relation("FeedToFeed")
   Track             Track[]
@@ -127,6 +127,18 @@ model Feed {
   @@index([status])
   @@index([status, lastFetched])
   @@index([status, priority, createdAt])
+  // The albums-fast main query: where {status, markedDead} order by
+  // [priority ASC, createdAt DESC]. Postgres cannot walk an all-ascending index
+  // for a mixed-direction ORDER BY, so `Feed_status_priority_createdAt_idx`
+  // above could not serve it and every cache miss full-sorted ~1,500 rows.
+  // Directions here match the query.
+  @@index([status, markedDead, priority(sort: Asc), createdAt(sort: Desc)], name: "Feed_catalog_grid_idx")
+  // `markedDead` appears in 15+ hot where clauses (albums-fast, feeds/recent,
+  // publishers, search, opml, parsed-feeds) and was in NO index, so every one
+  // of them filtered after the index scan.
+  @@index([status, markedDead, type])
+  // Queried on every albums-fast and feeds/recent request, unindexed.
+  @@index([type, musicShowOnly])
   @@index([status, priority])
   @@index([status, type])
   @@index([status, type, createdAt])
@@ -257,6 +269,12 @@ model Track {
   @@index([feedId])
   @@index([feedId, publishedAt])
   @@index([feedId, status])
+  // The hottest query in the app: the nested Track select under every feed.
+  // Prisma emits ROW_NUMBER() OVER (PARTITION BY feedId ORDER BY trackOrder,
+  // publishedAt, createdAt) with LIMIT, and `Feed_feedId_status_idx` above
+  // covers only the filter half — the partition sort was unindexed. This lets
+  // the window read pre-sorted.
+  @@index([feedId, status, trackOrder, publishedAt, createdAt], name: "Track_feed_ordered_idx")
   @@index([feedId, trackOrder])
   @@index([guid, feedId])
   @@index([guid])

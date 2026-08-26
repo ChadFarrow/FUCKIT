@@ -1,5 +1,6 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useState, useRef, useEffect, memo, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -9,7 +10,18 @@ import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { generateAlbumHref, generateAlbumUrl } from '@/lib/url-utils';
 // import CDNImage from './CDNImage'; // Replaced with direct Next.js Image for performance
 import { useScrollDetectionContext } from '@/components/ScrollDetectionProvider';
-import { BoostButton } from '@/components/Lightning/BoostButton';
+/**
+ * Lazily loaded, and it matters: BoostButton is ~1,700 lines and statically
+ * imports canvas-confetti. It renders only when `showBoostModal` is true — i.e.
+ * after a deliberate tap — but a static import put all of it in the initial
+ * chunk of every page that renders a card, which is most of the app.
+ * `ssr: false` because the modal is interaction-only and never needs to exist
+ * in the server-rendered HTML.
+ */
+const BoostButton = dynamic(
+  () => import('@/components/Lightning/BoostButton').then((m) => m.BoostButton),
+  { ssr: false }
+);
 import FavoriteButton from '@/components/favorites/FavoriteButton';
 import { singleTrackFavoriteData } from '@/lib/favorite-target';
 import DownloadButton from '@/components/downloads/DownloadButton';

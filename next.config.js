@@ -171,7 +171,10 @@ const nextConfig = {
     cpus: 1,
     // Disable CSS optimization during build - this is the main bottleneck
     optimizeCss: false, // Disabled for faster Railway builds (was causing 30min timeouts)
-    optimizePackageImports: ['@/components'],
+    // lucide-react is imported at 55 sites. Next 15 has a built-in default for
+    // it, but naming it here is free and does not depend on that default
+    // surviving a version bump.
+    optimizePackageImports: ['@/components', 'lucide-react'],
   },
   
   // Turbopack configuration (moved from experimental)

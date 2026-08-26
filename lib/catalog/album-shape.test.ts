@@ -147,13 +147,6 @@ test('duration falls back to 180 when a feed declares none', () => {
   assert.equal(trackToAlbumTrack(track({ duration: 300 })).duration, 300);
 });
 
-test('absent optional track JSON becomes undefined, not null', () => {
-  const t = trackToAlbumTrack(track({ chapters: null, valueTimeSplits: null, persons: null }));
-  assert.equal(t.chapters, undefined);
-  assert.equal(t.valueTimeSplits, undefined);
-  assert.equal(t.persons, undefined);
-});
-
 // The `filter=podcasts` branch of albums-fast omitted `take` entirely and
 // loaded every episode of every podcast.
 test('albumFeedSelect requires an explicit take', () => {
@@ -224,9 +217,69 @@ test('the album key set is the API contract', () => {
 
 test('the track key set is the API contract', () => {
   const expected = [
-    'alternateEnclosures', 'chapters', 'chaptersUrl', 'duration', 'guid', 'id',
-    'image', 'mediaType', 'persons', 'podcastImages', 'publishedAt', 'startTime',
-    'endTime', 'title', 'url', 'v4vRecipient', 'v4vValue', 'valueTimeSplits',
+    'alternateEnclosures', 'duration', 'guid', 'id',
+    'image', 'mediaType', 'publishedAt', 'startTime',
+    'endTime', 'title', 'url', 'v4vRecipient', 'v4vValue',
+    'chaptersUrl', 'chapters', 'valueTimeSplits', 'persons',
   ].sort();
   assert.deepEqual(Object.keys(trackToAlbumTrack(track())).sort(), expected);
+});
+
+test('a null column is omitted from the WIRE, not merely set to null', () => {
+  // The four playback fields are `|| undefined`, so `Object.keys` sees them
+  // (the test above) but `JSON.stringify` does not. That is what made trimming
+  // them measure as zero bytes saved at limit=50: for the mostly-null music
+  // catalogue they were never on the wire to begin with.
+  const wire = JSON.parse(JSON.stringify(trackToAlbumTrack(track())));
+  for (const k of ['chaptersUrl', 'chapters', 'valueTimeSplits', 'persons']) {
+    assert.ok(!(k in wire), `${k} should be absent from the wire when the column is null`);
+  }
+});
+
+test('catalog track shape keeps what playback reads', () => {
+  // REGRESSION GUARD. These four were trimmed from the catalog select on the
+  // reasoning that `app/page.tsx` is the only consumer and drops them on
+  // arrival. `app/radio/RadioClient.tsx` is a second consumer, and it hands the
+  // RAW response to `setInitialAlbums`; `shuffleAllTracks` then carries those
+  // exact track objects into playback, which reads all four:
+  //
+  //   valueTimeSplits  AudioContext — VTS playback and AutoBoost. Absent, a
+  //                    segment boost pays the track-level recipient instead,
+  //                    so the money goes to a different person.
+  //   chaptersUrl      AudioContext — fetches /api/chapters.
+  //   chapters         AudioContext — the pre-parsed fast path.
+  //   persons          NowPlayingScreen — track-level credits.
+  //
+  // Trimming one of these is only safe once radio stops consuming this
+  // endpoint raw. Follow it to contexts/AudioContext.tsx before you do.
+  for (const field of ['valueTimeSplits', 'chaptersUrl', 'chapters', 'persons']) {
+    assert.ok(
+      field in ALBUM_TRACK_SELECT,
+      `${field} was dropped from ALBUM_TRACK_SELECT — /radio reads it straight ` +
+        `off this response, so dropping it breaks VTS boosts or chapters there`
+    );
+  }
+
+  // And it must actually survive the mapper, not just the select.
+  const rich = trackToAlbumTrack(
+    track({
+      valueTimeSplits: [{ startTime: 0, duration: 30 }],
+      chaptersUrl: 'https://example.com/chapters.json',
+      chapters: [{ startTime: 0, title: 'Intro' }],
+      persons: [{ name: 'A Guest' }],
+    })
+  );
+  assert.ok(Array.isArray(rich.valueTimeSplits), 'VTS must survive the mapper');
+  assert.equal(rich.chaptersUrl, 'https://example.com/chapters.json');
+  assert.ok(Array.isArray(rich.chapters), 'chapters must survive the mapper');
+  assert.ok(Array.isArray(rich.persons), 'persons must survive the mapper');
+});
+
+test('track-level podcastImages stays out — nothing reads it', () => {
+  // The one field of the five that IS safe to drop. The FEED-level
+  // podcastImages is a different column and is still carried; AlbumCard reads
+  // that one.
+  assert.ok(!('podcastImages' in ALBUM_TRACK_SELECT));
+  assert.ok(!('podcastImages' in trackToAlbumTrack(track())));
+  assert.ok('podcastImages' in feedToAlbum(feed()));
 });

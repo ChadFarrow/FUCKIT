@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useAudio } from '@/contexts/AudioContext';
+import { useAudio, useAudioTime } from '@/contexts/AudioContext';
 import type { V4VValue } from '@/lib/v4v-utils';
 import {
   Play,
@@ -57,10 +57,12 @@ export default function DatabaseMusicPlayer() {
     pause, 
     resume, 
     isPlaying, 
-    currentTime, 
-    duration,
     seek
   } = useAudio();
+  // The clock lives in its own context so a 4Hz tick does not re-render
+  // every useAudio() consumer. Only components that DISPLAY a position
+  // subscribe here. See contexts/AudioContext.tsx.
+  const { currentTime, duration } = useAudioTime();
 
   // Fetch tracks from database
   const fetchTracks = async () => {

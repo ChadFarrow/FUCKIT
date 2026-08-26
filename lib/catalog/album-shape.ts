@@ -17,7 +17,41 @@ import { Prisma } from '@prisma/client';
  * Anything reading feeds to render album cards should use these.
  */
 
-/** Columns the client actually renders for a track. */
+/**
+ * Columns the client actually renders for a track.
+ *
+ * `podcastImages` is deliberately ABSENT: nothing under `components/`,
+ * `contexts/` or `hooks/` reads a track-level `podcastImages`. The FEED-level
+ * one is a different column and is still selected — `AlbumCard` reads it.
+ *
+ * `chapters`, `chaptersUrl`, `valueTimeSplits` and `persons` were absent too,
+ * on the reasoning that `app/page.tsx` is the only consumer of this endpoint
+ * and its mapper drops them on arrival. **The first half of that is wrong, and
+ * it cost the radio its value time splits.**
+ *
+ * `app/radio/RadioClient.tsx` is a second consumer. It hands the RAW response
+ * to `setInitialAlbums`, and `shuffleAllTracks` carries those exact track
+ * objects into playback — no re-fetch, no mapper. Playback then reads them
+ * directly:
+ *
+ *   valueTimeSplits  AudioContext.tsx — VTS segment playback and AutoBoost.
+ *                    Absent, a segment boost silently falls back to the
+ *                    track-level recipient, so the money goes to a different
+ *                    person.
+ *   chaptersUrl      AudioContext.tsx — fetches /api/chapters.
+ *   chapters         AudioContext.tsx — the pre-parsed fast path, tried first.
+ *   persons          NowPlayingScreen.tsx — track-level credits.
+ *
+ * Production carries 175 album-type tracks with VTS and 594 with a chapters
+ * URL, all of them in the radio shuffle pool, so this was not hypothetical.
+ *
+ * They stay `|| undefined` in the mapper, so `JSON.stringify` still drops them
+ * for the mostly-null music catalogue — which is why trimming them measured as
+ * zero bytes saved at `limit=50` in the first place.
+ *
+ * Pinned by `catalog track shape keeps what playback reads` in the test file.
+ * Do not trim one of these without following it to `contexts/AudioContext.tsx`.
+ */
 export const ALBUM_TRACK_SELECT = {
   id: true,
   guid: true,
@@ -37,7 +71,6 @@ export const ALBUM_TRACK_SELECT = {
   chapters: true,
   valueTimeSplits: true,
   persons: true,
-  podcastImages: true,
 } satisfies Prisma.TrackSelect;
 
 /** The order the album page expects: explicit track order, then date. */
@@ -45,6 +78,20 @@ export const ALBUM_TRACK_ORDER_BY: Prisma.TrackOrderByWithRelationInput[] = [
   { trackOrder: 'asc' },
   { publishedAt: 'asc' },
   { createdAt: 'asc' },
+];
+
+/**
+ * Newest first, for episode lists.
+ *
+ * This is NOT cosmetic when combined with `take`. Taking N rows in
+ * `ALBUM_TRACK_ORDER_BY` gives the N OLDEST episodes; re-sorting those in
+ * JavaScript afterwards produces a list that looks newest-first but contains
+ * the wrong episodes entirely. The bound and the direction have to move
+ * together.
+ */
+export const EPISODE_TRACK_ORDER_BY: Prisma.TrackOrderByWithRelationInput[] = [
+  { publishedAt: 'desc' },
+  { createdAt: 'desc' },
 ];
 
 /** Only tracks that can actually be played. */
@@ -85,14 +132,19 @@ export const ALBUM_FEED_SCALAR_SELECT = {
  */
 export type TrackTake = number | 'unbounded';
 
+export interface AlbumFeedSelectOptions {
+  /** 'newest' for episode lists — see EPISODE_TRACK_ORDER_BY for why it matters. */
+  order?: 'trackOrder' | 'newest';
+}
+
 /** The complete select for a feed rendered as an album. */
-export function albumFeedSelect(take: TrackTake) {
+export function albumFeedSelect(take: TrackTake, opts: AlbumFeedSelectOptions = {}) {
   return {
     ...ALBUM_FEED_SCALAR_SELECT,
     Track: {
       where: PLAYABLE_TRACK_WHERE,
       select: ALBUM_TRACK_SELECT,
-      orderBy: ALBUM_TRACK_ORDER_BY,
+      orderBy: opts.order === 'newest' ? EPISODE_TRACK_ORDER_BY : ALBUM_TRACK_ORDER_BY,
       ...(take === 'unbounded' ? {} : { take }),
     },
     _count: {
@@ -162,7 +214,6 @@ export interface AlbumTrack {
   chapters?: unknown;
   valueTimeSplits?: unknown;
   persons?: unknown;
-  podcastImages?: unknown;
 }
 
 export interface Album {
@@ -225,11 +276,12 @@ export function trackToAlbumTrack(track: AlbumSourceTrack): AlbumTrack {
     endTime: track.endTime,
     mediaType: track.mediaType || 'audio',
     alternateEnclosures: track.alternateEnclosures,
+    // `|| undefined` so JSON.stringify omits the key entirely when the column
+    // is null, which is most of the music catalogue. See the select's comment.
     chaptersUrl: track.chaptersUrl || undefined,
     chapters: track.chapters || undefined,
     valueTimeSplits: track.valueTimeSplits || undefined,
     persons: track.persons || undefined,
-    podcastImages: track.podcastImages || undefined,
   };
 }
 

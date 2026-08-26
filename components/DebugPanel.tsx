@@ -74,9 +74,12 @@ export function DebugPanel() {
     setMounted(true);
   }, []);
 
+  // Gated on `isOpen`, not just `mounted`. This copies the whole log array into
+  // state twice a second; before the gate it did so for the entire life of the
+  // page whether or not anyone had opened the panel.
   useEffect(() => {
-    if (!mounted) return;
-    
+    if (!mounted || !isOpen) return;
+
     const interval = setInterval(() => {
       if (logs.length > 0) {
         setLogEntries([...logs]);
@@ -84,7 +87,7 @@ export function DebugPanel() {
     }, 500);
 
     return () => clearInterval(interval);
-  }, [mounted]);
+  }, [mounted, isOpen]);
 
   useEffect(() => {
     if (autoScroll && isOpen && logEndRef.current) {
