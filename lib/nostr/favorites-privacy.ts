@@ -79,17 +79,17 @@ export type FavoritesPrivacy = 'public' | 'private' | 'off';
  * choice and got 97% of it is worse off than one told plainly that they have to
  * make it again elsewhere.
  *
- * OFF UNTIL BOSTMEBITCH CAN READ THE PRIVATE HALF. The sequencing is the same
- * shape as the carry rule, one step along: an app must be able to READ and
- * RENDER `content` before anything moves entries into it on that app's behalf,
- * or the move is indistinguishable from a deletion on its screen. BMB's reader
- * is in ChadFarrow/boostmebitch#222. Flipping this is a one-line commit once it
- * ships.
+ * ON since 2026-08-26. The sequencing this waited on is complete: an app must
+ * be able to READ and RENDER `content` before anything moves entries into it on
+ * that app's behalf, or the move is indistinguishable from a deletion on its
+ * screen. Boost Me Bitch reads it (boostmebitch#222) and renders it
+ * (boostmebitch#232), and it is the only other writer of this list.
  *
  * Only ever public → private. The reverse is a disclosure and stays limited to
- * what this device's baseline claims — see `publishPlan`.
+ * what this device's baseline claims — see `publishPlan`. That asymmetry does
+ * NOT depend on this flag and must survive it being removed.
  */
-export const WHOLE_LIST_PRIVACY_MOVE = false;
+export const WHOLE_LIST_PRIVACY_MOVE = true;
 
 /** The half a set of claims belongs to. `'off'` claims neither. */
 export type ListHalf = 'public' | 'private';

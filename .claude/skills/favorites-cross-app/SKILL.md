@@ -98,10 +98,11 @@ by someone who has the pubkey.
   mode, and going private takes everything — including entries this app did not write and cannot
   resolve. The alternative was measured on a real account: 436 entries encrypted, **13 left public**
   and relay-indexed because Boost Me Bitch had written them, with nothing on screen saying which.
-  97% private is worse than a clear no. **`WHOLE_LIST_PRIVACY_MOVE` is OFF** until BMB can read the
-  private half (boostmebitch#222) — an app must be able to render `content` before entries are moved
-  into it on its behalf, or the move looks like a deletion there. `PublishPlan.strandedInPublicHalf`
-  carries the count meanwhile, and the control says it out loud. Spec: PC20-Nostr#24.
+  97% private is worse than a clear no. **`WHOLE_LIST_PRIVACY_MOVE` is ON** since 2026-08-26 — BMB reads the private half
+  (boostmebitch#222) and renders it (boostmebitch#232) — an app must be able to render `content` before entries are moved
+  into it on its behalf, or the move looks like a deletion there. `PublishPlan.strandedInPublicHalf` stays as the
+  guard rail: it reports anything a switch could not move, and the control says it out loud rather
+  than leaving a user 97% private in silence. Spec: PC20-Nostr#25.
 - **The move is ONE DIRECTION.** public→private may take another app's entries: it only reduces
   exposure, carries them whole, and anything that can decrypt can undo it. private→public may not —
   it publishes an `i` tag relays index and cannot be taken back, so it moves only what
