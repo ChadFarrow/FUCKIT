@@ -35,6 +35,13 @@ npm run test:all     # everything
 # Tests — there is NO jest/vitest. The pattern is node:test + tsx.
 # `lib/*.test.ts` does NOT recurse — it misses lib/nostr, lib/caches and lib/downloads.
 npx tsx --test lib/*.test.ts lib/*/*.test.ts        # everything (also `npm run test:all`)
+
+# Testing a WRITE. There is no preview environment, so a local relay is the only
+# place a publish can be exercised without writing the real event under the real key.
+npm run relay                    # ws://127.0.0.1:7777, in-memory, replaceable-event semantics
+npm run seed:relay -- <npub>     # copies the real kind:10333 in — read-only against production
+npm run dev:isolated -- -p 3001  # dev, publishing ONLY to the local relay
+npm run e2e:favorites            # the whole loop on a throwaway key, with real NIP-44
 ```
 Per-subsystem test commands live in the skill that owns the subsystem — each skill opens with its own.
 
@@ -46,16 +53,19 @@ Per-subsystem test commands live in the skill that owns the subsystem — each s
   deploy-and-retest cycle on 2026-08-20, when stage timings added to chase a slow signing prompt printed nothing
   on stablekraft.app. Use `console.warn` for anything you intend to read in production.
 - **A grep that returns nothing is not evidence that nothing exists.** Under zsh, an unquoted `--include=*.tsx` errors with `no matches found` and prints nothing — indistinguishable from a clean result. This produced three wrong conclusions during the security audit, including "this route has no callers" about a live endpoint that was nearly deleted. Quote the globs, and check the exit status before believing an empty result.
-- **There is a local relay now, and a write can be tested without touching production.** `npm run
-  relay` (127.0.0.1, in-memory, replaceable-event semantics), `npm run seed:relay -- <npub>` (copies
-  the real kind:10333 in, read-only), `npm run e2e:favorites` (the whole loop on a throwaway key).
-  Use **`npm run dev:isolated`**, not a hand-set `NEXT_PUBLIC_NOSTR_RELAYS` — the variable alone is
-  not isolation. The publish path unions the user's NIP-65 relays with the defaults, so a "local"
-  test by a signed-in user published a real event under their real key, silently. `resolvePublishRelays`
-  now returns only the defaults when every one is loopback; production is unchanged and pinned by
-  `relay-isolation.test.ts`. **The database is still production** — `.env.local` points there — so
-  snapshot with `scripts/backup-favorites.ts` first, or override `DATABASE_URL` from `.env` on the
-  command line. Never edit `.env.local` to change it.
+- **A local relay is not isolation on its own, and the difference is a real publish.** The commands
+  are under Commands; the trap is here. Use **`npm run dev:isolated`**, never a hand-set
+  `NEXT_PUBLIC_NOSTR_RELAYS` — the publish path unions the user's NIP-65 relays with the defaults, so
+  a "local" test by a signed-in user published a real event under their real key, to their real
+  relays, silently. `resolvePublishRelays` now returns only the defaults when every one is loopback;
+  production is unchanged and pinned by `relay-isolation.test.ts`. Three separate places stripped
+  loopback URLs before that worked — `getDefaultRelays`, the publish union, and
+  `RelayManager.connect` — and the third one failed *only* the publish while reads kept working, so
+  the symptom was "couldn't reach the relays" from a relay that was answering on the same URL.
+- **`dev:isolated` does NOT isolate the database.** `.env.local` still points it at Railway
+  production, deliberately, because testing a mode switch needs real favorites to move. The reconcile
+  can only ADD, but a heart you tap is a real favorite — snapshot with `scripts/backup-favorites.ts`
+  first, or override `DATABASE_URL` from `.env` on the command line. Never edit `.env.local`.
 - Run `npm run build` before committing — but **stop `npm run dev` first**, *or* build into a
   different directory with `NEXT_DIST_DIR=.next-build npm run build`, which is what to do when a dev
   server is running. Changing the dev PORT does not help; the collision is the directory. Next
@@ -118,7 +128,13 @@ line holds the full story.
   **both** apps to *read* the new form, and only then start *writing* it. Writing a form the other app can't read
   doesn't fail — it silently makes favorites invisible on the far side, which is worse than the format it
   replaced. The channel is now **kind 10333**, one plain replaceable event; the kind:30078 two-list design it
-  replaced is deleted, and its events survive on the relays only as a rollback path → `favorites-cross-app`.
+  replaced is deleted, and its events survive on the relays only as a rollback path.
+  **This is not theory, and the order is not a formality.** On 2026-08-25 this app shipped the private
+  half and switched a real account to Private while Boost Me Bitch still hardcoded `content: ''`. For
+  about an hour, one favorite toggled there would have erased 436 encrypted entries — silently, no
+  undo, on an event that keeps no history. Nothing was wrong with any rule; the halves shipped in the
+  wrong sequence. **Before switching on anything that writes a new form, go and read the other app's
+  shipped `main` and confirm it handles it** — not its open PR → `favorites-cross-app`.
 - **Kind 10333 has TWO live writers, so every publish must read first and merge.** Publishing replaces the whole
   event, so a writer that sends what it holds without reading deletes everything the other app added — silently,
   on someone else's device, with no undo. Boost Me Bitch started publishing 2026-08-13, which retired the
@@ -145,6 +161,17 @@ line holds the full story.
   private→public is a disclosure. Seeding a device's mode from the wire must have **each half answer
   only for itself** — public-first fails open and republishes a private list as plaintext, indexed
   tags → `favorites-cross-app`.
+- **The privacy choice belongs to the LIST, not to this app.** Whichever half holds entries is the
+  mode, and going private takes **everything** — including entries this app did not write and cannot
+  resolve. The alternative was measured: 436 entries encrypted and **13 left public** because the
+  other app wrote them, with nothing on screen saying which. 97% private is worse than a clear no.
+  The move is **one direction only**: public→private may take another app's entries (it only reduces
+  exposure, carries them whole, and anything that can decrypt undoes it), private→public may not (it
+  publishes an `i` tag relays index and cannot be taken back). **Moved foreign entries are NOT
+  claimed in the baseline** — nothing local backs the claim, so it reads as our own removal next
+  cycle and deletes them. `strandedInPublicHalf` reports anything a switch could not move, and the
+  control says it out loud: silence was the actual defect, the split was only the cause →
+  `favorites-cross-app`.
 - **An unreadable private half is a degraded read, not an empty one.** Same exit as a silent relay.
   `decodePrivateFavorites` returns `null` rather than `[]` for valid JSON that is not a tag array —
   a `JSON.parse` that succeeds on a non-array marks the blob readable-and-empty, and the next
