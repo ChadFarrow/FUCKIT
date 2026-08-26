@@ -161,13 +161,13 @@ export default function FavoritesPrivacyControl() {
   const active = options.find((o) => o.value === mode);
 
   return (
-    <div className="rounded-lg border border-white/10 bg-white/5 p-3">
+    <div className="w-full max-w-md rounded-lg border border-white/10 bg-white/5 p-2.5">
       <div className="mb-2 flex items-center gap-2">
         <p className="text-xs font-medium text-gray-300">Favorites on Nostr</p>
         {busy && <Loader2 className="h-3 w-3 animate-spin text-gray-400" aria-hidden="true" />}
       </div>
 
-      <div role="radiogroup" aria-label="Favorites on Nostr" className="flex flex-wrap gap-1.5">
+      <div role="radiogroup" aria-label="Favorites on Nostr" className="flex flex-wrap gap-1">
         {options.map((option) => {
           const Icon = option.icon;
           const selected = mode === option.value;
@@ -183,7 +183,12 @@ export default function FavoritesPrivacyControl() {
               onClick={() => choose(option.value)}
               // min-h-[44px]: WCAG 2.5.8 asks 24px, and a segmented control the
               // user taps on a phone gets the platform 44px instead.
-              className={`flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-md px-3 text-xs transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+              // flex-1 on a phone so the three split the width and each stays a
+              // comfortable target; auto width above that, or the row stretches
+              // across a desktop page and reads as a banner rather than a
+              // setting. 44px is the phone target (WCAG 2.5.8 asks 24); a
+              // pointer does not need it.
+              className={`flex min-h-[44px] flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-md px-2 text-xs transition-colors disabled:cursor-not-allowed disabled:opacity-40 sm:min-h-[32px] sm:flex-none sm:px-3 ${
                 selected
                   ? 'bg-white/15 font-medium text-white'
                   : 'text-gray-400 hover:bg-white/10 hover:text-gray-200'

@@ -31,7 +31,22 @@ export class RelayManager {
     const lowerUrl = url.toLowerCase();
     const isKnownSignerRelay = lowerUrl.includes('localrelay.link');
 
-    if (!isKnownSignerRelay && (
+    // The OTHER exception: a build deliberately pointed at a local relay.
+    //
+    // This guard exists to skip junk in relay lists we did not write, where a
+    // loopback URL is someone's leftover config and will never answer. It is
+    // wrong about the one case where a loopback URL is the entire point, and it
+    // is the THIRD place that had to learn the difference — `getDefaultRelays`
+    // and `resolvePublishRelays` were the other two.
+    //
+    // It cost a full test cycle: the read goes through SimplePool and worked, so
+    // the app came up, seeded its mode off the wire and reconciled — and every
+    // publish failed here with "Skipping unreachable relay", surfacing as
+    // "Couldn't reach the relays" while the relay was running and answering
+    // reads on the same URL.
+    const isConfiguredLocalRelay = relaysAreIsolated() && getDefaultRelays().includes(url);
+
+    if (!isKnownSignerRelay && !isConfiguredLocalRelay && (
         lowerUrl.includes('127.0.0.1') ||
         lowerUrl.includes('localhost') ||
         lowerUrl.includes('.local') ||

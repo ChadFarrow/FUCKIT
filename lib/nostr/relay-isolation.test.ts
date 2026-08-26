@@ -12,7 +12,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { relaysAreIsolated, resolvePublishRelays } from './relay';
+import { RelayManager, relaysAreIsolated, resolvePublishRelays } from './relay';
 
 const LOCAL = 'ws://127.0.0.1:7777';
 /** A real NIP-65 list, which is what makes the union dangerous. */
@@ -80,5 +80,67 @@ test('a loopback relay is still dropped from a USER relay list', () => {
   // localhost entry in someone's NIP-65 list is junk, not a test instruction.
   withEnv(undefined, () => {
     assert.equal(resolvePublishRelays(['ws://127.0.0.1:7777']).includes(LOCAL), false);
+  });
+});
+
+/** `withEnv` for a test that awaits. Restoring in a `finally` around the await. */
+const withEnvAsync = async (value: string | undefined, fn: () => Promise<void>) => {
+  const had = process.env.NEXT_PUBLIC_NOSTR_RELAYS;
+  const hadWindow = 'window' in globalThis;
+  if (!hadWindow) (globalThis as any).window = {};
+  if (value === undefined) delete process.env.NEXT_PUBLIC_NOSTR_RELAYS;
+  else process.env.NEXT_PUBLIC_NOSTR_RELAYS = value;
+  try {
+    await fn();
+  } finally {
+    if (had === undefined) delete process.env.NEXT_PUBLIC_NOSTR_RELAYS;
+    else process.env.NEXT_PUBLIC_NOSTR_RELAYS = had;
+    if (!hadWindow) delete (globalThis as any).window;
+  }
+};
+
+/**
+ * The refusal we care about, as opposed to "nothing was listening".
+ *
+ * The manager is ALWAYS disconnected. A live socket keeps the event loop alive
+ * and `node --test` waits for it to drain, so a missing `disconnectAll` here
+ * does not fail the test — it hangs the whole run.
+ */
+const wasRefusedAsUnreachable = async (url: string): Promise<boolean> => {
+  const manager = new RelayManager();
+  try {
+    await manager.connect(url, { write: true, timeout: 300 });
+    return false;
+  } catch (err) {
+    return /Skipping unreachable relay/.test((err as Error).message);
+  } finally {
+    await manager.disconnectAll().catch(() => {});
+  }
+};
+
+test('RelayManager.connect accepts the CONFIGURED local relay', async () => {
+  // The third place that stripped loopback, and the one that cost a test cycle.
+  // Reads go through SimplePool and worked, so the app came up, seeded its mode
+  // off the wire and reconciled — while every publish failed HERE and surfaced
+  // as "Couldn't reach the relays", with the relay running and answering reads
+  // on the very same URL.
+  //
+  // Whether anything is listening is not the assertion: a connection refused is
+  // a fine outcome in CI. Being rejected before the attempt is the bug.
+  await withEnvAsync(LOCAL, async () => {
+    assert.equal(
+      await wasRefusedAsUnreachable(LOCAL),
+      false,
+      'the configured local relay was refused before a connection was attempted'
+    );
+  });
+});
+
+test('an UNCONFIGURED loopback relay is still refused', async () => {
+  // The guard keeps its real job: a loopback URL in a relay list we did not
+  // write is junk and will never answer. Only the one we were pointed at is
+  // exempt, and pointing at one relay does not exempt every other.
+  await withEnvAsync(LOCAL, async () => {
+    assert.equal(await wasRefusedAsUnreachable('ws://localhost:9999'), true);
   });
 });
