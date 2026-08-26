@@ -10,7 +10,7 @@ import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { buildPageBackgroundStyle } from '@/lib/page-background-style';
 import { pickCanvasBackground } from '@/lib/podcast-images';
 import { generateAlbumHref, generateAlbumSlug, generatePublisherSlug, getPublisherInfo } from '@/lib/url-utils';
-import { useAudio } from '@/contexts/AudioContext';
+import { useAudio, useAudioTime } from '@/contexts/AudioContext';
 import { useScrollDetectionContext } from '@/components/ScrollDetectionProvider';
 import ControlsBar from '@/components/ControlsBar';
 import BackButton from '@/components/BackButton';
@@ -56,14 +56,16 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
     currentPlayingAlbum,
     isPlaying: globalIsPlaying,
     currentTrackIndex: globalTrackIndex,
-    currentTime: globalCurrentTime,
-    duration: globalDuration,
     pause: globalPause,
     resume: globalResume,
     seek: globalSeek,
     shuffleAllTracks,
     setFullscreenMode
   } = useAudio();
+  // The clock lives in its own context so a 4Hz tick does not re-render
+  // every useAudio() consumer. Only components that DISPLAY a position
+  // subscribe here. See contexts/AudioContext.tsx.
+  const { currentTime: globalCurrentTime, duration: globalDuration } = useAudioTime();
 
   // Track URL parameter for deep linking
   const searchParams = useSearchParams();

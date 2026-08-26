@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 
 interface LoadingSpinnerProps {
   size?: 'small' | 'medium' | 'large';
@@ -17,16 +16,10 @@ export default function LoadingSpinner({
   progress = 0,
   className = ''
 }: LoadingSpinnerProps) {
-  const [dots, setDots] = useState('');
-
-  // Animated dots effect
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setDots(prev => prev.length >= 3 ? '' : prev + '.');
-    }, 500);
-
-    return () => clearInterval(interval);
-  }, []);
+  // The animated dots used to be a setInterval calling setState twice a second,
+  // per spinner. The home page renders `SkeletonGrid count={12}`, so that was
+  // 24 React renders a second for a decorative ellipsis, during the load it was
+  // decorating. CSS does it for free, off the main thread.
 
   const sizeClasses = {
     small: 'w-4 h-4',
@@ -47,7 +40,8 @@ export default function LoadingSpinner({
       
       {/* Text */}
       <div className={`text-gray-400 ${textSizes[size]} text-center`}>
-        {text}{dots}
+        {text}
+        <span className="sk-loading-dots" aria-hidden="true" />
       </div>
       
       {/* Progress bar */}

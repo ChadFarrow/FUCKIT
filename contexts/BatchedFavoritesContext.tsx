@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useSession } from '@/contexts/SessionContext';
 import { useNostr } from '@/contexts/NostrContext';
 import { getSessionId } from '@/lib/session-utils';
@@ -276,8 +276,17 @@ export function BatchedFavoritesProvider({ children }: { children: React.ReactNo
     };
   }, []);
 
+  // Memoized: an inline literal is a NEW object on every provider render, so
+  // every consumer re-rendered whenever anything above this provider did —
+  // and there is one FavoriteButton per album card. `getFavoriteStatus`
+  // legitimately changes with `favoriteStatuses`; the other two are stable.
+  const value = useMemo(
+    () => ({ checkFavorites, getFavoriteStatus, setFavoriteStatus }),
+    [checkFavorites, getFavoriteStatus, setFavoriteStatus]
+  );
+
   return (
-    <BatchedFavoritesContext.Provider value={{ checkFavorites, getFavoriteStatus, setFavoriteStatus }}>
+    <BatchedFavoritesContext.Provider value={value}>
       {children}
     </BatchedFavoritesContext.Provider>
   );

@@ -147,11 +147,21 @@ test('duration falls back to 180 when a feed declares none', () => {
   assert.equal(trackToAlbumTrack(track({ duration: 300 })).duration, 300);
 });
 
-test('absent optional track JSON becomes undefined, not null', () => {
-  const t = trackToAlbumTrack(track({ chapters: null, valueTimeSplits: null, persons: null }));
-  assert.equal(t.chapters, undefined);
-  assert.equal(t.valueTimeSplits, undefined);
-  assert.equal(t.persons, undefined);
+// These are queried by /api/albums/[slug] and NOT by the catalog list, because
+// app/page.tsx — the only consumer of both list endpoints — drops them on
+// arrival. They were most of the payload.
+test('the heavy JSON blobs are not in the catalog track select', () => {
+  for (const field of ['chapters', 'chaptersUrl', 'valueTimeSplits', 'persons', 'podcastImages']) {
+    assert.equal(
+      field in ALBUM_TRACK_SELECT,
+      false,
+      `${field} is shipped to a client that discards it`
+    );
+  }
+  const t = trackToAlbumTrack(track());
+  for (const field of ['chapters', 'chaptersUrl', 'valueTimeSplits', 'persons', 'podcastImages']) {
+    assert.equal(field in t, false, `${field} should not be in the album-list output`);
+  }
 });
 
 // The `filter=podcasts` branch of albums-fast omitted `take` entirely and
@@ -224,9 +234,9 @@ test('the album key set is the API contract', () => {
 
 test('the track key set is the API contract', () => {
   const expected = [
-    'alternateEnclosures', 'chapters', 'chaptersUrl', 'duration', 'guid', 'id',
-    'image', 'mediaType', 'persons', 'podcastImages', 'publishedAt', 'startTime',
-    'endTime', 'title', 'url', 'v4vRecipient', 'v4vValue', 'valueTimeSplits',
+    'alternateEnclosures', 'duration', 'guid', 'id',
+    'image', 'mediaType', 'publishedAt', 'startTime',
+    'endTime', 'title', 'url', 'v4vRecipient', 'v4vValue',
   ].sort();
   assert.deepEqual(Object.keys(trackToAlbumTrack(track())).sort(), expected);
 });

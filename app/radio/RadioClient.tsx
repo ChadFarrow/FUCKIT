@@ -5,11 +5,7 @@ import { useAudio } from '@/contexts/AudioContext';
 import RadioPlayer from '@/components/RadioPlayer';
 import { Play } from 'lucide-react';
 
-interface RadioClientProps {
-  initialAlbums: any[];
-}
-
-export default function RadioClient({ initialAlbums }: RadioClientProps) {
+export default function RadioClient() {
   const {
     currentPlayingAlbum,
     shuffleAllTracks,
@@ -19,12 +15,33 @@ export default function RadioClient({ initialAlbums }: RadioClientProps) {
 
   const [isStarting, setIsStarting] = useState(false);
 
-  // Pre-load albums from server-side fetch immediately on mount
+  // Load albums on mount rather than receiving them as a server prop. See the
+  // note in page.tsx: as a prop this was multiple megabytes inlined into the
+  // HTML document, which every visitor downloaded before the page could paint.
   useEffect(() => {
-    if (initialAlbums && initialAlbums.length > 0) {
-      setInitialAlbums(initialAlbums);
-    }
-  }, [initialAlbums, setInitialAlbums]);
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const res = await fetch('/api/albums-fast?limit=1000&offset=0&tier=all&filter=all');
+        if (!res.ok) {
+          console.warn(`Radio: albums API returned ${res.status}`);
+          return;
+        }
+        const data = await res.json();
+        if (!cancelled && Array.isArray(data.albums) && data.albums.length > 0) {
+          setInitialAlbums(data.albums);
+        }
+      } catch (error) {
+        // Not fatal: handleStartRadio already retries when albums are not ready.
+        console.warn('Radio: failed to load albums', error);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [setInitialAlbums]);
 
   const handleStartRadio = async () => {
     setIsStarting(true);

@@ -17,7 +17,19 @@ import { Prisma } from '@prisma/client';
  * Anything reading feeds to render album cards should use these.
  */
 
-/** Columns the client actually renders for a track. */
+/**
+ * Columns the client actually renders for a track.
+ *
+ * `chapters`, `chaptersUrl`, `valueTimeSplits`, `persons` and `podcastImages`
+ * are deliberately ABSENT. They were selected, serialized, gzipped, shipped,
+ * parsed — and then dropped on arrival by the mapper in `app/page.tsx`, which
+ * is the only consumer of both `/api/albums-fast` and `/api/feeds/recent`.
+ * `chapters` and `valueTimeSplits` are JSON blobs, so they were most of the
+ * payload.
+ *
+ * The album DETAIL endpoint (`/api/albums/[slug]`) still returns all of them,
+ * which is where playback with chapter ticks and VTS segments gets its data.
+ */
 export const ALBUM_TRACK_SELECT = {
   id: true,
   guid: true,
@@ -33,11 +45,6 @@ export const ALBUM_TRACK_SELECT = {
   trackOrder: true,
   mediaType: true,
   alternateEnclosures: true,
-  chaptersUrl: true,
-  chapters: true,
-  valueTimeSplits: true,
-  persons: true,
-  podcastImages: true,
 } satisfies Prisma.TrackSelect;
 
 /** The order the album page expects: explicit track order, then date. */
@@ -45,6 +52,20 @@ export const ALBUM_TRACK_ORDER_BY: Prisma.TrackOrderByWithRelationInput[] = [
   { trackOrder: 'asc' },
   { publishedAt: 'asc' },
   { createdAt: 'asc' },
+];
+
+/**
+ * Newest first, for episode lists.
+ *
+ * This is NOT cosmetic when combined with `take`. Taking N rows in
+ * `ALBUM_TRACK_ORDER_BY` gives the N OLDEST episodes; re-sorting those in
+ * JavaScript afterwards produces a list that looks newest-first but contains
+ * the wrong episodes entirely. The bound and the direction have to move
+ * together.
+ */
+export const EPISODE_TRACK_ORDER_BY: Prisma.TrackOrderByWithRelationInput[] = [
+  { publishedAt: 'desc' },
+  { createdAt: 'desc' },
 ];
 
 /** Only tracks that can actually be played. */
@@ -85,14 +106,19 @@ export const ALBUM_FEED_SCALAR_SELECT = {
  */
 export type TrackTake = number | 'unbounded';
 
+export interface AlbumFeedSelectOptions {
+  /** 'newest' for episode lists — see EPISODE_TRACK_ORDER_BY for why it matters. */
+  order?: 'trackOrder' | 'newest';
+}
+
 /** The complete select for a feed rendered as an album. */
-export function albumFeedSelect(take: TrackTake) {
+export function albumFeedSelect(take: TrackTake, opts: AlbumFeedSelectOptions = {}) {
   return {
     ...ALBUM_FEED_SCALAR_SELECT,
     Track: {
       where: PLAYABLE_TRACK_WHERE,
       select: ALBUM_TRACK_SELECT,
-      orderBy: ALBUM_TRACK_ORDER_BY,
+      orderBy: opts.order === 'newest' ? EPISODE_TRACK_ORDER_BY : ALBUM_TRACK_ORDER_BY,
       ...(take === 'unbounded' ? {} : { take }),
     },
     _count: {
@@ -158,11 +184,6 @@ export interface AlbumTrack {
   endTime: number | null;
   mediaType: string;
   alternateEnclosures: unknown;
-  chaptersUrl?: string;
-  chapters?: unknown;
-  valueTimeSplits?: unknown;
-  persons?: unknown;
-  podcastImages?: unknown;
 }
 
 export interface Album {
@@ -225,11 +246,6 @@ export function trackToAlbumTrack(track: AlbumSourceTrack): AlbumTrack {
     endTime: track.endTime,
     mediaType: track.mediaType || 'audio',
     alternateEnclosures: track.alternateEnclosures,
-    chaptersUrl: track.chaptersUrl || undefined,
-    chapters: track.chapters || undefined,
-    valueTimeSplits: track.valueTimeSplits || undefined,
-    persons: track.persons || undefined,
-    podcastImages: track.podcastImages || undefined,
   };
 }
 

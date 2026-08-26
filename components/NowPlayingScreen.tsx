@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useAudio } from '@/contexts/AudioContext';
+import { useAudio, useAudioTime } from '@/contexts/AudioContext';
 import { SkipBack, SkipForward, Play, Pause, Shuffle, Repeat, ChevronDown, Zap, Share2 } from 'lucide-react';
 import { toast } from '@/components/Toast';
 import { getAlbumArtworkUrl } from '@/lib/cdn-utils';
@@ -29,8 +29,6 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
     currentPlayingAlbum,
     isPlaying,
     currentTrackIndex,
-    currentTime,
-    duration,
     isShuffleMode,
     repeatMode,
     setRepeatMode,
@@ -47,6 +45,10 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
     chapters,
     currentChapterIndex,
   } = useAudio();
+  // The clock lives in its own context so a 4Hz tick does not re-render
+  // every useAudio() consumer. Only components that DISPLAY a position
+  // subscribe here. See contexts/AudioContext.tsx.
+  const { currentTime, duration } = useAudioTime();
 
   const { settings, updateSettings } = useUserSettings();
 

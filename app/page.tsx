@@ -162,7 +162,17 @@ function HomePageContent() {
   // Format-aware loading state (for "all" filter - load all albums before EPs)
   const [formatCounts, setFormatCounts] = useState<{ albums: number; eps: number; singles: number } | null>(null);
   const [currentFormatPhase, setCurrentFormatPhase] = useState<'albums' | 'eps' | 'singles'>('albums');
-  const API_VERSION = 'v17'; // v17: album.guid/episodeGuid no longer fall back to feed.id (issue #242) — shape unchanged, but a cached album still carries the old internal id and would publish it as podcast:item:guid
+  // v17: album.guid/episodeGuid no longer fall back to feed.id (issue #242) —
+  // shape unchanged, but a cached album still carries the old internal id and
+  // would publish it as podcast:item:guid.
+  //
+  // v18: /api/albums-fast track objects no longer carry chapters, chaptersUrl,
+  // valueTimeSplits, persons or podcastImages — this mapper dropped all five on
+  // arrival, so they were queried, shipped and discarded. Podcast episode lists
+  // are also bounded to the 20 newest. Both change the cached SHAPE, so the
+  // version has to move or clients keep serving the old objects from
+  // localStorage indefinitely (CLAUDE.md).
+  const API_VERSION = 'v18';
   
   // HGH filter removed - no longer needed
   
