@@ -25,9 +25,31 @@ A replaceable event keeps no history, so a bad publish while testing is not reco
 npm run relay                    # ws://127.0.0.1:7777, in-memory, REPLACEABLE-event semantics
 npm run seed:relay -- <npub>     # copies the real kind:10333 in — read-only against production
 npm run seed:relay -- <npub> --content 'AkQB…'   # force a private half to test the carry against
+npm run dev:isolated             # dev, publishing ONLY to the local relay
 npm run e2e:favorites            # the whole loop on a throwaway key: read → merge → publish → assert
 npx tsx lib/nostr/favorites.relay-probe.ts --relay ws://127.0.0.1:7777
 ```
+
+**`NEXT_PUBLIC_NOSTR_RELAYS` alone is NOT isolation, and that is why `dev:isolated` exists.** Setting
+it points `getDefaultRelays()` at the local relay, and the publish path used to union the user's real
+NIP-65 relays straight back in — so a "local" test by a signed-in user published a real event under
+their real key, to their real relays, on an event that keeps no history. It failed silently: the
+publish succeeded and looked like the test working. `resolvePublishRelays` (`relay.ts`) now returns
+**only** the defaults when every one of them is loopback, and both publish paths use it — the
+kind:10333 list and the kind:30001 per-item queue, because one heart toggle writes both. Pinned by
+`relay-isolation.test.ts`, including the vector that production behaviour is unchanged.
+
+**What still reaches the network, by design:** nostr-login's own hardcoded relays
+(`purplepag.es`, `user.kindpag.es`, `relay.nos.social`, `relay.snort.social`) for profile metadata
+and NIP-46 transport. A remote signer has to be reachable to sign, so isolating that would make the
+signer path untestable. Nothing of yours is published there.
+
+**The DATABASE is not isolated by `dev:isolated`** — `.env.local` still points it at Railway
+production. That is deliberate: testing a mode switch needs real favorites to move. The reconcile
+can only ADD (`baseline` is `[]`, `SHARED_FAVORITES_APPLY_DELETES` off), so nothing is destroyed, but
+snapshot first with `scripts/backup-favorites.ts` and expect any favorite you toggle to be a real
+one. To isolate it too, override `DATABASE_URL` from `.env` on the command line — never by editing
+`.env.local`.
 
 Point the app at it with `NEXT_PUBLIC_NOSTR_RELAYS=ws://127.0.0.1:7777`. That works because
 `getDefaultRelays()` returns an explicitly configured list **without** `filterReachableRelays` —
@@ -46,7 +68,63 @@ suite and failed in the wiring between the pieces.
 
 Spec: [`PC20-Nostr/pc20-favorites.md`](https://github.com/ChadFarrow/PC20-Nostr/blob/main/pc20-favorites.md), the canonical app-neutral copy kept outside both implementing repos. **That document, not this code, is what a third app implements against.** One plain (non-`d`-tagged) replaceable event, so exactly one per pubkey; `i` tags grouped under a running `medium`. Republishing the whole tag list IS the sync.
 
-**`content` is CARRIED, never written.** This app puts nothing there and reads nothing from it, and it must still return `event.content` byte-for-byte on every republish — `fetchSingleList` captures it and `templateFromTags` takes it with **no default**. The rule is not in the spec: rule 4, *carry what you can't read*, is written about **tags** and says nothing about `content`, so a writer following the document to the letter republishes the empty string the format has specified from the start. `content` is the only free slot in a one-event, many-writer format, and Boost Me Bitch puts a NIP-44 private half there. Blanking it deletes another app's data silently, on someone else's device, with no undo, on an event that keeps no history. A default parameter is how a `''` gets written back in by habit, which is why there isn't one; `singleListTemplate` builds a list from scratch and legitimately passes `''`. The digest gate is unaffected — unchanged tags publish nothing, so `content` is not rewritten either.
+## The private half — `content` is a second list
+
+**Public / private / not-on-Nostr**, per the spec's private-half section. Public entries stay in
+tags; private ones go in `content` as a NIP-44 encrypt-to-self of a **tag array** — the same shape
+as `event.tags`, so `parseSingleList` reads it unchanged and the grouping rules apply inside it.
+Files: `favorites-privacy.ts` (the pure planner), `favorites-private-half.ts` (decrypt + status),
+`nip44.ts` (one NIP-44 implementation, shared with the NWC backup), `FavoritesPrivacyControl.tsx`,
+`FavoritesPrivacyPrompt.tsx`. Tests: `npx tsx --test lib/nostr/favorites-privacy.test.ts`.
+
+**Why the choice exists:** `i` is a single-letter tag and relays INDEX those, so a `#i` filter
+answers *which pubkeys favorited this feed*. The list is searchable in reverse, not merely readable
+by someone who has the pubkey.
+
+- **The digest compares DECRYPTED tags, never ciphertext.** NIP-44 draws a fresh nonce, so identical
+  entries encrypt differently every time; a ciphertext comparison republishes forever. `publishPlan`
+  returns `privateTags` for exactly this reason.
+- **The baseline is TWO records** (`PrivacyBaseline`), and the active half's claims are derived from
+  local state while **the inactive half's are carried forward and cleared by the move, never
+  re-derived**. Nothing feeds the inactive half next cycle, so a derived claim goes unbacked and the
+  removal test fires on the whole half: cycle 1 claims another writer's entries, cycle 2 deletes
+  them. **This needs two cycles to show** — every single-cycle vector passes over it. `parseBaseline`
+  reads the old `{feeds, items}` shape as the **public** half.
+- **The inactive half is carried on the wire but NOT painted into local state.** Local state writes
+  through and comes back as `local`, which goes wholly into the active half — so an adopted entry is
+  republished into this one. `reconcileInput` filters it through `claimedByBaseline`: our own entries
+  (mid-move) yes, another writer's no. Private→public that would be a **disclosure**.
+- **The privacy choice belongs to the LIST, not to this app.** Whichever half holds entries is the
+  mode, and going private takes everything — including entries this app did not write and cannot
+  resolve. The alternative was measured on a real account: 436 entries encrypted, **13 left public**
+  and relay-indexed because Boost Me Bitch had written them, with nothing on screen saying which.
+  97% private is worse than a clear no. **`WHOLE_LIST_PRIVACY_MOVE` is OFF** until BMB can read the
+  private half (boostmebitch#222) — an app must be able to render `content` before entries are moved
+  into it on its behalf, or the move looks like a deletion there. `PublishPlan.strandedInPublicHalf`
+  carries the count meanwhile, and the control says it out loud. Spec: PC20-Nostr#24.
+- **The move is ONE DIRECTION.** public→private may take another app's entries: it only reduces
+  exposure, carries them whole, and anything that can decrypt can undo it. private→public may not —
+  it publishes an `i` tag relays index and cannot be taken back, so it moves only what
+  `baseline.private` claims. **Moved foreign entries are NOT claimed in the baseline**: nothing local
+  backs the claim, so it would read as our own removal next cycle and delete them (defect 3 by
+  another road). Pinned across two cycles, with the suite green under BOTH flag settings.
+- **`seedModeFromWire` has each half answer only for itself.** Public-first fails open: a device
+  seeded `'public'` over a private account republishes every decrypted entry as a plaintext, indexed
+  tag. Both halves, or neither, means **ask the user**.
+- **An unreadable private half is a DEGRADED READ, not an empty one** — same exit as a silent relay.
+  `decodePrivateFavorites` returns **null** for valid JSON that is not a tag array, and that is the
+  guard that matters: a `JSON.parse` succeeding on a non-array marks the blob readable-and-empty, and
+  the next republish rewrites `content` from those empty lists.
+- **NIP-55 and read-only nip05 sessions cannot encrypt.** `nip55-client.ts` implements `sign_event`
+  only. That is a normal state for a real user, not an error — gate on `signerSupportsNip44()` and
+  **state the reason on screen**, because a phone has no hover for a `title` tooltip.
+- **`?` is written as its six-character JSON escape** in the plaintext. Amber URL-decodes the whole
+  `nostrsigner:` URI then splits on `?`, and item guids are routinely permalink URLs. This app signs
+  over NIP-46 and is unaffected; BMB reads what we write and may not be.
+- **Plaintext stays under 60,000 bytes.** NIP-44 v2 as first published capped it at 65535, and a
+  library built to that text rejects anything past it — which reads as an empty list, not an error.
+
+**`content` is CARRIED, never written by an app that does not use it.** This app puts nothing there and reads nothing from it, and it must still return `event.content` byte-for-byte on every republish — `fetchSingleList` captures it and `templateFromTags` takes it with **no default**. The rule is not in the spec: rule 4, *carry what you can't read*, is written about **tags** and says nothing about `content`, so a writer following the document to the letter republishes the empty string the format has specified from the start. `content` is the only free slot in a one-event, many-writer format, and Boost Me Bitch puts a NIP-44 private half there. Blanking it deletes another app's data silently, on someone else's device, with no undo, on an event that keeps no history. A default parameter is how a `''` gets written back in by habit, which is why there isn't one; `singleListTemplate` builds a list from scratch and legitimately passes `''`. The digest gate is unaffected — unchanged tags publish nothing, so `content` is not rewritten either.
 
 It **replaced** the two-list NIP-78 kind:30078 design, which proved overcomplicated and has been deleted from both this repo and the spec repo. Events at `d:podcast:favorites` and `d:podcast:favorites:items` are still on the relays and are the rollback path; nothing in this app reads or writes them.
 

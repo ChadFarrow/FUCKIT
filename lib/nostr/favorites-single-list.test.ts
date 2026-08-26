@@ -32,6 +32,10 @@ import {
   tagsFromNodes,
   singleListTemplate,
   templateFromTags,
+  encodePrivateFavorites,
+  decodePrivateFavorites,
+  plaintextBytes,
+  PRIVATE_PLAINTEXT_MAX,
 } from './favorites-single-list';
 import { itemId, showId, type FavoriteEntry } from './pc20-identifiers';
 
@@ -121,6 +125,72 @@ test('an empty `content` is only ever what the read actually held', () => {
   // republish is empty only because the event we read was.
   assert.equal(singleListTemplate([album(MUSIC_A, 'music')], 1_700_000_000).content, '');
   assert.equal(templateFromTags([['alt', LIST_ALT]], 1_700_000_000, '').content, '');
+});
+
+// ---------------------------------------------------------------------------
+// The private half's plaintext — the interop contract with Boost Me Bitch
+// ---------------------------------------------------------------------------
+
+test('the private half round-trips through encode and decode unchanged', () => {
+  // A tag array, the same shape as `event.tags`, so the grouping rules apply
+  // inside it unchanged and one parser reads both halves.
+  const tags = [
+    ['medium', 'music'],
+    ['i', showId(MUSIC_A)],
+    ['i', itemId('t1')],
+    ['k', 'podcast:guid'],
+  ];
+  assert.deepEqual(decodePrivateFavorites(encodePrivateFavorites(tags)), tags);
+});
+
+test('a `?` in a guid survives, written as its JSON escape', () => {
+  // Amber (NIP-55) URL-decodes the WHOLE nostrsigner: URI and only then splits
+  // it on `?`, so a plaintext carrying one is silently truncated and comes back
+  // "malformed nostrsigner request". Item guids are routinely permalink URLs,
+  // so one favorited track with a query string would break every private
+  // publish on Android, forever, with a message reading "Amber isn't
+  // installed". This app's Amber path is NIP-46 and unaffected — BMB reads what
+  // we write and may not be.
+  const withQuery = itemId('https://example.com/ep?id=42&utm=x');
+  const encoded = encodePrivateFavorites([['i', withQuery]]);
+
+  assert.equal(encoded.includes('?'), false, 'no raw ? survives the encoding');
+  assert.equal(encoded.includes('\\u003f'), true, 'it is written as the JSON escape');
+  // And every JSON reader gives back the identical string, which is the whole
+  // reason the escape is `?` and not an app-specific wrapper.
+  assert.deepEqual(decodePrivateFavorites(encoded), [['i', withQuery]]);
+});
+
+test('valid JSON that is not a tag array decodes to null, not to empty', () => {
+  // THE DISTINCTION THAT PREVENTS A WIPE. A `JSON.parse` that succeeds on a
+  // non-array leaves the blob marked readable and EMPTY, and the next republish
+  // rewrites `content` from those empty lists and destroys it. "I read it and
+  // it was empty" and "I could not read it" have to be different answers, and
+  // only the first may ever be published from.
+  assert.equal(decodePrivateFavorites('42'), null);
+  assert.equal(decodePrivateFavorites('"a string"'), null);
+  assert.equal(decodePrivateFavorites('{"tags":[]}'), null);
+  assert.equal(decodePrivateFavorites('null'), null);
+  assert.equal(decodePrivateFavorites('[["i","x"],"not-a-tag"]'), null);
+  assert.equal(decodePrivateFavorites('[["i",42]]'), null, 'tag elements must be strings');
+  assert.equal(decodePrivateFavorites('not json at all'), null);
+
+  // The one thing that IS a legitimately empty private half.
+  assert.deepEqual(decodePrivateFavorites('[]'), []);
+});
+
+test('the plaintext cap sits under the NIP-44 v2 interop cliff at 64 KB', () => {
+  // NIP-44 v2 as first published capped plaintext at 65535 bytes; the current
+  // text allows more and changes the length prefix at 65536. A library built to
+  // the older text REJECTS a payload across that line, and a private list that
+  // cannot be decrypted is indistinguishable from an empty one.
+  assert.ok(PRIVATE_PLAINTEXT_MAX < 65_535, 'must stay under the older cap');
+
+  // Counted in UTF-8 bytes, which is what the limit counts — not in JS string
+  // length, which would undercount every non-ASCII title by up to 3×.
+  assert.equal(plaintextBytes('abc'), 3);
+  assert.equal(plaintextBytes('é'), 2);
+  assert.equal(plaintextBytes('🎵'), 4);
 });
 
 test('an album with no favorited tracks emits a feed group and nothing else', () => {

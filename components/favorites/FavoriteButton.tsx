@@ -8,6 +8,7 @@ import { getSessionId } from '@/lib/session-utils';
 import { toast } from '@/components/Toast';
 import { queueFavoritePublish, queueFavoriteDeletion } from '@/lib/nostr/publish-queue';
 import { requestSharedFavoritesSync } from '@/lib/nostr/favorites-sync-client';
+import { FAVORITES_PRIVACY_ASK_EVENT } from '@/components/favorites/FavoritesPrivacyPrompt';
 import { useBatchedFavorites } from '@/contexts/BatchedFavoritesContext';
 import type { FavoriteKind } from '@/lib/favorite-status-cache';
 
@@ -306,6 +307,16 @@ export default function FavoriteButton({
             pubkey: user.nostrPubkey,
             relays: userRelays,
           });
+
+          // Ask where the shared list should put this, if the user has never
+          // said. AFTER the favorite is saved and the heart is filled, never
+          // before: a dialog between the tap and the result makes a favorite
+          // feel like a transaction. Safe in this order only because nothing
+          // has been published yet — the sync above writes nothing to the
+          // shared list while the question is unanswered. The prompt itself
+          // decides whether to appear; a page can hold hundreds of these
+          // buttons and the question belongs to the account, not to a row.
+          window.dispatchEvent(new Event(FAVORITES_PRIVACY_ASK_EVENT));
 
           queueFavoritePublish(publishType, publishId, publishTitle, publishArtist, userRelays)
             .then(async (nostrEventId) => {

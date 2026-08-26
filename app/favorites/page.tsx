@@ -1110,6 +1110,15 @@ function FavoritesPageContent() {
               My Favorites
             </h1>
             <p className="text-sm sm:text-base text-gray-400">Your favorite tracks, albums, and publishers</p>
+
+            {/* Inside the title block, directly under the subtitle, rather than
+                as a row of its own below it. It is one quiet line about what
+                happens to these favorites, so it belongs with the words that
+                introduce them — and in the space beside the sync button, which
+                was otherwise empty. Renders nothing when signed out or on a
+                read-only nip05 session. Prerequisite for removing the trial
+                allowlist — see the component. */}
+            <SharedFavoritesDisclosure />
           </div>
           <SyncToNostrButton className="self-start sm:self-auto" />
         </div>
@@ -1119,13 +1128,6 @@ function FavoritesPageContent() {
             copy and are fine. Renders nothing unless the last cross-app sync
             was degraded. See #194. */}
         <SharedFavoritesNotice />
-
-        {/* Sits with the sync control for the same reason the notice does: this
-            is the thing that publishes, so this is where its consequence
-            belongs. Renders nothing when signed out or on a read-only nip05
-            session. Prerequisite for removing the trial allowlist — see the
-            component. */}
-        <SharedFavoritesDisclosure />
 
         {error && (
           <div className="mb-6 p-4 bg-red-900/20 border border-red-500/50 rounded-lg text-red-400">

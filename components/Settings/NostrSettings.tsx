@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { useNostr } from '@/contexts/NostrContext';
 import { useUserSettings } from '@/hooks/useUserSettings';
 import { SettingsSection, SettingsRow } from './SettingsLayout';
+import FavoritesPrivacyControl from '@/components/favorites/FavoritesPrivacyControl';
 import { useRouter } from 'next/navigation';
 import { toast } from '@/components/Toast';
 
@@ -214,6 +215,15 @@ export default function NostrSettings() {
           </label>
         </SettingsRow>
           </div>
+
+          {/* Where favorites go on the shared cross-app list.
+              Here rather than on /favorites, where a bordered settings panel sat
+              above the user's albums and competed with them for the top of the
+              screen. The disclosure on that page names the current mode and
+              links here — one line, which is the part that has to be seen.
+              Renders nothing outside the trial allowlist or for a read-only
+              nip05 session, where there is no shared list to govern. */}
+          <FavoritesPrivacyControl />
 
           {/* Logout Button - Bottom Right */}
           <div className="flex justify-end gap-2 border-t border-gray-700 pt-6">
