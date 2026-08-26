@@ -87,6 +87,12 @@ interface FavoriteAlbum {
    *  in another app can be told from an album without resolving it first. */
   medium?: string | null;
   favoritedAt: string;
+  /** Album release date — the oldest track's publish date, when the feed has
+   *  one. NOT `lastFetched`, which is when we last polled the feed; using that
+   *  showed a different year for the same album than the home grid did. */
+  oldestItemPubdate?: string | Date | null;
+  /** When the feed row was created here. The fallback for `oldestItemPubdate`. */
+  createdAt?: string | Date | null;
   trackCount?: number;
   v4vValue?: any;
   v4vRecipient?: string | null;
@@ -620,7 +626,10 @@ function FavoritesPageContent() {
               artist: album.artist || 'Unknown Artist',
               description: album.description || '',
               coverArt: album.image || '',
-              releaseDate: album.lastFetched || album.createdAt,
+              // oldestItemPubdate, NOT lastFetched — the latter is when we
+              // last POLLED the feed. Same drift as app/publisher/[id]/page.tsx
+              // had; see lib/catalog/album-shape.ts.
+              releaseDate: album.oldestItemPubdate || album.createdAt,
               tracks: playable.map((track: any, index: number) => ({
                 title: track.title,
                 duration: track.duration ? `${Math.floor(track.duration / 60)}:${String(track.duration % 60).padStart(2, '0')}` : '0:00',

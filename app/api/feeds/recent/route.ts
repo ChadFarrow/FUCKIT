@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { albumFeedSelect, feedToAlbum } from '@/lib/catalog/album-shape';
 import { prisma } from '@/lib/prisma';
 import { getPlaylistUrls, getAllPlaylistIds } from '@/lib/playlist/configs';
 import {
@@ -137,54 +138,9 @@ export async function GET(request: Request) {
 
     const fullFeeds = await prisma.feed.findMany({
       where: { id: { in: pageIds } },
-      select: {
-        id: true,
-        guid: true,
-        title: true,
-        description: true,
-        originalUrl: true,
-        type: true,
-        artist: true,
-        image: true,
-        priority: true,
-        createdAt: true,
-        oldestItemPubdate: true,
-        v4vRecipient: true,
-        v4vValue: true,
-        persons: true,
-        podcastImages: true,
-        Track: {
-          where: { audioUrl: { not: '' }, status: 'active' },
-          select: {
-            id: true,
-            guid: true,
-            title: true,
-            duration: true,
-            audioUrl: true,
-            image: true,
-            publishedAt: true,
-            v4vRecipient: true,
-            v4vValue: true,
-            startTime: true,
-            endTime: true,
-            trackOrder: true,
-            mediaType: true,
-            alternateEnclosures: true,
-            chaptersUrl: true,
-            chapters: true,
-            valueTimeSplits: true,
-            persons: true,
-            podcastImages: true,
-          },
-          orderBy: [
-            { trackOrder: 'asc' },
-            { publishedAt: 'asc' },
-            { createdAt: 'asc' },
-          ],
-          take: 20,
-        },
-        _count: { select: { Track: { where: { status: 'active' } } } },
-      },
+      // Shared shape — a third verbatim copy of the albums-fast select lived
+      // here. See lib/catalog/album-shape.ts.
+      select: albumFeedSelect(20),
     });
 
     const feedById = new Map(fullFeeds.map((f) => [f.id, f]));
@@ -192,51 +148,9 @@ export async function GET(request: Request) {
     const albums = pageIds
       .map((id) => feedById.get(id))
       .filter((f): f is NonNullable<typeof f> => Boolean(f))
-      .map((feed) => ({
-        id: feed.id,
-        title: feed.title,
-        type: feed.type || 'album',
-        artist: feed.artist || feed.title,
-        description: feed.description || '',
-        coverArt: feed.image || '',
-        releaseDate: feed.oldestItemPubdate || feed.createdAt,
-        dateAdded: feed.createdAt,
-        feedUrl: feed.originalUrl,
-        feedGuid: feed.guid || null,
-        feedId: feed.id,
-        remoteFeedGuid: feed.guid || null,
-        // Real <item> guid or null. `feed.id` here would be published as
-        // `podcast:item:guid:<stablekraft-slug>` (#242).
-        guid: feed.Track?.[0]?.guid || null,
-        episodeGuid: feed.Track?.[0]?.guid || null,
-        link: feed.originalUrl,
-        priority: feed.priority,
-        tracks: feed.Track.map((track) => ({
-          id: track.id,
-          title: track.title,
-          duration: track.duration || 180,
-          url: track.audioUrl,
-          image: track.image,
-          publishedAt: track.publishedAt,
-          guid: track.guid,
-          v4vRecipient: track.v4vRecipient,
-          v4vValue: track.v4vValue,
-          startTime: track.startTime,
-          endTime: track.endTime,
-          mediaType: track.mediaType || 'audio',
-          alternateEnclosures: track.alternateEnclosures,
-          chaptersUrl: track.chaptersUrl || undefined,
-          chapters: track.chapters || undefined,
-          valueTimeSplits: track.valueTimeSplits || undefined,
-          persons: (track as { persons?: unknown }).persons || undefined,
-          podcastImages: (track as { podcastImages?: unknown }).podcastImages || undefined,
-        })),
-        v4vRecipient: feed.v4vRecipient || feed.Track?.[0]?.v4vRecipient || null,
-        v4vValue: feed.v4vValue || feed.Track?.[0]?.v4vValue || null,
-        persons: (feed as { persons?: unknown }).persons || undefined,
-        podcastImages: (feed as { podcastImages?: unknown }).podcastImages || undefined,
-        trackCount: feed._count?.Track || 0,
-      }));
+      // Shared mapper. Note this path does NOT dedupe tracks, which is the one
+      // way it differed from albums-fast; that stays true.
+      .map((feed) => feedToAlbum(feed as never));
 
     return NextResponse.json(
       { albums, count: albums.length, total, hasMore: offset + albums.length < total },

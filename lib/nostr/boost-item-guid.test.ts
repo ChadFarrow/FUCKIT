@@ -32,16 +32,22 @@ import { readFileSync } from 'node:fs';
 
 /**
  * Every file that decides what becomes `podcast:item:guid` on a note or
- * `remote_item_guid`/`episode_guid` in a TLV. The API routes are here because
- * their `guid`/`episodeGuid` fields are what `AlbumCard` later hands to
+ * `remote_item_guid`/`episode_guid` in a TLV. The catalog mapper is here
+ * because its `guid`/`episodeGuid` fields are what `AlbumCard` later hands to
  * `BoostButton` — the fallback used to be applied twice over, once in the
  * route and again in the component.
+ *
+ * `lib/catalog/album-shape.ts` replaced the two route entries this list used
+ * to carry (`app/api/albums-fast/route.ts` and `app/api/feeds/recent/route.ts`),
+ * which held three copies of that object literal between them. Neither route
+ * names an item guid any more; both call `feedToAlbum`. That is the whole
+ * point of the shared mapper, and it is why the vacuity test below matters:
+ * it is what noticed the move.
  */
 const SITES = [
   'components/AlbumCard.tsx',
   'app/favorites/page.tsx',
-  'app/api/albums-fast/route.ts',
-  'app/api/feeds/recent/route.ts',
+  'lib/catalog/album-shape.ts',
   'components/Lightning/BoostButton.tsx',
   'contexts/AudioContext.tsx',
   'hooks/useAutoBoost.ts',

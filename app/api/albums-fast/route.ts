@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createRouteLimiter, enforceRateLimit } from '@/lib/rate-limit-guard';
+import { albumFeedSelect, feedToAlbum } from '@/lib/catalog/album-shape';
 import { prisma } from '@/lib/prisma';
 import { Track } from '@prisma/client';
 import { getPlaylistUrls, getAllPlaylistIds } from '@/lib/playlist/configs';
@@ -11,6 +12,9 @@ import {
   invalidateAlbumsFastCache,
   type FeedWithTracks,
 } from '@/lib/caches/albums-fast-cache';
+
+/** Most albums have fewer than this; the full list comes from /api/albums/[slug]. */
+const ALBUM_TRACK_LIMIT = 20;
 
 const cache = getAlbumsFastCache();
 
@@ -168,61 +172,9 @@ export async function GET(request: Request) {
         // Fetch feeds with minimal track data (optimized select)
         feeds = await prisma.feed.findMany({
           where: { status: 'active', markedDead: false },
-          select: {
-            id: true,
-            guid: true,
-            title: true,
-            description: true,
-            originalUrl: true,
-            type: true,
-            artist: true,
-            image: true,
-            priority: true,
-            status: true,
-            createdAt: true,
-            updatedAt: true,
-            oldestItemPubdate: true,
-            v4vRecipient: true,
-            v4vValue: true,
-            persons: true,
-            podcastImages: true,
-            Track: {
-              where: {
-                audioUrl: { not: '' },
-                status: 'active'
-              },
-              select: {
-                id: true,
-                guid: true,
-                title: true,
-                duration: true,
-                audioUrl: true,
-                image: true,
-                publishedAt: true,
-                v4vRecipient: true,
-                v4vValue: true,
-                startTime: true,
-                endTime: true,
-                trackOrder: true,
-                mediaType: true,
-                alternateEnclosures: true,
-                chaptersUrl: true,
-                chapters: true,
-                valueTimeSplits: true,
-                persons: true,
-                podcastImages: true,
-              },
-              orderBy: [
-                { trackOrder: 'asc' },
-                { publishedAt: 'asc' },
-                { createdAt: 'asc' }
-              ],
-              take: 20 // Most albums have <20 tracks
-            },
-            _count: {
-              select: { Track: { where: { status: 'active' } } }
-            }
-          },
+          // Shared shape — this select was written out twice in this file and a
+          // third time in /api/feeds/recent. See lib/catalog/album-shape.ts.
+          select: albumFeedSelect(ALBUM_TRACK_LIMIT),
           orderBy: [
             { priority: 'asc' },
             { createdAt: 'desc' }
@@ -272,66 +224,12 @@ export async function GET(request: Request) {
     // Transform feeds into album format for frontend.
     // API contract for sort/display: releaseDate = album release (oldest track date when available); dateAdded = when feed was added to site.
     // Run POST /api/admin/backfill-oldest-pubdate to backfill oldestItemPubdate so "Year" sort uses real release dates.
-    const albums = feeds.map((feed: FeedWithTracks) => ({
-      id: feed.id,
-      title: feed.title,
-      type: feed.type || 'album',
-      artist: feed.artist || feed.title,
-      description: feed.description || '',
-      coverArt: feed.image || '',
-      releaseDate: feed.oldestItemPubdate || feed.createdAt,
-      dateAdded: feed.createdAt,
-      feedUrl: feed.originalUrl, // For Helipad TLV
-      feedGuid: feed.guid || null, // Real podcast:guid from RSS (for BoostBox feed_guid)
-      feedId: feed.id, // Slug-based ID for URLs and Helipad TLV
-      remoteFeedGuid: feed.guid || null, // Real podcast:guid (for BoostBox remote_feed_guid)
-      // The first track's real <item> guid, or null — never `feed.id`.
-      // These two fields reach `BoostButton`'s `episodeGuid` prop, which
-      // becomes `podcast:item:guid:<...>` on a published boost note and the
-      // Helipad `remote_item_guid`/`episode_guid` TLV. A StableKraft slug in
-      // either place is an identifier only this app can resolve (#242).
-      // Same honesty as `feedGuid`/`remoteFeedGuid` two lines up: absent is
-      // a real answer.
-      guid: feed.Track?.[0]?.guid || null, // Episode GUID for Helipad TLV
-      episodeGuid: feed.Track?.[0]?.guid || null, // Alternative field name
-      link: feed.originalUrl, // For feedUrl fallback
-      priority: feed.priority,
-      tracks: feed.Track
-        .filter((track: Track, index: number, self: Track[]) => {
-          // Deduplicate tracks by URL and title
-          return self.findIndex((t: Track) =>
-            t.audioUrl === track.audioUrl && t.title === track.title
-          ) === index;
-        })
-        .map((track: Track) => ({
-          id: track.id,
-          title: track.title,
-          duration: track.duration || 180,
-          url: track.audioUrl,
-          image: track.image,
-          publishedAt: track.publishedAt,
-          guid: track.guid,
-          // Include V4V fields for Lightning payments
-          v4vRecipient: track.v4vRecipient,
-          v4vValue: track.v4vValue,
-          startTime: track.startTime,
-          endTime: track.endTime,
-          mediaType: track.mediaType || 'audio',
-          alternateEnclosures: track.alternateEnclosures,
-          chaptersUrl: (track as any).chaptersUrl || undefined,
-          chapters: (track as any).chapters || undefined,
-          valueTimeSplits: (track as any).valueTimeSplits || undefined,
-          persons: (track as any).persons || undefined,
-          podcastImages: (track as any).podcastImages || undefined,
-        })),
-      // Include V4V payment data from feed (preferred) or first track (fallback)
-      v4vRecipient: feed.v4vRecipient || feed.Track?.[0]?.v4vRecipient || null,
-      v4vValue: feed.v4vValue || feed.Track?.[0]?.v4vValue || null,
-      persons: (feed as any).persons || undefined,
-      podcastImages: (feed as any).podcastImages || undefined,
-      // Actual track count from database (tracks array may be limited)
-      trackCount: feed._count.Track
-    }));
+    const albums = feeds.map((feed: FeedWithTracks) =>
+      // Shared mapper — this object literal was written out seven times across
+      // the repo, and one copy had already drifted: app/publisher/[id]/page.tsx
+      // used `lastFetched` (the last POLL time) as the release date.
+      feedToAlbum(feed as never, { dedupeTracks: true })
+    );
     
     // Filter out Bowl After Bowl podcast (mis-imported as type='album') but keep
     // Bowl Covers (legit music). Shared helper keeps /api/feeds/recent in sync.
@@ -472,111 +370,27 @@ export async function GET(request: Request) {
               type: 'podcast',
               markedDead: false,
             },
-            select: {
-              id: true,
-              guid: true,
-              title: true,
-              description: true,
-              originalUrl: true,
-              type: true,
-              artist: true,
-              image: true,
-              priority: true,
-              status: true,
-              createdAt: true,
-              updatedAt: true,
-              oldestItemPubdate: true,
-              v4vRecipient: true,
-              v4vValue: true,
-              persons: true,
-              podcastImages: true,
-              Track: {
-                where: { audioUrl: { not: '' }, status: 'active' },
-                select: {
-                  id: true,
-                  guid: true,
-                  title: true,
-                  duration: true,
-                  audioUrl: true,
-                  image: true,
-                  publishedAt: true,
-                  v4vRecipient: true,
-                  v4vValue: true,
-                  startTime: true,
-                  endTime: true,
-                  trackOrder: true,
-                  mediaType: true,
-                  alternateEnclosures: true,
-                  chaptersUrl: true,
-                  chapters: true,
-                  valueTimeSplits: true,
-                  persons: true,
-                  podcastImages: true,
-                },
-                orderBy: [
-                  { trackOrder: 'asc' },
-                  { publishedAt: 'asc' },
-                  { createdAt: 'asc' }
-                ]
-              },
-              _count: { select: { Track: { where: { status: 'active' } } } }
-            }
+            // 'unbounded' preserves today's behaviour and SAYS SO. This select
+            // simply omitted `take`, so it loaded every episode of every
+            // podcast with `chapters` and `valueTimeSplits` attached. Spelling
+            // it out makes the cost greppable instead of looking like an
+            // oversight; bounding it changes the response shape and belongs
+            // with the API_VERSION bump.
+            select: albumFeedSelect('unbounded'),
           });
-          filteredAlbums = podcastFeeds.map((feed: any) => {
-            // Sort podcast episodes newest-first
-            const sortedTracks = [...(feed.Track || [])].sort((a: any, b: any) => {
-              const dateA = a.publishedAt ? new Date(a.publishedAt).getTime() : 0;
-              const dateB = b.publishedAt ? new Date(b.publishedAt).getTime() : 0;
-              return dateB - dateA;
-            });
-            return {
-            id: feed.id,
-            title: feed.title,
-            type: feed.type || 'podcast',
+          filteredAlbums = podcastFeeds.map((feed) => ({
+            // Same shared mapper, with the three things this branch does
+            // differently stated as options rather than as a fourth copy:
+            // podcasts default to type 'podcast', episodes render newest-first,
+            // and V4V reports only the feed's own value with no track fallback.
+            ...feedToAlbum(feed as never, {
+              newestFirst: true,
+              defaultType: 'podcast',
+              v4vTrackFallback: false,
+            }),
             isPodcast: true,
-            artist: feed.artist || feed.title,
-            description: feed.description || '',
-            coverArt: feed.image || '',
-            releaseDate: feed.oldestItemPubdate || feed.createdAt,
-            dateAdded: feed.createdAt,
-            feedUrl: feed.originalUrl,
-            feedGuid: feed.guid || null,
-            feedId: feed.id,
-            remoteFeedGuid: feed.guid || null,
-            // Real <item> guid or null, never `feed.id` — see the album
-            // mapping above and #242.
-            guid: feed.Track?.[0]?.guid || null,
-            episodeGuid: feed.Track?.[0]?.guid || null,
-            link: feed.originalUrl,
-            priority: feed.priority,
-            tracks: sortedTracks.map((track: any) => ({
-              id: track.id,
-              title: track.title,
-              duration: track.duration || 180,
-              url: track.audioUrl,
-              image: track.image,
-              publishedAt: track.publishedAt,
-              guid: track.guid,
-              v4vRecipient: track.v4vRecipient,
-              v4vValue: track.v4vValue,
-              startTime: track.startTime,
-              endTime: track.endTime,
-              mediaType: track.mediaType || 'audio',
-              alternateEnclosures: track.alternateEnclosures,
-              chaptersUrl: track.chaptersUrl || undefined,
-              chapters: track.chapters || undefined,
-              valueTimeSplits: track.valueTimeSplits || undefined,
-              persons: (track as any).persons || undefined,
-              podcastImages: (track as any).podcastImages || undefined,
-            })),
             totalTracks: feed._count?.Track || feed.Track?.length || 0,
-            trackCount: feed._count?.Track || feed.Track?.length || 0,
-            v4vRecipient: feed.v4vRecipient,
-            v4vValue: feed.v4vValue,
-            persons: (feed as any).persons || undefined,
-            podcastImages: (feed as any).podcastImages || undefined,
-          };
-          });
+          }));
           break;
         }
         case 'videos':

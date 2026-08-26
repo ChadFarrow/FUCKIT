@@ -126,6 +126,13 @@ export async function POST(request: NextRequest) {
                 image: feedData.image || null,
                 originalUrl: feedData.url || '',
                 language: feedData.language || null,
+                // What the feed DECLARED, relayed by Podcast Index — not a
+                // guess, and null when PI reports none. CLAUDE.md: nothing may
+                // default `medium`.
+                medium:
+                  typeof feedData.medium === 'string' && feedData.medium
+                    ? feedData.medium.toLowerCase()
+                    : null,
                 category: feedData.categories ? Object.keys(feedData.categories)[0] : null,
                 explicit: feedData.explicit || false,
                 status: 'active',
