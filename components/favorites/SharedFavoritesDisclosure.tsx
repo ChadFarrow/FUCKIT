@@ -70,7 +70,7 @@ export default function SharedFavoritesDisclosure() {
   const Icon = mode === 'private' ? Lock : mode === 'off' ? CircleSlash : Globe;
 
   return (
-    <p className="mb-2 flex max-w-3xl items-start gap-2 text-xs text-gray-500">
+    <p className="mt-2 flex max-w-3xl items-start gap-2 text-xs text-gray-500">
       <Icon className="w-3.5 h-3.5 flex-shrink-0 mt-px" aria-hidden="true" />
       <span>
         Your favorites are public on Nostr, signed by your key.
