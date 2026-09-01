@@ -514,3 +514,70 @@ test('the whole-list move is one direction only, whatever the flag says', () => 
     "another app's private entry is NEVER disclosed by our switch to public"
   );
 });
+
+// ---------------------------------------------------------------------------
+// A list already in BOTH halves — spec test vector 15
+// ---------------------------------------------------------------------------
+
+test('a feed in BOTH halves moves as one group, not two', () => {
+  // The state, and it is not hypothetical: 284 favorites in the public tags,
+  // 287 in the encrypted half, all 284 in both, on a real account whose mode
+  // read Public. Nothing in the format forbids it, and a switch that publishes
+  // into one half while its removal from the other is baseline-gated lands
+  // there by itself.
+  //
+  // Concatenating the halves on the way into private then emits MUSIC_A twice:
+  // two groups for one feed, double-counted by every reader, with its items
+  // given two parents to sit under. Only this state reaches it, which is why
+  // every vector above passes over it.
+  const plan = publishPlan({
+    mode: 'private',
+    publicRead: halfWith(MUSIC_A, MUSIC_B),
+    privateRead: halfWith(MUSIC_A),
+    local: groupForSingleList([album(MUSIC_A, 'music')]),
+    baseline: EMPTY_BASELINE,
+  });
+
+  if (!WHOLE_LIST_PRIVACY_MOVE) return; // nothing moves, nothing to duplicate
+
+  const moved = feedsOf(plan.privateTags!);
+  assert.equal(
+    moved.filter((id) => id === showId(MUSIC_A)).length,
+    1,
+    'the feed that was in both halves was emitted twice'
+  );
+  assert.equal(
+    moved.includes(showId(MUSIC_B)),
+    true,
+    'the public-only feed did not move'
+  );
+  assert.deepEqual(feedsOf(plan.tags), [], 'the public half is emptied');
+});
+
+test('an item under a duplicated group survives the fold', () => {
+  // Folding rather than dropping. The incoming group may carry items the one
+  // already here does not, and this is a MOVE — an item under a duplicate
+  // group is as much the user's as the group itself.
+  const withTrack = parseSingleList([
+    ['alt', LIST_ALT],
+    ['medium', 'music'],
+    ['i', showId(MUSIC_A)],
+    ['i', itemId(FOREIGN)],
+  ]);
+  const plan = publishPlan({
+    mode: 'private',
+    publicRead: withTrack,
+    privateRead: halfWith(MUSIC_A),
+    local: groupForSingleList([album(MUSIC_A, 'music')]),
+    baseline: EMPTY_BASELINE,
+  });
+  if (!WHOLE_LIST_PRIVACY_MOVE) return;
+
+  const ids = plan.privateTags!.filter((t) => t[0] === 'i').map((t) => t[1]);
+  assert.equal(
+    ids.filter((id) => id === showId(MUSIC_A)).length,
+    1,
+    'the duplicated group was emitted twice'
+  );
+  assert.equal(ids.includes(itemId(FOREIGN)), true, 'the item was dropped with its duplicate group');
+});

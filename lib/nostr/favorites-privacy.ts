@@ -50,6 +50,7 @@
  */
 
 import {
+  type ListNode,
   type ParsedSingleList,
   type PublishedRecord,
   type SingleListGroup,
@@ -221,6 +222,68 @@ export interface PublishPlan {
 }
 
 /**
+ * Fold the nodes moving in from the other half into the ones already here.
+ *
+ * **A concatenation was wrong, and only one state shows it.** An entry can sit
+ * in BOTH halves at once — nothing in the format forbids it, and a mode switch
+ * that publishes into one half while its removal from the other is
+ * baseline-gated produces exactly that. Measured on a real account: 284
+ * favorites in the public tags, 287 in the encrypted half, all 284 in both.
+ * Concatenating then emits one feed as TWO groups, because `tagsFromNodes`
+ * writes every node it is handed. Two groups for one feed double-count it for
+ * every reader and give its items two parents to sit under.
+ *
+ * Folding rather than dropping, because the incoming group may carry items the
+ * one already here does not: this is a MOVE, and an item under a duplicate
+ * group is as much the user's as the group itself. Order is the existing half's
+ * — tag order is semantic, so the side already in place keeps its positions and
+ * the incoming items append.
+ *
+ * Loose nodes fold on their identifier for the same reason. A duplicate there
+ * is the same entry named twice, not two entries.
+ *
+ * See spec test vector 15.
+ */
+function mergeMovedNodes(here: ListNode[], moving: ListNode[]): ListNode[] {
+  const out = here.map((n) =>
+    n.t === 'group' ? { t: 'group' as const, group: { ...n.group, itemGuids: [...n.group.itemGuids] } } : n
+  );
+  const groupAt = new Map<string, number>();
+  const looseIds = new Set<string>();
+  out.forEach((n, i) => {
+    if (n.t === 'group') groupAt.set(n.group.feedGuid, i);
+    else if (n.loose.tag[1]) looseIds.add(n.loose.tag[1]);
+  });
+
+  for (const node of moving) {
+    if (node.t === 'loose') {
+      const id = node.loose.tag[1];
+      if (id && looseIds.has(id)) continue;
+      if (id) looseIds.add(id);
+      out.push(node);
+      continue;
+    }
+    const at = groupAt.get(node.group.feedGuid);
+    if (at === undefined) {
+      groupAt.set(node.group.feedGuid, out.length);
+      out.push({ t: 'group', group: { ...node.group, itemGuids: [...node.group.itemGuids] } });
+      continue;
+    }
+    const existing = out[at];
+    if (existing.t !== 'group') continue;
+    for (const guid of node.group.itemGuids) {
+      if (!existing.group.itemGuids.includes(guid)) existing.group.itemGuids.push(guid);
+    }
+    // The medium hint only ever FILLS a gap. Overwriting one the feed declared
+    // with one it did not is how a hint becomes wrong.
+    if (!existing.group.medium && node.group.medium) {
+      existing.group.medium = node.group.medium;
+    }
+  }
+  return out;
+}
+
+/**
  * Build the publish, given both halves as read and what this device claims.
  *
  * `mode` decides which half the local favorites are merged into. The other one
@@ -287,7 +350,7 @@ export function publishPlan(input: {
   // half, and are carried from there exactly as they were carried here.
   const movingWholeList = WHOLE_LIST_PRIVACY_MOVE && mode === 'private';
   const privateNodes = movingWholeList
-    ? [...activeMerged.nodes, ...inactiveMerged.nodes]
+    ? mergeMovedNodes(activeMerged.nodes, inactiveMerged.nodes)
     : activeMerged.nodes;
   const privateTags = movingWholeList
     ? tagsFromNodes(
