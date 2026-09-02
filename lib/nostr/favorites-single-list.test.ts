@@ -545,6 +545,10 @@ test('a degraded read is not an empty list — parse never invents that distinct
   // distinguishable by the caller rather than here.
   assert.deepEqual(parseSingleList([['alt', LIST_ALT]]), {
     nodes: [],
+    // Null, not 'public'. An event that never said which half it lives in has
+    // not said it, and a default here would make every list written before the
+    // tag claim a mode nobody picked.
+    visibility: null,
     foreignTags: [],
     foreignKinds: [],
     groups: [],

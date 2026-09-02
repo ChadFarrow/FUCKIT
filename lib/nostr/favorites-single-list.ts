@@ -113,8 +113,29 @@ export type ListNode =
   | { t: 'group'; group: SingleListGroup }
   | { t: 'loose'; loose: LooseNode };
 
+/** Which half the WHOLE list lives in. Never a per-entry property. */
+export type ListVisibility = 'public' | 'private';
+
+/**
+ * The tag naming that half.
+ *
+ * Multi-letter on purpose: relays index single-letter tags, so a `["v", …]`
+ * would let a `#v=private` filter enumerate the pubkeys that keep a private
+ * list. It takes no part in grouping — treat it like `k`.
+ */
+export const VISIBILITY_TAG = 'visibility';
+
 export interface ParsedSingleList {
   nodes: ListNode[];
+  /**
+   * The mode the event STATES, or null when it does not.
+   *
+   * Null is not "public". It means the list was written before this tag
+   * existed, and the caller falls back to inferring the mode from whichever
+   * half holds entries — which answers for every list that has any, and
+   * cannot answer at all for one that has none.
+   */
+  visibility: ListVisibility | null;
   /** Tag types we have no meaning for, whole and in read order. */
   foreignTags: string[][];
   /** `k` values naming kinds outside our table. Re-emitted, never acted on. */
@@ -178,6 +199,7 @@ function projectNodes(nodes: ListNode[]): {
 /** An empty parse, for an absent event and for callers building one by hand. */
 export const EMPTY_PARSED: ParsedSingleList = {
   nodes: [],
+  visibility: null,
   foreignTags: [],
   foreignKinds: [],
   groups: [],
@@ -261,12 +283,40 @@ export function buildSingleListTags(items: FavoriteEntry[]): string[][] {
  * boundary. Reordering within a block costs nothing; breaking contiguity
  * corrupts.
  */
+/**
+ * State the list's mode on a tag array that is about to become the EVENT.
+ *
+ * Kept out of `tagsFromNodes` on purpose. That function builds both halves,
+ * and the private half is a tag array inside `content` — a mode stated there
+ * is a claim about the list made in a place no reader may act on, and this
+ * app's own parser drops it. So the tag is added once, to the array that
+ * really is the event's, and never to the other one.
+ *
+ * Inserted after `alt` so the head of the event is stable across republishes;
+ * position is not semantic for either tag.
+ */
+export function withVisibility(
+  tags: string[][],
+  visibility: ListVisibility | null
+): string[][] {
+  if (!visibility) return tags;
+  const out = tags.filter((t) => t[0] !== VISIBILITY_TAG);
+  const at = out.findIndex((t) => t[0] === 'alt');
+  out.splice(at === -1 ? 0 : at + 1, 0, [VISIBILITY_TAG, visibility]);
+  return out;
+}
+
 export function tagsFromNodes(
   nodes: ListNode[],
   foreignTags: string[][] = [],
-  foreignKinds: string[] = []
+  foreignKinds: string[] = [],
+  visibility: ListVisibility | null = null
 ): string[][] {
   const tags: string[][] = [['alt', LIST_ALT]];
+  // Right after `alt`, and only when the caller has one to state. Absent is a
+  // real answer — see `ParsedSingleList.visibility` — so a default here would
+  // make every legacy list claim a mode nobody picked.
+  if (visibility) tags.push([VISIBILITY_TAG, visibility]);
 
   // Tag types we have no meaning for, replayed whole and in read order. They
   // take no part in grouping, so position among themselves is all they need.
@@ -487,6 +537,10 @@ export function mergeSingleList(
 
   return {
     nodes,
+    // Carried from the read, not decided here. `mergeSingleList` folds ONE
+    // half; the mode belongs to the whole list, and `publishPlan` is the only
+    // thing that may state it.
+    visibility: read.visibility,
     foreignTags: read.foreignTags,
     foreignKinds: read.foreignKinds,
     ...projectNodes(nodes),
@@ -648,6 +702,7 @@ export function parseSingleList(tags: string[][]): ParsedSingleList {
   const nodes: ListNode[] = [];
   const foreignTags: string[][] = [];
   const foreignKinds: string[] = [];
+  let visibility: ListVisibility | null = null;
   let medium: string | undefined;
   let current: SingleListGroup | null = null;
 
@@ -657,6 +712,18 @@ export function parseSingleList(tags: string[][]): ParsedSingleList {
     // Ours, and regenerated on the way out — a foreign `alt` is replaced
     // rather than carried, since the event can only have one label.
     if (type === 'alt') continue;
+
+    // Read, never carried as a foreign tag. Letting it fall through to
+    // `foreignTags` would replay it AND emit our own, so the event would end
+    // up stating the mode twice — and the second copy would be the stale one.
+    //
+    // A `visibility` tag INSIDE the private half is meaningless — the mode is
+    // a property of the list, not of a half — so this drops it there rather
+    // than round-tripping a claim no reader may act on.
+    if (type === VISIBILITY_TAG) {
+      if (tag[1] === 'public' || tag[1] === 'private') visibility = tag[1];
+      continue;
+    }
 
     if (type === 'k') {
       const value = tag[1];
@@ -701,7 +768,7 @@ export function parseSingleList(tags: string[][]): ParsedSingleList {
     nodes.push({ t: 'loose', loose: { tag: tag.slice(), medium } });
   }
 
-  return { nodes, foreignTags, foreignKinds, ...projectNodes(nodes) };
+  return { nodes, visibility, foreignTags, foreignKinds, ...projectNodes(nodes) };
 }
 
 /**

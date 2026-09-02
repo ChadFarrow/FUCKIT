@@ -614,7 +614,14 @@ function resolveMode(pubkey: string, read: SingleList, privateHalf: PrivateHalf)
   const hasPublic = read.groups.length > 0 || read.orphanItemGuids.length > 0;
   const hasPrivate = privateHalf.list.groups.length > 0 || privateHalf.list.orphanItemGuids.length > 0;
 
-  const seeded = seedModeFromWire(hasPublic, hasPrivate);
+  // THE STATED MODE FIRST. `seedModeFromWire` reads emptiness, which answers
+  // for every list that has entries and cannot answer for one that has none —
+  // a new account, or one whose last favorite was just removed. There is no
+  // safe default there: guessing `'public'` publishes the next favorite as a
+  // relay-indexed `i` tag for someone who chose Private in another app. The
+  // tag is what closes that, and it also answers on a list whose halves both
+  // hold entries, where emptiness deliberately says "ask".
+  const seeded = read.visibility ?? seedModeFromWire(hasPublic, hasPrivate);
   if (!seeded) return 'off';
   setFavoritesPrivacy(pubkey, seeded);
   console.log(`ℹ️ Favorites: adopted ${seeded} mode from the list already on the relays`);
@@ -665,7 +672,8 @@ async function publishSingleList(
   read: SingleList,
   privateHalf: PrivateHalf,
   mode: ListHalf,
-  timer?: StageTimer
+  timer?: StageTimer,
+  userChose = false
 ): Promise<boolean> {
   try {
     // Read first, ALWAYS. Publishing replaces the event wholesale, so a publish
@@ -701,6 +709,12 @@ async function publishSingleList(
       privateRead: privateHalf.list,
       local: localGroups,
       baseline: getPublishedRecord(pubkey),
+      // Only a real choice may state or change the mode; `intent: 'resolve'`
+      // is that choice, and it is the same signal `publishGate` acts on.
+      userChose,
+      // We got here, so the half decrypted — `publishSingleList` refuses an
+      // unusable one above. A signer with no NIP-44 never reaches this call.
+      canReadPrivate: true,
     });
 
     // THE DIGEST IS OVER BOTH HALVES, AND OVER THE PRIVATE HALF'S TAGS RATHER
@@ -921,6 +935,7 @@ export async function syncSharedFavoritesNow(opts: {
       hasPublic,
       hasPrivate,
       intent: opts.intent ?? 'auto',
+      stated: read.visibility,
     });
     setModeConflict(
       opts.pubkey,
@@ -962,7 +977,8 @@ export async function syncSharedFavoritesNow(opts: {
       read,
       privateHalf,
       mode,
-      timer
+      timer,
+      (opts.intent ?? 'auto') === 'resolve'
     );
     timer.log('favorites sync');
 

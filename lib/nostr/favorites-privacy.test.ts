@@ -30,6 +30,7 @@ import {
   groupForSingleList,
   parseSingleList,
   LIST_ALT,
+  VISIBILITY_TAG,
 } from './favorites-single-list';
 import { itemId, showId, type FavoriteEntry } from './pc20-identifiers';
 
@@ -350,6 +351,185 @@ test('the reconcile sees the active half whole and only our part of the other', 
     false,
     "another writer's private entry is carried on the wire but never adopted"
   );
+});
+
+// ---------------------------------------------------------------------------
+// `visibility` — the mode as a fact about the list rather than a guess from
+// which half happens to hold entries. PC20-Nostr, "The list is public or
+// private, and the event says which".
+// ---------------------------------------------------------------------------
+
+/** A half with a stated mode, as if read off the wire. */
+const halfSaying = (visibility: 'public' | 'private', ...guids: string[]) =>
+  parseSingleList([
+    ['alt', LIST_ALT],
+    [VISIBILITY_TAG, visibility],
+    ['medium', 'music'],
+    ...guids.map((g) => ['i', showId(g)]),
+  ]);
+
+const visibilityOf = (tags: string[][]) =>
+  tags.find((t) => t[0] === VISIBILITY_TAG)?.[1] ?? null;
+
+test('an EMPTY list still has a mode, and it comes from the tag', () => {
+  // The gap emptiness cannot fill, and it is where every user starts. A device
+  // reading this list sees nothing in either half; guessing `'public'` here
+  // publishes the next favorite as a relay-indexed `i` tag on the account of
+  // someone who chose Private in another app.
+  const empty = parseSingleList([['alt', LIST_ALT], [VISIBILITY_TAG, 'private']]);
+  assert.equal(empty.visibility, 'private');
+  assert.equal(seedModeFromWire(false, false), null, 'emptiness has no answer of its own');
+
+  const plan = publishPlan({
+    mode: 'private',
+    publicRead: empty,
+    privateRead: EMPTY_PARSED,
+    local: groupForSingleList([album(MUSIC_A, 'music')]),
+    baseline: EMPTY_BASELINE,
+  });
+  assert.deepEqual(feedsOf(plan.tags), [], 'nothing may reach the plaintext tags');
+  assert.deepEqual(feedsOf(plan.privateTags!), [showId(MUSIC_A)]);
+  assert.equal(visibilityOf(plan.tags), 'private', 'and the list keeps saying what it is');
+});
+
+test('a stated mode outranks this app\'s standing preference', () => {
+  // Two apps, one event, and nothing else on the wire naming the intended
+  // half. Letting a stored setting win is how a list flips halves on a page
+  // load — measured, on a list of 287 entries.
+  const plan = publishPlan({
+    mode: 'private',
+    publicRead: halfSaying('public', MUSIC_A),
+    privateRead: EMPTY_PARSED,
+    local: groupForSingleList([album(MUSIC_B, 'music')]),
+    baseline: EMPTY_BASELINE,
+  });
+  assert.equal(visibilityOf(plan.tags), 'public', 'the event still says what it said');
+  assert.deepEqual(
+    feedsOf(plan.tags).sort(),
+    [showId(MUSIC_A), showId(MUSIC_B)].sort(),
+    'and the entries stayed in the half it names'
+  );
+  assert.deepEqual(feedsOf(plan.privateTags!), []);
+
+  // The same call with the user actually choosing. That IS the answer, so it
+  // goes through and the whole list moves.
+  const chosen = publishPlan({
+    mode: 'private',
+    publicRead: halfSaying('public', MUSIC_A),
+    privateRead: EMPTY_PARSED,
+    local: groupForSingleList([album(MUSIC_B, 'music')]),
+    baseline: EMPTY_BASELINE,
+    userChose: true,
+  });
+  assert.equal(visibilityOf(chosen.tags), 'private');
+  assert.deepEqual(feedsOf(chosen.tags), [], 'the public half is emptied');
+  assert.equal(
+    feedsOf(chosen.privateTags!).includes(showId(MUSIC_A)),
+    true,
+    "the other app's entry moved too — the choice belongs to the LIST"
+  );
+});
+
+test('a stated public mode converges a half-moved list, and no tag does not', () => {
+  // A list whose tag and entries disagree is one somebody left half-converged.
+  // Only a writer that could read both halves may have written that tag, so
+  // finishing it is the user's stated intent rather than this app guessing.
+  const converged = publishPlan({
+    mode: 'public',
+    publicRead: halfSaying('public', MUSIC_A),
+    privateRead: halfWith(FOREIGN),
+    local: groupForSingleList([album(MUSIC_A, 'music')]),
+    baseline: EMPTY_BASELINE,
+  });
+  assert.deepEqual(
+    feedsOf(converged.tags).sort(),
+    [showId(MUSIC_A), showId(FOREIGN)].sort(),
+    'the whole list ends up in the half the tag names'
+  );
+  assert.deepEqual(feedsOf(converged.privateTags!), [], 'and the other half is emptied');
+  assert.equal(converged.inBothHalves, 0);
+  assert.equal(converged.carriedInOtherHalf, 0);
+
+  // THE CONTROL, and it is the half a naive implementation fails: the same
+  // entries with NO tag must not move. There is no stated intent, so
+  // private → public stays limited to what this device claims, and moving
+  // FOREIGN would be a disclosure nobody asked for.
+  const untagged = publishPlan({
+    mode: 'public',
+    publicRead: halfWith(MUSIC_A),
+    privateRead: halfWith(FOREIGN),
+    local: groupForSingleList([album(MUSIC_A, 'music')]),
+    baseline: EMPTY_BASELINE,
+  });
+  assert.equal(
+    feedsOf(untagged.tags).includes(showId(FOREIGN)),
+    false,
+    "without a stated mode another app's private entry stays private"
+  );
+  assert.deepEqual(feedsOf(untagged.privateTags!), [showId(FOREIGN)]);
+});
+
+test('a writer that cannot read the private half may not restate the mode', () => {
+  // Declaring a list public while the entries in it stay encrypted publishes a
+  // false claim about someone's privacy, and the next writer converges on the
+  // strength of it. A signer with no NIP-44 is an ordinary state, not an error.
+  const plan = publishPlan({
+    mode: 'public',
+    publicRead: halfSaying('private'),
+    privateRead: halfWith(FOREIGN),
+    local: groupForSingleList([album(MUSIC_A, 'music')]),
+    baseline: EMPTY_BASELINE,
+    userChose: true,
+    canReadPrivate: false,
+  });
+  assert.equal(visibilityOf(plan.tags), 'private', 'the mode we could not honour is carried');
+  assert.equal(
+    feedsOf(plan.tags).includes(showId(FOREIGN)),
+    false,
+    'and nothing we could not see was moved into the clear'
+  );
+
+  // The control, in the same fixture: a writer that CAN read it. Now the
+  // change is honest, so it must go through — an implementation that never
+  // restates the mode passes the assertions above for the wrong reason.
+  const allowed = publishPlan({
+    mode: 'public',
+    publicRead: halfSaying('private'),
+    privateRead: halfWith(FOREIGN),
+    local: groupForSingleList([album(MUSIC_A, 'music')]),
+    baseline: EMPTY_BASELINE,
+    userChose: true,
+  });
+  assert.equal(visibilityOf(allowed.tags), 'public');
+  assert.equal(feedsOf(allowed.tags).includes(showId(FOREIGN)), true, 'the whole list moves');
+});
+
+test('a legacy list is not stamped with a mode nobody picked', () => {
+  // The migration is deliberately not eager. A writer stamping its own
+  // standing default on a list that never said anything would state a mode the
+  // user never chose — and on a list that already has a private half, that
+  // stamp is exactly what would license disclosing it.
+  const plan = publishPlan({
+    mode: 'public',
+    publicRead: halfWith(MUSIC_A),
+    privateRead: EMPTY_PARSED,
+    local: groupForSingleList([album(MUSIC_A, 'music')]),
+    baseline: EMPTY_BASELINE,
+  });
+  assert.equal(visibilityOf(plan.tags), null, 'silence is carried as silence');
+});
+
+test('the gate treats a stated disagreement as a conflict, emptiness or not', () => {
+  // `seedModeFromWire` says nothing about a list whose halves BOTH hold
+  // entries — correctly, since emptiness cannot answer there. A stated mode
+  // can, so the conflict is reachable in a state the inference cannot see.
+  assert.equal(wireContradictsMode('private', true, true), null, 'inference has no answer');
+  assert.equal(
+    wireContradictsMode('private', true, true, 'public'),
+    'wire-public',
+    'the tag does'
+  );
+  assert.equal(wireContradictsMode('public', true, true, 'public'), null, 'agreement is not one');
 });
 
 // ---------------------------------------------------------------------------

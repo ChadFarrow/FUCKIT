@@ -51,6 +51,7 @@
 
 import {
   type ListNode,
+  type ListVisibility,
   type ParsedSingleList,
   type PublishedRecord,
   type SingleListGroup,
@@ -58,6 +59,7 @@ import {
   mergeSingleList,
   publishedRecordFrom,
   tagsFromNodes,
+  withVisibility,
 } from './favorites-single-list';
 
 /**
@@ -194,11 +196,17 @@ export type WireVerdict = 'wire-public' | 'wire-private' | null;
 export function wireContradictsMode(
   stored: FavoritesPrivacy | null,
   hasPublic: boolean,
-  hasPrivate: boolean
+  hasPrivate: boolean,
+  stated: ListVisibility | null = null
 ): WireVerdict {
   // Never asked: seeding owns that case and this must not pre-empt it.
   if (!stored || stored === 'off') return null;
-  const wire = seedModeFromWire(hasPublic, hasPrivate);
+  // A STATED mode outranks the inference, and widens what counts as a
+  // conflict. Emptiness can only tell you about a list that is wholly one
+  // thing; the tag is a fact about the list, so ANY disagreement with it is
+  // one app about to overrule another — including on a list whose halves both
+  // hold entries, where `seedModeFromWire` has nothing to say.
+  const wire = stated ?? seedModeFromWire(hasPublic, hasPrivate);
   if (!wire || wire === stored) return null;
   return wire === 'public' ? 'wire-public' : 'wire-private';
 }
@@ -233,9 +241,16 @@ export function publishGate(input: {
   hasPublic: boolean;
   hasPrivate: boolean;
   intent: 'auto' | 'resolve';
+  /** The `visibility` tag as read, or null on a list written before it. */
+  stated?: ListVisibility | null;
 }): PublishGate {
   if (!input.privateHalfUsable) return { publish: false, conflict: null };
-  const conflict = wireContradictsMode(input.stored, input.hasPublic, input.hasPrivate);
+  const conflict = wireContradictsMode(
+    input.stored,
+    input.hasPublic,
+    input.hasPrivate,
+    input.stated ?? null
+  );
   return { publish: !conflict || input.intent === 'resolve', conflict };
 }
 
@@ -494,12 +509,59 @@ export function publishPlan(input: {
   privateRead: ParsedSingleList;
   local: SingleListGroup[];
   baseline: PrivacyBaseline;
+  /**
+   * Is the user CHOOSING this mode right now, rather than it being this app's
+   * standing setting?
+   *
+   * Only a choice may write the `visibility` tag for the first time or change
+   * one already there. A standing setting that merely disagrees is two apps
+   * holding different answers about one shared event, and letting whichever
+   * loaded last win is how a list flips halves on a page load — which is what
+   * `publishGate` holds. Stamping our own default on a legacy list would state
+   * a mode nobody picked, and on a list that already has a private half that
+   * stamp is what would license disclosing it.
+   */
+  userChose?: boolean;
+  /**
+   * Could this writer read the private half?
+   *
+   * False for a signer with no NIP-44, which is a normal state for a real
+   * user. Such a writer cannot move what it cannot see, so it may not restate
+   * the mode: declaring the list public while the entries in it stay encrypted
+   * publishes a false claim about someone's privacy, and the next writer
+   * converges on the strength of it.
+   */
+  canReadPrivate?: boolean;
 }): PublishPlan {
   const { mode, publicRead, privateRead, local, baseline } = input;
-  const inactive = otherHalf(mode);
+  const userChose = input.userChose ?? false;
+  const canReadPrivate = input.canReadPrivate ?? true;
 
-  const activeRead = mode === 'public' ? publicRead : privateRead;
-  const inactiveRead = mode === 'public' ? privateRead : publicRead;
+  // WHAT THE EVENT SAYS, which is not the same as what this writer wants.
+  // Null means the list predates the tag, and the old inference stands.
+  const stated = publicRead.visibility;
+
+  // An empty private half is readable by anybody — there is no half to be
+  // blind to — so a signer with no NIP-44 may still set the mode on a fresh
+  // list. Treating empty as opaque would freeze every new account on such a
+  // signer at whatever the first writer guessed.
+  const privateIsEmpty = privateRead.nodes.length === 0;
+  const mayChange = userChose && (canReadPrivate || privateIsEmpty);
+
+  // The mode this publish actually writes, and EVERYTHING below reads this
+  // rather than `mode`. A stated mode this writer is not entitled to change
+  // outranks its own preference — otherwise a standing setting silently
+  // overrules the app the user last answered in.
+  const effective: ListHalf = stated && stated !== mode && !mayChange ? stated : mode;
+
+  // Carried forward once the list has a tag; written for the first time only
+  // on a real choice.
+  const stating: ListVisibility | null = mayChange || stated ? effective : null;
+
+  const inactive = otherHalf(effective);
+
+  const activeRead = effective === 'public' ? publicRead : privateRead;
+  const inactiveRead = effective === 'public' ? privateRead : publicRead;
 
   // The inactive half FIRST, because what survives it is the definition of
   // "carried" and the active half's local state has to be filtered against it.
@@ -513,7 +575,7 @@ export function publishPlan(input: {
   // `withoutCarried` — this is the line that stops a favorite the user
   // encrypted being re-emitted as a relay-indexed `i` tag.
   const ours = withoutCarried(local, inactiveMerged, activeRead);
-  const activeMerged = mergeSingleList(activeRead, ours, baseline[mode]);
+  const activeMerged = mergeSingleList(activeRead, ours, baseline[effective]);
 
   const activeTags = tagsFromNodes(
     activeMerged.nodes,
@@ -532,27 +594,46 @@ export function publishPlan(input: {
   // ours was just removed from it — and it moves too. That is the spec's rule
   // and it is the difference between "private" and "97% private".
   //
-  // Safe in this direction only. It strictly reduces exposure, the entries are
-  // carried WHOLE rather than re-rendered, and anything that can decrypt can
-  // put them back. The reverse is a disclosure and is not done: switching to
-  // public moves only what `baseline.private` claims, which is what the merge
-  // above already computes.
+  // Safe in this direction UNCONDITIONALLY. It strictly reduces exposure, the
+  // entries are carried WHOLE rather than re-rendered, and anything that can
+  // decrypt can put them back.
+  //
+  // THE REVERSE IS A DISCLOSURE, and it now has one licence: a STATED mode.
+  // The asymmetry existed because no app could tell the user's intent for the
+  // whole list from the event, so private → public moved only what
+  // `baseline.private` claimed. `visibility` is that intent, and only a writer
+  // that could read both halves may have written it — so with it present the
+  // move is symmetric, and without it the conservative rule still stands.
   //
   // The moved entries are NOT claimed in the baseline. Nothing local backs
   // them, so a claim would read as our own removal next cycle and delete them —
   // defect 3, arriving by a different road. They stay foreign, in the other
   // half, and are carried from there exactly as they were carried here.
-  const movingWholeList = WHOLE_LIST_PRIVACY_MOVE && mode === 'private';
-  const privateNodes = movingWholeList
-    ? mergeMovedNodes(activeMerged.nodes, inactiveMerged.nodes)
-    : activeMerged.nodes;
-  const privateTags = movingWholeList
-    ? tagsFromNodes(
-        privateNodes,
-        [...activeMerged.foreignTags, ...inactiveMerged.foreignTags],
-        [...activeMerged.foreignKinds, ...inactiveMerged.foreignKinds]
-      )
-    : activeTags;
+  const movingWholeList = WHOLE_LIST_PRIVACY_MOVE && effective === 'private';
+
+  // The same fold in the public direction, licensed by the stated mode: either
+  // the event already says public — somebody consented, in an app that could
+  // see everything — or the user is choosing it right now in an app that can.
+  // A list whose tag and entries disagree is one somebody left half-converged;
+  // finishing it is what makes "no split in either app" true rather than
+  // aspirational.
+  const movingWholePublic =
+    effective === 'public' &&
+    canReadPrivate &&
+    (stated === 'public' || (mayChange && mode === 'public')) &&
+    inactiveMerged.nodes.length > 0;
+
+  const foldedNodes = mergeMovedNodes(activeMerged.nodes, inactiveMerged.nodes);
+  const foldedTags = () =>
+    tagsFromNodes(
+      foldedNodes,
+      [...activeMerged.foreignTags, ...inactiveMerged.foreignTags],
+      [...activeMerged.foreignKinds, ...inactiveMerged.foreignKinds]
+    );
+
+  const privateNodes = movingWholeList ? foldedNodes : activeMerged.nodes;
+  const privateTags = movingWholeList ? foldedTags() : activeTags;
+  const publicTags = movingWholePublic ? foldedTags() : activeTags;
 
   // THE COUNTS DESCRIBE WHAT IS ABOUT TO BE ON THE WIRE, not what was read.
   //
@@ -561,8 +642,9 @@ export function publishPlan(input: {
   // the read would name a half the publish is about to empty. `movingWholeList`
   // is the case that makes this visible: the public half becomes `[]`, so there
   // is nothing left behind and nothing to report.
-  const emittedActive = mode === 'private' ? privateNodes : activeMerged.nodes;
-  const emittedInactive = movingWholeList ? [] : inactiveMerged.nodes;
+  const emittedActive =
+    effective === 'private' ? privateNodes : movingWholePublic ? foldedNodes : activeMerged.nodes;
+  const emittedInactive = movingWholeList || movingWholePublic ? [] : inactiveMerged.nodes;
   const theirs = namedFavoritesIn(emittedInactive);
   const oursNow = namedFavoritesIn(emittedActive);
   const inBoth =
@@ -570,8 +652,24 @@ export function publishPlan(input: {
     [...theirs.items].filter((i) => oursNow.items.has(i)).length;
 
   return {
-    tags: mode === 'public' ? activeTags : movingWholeList ? [] : inactiveTags,
-    privateTags: mode === 'private' ? privateTags : inactiveTags,
+    // The `visibility` tag goes on the EVENT and nowhere else — never inside
+    // `privateTags`, which becomes `content`. Going private still emits a tag
+    // array rather than nothing: the label and the mode are what is left of a
+    // list whose entries have all moved into `content`, and a private list
+    // with no entries yet has no other way to say what it is.
+    tags: withVisibility(
+      effective === 'public'
+        ? publicTags
+        : movingWholeList
+          ? tagsFromNodes([], [], [])
+          : inactiveTags,
+      stating
+    ),
+    privateTags: effective === 'private'
+      ? privateTags
+      : movingWholePublic
+        ? []
+        : inactiveTags,
     // The two partition the other half: an entry is either left there alone or
     // in both places, never counted twice. Saying "287 are still encrypted"
     // when 284 of them are public as well is false in the direction that
@@ -579,7 +677,7 @@ export function publishPlan(input: {
     carriedInOtherHalf: theirs.feeds.size + theirs.items.size - inBoth,
     inBothHalves: inBoth,
     baseline:
-      mode === 'public'
+      effective === 'public'
         ? { public: publishedRecordFrom(ours), private: EMPTY_RECORD }
         : { public: EMPTY_RECORD, private: publishedRecordFrom(ours) },
   };

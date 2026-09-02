@@ -122,6 +122,18 @@ by someone who has the pubkey.
   switch still complete. **Present in the active half wins**: dropping an entry that is in both would
   drop it from `publishedRecordFrom` too, un-claiming something we do publish and making it foreign
   forever. Measured before the fix: 284 in the tags, 287 encrypted, all 284 in both.
+- **`["visibility","public"|"private"]` states the mode, and it outranks the inference.**
+  Multi-letter so relays cannot index it — `#v=private` would enumerate the pubkeys that keep a
+  private list. `parseSingleList` reads it into `ParsedSingleList.visibility` and does NOT let it
+  fall through to `foreignTags` (that would emit it twice, the second copy stale), and it drops one
+  found inside the private half, where the mode is a claim no reader may act on. `withVisibility`
+  adds it to the EVENT's tags only; `tagsFromNodes` builds both halves and must stay ignorant of it.
+  **Absent is a real answer**, so nothing defaults it: a legacy list is not stamped with a mode
+  nobody picked, and on a list that already has a private half that stamp is what would license
+  disclosing it. Only `userChose` — the same signal as `intent: 'resolve'` — may write or change it,
+  and only a writer that can read BOTH halves may change it. With the tag present the
+  private → public whole-list move is licensed; without it the old conservative rule stands. Spec:
+  PC20-Nostr, "The list is public or private, and the event says which".
 - **The mode is per-app and per-device; the event is shared, and nothing on the wire says which half
   it intends to be.** So two apps can hold opposite answers and whichever loads last silently
   rewrites the whole list. `publishGate` holds an AUTOMATIC publish when the stored mode names an

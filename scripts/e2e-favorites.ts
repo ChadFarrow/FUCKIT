@@ -373,6 +373,58 @@ async function main() {
     'while a list that really is in both halves is not held at all'
   );
 
+  // -------------------------------------------------------------------------
+  console.log('\n⑩ The list says which half it lives in, and the tag survives');
+  // -------------------------------------------------------------------------
+  // Through a real relay round trip, because the tag has to survive parse,
+  // merge and republish — and because this app's parser deliberately DROPS a
+  // `visibility` tag it finds inside the private half, where the mode is not
+  // a claim any reader may act on.
+  const statedPlan = publishPlan({
+    mode: 'private',
+    publicRead: parseSingleList([['alt', LIST_ALT]]),
+    privateRead: parseSingleList([]),
+    local: groupForSingleList([album(MUSIC_B, 'music')]),
+    baseline: EMPTY_BASELINE,
+    userChose: true,
+  });
+  await publish(
+    finalizeEvent(
+      {
+        kind: SINGLE_LIST_KIND,
+        created_at: Math.floor(Date.now() / 1000) + 3,
+        content: nip44.encrypt(encodePrivateFavorites(statedPlan.privateTags!), convo),
+        tags: statedPlan.tags,
+      },
+      sk
+    )
+  );
+  const stated = await fetchSingleList(pubkey, relays);
+  check(stated.visibility === 'private', `the event states its mode (${stated.visibility})`);
+  check(
+    stated.groups.length === 0,
+    'and no entry reached the plaintext tags — `i` is relay-indexed',
+  );
+
+  // An empty list that SAYS private is the case emptiness cannot answer. A
+  // reader with no stored preference must take the tag, not guess.
+  const emptyStated = parseSingleList([
+    ['alt', LIST_ALT],
+    ['visibility', 'private'],
+  ]);
+  check(
+    emptyStated.visibility === 'private' && emptyStated.groups.length === 0,
+    'an empty list still carries a mode',
+  );
+
+  // And the tag does not leak into `content`, which is where a shared
+  // `tagsFromNodes` would have put it.
+  const inner = decodePrivateFavorites(nip44.decrypt(stated.content, convo)) ?? [];
+  check(
+    !inner.some((t) => t[0] === 'visibility'),
+    'the private half carries no mode claim of its own',
+  );
+
   console.log(failures === 0 ? '\nAll checks passed.' : `\n${failures} check(s) FAILED.`);
   process.exit(failures === 0 ? 0 : 1);
 }
