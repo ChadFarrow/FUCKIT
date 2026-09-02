@@ -8,12 +8,16 @@ import {
   FAVORITES_PRIVACY_CHANGED_EVENT,
   getFavoritesPrivacy,
   setFavoritesPrivacy,
-  getStrandedCount,
+  getHalfCounts,
+  getModeConflict,
+  NO_HALF_COUNTS,
+  type ModeConflict,
   sharedFavoritesEnabledFor,
   withdrawFromSharedFavorites,
   requestSharedFavoritesSync,
 } from '@/lib/nostr/favorites-sync-client';
 import { signerSupportsNip44 } from '@/lib/nostr/nip44';
+import FavoritesModeConflictNotice from '@/components/favorites/FavoritesModeConflictNotice';
 import type { FavoritesPrivacy } from '@/lib/nostr/favorites-privacy';
 
 /**
@@ -56,15 +60,18 @@ export default function FavoritesPrivacyControl() {
   const [busy, setBusy] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const [stranded, setStranded] = useState(0);
+  const [halves, setHalves] = useState(NO_HALF_COUNTS);
+  const [conflict, setConflict] = useState<ModeConflict | null>(null);
 
   useEffect(() => {
     if (!pubkey) return;
     setMode(getFavoritesPrivacy(pubkey));
-    setStranded(getStrandedCount(pubkey));
+    setHalves(getHalfCounts(pubkey));
+    setConflict(getModeConflict(pubkey));
     const onChange = () => {
       setMode(getFavoritesPrivacy(pubkey));
-      setStranded(getStrandedCount(pubkey));
+      setHalves(getHalfCounts(pubkey));
+      setConflict(getModeConflict(pubkey));
     };
     window.addEventListener(FAVORITES_PRIVACY_CHANGED_EVENT, onChange);
     return () => window.removeEventListener(FAVORITES_PRIVACY_CHANGED_EVENT, onChange);
@@ -103,7 +110,17 @@ export default function FavoritesPrivacyControl() {
         // The switch IS a publish — the entries move from one half of the event
         // to the other — so it runs now rather than waiting for the next
         // favorite toggle. On a remote signer this is a prompt on the phone.
-        requestSharedFavoritesSync({ userId: user.id, pubkey, relays: user.relays });
+        //
+        // `intent: 'resolve'` because pressing one of these buttons IS the
+        // answer to a mode conflict. A page load is not, and a heart tap is
+        // not: neither says "move 287 entries between halves of a shared
+        // event", so both stay on the default `'auto'` and are held.
+        requestSharedFavoritesSync({
+          userId: user.id,
+          pubkey,
+          relays: user.relays,
+          intent: 'resolve',
+        });
         setMessage(
           next === 'private'
             ? 'Moving your favorites into the encrypted half. Approve the signing request if your signer asks.'
@@ -227,6 +244,15 @@ export default function FavoritesPrivacyControl() {
         </div>
       </SettingsRow>
 
+      {/* ABOVE the hint, because until it is answered the hint describes a mode
+          this app is not acting on. The notice renders nothing when the stored
+          mode and the list agree, which is every ordinary account. */}
+      {conflict && (
+        <div className="mt-3">
+          <FavoritesModeConflictNotice />
+        </div>
+      )}
+
       {/* The hint describes the SELECTED option, not whatever is hovered — this
           is a consequence the user is choosing, so it has to stay legible while
           they read it. Nothing is selected until they answer, and the text below
@@ -254,11 +280,40 @@ export default function FavoritesPrivacyControl() {
           its screen. Until then these stay public, and a user who chose Private
           and got 97% of it has to be told which part did not move. Measured on
           a real account: 436 moved, 13 did not, and nothing said so. */}
-      {mode === 'private' && stranded > 0 && (
+      {mode === 'private' && halves.other > 0 && (
         <p className="mt-2 text-xs text-amber-300/80">
-          {stranded} {stranded === 1 ? 'favorite is' : 'favorites are'} still public — added by
-          another app, so this one cannot move {stranded === 1 ? 'it' : 'them'} yet. Set Private in
-          that app too, or wait for it to support the encrypted list.
+          {halves.other} {halves.other === 1 ? 'favorite is' : 'favorites are'} still public — added
+          by another app, so this one cannot move {halves.other === 1 ? 'it' : 'them'} yet. Set
+          Private in that app too, or wait for it to support the encrypted list.
+        </p>
+      )}
+
+      {/* THE SAME SENTENCE IN THE OTHER DIRECTION, which nothing said before.
+          A public list can be carrying an encrypted half another app wrote, and
+          this app does not move those into the tags: `i` is relay-indexed, so
+          publishing a favorite somebody chose to encrypt cannot be taken back.
+          Naming the remedy matters as much as the count — this app genuinely
+          cannot do it, and offering an action it cannot take is worse than
+          silence. */}
+      {mode === 'public' && halves.other > 0 && (
+        <p className="mt-2 text-xs text-amber-300/80">
+          {halves.other} {halves.other === 1 ? 'favorite is' : 'favorites are'} in the encrypted
+          half of your list. This app carries {halves.other === 1 ? 'it' : 'them'} and does not
+          publish {halves.other === 1 ? 'it' : 'them'} as {halves.other === 1 ? 'a public tag' : 'public tags'} —
+          that would be a disclosure it cannot undo. Set Public in the app that encrypted{' '}
+          {halves.other === 1 ? 'it' : 'them'}, or set Private here.
+        </p>
+      )}
+
+      {/* THE SPEC VIOLATION. No entry may be in both halves; this one is, and
+          this device did not put it there. Loudest of the three because it is
+          the state that double-counts a favorite for every reader — and the
+          only in-app remedy is Private, which folds the two into one. */}
+      {halves.both > 0 && (
+        <p className="mt-2 text-xs text-amber-300">
+          {halves.both} {halves.both === 1 ? 'favorite is' : 'favorites are'} in BOTH halves of your
+          list — public and encrypted at once. Setting Private folds{' '}
+          {halves.both === 1 ? 'it' : 'them'} into one.
         </p>
       )}
 

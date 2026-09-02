@@ -17,9 +17,11 @@ import {
   WHOLE_LIST_PRIVACY_MOVE,
   claimedByBaseline,
   parseBaseline,
+  publishGate,
   publishPlan,
   reconcileInput,
   seedModeFromWire,
+  wireContradictsMode,
   withdrawalPlan,
   type PrivacyBaseline,
 } from './favorites-privacy';
@@ -52,6 +54,15 @@ const halfWith = (...guids: string[]) =>
 
 const feedsOf = (tags: string[][]) =>
   tags.filter((t) => t[0] === 'i').map((t) => t[1]);
+
+/** A half holding one feed group with the given tracks under it. */
+const halfWithTracks = (feedGuid: string, ...itemGuids: string[]) =>
+  parseSingleList([
+    ['alt', LIST_ALT],
+    ['medium', 'music'],
+    ['i', showId(feedGuid)],
+    ...itemGuids.map((g) => ['i', itemId(g)]),
+  ]);
 
 // ---------------------------------------------------------------------------
 // Seeding — each half answers only for itself
@@ -341,11 +352,158 @@ test('the reconcile sees the active half whole and only our part of the other', 
   );
 });
 
-test('adopting a foreign private entry would republish it as a public tag', () => {
-  // Why the filter above is a disclosure rule and not tidiness. Local state is
-  // written through and read back as `local`, which goes wholly into the ACTIVE
-  // half — so an adopted private entry comes back out as a plaintext `i` tag,
-  // and `i` is indexed by relays.
+// ---------------------------------------------------------------------------
+// The mode is per-app; the event is shared. Nothing on the wire says which half
+// the list intends to be, so every answer here is inference from emptiness.
+// ---------------------------------------------------------------------------
+
+const gate = (over: Partial<Parameters<typeof publishGate>[0]> = {}) =>
+  publishGate({
+    stored: 'private',
+    privateHalfUsable: true,
+    hasPublic: true,
+    hasPrivate: false,
+    intent: 'auto',
+    ...over,
+  });
+
+test('a stored mode the wire wholesale contradicts holds the automatic publish', () => {
+  // The live account. This app on Private, the list made entirely public from
+  // the other one — and the next page load would have moved all of it back.
+  assert.deepEqual(gate(), { publish: false, conflict: 'wire-public' });
+
+  // And the mirror, which is the direction that discloses.
+  assert.deepEqual(gate({ stored: 'public', hasPublic: false, hasPrivate: true }), {
+    publish: false,
+    conflict: 'wire-private',
+  });
+});
+
+test('an ambiguous wire is NOT a conflict', () => {
+  // Both halves populated is the both-halves state, and it belongs to the
+  // counts. Calling it a conflict would hold every publish on the very account
+  // this whole change exists for — 284 in the tags and 287 encrypted.
+  assert.deepEqual(gate({ hasPublic: true, hasPrivate: true }), {
+    publish: true,
+    conflict: null,
+  });
+  // Neither half has anything: there is nothing to rewrite.
+  assert.deepEqual(gate({ hasPublic: false, hasPrivate: false }), {
+    publish: true,
+    conflict: null,
+  });
+});
+
+test('an unreadable private half never produces a conflict', () => {
+  // `unreadable`, `unsupported` and `none` all present as an empty private
+  // half. A verdict computed from one would tell a private-mode user their
+  // list is entirely public when it is not — and the buttons under that
+  // sentence would then do real damage. No publish either way, no claim.
+  assert.deepEqual(gate({ privateHalfUsable: false }), { publish: false, conflict: null });
+});
+
+test('a device that has never been asked is not in conflict', () => {
+  // Seeding owns that case, and pre-empting it would put a question about two
+  // apps disagreeing in front of a user who has not answered the first one.
+  assert.deepEqual(gate({ stored: null }), { publish: true, conflict: null });
+  assert.deepEqual(gate({ stored: 'off' }), { publish: true, conflict: null });
+});
+
+test('an explicit answer publishes over the conflict, and still reports it', () => {
+  // Pressing Public or Private IS the answer. The conflict stays in the return
+  // because the screen wants the numbers either way — it is reported, not
+  // blocking.
+  assert.deepEqual(gate({ intent: 'resolve' }), { publish: true, conflict: 'wire-public' });
+});
+
+test('the verdict names which half the list is actually in', () => {
+  assert.equal(wireContradictsMode('private', true, false), 'wire-public');
+  assert.equal(wireContradictsMode('public', false, true), 'wire-private');
+  assert.equal(wireContradictsMode('public', true, false), null, 'agreement is not a conflict');
+  assert.equal(wireContradictsMode('private', false, true), null);
+});
+
+// ---------------------------------------------------------------------------
+// Defect 4, from the side `claimedByBaseline` cannot reach: an entry ALREADY
+// in local state because the database that holds it is add-only.
+// ---------------------------------------------------------------------------
+
+test('a feed in BOTH halves is still ours to publish', () => {
+  // The exception that makes the rest safe. Dropping this one would take it
+  // out of the baseline too, un-claiming an entry we DO publish — and an
+  // unclaimed entry is foreign, and a foreign entry is carried forever.
+  const plan = publishPlan({
+    mode: 'public',
+    publicRead: halfWith(MUSIC_A),
+    privateRead: halfWith(MUSIC_A),
+    local: groupForSingleList([album(MUSIC_A, 'music')]),
+    baseline: EMPTY_BASELINE,
+  });
+  assert.deepEqual(feedsOf(plan.tags), [showId(MUSIC_A)], 'present in the active half wins');
+  assert.deepEqual(plan.baseline.public.feeds, [MUSIC_A], 'and it stays claimed');
+});
+
+test('a claimed private entry still MOVES when the mode goes public', () => {
+  // The filter must not freeze a mode switch. Anything this device claims on
+  // the inactive half is removed by that half's own merge, so it is not
+  // carried, so it is not filtered — which is the whole reason the filter is
+  // derived from the merged half rather than the raw read.
+  const baseline: PrivacyBaseline = {
+    public: { feeds: [], items: [] },
+    private: { feeds: [MUSIC_B], items: [] },
+  };
+  const plan = publishPlan({
+    mode: 'public',
+    publicRead: EMPTY_PARSED,
+    privateRead: halfWith(MUSIC_B, FOREIGN),
+    local: groupForSingleList([album(MUSIC_B, 'music')]),
+    baseline,
+  });
+  assert.deepEqual(feedsOf(plan.tags), [showId(MUSIC_B)], 'ours crosses over');
+  assert.deepEqual(feedsOf(plan.privateTags!), [showId(FOREIGN)], "theirs does not");
+  assert.deepEqual(plan.baseline.public.feeds, [MUSIC_B]);
+});
+
+test('a carried TRACK is left behind while its claimed sibling moves', () => {
+  // A group can be part ours and part theirs. Dropping the whole group would
+  // take the claimed track with it; keeping the whole group discloses the
+  // other one. Both tracks sit under one feed, which is the only shape where
+  // that distinction is visible.
+  const OURS = 'a1b2c3d4-0000-4000-8000-000000000001';
+  const THEIRS = 'a1b2c3d4-0000-4000-8000-000000000002';
+  const baseline: PrivacyBaseline = {
+    public: { feeds: [], items: [] },
+    private: { feeds: [], items: [OURS] },
+  };
+  const plan = publishPlan({
+    mode: 'public',
+    publicRead: EMPTY_PARSED,
+    privateRead: halfWithTracks(MUSIC_A, OURS, THEIRS),
+    local: groupForSingleList([track(OURS, MUSIC_A, 'music'), track(THEIRS, MUSIC_A, 'music')]),
+    baseline,
+  });
+  const publicIds = feedsOf(plan.tags);
+  assert.equal(publicIds.includes(itemId(OURS)), true, 'the claimed track moves');
+  assert.equal(publicIds.includes(itemId(THEIRS)), false, "the other writer's does not");
+  assert.equal(
+    feedsOf(plan.privateTags!).includes(itemId(THEIRS)),
+    true,
+    'and it stays where its writer put it'
+  );
+  assert.deepEqual(plan.baseline.public.items, [OURS], 'we claim only what we published');
+});
+
+test('an adopted foreign private entry is NOT republished as a public tag', () => {
+  // Why the filter above is a disclosure rule and not tidiness, and why one
+  // filter is not enough. Local state is written through and read back as
+  // `local`, which goes wholly into the ACTIVE half — so an adopted private
+  // entry comes back out as a plaintext `i` tag, and `i` is indexed by relays.
+  //
+  // `reconcileInput` stops the adoption. It cannot stop an entry that is
+  // ALREADY adopted: this app's inbound reconcile is add-only, so anything
+  // taken in while the mode was `'private'` outlives the switch to `'public'`
+  // and arrives here anyway. `withoutCarried` is the second line, and this test
+  // used to assert the disclosure as an outcome the first line merely avoided.
   const adopted = groupForSingleList([album(FOREIGN, 'music')]);
   const plan = publishPlan({
     mode: 'public',
@@ -354,10 +512,16 @@ test('adopting a foreign private entry would republish it as a public tag', () =
     local: adopted,
     baseline: EMPTY_BASELINE,
   });
+  assert.deepEqual(feedsOf(plan.tags), [], 'nothing of another writer\'s reaches the tags');
   assert.deepEqual(
-    feedsOf(plan.tags),
+    feedsOf(plan.privateTags!),
     [showId(FOREIGN)],
-    'this is the outcome reconcileInput exists to prevent reaching'
+    'it stays where its writer put it'
+  );
+  assert.deepEqual(
+    plan.baseline.public.feeds,
+    [],
+    'and we do not claim an entry we did not publish'
   );
 });
 
@@ -430,7 +594,8 @@ test('a switch to private reports what it could NOT move', () => {
   });
 
   if (WHOLE_LIST_PRIVACY_MOVE) {
-    assert.equal(plan.strandedInPublicHalf, 0, 'nothing is stranded once the move is on');
+    assert.equal(plan.carriedInOtherHalf, 0, 'nothing is left behind once the move is on');
+    assert.equal(plan.inBothHalves, 0, 'and the fold leaves nothing in both');
     assert.deepEqual(feedsOf(plan.tags), [], 'the public half is emptied');
     assert.equal(
       feedsOf(plan.privateTags!).includes(showId(FOREIGN)),
@@ -438,12 +603,62 @@ test('a switch to private reports what it could NOT move', () => {
       "the other app's entry moved too"
     );
   } else {
-    assert.equal(plan.strandedInPublicHalf, 1);
+    assert.equal(plan.carriedInOtherHalf, 1);
     assert.deepEqual(feedsOf(plan.tags), [showId(FOREIGN)]);
   }
 });
 
-test('going public strands nothing, because nothing was meant to move', () => {
+test('the counts partition the other half — carried and in-both never overlap', () => {
+  // 284 in both and 3 encrypted-only was the measured account. Reporting 287
+  // as "still encrypted" is false in the direction that matters, and reporting
+  // 284 twice is worse. One number cannot say both things, which is why there
+  // are two.
+  const plan = publishPlan({
+    mode: 'public',
+    publicRead: halfWith(MUSIC_A),
+    privateRead: halfWith(MUSIC_A, FOREIGN),
+    local: groupForSingleList([album(MUSIC_A, 'music')]),
+    baseline: EMPTY_BASELINE,
+  });
+  assert.equal(plan.inBothHalves, 1, 'MUSIC_A is public and encrypted at once');
+  assert.equal(plan.carriedInOtherHalf, 1, 'FOREIGN is encrypted only — counted once, not twice');
+});
+
+test('going private with the whole-list move reports nothing on either count', () => {
+  // There is nothing to report: the public half is emptied and both halves are
+  // folded into one. A non-zero number here would be a false alarm about a
+  // state the publish has just removed.
+  if (!WHOLE_LIST_PRIVACY_MOVE) return;
+  const plan = publishPlan({
+    mode: 'private',
+    publicRead: halfWith(FOREIGN),
+    privateRead: halfWith(MUSIC_A),
+    local: groupForSingleList([album(MUSIC_A, 'music')]),
+    baseline: EMPTY_BASELINE,
+  });
+  assert.deepEqual(plan.tags.filter((t) => t[0] === 'i'), []);
+  assert.equal(plan.carriedInOtherHalf, 0);
+  assert.equal(plan.inBothHalves, 0);
+});
+
+test('a placement group is not a favorite, and is not counted as one', () => {
+  // A group with items exists to say which feed a track came from — the format
+  // has no other way. Counting its feed identifier would report a feed sitting
+  // in "both halves" whenever one half favorites it and the other merely places
+  // a track under it, which is not the defect this number is for.
+  const TRACK = 'b7c8d9e0-0000-4000-8000-000000000003';
+  const plan = publishPlan({
+    mode: 'public',
+    publicRead: halfWithTracks(MUSIC_A, TRACK),
+    privateRead: halfWith(MUSIC_A),
+    local: groupForSingleList([track(TRACK, MUSIC_A, 'music')]),
+    baseline: { public: { feeds: [], items: [TRACK] }, private: { feeds: [], items: [] } },
+  });
+  assert.equal(plan.inBothHalves, 0, 'a placement above a track is not the same claim');
+  assert.equal(plan.carriedInOtherHalf, 1, 'the encrypted feed favorite is still carried');
+});
+
+test('going public moves nothing of another app\'s, and says how much it carries', () => {
   const plan = publishPlan({
     mode: 'public',
     publicRead: EMPTY_PARSED,
@@ -451,7 +666,8 @@ test('going public strands nothing, because nothing was meant to move', () => {
     local: groupForSingleList([album(MUSIC_A, 'music')]),
     baseline: EMPTY_BASELINE,
   });
-  assert.equal(plan.strandedInPublicHalf, 0);
+  assert.equal(plan.carriedInOtherHalf, 1, "the other app's private entry is carried, not moved");
+  assert.equal(plan.inBothHalves, 0);
   // And the foreign PRIVATE entry stays private. This is the direction that
   // must never move: publishing it as a tag is a disclosure, relays index `i`,
   // and it cannot be taken back.

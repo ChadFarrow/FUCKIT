@@ -41,7 +41,7 @@ import {
   decodePrivateFavorites,
   parseSingleList,
 } from '../lib/nostr/favorites-single-list';
-import { publishPlan, EMPTY_BASELINE } from '../lib/nostr/favorites-privacy';
+import { publishGate, publishPlan, EMPTY_BASELINE } from '../lib/nostr/favorites-privacy';
 import { itemId, showId, type FavoriteEntry } from '../lib/nostr/pc20-identifiers';
 
 const RELAY = process.env.E2E_RELAY || `ws://127.0.0.1:${process.env.PORT || 7777}`;
@@ -258,6 +258,119 @@ async function main() {
   check(
     nip44.decrypt(again, convo) === plaintext,
     'while the plaintext is identical — which is what must be compared'
+  );
+
+  // -------------------------------------------------------------------------
+  console.log('\n⑧ A list in BOTH halves is not re-disclosed, and says so');
+  // -------------------------------------------------------------------------
+  // The state measured on a real account: 284 in the public tags, 287 in the
+  // encrypted half, all 284 in both. It gets there because this app's local
+  // favorites are a database and its inbound reconcile is add-only, so entries
+  // adopted while the mode was Private outlive a switch to Public and arrive
+  // back in `local` — which goes wholly into the ACTIVE half.
+  //
+  // Driven through the relay rather than as a unit vector because the input
+  // that matters is a REAL encrypted half read back off the wire, and because
+  // the fault is in the wiring between the reads and the plan, which is where
+  // every shipped bug in this subsystem has been.
+  const bothPublic = tagsFromNodes(
+    mergeSingleList(parseSingleList([]), groupForSingleList([album(MUSIC_A, 'music')])).nodes
+  );
+  const bothPrivate = encodePrivateFavorites(
+    tagsFromNodes(
+      mergeSingleList(
+        parseSingleList([]),
+        groupForSingleList([album(MUSIC_A, 'music'), album(MUSIC_B, 'music')])
+      ).nodes
+    )
+  );
+  await publish(
+    finalizeEvent(
+      {
+        kind: SINGLE_LIST_KIND,
+        created_at: Math.floor(Date.now() / 1000) + 2,
+        content: nip44.encrypt(bothPrivate, convo),
+        tags: bothPublic,
+      },
+      sk
+    )
+  );
+  const split = await fetchSingleList(pubkey, relays);
+  const splitPrivate = parseSingleList(
+    decodePrivateFavorites(nip44.decrypt(split.content, convo)) ?? []
+  );
+  check(
+    split.groups.some((g) => g.feedGuid === MUSIC_A) &&
+      splitPrivate.groups.some((g) => g.feedGuid === MUSIC_A),
+    'seeded: one feed in both halves, one encrypted only'
+  );
+
+  // The database holds both, because it adopted them while the mode was
+  // Private and has no way to give them back.
+  const adopted = groupForSingleList([album(MUSIC_A, 'music'), album(MUSIC_B, 'music')]);
+  const splitPlan = publishPlan({
+    mode: 'public',
+    publicRead: split,
+    privateRead: splitPrivate,
+    local: adopted,
+    baseline: EMPTY_BASELINE,
+  });
+  const publicIds = splitPlan.tags.filter((t) => t[0] === 'i').map((t) => t[1]);
+  check(publicIds.includes(showId(MUSIC_A)), 'the feed already public stays public');
+  check(
+    !publicIds.includes(showId(MUSIC_B)),
+    'the encrypted-only feed is NOT published as a plaintext tag'
+  );
+  check(
+    (splitPlan.privateTags ?? []).some((t) => t[1] === showId(MUSIC_B)),
+    'it stays where its writer put it'
+  );
+  check(
+    !splitPlan.baseline.public.feeds.includes(MUSIC_B),
+    'and we do not claim an entry we did not publish'
+  );
+  check(
+    splitPlan.carriedInOtherHalf === 1 && splitPlan.inBothHalves === 1,
+    `the counts name both states separately (carried ${splitPlan.carriedInOtherHalf}, both ${splitPlan.inBothHalves})`
+  );
+
+  // -------------------------------------------------------------------------
+  console.log('\n⑨ A stored mode the wire contradicts holds the publish');
+  // -------------------------------------------------------------------------
+  // Two apps, one event, and nothing on the wire saying which half the list
+  // intends to be. Whichever app loads last would otherwise rewrite the whole
+  // list to match its own stored answer.
+  const wholly = await fetchSingleList(pubkey, relays);
+  const hasPublic = wholly.groups.length > 0 || wholly.orphanItemGuids.length > 0;
+  check(
+    publishGate({
+      stored: 'private',
+      privateHalfUsable: true,
+      hasPublic,
+      hasPrivate: false,
+      intent: 'auto',
+    }).publish === false,
+    'a page load does not move a public list into the encrypted half'
+  );
+  check(
+    publishGate({
+      stored: 'private',
+      privateHalfUsable: true,
+      hasPublic,
+      hasPrivate: false,
+      intent: 'resolve',
+    }).publish === true,
+    'and pressing the button in the app does'
+  );
+  check(
+    publishGate({
+      stored: 'private',
+      privateHalfUsable: true,
+      hasPublic,
+      hasPrivate: true,
+      intent: 'auto',
+    }).conflict === null,
+    'while a list that really is in both halves is not held at all'
   );
 
   console.log(failures === 0 ? '\nAll checks passed.' : `\n${failures} check(s) FAILED.`);
