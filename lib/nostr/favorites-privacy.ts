@@ -170,6 +170,76 @@ export function seedModeFromWire(hasPublic: boolean, hasPrivate: boolean): Favor
 }
 
 /**
+ * Which half the WIRE says this list is in, when the stored mode says the other.
+ *
+ * The mode is per-app and per-device — `sk_favorites_privacy:<pubkey>` here,
+ * `bmb:favPrivacy:<npub>` in Boost Me Bitch — and there is nothing on the wire
+ * that says which half the list intends to be. So two apps can hold opposite
+ * answers about one shared event, and every load of whichever app ran last
+ * rewrites the whole list to match its own stored answer. That is not a
+ * hypothetical: this app was left on `'private'` for an account whose list had
+ * since been made entirely public from the other one, and the next page load
+ * would have moved all 287 entries back into `content` with no user action and
+ * nothing on screen.
+ *
+ * WHOLESALE is the whole point. The reuse of `seedModeFromWire` is deliberate:
+ * one half populated and the other empty is exactly the shape it already
+ * answers for, and everything else is either ambiguous (both halves have
+ * entries — that is the both-halves state, and it belongs to the counts, not
+ * here) or empty (nothing to rewrite). A partial disagreement is ordinary and
+ * must stay silent, or this fires on every account that has ever used both.
+ */
+export type WireVerdict = 'wire-public' | 'wire-private' | null;
+
+export function wireContradictsMode(
+  stored: FavoritesPrivacy | null,
+  hasPublic: boolean,
+  hasPrivate: boolean
+): WireVerdict {
+  // Never asked: seeding owns that case and this must not pre-empt it.
+  if (!stored || stored === 'off') return null;
+  const wire = seedModeFromWire(hasPublic, hasPrivate);
+  if (!wire || wire === stored) return null;
+  return wire === 'public' ? 'wire-public' : 'wire-private';
+}
+
+/** What a sync may do, given the disagreement above. */
+export interface PublishGate {
+  /** May this cycle publish at all? */
+  publish: boolean;
+  /** The disagreement to show, or null. Reported even when publishing. */
+  conflict: WireVerdict;
+}
+
+/**
+ * May this cycle publish, and is there a disagreement to show?
+ *
+ * `intent` is the consent. `'auto'` is a page load — nobody asked for anything,
+ * so a cycle that would rewrite the whole list stops and the screen asks.
+ * `'resolve'` is the user pressing Public or Private, which IS the answer, so
+ * it publishes over the conflict while still reporting it (the screen wants
+ * the numbers either way).
+ *
+ * AN UNREADABLE PRIVATE HALF IS NEVER A CONFLICT. `unreadable`, `unsupported`
+ * and `none` all present as an empty private half, so a verdict computed from
+ * one would tell a private-mode user their list is entirely public when it is
+ * not — and the buttons under that sentence would then do real damage. No
+ * publish either way (`publishSingleList` already refuses), and no claim on
+ * screen. Carry, publish nothing, say so.
+ */
+export function publishGate(input: {
+  stored: FavoritesPrivacy | null;
+  privateHalfUsable: boolean;
+  hasPublic: boolean;
+  hasPrivate: boolean;
+  intent: 'auto' | 'resolve';
+}): PublishGate {
+  if (!input.privateHalfUsable) return { publish: false, conflict: null };
+  const conflict = wireContradictsMode(input.stored, input.hasPublic, input.hasPrivate);
+  return { publish: !conflict || input.intent === 'resolve', conflict };
+}
+
+/**
  * The subset of a half's entries this device put there.
  *
  * Defect 4. The inactive half is carried on the wire whatever happens, but only
@@ -209,16 +279,194 @@ export interface PublishPlan {
   /** The baseline to store IF the relays accept the event, and only then. */
   baseline: PrivacyBaseline;
   /**
-   * Entries left PUBLIC by a switch to private, because another app wrote them
-   * and this build cannot move them yet.
+   * Favorites this publish leaves on the OTHER half, because another app wrote
+   * them and this device does not claim them.
    *
    * Surfaced rather than counted and forgotten: a user who chose Private and
    * got 97% of it must be told which part did not move, or the format has
-   * quietly made a promise it did not keep. Zero once
-   * {@link WHOLE_LIST_PRIVACY_MOVE} is on, and zero in public mode, where
-   * nothing was supposed to move.
+   * quietly made a promise it did not keep. This replaced
+   * `strandedInPublicHalf`, which answered only the private direction and was
+   * pinned to zero once {@link WHOLE_LIST_PRIVACY_MOVE} shipped — so the only
+   * both-halves signal the app had became unreachable on the day it started to
+   * matter. A public-mode list with an encrypted half it is carrying reported
+   * nothing at all.
+   *
+   * Counted on FAVORITES, not on `i` values: a group with items is a placement
+   * and the format has no other way to name a track's feed.
    */
-  strandedInPublicHalf: number;
+  carriedInOtherHalf: number;
+  /**
+   * Favorites named in BOTH emitted halves.
+   *
+   * The format says no entry is in both, and nothing here checked. Zero once
+   * `withoutCarried` runs, which is what makes a non-zero value worth showing:
+   * it is a state this device did not create and cannot repair on its own.
+   */
+  inBothHalves: number;
+}
+
+/**
+ * Fold the nodes moving in from the other half into the ones already here.
+ *
+ * **A concatenation was wrong, and only one state shows it.** An entry can sit
+ * in BOTH halves at once — nothing in the format forbids it, and a mode switch
+ * that publishes into one half while its removal from the other is
+ * baseline-gated produces exactly that. Measured on a real account: 284
+ * favorites in the public tags, 287 in the encrypted half, all 284 in both.
+ * Concatenating then emits one feed as TWO groups, because `tagsFromNodes`
+ * writes every node it is handed. Two groups for one feed double-count it for
+ * every reader and give its items two parents to sit under.
+ *
+ * Folding rather than dropping, because the incoming group may carry items the
+ * one already here does not: this is a MOVE, and an item under a duplicate
+ * group is as much the user's as the group itself. Order is the existing half's
+ * — tag order is semantic, so the side already in place keeps its positions and
+ * the incoming items append.
+ *
+ * Loose nodes fold on their identifier for the same reason. A duplicate there
+ * is the same entry named twice, not two entries.
+ *
+ * See spec test vector 15.
+ */
+function mergeMovedNodes(here: ListNode[], moving: ListNode[]): ListNode[] {
+  const out = here.map((n) =>
+    n.t === 'group' ? { t: 'group' as const, group: { ...n.group, itemGuids: [...n.group.itemGuids] } } : n
+  );
+  const groupAt = new Map<string, number>();
+  const looseIds = new Set<string>();
+  out.forEach((n, i) => {
+    if (n.t === 'group') groupAt.set(n.group.feedGuid, i);
+    else if (n.loose.tag[1]) looseIds.add(n.loose.tag[1]);
+  });
+
+  for (const node of moving) {
+    if (node.t === 'loose') {
+      const id = node.loose.tag[1];
+      if (id && looseIds.has(id)) continue;
+      if (id) looseIds.add(id);
+      out.push(node);
+      continue;
+    }
+    const at = groupAt.get(node.group.feedGuid);
+    if (at === undefined) {
+      groupAt.set(node.group.feedGuid, out.length);
+      out.push({ t: 'group', group: { ...node.group, itemGuids: [...node.group.itemGuids] } });
+      continue;
+    }
+    const existing = out[at];
+    if (existing.t !== 'group') continue;
+    for (const guid of node.group.itemGuids) {
+      if (!existing.group.itemGuids.includes(guid)) existing.group.itemGuids.push(guid);
+    }
+    // The medium hint only ever FILLS a gap. Overwriting one the feed declared
+    // with one it did not is how a hint becomes wrong.
+    if (!existing.group.medium && node.group.medium) {
+      existing.group.medium = node.group.medium;
+    }
+  }
+  return out;
+}
+
+/**
+ * The favorites a half actually names, as opposed to the identifiers in it.
+ *
+ * A group with items is a PLACEMENT — the format has no other way to say which
+ * feed a track came from — so only an ITEMLESS group is a feed favorite. Items
+ * are favorites wherever they sit, including the orphans another writer left
+ * above the first group.
+ *
+ * The distinction is the whole reason this is not a set of `i` values: a feed
+ * can legitimately be a placement group in one half and a favorite in the
+ * other, and counting that as "in both halves" would report a defect that is
+ * not there.
+ */
+function namedFavoritesIn(nodes: ListNode[]): { feeds: Set<string>; items: Set<string> } {
+  const feeds = new Set<string>();
+  const items = new Set<string>();
+  for (const node of nodes) {
+    if (node.t !== 'group') continue;
+    if (node.group.itemGuids.length === 0) feeds.add(node.group.feedGuid);
+    for (const guid of node.group.itemGuids) items.add(guid);
+  }
+  return { feeds, items };
+}
+
+/** The same, for a parse — which also knows about items above the first group. */
+function namedFavorites(list: ParsedSingleList): { feeds: Set<string>; items: Set<string> } {
+  const named = namedFavoritesIn(list.nodes);
+  for (const guid of list.orphanItemGuids) named.items.add(guid);
+  return named;
+}
+
+/**
+ * How many favorites a half names — for a sentence on screen, never for a
+ * decision. Counted the same way everywhere so two numbers shown side by side
+ * are comparable: itemless groups plus items, placements excluded.
+ */
+export function countNamedFavorites(list: ParsedSingleList): number {
+  const named = namedFavorites(list);
+  return named.feeds.size + named.items.size;
+}
+
+/**
+ * Drop from `local` whatever this device is only CARRYING on the other half.
+ *
+ * Defect 4 again, from the side `claimedByBaseline` cannot reach. That filter
+ * governs what the RECONCILE may adopt, and it is right; but local state is a
+ * database, and this app's inbound reconcile is add-only by construction — it
+ * posts an empty baseline, and the route refuses to delete anything the
+ * baseline never claimed. So an entry adopted while the mode was `'private'`
+ * stays in the database after a switch to `'public'`, arrives back here in
+ * `local`, and is written into the PUBLIC tags while `inactiveMerged` carries
+ * the very same entry in `content`.
+ *
+ * Two faults from one line. The entry is in both halves, which the format says
+ * it may not be and which double-counts it for every reader. And in the
+ * private → public direction it is a DISCLOSURE: relays index `i`, so a
+ * favorite the user chose to encrypt becomes searchable in reverse — published
+ * by an app they never asked to publish it, from a database row they cannot
+ * see. Measured on a real account: 284 in the tags, 287 encrypted, all 284 in
+ * both.
+ *
+ * `carried` is the inactive half AFTER its own merge, never the raw read.
+ * Anything this device claims there has already been removed by that merge, so
+ * it is not carried and is not filtered — which is exactly what lets the first
+ * publish after a mode switch move our own entries across.
+ *
+ * PRESENT IN THE ACTIVE HALF WINS. A favorite in both halves is ours to
+ * publish: dropping it here would take it out of `publishedRecordFrom(local)`
+ * as well, un-claiming an entry we do publish and making it foreign — and a
+ * foreign entry is carried forever. That is defect 3 arriving by a different
+ * road, and the same rule Boost Me Bitch settled on (boostmebitch#289).
+ *
+ * A group whose feed is carried but whose items are ours keeps its items and
+ * loses only `favorited`. The group still emits its feed tag, because it has
+ * to — that is the placement above — and a placement is not a favorite.
+ */
+function withoutCarried(
+  local: SingleListGroup[],
+  carried: ParsedSingleList,
+  activeRead: ParsedSingleList
+): SingleListGroup[] {
+  const theirs = namedFavorites(carried);
+  if (theirs.feeds.size === 0 && theirs.items.size === 0) return local;
+  const ours = namedFavorites(activeRead);
+
+  const out: SingleListGroup[] = [];
+  for (const group of local) {
+    const dropFeed =
+      group.favorited && theirs.feeds.has(group.feedGuid) && !ours.feeds.has(group.feedGuid);
+    const itemGuids = group.itemGuids.filter(
+      (guid) => !theirs.items.has(guid) || ours.items.has(guid)
+    );
+    if (dropFeed && itemGuids.length === 0) continue;
+    if (!dropFeed && itemGuids.length === group.itemGuids.length) {
+      out.push(group);
+      continue;
+    }
+    out.push({ ...group, favorited: dropFeed ? false : group.favorited, itemGuids });
+  }
+  return out;
 }
 
 /**
@@ -315,11 +563,19 @@ export function publishPlan(input: {
   const activeRead = mode === 'public' ? publicRead : privateRead;
   const inactiveRead = mode === 'public' ? privateRead : publicRead;
 
-  const activeMerged = mergeSingleList(activeRead, local, baseline[mode]);
+  // The inactive half FIRST, because what survives it is the definition of
+  // "carried" and the active half's local state has to be filtered against it.
+  //
   // No local state on this side: everything we claim here is a removal in
   // flight (the entry moved to the other half), and everything we don't claim
   // is another writer's and is carried.
   const inactiveMerged = mergeSingleList(inactiveRead, [], baseline[inactive]);
+
+  // What is left on the other half is not ours to republish into this one. See
+  // `withoutCarried` — this is the line that stops a favorite the user
+  // encrypted being re-emitted as a relay-indexed `i` tag.
+  const ours = withoutCarried(local, inactiveMerged, activeRead);
+  const activeMerged = mergeSingleList(activeRead, ours, baseline[mode]);
 
   const activeTags = tagsFromNodes(
     activeMerged.nodes,
@@ -360,17 +616,34 @@ export function publishPlan(input: {
       )
     : activeTags;
 
+  // THE COUNTS DESCRIBE WHAT IS ABOUT TO BE ON THE WIRE, not what was read.
+  //
+  // Taken from the emitted node lists rather than from the reads, because the
+  // merge and the whole-list fold both move entries between them — a count off
+  // the read would name a half the publish is about to empty. `movingWholeList`
+  // is the case that makes this visible: the public half becomes `[]`, so there
+  // is nothing left behind and nothing to report.
+  const emittedActive = mode === 'private' ? privateNodes : activeMerged.nodes;
+  const emittedInactive = movingWholeList ? [] : inactiveMerged.nodes;
+  const theirs = namedFavoritesIn(emittedInactive);
+  const oursNow = namedFavoritesIn(emittedActive);
+  const inBoth =
+    [...theirs.feeds].filter((f) => oursNow.feeds.has(f)).length +
+    [...theirs.items].filter((i) => oursNow.items.has(i)).length;
+
   return {
     tags: mode === 'public' ? activeTags : movingWholeList ? [] : inactiveTags,
     privateTags: mode === 'private' ? privateTags : inactiveTags,
-    strandedInPublicHalf:
-      mode === 'private' && !movingWholeList
-        ? inactiveTags.filter((t) => t[0] === 'i').length
-        : 0,
+    // The two partition the other half: an entry is either left there alone or
+    // in both places, never counted twice. Saying "287 are still encrypted"
+    // when 284 of them are public as well is false in the direction that
+    // matters, and the two states have different remedies.
+    carriedInOtherHalf: theirs.feeds.size + theirs.items.size - inBoth,
+    inBothHalves: inBoth,
     baseline:
       mode === 'public'
-        ? { public: publishedRecordFrom(local), private: EMPTY_RECORD }
-        : { public: EMPTY_RECORD, private: publishedRecordFrom(local) },
+        ? { public: publishedRecordFrom(ours), private: EMPTY_RECORD }
+        : { public: EMPTY_RECORD, private: publishedRecordFrom(ours) },
   };
 }
 
@@ -398,8 +671,11 @@ export function withdrawalPlan(input: {
   return {
     tags: tagsFromNodes(pub.nodes, pub.foreignTags, pub.foreignKinds),
     privateTags: tagsFromNodes(priv.nodes, priv.foreignTags, priv.foreignKinds),
-    // A withdrawal moves nothing, so nothing is stranded by it.
-    strandedInPublicHalf: 0,
+    // A withdrawal moves nothing between halves, so it leaves nothing behind
+    // and creates no overlap. Both halves keep whatever this device never
+    // claimed, exactly where it already was.
+    carriedInOtherHalf: 0,
+    inBothHalves: 0,
     baseline: EMPTY_BASELINE,
   };
 }

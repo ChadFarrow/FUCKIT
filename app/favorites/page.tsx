@@ -16,6 +16,7 @@ import AlbumCard from '@/components/AlbumCard';
 import FavoriteButton from '@/components/favorites/FavoriteButton';
 import SyncToNostrButton from '@/components/favorites/SyncToNostrButton';
 import SharedFavoritesNotice from '@/components/favorites/SharedFavoritesNotice';
+import FavoritesModeConflictNotice from '@/components/favorites/FavoritesModeConflictNotice';
 import SharedFavoritesDisclosure from '@/components/favorites/SharedFavoritesDisclosure';
 import PublishPlaylistButton from '@/components/favorites/PublishPlaylistButton';
 import { BoostButton } from '@/components/Lightning/BoostButton';
@@ -1128,6 +1129,12 @@ function FavoritesPageContent() {
             copy and are fine. Renders nothing unless the last cross-app sync
             was degraded. See #194. */}
         <SharedFavoritesNotice />
+
+        {/* Mounted HERE as well as in Settings › Nostr, because a conflict that
+            can only be answered from a settings screen is a trap on a phone:
+            the publish is held, nothing on /favorites says why, and the list
+            simply stops syncing. Renders nothing when there is no conflict. */}
+        <FavoritesModeConflictNotice />
 
         {error && (
           <div className="mb-6 p-4 bg-red-900/20 border border-red-500/50 rounded-lg text-red-400">

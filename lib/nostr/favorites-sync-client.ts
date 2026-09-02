@@ -43,6 +43,8 @@ import { isUsable, readPrivateHalf, type PrivateHalf } from './favorites-private
 import {
   EMPTY_BASELINE,
   parseBaseline,
+  countNamedFavorites,
+  publishGate,
   publishPlan,
   reconcileInput,
   seedModeFromWire,
@@ -464,33 +466,119 @@ export function setFavoritesPrivacy(pubkey: string, mode: FavoritesPrivacy): voi
 /** Dispatched when the mode changes, so the page can re-render without a reload. */
 export const FAVORITES_PRIVACY_CHANGED_EVENT = 'favorites-privacy-changed';
 
+const HALF_COUNTS_PREFIX = 'sk_favorites_halves';
+/** Replaced by the two-number shape above. Cleared on the first write. */
 const STRANDED_PREFIX = 'sk_favorites_stranded';
 
+/** What the other half of the list holds that this device did not put there. */
+export interface HalfCounts {
+  /** Favorites only on the OTHER half — another app's, carried, not moved. */
+  other: number;
+  /** Favorites on BOTH halves at once, which the format says may not happen. */
+  both: number;
+}
+
+export const NO_HALF_COUNTS: HalfCounts = { other: 0, both: 0 };
+
 /**
- * How many entries a switch to private left in the public half.
+ * What the last publish left on each half, kept so the UI can say it out loud.
  *
- * They belong to another app, and until every reader can render the private
- * half this build carries them where they are rather than moving them — see
- * `WHOLE_LIST_PRIVACY_MOVE`. The count is kept so the UI can say so out loud.
  * Silence here is the actual defect: a user who chose Private and got most of
  * it, with nothing on screen naming the rest, has been told something untrue by
- * omission.
+ * omission. The predecessor said it in one number and only about the private
+ * direction, and `WHOLE_LIST_PRIVACY_MOVE` pinned that number to zero — so the
+ * one both-halves signal the app had went dark on the day it started to matter,
+ * and a public list carrying an encrypted half reported nothing at all.
+ *
+ * TWO numbers because one cannot say both things. "287 are still encrypted" is
+ * false in the direction that matters when 284 of them are public as well, and
+ * the two states have different remedies: not-moved is answered in the app that
+ * holds them, in-both is answered here by choosing Private.
  */
-function setStranded(pubkey: string, count: number): void {
+function setHalfCounts(pubkey: string, counts: HalfCounts): void {
   if (typeof window === 'undefined' || !pubkey) return;
   try {
-    localStorage.setItem(`${STRANDED_PREFIX}:${pubkey}`, String(count));
-    window.dispatchEvent(new CustomEvent(FAVORITES_PRIVACY_CHANGED_EVENT, { detail: { count } }));
+    localStorage.setItem(`${HALF_COUNTS_PREFIX}:${pubkey}`, JSON.stringify(counts));
+    // Removed in the same write, so a device that upgrades mid-session cannot
+    // keep rendering a stale one-number answer nothing writes any more.
+    localStorage.removeItem(`${STRANDED_PREFIX}:${pubkey}`);
+    window.dispatchEvent(new CustomEvent(FAVORITES_PRIVACY_CHANGED_EVENT, { detail: counts }));
   } catch {
-    /* private browsing — the count is a nicety, the carry is not */
+    /* private browsing — the counts are a nicety, the carry is not */
   }
 }
 
-export function getStrandedCount(pubkey: string): number {
-  if (typeof window === 'undefined' || !pubkey) return 0;
-  const raw = localStorage.getItem(`${STRANDED_PREFIX}:${pubkey}`);
-  const n = raw ? Number(raw) : 0;
-  return Number.isFinite(n) && n > 0 ? n : 0;
+export function getHalfCounts(pubkey: string): HalfCounts {
+  if (typeof window === 'undefined' || !pubkey) return NO_HALF_COUNTS;
+  const raw = localStorage.getItem(`${HALF_COUNTS_PREFIX}:${pubkey}`);
+  if (!raw) {
+    // The old shape, from a device that has not published since upgrading. It
+    // only ever counted the private direction, which is the `other` half of
+    // this pair; reading it as such is true, and reading it as nothing would
+    // blank a warning the user is already looking at.
+    const legacy = Number(localStorage.getItem(`${STRANDED_PREFIX}:${pubkey}`) ?? '');
+    return Number.isFinite(legacy) && legacy > 0 ? { other: legacy, both: 0 } : NO_HALF_COUNTS;
+  }
+  try {
+    const parsed = JSON.parse(raw);
+    const n = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) && v > 0 ? v : 0);
+    return { other: n(parsed?.other), both: n(parsed?.both) };
+  } catch {
+    return NO_HALF_COUNTS;
+  }
+}
+
+const MODE_CONFLICT_PREFIX = 'sk_favorites_mode_conflict';
+
+/** A stored mode the wire wholesale contradicts, with both sides' numbers. */
+export interface ModeConflict {
+  /** Which half the list is actually in. */
+  wire: 'wire-public' | 'wire-private';
+  /** What this device is set to. */
+  stored: FavoritesPrivacy;
+  /** Favorites named by each half, for the sentence on screen. */
+  publicCount: number;
+  privateCount: number;
+}
+
+/**
+ * The disagreement between this device's stored mode and the list on the relays.
+ *
+ * Recomputed on EVERY sync and removed when it no longer holds, so a conflict
+ * the other app resolves clears itself with no user action. Persisted rather
+ * than kept in memory because the sync that finds it runs on mount, before the
+ * settings screen exists, and the notice has to be able to render after it.
+ */
+function setModeConflict(pubkey: string, conflict: ModeConflict | null): void {
+  if (typeof window === 'undefined' || !pubkey) return;
+  try {
+    const key = `${MODE_CONFLICT_PREFIX}:${pubkey}`;
+    if (conflict) localStorage.setItem(key, JSON.stringify(conflict));
+    else localStorage.removeItem(key);
+    window.dispatchEvent(new CustomEvent(FAVORITES_PRIVACY_CHANGED_EVENT, { detail: conflict }));
+  } catch {
+    /* private browsing — the guard still holds, only the sentence is lost */
+  }
+}
+
+export function getModeConflict(pubkey: string): ModeConflict | null {
+  if (typeof window === 'undefined' || !pubkey) return null;
+  const raw = localStorage.getItem(`${MODE_CONFLICT_PREFIX}:${pubkey}`);
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw);
+    if (parsed?.wire !== 'wire-public' && parsed?.wire !== 'wire-private') return null;
+    if (parsed?.stored !== 'public' && parsed?.stored !== 'private') return null;
+    const n = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) && v > 0 ? v : 0);
+    return {
+      wire: parsed.wire,
+      stored: parsed.stored,
+      publicCount: n(parsed.publicCount),
+      privateCount: n(parsed.privateCount),
+    };
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -640,6 +728,13 @@ async function publishSingleList(
     // recording our contribution is simply true.
     if (typeof window !== 'undefined' && localStorage.getItem(key) === digest) {
       rememberPublished(pubkey, plan.baseline);
+      // AND THE COUNTS, for the same reason and it is not a detail. A settled
+      // account takes this branch on every load, so writing them only after a
+      // real publish leaves the UI showing whatever the last one left — months
+      // stale, or zero forever on a device that has never had to publish. The
+      // digest matching means the relays hold exactly this plan, which is the
+      // only condition under which a plan-derived count is true at all.
+      setHalfCounts(pubkey, { other: plan.carriedInOtherHalf, both: plan.inBothHalves });
       return true;
     }
 
@@ -673,11 +768,11 @@ async function publishSingleList(
     console.log(
       `✅ Favorites: published ${entries} public and ${hidden} private entries (kind 10333)`
     );
-    // Entries a switch to private could NOT move, because another app wrote
-    // them and this build cannot move them yet. Recorded for the UI rather than
-    // only logged: a user who chose Private and got 97% of it has to be told
-    // which part is still public, or the app has quietly not kept a promise.
-    setStranded(pubkey, plan.strandedInPublicHalf);
+    // What this publish left on the other half, and what it found in both.
+    // Recorded for the UI rather than only logged: a user who chose Private and
+    // got 97% of it has to be told which part is still public, or the app has
+    // quietly not kept a promise.
+    setHalfCounts(pubkey, { other: plan.carriedInOtherHalf, both: plan.inBothHalves });
     return true;
   } catch (error) {
     console.warn('⚠️ Favorites: publish failed —', error);
@@ -756,6 +851,13 @@ export async function syncSharedFavoritesNow(opts: {
   userId: string;
   pubkey: string;
   relays?: string[];
+  /**
+   * Who asked. `'auto'` is a page load or a heart tap — nobody consented to
+   * move the whole list between halves, so a wholesale mode conflict stops the
+   * cycle. `'resolve'` is the user pressing Public or Private, which IS the
+   * answer. It DEFAULTS to `'auto'`, so a call site nobody updated fails closed.
+   */
+  intent?: 'auto' | 'resolve';
 }): Promise<'off' | 'ok' | 'degraded'> {
   if (!sharedFavoritesEnabledFor(opts.pubkey)) return 'off';
   if (inFlight) {
@@ -794,6 +896,54 @@ export async function syncSharedFavoritesNow(opts: {
     // only once the read has actually come back with something in `content`.
     // `readPrivateHalf` short-circuits an empty one without touching the signer.
     const privateHalf = await timer.time('decrypt', readPrivateHalf(opts.pubkey, read.content));
+
+    // DOES THIS DEVICE'S STORED MODE STILL DESCRIBE THE LIST?
+    //
+    // Before `resolveMode`, and on the STORED value rather than the resolved
+    // one, because resolving seeds a mode and would erase the disagreement it
+    // is being asked about. Before the `'off'` return too, so an opted-out
+    // device still refreshes the state instead of leaving a stale sentence on
+    // screen.
+    //
+    // The mode is per-app and per-device; the event is shared. Two apps can
+    // therefore hold opposite answers, and an automatic publish resolves that
+    // by rewriting the whole list to match whichever one loaded last. Measured:
+    // this app was left on Private for an account made entirely public from
+    // Boost Me Bitch, and the next load would have moved 287 entries into
+    // `content` with nothing on screen and no user action.
+    const hasPublic = read.groups.length > 0 || read.orphanItemGuids.length > 0;
+    const hasPrivate =
+      privateHalf.list.groups.length > 0 || privateHalf.list.orphanItemGuids.length > 0;
+    const stored = getFavoritesPrivacy(opts.pubkey);
+    const gate = publishGate({
+      stored,
+      privateHalfUsable: isUsable(privateHalf),
+      hasPublic,
+      hasPrivate,
+      intent: opts.intent ?? 'auto',
+    });
+    setModeConflict(
+      opts.pubkey,
+      gate.conflict && (stored === 'public' || stored === 'private')
+        ? {
+            wire: gate.conflict,
+            stored,
+            publicCount: countNamedFavorites(read),
+            privateCount: countNamedFavorites(privateHalf.list),
+          }
+        : null
+    );
+    if (!gate.publish && gate.conflict) {
+      // 'ok', NOT 'degraded'. Degraded means the relays could not be reached and
+      // renders a Retry button; retrying is exactly the wrong affordance here,
+      // and it would clobber a genuine read failure through the shared flag.
+      // Nothing touches `setSyncHealth` on this path.
+      console.warn(
+        `⚠️ Favorites: this device is set to ${stored} but the list is ${gate.conflict === 'wire-public' ? 'public' : 'encrypted'} — not publishing until the user answers`
+      );
+      timer.log('favorites sync (mode conflict)');
+      return 'ok';
+    }
 
     // Which half new favorites go into. `resolveMode` answers 'off' for a user
     // who opted out and for one who has not been asked yet — neither may
@@ -918,17 +1068,28 @@ export async function withdrawFromSharedFavorites(opts: {
   return 'ok';
 }
 
+let pendingIntent: 'auto' | 'resolve' = 'auto';
+
 export function requestSharedFavoritesSync(opts: {
   userId: string;
   pubkey: string;
   relays?: string[];
+  /** See `syncSharedFavoritesNow`. Defaults to `'auto'`, which fails closed. */
+  intent?: 'auto' | 'resolve';
 }): void {
   if (typeof window === 'undefined' || !opts.userId || !opts.pubkey) return;
   if (!sharedFavoritesEnabledFor(opts.pubkey)) return;
   if (debounceTimer) clearTimeout(debounceTimer);
+  // A collision UPGRADES and never downgrades. Answering the conflict and then
+  // tapping a heart inside the debounce window is still an answer; losing it
+  // because the second call carried the weaker intent would leave the user
+  // pressing a button that visibly did nothing.
+  if (opts.intent === 'resolve') pendingIntent = 'resolve';
+  const merged = { ...opts, intent: pendingIntent === 'resolve' ? ('resolve' as const) : opts.intent };
   debounceTimer = setTimeout(() => {
     debounceTimer = null;
-    syncSharedFavoritesNow(opts).catch((error) => {
+    pendingIntent = 'auto';
+    syncSharedFavoritesNow(merged).catch((error) => {
       console.warn('⚠️ Shared favorites sync failed:', error);
     });
   }, DEBOUNCE_MS);
