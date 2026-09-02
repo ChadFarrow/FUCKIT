@@ -195,7 +195,13 @@ export default function FavoritesPrivacyControl() {
         <div
           role="radiogroup"
           aria-label="Favorites on Nostr"
-          className="flex flex-wrap justify-end gap-1"
+          // justify-start, not justify-end: `SettingsRow` drops this group onto
+          // its own line under the label once it can no longer sit beside it,
+          // which is every phone. A right-aligned group there floats away from
+          // the text it belongs to. On a wide row the group is flush right
+          // already — it is sized to its content, so the inner justification
+          // only decides where a wrapped THIRD button lands.
+          className="flex flex-wrap justify-start gap-1"
         >
           {options.map((option) => {
             const Icon = option.icon;

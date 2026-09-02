@@ -1,6 +1,6 @@
 ---
 name: mobile-layout
-description: "Use when working on layout, especially on phones: content hidden under the status bar or navigation bar, safe-area insets and --sk-safe-*, a control cut off at the bottom of the screen, the player bar overlapping page content, --sk-player-reserve, a visible band above the player bar, a pinned header that does not stay pinned, inner-scroll pages, the Now Playing screen layout, artwork stretched into a rectangle, buttons inflated by the OS font-size setting, the mobile album/podcast page, an untappable account avatar, floating buttons, the back/home button row, or toasts."
+description: "Use when working on layout, especially on phones: content hidden under the status bar or navigation bar, safe-area insets and --sk-safe-*, a control cut off at the bottom of the screen, the player bar overlapping page content, --sk-player-reserve, a visible band above the player bar, a pinned header that does not stay pinned, inner-scroll pages, the Now Playing screen layout, artwork stretched into a rectangle, buttons inflated by the OS font-size setting, the mobile album/podcast page, an untappable account avatar, floating buttons, the back/home button row, toasts, or a settings row whose description text is squeezed into a narrow column beside its control."
 ---
 
 # mobile-layout
@@ -12,7 +12,44 @@ Layout and chrome, mostly mobile. Verification here is measurement with puppetee
 ```
 npx tsx --test lib/album-detail-routes.test.ts      # which routes render AlbumDetailClient
 node lib/ui-menu-scroll.browser-probe.mjs           # UserMenu dropdown + LoginModal reachability (needs `npm run dev`)
+node lib/settings-row-layout.browser-probe.mjs      # Settings rows keep their label width on a phone (needs `npm run dev`)
 ```
+
+---
+
+## A `justify-between` row on a phone pays for the control out of the label
+`SettingsRow` (`components/Settings/SettingsLayout.tsx`) is label-left / control-right. The control is
+`flex-shrink-0` — correct, a segmented control or an input must not be squashed — so the label column was the only
+part that could yield, and it yielded all of it. Reported from a phone against **Favorites on Nostr**, whose three
+options are ~262px wide: measured at a 393px viewport the description got **61px and wrapped to 19 lines**, one
+word per line down the side of an otherwise empty row, while the options themselves hung 15px past the right edge
+of the screen. Every row on the page shares the shape, so the same defect sat on Default Boost Name and both
+Danger Zone buttons.
+
+- **The row is `flex-wrap` with a `basis-56` floor on the label** (`min-w-0 grow shrink basis-56`). The label never
+  drops below 14rem, so a control that no longer fits beside it wraps to its own line and left-aligns under the
+  description. Anything narrow — a toggle, a 96px number input — still sits on the right at 360px and wider; below
+  that (Android Display size turned up) every row stacks.
+- **Write it as `grow shrink basis-56`, never `flex-1 basis-56`.** The `flex` shorthand also sets `flex-basis`, so
+  which value wins depends on Tailwind's emission order rather than on the order you wrote the classes — the same
+  equal-specificity trap as `text-gray-400` vs `text-white` on the album page icons.
+- **The control wrapper needs `max-w-full` alongside `flex-shrink-0`.** `max-width` still clamps a flex item that
+  cannot shrink, so a control wider than the line wraps inside itself instead of pushing the page sideways.
+- **A control that wraps onto its own line must not be right-aligned.** `FavoritesPrivacyControl`'s radiogroup is
+  `justify-start`; on a wide row it is flush right anyway (the box is sized to its content), so `justify-end` only
+  ever decided where the wrapped third button landed — and on a phone it floated the group away from the text it
+  belongs to.
+- **Once rows stack, the gap between rows has to beat the gap inside one.** `SettingsSection` is
+  `space-y-6 sm:space-y-4` against the row's `gap-y-3`, or a control reads as belonging to the label *below* it.
+  The Auto-Boost pair in `UserSettings` sits outside that container and carries its own copy.
+- **Don't hand-roll the shape.** `DangerSettings` had its own `flex items-start justify-between` + `flex-1` +
+  `flex-shrink-0` copy and therefore its own copy of the bug; it uses `SettingsRow` now, whose `description` takes
+  a `ReactNode` so a live favorites count can live in it.
+- **Verify by measuring:** `node lib/settings-row-layout.browser-probe.mjs` (needs `npm run dev`). It seeds the
+  allowlisted pubkey into `localStorage` so the real `FavoritesPrivacyControl` renders — a logged-out `/settings`
+  does not show the row this was reported against — and asserts both halves across six viewports: the label keeps
+  its width and the page never scrolls sideways, **and** the NIP-38 toggle still sits beside its label. A fix that
+  only checks the first half is a fix that has quietly stacked every row on the page.
 
 ---
 
