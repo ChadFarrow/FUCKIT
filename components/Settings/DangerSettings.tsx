@@ -7,6 +7,7 @@ import { useNostr } from '@/contexts/NostrContext';
 import { getSessionId } from '@/lib/session-utils';
 import { FAVORITE_STATUSES_INVALIDATED_EVENT } from '@/lib/favorite-status-cache';
 import { AlertTriangle, Trash2, Loader2, X } from 'lucide-react';
+import { SettingsRow } from './SettingsLayout';
 
 interface FavoriteCounts {
   nostr: { albums: number; tracks: number; total: number };
@@ -194,7 +195,7 @@ export default function DangerSettings() {
   const hasLocalFavorites = counts && counts.local.total > 0;
 
   return (
-    <div className="bg-red-950/30 backdrop-blur-sm rounded-lg p-6 border border-red-900/50">
+    <div className="bg-red-950/30 backdrop-blur-sm rounded-lg p-4 sm:p-6 border border-red-900/50">
       <div className="mb-4 flex items-center gap-3">
         <AlertTriangle className="w-6 h-6 text-red-500" />
         <div>
@@ -219,13 +220,15 @@ export default function DangerSettings() {
       <div className="space-y-6">
         {/* Delete Nostr Favorites */}
         <div className="border-b border-red-900/30 pb-6">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1">
-              <div className="text-sm font-medium text-white flex items-center gap-2">
-                <Trash2 className="w-4 h-4 text-red-400" />
+          <SettingsRow
+            label={
+              <span className="flex items-center gap-2">
+                <Trash2 className="w-4 h-4 text-red-400 flex-shrink-0" />
                 Delete Nostr Favorites
-              </div>
-              <div className="text-xs text-gray-400 mt-1">
+              </span>
+            }
+            description={
+              <>
                 Delete all favorites associated with your Nostr account.
                 {loading || nostrLoading ? (
                   <span className="text-gray-500"> Loading counts...</span>
@@ -236,29 +239,30 @@ export default function DangerSettings() {
                 ) : (
                   <span className="text-gray-500"> (Not logged in with Nostr)</span>
                 )}
-              </div>
-            </div>
-            <div className="flex-shrink-0">
-              <button
-                onClick={() => setShowConfirmModal('nostr')}
-                disabled={!isNostrAuthenticated || !nostrUser || !hasNostrFavorites || loading || nostrLoading}
-                className="px-4 py-2 bg-red-900/50 hover:bg-red-800/50 text-red-400 hover:text-red-300 text-sm font-medium rounded-lg transition-colors border border-red-800/50 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Delete Nostr Favorites
-              </button>
-            </div>
-          </div>
+              </>
+            }
+          >
+            <button
+              onClick={() => setShowConfirmModal('nostr')}
+              disabled={!isNostrAuthenticated || !nostrUser || !hasNostrFavorites || loading || nostrLoading}
+              className="px-4 py-2 bg-red-900/50 hover:bg-red-800/50 text-red-400 hover:text-red-300 text-sm font-medium rounded-lg transition-colors border border-red-800/50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Delete Nostr Favorites
+            </button>
+          </SettingsRow>
         </div>
 
         {/* Delete Local Favorites */}
         <div>
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1">
-              <div className="text-sm font-medium text-white flex items-center gap-2">
-                <Trash2 className="w-4 h-4 text-red-400" />
+          <SettingsRow
+            label={
+              <span className="flex items-center gap-2">
+                <Trash2 className="w-4 h-4 text-red-400 flex-shrink-0" />
                 Delete Local Favorites
-              </div>
-              <div className="text-xs text-gray-400 mt-1">
+              </span>
+            }
+            description={
+              <>
                 Delete all favorites stored in your browser session (not linked to Nostr).
                 {loading || sessionLoading ? (
                   <span className="text-gray-500"> Loading counts...</span>
@@ -269,18 +273,17 @@ export default function DangerSettings() {
                 ) : (
                   <span className="text-gray-500"> (No session found)</span>
                 )}
-              </div>
-            </div>
-            <div className="flex-shrink-0">
-              <button
-                onClick={() => setShowConfirmModal('local')}
-                disabled={!(sessionId || getSessionId()) || !hasLocalFavorites || loading || sessionLoading}
-                className="px-4 py-2 bg-red-900/50 hover:bg-red-800/50 text-red-400 hover:text-red-300 text-sm font-medium rounded-lg transition-colors border border-red-800/50 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Delete Local Favorites
-              </button>
-            </div>
-          </div>
+              </>
+            }
+          >
+            <button
+              onClick={() => setShowConfirmModal('local')}
+              disabled={!(sessionId || getSessionId()) || !hasLocalFavorites || loading || sessionLoading}
+              className="px-4 py-2 bg-red-900/50 hover:bg-red-800/50 text-red-400 hover:text-red-300 text-sm font-medium rounded-lg transition-colors border border-red-800/50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Delete Local Favorites
+            </button>
+          </SettingsRow>
         </div>
       </div>
 
