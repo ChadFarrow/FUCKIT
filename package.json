@@ -11,6 +11,7 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "test:all": "tsx --test lib/*.test.ts lib/*/*.test.ts",
+    "check:conformance": "tsx scripts/conformance.ts",
     "relay": "node scripts/local-relay.mjs",
     "dev:isolated": "NEXT_PUBLIC_NOSTR_RELAYS=ws://127.0.0.1:7777 next dev",
     "seed:relay": "node scripts/seed-local-relay.mjs",

@@ -15,7 +15,16 @@ npx tsx --test lib/nostr/relay-read.test.ts              # the read, against scr
 npx tsx --test lib/nostr/relay-health.test.ts            # the dead-relay memo and the three limits that bound it
 npx tsx lib/nostr/favorites.relay-probe.ts               # read-only smoke check against the REAL default relays (network; not in --test runs)
 npx tsx scripts/backup-favorites.ts dump > fav.json      # snapshot favorites before enabling SHARED_FAVORITES_APPLY_DELETES
+npm run check:conformance                                # the SPEC's 24 vectors against this merge (needs ../PC20-Nostr)
 ```
+
+**`check:conformance` runs the document's own vectors, not ours.** `PC20-Nostr/conformance/vectors.test.mjs`
+drives `lib/nostr/favorites-conformance-adapter.ts`, a thin shim over the real modules, and it needs the
+spec checkout beside this one (or `PC20_NOSTR_DIR`). It is deliberately not in `test:all`, because CI has
+no sibling checkout. Its first run found two real gaps here — the resurrection loop in the append pass
+(vector 9) and refusing a public publish over a private half this signer cannot open (vector 12) — and
+four vectors the document had wrong. When it and the unit suite disagree, the spec is the authority: fix
+the code, or change the spec by PR at PC20-Nostr first.
 
 **The local harness — because there is nowhere else to test a WRITE.** This repo has no preview
 environment, and a dev server on localhost publishes to the real relays under the user's real npub.
@@ -147,10 +156,16 @@ by someone who has the pubkey.
 - **`seedModeFromWire` has each half answer only for itself.** Public-first fails open: a device
   seeded `'public'` over a private account republishes every decrypted entry as a plaintext, indexed
   tag. Both halves, or neither, means **ask the user**.
-- **An unreadable private half is a DEGRADED READ, not an empty one** — same exit as a silent relay.
-  `decodePrivateFavorites` returns **null** for valid JSON that is not a tag array, and that is the
-  guard that matters: a `JSON.parse` succeeding on a non-array marks the blob readable-and-empty, and
-  the next republish rewrites `content` from those empty lists.
+- **An unreadable private half is a DEGRADED READ, not an empty one** — same exit as a silent relay
+  for anything that would have to TOUCH it: seeding a mode, a private-mode publish, a publish on a list
+  that says private, the reconcile. `decodePrivateFavorites` returns **null** for valid JSON that is
+  not a tag array, and that is the guard that matters: a `JSON.parse` succeeding on a non-array marks
+  the blob readable-and-empty, and the next republish rewrites `content` from those empty lists.
+  **A PUBLIC writer on a list that does not say private still publishes the public half**, carrying
+  the ciphertext byte for byte (`publishPlan` with `canReadPrivate: false` returns `privateTags: null`,
+  which `buildContent` turns into the bytes it read, and the private claims are carried, not cleared).
+  Refusing that too — which this app did until spec vector 12 caught it — stranded every favorite a
+  NIP-55 user made here the moment any other app put anything in `content`.
 - **NIP-55 and read-only nip05 sessions cannot encrypt.** `nip55-client.ts` implements `sign_event`
   only. That is a normal state for a real user, not an error — gate on `signerSupportsNip44()` and
   **state the reason on screen**, because a phone has no hover for a `title` tooltip.
@@ -192,6 +207,16 @@ The parse returns an **ordered node list**. `groups` and `orphanItemGuids` are a
 - **Position is the data, which is why the model has to hold it.** Re-emitting unreadable entries at a fixed place rather than where they sat makes two apps rewrite the event against each other forever, each publish locally reasonable, the only symptom being that it never stops.
 - `foreignTags` replay in read order ahead of the entries (they take no part in grouping); `foreignKinds` append after the `k` tags we derived.
 - **`k` tags are derived from what was ACTUALLY emitted**, in emission order — never from the model, or a `k` could name a kind that isn't on the list.
+
+- **Inside a group, items keep their WIRE order and a new one goes at the end.** `mergeSingleList`
+  emitted `mine.itemGuids` first until 2026-09-02; Boost Me Bitch keeps what it read, so each app's
+  publish put a group's items in ITS order and the other's next cycle put them back — the event
+  rewritten on every load for three weeks, every publish locally reasonable. Tag order is semantic,
+  so that was the meaningful part of the event moving. Spec vector 18.
+- **A group this device published and no longer finds on the wire is NOT re-appended** unless it
+  holds something genuinely new under it. Another app removed it; re-adding it is the resurrection
+  loop in the other direction (spec vector 9). The published record still claims it while it is held
+  here, so an unfavorite-and-refavorite (which drops and re-adds the row) publishes it again.
 
 Where the spec's two ordering rules conflict — preserve read order vs. keep same-medium feeds contiguous — **contiguity wins**. Reordering within a medium block costs nothing because items always follow their own group; breaking contiguity silently re-labels every entry after the boundary.
 

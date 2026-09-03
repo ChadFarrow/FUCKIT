@@ -690,12 +690,20 @@ async function publishSingleList(
       return false;
     }
 
-    // A private half we could not read is a degraded read of the SAME kind, and
-    // gets the same answer. We hold the ciphertext and could put it back — but
-    // the merge below would still be deriving the public half from a list whose
-    // other half is unknown, and in private mode we would be replacing entries
-    // we never saw with an empty array. Carry, publish nothing, say so.
-    if (!isUsable(privateHalf)) {
+    // A private half we could not read is a degraded read of the SAME kind
+    // wherever this publish would have to touch it: in private mode every
+    // publish writes `content`, and on a list that SAYS private the mode is
+    // private whatever this device stored. Carry, publish nothing, say so.
+    //
+    // A PUBLIC writer on a list that does not say private is different, and
+    // used to be refused here too. That stranded every favorite a NIP-55 user
+    // made in this app the moment any other app put anything in `content` —
+    // and rule 4's `content` clause is exactly the case it forbids nothing
+    // about: put the bytes back, write the half you can. Spec vector 12.
+    // `publishPlan` is told the half is opaque and returns `privateTags: null`,
+    // which `buildContent` turns into the ciphertext verbatim.
+    const opaque = !isUsable(privateHalf);
+    if (opaque && (mode === 'private' || read.visibility === 'private')) {
       console.warn(
         `⚠️ Favorites: the private half is ${privateHalf.status} — not publishing`
       );
@@ -712,9 +720,11 @@ async function publishSingleList(
       // Only a real choice may state or change the mode; `intent: 'resolve'`
       // is that choice, and it is the same signal `publishGate` acts on.
       userChose,
-      // We got here, so the half decrypted — `publishSingleList` refuses an
-      // unusable one above. A signer with no NIP-44 never reaches this call.
-      canReadPrivate: true,
+      // False for a half this session could not open. `publishPlan` then
+      // neither moves nor restates anything and hands back `privateTags: null`
+      // so the ciphertext is carried; the private-mode refusal above is what
+      // keeps this from ever writing into that half.
+      canReadPrivate: !opaque,
     });
 
     // THE DIGEST IS OVER BOTH HALVES, AND OVER THE PRIVATE HALF'S TAGS RATHER

@@ -510,20 +510,29 @@ export function mergeSingleList(
       continue;
     }
 
+    // WIRE ORDER FIRST, then what is new here. Spec vector 18.
+    //
+    // What survives from the read: every item we still hold, and every item we
+    // never published — another app's, and not ours to delete just because it
+    // sits beneath a feed we happen to hold. In the order it was read. Then
+    // the items we hold that the wire does not carry, at the END of the group.
+    //
+    // It used to be `[...mine.itemGuids, ...theirs]` — local order first —
+    // and that is the convergence bug: Boost Me Bitch keeps wire order, so
+    // each app's publish put the group's items in ITS order and the other
+    // app's next cycle put them back. Every publish locally reasonable, the
+    // event rewritten on every load for three weeks, and tag order is
+    // semantic here so it was the meaningful part of the event moving.
+    const mineSet = new Set(mine.itemGuids);
+    const kept = group.itemGuids.filter(
+      (guid) => mineSet.has(guid) || !publishedItems.has(guid)
+    );
     const merged: SingleListGroup = {
       ...mine,
       // Prefer what we resolved; fall back to the hint that was already there
       // rather than blanking it. A hint we didn't write is not ours to delete.
       medium: mine.medium ?? group.medium,
-      // Ours in our order, then any item under this feed that we never
-      // published — another app's, and not ours to delete just because it
-      // sits beneath a feed we happen to hold.
-      itemGuids: [
-        ...mine.itemGuids,
-        ...group.itemGuids.filter(
-          (guid) => !publishedItems.has(guid) && !mine.itemGuids.includes(guid)
-        ),
-      ],
+      itemGuids: [...kept, ...mine.itemGuids.filter((guid) => !kept.includes(guid))],
     };
     emitted.set(group.feedGuid, merged);
     nodes.push({ t: 'group', group: merged });
@@ -531,8 +540,30 @@ export function mergeSingleList(
 
   for (const group of local) {
     if (emitted.has(group.feedGuid)) continue;
-    emitted.set(group.feedGuid, group);
-    nodes.push({ t: 'group', group });
+
+    // Absent from the read entirely. Anything we already published and the
+    // relay no longer has was removed by ANOTHER writer, and re-adding it is
+    // the resurrection loop in the other direction: the favorite returns on
+    // every load, on every device, forever. Spec vector 9. Only what is
+    // genuinely new here goes up — and a track the user just favorited under
+    // a feed another app removed still needs its group reopened to name the
+    // parent, so the group is skipped only when nothing new is left under it.
+    //
+    // This used to be unconditional, and the comparison page in PC20-Nostr
+    // named it as the second of two ways the apps were rewriting the event at
+    // each other. The record stays as it was: an entry we hold and did not
+    // emit stays claimed, so a later unfavorite-and-refavorite here (which
+    // drops and re-adds the row) publishes it again, while merely holding it
+    // does not.
+    const fresh = group.itemGuids.filter((guid) => !publishedItems.has(guid));
+    const feedFresh = !publishedFeeds.has(group.feedGuid);
+    if (!feedFresh && fresh.length === 0) continue;
+    const appended: SingleListGroup =
+      feedFresh && fresh.length === group.itemGuids.length
+        ? group
+        : { ...group, itemGuids: fresh, favorited: feedFresh && group.favorited };
+    emitted.set(group.feedGuid, appended);
+    nodes.push({ t: 'group', group: appended });
   }
 
   return {

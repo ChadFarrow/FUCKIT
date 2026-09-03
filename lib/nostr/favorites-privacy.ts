@@ -244,7 +244,19 @@ export function publishGate(input: {
   /** The `visibility` tag as read, or null on a list written before it. */
   stated?: ListVisibility | null;
 }): PublishGate {
-  if (!input.privateHalfUsable) return { publish: false, conflict: null };
+  // A half we could not open is not a half we may write INTO, and it is not a
+  // half we may reason about — so no conflict is ever claimed from it. But a
+  // PUBLIC writer on a list that does not say private may still publish the
+  // public half, carrying the ciphertext byte for byte: that is spec rule 4's
+  // `content` clause and vector 12, and refusing it stranded every favorite a
+  // NIP-55 user made here the moment any other app put anything in `content`.
+  // Spec: "Such an app carries `content` verbatim, keeps writing into the
+  // half the tag names if it can, and says on screen that it cannot open the
+  // other one."
+  if (!input.privateHalfUsable) {
+    const mayWritePublic = input.stored === 'public' && input.stated !== 'private';
+    return { publish: mayWritePublic, conflict: null };
+  }
   const conflict = wireContradictsMode(
     input.stored,
     input.hasPublic,
@@ -635,6 +647,15 @@ export function publishPlan(input: {
   const privateTags = movingWholeList ? foldedTags() : activeTags;
   const publicTags = movingWholePublic ? foldedTags() : activeTags;
 
+  // A private half this writer could not open is CARRIED, never re-rendered.
+  // `privateRead` is empty in that case only because there was nothing to
+  // parse, and rendering that emptiness back would replace the ciphertext with
+  // an encrypted empty array — rule 4's `content` clause broken by the branch
+  // that exists to honour it. Null tells `buildContent` to put the bytes back.
+  // Only reachable in public mode: `publishSingleList` refuses a private-mode
+  // publish over such a half before this is called.
+  const carryOpaque = !canReadPrivate && effective === 'public';
+
   // THE COUNTS DESCRIBE WHAT IS ABOUT TO BE ON THE WIRE, not what was read.
   //
   // Taken from the emitted node lists rather than from the reads, because the
@@ -665,20 +686,26 @@ export function publishPlan(input: {
           : inactiveTags,
       stating
     ),
-    privateTags: effective === 'private'
-      ? privateTags
-      : movingWholePublic
-        ? []
-        : inactiveTags,
+    privateTags: carryOpaque
+      ? null
+      : effective === 'private'
+        ? privateTags
+        : movingWholePublic
+          ? []
+          : inactiveTags,
     // The two partition the other half: an entry is either left there alone or
     // in both places, never counted twice. Saying "287 are still encrypted"
     // when 284 of them are public as well is false in the direction that
     // matters, and the two states have different remedies.
     carriedInOtherHalf: theirs.feeds.size + theirs.items.size - inBoth,
     inBothHalves: inBoth,
+    // The inactive half's claims are cleared because its merge just removed
+    // everything they named. An OPAQUE half was not merged, so its claims are
+    // carried untouched — recomputing them from nothing would disown every
+    // private entry this device ever wrote.
     baseline:
       effective === 'public'
-        ? { public: publishedRecordFrom(ours), private: EMPTY_RECORD }
+        ? { public: publishedRecordFrom(ours), private: carryOpaque ? baseline.private : EMPTY_RECORD }
         : { public: EMPTY_RECORD, private: publishedRecordFrom(ours) },
   };
 }
