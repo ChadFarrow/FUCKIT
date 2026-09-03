@@ -673,6 +673,50 @@ test('a new local group appends to the end of its medium block, not the event', 
   ]);
 });
 
+test("a group's items keep their WIRE order, and a new one goes at the end — spec vector 18", () => {
+  // The convergence bug. This app used to emit `mine` first, Boost Me Bitch
+  // keeps what it read, so each publish put the items in ITS order and the
+  // other app's next cycle put them back — the event rewritten on every load,
+  // for three weeks, with every publish locally reasonable. Tag order is
+  // semantic, so that was the meaningful part of the event moving.
+  const read = parseSingleList([
+    ['medium', 'music'],
+    ['i', showId(MUSIC_A)],
+    ['i', itemId('t1')],
+    ['i', itemId('t2')],
+    ['medium', 'podcast'],
+    ['i', showId(POD_B)],
+    ['i', itemId('e1')],
+  ]);
+  const local = [
+    // Held in a different order from the wire, plus t3 which is new here.
+    track('t3', MUSIC_A, 'music'),
+    track('t2', MUSIC_A, 'music'),
+    track('t1', MUSIC_A, 'music'),
+    track('e1', POD_B, 'podcast'),
+  ];
+  const published = publishedRecordFrom(
+    groupForSingleList([
+      track('t1', MUSIC_A, 'music'),
+      track('t2', MUSIC_A, 'music'),
+      track('e1', POD_B, 'podcast'),
+    ])
+  );
+  const emit = (r: ReturnType<typeof parseSingleList>) => {
+    const merged = mergeSingleList(r, groupForSingleList(local), published);
+    return tagsFromNodes(merged.nodes, merged.foreignTags, merged.foreignKinds);
+  };
+  const tags = emit(read);
+  assert.deepEqual(
+    tags.filter((t) => t[0] === 'i').map((t) => t[1]),
+    [showId(MUSIC_A), itemId('t1'), itemId('t2'), itemId('t3'), showId(POD_B), itemId('e1')],
+    'wire order kept; the new item after its own group and before the next'
+  );
+  // And a second pass over our own output is a fixed point — the property the
+  // old order broke for the OTHER app, which this test cannot see directly.
+  assert.deepEqual(emit(parseSingleList(tags)), tags);
+});
+
 test('media stay contiguous even when the read interleaved them', () => {
   // Where the spec's two ordering rules collide, contiguity wins: reordering
   // within a block reattaches nothing, while a broken block silently re-labels
@@ -741,11 +785,33 @@ test('...while an entry we never published is still carried', () => {
     ['i', showId(FOREIGN_E)],
     ['i', itemId('their-ep')],
   ]);
-  const published = publishedRecordFrom(groupForSingleList([album(MUSIC_A, 'music')]));
+  // A record that claims something ELSE, so MUSIC_A is genuinely new here.
+  const published = publishedRecordFrom(groupForSingleList([album(POD_B, 'podcast')]));
   const merged = mergeSingleList(read, groupForSingleList([album(MUSIC_A, 'music')]), published);
 
   assert.deepEqual(merged.groups.map((g) => g.feedGuid), [FOREIGN_E, MUSIC_A]);
   assert.deepEqual(merged.groups[0].itemGuids, ['their-ep']);
+});
+
+test('an entry ANOTHER app removed is not resurrected — spec vector 9', () => {
+  // We hold it, our record claims it, and the relay no longer has it: the
+  // other app deleted it. The append loop used to re-add it unconditionally,
+  // so the favorite came back on every load, on every device, forever — the
+  // second of the two ways the comparison page in PC20-Nostr said the apps
+  // were rewriting the event at each other.
+  const read = parseSingleList([['medium', 'music'], ['i', showId(MUSIC_A)]]);
+  const local = [album(MUSIC_A, 'music'), album(MUSIC_C, 'music'), track('t9', MUSIC_C, 'music')];
+  const published = publishedRecordFrom(groupForSingleList(local));
+  const merged = mergeSingleList(read, groupForSingleList(local), published);
+  assert.deepEqual(merged.groups.map((g) => g.feedGuid), [MUSIC_A]);
+
+  // But a track the user has JUST favorited under that same removed feed still
+  // goes up, with its group reopened to name the parent — and only that.
+  const withNew = [...local, track('t10', MUSIC_C, 'music')];
+  const again = mergeSingleList(read, groupForSingleList(withNew), published);
+  assert.deepEqual(again.groups.map((g) => g.feedGuid), [MUSIC_A, MUSIC_C]);
+  assert.deepEqual(again.groups[1].itemGuids, ['t10']);
+  assert.equal(again.groups[1].favorited, false, 'reopened to place the track, not as a favorite');
 });
 
 test('an item under OUR feed that we never published survives', () => {

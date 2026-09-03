@@ -977,3 +977,70 @@ test('an item under a duplicated group survives the fold', () => {
   );
   assert.equal(ids.includes(itemId(FOREIGN)), true, 'the item was dropped with its duplicate group');
 });
+
+// ---------------------------------------------------------------------------
+// An unreadable private half, and a PUBLIC writer. Spec vectors 12 and 23.
+// ---------------------------------------------------------------------------
+
+test('a public writer publishes over a private half it cannot open, and carries it', () => {
+  // NIP-55 has no NIP-44. Refusing every publish here stranded each favorite
+  // such a user made in this app the moment any other app put anything in
+  // `content`. Rule 4's `content` clause: put the bytes back, write the half
+  // you can.
+  const gate = publishGate({
+    stored: 'public',
+    privateHalfUsable: false,
+    hasPublic: true,
+    hasPrivate: false,
+    intent: 'auto',
+    stated: null,
+  });
+  assert.deepEqual(gate, { publish: true, conflict: null });
+
+  const plan = publishPlan({
+    mode: 'public',
+    publicRead: halfWith(MUSIC_A),
+    privateRead: EMPTY_PARSED,
+    local: [
+      { feedGuid: MUSIC_A, medium: 'music', itemGuids: [], favorited: true },
+      { feedGuid: MUSIC_B, medium: 'music', itemGuids: [], favorited: true },
+    ],
+    baseline: { public: { feeds: [MUSIC_A], items: [] }, private: { feeds: [FOREIGN], items: [] } },
+    canReadPrivate: false,
+  });
+  assert.equal(plan.privateTags, null, 'null is what makes buildContent put the ciphertext back');
+  assert.deepEqual(feedsOf(plan.tags), [showId(MUSIC_A), showId(MUSIC_B)]);
+  assert.deepEqual(
+    plan.baseline.private,
+    { feeds: [FOREIGN], items: [] },
+    'claims on a half we could not merge are carried, never recomputed from nothing'
+  );
+  assert.equal(visibilityOf(plan.tags), null, 'and no mode is stated over a half we could not read');
+});
+
+test('...but not INTO it, and not on a list that says private', () => {
+  assert.equal(
+    publishGate({
+      stored: 'private',
+      privateHalfUsable: false,
+      hasPublic: false,
+      hasPrivate: false,
+      intent: 'resolve',
+      stated: null,
+    }).publish,
+    false,
+    'a private-mode publish would have to write the half it cannot read'
+  );
+  assert.equal(
+    publishGate({
+      stored: 'public',
+      privateHalfUsable: false,
+      hasPublic: true,
+      hasPrivate: false,
+      intent: 'auto',
+      stated: 'private',
+    }).publish,
+    false,
+    'the list says private, so the mode is private whatever this device stored'
+  );
+});
