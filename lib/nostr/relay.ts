@@ -1,4 +1,8 @@
-import { Relay } from 'nostr-tools';
+// Deliberately the `relay` subpath, not the `nostr-tools` barrel. The barrel
+// INLINES its own copy of this class with its own captured `_WebSocket`, which
+// no `useWebSocketImplementation` can reach, so the Node harnesses could not
+// keep this off undici's WebSocket. See lib/nostr/node-websocket.ts.
+import { Relay } from 'nostr-tools/relay';
 
 /**
  * Relay connection management

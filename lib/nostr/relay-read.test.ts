@@ -46,8 +46,9 @@ import { readReplaceableEvent } from './relay-read';
 import { SINGLE_LIST_KIND, LIST_ALT } from './favorites-single-list';
 import { showId } from './pc20-identifiers';
 
-// See NODE VERSION above. A no-op on Node >= 21; on Node 20 it is the difference
-// between this file testing the read and testing nothing at all.
+// See NODE VERSION above. On Node 20 this is the difference between this file
+// testing the read and testing nothing at all; on Node >= 21 it keeps us off
+// undici's WebSocket, which recurses on a failed connect.
 before(async () => {
   await installNodeWebSocket();
 });
