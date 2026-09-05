@@ -31,7 +31,28 @@
  * `fetchSharedFavorites` dynamic-imports the pool (ESM), while the probe builds
  * its own `SimplePool` from a static import (CJS). Patching one leaves the other
  * silently broken — measured, when this was written as the obvious one-liner.
- * So: set the global for any copy not yet loaded, then inject into both copies.
+ * So: set the global for any copy not yet loaded, then inject into every copy.
+ *
+ * And it is not two copies but four. `nostr-tools/relay` keeps its OWN
+ * `_WebSocket`, separate from `nostr-tools/pool` -- `RelayManager` reaches it
+ * through `Relay.connect`, while the reads go through the pool -- so each of the
+ * two modules needs patching under each of the two conditions.
+ *
+ * WHY IT RUNS ON NODE >= 21 TOO, WHERE `WebSocket` ALREADY EXISTS
+ * It used to return early whenever a global `WebSocket` was defined, which on
+ * Node >= 21 left `nostr-tools` on **undici's** WebSocket. Undici re-fires
+ * `error` from inside `close()` on a socket that already failed to connect, and
+ * `nostr-tools` >= 2.25.2 calls `this.ws?.close?.()` from its own `onerror`
+ * (the fix for its leaked-socket bug, nbd-wtf/nostr-tools#550). The two
+ * together recurse until `RangeError: Maximum call stack size exceeded`, so on
+ * Node 22 three relay tests failed while CI, pinned to Node 20 by `.nvmrc`,
+ * stayed green. Browsers are not affected: `close()` on an already-failed
+ * socket is a no-op there, so the upstream fix does what it says.
+ *
+ * Installing `ws` unconditionally under Node makes a local run match CI and
+ * production (`node:20-alpine`), and keeps the undici quirk out of the picture.
+ * `ws` is a devDependency and this module is test-and-probe-only, so nothing
+ * here reaches a production bundle.
  */
 
 // Static — reaches the CJS instance, whose `_WebSocket` was already captured
@@ -39,24 +60,30 @@
 // name because eslint's `react-hooks/rules-of-hooks` reads any `useFoo()` call
 // as a React hook and errors on it — an error, not a warning, so it fails
 // `next lint` in CI.
-import { useWebSocketImplementation as setCjsWebSocket } from 'nostr-tools/pool';
+import { useWebSocketImplementation as setCjsPoolWebSocket } from 'nostr-tools/pool';
+import { useWebSocketImplementation as setCjsRelayWebSocket } from 'nostr-tools/relay';
 
 let installed = false;
 
 /**
- * No-op in a browser and on Node >= 21. Safe to call more than once; call it
- * before constructing a `SimplePool` or reading from a relay.
+ * No-op in a browser. Safe to call more than once; call it before constructing
+ * a `SimplePool` or reading from a relay.
  */
 export async function installNodeWebSocket(): Promise<void> {
   if (installed) return;
-  if (typeof (globalThis as any).WebSocket !== 'undefined') return;
+  // Browsers keep their own WebSocket. Under Node we always install `ws`, even
+  // on Node >= 21 where a global already exists -- see the header.
+  if (typeof process === 'undefined' || !process.versions?.node) return;
 
   const { default: WS } = await import('ws');
 
   (globalThis as any).WebSocket = WS; // for any copy loaded from here on
-  setCjsWebSocket(WS); // the CJS copy (the probe's own pool)
-  const esm = await import('nostr-tools/pool');
-  esm.useWebSocketImplementation(WS); // the ESM copy (fetchSharedFavorites')
+  setCjsPoolWebSocket(WS); // the CJS pool (the probe's own SimplePool)
+  setCjsRelayWebSocket(WS); // the CJS relay (RelayManager's `Relay.connect`)
+  const esmPool = await import('nostr-tools/pool');
+  esmPool.useWebSocketImplementation(WS); // the ESM pool (fetchSharedFavorites')
+  const esmRelay = await import('nostr-tools/relay');
+  esmRelay.useWebSocketImplementation(WS); // the ESM relay
 
   installed = true;
 }

@@ -9,10 +9,19 @@
  * because the publish succeeds and looks exactly like the test working.
  */
 
-import test from 'node:test';
+import test, { before } from 'node:test';
 import assert from 'node:assert/strict';
 
+import { installNodeWebSocket } from './node-websocket';
 import { RelayManager, relaysAreIsolated, resolvePublishRelays } from './relay';
+
+// The connect cases below aim at a relay that is deliberately not listening.
+// Undici's WebSocket re-fires `error` from inside the `close()` that
+// `nostr-tools` >= 2.25.2 calls in its own `onerror`, which recurses until the
+// stack is gone, so hand it `ws` instead. See lib/nostr/node-websocket.ts.
+before(async () => {
+  await installNodeWebSocket();
+});
 
 const LOCAL = 'ws://127.0.0.1:7777';
 /** A real NIP-65 list, which is what makes the union dangerous. */
