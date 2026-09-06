@@ -5,6 +5,7 @@ import { resolvePodcastIndexUrl } from '@/lib/podcast-index-api';
 import { normalizeUrl } from '@/lib/url-utils';
 import { findFeedIdByUrl } from '@/lib/feed-lookup';
 import { RateLimiter, clientIp } from '@/lib/rate-limit';
+import { buildRekeyedFeedData } from '@/lib/feeds/rekey-feed';
 
 // Public endpoint (podping consumer) that triggers expensive RSS reparses —
 // cap per-IP request rate. In-memory, so the cap is per Railway instance;
@@ -447,33 +448,17 @@ export async function POST(request: NextRequest) {
         }
         await prisma.feed.delete({ where: { id: feed.id } });
 
+        // buildRekeyedFeedData, not an inline literal. The literal that used to
+        // be here carried a comment claiming it was complete and dropped SEVEN
+        // columns, markedDead among them — so a hidden feed un-hid itself.
+        // rekey-feed.test.ts compares the produced keys against schema.prisma,
+        // so the next column added to the model fails the test rather than
+        // vanishing here.
         feed = await prisma.feed.create({
-          data: {
+          data: buildRekeyedFeedData(oldFeedData, {
             id: customFeedId,
-            guid: oldFeedData.guid,
-            // Carried across with the rest: this create is a re-key of an existing
-            // row, so anything not copied here is silently dropped.
-            medium: oldFeedData.medium,
-            title: oldFeedData.title,
-            description: oldFeedData.description,
-            originalUrl: oldFeedData.originalUrl,
-            cdnUrl: oldFeedData.cdnUrl,
-            type: customType || oldFeedData.type,
-            artist: oldFeedData.artist,
-            image: oldFeedData.image,
-            language: oldFeedData.language,
-            category: oldFeedData.category,
-            podcastCategories: oldFeedData.podcastCategories,
-            explicit: oldFeedData.explicit,
-            priority: oldFeedData.priority,
-            status: oldFeedData.status,
-            lastFetched: oldFeedData.lastFetched,
-            lastError: oldFeedData.lastError,
-            v4vRecipient: oldFeedData.v4vRecipient,
-            v4vValue: oldFeedData.v4vValue ?? undefined,
-            publisherId: oldFeedData.publisherId,
-            updatedAt: new Date()
-          }
+            type: customType,
+          }),
         });
       }
 

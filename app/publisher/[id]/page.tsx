@@ -600,6 +600,7 @@ async function loadPublisherData(publisherId: string) {
             description: true,
             image: true,
             lastFetched: true,
+            oldestItemPubdate: true,
             createdAt: true,
             originalUrl: true,
             Track: {
@@ -668,6 +669,7 @@ async function loadPublisherData(publisherId: string) {
         description: true,
         image: true,
         lastFetched: true,
+        oldestItemPubdate: true,
         createdAt: true,
         originalUrl: true,
         publisherId: true,
@@ -898,6 +900,7 @@ async function loadPublisherData(publisherId: string) {
             description: true,
             image: true,
             lastFetched: true,
+            oldestItemPubdate: true,
             createdAt: true,
             originalUrl: true,
             Track: {
@@ -971,7 +974,12 @@ async function loadPublisherData(publisherId: string) {
         artist: feed.artist,
         description: feed.description,
         coverArt: feed.image,
-        releaseDate: feed.lastFetched || feed.createdAt,
+        // oldestItemPubdate, NOT lastFetched. `lastFetched` is when we last
+        // POLLED the feed, so this page showed a different year for the same
+        // album than the home grid, /api/feeds/recent, /api/parsed-feeds and
+        // /api/publishers-by-id — all of which use the line below.
+        // See lib/catalog/album-shape.ts.
+        releaseDate: feed.oldestItemPubdate || feed.createdAt,
         trackCount: feed.Track.length,
         tracks: feed.Track.map((track: {
           id: string;

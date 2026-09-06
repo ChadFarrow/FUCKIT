@@ -45,6 +45,12 @@ async function fetchFeedByGuid(feedGuid: string) {
       if (feed) {
         return {
           guid: feedGuid,
+          // `medium` is what the FEED declared; Podcast Index relays it rather
+          // than guessing, so carrying it here is not a default. CLAUDE.md:
+          // nothing may default `medium`, because only `medium` goes on the
+          // cross-app favorites list where a guess is sticky and no other app
+          // will correct it. `null` when PI reports none is the honest value.
+          medium: typeof feed.medium === 'string' && feed.medium ? feed.medium.toLowerCase() : null,
           title: feed.title || 'Unknown Feed',
           description: feed.description || '',
           originalUrl: feed.url || '',
@@ -156,6 +162,10 @@ export async function POST(request: NextRequest) {
             id: feedGuid, // Use feedGuid as the ID
             originalUrl: feedData.originalUrl,
             type: 'album', // Default to album for music feeds
+            // `type` above is OUR classification and is a guess; `medium` is
+            // what the feed declared. They are not interchangeable — see the
+            // cross-cutting invariants in CLAUDE.md.
+            medium: feedData.medium,
             title: feedData.title,
             description: feedData.description,
             artist: feedData.artist,
