@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   DEFAULT_ALLOWED_ORIGINS,
+  buildCorsHeaders,
   parseCorsMode,
   parseAllowedOrigins,
   isLocalOrigin,
@@ -61,4 +62,39 @@ test('localhost is allowed on any port, so development keeps working', () => {
   assert.equal(isLocalOrigin('http://127.0.0.1:3001'), true);
   assert.equal(isLocalOrigin('https://notlocalhost.example'), false);
   assert.equal(resolveAllowedOrigin('http://localhost:3000', ALLOWED, 'enforce'), 'http://localhost:3000');
+});
+
+/**
+ * Vary: Origin, on the refusal as much as on the echo.
+ *
+ * The refusal is the case that is easy to leave out and the one that bites: a
+ * shared cache that stores a header-less response with no Vary will replay it to
+ * an origin that IS allowed, and that site then breaks with no clue why. Four of
+ * these routes send s-maxage, so they invite exactly that caching.
+ */
+test('enforce mode sends Vary: Origin on a refusal, not only on an echo', () => {
+  assert.deepEqual(buildCorsHeaders('https://attacker.example', ALLOWED, 'enforce'), {
+    Vary: 'Origin',
+  });
+  assert.deepEqual(buildCorsHeaders('https://stablekraft.app', ALLOWED, 'enforce'), {
+    'Access-Control-Allow-Origin': 'https://stablekraft.app',
+    Vary: 'Origin',
+  });
+});
+
+test('enforce mode with no Origin still answers Vary and no permission', () => {
+  // Same-origin fetches, our Android WebView, curl and the Node podping consumer
+  // all arrive with no Origin. They need no permission header and must keep
+  // working; Vary keeps a cache from confusing them with a foreign caller.
+  assert.deepEqual(buildCorsHeaders(null, ALLOWED, 'enforce'), { Vary: 'Origin' });
+});
+
+test('log mode answers * for everyone and needs no Vary', () => {
+  // The answer does not depend on the Origin, so there is nothing to vary on.
+  assert.deepEqual(buildCorsHeaders('https://attacker.example', ALLOWED, 'log'), {
+    'Access-Control-Allow-Origin': '*',
+  });
+  assert.deepEqual(buildCorsHeaders(null, ALLOWED, 'log'), {
+    'Access-Control-Allow-Origin': '*',
+  });
 });

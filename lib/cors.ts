@@ -88,15 +88,50 @@ export function resolveAllowedOrigin(
 }
 
 /**
+ * The header policy itself, as a pure function of the incoming Origin.
+ *
+ * Split out from corsHeaders() so the enforce-mode branches are testable. They
+ * are not reachable through corsHeaders() in a unit test: next/headers throws
+ * with no request context, so that path can only ever see a null Origin, and
+ * the refusal case below would go unasserted.
+ *
+ * Sends `Vary: Origin` on EVERY enforce-mode answer, a refusal included. The
+ * refusal is the case that matters and the easy one to miss: sending no
+ * Access-Control-Allow-Origin without `Vary` lets a shared cache store that
+ * header-less response and replay it to an allowed origin, which denies a site
+ * that should work — and the reverse, replaying an echoed origin to a stranger,
+ * leaks the permission. Four of these routes send `s-maxage`, so they are asking
+ * to be cached that way. Railway has no CDN in front today, so this is latent
+ * rather than live; it is also two lines.
+ *
+ * Log mode answers `*` for everyone exactly as before, which does not vary by
+ * origin, so it needs no `Vary`.
+ */
+export function buildCorsHeaders(
+  origin: string | null,
+  allowedOrigins: readonly string[],
+  mode: CorsMode
+): Record<string, string> {
+  const allowed = resolveAllowedOrigin(origin, allowedOrigins, mode);
+
+  if (mode === 'log' && origin && !resolveAllowedOrigin(origin, allowedOrigins, 'enforce')) {
+    // console.warn, never console.log — next.config.js strips console.log from
+    // production builds. This is the line that tells you who would break.
+    console.warn(`[cors] cross-origin caller (log mode, still allowed): ${origin}`);
+  }
+
+  if (allowed === '*') return { 'Access-Control-Allow-Origin': '*' };
+  // Refusal and echo alike: the response depends on the Origin either way.
+  if (!allowed) return { Vary: 'Origin' };
+  return { 'Access-Control-Allow-Origin': allowed, Vary: 'Origin' };
+}
+
+/**
  * CORS headers for the current request, for spreading into a headers object.
  *
  * Reads the incoming Origin through next/headers rather than a `request`
  * parameter, because several of these handlers are declared `GET()` and
  * `OPTIONS()` with no request at all.
- *
- * Sends `Vary: Origin` whenever it echoes a specific origin. Without it a shared
- * cache can hand one site's Access-Control-Allow-Origin to another and either
- * leak the permission or wrongly deny it.
  */
 export async function corsHeaders(): Promise<Record<string, string>> {
   let origin: string | null = null;
@@ -108,17 +143,9 @@ export async function corsHeaders(): Promise<Record<string, string>> {
     // same answer as a request with no Origin.
   }
 
-  const mode = parseCorsMode(process.env.CORS_MODE);
-  const allowed = resolveAllowedOrigin(origin, parseAllowedOrigins(process.env.CORS_ALLOWED_ORIGINS), mode);
-
-  if (mode === 'log' && origin && !resolveAllowedOrigin(origin, parseAllowedOrigins(process.env.CORS_ALLOWED_ORIGINS), 'enforce')) {
-    // console.warn, never console.log — next.config.js strips console.log from
-    // production builds. This is the line that tells you who would break.
-    console.warn(`[cors] cross-origin caller (log mode, still allowed): ${origin}`);
-  }
-
-  if (!allowed) return {};
-  return allowed === '*'
-    ? { 'Access-Control-Allow-Origin': '*' }
-    : { 'Access-Control-Allow-Origin': allowed, Vary: 'Origin' };
+  return buildCorsHeaders(
+    origin,
+    parseAllowedOrigins(process.env.CORS_ALLOWED_ORIGINS),
+    parseCorsMode(process.env.CORS_MODE)
+  );
 }
