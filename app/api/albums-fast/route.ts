@@ -16,6 +16,9 @@ import {
 /** Most albums have fewer than this; the full list comes from /api/albums/[slug]. */
 const ALBUM_TRACK_LIMIT = 20;
 
+/** Enough newest episodes to render a podcast card. The detail page fetches the rest. */
+const PODCAST_EPISODE_LIMIT = 20;
+
 const cache = getAlbumsFastCache();
 
 // publisher-stats.json is baked into the build (public/), so parse it once per
@@ -157,6 +160,22 @@ export async function GET(request: Request) {
     const now = Date.now();
     const shouldRefreshCache = !cache.data || (now - cache.timestamp) > CACHE_DURATION;
 
+    // Started HERE, awaited far below. It is independent of the feed load, but
+    // it used to be awaited after it — so on a cache miss the two round-trips
+    // were strictly serial, and on a cache HIT this one was still the only
+    // thing the request waited on. Deliberately not cached (see its note at the
+    // await): it has to react to a PATCH flag flip without waiting out the
+    // 15-minute feeds cache.
+    const msoPublishersPromise = prisma.feed.findMany({
+      where: { type: 'publisher', musicShowOnly: true },
+      select: { artist: true, title: true },
+    });
+    // If the feed load below throws before we reach the await, this promise
+    // would reject with nobody listening. The no-op handler marks it handled;
+    // the error still surfaces at the await site, where the outer try/catch
+    // takes it. Standard idiom for a deliberately-early-started promise.
+    msoPublishersPromise.catch(() => {});
+
     let feeds: FeedWithTracks[];
     let publisherStats: Array<{ name: string; albumCount: number }>;
     
@@ -196,20 +215,23 @@ export async function GET(request: Request) {
       // This contains actual publisher feeds (podcast:publisher references) not individual albums
       publisherStats = loadPublisherStats();
       
-      // Cache the results only for 'all' filter with no pagination (first page)
-      // This provides fast cache hits for common initial load
-      const shouldCache = filter === 'all' && offset === 0 && limit >= 50;
-      if (shouldCache) {
-        cache.data = { feeds, publisherStats };
-        cache.timestamp = now;
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`✅ Loaded and cached ${feeds.length} albums from database`);
-        }
-      } else {
-        // Don't cache filtered or paginated results
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`✅ Loaded ${feeds.length} albums from database (${filter !== 'all' ? 'filtered' : 'paginated'}, not cached)`);
-        }
+      // Cache unconditionally.
+      //
+      // This used to be gated on `filter === 'all' && offset === 0 && limit >= 50`,
+      // with a comment about not caching "filtered or paginated results". But
+      // the query above does not vary: it is the same
+      // `where: { status: 'active', markedDead: false }` with no skip and no
+      // take for every request — filtering, sorting and pagination all happen
+      // in JavaScript further down. So the rows being cached are identical
+      // whatever the query string said.
+      //
+      // The gate's real effect was that a cold process whose first request was
+      // `?filter=podcasts` or `?offset=50` ran the full scan and cached
+      // nothing, so the next request ran it again.
+      cache.data = { feeds, publisherStats };
+      cache.timestamp = now;
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`✅ Loaded and cached ${feeds.length} albums from database`);
       }
     } else {
       // Use cached data - no need for count query since cache has all feeds
@@ -271,10 +293,9 @@ export async function GET(request: Request) {
     // caught alongside linked ones. Query runs every request — small
     // enough (<100 publishers typically), and we need it to react to
     // PATCH flag flips without waiting on the 15-min feeds cache.
-    const msoPublishers = await prisma.feed.findMany({
-      where: { type: 'publisher', musicShowOnly: true },
-      select: { artist: true, title: true },
-    });
+    // It is STARTED near the top of the handler so it overlaps the feed load
+    // instead of following it.
+    const msoPublishers = await msoPublishersPromise;
     const msoArtistKeys = new Set<string>();
     for (const p of msoPublishers) {
       const key = (p.artist || p.title || '').trim().toLowerCase();
@@ -370,21 +391,26 @@ export async function GET(request: Request) {
               type: 'podcast',
               markedDead: false,
             },
-            // 'unbounded' preserves today's behaviour and SAYS SO. This select
-            // simply omitted `take`, so it loaded every episode of every
-            // podcast with `chapters` and `valueTimeSplits` attached. Spelling
-            // it out makes the cost greppable instead of looking like an
-            // oversight; bounding it changes the response shape and belongs
-            // with the API_VERSION bump.
-            select: albumFeedSelect('unbounded'),
+            // Bounded, and ordered in the DATABASE. This select used to omit
+            // `take` entirely, so it loaded every episode of every podcast —
+            // with `chapters` and `valueTimeSplits` attached — and then sorted
+            // them newest-first in JavaScript. An 800-episode show returned 800
+            // heavy rows to render one card.
+            //
+            // `order: 'newest'` is required, not cosmetic: taking N rows in the
+            // default order would give the N OLDEST episodes, and the JS sort
+            // would then present the wrong episodes in the right order.
+            //
+            // The card only needs enough episodes to render; the full list
+            // comes from /api/albums/[id], which the podcast detail page uses.
+            select: albumFeedSelect(PODCAST_EPISODE_LIMIT, { order: 'newest' }),
           });
           filteredAlbums = podcastFeeds.map((feed) => ({
-            // Same shared mapper, with the three things this branch does
-            // differently stated as options rather than as a fourth copy:
-            // podcasts default to type 'podcast', episodes render newest-first,
-            // and V4V reports only the feed's own value with no track fallback.
+            // Same shared mapper. The sort is done by the database now, so
+            // `newestFirst` is no longer needed here. Podcasts default to type
+            // 'podcast' and report only the feed's own V4V, with no track
+            // fallback.
             ...feedToAlbum(feed as never, {
-              newestFirst: true,
               defaultType: 'podcast',
               v4vTrackFallback: false,
             }),

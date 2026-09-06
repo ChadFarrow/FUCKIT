@@ -162,7 +162,21 @@ function HomePageContent() {
   // Format-aware loading state (for "all" filter - load all albums before EPs)
   const [formatCounts, setFormatCounts] = useState<{ albums: number; eps: number; singles: number } | null>(null);
   const [currentFormatPhase, setCurrentFormatPhase] = useState<'albums' | 'eps' | 'singles'>('albums');
-  const API_VERSION = 'v17'; // v17: album.guid/episodeGuid no longer fall back to feed.id (issue #242) — shape unchanged, but a cached album still carries the old internal id and would publish it as podcast:item:guid
+  // v17: album.guid/episodeGuid no longer fall back to feed.id (issue #242) —
+  // shape unchanged, but a cached album still carries the old internal id and
+  // would publish it as podcast:item:guid.
+  //
+  // v18: /api/albums-fast track objects no longer carry a track-level
+  // podcastImages, and podcast episode lists are bounded to the 20 newest.
+  // Both change the cached SHAPE, so the version has to move or clients keep
+  // serving the old objects from localStorage indefinitely (CLAUDE.md).
+  //
+  // chapters, chaptersUrl, valueTimeSplits and persons were dropped here too
+  // and have been PUT BACK. This mapper does discard them, but it is not the
+  // only consumer: app/radio/RadioClient.tsx hands the raw response to
+  // setInitialAlbums and playback reads all four off those track objects. See
+  // lib/catalog/album-shape.ts.
+  const API_VERSION = 'v18';
   
   // HGH filter removed - no longer needed
   

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { useAudio } from '@/contexts/AudioContext';
+import { useAudio, useAudioTime } from '@/contexts/AudioContext';
 import { SkipBack, SkipForward, Play, Pause } from 'lucide-react';
 import { adjustColorBrightness, ensureGoodContrast } from '@/lib/color-utils';
 import { generateAlbumHref } from '@/lib/url-utils';
@@ -12,14 +12,16 @@ export default function RadioPlayer() {
     currentPlayingAlbum,
     isPlaying,
     currentTrackIndex,
-    currentTime,
-    duration,
     playNextTrack,
     playPreviousTrack,
     pause,
     resume,
     seek,
   } = useAudio();
+  // The clock lives in its own context so a 4Hz tick does not re-render
+  // every useAudio() consumer. Only components that DISPLAY a position
+  // subscribe here. See contexts/AudioContext.tsx.
+  const { currentTime, duration } = useAudioTime();
 
   const [dominantColor, setDominantColor] = useState('#1A252F');
   const [contrastColors, setContrastColors] = useState({

@@ -359,3 +359,29 @@
 .animate-shimmer {
   animation: shimmer 2s infinite;
 }
+/*
+ * Animated ellipsis for LoadingSpinner.
+ *
+ * This used to be a setInterval in the component calling setState twice a
+ * second, per spinner — and the home page renders twelve of them at once
+ * during load. CSS runs it on the compositor and costs no renders.
+ */
+.sk-loading-dots::after {
+  content: '';
+  animation: sk-loading-dots-steps 1.5s steps(4, jump-none) infinite;
+}
+
+@keyframes sk-loading-dots-steps {
+  0% { content: ''; }
+  25% { content: '.'; }
+  50% { content: '..'; }
+  75% { content: '...'; }
+  100% { content: '...'; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sk-loading-dots::after {
+    animation: none;
+    content: '...';
+  }
+}

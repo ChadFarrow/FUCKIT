@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, ReactNode, useMemo, useCallback } from 'react';
 import { useNostr } from '@/contexts/NostrContext';
 
 export interface UserSettings {
@@ -94,20 +94,20 @@ export function UserSettingsProvider({ children }: { children: ReactNode }) {
     }
   }, [settings, isLoaded]);
 
-  const updateSettings = (updates: Partial<UserSettings>) => {
+  // useCallback: both close over nothing but the setter, so they are stable
+  // and the memo below can hold across setting changes it does not care about.
+  const updateSettings = useCallback((updates: Partial<UserSettings>) => {
     setSettings(prev => ({ ...prev, ...updates }));
-  };
+  }, []);
 
-  const resetSettings = () => {
+  const resetSettings = useCallback(() => {
     setSettings(defaultSettings);
-  };
+  }, []);
 
-  const value: UserSettingsContextType = {
-    settings,
-    isLoaded,
-    updateSettings,
-    resetSettings,
-  };
+  const value: UserSettingsContextType = useMemo(
+    () => ({ settings, isLoaded, updateSettings, resetSettings }),
+    [settings, isLoaded, updateSettings, resetSettings]
+  );
 
   return (
     <UserSettingsContext.Provider value={value}>

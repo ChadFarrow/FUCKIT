@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, useCallback, useSyncExternalStore } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback, useSyncExternalStore, useMemo } from 'react';
 import {
   downloadManager,
   type DownloadableTrack,
@@ -97,7 +97,12 @@ export function DownloadsProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  const value: DownloadsContextType = {
+  // Memoized. This provider re-renders on every downloadManager version bump
+  // (useSyncExternalStore), and the literal handed all thirteen methods to
+  // every DownloadButton as brand-new closures each time. `downloadManager` is
+  // a module singleton, so the methods only need the three state values in the
+  // dep list.
+  const value: DownloadsContextType = useMemo(() => ({
     ready,
     isOnline,
     offlineMode,
@@ -116,7 +121,7 @@ export function DownloadsProvider({ children }: { children: React.ReactNode }) {
     listDownloads: () => downloadManager.listDownloads(),
     getStorageEstimate: () => downloadManager.getStorageEstimate(),
     getCoverUrl: (url) => downloadManager.getCoverObjectUrl(url),
-  };
+  }), [ready, isOnline, offlineMode, setOfflineMode]);
 
   return <DownloadsContext.Provider value={value}>{children}</DownloadsContext.Provider>;
 }

@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react';
 import NowPlaying from './NowPlaying';
-import { useAudio } from '@/contexts/AudioContext';
+import { useAudio, useAudioTime } from '@/contexts/AudioContext';
 import { getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { Share2 } from 'lucide-react';
 import { toast } from './Toast';
@@ -13,8 +13,6 @@ const GlobalNowPlayingBar: React.FC = () => {
     isPlaying,
     isLoading,
     currentTrackIndex,
-    currentTime,
-    duration,
     isShuffleMode,
     repeatMode,
     setRepeatMode,
@@ -30,6 +28,10 @@ const GlobalNowPlayingBar: React.FC = () => {
     chapters,
     currentChapterIndex
   } = useAudio();
+  // The clock lives in its own context so a 4Hz tick does not re-render
+  // every useAudio() consumer. Only components that DISPLAY a position
+  // subscribe here. See contexts/AudioContext.tsx.
+  const { currentTime, duration } = useAudioTime();
 
   // Helper function to proxy external image URLs
   const getProxiedImageUrl = (imageUrl: string): string => {

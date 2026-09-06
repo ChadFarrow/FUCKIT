@@ -132,8 +132,6 @@ interface AudioContextType {
   isPlaying: boolean;
   isLoading: boolean; // True when playback is starting (between click and audio playing)
   currentTrackIndex: number;
-  currentTime: number;
-  duration: number;
 
   // Media type state
   isVideoMode: boolean;
@@ -177,10 +175,49 @@ interface AudioContextType {
 
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
 
+/**
+ * The playback clock, deliberately SEPARATE from AudioContext.
+ *
+ * WHY: `handleTimeUpdate` calls `setCurrentTime` on every `timeupdate` event —
+ * roughly 4Hz, and up to 60Hz on some engines. While `currentTime` sat in the
+ * main context value's dependency array, that invalidated the memo several
+ * times a second and re-rendered ALL of its consumers, including the 2,143-line
+ * `app/page.tsx`, which only ever wanted `playAlbum` and `shuffleAllTracks` and
+ * never read the clock at all. `AlbumCard`'s custom comparator stopped the
+ * cards themselves re-rendering, so the cost was a full JSX tree rebuild plus
+ * roughly 800 comparator calls per second on a 200-card grid — on a phone,
+ * while audio was decoding.
+ *
+ * Only the five components that actually display a position subscribe here.
+ * Anything needing the exact value outside a render can read `currentTimeRef`.
+ */
+interface AudioTimeContextType {
+  currentTime: number;
+  duration: number;
+}
+
+const AudioTimeContext = createContext<AudioTimeContextType | undefined>(undefined);
+
 export const useAudio = () => {
   const context = useContext(AudioContext);
   if (!context) {
     throw new Error('useAudio must be used within an AudioProvider');
+  }
+  return context;
+};
+
+/**
+ * The playback position and track length.
+ *
+ * Split out of `useAudio` because it changes several times a second. Call it
+ * ONLY from a component that renders the value — a progress bar, a time label,
+ * a scrubber. Anything else should use `useAudio`, or it will re-render at the
+ * clock's rate for nothing.
+ */
+export const useAudioTime = (): AudioTimeContextType => {
+  const context = useContext(AudioTimeContext);
+  if (!context) {
+    throw new Error('useAudioTime must be used within an AudioProvider');
   }
   return context;
 };
@@ -4718,15 +4755,20 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     }
   }, []);
 
-  // Memoize context value to prevent unnecessary re-renders of consumers
-  // Without this, every currentTime update (every second) would re-render all consumers
+  // Memoized so a state change that is not in the deps below does not re-render
+  // every consumer.
+  //
+  // The comment that used to sit here said this memo stopped `currentTime`
+  // updates from re-rendering all consumers. It did not, and could not:
+  // `currentTime` was IN the dependency array, so the memo was invalidated by
+  // every tick — several times a second — which is exactly what it claimed to
+  // prevent. The clock now lives in AudioTimeContext, and this array is what
+  // makes that true.
   const value: AudioContextType = useMemo(() => ({
     currentPlayingAlbum,
     isPlaying,
     isLoading,
     currentTrackIndex,
-    currentTime,
-    duration,
     isVideoMode,
     isShuffleMode,
     isFullscreenMode,
@@ -4755,8 +4797,6 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     isPlaying,
     isLoading,
     currentTrackIndex,
-    currentTime,
-    duration,
     isVideoMode,
     isShuffleMode,
     isFullscreenMode,
@@ -4778,8 +4818,15 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     setInitialAlbums,
   ]);
 
+  // Its own memo, so a clock tick invalidates only this one.
+  const timeValue = useMemo<AudioTimeContextType>(
+    () => ({ currentTime, duration }),
+    [currentTime, duration]
+  );
+
   return (
     <AudioContext.Provider value={value}>
+      <AudioTimeContext.Provider value={timeValue}>
       {children}
       {/* Hidden audio element - ID used for iOS background fallback
           Note: Using position absolute off-screen instead of opacity:0/1px
@@ -4846,6 +4893,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
           pointerEvents: 'none'
         }}
       />
+      </AudioTimeContext.Provider>
     </AudioContext.Provider>
   );
 }; 

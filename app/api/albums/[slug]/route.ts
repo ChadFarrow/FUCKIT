@@ -297,7 +297,11 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
         lastUpdated: new Date().toISOString()
       }, {
         headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          // Was 'no-cache, no-store, must-revalidate' on every return path. This is
+          // the album DETAIL endpoint — the second most visited route, fully
+          // deterministic per slug, and the heaviest per-request work in the repo.
+          // Nothing about it is per-user.
+          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
           'Pragma': 'no-cache',
           'Expires': '0',
           'ETag': `"${Date.now()}"`,
@@ -408,7 +412,11 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
         lastUpdated: new Date().toISOString()
       }, {
         headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          // Was 'no-cache, no-store, must-revalidate' on every return path. This is
+          // the album DETAIL endpoint — the second most visited route, fully
+          // deterministic per slug, and the heaviest per-request work in the repo.
+          // Nothing about it is per-user.
+          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
           'Pragma': 'no-cache',
           'Expires': '0',
           'ETag': `"${Date.now()}"`,
@@ -519,7 +527,11 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
         lastUpdated: new Date().toISOString()
       }, {
         headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          // Was 'no-cache, no-store, must-revalidate' on every return path. This is
+          // the album DETAIL endpoint — the second most visited route, fully
+          // deterministic per slug, and the heaviest per-request work in the repo.
+          // Nothing about it is per-user.
+          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
           'Pragma': 'no-cache',
           'Expires': '0',
           'ETag': `"${Date.now()}"`,
@@ -630,7 +642,11 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
         lastUpdated: new Date().toISOString()
       }, {
         headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          // Was 'no-cache, no-store, must-revalidate' on every return path. This is
+          // the album DETAIL endpoint — the second most visited route, fully
+          // deterministic per slug, and the heaviest per-request work in the repo.
+          // Nothing about it is per-user.
+          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
           'Pragma': 'no-cache',
           'Expires': '0',
           'ETag': `"${Date.now()}"`,
@@ -705,7 +721,11 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
         lastUpdated: new Date().toISOString()
       }, {
         headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          // Was 'no-cache, no-store, must-revalidate' on every return path. This is
+          // the album DETAIL endpoint — the second most visited route, fully
+          // deterministic per slug, and the heaviest per-request work in the repo.
+          // Nothing about it is per-user.
+          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
           'Pragma': 'no-cache',
           'Expires': '0',
           'ETag': `"${Date.now()}"`,
@@ -1479,7 +1499,11 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
       lastUpdated: new Date().toISOString()
     }, {
       headers: {
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        // Was 'no-cache, no-store, must-revalidate' on every return path. This is
+          // the album DETAIL endpoint — the second most visited route, fully
+          // deterministic per slug, and the heaviest per-request work in the repo.
+          // Nothing about it is per-user.
+          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
         'Pragma': 'no-cache',
         'Expires': '0',
         'ETag': `"${Date.now()}"`,
