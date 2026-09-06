@@ -205,8 +205,10 @@ export async function GET(request: Request) {
         feedGuid: feed.guid || null,
         feedId: feed.id,
         remoteFeedGuid: feed.guid || null,
-        guid: feed.Track?.[0]?.guid || feed.id,
-        episodeGuid: feed.Track?.[0]?.guid || feed.id,
+        // Real <item> guid or null. `feed.id` here would be published as
+        // `podcast:item:guid:<stablekraft-slug>` (#242).
+        guid: feed.Track?.[0]?.guid || null,
+        episodeGuid: feed.Track?.[0]?.guid || null,
         link: feed.originalUrl,
         priority: feed.priority,
         tracks: feed.Track.map((track) => ({

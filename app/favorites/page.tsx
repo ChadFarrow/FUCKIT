@@ -1412,7 +1412,9 @@ function FavoritesPageContent() {
                             type: r.type || (r.address?.includes('@') ? 'lnaddress' : 'node')
                           }))}
                           feedUrl={track.Feed?.originalUrl || undefined}
-                          episodeGuid={track.guid || track.id}
+                          // Never `|| track.id` — an internal id published as
+                          // `podcast:item:guid` resolves nowhere (#242).
+                          episodeGuid={track.guid || undefined}
                           remoteFeedGuid={(track.Feed as any)?.guid}
                           albumName={track.album || track.Feed?.title}
                           iconOnly={true}

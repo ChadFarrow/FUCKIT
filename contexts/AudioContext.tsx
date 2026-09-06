@@ -477,9 +477,13 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
       if (album.feedGuid) {
         helipadMetadata.remote_feed_guid = album.feedGuid;
       }
-      if (track.guid || track.id) {
-        helipadMetadata.remote_item_guid = track.guid || track.id;
-        helipadMetadata.episode_guid = track.guid || track.id;
+      // `track.id` is a StableKraft row id (`<feedId>-<guid>`), not an RSS
+      // `<item>` guid. Same defect as the manual boost path in #242, in the
+      // same two TLV fields — omit them rather than name the track with an
+      // id only this app can resolve.
+      if (track.guid) {
+        helipadMetadata.remote_item_guid = track.guid;
+        helipadMetadata.episode_guid = track.guid;
       }
       if (album.title) {
         helipadMetadata.album = album.title;
