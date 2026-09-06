@@ -155,6 +155,15 @@ const nextConfig = {
   reactStrictMode: true,
   
   // Dynamic route configuration to prevent build issues
+  // `ws` must be require()d from node_modules at runtime, never bundled. Webpack
+  // inlines it and its optional native helpers (bufferutil / utf-8-validate) do
+  // not survive, so every frame it sends throws `TypeError: b.mask is not a
+  // function` as an uncaughtException in the server process -- measured against
+  // the standalone build. Marking it external also makes Next trace it into
+  // `.next/standalone/node_modules`, which is why `ws` is a production dep.
+  // It is the server's only WebSocket: see lib/nostr/node-websocket.ts.
+  serverExternalPackages: ['ws'],
+
   experimental: {
     // Disable worker threads - causes DataCloneError with webpack config
     workerThreads: false,

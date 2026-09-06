@@ -1,4 +1,6 @@
 import type { Event, Filter } from 'nostr-tools';
+
+import { installNodeWebSocket } from './node-websocket';
 import { getDefaultRelays, filterReachableRelays } from './relay';
 import { publicKeyToNpub } from './keys';
 
@@ -372,6 +374,15 @@ export async function fetchCommunityFavorites(options: {
     return { status: 'empty', favorites: [], rawEventCount: 0 };
   }
 
+  // Must precede the pool: `SimplePool` reads the module-level WebSocket in its
+  // constructor. These are the only relay reads that run on the SERVER -- the
+  // shared kind:10333 list is read in the browser -- and the server had no
+  // WebSocket of its own. `node:20-alpine` runs `node server.js` with no
+  // `--experimental-websocket`, and Node 20 exposes the global ONLY behind that
+  // flag, so this sweep was one environment change away from reaching nothing.
+  // See the connectivity check below for why that would have been invisible.
+  await installNodeWebSocket();
+
   const { SimplePool } = await import('nostr-tools/pool');
   const relays = buildCommunityRelays(getDefaultRelays(), relayOverride || []);
   const pool = new SimplePool();
@@ -388,6 +399,29 @@ export async function fetchCommunityFavorites(options: {
       )
     );
     const events = batches.flat();
+
+    // A sweep that reached NO relay is a failure, not an empty result, and nothing
+    // else here can tell the two apart: `querySync` swallows a connect failure
+    // inside nostr-tools and resolves to [], so the per-filter `catch` above never
+    // fires and no warning is logged either. Measured against the local relay with
+    // the WebSocket global removed -- `ensureRelay` reports "WebSocket is not
+    // defined" while `querySync` returns 0 events and throws nothing. Without this
+    // the route answered `success: true`, `status: 'empty'`, zero people: an empty
+    // Community tab, and silence in the logs.
+    //
+    // Reporting 'error' is safe for the cache. The route's `storeIfUsable` refuses
+    // to store an error, so a failed sweep cannot evict a good answer.
+    const reached = [...pool.listConnectionStatus().values()].filter(Boolean).length;
+    if (reached === 0) {
+      const detail = `0 of ${relays.length} relays (WebSocket global: ${typeof WebSocket !== 'undefined'})`;
+      console.error(`community-favorites: reached ${detail}. Reporting error, NOT empty.`);
+      return {
+        status: 'error',
+        favorites: [],
+        rawEventCount: 0,
+        error: `Reached none of the ${relays.length} community relays`,
+      };
+    }
 
     // Dedupe to the current version of each coordinate FIRST, then apply deletions —
     // so a kind-5 aimed at a superseded version can't take out the live favorite.
@@ -430,6 +464,9 @@ export async function fetchCommunityProfiles(
   relayOverride?: string[]
 ): Promise<Map<string, CommunityProfile>> {
   if (pubkeys.length === 0) return new Map();
+
+  // Its own pool, so its own guard. Idempotent -- see the sweep above.
+  await installNodeWebSocket();
 
   const { SimplePool } = await import('nostr-tools/pool');
   const relays = buildCommunityRelays(getDefaultRelays(), relayOverride || []);

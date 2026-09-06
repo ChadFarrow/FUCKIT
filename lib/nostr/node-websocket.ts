@@ -3,8 +3,11 @@
  *
  * NODE-ONLY. Nothing in `app/`, `components/` or `contexts/` may import this —
  * browsers have always had `WebSocket`, and pulling `ws` into the client bundle
- * would be pure dead weight. Its only callers are the two relay harnesses:
- * `relay-read.test.ts` and `favorites.relay-probe.ts`.
+ * would be pure dead weight. Its callers are the relay harnesses
+ * (`relay-read.test.ts`, `relay-isolation.test.ts`, `favorites.relay-probe.ts`,
+ * `scripts/e2e-favorites.ts`) and `community-favorites.ts`, which holds the only
+ * relay read that runs on the SERVER. That last one is why `ws` is a production
+ * dependency and not a devDependency.
  *
  * WHY IT EXISTS
  * `globalThis.WebSocket` only landed as a default in **Node 21**. This repo
@@ -77,13 +80,31 @@ export async function installNodeWebSocket(): Promise<void> {
 
   const { default: WS } = await import('ws');
 
-  (globalThis as any).WebSocket = WS; // for any copy loaded from here on
-  setCjsPoolWebSocket(WS); // the CJS pool (the probe's own SimplePool)
-  setCjsRelayWebSocket(WS); // the CJS relay (RelayManager's `Relay.connect`)
+  // `ws` reports a close() that lands on a socket still in CONNECTING by
+  // EMITTING an error, and an 'error' with no listener is rethrown -- so it
+  // surfaces as `uncaughtException: WebSocket was closed before the connection
+  // was established`. nostr-tools does exactly that from its connect timeout
+  // (`this.ws?.close?.()`, added in 2.25.2) after clearing its own handler, so
+  // every relay that timed out crashed out of the request. Measured against the
+  // standalone build: two uncaught exceptions per sweep before this listener.
+  //
+  // A permanent no-op listener only stops the rethrow. nostr-tools still gets
+  // its own `onerror`, and a relay that failed still reports `connected: false`,
+  // so the connectivity check in community-favorites.ts is unaffected.
+  class SafeWebSocket extends WS {
+    constructor(...args: ConstructorParameters<typeof WS>) {
+      super(...args);
+      this.on('error', () => {});
+    }
+  }
+
+  (globalThis as any).WebSocket = SafeWebSocket; // for any copy loaded from here on
+  setCjsPoolWebSocket(SafeWebSocket); // the CJS pool (the probe's own SimplePool)
+  setCjsRelayWebSocket(SafeWebSocket); // the CJS relay (RelayManager's `Relay.connect`)
   const esmPool = await import('nostr-tools/pool');
-  esmPool.useWebSocketImplementation(WS); // the ESM pool (fetchSharedFavorites')
+  esmPool.useWebSocketImplementation(SafeWebSocket); // the ESM pool (fetchSharedFavorites')
   const esmRelay = await import('nostr-tools/relay');
-  esmRelay.useWebSocketImplementation(WS); // the ESM relay
+  esmRelay.useWebSocketImplementation(SafeWebSocket); // the ESM relay
 
   installed = true;
 }
