@@ -8,6 +8,7 @@ import { ToastContainer } from '@/components/Toast'
 import AndroidBatteryHintModal from '@/components/AndroidBatteryHintModal'
 import FavoritesPrivacyPrompt from '@/components/favorites/FavoritesPrivacyPrompt'
 import AndroidBackButton from '@/components/AndroidBackButton'
+import ForeignShellGate from '@/components/ForeignShellGate'
 import { AudioProvider } from '@/contexts/AudioContext'
 import { SessionProvider } from '@/contexts/SessionContext'
 import { NostrProvider } from '@/contexts/NostrContext'
@@ -245,6 +246,10 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <GlobalErrorHandler />
+        {/* Blocks a forked Android shell from running on our backend.
+            Renders children untouched for every browser and for our own
+            APK of any vintage. See lib/native-app-identity.ts. */}
+        <ForeignShellGate>
         <ClientErrorBoundary>
           <ErrorBoundary>
             <NostrProvider>
@@ -332,6 +337,7 @@ export default function RootLayout({
           </ErrorBoundary>
           {/* <PerformanceMonitor /> */}
         </ClientErrorBoundary>
+        </ForeignShellGate>
       </body>
     </html>
   )

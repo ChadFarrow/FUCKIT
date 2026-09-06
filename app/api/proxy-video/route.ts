@@ -1,6 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createRouteLimiter, enforceRateLimit } from '@/lib/rate-limit-guard';
+
+/**
+ * Per-IP ceiling on this route. Module scope so the buckets survive between
+ * requests. Log-only until RATE_LIMIT_MODE=enforce — see lib/rate-limit-guard.ts.
+ */
+const limiter = createRouteLimiter(60);
 
 export async function GET(request: NextRequest) {
+  const limited = enforceRateLimit(limiter, request.headers, 'proxy-video');
+  if (limited) return limited;
+
   const { searchParams } = new URL(request.url);
   const videoUrl = searchParams.get('url');
 

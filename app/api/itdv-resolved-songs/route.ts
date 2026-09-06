@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
+import { corsHeaders } from '@/lib/cors';
 import resolvedSongsData from '@/data/itdv-resolved-songs.json';
 
 export async function GET() {
+  const cors = await corsHeaders();
   try {
     console.log('📊 Serving resolved songs data:', resolvedSongsData.length, 'songs');
 
@@ -46,7 +48,7 @@ export async function GET() {
       headers: {
         'Content-Type': 'application/json',
         'Cache-Control': 'public, max-age=3600', // Cache for 1 hour
-        'Access-Control-Allow-Origin': '*',
+        ...cors,
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
       },
@@ -58,7 +60,7 @@ export async function GET() {
       {
         status: 500,
         headers: {
-          'Access-Control-Allow-Origin': '*',
+          ...cors,
           'Access-Control-Allow-Methods': 'GET, OPTIONS',
           'Access-Control-Allow-Headers': 'Content-Type',
         }
@@ -68,10 +70,11 @@ export async function GET() {
 }
 
 export async function OPTIONS() {
+  const cors = await corsHeaders();
   return new NextResponse(null, {
     status: 200,
     headers: {
-      'Access-Control-Allow-Origin': '*',
+      ...cors,
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
     },

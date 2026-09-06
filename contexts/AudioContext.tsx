@@ -7,6 +7,7 @@ import { toast } from '@/components/Toast';
 // Type-only import for TypeScript (hls.js is ~150KB, loaded dynamically when needed)
 import type HlsType from 'hls.js';
 import { monitoring } from '@/lib/monitoring';
+import { isNativeAndroid } from '@/lib/native-app-identity';
 import { storage } from '@/lib/indexed-db-storage';
 import { useNostr } from './NostrContext';
 import { useUserSettings } from '@/hooks/useUserSettings';
@@ -81,16 +82,6 @@ function playbackKeepAlive(action: 'start' | 'stop'): void {
     cap.Plugins?.PlaybackKeepAlive?.[action]?.();
   } catch {
     // swallow — must never break the audio pipeline
-  }
-}
-
-/** True only inside the native Capacitor Android app (not iOS/PWA/SSR). */
-function isNativeAndroid(): boolean {
-  try {
-    const cap = (window as any).Capacitor;
-    return !!cap?.isNativePlatform?.() && cap.getPlatform?.() === 'android';
-  } catch {
-    return false;
   }
 }
 

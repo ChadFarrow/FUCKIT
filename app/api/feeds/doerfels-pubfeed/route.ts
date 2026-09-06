@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { corsHeaders } from '@/lib/cors';
 
 // Define the Doerfels album feeds with their metadata
 const doerfelsAlbums = [
@@ -42,6 +43,7 @@ const doerfelsAlbums = [
 ];
 
 export async function GET() {
+  const cors = await corsHeaders();
   try {
     // Generate the publisher feed XML
     const publisherFeedGuid = '5526a0ee-069d-4c76-8bd4-7fd2022034bc'; // Unique GUID for The Doerfels publisher feed
@@ -85,7 +87,7 @@ ${remoteItems}
       headers: {
         'Content-Type': 'application/xml; charset=utf-8',
         'Cache-Control': 'public, max-age=3600',
-        'Access-Control-Allow-Origin': '*',
+        ...cors,
       },
     });
   } catch (error) {

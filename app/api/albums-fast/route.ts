@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { createRouteLimiter, enforceRateLimit } from '@/lib/rate-limit-guard';
 import { prisma } from '@/lib/prisma';
 import { Track } from '@prisma/client';
 import { getPlaylistUrls, getAllPlaylistIds } from '@/lib/playlist/configs';
@@ -108,7 +109,16 @@ async function getPlaylistAlbums() {
   }
 }
 
+/**
+ * Per-IP ceiling on this route. Module scope so the buckets survive between
+ * requests. Log-only until RATE_LIMIT_MODE=enforce — see lib/rate-limit-guard.ts.
+ */
+const limiter = createRouteLimiter(120);
+
 export async function GET(request: Request) {
+  const limited = enforceRateLimit(limiter, request.headers, 'albums-fast');
+  if (limited) return limited;
+
   try {
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '50');

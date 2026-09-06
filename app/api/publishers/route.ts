@@ -1,8 +1,10 @@
 import { NextResponse, NextRequest } from 'next/server';
+import { corsHeaders } from '@/lib/cors';
 import { prisma } from '@/lib/prisma';
 import { generateAlbumSlug } from '@/lib/url-utils';
 
 export async function GET(request: NextRequest) {
+  const cors = await corsHeaders();
   try {
     const { searchParams } = new URL(request.url);
     const sort = searchParams.get('sort') || 'name-asc';
@@ -223,7 +225,7 @@ export async function GET(request: NextRequest) {
         'Cache-Control': 'public, max-age=300, s-maxage=600',
         'ETag': `"${Date.now()}"`,
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
+        ...cors,
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
         'X-Content-Type-Options': 'nosniff',
@@ -251,10 +253,11 @@ export async function GET(request: NextRequest) {
 }
 
 export async function OPTIONS() {
+  const cors = await corsHeaders();
   return new NextResponse(null, {
     status: 200,
     headers: {
-      'Access-Control-Allow-Origin': '*',
+      ...cors,
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
     },

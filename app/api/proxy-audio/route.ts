@@ -1,8 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { guardProxyTarget } from '@/lib/proxy-host-allowlist';
+import { createRouteLimiter, enforceRateLimit } from '@/lib/rate-limit-guard';
 import { isSafePublicUrl } from '@/lib/url-security';
 import { safeFetch, declaredLengthExceeds, MAX_AUDIO_BYTES } from '@/lib/safe-fetch';
 
+/**
+ * Per-IP ceiling on this route. Module scope so the buckets survive between
+ * requests. Log-only until RATE_LIMIT_MODE=enforce — see lib/rate-limit-guard.ts.
+ */
+const limiter = createRouteLimiter(240);
+
 export async function GET(request: NextRequest) {
+  const limited = enforceRateLimit(limiter, request.headers, 'proxy-audio');
+  if (limited) return limited;
+
   const { searchParams } = new URL(request.url);
   const url = searchParams.get('url');
 
@@ -18,6 +29,12 @@ export async function GET(request: NextRequest) {
     console.error(`❌ [Audio Proxy] Rejected URL (${urlCheck.error}):`, url.substring(0, 150));
     return NextResponse.json({ error: urlCheck.error }, { status: 400 });
   }
+
+  // isSafePublicUrl answers the SSRF question only — it permits every PUBLIC
+  // host, which made this an open proxy for the whole internet. Bind it to the
+  // catalog. Log-only until PROXY_HOST_MODE=enforce.
+  const { refusal } = await guardProxyTarget(url, 'proxy-audio');
+  if (refusal) return NextResponse.json({ error: refusal.error }, { status: refusal.status });
 
   try {
     // Fetch the audio file with browser-like headers to bypass bot detection

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { corsHeaders } from '@/lib/cors';
 import fs from 'fs';
 import path from 'path';
 
@@ -9,6 +10,8 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ filename: string }> }
 ) {
+  // This serves real files off disk, so `*` let any site hotlink them.
+  const cors = await corsHeaders();
   try {
     const { filename } = await params;
     const videoDir = path.join(process.cwd(), 'data', 'cache', 'video');
@@ -53,7 +56,7 @@ export async function GET(
     headers.set('Content-Length', fileBuffer.length.toString());
     headers.set('Cache-Control', 'public, max-age=31536000, immutable'); // 1 year
     headers.set('ETag', `"${stats.mtime.getTime()}"`);
-    headers.set('Access-Control-Allow-Origin', '*');
+    for (const [key, value] of Object.entries(cors)) headers.set(key, value);
     headers.set('Access-Control-Allow-Methods', 'GET, HEAD');
     headers.set('Accept-Ranges', 'bytes');
 

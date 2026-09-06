@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { corsHeaders } from '@/lib/cors';
 import { prisma } from '@/lib/prisma';
 import { generateAlbumSlug, getPublisherInfo } from '@/lib/url-utils';
 import { getAllPlaylistIds, getPlaylistUrls, getPlaylistConfig, PLAYLIST_CONFIGS } from '@/lib/playlist/configs';
@@ -194,6 +195,7 @@ function mapTrackToResponse(track: any, fallbackImage: string | null, index: num
 }
 
 export async function GET(request: Request, { params }: { params: Promise<{ slug: string }> }) {
+  const cors = await corsHeaders();
   try {
     const { slug } = await params;
     console.log(`🔍 Database Album API: Looking for slug "${slug}"`);
@@ -300,7 +302,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
           'Expires': '0',
           'ETag': `"${Date.now()}"`,
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
+          ...cors,
           'Access-Control-Allow-Methods': 'GET, OPTIONS',
           'Access-Control-Allow-Headers': 'Content-Type',
           'X-Content-Type-Options': 'nosniff',
@@ -411,7 +413,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
           'Expires': '0',
           'ETag': `"${Date.now()}"`,
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
+          ...cors,
           'Access-Control-Allow-Methods': 'GET, OPTIONS',
           'Access-Control-Allow-Headers': 'Content-Type',
           'X-Content-Type-Options': 'nosniff',
@@ -522,7 +524,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
           'Expires': '0',
           'ETag': `"${Date.now()}"`,
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
+          ...cors,
           'Access-Control-Allow-Methods': 'GET, OPTIONS',
           'Access-Control-Allow-Headers': 'Content-Type',
           'X-Content-Type-Options': 'nosniff',
@@ -633,7 +635,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
           'Expires': '0',
           'ETag': `"${Date.now()}"`,
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
+          ...cors,
           'Access-Control-Allow-Methods': 'GET, OPTIONS',
           'Access-Control-Allow-Headers': 'Content-Type',
           'X-Content-Type-Options': 'nosniff',
@@ -708,7 +710,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
           'Expires': '0',
           'ETag': `"${Date.now()}"`,
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
+          ...cors,
           'Access-Control-Allow-Methods': 'GET, OPTIONS',
           'Access-Control-Allow-Headers': 'Content-Type',
           'X-Content-Type-Options': 'nosniff',
@@ -1482,7 +1484,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
         'Expires': '0',
         'ETag': `"${Date.now()}"`,
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
+        ...cors,
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
         'X-Content-Type-Options': 'nosniff',

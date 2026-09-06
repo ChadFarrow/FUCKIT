@@ -124,6 +124,18 @@ line holds the full story.
   a socket that already failed, and `nostr-tools` >= 2.25.2 calls `this.ws?.close?.()` from its own `onerror`, so
   the two recurse until `RangeError: Maximum call stack size exceeded`. Browsers make that `close()` a no-op, so
   only Node is affected. `ws` avoids it entirely — which is the other reason the server is on `ws` → `nostr-signer`.
+- **`isSafePublicUrl` answers SSRF, not abuse — and there are THREE external-host lists, not one.**
+  It blocks *private* addresses and permits *every public host*, so it never made the media proxies
+  anything but an open proxy for the internet; `lib/proxy-host-allowlist.ts` is the separate control that
+  binds them to the catalog, and it runs **after**. The lists it must stay in step with are
+  `CORS_PROBLEMATIC_DOMAINS` and `DIRECT_FIRST_DOMAINS` (`lib/audio-url-utils.ts`) and
+  `ALLOWED_IMAGE_DOMAINS` (`lib/cdn-utils.ts`) — seeding from only the first two left two hosts carrying
+  real playlist artwork matching nothing. `next.config.js` `images.remotePatterns` hand-mirrors the third
+  and cannot import it (CommonJS, loaded before the app). Matching is **dot-boundary, never `includes`** —
+  `includes` accepts `wavlake.com.attacker.net`. And the HGH/ITDV playlists hardcode ~1800 media URLs in
+  `data/`, whose source feeds are in `PLAYLIST_SOURCE_FEED_URLS` and therefore *deliberately absent from
+  the catalog*, so the catalog binding does not cover them — `PLAYLIST_MEDIA_HOSTS` and a test over those
+  data files does → `auth-and-security`.
 - **`isSafePublicUrl()` returns `{ ok, ... }`, not a boolean.** `if (!isSafePublicUrl(u))` negates an object, is
   always `false`, and silently turns the SSRF guard into dead code — and `tsc --noEmit` stays clean. Always
   `const c = isSafePublicUrl(u); if (!c.ok)`. Verify empirically, never by reading it → `auth-and-security`.

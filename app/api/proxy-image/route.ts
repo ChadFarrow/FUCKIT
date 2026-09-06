@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { guardProxyTarget } from '@/lib/proxy-host-allowlist';
+import { createRouteLimiter, enforceRateLimit } from '@/lib/rate-limit-guard';
 import { isSafePublicUrl } from '@/lib/url-security';
 import { safeFetch, readCappedArrayBuffer, MAX_IMAGE_BYTES } from '@/lib/safe-fetch';
 
@@ -140,7 +142,16 @@ async function returnPlaceholderImage(): Promise<NextResponse> {
   }
 }
 
+/**
+ * Per-IP ceiling on this route. Module scope so the buckets survive between
+ * requests. Log-only until RATE_LIMIT_MODE=enforce — see lib/rate-limit-guard.ts.
+ */
+const limiter = createRouteLimiter(300);
+
 export async function GET(request: NextRequest) {
+  const limited = enforceRateLimit(limiter, request.headers, 'proxy-image');
+  if (limited) return limited;
+
   try {
     const { searchParams } = new URL(request.url);
     let imageUrl = searchParams.get('url');
@@ -182,6 +193,14 @@ export async function GET(request: NextRequest) {
       console.warn(`⚠️ Rejected image URL (${urlCheck.error}): ${imageUrl}, returning placeholder`);
       return returnPlaceholderImage();
     }
+
+    // isSafePublicUrl answers the SSRF question only — it permits every PUBLIC
+    // host, which made this an open proxy for the whole internet. Bind it to the
+    // catalog. A refusal returns the placeholder rather than an error, matching
+    // how this route already handles a rejected URL. Log-only until
+    // PROXY_HOST_MODE=enforce.
+    const { refusal } = await guardProxyTarget(imageUrl, 'proxy-image');
+    if (refusal) return returnPlaceholderImage();
     const url = urlCheck.url;
 
     // Try to upgrade HTTP to HTTPS for security

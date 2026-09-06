@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { corsHeaders } from '@/lib/cors';
 import { prisma } from '@/lib/prisma';
 import { generateAlbumSlug, normalizeArtistName } from '@/lib/url-utils';
 import * as fs from 'fs';
@@ -69,6 +70,7 @@ async function getPublisherRemoteItemUrls(publisherId: string): Promise<Set<stri
 }
 
 export async function GET(request: Request) {
+  const cors = await corsHeaders();
   try {
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '50');
@@ -617,7 +619,7 @@ export async function GET(request: Request) {
       headers: {
         'Cache-Control': 'public, max-age=300, s-maxage=600, stale-while-revalidate=1800',
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
+        ...cors,
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
         'X-Content-Type-Options': 'nosniff',

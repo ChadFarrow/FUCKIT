@@ -4,16 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAudio } from '@/contexts/AudioContext';
 import { useSidebar } from '@/contexts/SidebarContext';
-
-/** True only inside the native Capacitor Android app (not iOS/PWA/SSR). */
-function isNativeAndroid(): boolean {
-  try {
-    const cap = (window as any).Capacitor;
-    return !!cap?.isNativePlatform?.() && cap.getPlatform?.() === 'android';
-  } catch {
-    return false;
-  }
-}
+import { isNativeAndroid } from '@/lib/native-app-identity';
 
 /**
  * Hardware / gesture back button for the native Android app (issue #167).

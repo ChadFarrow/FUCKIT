@@ -1,11 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createRouteLimiter, enforceRateLimit } from '@/lib/rate-limit-guard';
 import crypto from 'crypto';
 
 const PODCAST_INDEX_API_KEY = process.env.PODCAST_INDEX_API_KEY || '';
 const PODCAST_INDEX_API_SECRET = process.env.PODCAST_INDEX_API_SECRET || '';
 const PODCAST_INDEX_BASE_URL = 'https://api.podcastindex.org/api/1.0';
 
+/**
+ * Per-IP ceiling on this route. Module scope so the buckets survive between
+ * requests. Log-only until RATE_LIMIT_MODE=enforce — see lib/rate-limit-guard.ts.
+ */
+const limiter = createRouteLimiter(30);
+
 export async function GET(request: NextRequest) {
+  const limited = enforceRateLimit(limiter, request.headers, 'podcastindex');
+  if (limited) return limited;
+
   try {
     const { searchParams } = new URL(request.url);
     const feedUrl = searchParams.get('feedUrl');

@@ -1,6 +1,6 @@
 ---
 name: auth-and-security
-description: "Use when touching authentication, authorization or hardening: ADMIN_SECRET and the middleware.ts bearer gate, SESSION_SECRET and the signed session cookie in lib/auth/, requireUser, the x-nostr-user-id header (must never be trusted), adding or gating an admin route, a 401 from an admin endpoint, the SSRF guard isSafePublicUrl in lib/url-security.ts, any endpoint that fetches a caller-supplied URL, /api/proxy-image or /api/proxy-audio, CORS, the Content-Security-Policy, response headers leaking Prisma errors, rate limiting, or CI (typecheck, test:all, next lint)."
+description: "Use when touching authentication, authorization or hardening: ADMIN_SECRET and the middleware.ts bearer gate, SESSION_SECRET and the signed session cookie in lib/auth/, requireUser, the x-nostr-user-id header (must never be trusted), adding or gating an admin route, a 401 from an admin endpoint, the SSRF guard isSafePublicUrl in lib/url-security.ts, any endpoint that fetches a caller-supplied URL, /api/proxy-image or /api/proxy-audio, CORS, the Content-Security-Policy, response headers leaking Prisma errors, rate limiting, or CI (typecheck, test:all, next lint). Also for stopping a forked Android shell or another website running on this backend: the zapstore fork, the applicationId gate in lib/native-app-identity.ts, ForeignShellGate, the media proxy host allowlist in lib/proxy-host-allowlist.ts, and the NEXT_PUBLIC_FOREIGN_SHELL_GATE, PROXY_HOST_MODE, CORS_MODE and RATE_LIMIT_MODE switches."
 ---
 
 # auth-and-security
@@ -12,6 +12,10 @@ Two independent secrets (ADMIN_SECRET gates the operator, SESSION_SECRET gates t
 ```
 npx tsx --test lib/auth/*.test.ts                   # session token, requireUser, session-expired
 npx tsx --test lib/favorites-check-input.test.ts    # favorites/check input cap + first-match-wins index
+npx tsx --test lib/cors.test.ts                     # enforce/log modes, Vary: Origin on a refusal
+npx tsx --test lib/proxy-host-allowlist.test.ts     # host allowlist, the playlist drift guard, the catalog cache
+npx tsx --test lib/rate-limit-guard.test.ts        # log vs enforce, forged x-forwarded-for
+npx tsx --test lib/native-app-identity.test.ts     # the shell gate, and every branch of it that fails open
 ```
 
 ---
@@ -66,8 +70,56 @@ Two supporting guards in the route, both driven by those 19 MB GIFs:
 
 ---
 
-## Response Headers, CORS and CI (`next.config.js`, `.github/workflows/ci.yml`)
-- **CORS is NOT `*` on `/api/*` any more.** Only the four podping-consumer endpoints keep a wildcard (`/api/feeds/:path(exists|refresh-by-url|opml)` and `/api/feeds`) — they carry no user data and `msp-podping-service` calls them server-to-server. Everything else sends no CORS headers at all, which is correct: the app is same-origin and the session cookie can't ride a wildcard anyway. Note ~18 route files still hardcode `ACAO: *` in their own handlers; all are public read-only.
+## Who may use this backend (PR #244) — four switches, three of them log-only
+
+The APK is a WebView pointed at `https://stablekraft.app` (`capacitor.config.ts`), with no `output: 'export'`,
+so a fork that changes only `appId` serves every byte off this Railway instance. Three independent guards
+answer that and two wider holes found alongside it. **Each has its own mode switch, and only the shell gate
+defaults to blocking.** The `NEXT_PUBLIC_*` ones bake in at build time — set them in Railway *before* the
+deploy that should use them. `CORS_MODE`, `PROXY_HOST_MODE` and `RATE_LIMIT_MODE` are plain server variables
+and take effect on restart. Flip them **one at a time**, after reading the warnings each one logs.
+
+| Switch | Default | Module | Log line |
+|---|---|---|---|
+| `NEXT_PUBLIC_FOREIGN_SHELL_GATE` | `block` | `lib/native-app-identity.ts` | `[foreign-shell]` |
+| `PROXY_HOST_MODE` | `log` | `lib/proxy-host-allowlist.ts` | `[proxy-hosts]` |
+| `CORS_MODE` | `log` | `lib/cors.ts` | `[cors]` |
+| `RATE_LIMIT_MODE` | `log` | `lib/rate-limit-guard.ts` | `[rate-limit]` |
+
+- **The shell gate keys on the Android `applicationId`, and every uncertain branch ALLOWS.** Ours is
+  `app.stablekraft` (`android/app/build.gradle:7`); Android refuses two packages with the same id and
+  different signing certs, so a fork cannot keep it. Only a positively-identified foreign id is blocked —
+  not native, no Capacitor, no `@capacitor/app` (an older APK), a rejected `getInfo()`, one that never
+  settles: all render the app. It fires **only on our own hosts**, so a fork that self-hosts is unaffected,
+  which is the point. It is client-side and a fork can fake the plugin response; the rate limits are the
+  backstop. A blocked shell renders **nothing**, so the `monitoring.warn` report is the only signal it fired.
+- **A blank screen looks like OUR bug.** Users of a blocked fork will report it here. That is the accepted
+  cost, and the diagnostics panel is where to confirm it.
+- **The proxy allowlist is the abuse control; `isSafePublicUrl` is the SSRF control.** They are different
+  questions and both run — see the CLAUDE.md invariant on the three host lists. It **fails open** on any
+  database trouble, and it must never make a request wait: `checkProxyTarget` consults the catalog in *log*
+  mode too (log mode has to know whether it would have refused in order to say so), so a blocking cache made
+  every proxy request pay for a refresh in the mode that is supposed to change nothing. It now serves the
+  stale set and refreshes behind the request.
+- **Before `RATE_LIMIT_MODE=enforce`, check two things in the logs.** `clientIp` takes the **rightmost**
+  `x-forwarded-for` entry, correct for exactly one trusted hop — `stablekraft.app` answers
+  `server: railway-hikari` with nothing in front. Put a CDN there and every caller collapses into one
+  bucket and enforce refuses the world; the warn line prints the whole chain so that is visible. Second,
+  `app/api/artwork-colors/route.ts` **fetches its own `/api/proxy-image`** through `NEXT_PUBLIC_BASE_URL`, so
+  it leaves and re-enters through Railway's edge and keys on one apparent IP against the 300/min bucket —
+  `batch-process` could 429 itself. The hop is pure waste (a server-side fetch has no CORS to work around)
+  and deleting it is the real fix; it is left alone here as out of scope.
+- **Two callers are off-catalog by construction** and degrade under `PROXY_HOST_MODE=enforce`:
+  `components/CDNImage.tsx` retries any failed `<img>` through the proxy (it gets the placeholder, so the
+  retry ladder still terminates) and `components/FeedManager.tsx` previews a feed not yet imported
+  (admin-only; its `onError` already falls back to the direct URL).
+
+## Response Headers, CORS and CI (`lib/cors.ts`, `next.config.js`, `.github/workflows/ci.yml`)
+- **CORS is NOT `*` on `/api/*` any more.** Only the four podping-consumer endpoints keep a wildcard (`/api/feeds/:path(exists|refresh-by-url|opml)` and `/api/feeds`) — they carry no user data and `msp-podping-service` calls them server-to-server. Everything else sends no CORS headers at all, which is correct: the app is same-origin and the session cookie can't ride a wildcard anyway.
+- **Narrowing CORS cannot break a non-browser caller.** CORS is enforced by browsers on cross-origin JavaScript; it is not an access control. Our own site, our Android WebView, curl, scripts and the Node podping consumer all arrive with **no `Origin`** and need no header. What it stops is somebody else's *website* rendering pages off this Postgres. Checked before writing it: boostmebitch, msp-podping-service, musicL-playlist-updater and ITDV-Lightning contain no browser call to stablekraft.app.
+- **`Vary: Origin` goes on every enforce-mode answer, the refusals included.** Sending no `Access-Control-Allow-Origin` *without* `Vary` lets a shared cache replay that header-less response to an origin that is allowed. `albums`, `parsed-feeds`, `publishers` and `publishers/[id]` all send `s-maxage`, so they invite exactly that. Latent only because there is no CDN in front today. Test the enforce branches through the pure `buildCorsHeaders` — `corsHeaders()` reads `next/headers`, which throws with no request context, so in a unit test it can only ever see a null Origin.
+- **Wildcards that remain, deliberately.** `placeholder-image` and `gif-placeholder` synthesise pixels and touch no database; `cache/video/[filename]` was narrowed; the two media proxies keep theirs because `PlaybackKeepAliveService.java` fetches `/api/proxy-image` from plain `java.net` and every `<img src>` depends on it. These serve **bytes to tags**, not JSON to `fetch`.
+- **`corsHeaders()` calls `headers()`, which makes a route dynamic.** `itdv-resolved-songs`, `public/itdv-resolved-songs` and `feeds/doerfels-pubfeed` went from `○` to `ƒ` in the build's route table. All three are cheap, and for `doerfels-pubfeed` it is an accidental fix — it calls `new Date().toUTCString()`, so a static prerender had frozen the build date into the feed's `lastBuildDate`.
 - **CSP is `Content-Security-Policy-Report-Only`, deliberately.** Full directive set (`default-src`, `script-src`, `object-src 'none'`, `base-uri`, `form-action`, `frame-ancestors 'none'`, `worker-src`) with **`connect-src` copied verbatim** from the old policy so no relay or wallet socket changes. Report-only because a wrong `script-src` white-screens the app, there is no preview environment, and `app/layout.tsx` ships an inline `<script>`. Caveat: `script-src` carries `'unsafe-inline' 'unsafe-eval'` and `connect-src` carries bare `https:`, so even enforcing it will not stop XSS — it buys `object-src`/`base-uri`/`form-action`/external-script hardening, nothing more.
 
 - **`worker-src 'self' blob:` is load-bearing and NOT redundant with `default-src`.** Workers fall back to `default-src 'self'`, which refuses a `blob:` worker — and **the `Worker` constructor does not throw**, so it fails silently. `contexts/AudioContext.tsx` builds hls.js with `enableWorker: true`, so enforcing without this line kills HLS playback with nothing in the console but a CSP line nobody is reading. Measured in Chromium against the real policy, not reasoned about: probe both the current and proposed policy before changing any directive, because the fallback directives (`worker-src`, `frame-src`, `manifest-src`) are the ones that bite.
