@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createRouteLimiter, enforceRateLimit } from '@/lib/rate-limit-guard';
 import { PrismaClient } from '@prisma/client';
 import { parseSearchQuery, buildTsQuery, normalizeQuery, buildFieldFilters } from '@/lib/search-utils';
 import { fuzzySearchTracks, fuzzySearchAlbums, fuzzySearchArtists, calculateThreshold } from '@/lib/fuzzy-search';
@@ -28,7 +29,16 @@ function buildFullTextSearchWhere(normalizedQuery: string, fieldFilters: Record<
   return { andConditions };
 }
 
+/**
+ * Per-IP ceiling on this route. Module scope so the buckets survive between
+ * requests. Log-only until RATE_LIMIT_MODE=enforce — see lib/rate-limit-guard.ts.
+ */
+const limiter = createRouteLimiter(60);
+
 export async function GET(request: NextRequest) {
+  const limited = enforceRateLimit(limiter, request.headers, 'search');
+  if (limited) return limited;
+
   const startTime = Date.now();
   const QUERY_TIMEOUT = 10000; // 10 seconds timeout
   

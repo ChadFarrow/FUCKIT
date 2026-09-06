@@ -1,8 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createRouteLimiter, enforceRateLimit } from '@/lib/rate-limit-guard';
 import { isSafePublicUrl } from '@/lib/url-security';
 import { safeFetch, declaredLengthExceeds, MAX_AUDIO_BYTES } from '@/lib/safe-fetch';
 
+/**
+ * Per-IP ceiling on this route. Module scope so the buckets survive between
+ * requests. Log-only until RATE_LIMIT_MODE=enforce — see lib/rate-limit-guard.ts.
+ */
+const limiter = createRouteLimiter(240);
+
 export async function GET(request: NextRequest) {
+  const limited = enforceRateLimit(limiter, request.headers, 'proxy-audio');
+  if (limited) return limited;
+
   const { searchParams } = new URL(request.url);
   const url = searchParams.get('url');
 

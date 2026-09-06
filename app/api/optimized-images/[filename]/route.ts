@@ -1,11 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createRouteLimiter, enforceRateLimit } from '@/lib/rate-limit-guard';
 import fs from 'fs';
 import path from 'path';
+
+/**
+ * Per-IP ceiling on this route. Module scope so the buckets survive between
+ * requests. Log-only until RATE_LIMIT_MODE=enforce — see lib/rate-limit-guard.ts.
+ */
+const limiter = createRouteLimiter(300);
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ filename: string }> }
 ) {
+  const limited = enforceRateLimit(limiter, request.headers, 'optimized-images');
+  if (limited) return limited;
+
   try {
     const { filename } = await params;
     const optimizedDir = path.join(process.cwd(), 'data', 'optimized-images');
