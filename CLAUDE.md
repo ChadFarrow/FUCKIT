@@ -42,6 +42,18 @@ npm run relay                    # ws://127.0.0.1:7777, in-memory, replaceable-e
 npm run seed:relay -- <npub>     # copies the real kind:10333 in — read-only against production
 npm run dev:isolated -- -p 3001  # dev, publishing ONLY to the local relay
 npm run e2e:favorites            # the whole loop on a throwaway key, with real NIP-44
+
+# Reading PRODUCTION. `railway login` needs a real TTY — it fails in any non-interactive
+# shell, so run it in a terminal of your own; the credentials then persist to disk. The
+# --service/--environment flags are NOT enough on their own, the directory must be linked:
+railway link --project StableKraft --environment production --service StableKraft
+railway logs -n 400              # ALWAYS pass -n; the default STREAMS and never returns
+railway logs --build -n 400      # the build, when a deploy is the suspect
+railway variables --json         # dump: filter in code, never print a secret's value
+railway domain                   # which hostnames actually serve this instance
+# Only the current deployment's buffer is kept, and Next logs no successful request — so
+# a quiet log is not evidence of no traffic. Ask what WOULD have been logged before
+# concluding anything from silence.
 ```
 Per-subsystem test commands live in the skill that owns the subsystem — each skill opens with its own.
 
@@ -124,6 +136,22 @@ line holds the full story.
   a socket that already failed, and `nostr-tools` >= 2.25.2 calls `this.ws?.close?.()` from its own `onerror`, so
   the two recurse until `RangeError: Maximum call stack size exceeded`. Browsers make that `close()` a no-op, so
   only Node is affected. `ws` avoids it entirely — which is the other reason the server is on `ws` → `nostr-signer`.
+- **Four guards decide who may use this backend, each behind its own switch, and three ship in LOG mode.**
+  `NEXT_PUBLIC_FOREIGN_SHELL_GATE` (defaults to `block`), `PROXY_HOST_MODE`, `CORS_MODE` and
+  `RATE_LIMIT_MODE` (all default to `log`). A log-mode guard must be **indistinguishable from before**, and
+  the way that breaks is latency, not responses: `checkProxyTarget` consults the catalog in log mode too —
+  it has to, to report what it *would* have refused — so a blocking cache there made every proxy request pay
+  for a refresh in the mode that is meant to change nothing. Adding a route means asking which of the four
+  applies: a costly route wants `enforceRateLimit`, a catalog JSON route wants `corsHeaders()`. The
+  `NEXT_PUBLIC_*` pair bakes in at BUILD time; the other three are plain server variables and need no
+  rebuild. Flip them **one at a time**, reading each guard's own log prefix in between → `auth-and-security`.
+- **The Android APK is a WebView pointed at production, so a fork can serve itself off this instance.**
+  `capacitor.config.ts` sets `server.url` and there is no `output: 'export'`. The gate keys on the Android
+  `applicationId`, which a fork cannot keep, and it is **inert on any host but ours** — a fork that
+  self-hosts is meant to work, and does. Every uncertain branch ALLOWS: not native, no Capacitor, no
+  `@capacitor/app`, a rejected or hanging `getInfo()`. Checked 2026-09-06 against the installed
+  `app.unstablekraft`: it runs a complete backend of its own and `stablekraft.app` appears **nowhere** in
+  its APK, so the gate is deterrence against a one-line change, not a live rescue → `auth-and-security`.
 - **`isSafePublicUrl` answers SSRF, not abuse — and there are THREE external-host lists, not one.**
   It blocks *private* addresses and permits *every public host*, so it never made the media proxies
   anything but an open proxy for the internet; `lib/proxy-host-allowlist.ts` is the separate control that
