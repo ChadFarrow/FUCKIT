@@ -8,7 +8,7 @@ import { Play, Pause, SkipBack, SkipForward, Volume2, Video, MoreVertical, Shuff
 import { RSSAlbum } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
 import { pickCanvasBackground } from '@/lib/podcast-images';
-import { generateAlbumHref, generateAlbumSlug, generatePublisherSlug, generatePublisherUrl, getPublisherInfo } from '@/lib/url-utils';
+import { generateAlbumHref, generateAlbumSlug, generatePublisherSlug, getPublisherInfo } from '@/lib/url-utils';
 import { useAudio } from '@/contexts/AudioContext';
 import { useScrollDetectionContext } from '@/components/ScrollDetectionProvider';
 import ControlsBar from '@/components/ControlsBar';
@@ -861,9 +861,6 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
     remoteFeedGuid: album.feedGuid,
     albumName: album.title,
     publisherGuid: album.publisher?.feedGuid,
-    publisherUrl: album.publisher?.feedGuid
-      ? `https://stablekraft.app${generatePublisherUrl({ artist: album.artist, feedGuid: album.publisher.feedGuid })}`
-      : undefined,
     persons: (album as any).persons || [],
   };
 
@@ -1476,7 +1473,6 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
                             feedUrl={album.feedUrl}
                             albumName={album.title}
                             publisherGuid={album.publisher?.feedGuid}
-                            publisherUrl={album.publisher?.feedGuid ? `https://stablekraft.app${generatePublisherUrl({ artist: album.artist, feedGuid: album.publisher.feedGuid })}` : undefined}
                             persons={[
                               ...((track as any).persons || []),
                               ...((album as any).persons || []),

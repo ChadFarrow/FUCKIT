@@ -40,7 +40,6 @@ interface BoostButtonProps {
   remoteFeedGuid?: string; // Remote feed GUID
   albumName?: string; // Album name (can be same as trackTitle)
   publisherGuid?: string; // Publisher's podcast:guid
-  publisherUrl?: string; // URL to publisher page (will be generated if not provided)
   iconOnly?: boolean; // Show only the icon without text (for compact displays)
   remoteStartTime?: number; // VTS remoteStartTime for accurate Helipad metadata
   // <podcast:person> entries parsed from the feed, pre-combined from track-level
@@ -64,7 +63,6 @@ export function BoostButton({
   remoteFeedGuid,
   albumName,
   publisherGuid,
-  publisherUrl,
   iconOnly = false,
   remoteStartTime,
   persons = [],
@@ -517,7 +515,6 @@ export function BoostButton({
             let finalEpisodeGuid: string | null = episodeGuid || null;
             let finalFeedGuid: string | null = remoteFeedGuid || null;
             let finalPublisherGuid: string | null = publisherGuid || null;
-            let finalPublisherUrl: string | null = publisherUrl || null;
 
             // Fetch track data if trackId is available
             let actualAlbumName = albumName; // Keep original albumName as fallback
