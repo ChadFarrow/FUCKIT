@@ -75,6 +75,15 @@ Per-subsystem test commands live in the skill that owns the subsystem — each s
   is a page stuck on its loading state with no obvious error. Recovery: kill dev, `rm -rf .next`,
   `npm run dev`. Any phone testing over the LAN needs a hard reload afterwards.
 - **Testing on a phone over the LAN? The service worker will serve it stale content.** `next-pwa` is disabled in dev, but a production `npm run build` writes `public/sw.js` + `public/workbox-*.js`, and Next serves `public/` statically **even in dev** — so any device that registered the worker keeps getting its cached HTML shell and CSS from `http://<lan-ip>:3000`. Symptom: the phone shows a layout you already changed, often with CSS partly missing (flex `gap`s collapsing, so text runs together) because the shell and the stylesheet come from different builds. A plain reload does not fix it. Delete `public/sw.js` and `public/workbox-*.js` (both gitignored build artifacts) so `/sw.js` 404s — the browser then drops the registration on next load — and reload twice, or use a private tab. Worth deleting them after every local `npm run build` you didn't intend to deploy.
+- **A clean `npm run build` is not evidence the server works.** It bundles; it does not run. Two separate
+  server-only breakages passed a green build and only appeared when the built artifact was started —
+  `ws` inlined by webpack throwing `b.mask is not a function` on every frame, and `ws` rethrowing a `close()`
+  that landed on a still-connecting socket, both as `uncaughtException`. For anything touching a server route's
+  runtime, run the real thing: `npm run build`, copy `.env.local` into `.next/standalone/`, then
+  `cd .next/standalone && PORT=3009 NODE_ENV=production node server.js` — add
+  `NODE_OPTIONS=--no-experimental-websocket` to stand in for `node:20-alpine`, which is the shape production
+  actually has. Read the server log, not just the response body: the first version of that fix returned correct
+  JSON while throwing uncaught exceptions behind it. Delete the copied `.env.local` afterwards.
 - No `src/` directory — all source lives in `app/`, `lib/`, `components/`, `contexts/`
 - No `deploy-*/` artifacts in the repo — add to `.gitignore` if generated
 - No JSON-file databases — all data is in PostgreSQL via Prisma
@@ -98,6 +107,23 @@ line holds the full story.
 - **Railway does not run migrations on deploy.** The Dockerfile has no `prisma migrate deploy`, so after merging a
   migration run `railway run --service StableKraft --environment production npm run db:migrate` **before** the code
   that reads the new column goes live — otherwise every query selecting it 500s (issue #122).
+- **The server has exactly ONE relay read, and it must bring its own WebSocket.** Everything else Nostr happens in
+  the browser; `/api/nostr/global-favorites` is the exception. `node:20-alpine` runs `node server.js` with no
+  `--experimental-websocket`, and **Node 20 exposes the `WebSocket` global only behind that flag** (v22 exposes it
+  unconditionally). Next does not polyfill it. So the sweep runs on `ws`, installed by `installNodeWebSocket()`
+  before the pool is constructed — which is why `ws` is a **production** dependency and why `next.config.js` sets
+  `serverExternalPackages: ['ws']`. Do not drop either: webpack inlines `ws`, its native helpers do not survive the
+  bundle, and every frame then throws `TypeError: b.mask is not a function` as an `uncaughtException`. Marking it
+  external is also what traces it into `.next/standalone/node_modules` → `favorites`, `nostr-signer`.
+- **A relay sweep that reached nobody looks EXACTLY like one that found nothing.** `querySync` swallows a connect
+  failure inside nostr-tools and resolves to `[]`, so a per-filter `catch` never fires and **nothing is logged** —
+  the route answered `success: true`, `status: 'empty'`, zero people, in silence. Connectivity is a separate
+  question from emptiness and has to be asked separately: `pool.listConnectionStatus()`, and zero reached is an
+  **error**, never an empty result. Same exit as an unreadable private half → `favorites`.
+- **Do not raise the base image to Node 22 on its own.** Node 22's undici re-fires `error` from inside `close()` on
+  a socket that already failed, and `nostr-tools` >= 2.25.2 calls `this.ws?.close?.()` from its own `onerror`, so
+  the two recurse until `RangeError: Maximum call stack size exceeded`. Browsers make that `close()` a no-op, so
+  only Node is affected. `ws` avoids it entirely — which is the other reason the server is on `ws` → `nostr-signer`.
 - **`isSafePublicUrl()` returns `{ ok, ... }`, not a boolean.** `if (!isSafePublicUrl(u))` negates an object, is
   always `false`, and silently turns the SSRF guard into dead code — and `tsc --noEmit` stays clean. Always
   `const c = isSafePublicUrl(u); if (!c.ok)`. Verify empirically, never by reading it → `auth-and-security`.

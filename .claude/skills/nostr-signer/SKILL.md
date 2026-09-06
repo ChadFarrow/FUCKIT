@@ -61,6 +61,19 @@ Wallet-backup localStorage keys, for reference when debugging: `nostr_pending_nw
 Favoriting saves to DB immediately, queues Nostr publish (500ms debounce). **Always call `disconnectAll()`** after publishing or WebSocket connections leak. Key files: `lib/nostr/publish-queue.ts`, `lib/nostr/relay.ts`.
 
 - **`getDefaultRelays()` no longer includes `wss://relay.nsec.app`** (dropped 2026-07-26). It sat first in the list, labelled "more reliable", while returning **502** — costing ~0.5–1.4s on every relay operation. `filterReachableRelays()` only pattern-matches localhost-style URLs, so nothing prunes a dead host automatically; check a relay before adding one. The same URL was also removed from `nip46-client`'s backup-relay list and from the help text that told users to point their bunker at it.
+- **Which `WebSocket` nostr-tools gets is a real decision** (`lib/nostr/node-websocket.ts`). Browsers use their
+  own. Under Node, `installNodeWebSocket()` installs `ws` — always, even on Node >= 21 where a global already
+  exists — because undici re-fires `error` from inside `close()` on a socket that already failed, and
+  `nostr-tools` >= 2.25.2 calls `this.ws?.close?.()` from its own `onerror` (its fix for leaked sockets,
+  nbd-wtf/nostr-tools#550). The two recurse until `RangeError: Maximum call stack size exceeded`. **So do not
+  raise the base image or `.nvmrc` to Node 22 assuming the global is a free upgrade.**
+- **`ws` needs a no-op `'error'` listener, and there are FOUR module copies to patch.** `ws` reports a `close()`
+  landing on a still-CONNECTING socket by *emitting* an error, and an `'error'` with no listener is rethrown as an
+  `uncaughtException` — which is exactly what nostr-tools' connect timeout triggers, so the helper wraps `ws` in a
+  `SafeWebSocket` subclass that adds one. And `nostr-tools/pool` and `nostr-tools/relay` each keep their own
+  `_WebSocket`, under each of the CJS and ESM conditions. The barrel **inlines a third copy** that no
+  `useWebSocketImplementation` can reach, which is why `RelayManager` imports `Relay` from `nostr-tools/relay`
+  rather than `nostr-tools`. Patching one and assuming the rest followed has been the bug twice.
 - **NIP-01 tag validation**: `createFavoriteEventTemplate` (in `lib/nostr/favorites.ts`) throws if `itemId` is falsy so we never publish events with `["d", null]` tags — strict relays (nsec.app) reject them. Validate all required tag values at build time, not publish time.
 - **Dead-socket filtering** (`RelayManager.publish`): write relays filtered by `relay.connected !== false` before publishing. Each `relay.publish()` wrapped in `Promise.resolve().then(...)` so sync throws flow through `Promise.allSettled`.
 - **Stale-signer recovery** (`flushQueue`): routes through `ensureSignerAvailable()` from `signer-reconnect.ts` (same wrapper `BoostButton.tsx` uses). Do **not** revert to the manual `isAvailable() + NIP-55-only` branch — it silently dropped favorites on stale singleton signers.
