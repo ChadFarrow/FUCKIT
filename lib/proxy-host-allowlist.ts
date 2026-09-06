@@ -34,6 +34,7 @@
  */
 
 import { CORS_PROBLEMATIC_DOMAINS, DIRECT_FIRST_DOMAINS } from './audio-url-utils';
+import { hostMatches } from './host-match';
 
 export type ProxyHostMode = 'log' | 'enforce';
 
@@ -73,23 +74,8 @@ export const STATIC_ALLOWED_HOSTS: readonly string[] = Array.from(
   ])
 );
 
-/**
- * True when `hostname` is, or is a subdomain of, one of `allowed`.
- *
- * Suffix matching on a DOT boundary, never `includes`. A bare `includes` would
- * accept `wavlake.com.attacker.net`, which is the classic way an allowlist
- * becomes decorative. lib/audio-url-utils.ts uses `includes` for its own lists,
- * but that only picks a fetch ORDER — here it would be a security control.
- */
-export function hostMatches(hostname: string, allowed: Iterable<string>): boolean {
-  const host = hostname.toLowerCase().replace(/\.$/, '');
-  for (const raw of allowed) {
-    const entry = raw.toLowerCase().replace(/^\.+/, '').replace(/\.$/, '');
-    if (!entry) continue;
-    if (host === entry || host.endsWith(`.${entry}`)) return true;
-  }
-  return false;
-}
+/** Re-exported so this module stays the single import for proxy host questions. */
+export { hostMatches };
 
 /** Hosts referenced by the catalog, cached in memory. Null until first loaded. */
 let catalogHosts: Set<string> | null = null;

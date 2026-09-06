@@ -8,7 +8,13 @@ import {
   isNativeAndroid,
   readNativeAppId,
   checkNativeShell,
+  parseCanonicalHosts,
+  isCanonicalDeployment,
+  DEFAULT_CANONICAL_HOSTS,
 } from './native-app-identity';
+
+/** Every checkNativeShell test runs as if served by our own deployment. */
+const ON_CANONICAL = { hostname: 'stablekraft.app' } as const;
 
 const ALLOWED = [...DEFAULT_ALLOWED_APP_IDS];
 
@@ -143,7 +149,7 @@ test('readNativeAppId: a bridge that never answers times out instead of hanging'
 
 test('checkNativeShell: blocks a foreign shell and reports the id it found', async () => {
   stubShell(androidShell(async () => ({ id: 'app.unstablekraft' })));
-  assert.deepEqual(await checkNativeShell({ mode: 'block', allowedAppIds: ALLOWED }), {
+  assert.deepEqual(await checkNativeShell({ mode: 'block', allowedAppIds: ALLOWED, ...ON_CANONICAL }), {
     decision: 'block',
     appId: 'app.unstablekraft',
   });
@@ -151,19 +157,19 @@ test('checkNativeShell: blocks a foreign shell and reports the id it found', asy
 
 test('checkNativeShell: allows ours, browsers, and a shell that cannot answer', async () => {
   stubShell(androidShell(async () => ({ id: 'app.stablekraft' })));
-  assert.deepEqual(await checkNativeShell({ mode: 'block', allowedAppIds: ALLOWED }), {
+  assert.deepEqual(await checkNativeShell({ mode: 'block', allowedAppIds: ALLOWED, ...ON_CANONICAL }), {
     decision: 'allow',
     appId: 'app.stablekraft',
   });
 
   stubShell(null);
-  assert.deepEqual(await checkNativeShell({ mode: 'block', allowedAppIds: ALLOWED }), {
+  assert.deepEqual(await checkNativeShell({ mode: 'block', allowedAppIds: ALLOWED, ...ON_CANONICAL }), {
     decision: 'allow',
     appId: null,
   });
 
   stubShell(androidShell());
-  assert.deepEqual(await checkNativeShell({ mode: 'block', allowedAppIds: ALLOWED }), {
+  assert.deepEqual(await checkNativeShell({ mode: 'block', allowedAppIds: ALLOWED, ...ON_CANONICAL }), {
     decision: 'allow',
     appId: null,
   });
@@ -172,9 +178,59 @@ test('checkNativeShell: allows ours, browsers, and a shell that cannot answer', 
 test('checkNativeShell: off mode never touches the bridge at all', async () => {
   let asked = false;
   stubShell(androidShell(async () => { asked = true; return { id: 'app.unstablekraft' }; }));
-  assert.deepEqual(await checkNativeShell({ mode: 'off', allowedAppIds: ALLOWED }), {
+  assert.deepEqual(await checkNativeShell({ mode: 'off', allowedAppIds: ALLOWED, ...ON_CANONICAL }), {
     decision: 'allow',
     appId: null,
   });
   assert.equal(asked, false);
+});
+
+test('parseCanonicalHosts: keeps ours, including the Railway hostname', () => {
+  assert.deepEqual(parseCanonicalHosts(undefined), [...DEFAULT_CANONICAL_HOSTS]);
+  assert.ok(parseCanonicalHosts(undefined).includes('stablekraft-production.up.railway.app'),
+    'omitting it would let a shell skip the gate by using the Railway host directly');
+  assert.deepEqual(parseCanonicalHosts(' preview.example , '), [...DEFAULT_CANONICAL_HOSTS, 'preview.example']);
+});
+
+test('isCanonicalDeployment: our domain and its subdomains, nothing else', () => {
+  const hosts = parseCanonicalHosts(undefined);
+  assert.equal(isCanonicalDeployment('stablekraft.app', hosts), true);
+  assert.equal(isCanonicalDeployment('radio.stablekraft.app', hosts), true, 'the radio subdomain');
+  assert.equal(isCanonicalDeployment('stablekraft-production.up.railway.app', hosts), true);
+  assert.equal(isCanonicalDeployment('unstablekraft.example', hosts), false);
+  assert.equal(isCanonicalDeployment('localhost', hosts), false);
+  assert.equal(isCanonicalDeployment('stablekraft.app.attacker.net', hosts), false);
+});
+
+test('the gate is INERT on a fork that self-hosts this code', async () => {
+  // The outcome we want them to reach. Their own deployment must not block their
+  // own app, or self-hosting costs them a support ticket and they stay put.
+  stubShell(androidShell(async () => ({ id: 'app.unstablekraft' })));
+  assert.deepEqual(
+    await checkNativeShell({ mode: 'block', allowedAppIds: ALLOWED, hostname: 'unstablekraft.example' }),
+    { decision: 'allow', appId: null }
+  );
+});
+
+test('the gate still fires for that same shell on OUR deployment', async () => {
+  stubShell(androidShell(async () => ({ id: 'app.unstablekraft' })));
+  assert.deepEqual(
+    await checkNativeShell({ mode: 'block', allowedAppIds: ALLOWED, hostname: 'stablekraft.app' }),
+    { decision: 'block', appId: 'app.unstablekraft' }
+  );
+  // And via the Railway hostname, which is the way round it if left unlisted.
+  assert.equal(
+    (await checkNativeShell({
+      mode: 'block', allowedAppIds: ALLOWED, hostname: 'stablekraft-production.up.railway.app',
+    })).decision,
+    'block'
+  );
+});
+
+test('no hostname (SSR, or a non-browser context) leaves the gate inert', async () => {
+  stubShell(androidShell(async () => ({ id: 'app.unstablekraft' })));
+  assert.deepEqual(
+    await checkNativeShell({ mode: 'block', allowedAppIds: ALLOWED, hostname: null }),
+    { decision: 'allow', appId: null }
+  );
 });

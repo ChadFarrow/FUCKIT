@@ -32,8 +32,57 @@
  * costs in bandwidth. Only a positively-identified foreign id is ever blocked.
  */
 
+/**
+ * Deployments this gate defends. It runs ONLY when the page is served by one of
+ * these hosts.
+ *
+ * Without this the gate would fire on ANY deployment of this code, so a fork that
+ * self-hosts — the outcome this whole feature exists to encourage — would find
+ * its own app blocked by its own server until it discovered an environment
+ * variable. That is backwards: it puts friction exactly where we want none. The
+ * point is to protect THIS backend, not to police package ids in general.
+ *
+ * The Railway hostname is listed as well as the domain. Leaving it out would let
+ * a shell skip the gate entirely by pointing at *.up.railway.app directly, which
+ * answers the same app from the same instance.
+ */
+export const DEFAULT_CANONICAL_HOSTS = [
+  'stablekraft.app',
+  'stablekraft-production.up.railway.app',
+] as const;
+
+/** Extra canonical hosts from NEXT_PUBLIC_CANONICAL_HOSTS, comma-separated. */
+export function parseCanonicalHosts(raw: string | undefined): string[] {
+  const extra = (raw ?? '')
+    .split(',')
+    .map((h) => h.trim().toLowerCase())
+    .filter(Boolean);
+  return Array.from(new Set([...DEFAULT_CANONICAL_HOSTS, ...extra]));
+}
+
+/**
+ * Whether the page is being served by a deployment this gate defends.
+ *
+ * Subdomains count, so radio.stablekraft.app is covered. Anything else — a
+ * fork's own domain, a preview, localhost — makes the gate inert.
+ */
+export function isCanonicalDeployment(hostname: string, canonicalHosts: readonly string[]): boolean {
+  return hostMatches(hostname, canonicalHosts);
+}
+
+/** The hostname currently serving the page, or null off the browser. */
+export function currentHostname(): string | null {
+  try {
+    return typeof window !== 'undefined' ? window.location?.hostname?.toLowerCase() || null : null;
+  } catch {
+    return null;
+  }
+}
+
 /** Package ids allowed to load this site inside a native Android shell. */
 export const DEFAULT_ALLOWED_APP_IDS = ['app.stablekraft'] as const;
+
+import { hostMatches } from './host-match';
 
 export type ForeignShellGateMode = 'block' | 'log' | 'off';
 
@@ -133,11 +182,21 @@ export async function checkNativeShell(options?: {
   allowedAppIds?: readonly string[];
   mode?: ForeignShellGateMode;
   timeoutMs?: number;
+  canonicalHosts?: readonly string[];
+  hostname?: string | null;
 }): Promise<{ decision: ShellDecision; appId: string | null }> {
   const mode = options?.mode ?? parseGateMode(process.env.NEXT_PUBLIC_FOREIGN_SHELL_GATE);
   const allowedAppIds = options?.allowedAppIds ?? parseAllowedAppIds(process.env.NEXT_PUBLIC_ALLOWED_APP_IDS);
 
   if (mode === 'off') return { decision: 'allow', appId: null };
+
+  // Only defend our own deployments. On anyone else's copy of this code the gate
+  // is inert, so a self-hosting fork needs no configuration to work.
+  const hostname = options?.hostname !== undefined ? options.hostname : currentHostname();
+  const canonicalHosts = options?.canonicalHosts ?? parseCanonicalHosts(process.env.NEXT_PUBLIC_CANONICAL_HOSTS);
+  if (!hostname || !isCanonicalDeployment(hostname, canonicalHosts)) {
+    return { decision: 'allow', appId: null };
+  }
 
   const native = isNativeAndroid();
   if (!native) return { decision: 'allow', appId: null };
