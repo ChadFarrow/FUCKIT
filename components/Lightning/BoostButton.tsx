@@ -276,9 +276,14 @@ export function BoostButton({
     if (remoteFeedGuid) {
       metadata.remote_feed_guid = remoteFeedGuid;
     }
-    if (episodeGuid || trackId) {
-      metadata.remote_item_guid = episodeGuid || trackId;
-      metadata.episode_guid = episodeGuid || trackId;
+    // `trackId` is a StableKraft row id, not an RSS `<item>` guid. Fixing the
+    // five prop sources in #242 is not enough on its own: this fallback would
+    // put the same unresolvable value back into the TLV an artist reads in
+    // Helipad, on every boost that passes a `trackId`. Omit the field instead
+    // — `remote_item_guid` is optional, and a wrong guid is worse than none.
+    if (episodeGuid) {
+      metadata.remote_item_guid = episodeGuid;
+      metadata.episode_guid = episodeGuid;
     }
     if (albumName) {
       metadata.album = albumName;

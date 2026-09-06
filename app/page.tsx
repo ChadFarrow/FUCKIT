@@ -162,7 +162,7 @@ function HomePageContent() {
   // Format-aware loading state (for "all" filter - load all albums before EPs)
   const [formatCounts, setFormatCounts] = useState<{ albums: number; eps: number; singles: number } | null>(null);
   const [currentFormatPhase, setCurrentFormatPhase] = useState<'albums' | 'eps' | 'singles'>('albums');
-  const API_VERSION = 'v16'; // v16: releaseDate corrected for feeds whose oldestItemPubdate was null (issue #169) — shape unchanged, but cached values were wrong
+  const API_VERSION = 'v17'; // v17: album.guid/episodeGuid no longer fall back to feed.id (issue #242) — shape unchanged, but a cached album still carries the old internal id and would publish it as podcast:item:guid
   
   // HGH filter removed - no longer needed
   

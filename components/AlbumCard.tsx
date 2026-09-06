@@ -452,7 +452,12 @@ function AlbumCard({ album, isPlaying = false, onPlay, className = '', linkFilte
         autoOpen={true}
         onClose={() => setShowBoostModal(false)}
         feedUrl={(album as any).feedUrl || album.link}
-        episodeGuid={(album as any).guid || album.id}
+        // No `|| album.id` fallback. `album.id` is a StableKraft slug, and
+        // this prop becomes `podcast:item:guid:<slug>` on a public boost note
+        // — an identifier no other app can resolve (#242). An absent item
+        // guid is dropped by `podcastIdentifierTags`, so the note names the
+        // show only, which is true rather than misleading.
+        episodeGuid={(album as any).guid || undefined}
         remoteFeedGuid={(album as any).feedGuid}
         albumName={album.title}
         publisherGuid={(album as any).publisher?.feedGuid}

@@ -285,8 +285,15 @@ export async function GET(request: Request) {
       feedGuid: feed.guid || null, // Real podcast:guid from RSS (for BoostBox feed_guid)
       feedId: feed.id, // Slug-based ID for URLs and Helipad TLV
       remoteFeedGuid: feed.guid || null, // Real podcast:guid (for BoostBox remote_feed_guid)
-      guid: feed.Track?.[0]?.guid || feed.id, // Episode GUID for Helipad TLV
-      episodeGuid: feed.Track?.[0]?.guid || feed.id, // Alternative field name
+      // The first track's real <item> guid, or null — never `feed.id`.
+      // These two fields reach `BoostButton`'s `episodeGuid` prop, which
+      // becomes `podcast:item:guid:<...>` on a published boost note and the
+      // Helipad `remote_item_guid`/`episode_guid` TLV. A StableKraft slug in
+      // either place is an identifier only this app can resolve (#242).
+      // Same honesty as `feedGuid`/`remoteFeedGuid` two lines up: absent is
+      // a real answer.
+      guid: feed.Track?.[0]?.guid || null, // Episode GUID for Helipad TLV
+      episodeGuid: feed.Track?.[0]?.guid || null, // Alternative field name
       link: feed.originalUrl, // For feedUrl fallback
       priority: feed.priority,
       tracks: feed.Track
@@ -536,8 +543,10 @@ export async function GET(request: Request) {
             feedGuid: feed.guid || null,
             feedId: feed.id,
             remoteFeedGuid: feed.guid || null,
-            guid: feed.Track?.[0]?.guid || feed.id,
-            episodeGuid: feed.Track?.[0]?.guid || feed.id,
+            // Real <item> guid or null, never `feed.id` — see the album
+            // mapping above and #242.
+            guid: feed.Track?.[0]?.guid || null,
+            episodeGuid: feed.Track?.[0]?.guid || null,
             link: feed.originalUrl,
             priority: feed.priority,
             tracks: sortedTracks.map((track: any) => ({
