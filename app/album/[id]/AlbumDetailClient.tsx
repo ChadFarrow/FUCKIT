@@ -7,6 +7,7 @@ import { useSearchParams } from 'next/navigation';
 import { Play, Pause, SkipBack, SkipForward, Volume2, Video, MoreVertical, Shuffle, ChevronDown } from 'lucide-react';
 import { RSSAlbum } from '@/lib/rss-parser';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
+import { buildPageBackgroundStyle } from '@/lib/page-background-style';
 import { pickCanvasBackground } from '@/lib/podcast-images';
 import { generateAlbumHref, generateAlbumSlug, generatePublisherSlug, getPublisherInfo } from '@/lib/url-utils';
 import { useAudio } from '@/contexts/AudioContext';
@@ -530,16 +531,6 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
 
   // Optimized background style calculation - memoized to prevent repeated logs
   const backgroundStyle = useMemo(() => {
-    // Create a fixed background that overrides the global layout background
-    const baseStyle = {
-      position: 'fixed' as const,
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      zIndex: 1  // Override global background (which is z-0)
-    };
-
     // For backgrounds, use enhanced proxy for better quality and upscaling
     // This ensures high-resolution backgrounds even from low-res sources
     const highResBackgroundUrl = backgroundImage && isClient
@@ -553,23 +544,9 @@ export default function AlbumDetailClient({ albumTitle, albumId, initialAlbum, e
         })()
       : null;
 
-    const style = highResBackgroundUrl ? {
-      ...baseStyle,
-      backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('${highResBackgroundUrl}')`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundAttachment: 'fixed',
-      // Add image rendering optimizations for better quality
-      filter: 'blur(4px) contrast(0.9) brightness(0.95)',
-      imageRendering: 'high-quality' as any,
-      WebkitBackfaceVisibility: 'hidden' as any,
-      transform: 'translateZ(0)' as any,
-    } : {
-      ...baseStyle,
-      background: 'linear-gradient(to bottom right, rgb(17, 24, 39), rgb(31, 41, 55), rgb(17, 24, 39))'
-    };
-
-    return style;
+    // Shared with the playlist pages, and opaque underneath the artwork so the
+    // global rocket wallpaper cannot show through while it loads — see #201.
+    return buildPageBackgroundStyle(highResBackgroundUrl);
   }, [backgroundImage, isClient]);
 
   // Load album data if not provided initially

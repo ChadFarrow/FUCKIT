@@ -14,6 +14,7 @@ import { Share2, List, Layers } from 'lucide-react';
 import EpisodeSection from '@/components/EpisodeSection';
 import { toast } from '@/components/Toast';
 import { getAlbumArtworkUrl, getPlaceholderImageUrl } from '@/lib/cdn-utils';
+import { buildPageBackgroundStyle } from '@/lib/page-background-style';
 import { generateAlbumHref } from '@/lib/url-utils';
 import AppLayout from '@/components/AppLayout';
 import HomeButton from '@/components/HomeButton';
@@ -705,16 +706,6 @@ export default function PlaylistTemplateCompact({ config }: PlaylistTemplateComp
   // Optimized background style calculation - memoized to prevent repeated logs
   // MUST be called before any early returns to follow React hooks rules
   const backgroundStyle = useMemo(() => {
-    // Create a fixed background that overrides the global layout background
-    const baseStyle = {
-      position: 'fixed' as const,
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      zIndex: 1  // Override global background (which is z-0)
-    };
-
     // For backgrounds, use enhanced proxy for better quality and upscaling
     // This ensures high-resolution backgrounds even from low-res sources
     const highResBackgroundUrl = playlistArtwork && isClient
@@ -728,23 +719,9 @@ export default function PlaylistTemplateCompact({ config }: PlaylistTemplateComp
         })()
       : null;
 
-    const style = highResBackgroundUrl ? {
-      ...baseStyle,
-      backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('${highResBackgroundUrl}')`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundAttachment: 'fixed',
-      // Add image rendering optimizations for better quality
-      filter: 'blur(4px) contrast(0.9) brightness(0.95)',
-      imageRendering: 'high-quality' as any,
-      WebkitBackfaceVisibility: 'hidden' as any,
-      transform: 'translateZ(0)' as any,
-    } : {
-      ...baseStyle,
-      background: 'linear-gradient(to bottom right, rgb(17, 24, 39), rgb(31, 41, 55), rgb(17, 24, 39))'
-    };
-
-    return style;
+    // Shared with the album page, and opaque underneath the artwork so the global
+    // rocket wallpaper cannot show through while it loads — see #201.
+    return buildPageBackgroundStyle(highResBackgroundUrl);
   }, [playlistArtwork, isClient]);
 
   // Early returns AFTER all hooks
