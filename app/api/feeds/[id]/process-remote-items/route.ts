@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { parseRSSFeedWithSegments, calculateTrackOrder } from '@/lib/rss-parser-db';
 import { generateAlbumSlug, normalizeUrl } from '@/lib/url-utils';
+import { findFeedIdByUrl } from '@/lib/feed-lookup';
 import { isBlacklistedFeedUrl, isPlaylistSourceFeedUrl } from '@/lib/feed-exclusions';
 
 interface RemoteItem {
@@ -137,21 +138,29 @@ export async function POST(
       }
 
       try {
-        // Check if feed already exists (by normalized URL, raw URL, feedGuid, or GUID-in-URL)
+        // Check if feed already exists (by URL via the shared ladder, feedGuid, or
+        // GUID-in-URL).
+        //
+        // The two `originalUrl` equality clauses that used to be here were exact,
+        // and both resolve to the SAME string whenever the input is already
+        // encoded — `normalizeUrl` encodes a literal space to `%20`. So a
+        // remoteItem naming the `%20` form of a row stored with literal spaces
+        // matched neither, and this loop minted a duplicate of an album it already
+        // had (#247). The ladder's rung 2 percent-decodes and compares
+        // case-insensitively, which is exactly that miss.
         const normalizedUrl = normalizeUrl(remoteItem.feedUrl);
-        const conditions: any[] = [
-          { originalUrl: normalizedUrl },
-          { originalUrl: remoteItem.feedUrl }
-        ];
+        const urlMatch = await findFeedIdByUrl(remoteItem.feedUrl);
+        const conditions: any[] = [];
+        if (urlMatch) conditions.push({ id: urlMatch.id });
         if (remoteItem.feedGuid) {
           conditions.push({ id: remoteItem.feedGuid });
           conditions.push({ guid: remoteItem.feedGuid });
           conditions.push({ originalUrl: { contains: remoteItem.feedGuid } });
         }
 
-        const existingFeed = await prisma.feed.findFirst({
-          where: { OR: conditions }
-        });
+        const existingFeed = conditions.length > 0
+          ? await prisma.feed.findFirst({ where: { OR: conditions } })
+          : null;
 
         if (existingFeed) {
           console.log(`⚡ Feed already exists: ${existingFeed.title} (${existingFeed.id})`);
@@ -175,7 +184,18 @@ export async function POST(
         // Generate slug-based ID (same pattern as import-albums)
         let feedId = generateFeedId(parsedFeed.artist, parsedFeed.title);
         const idExists = await prisma.feed.findUnique({ where: { id: feedId } });
-        if (idExists) feedId = `${feedId}-${Date.now()}`;
+        if (idExists) {
+          // The URL ladder and the guid checks both said this is a different feed,
+          // yet the slug collides. Possible, but also #247's duplicate-mint shape,
+          // which used to happen silently. `console.warn` survives production's
+          // `removeConsole`; `console.log` does not.
+          console.warn(
+            `⚠️ feed id collision minting a new row: ${feedId} already exists, ` +
+            `creating ${feedId}-<ts> from ${remoteItem.feedUrl}. If these are the ` +
+            `same album this is a duplicate mint (#247).`
+          );
+          feedId = `${feedId}-${Date.now()}`;
+        }
 
         // Secondary GUID check after parsing (feed XML may reveal a GUID we didn't have before)
         if (parsedFeed.podcastGuid) {
