@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { ensureGoodContrast } from '@/lib/color-utils';
 import {
   brightenColorForBackground,
-  isValidImageUrl,
   extractColorCandidates,
   pickBestBackgroundColor,
   makeBackgroundSuitable,
@@ -10,6 +9,71 @@ import {
   DEFAULT_COLOR_CONFIG
 } from '@/lib/server-color-utils';
 import { prisma } from '@/lib/prisma';
+import { resolveArtworkSource, artworkBaseUrl } from '@/lib/artwork-image-source';
+import { safeFetch, readCappedArrayBuffer, MAX_IMAGE_BYTES } from '@/lib/safe-fetch';
+
+/**
+ * The image bytes for `imageUrl`, or null if they cannot be had.
+ *
+ * Fetches the artwork host DIRECTLY. This used to round-trip through our own
+ * /api/proxy-image, which exists solely to work around browser CORS — a rule
+ * that does not apply to a server-side fetch. See lib/artwork-image-source.ts
+ * for what that hop cost.
+ *
+ * Never throws: every caller treats null as "keep the fallback colour", which is
+ * what the old try/catch around the fetch did.
+ */
+async function loadArtworkBytes(imageUrl: string): Promise<Buffer | null> {
+  const source = resolveArtworkSource(imageUrl, artworkBaseUrl());
+
+  try {
+    if (source.kind === 'remote') {
+      // allowHttp because real catalog rows carry http:// artwork. safeFetch
+      // applies isSafePublicUrl, bounds the redirect chain and sets a timeout.
+      const result = await safeFetch(source.url, { allowHttp: true });
+      if (!result.ok) {
+        console.warn(`🎨 artwork fetch refused: ${result.error} for ${source.url}`);
+        return null;
+      }
+      if (!result.response.ok) {
+        console.warn(`🎨 artwork fetch failed: ${result.response.status} for ${source.url}`);
+        return null;
+      }
+      const bytes = await readCappedArrayBuffer(result.response, MAX_IMAGE_BYTES);
+      if (!bytes.ok) {
+        // Oversized artwork lands here — HGH ships ~19MB animated GIFs. The old
+        // path reached the same outcome by a longer road: proxy-image applies
+        // the same cap and answers with its placeholder, whose colours were then
+        // extracted instead of the artwork's. Falling back honestly is better
+        // than extracting the placeholder's palette and presenting it as real.
+        console.warn(`🎨 artwork too large: ${bytes.error} for ${source.url}`);
+        return null;
+      }
+      return Buffer.from(bytes.value);
+    }
+
+    if (source.kind === 'local') {
+      // Our own asset over loopback. safeFetch CANNOT be used: isSafePublicUrl
+      // rejects localhost, so it would refuse every local placeholder.
+      const response = await fetch(source.url, {
+        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; ColorExtractor/1.0)' },
+      });
+      if (!response.ok) {
+        // Logged, like the remote branches. Returning null silently here cost a
+        // round of debugging: a missing local asset looked identical to
+        // extraction simply producing nothing.
+        console.warn(`🎨 local artwork fetch failed: ${response.status} for ${source.url}`);
+        return null;
+      }
+      return Buffer.from(await response.arrayBuffer());
+    }
+
+    return null;
+  } catch (error) {
+    console.warn('🎨 artwork fetch threw:', error);
+    return null;
+  }
+}
 
 // GET: Retrieve processed color for an image URL
 // Add ?realtime=true to compute fresh with tuning parameters
@@ -37,31 +101,19 @@ export async function GET(request: NextRequest) {
 
       console.log('🎨 REALTIME mode - config:', config);
 
-      // Get proxied image URL
-      const proxiedUrl = imageUrl.startsWith('/') || imageUrl.includes('/api/proxy-image')
-        ? imageUrl
-        : `/api/proxy-image?url=${encodeURIComponent(imageUrl)}`;
-
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 3001}`;
-      const fullProxiedUrl = proxiedUrl.startsWith('/') ? `${baseUrl}${proxiedUrl}` : proxiedUrl;
-
       let originalColor = '#4F46E5';
       let adjustedColor = '#4F46E5';
       let candidates: string[] = [];
 
-      if (isValidImageUrl(fullProxiedUrl)) {
+      const imageBuffer = await loadArtworkBytes(imageUrl);
+      if (imageBuffer) {
         try {
-          const response = await fetch(fullProxiedUrl, {
-            headers: { 'User-Agent': 'Mozilla/5.0 (compatible; ColorExtractor/1.0)' },
-          });
-
-          if (response.ok) {
-            const imageBuffer = Buffer.from(await response.arrayBuffer());
-            candidates = await extractColorCandidates(imageBuffer);
-            originalColor = pickBestBackgroundColor(candidates);
-            adjustedColor = makeBackgroundSuitable(originalColor, config);
-          }
+          candidates = await extractColorCandidates(imageBuffer);
+          originalColor = pickBestBackgroundColor(candidates);
+          adjustedColor = makeBackgroundSuitable(originalColor, config);
         } catch (error) {
+          // sharp rejecting the bytes is how a non-image is caught. The URL is
+          // not pre-filtered on extension: see lib/artwork-image-source.ts.
           console.warn('🎨 REALTIME extraction failed:', error);
         }
       }
@@ -154,50 +206,34 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Get proxied image URL for processing
-    const proxiedUrl = imageUrl.startsWith('/') || imageUrl.includes('/api/proxy-image')
-      ? imageUrl
-      : `/api/proxy-image?url=${encodeURIComponent(imageUrl)}`;
-
-    // Convert relative URL to absolute for server-side processing
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 3001}`;
-    const fullProxiedUrl = proxiedUrl.startsWith('/') ? `${baseUrl}${proxiedUrl}` : proxiedUrl;
-
-    console.log('🎨 Extracting color from image:', fullProxiedUrl);
+    console.log('🎨 Extracting color from image:', imageUrl);
 
     // Default fallback (only used if image fetch completely fails)
     let originalColor = '#4F46E5';
     let adjustedColor = '#4F46E5';
 
-    if (isValidImageUrl(fullProxiedUrl)) {
+    const imageBuffer = await loadArtworkBytes(imageUrl);
+    if (imageBuffer) {
       try {
-        // Fetch the image
-        const response = await fetch(fullProxiedUrl, {
-          headers: { 'User-Agent': 'Mozilla/5.0 (compatible; ColorExtractor/1.0)' },
-        });
+        // Extract multiple color candidates with minimal filtering
+        const candidates = await extractColorCandidates(imageBuffer);
+        console.log('🎨 Color candidates:', candidates);
 
-        if (response.ok) {
-          const imageBuffer = Buffer.from(await response.arrayBuffer());
+        // Pick the best one for background use
+        originalColor = pickBestBackgroundColor(candidates);
 
-          // Extract multiple color candidates with minimal filtering
-          const candidates = await extractColorCandidates(imageBuffer);
-          console.log('🎨 Color candidates:', candidates);
-
-          // Pick the best one for background use
-          originalColor = pickBestBackgroundColor(candidates);
-
-          // Always transform to ensure suitability (preserves hue!)
-          adjustedColor = makeBackgroundSuitable(originalColor, DEFAULT_COLOR_CONFIG);
-          console.log(`🎨 Original: ${originalColor} -> Adjusted: ${adjustedColor}`);
-        } else {
-          console.warn('🎨 Failed to fetch image:', response.status);
-        }
+        // Always transform to ensure suitability (preserves hue!)
+        adjustedColor = makeBackgroundSuitable(originalColor, DEFAULT_COLOR_CONFIG);
+        console.log(`🎨 Original: ${originalColor} -> Adjusted: ${adjustedColor}`);
       } catch (error) {
+        // sharp rejecting the bytes is how a non-image is caught here.
         console.warn('🎨 Color extraction failed:', error);
-        // Keep default fallback - only happens on network failure
+        // Keep default fallback
       }
     } else {
-      console.warn('🎨 Invalid image URL format');
+      // loadArtworkBytes logs its own reason for a refusal, a bad status or a
+      // throw. This covers the remaining case: nothing fetchable in the URL.
+      console.warn('🎨 No artwork bytes for:', imageUrl);
     }
 
     // Apply final brightening for better visibility
