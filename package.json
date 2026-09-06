@@ -87,6 +87,7 @@
     "tailwindcss": "^3.4.19",
     "typescript": "^5",
     "webln": "^0.3.2",
+    "ws": "^8.21.3",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
@@ -104,8 +105,7 @@
     "lighthouse": "^12.8.2",
     "task-master-ai": "^0.22.0",
     "ts-node": "^10.9.2",
-    "tsx": "^4.21.0",
-    "ws": "^8.21.3"
+    "tsx": "^4.21.0"
   },
   "engines": {
     "node": ">=18.0.0",
