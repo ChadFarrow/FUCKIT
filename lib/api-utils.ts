@@ -164,44 +164,12 @@ export const transformers = {
   }
 };
 
-// Rate limiting utility
-export class RateLimiter {
-  private requests = new Map<string, { count: number; resetTime: number }>();
-  
-  constructor(
-    private maxRequests: number = 100,
-    private windowMs: number = 15 * 60 * 1000 // 15 minutes
-  ) {}
-  
-  isAllowed(identifier: string): boolean {
-    const now = Date.now();
-    const record = this.requests.get(identifier);
-    
-    if (!record || now > record.resetTime) {
-      this.requests.set(identifier, {
-        count: 1,
-        resetTime: now + this.windowMs
-      });
-      return true;
-    }
-    
-    if (record.count >= this.maxRequests) {
-      return false;
-    }
-    
-    record.count++;
-    return true;
-  }
-  
-  getRemaining(identifier: string): number {
-    const record = this.requests.get(identifier);
-    if (!record || Date.now() > record.resetTime) {
-      return this.maxRequests;
-    }
-    return Math.max(0, this.maxRequests - record.count);
-  }
-}
-
+// Rate limiting lives in lib/rate-limit.ts, with the route-side guard in
+// lib/rate-limit-guard.ts. A second RateLimiter class used to sit here: it had
+// no callers, it never swept its Map, and having two classes of the same name
+// meant an import could silently pick the wrong one. Deleted for the same
+// reason as the CORS helper below.
+//
 // CORS lives in lib/cors.ts. The helper that used to sit here was unimported
 // and wrong — it joined origins with ', ', which is not a valid
 // Access-Control-Allow-Origin value and which every browser rejects.

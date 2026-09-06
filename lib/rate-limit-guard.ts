@@ -54,7 +54,19 @@ export function enforceRateLimit(
   // console.warn, never console.log — next.config.js strips console.log from
   // production builds, so a console.log diagnostic is missing from the one
   // environment worth diagnosing.
-  console.warn(`[rate-limit] ${mode === 'enforce' ? 'refused' : 'over limit (log mode)'} ${routeLabel} ip=${ip}`);
+  //
+  // The whole x-forwarded-for rides along, not just the IP clientIp picked out
+  // of it. clientIp takes the RIGHTMOST entry because that is the one our own
+  // proxy wrote and a caller cannot forge, which is correct for exactly one
+  // trusted hop — Railway's edge, which is what is in front of us today. Put a
+  // CDN in front and the rightmost entry becomes that CDN's IP for everyone, so
+  // every caller collapses into one bucket and enforce mode 429s the world.
+  // This line is what makes that visible the moment it starts, instead of
+  // looking like one very busy user.
+  const forwarded = headers.get('x-forwarded-for') ?? '(none)';
+  console.warn(
+    `[rate-limit] ${mode === 'enforce' ? 'refused' : 'over limit (log mode)'} ${routeLabel} ip=${ip} xff=${forwarded}`
+  );
 
   if (mode === 'log') return null;
 

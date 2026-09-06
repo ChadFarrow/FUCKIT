@@ -1,3 +1,5 @@
+import { hostMatches } from './host-match';
+
 /**
  * Which native Android shell is loading this site.
  *
@@ -81,8 +83,6 @@ export function currentHostname(): string | null {
 
 /** Package ids allowed to load this site inside a native Android shell. */
 export const DEFAULT_ALLOWED_APP_IDS = ['app.stablekraft'] as const;
-
-import { hostMatches } from './host-match';
 
 export type ForeignShellGateMode = 'block' | 'log' | 'off';
 
