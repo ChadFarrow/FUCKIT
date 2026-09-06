@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { APP_NAME } from '@/lib/constants';
+import { clientTag, podcastIdentifierTags } from '@/lib/nostr/boost-note';
 import { createPortal } from 'react-dom';
 import { useBitcoinConnect } from './BitcoinConnectProvider';
 import { useNostr } from '@/contexts/NostrContext';
@@ -661,32 +662,18 @@ export function BoostButton({
             // Add URL reference tag (NIP-18) - more widely supported than 'i' tags
             tags.push(['r', urlWithAnchor]);
 
-            // Add podcast GUID tags at the END (NIP-73 external identifiers)
-            // These come last to avoid clients misinterpreting them as "reply to" markers
-            // Use finalEpisodeGuid (from track.guid or v4vValue.itemGuid) for podcast:item:guid
-            if (finalEpisodeGuid) {
-              tags.push(['i', `podcast:item:guid:${finalEpisodeGuid}`]);
-            }
-
-            // Use finalFeedGuid (from remoteFeedGuid prop or v4vValue.feedGuid) for podcast:guid
-            if (finalFeedGuid) {
-              tags.push(['i', `podcast:guid:${finalFeedGuid}`]);
-            }
-
-            // Add podcast:publisher:guid tag if available
-            if (finalPublisherGuid) {
-              // Generate publisher URL if not provided
-              if (!finalPublisherUrl && isClient) {
-                // Use generatePublisherUrl utility
-                const { generatePublisherUrl } = await import('@/lib/url-utils');
-                const publisherPath = generatePublisherUrl({ feedGuid: finalPublisherGuid });
-                finalPublisherUrl = `${baseUrl}${publisherPath}`;
-              }
-
-              // Use full publisher URL with base URL
-              const publisherFullUrl = finalPublisherUrl || `${baseUrl}/publisher/${finalPublisherGuid}`;
-              tags.push(['i', `podcast:publisher:guid:${finalPublisherGuid}`]);
-            }
+            // NIP-73 external identifiers at the END, so clients don't misread them
+            // as "reply to" markers — each one immediately followed by the `k` naming
+            // its kind. The `k` is what makes the note findable at all:
+            // {"kinds":[1],"#k":["podcast:guid","podcast:item:guid"]} is how an indexer
+            // asks a relay for podcast boosts, and an `i` without its `k` matches that
+            // never. 274 notes were invisible to every index for months on exactly that
+            // (#237). Do not "tidy" the k tags away — see lib/nostr/boost-note.ts.
+            tags.push(...podcastIdentifierTags({
+              itemGuid: finalEpisodeGuid,        // track.guid or v4vValue.itemGuid
+              feedGuid: finalFeedGuid,           // remoteFeedGuid prop or v4vValue.feedGuid
+              publisherGuid: finalPublisherGuid,
+            }));
 
             // Add p-tags for musician notifications (resolved from Lightning Address NIP-05/Nostr info)
             // These pubkeys were extracted during Lightning Address resolution via resolveLightningAddressDetails()
@@ -729,6 +716,11 @@ export function BoostButton({
                 }
               }
             }
+
+            // NIP-89 attribution, last because it takes part in nothing above.
+            // Without it the app has no name on the wire but the `r` URL, so
+            // boosts show as unattributed wherever they're aggregated (#237).
+            tags.push(clientTag());
 
             // Create note template
             const { createNoteTemplate } = await import('@/lib/nostr/events');
