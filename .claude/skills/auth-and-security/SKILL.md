@@ -16,6 +16,7 @@ npx tsx --test lib/cors.test.ts                     # enforce/log modes, Vary: O
 npx tsx --test lib/proxy-host-allowlist.test.ts     # host allowlist, the playlist drift guard, the catalog cache
 npx tsx --test lib/rate-limit-guard.test.ts        # log vs enforce, forged x-forwarded-for
 npx tsx --test lib/native-app-identity.test.ts     # the shell gate, and every branch of it that fails open
+npx tsx --test lib/artwork-image-source.test.ts    # where artwork-colors fetches from; the proxy-URL unwrap
 ```
 
 ---
@@ -101,14 +102,26 @@ and take effect on restart. Flip them **one at a time**, after reading the warni
   mode too (log mode has to know whether it would have refused in order to say so), so a blocking cache made
   every proxy request pay for a refresh in the mode that is supposed to change nothing. It now serves the
   stale set and refreshes behind the request.
-- **Before `RATE_LIMIT_MODE=enforce`, check two things in the logs.** `clientIp` takes the **rightmost**
+- **Before `RATE_LIMIT_MODE=enforce`, check the forwarded chain.** `clientIp` takes the **rightmost**
   `x-forwarded-for` entry, correct for exactly one trusted hop — `stablekraft.app` answers
   `server: railway-hikari` with nothing in front. Put a CDN there and every caller collapses into one
-  bucket and enforce refuses the world; the warn line prints the whole chain so that is visible. Second,
-  `app/api/artwork-colors/route.ts` **fetches its own `/api/proxy-image`** through `NEXT_PUBLIC_BASE_URL`, so
-  it leaves and re-enters through Railway's edge and keys on one apparent IP against the 300/min bucket —
-  `batch-process` could 429 itself. The hop is pure waste (a server-side fetch has no CORS to work around)
-  and deleting it is the real fix; it is left alone here as out of scope.
+  bucket and enforce refuses the world; the warn line prints the whole chain so that is visible.
+- **Never fetch our own `/api/proxy-*` from the server.** The proxies exist for ONE reason — browsers
+  enforce CORS and a page cannot read pixels off another origin — and a server-side fetch has no CORS to
+  work around. `artwork-colors` did this, and the cost was not just double bytes and double latency on
+  every track change: `NEXT_PUBLIC_BASE_URL` is unset in production, so the fallback is
+  `http://localhost:<PORT>`, and a **loopback request carries no `x-forwarded-for`**, so `clientIp()` keys
+  every one of them on the single bucket named `unknown` — `batch-process` loops that route, so enforce
+  mode could have 429'd it against itself. Fixed: `lib/artwork-image-source.ts` resolves the target and the
+  route fetches the host directly. When writing a similar route, note the three-way split — a remote URL
+  goes through `safeFetch`, a **relative** path keeps a plain loopback fetch (`isSafePublicUrl` rejects
+  localhost by design, so `safeFetch` would refuse every local placeholder), and a caller-supplied
+  absolute loopback URL must still be refused.
+- **A gate can be a no-op without looking like one.** `isValidImageUrl` was applied to the *wrapper*
+  `/api/proxy-image?url=…`, whose pathname contains the substring `image`, so it passed unconditionally for
+  every external image. Moving that gate onto the real target would have been strictly stricter and would
+  have silently stopped extracting colour from extensionless artwork such as `https://host/a/b/c123`. Check
+  what a predicate actually returns for real inputs before relocating it.
 - **Two callers are off-catalog by construction** and degrade under `PROXY_HOST_MODE=enforce`:
   `components/CDNImage.tsx` retries any failed `<img>` through the proxy (it gets the placeholder, so the
   retry ladder still terminates) and `components/FeedManager.tsx` previews a feed not yet imported
