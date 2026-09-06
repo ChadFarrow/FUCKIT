@@ -79,6 +79,17 @@ export const KEYBOARD_SHORTCUTS = {
   CLOSE_MODAL: 'Escape',
 } as const;
 
+/**
+ * The app's name as it appears on other people's wires — the NIP-89 `client`
+ * tag on a boost note, the Helipad `app_name` TLV artists read, the
+ * nostrconnect:// handshake a signer shows.
+ *
+ * Deliberately NOT `SITE_CONFIG.name` ('Project StableKraft'), which is the
+ * display and SEO title and is free to be reworded. Rewording that must never
+ * silently rename this app in someone else's boost index.
+ */
+export const APP_NAME = 'StableKraft';
+
 // Site metadata
 export const SITE_CONFIG = {
   name: 'Project StableKraft',

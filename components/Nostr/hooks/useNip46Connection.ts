@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { APP_NAME } from '@/lib/constants';
 import { NIP46Client } from '@/lib/nostr/nip46-client';
 
 export interface Nip46ConnectionState {
@@ -224,7 +225,7 @@ export function useNip46Connection(options: UseNip46ConnectionOptions): Nip46Con
     // Generate nostrconnect URI with permissions
     const relayEncoded = encodeURIComponent(relayUrl);
     const secretEncoded = encodeURIComponent(token);
-    const appName = encodeURIComponent('StableKraft');
+    const appName = encodeURIComponent(APP_NAME);
     const appUrl = encodeURIComponent('https://stablekraft.app/');
     // Request broad permissions - some signers (Primal) don't support kind-specific permissions
     // Use generic sign_event to allow all event signing, plus specific kinds for signers that support it

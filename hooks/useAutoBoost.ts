@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useRef } from 'react';
+import { APP_NAME } from '@/lib/constants';
 import { useBitcoinConnect } from '@/components/Lightning/BitcoinConnectProvider';
 import { useUserSettings } from '@/contexts/UserSettingsContext';
 import { ValueSplitsService } from '@/lib/lightning/value-splits';
@@ -77,7 +78,7 @@ export function useAutoBoost() {
         podcast: album.artist || 'Unknown Artist',
         episode: track.title || 'Unknown Track',
         action: 'auto', // Helipad action type 4 = automated boost
-        app_name: 'StableKraft',
+        app_name: APP_NAME,
         value_msat: boostAmount * 1000,
         value_msat_total: boostAmount * 1000,
         sender_name: resolveAutoBoostSenderName(settings.defaultBoostName),

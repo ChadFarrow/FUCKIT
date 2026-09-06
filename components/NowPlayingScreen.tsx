@@ -871,7 +871,6 @@ export default function NowPlayingScreen({ isOpen, onClose }: NowPlayingScreenPr
           remoteFeedGuid={activeVTS?.remoteItem?.feedGuid || currentTrack.v4vValue?.feedGuid || currentPlayingAlbum.feedGuid}
           albumName={(currentTrack as any).feedTitle || (currentTrack as any).albumTitle || currentPlayingAlbum.title}
           publisherGuid={(currentPlayingAlbum as any).publisher?.feedGuid}
-          publisherUrl={(currentPlayingAlbum as any).publisher?.publisherUrl}
           remoteStartTime={activeVTS ? activeVTS.startTime : currentTrack.v4vValue?.remoteStartTime}
           persons={[
             ...((currentTrack as any).persons || []),
