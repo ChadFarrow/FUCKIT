@@ -126,17 +126,32 @@ async function importMissingAlbums(
     }
 
     try {
-      // Check if album already exists by URL or GUID
-      const conditions: any[] = [{ originalUrl: item.feedUrl }];
+      // Check if album already exists by URL or GUID.
+      //
+      // The URL half runs through the SHARED LADDER (`lib/feed-lookup.ts`), never a
+      // bare `originalUrl` compare. An exact compare sees only the byte-identical
+      // string, and `normalizeUrl` ENCODES a literal space to `%20` — so a publisher
+      // that lists the `%20` form of a row stored with literal spaces matched
+      // nothing here, and this loop minted a second row for an album it already
+      // had. That is #247: the duplicate then parsed the feed's `<podcast:guid>`
+      // and took it, and because `Feed.guid` is `@unique` the original could never
+      // reclaim it — every reparse 500s and the real row is stuck at
+      // `status: 'error'` forever. The ladder's rung 2 percent-decodes, which is
+      // precisely this case.
+      const urlMatch = await findFeedIdByUrl(item.feedUrl);
+      const conditions: any[] = [];
+      if (urlMatch) conditions.push({ id: urlMatch.id });
       if (item.feedGuid) {
         conditions.push({ id: item.feedGuid });
         conditions.push({ guid: item.feedGuid });
         conditions.push({ originalUrl: { contains: item.feedGuid } });
       }
 
-      const existing = await prisma.feed.findFirst({
-        where: { OR: conditions }
-      });
+      // An empty OR matches nothing in Prisma, but say so explicitly rather than
+      // relying on that.
+      const existing = conditions.length > 0
+        ? await prisma.feed.findFirst({ where: { OR: conditions } })
+        : null;
 
       if (existing) {
         // Just link it if not already linked
@@ -160,6 +175,16 @@ async function importMissingAlbums(
       // Check for ID collision
       const idExists = await prisma.feed.findUnique({ where: { id: feedId } });
       if (idExists) {
+        // Reaching here means the slug matched a row that the URL ladder and the
+        // guid checks both said was a DIFFERENT feed. That is possible, but it is
+        // also the exact shape of #247's duplicate mint, and it used to happen in
+        // silence. `console.warn` survives `removeConsole` in production; a plain
+        // log would not.
+        console.warn(
+          `⚠️ feed id collision minting a new row: ${feedId} already exists, ` +
+          `creating ${feedId}-<ts> from ${item.feedUrl}. If these are the same ` +
+          `album this is a duplicate mint (#247).`
+        );
         feedId = `${feedId}-${Date.now()}`;
       }
 
