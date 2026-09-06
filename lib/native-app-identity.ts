@@ -91,7 +91,7 @@ export type ShellDecision =
   | 'allow'
   /** Foreign, but the gate is in log mode: report it and render the app anyway. */
   | 'report'
-  /** Foreign: report it and render the notice instead of the app. */
+  /** Foreign: report it and render nothing at all. */
   | 'block';
 
 /**
