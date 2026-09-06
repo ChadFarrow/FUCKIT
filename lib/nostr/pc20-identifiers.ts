@@ -15,6 +15,10 @@ export const SHOW_PREFIX = `${SHOW_KIND}:`;
 export const ITEM_KIND = 'podcast:item:guid';
 export const ITEM_PREFIX = `${ITEM_KIND}:`;
 
+/** `<podcast:publisher>` — the feed that owns a set of feeds. */
+export const PUBLISHER_KIND = 'podcast:publisher:guid';
+export const PUBLISHER_PREFIX = `${PUBLISHER_KIND}:`;
+
 /**
  * The NIP-73 identifier kinds Podcasting 2.0 defines. Longest first, so a kind
  * that is a prefix of another can't shadow it.
@@ -25,7 +29,7 @@ export const ITEM_PREFIX = `${ITEM_KIND}:`;
  * `podcast:item:guid:https` — a `k` tag no relay filter will ever match, which
  * breaks discovery without breaking anything visible.
  */
-const KNOWN_IDENTIFIER_KINDS = ['podcast:publisher:guid', ITEM_KIND, SHOW_KIND];
+const KNOWN_IDENTIFIER_KINDS = [PUBLISHER_KIND, ITEM_KIND, SHOW_KIND];
 
 /**
  * Is this a kind from the table — i.e. one a `k` tag could name that we also
@@ -70,6 +74,7 @@ export interface FavoriteEntry {
 
 export const showId = (feedGuid: string) => `${SHOW_PREFIX}${feedGuid}`;
 export const itemId = (itemGuid: string) => `${ITEM_PREFIX}${itemGuid}`;
+export const publisherId = (publisherGuid: string) => `${PUBLISHER_PREFIX}${publisherGuid}`;
 
 /** `podcast:guid:<uuid>` → uuid, or null when it isn't a readable show id. */
 export function parseShowGuid(id: string): string | null {
