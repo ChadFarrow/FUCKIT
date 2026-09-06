@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState, useRef, useCallback } from 'react';
+import { APP_NAME } from '@/lib/constants';
 import type { WebLNProvider } from '@webbtc/webln-types';
 import { LIGHTNING_CONFIG } from '@/lib/lightning/config';
 import { useNostr } from '@/contexts/NostrContext';
@@ -102,7 +103,7 @@ export function BitcoinConnectProvider({ children }: { children: React.ReactNode
     if (typeof window !== 'undefined') {
       import('@getalby/bitcoin-connect').then(({ init, onConnected, onDisconnected }) => {
         init({
-          appName: 'StableKraft',
+          appName: APP_NAME,
           showBalance: true,
         });
 

@@ -12,6 +12,7 @@
  * @see https://github.com/ChadFarrow/boostbox
  */
 
+import { APP_NAME } from '@/lib/constants';
 export interface BoostBoxPayload {
   action: 'boost' | 'stream';
   split: number;
@@ -61,7 +62,7 @@ function mapHelipadToBoostBox(
     value_msat_total: helipadMetadata.value_msat_total || helipadMetadata.value_msat || 0,
     timestamp: new Date().toISOString(),
     message: helipadMetadata.message,
-    app_name: helipadMetadata.app_name || 'StableKraft',
+    app_name: helipadMetadata.app_name || APP_NAME,
     app_version: helipadMetadata.app_version,
     sender_name: helipadMetadata.sender_name,
     recipient_name: recipientName,

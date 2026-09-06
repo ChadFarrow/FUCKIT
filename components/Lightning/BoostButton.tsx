@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { APP_NAME } from '@/lib/constants';
 import { createPortal } from 'react-dom';
 import { useBitcoinConnect } from './BitcoinConnectProvider';
 import { useNostr } from '@/contexts/NostrContext';
@@ -257,11 +258,11 @@ export function BoostButton({
       podcast: artistName || 'Unknown Artist',
       episode: trackTitle || 'Unknown Track',
       action: 'boost',
-      app_name: 'StableKraft',
+      app_name: APP_NAME,
       value_msat: amount * 1000,
       value_msat_total: amount * 1000,
       sender_name: senderName || 'Anonymous',
-      name: 'StableKraft',
+      name: APP_NAME,
       app_version: '1.0.0',
       uuid: `boost-${Date.now()}-${Math.floor(Math.random() * 999)}`
     };
@@ -1125,13 +1126,13 @@ export function BoostButton({
       if (LIGHTNING_CONFIG.features.boostbox) {
         const helipadMetadata = buildHelipadMetadata(platformFee, metaboostMessage);
         helipadMetadata.uuid = `metaboost-${Date.now()}-${Math.floor(Math.random() * 999)}`;
-        helipadMetadata.name = 'StableKraft';
+        helipadMetadata.name = APP_NAME;
         if (boostboxUrls && boostboxUrls.length > 0) {
           helipadMetadata.boost_link = boostboxUrls[0];
         }
         const boostboxResult = await BoostBoxService.storeMetadata(
           helipadMetadata,
-          'StableKraft',
+          APP_NAME,
           platformLightningAddress,
           100
         );

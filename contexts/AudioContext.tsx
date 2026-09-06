@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useRef, useState, useEffect, useCallback, useMemo, ReactNode } from 'react';
+import { APP_NAME } from '@/lib/constants';
 import { RSSAlbum } from '@/lib/rss-parser';
 import { toast } from '@/components/Toast';
 // Type-only import for TypeScript (hls.js is ~150KB, loaded dynamically when needed)
@@ -466,7 +467,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         podcast: track.artist || album.artist || 'Unknown Artist',
         episode: track.title || 'Unknown Track',
         action: 'auto', // Helipad action type 4 = automated boost
-        app_name: 'StableKraft',
+        app_name: APP_NAME,
         value_msat: amount * 1000,
         value_msat_total: amount * 1000,
         sender_name: resolveAutoBoostSenderName(settings.defaultBoostName),
@@ -790,7 +791,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
         podcast: album.artist || 'Unknown Artist',
         episode: trackTitle,
         action: 'auto',
-        app_name: 'StableKraft',
+        app_name: APP_NAME,
         value_msat: amount * 1000,
         value_msat_total: amount * 1000,
         sender_name: resolveAutoBoostSenderName(settings.defaultBoostName),
