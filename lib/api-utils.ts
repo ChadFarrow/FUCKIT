@@ -202,17 +202,9 @@ export class RateLimiter {
   }
 }
 
-// CORS utility
-export function createCorsHeaders(origin?: string) {
-  const allowedOrigins = origin ? [origin] : ['*'];
-  
-  return {
-    'Access-Control-Allow-Origin': allowedOrigins.join(', '),
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Access-Control-Max-Age': '86400',
-  };
-}
+// CORS lives in lib/cors.ts. The helper that used to sit here was unimported
+// and wrong — it joined origins with ', ', which is not a valid
+// Access-Control-Allow-Origin value and which every browser rejects.
 
 // Cache utility
 export class ApiCache {

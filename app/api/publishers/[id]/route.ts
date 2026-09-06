@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { corsHeaders } from '@/lib/cors';
 import { prisma } from '@/lib/prisma';
 import { generateAlbumSlug } from '@/lib/url-utils';
 
@@ -6,6 +7,7 @@ export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const cors = await corsHeaders();
   try {
     const { id } = await params;
     const publisherId = decodeURIComponent(id);
@@ -225,7 +227,7 @@ export async function GET(
       headers: {
         'Cache-Control': 'public, max-age=300, s-maxage=300', // Cache for 5 minutes
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
+        ...cors,
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type'
       },
@@ -251,10 +253,11 @@ export async function GET(
 }
 
 export async function OPTIONS() {
+  const cors = await corsHeaders();
   return new NextResponse(null, {
     status: 200,
     headers: {
-      'Access-Control-Allow-Origin': '*',
+      ...cors,
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
     },

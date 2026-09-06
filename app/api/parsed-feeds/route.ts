@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
+import { corsHeaders } from '@/lib/cors';
 import { prisma } from '@/lib/prisma';
 
 export async function GET(request: Request) {
+  const cors = await corsHeaders();
   try {
     console.log('🔍 Database Parsed Feeds API: Getting all feeds with metadata');
     
@@ -194,7 +196,7 @@ export async function GET(request: Request) {
       headers: {
         'Cache-Control': 'public, max-age=300, s-maxage=600, stale-while-revalidate=1800',
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
+        ...cors,
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
         'X-Content-Type-Options': 'nosniff',
@@ -222,10 +224,11 @@ export async function GET(request: Request) {
 }
 
 export async function OPTIONS() {
+  const cors = await corsHeaders();
   return new NextResponse(null, {
     status: 200,
     headers: {
-      'Access-Control-Allow-Origin': '*',
+      ...cors,
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
     },
