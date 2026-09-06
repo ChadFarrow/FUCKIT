@@ -7,6 +7,11 @@ import {
   STATIC_ALLOWED_HOSTS,
   checkProxyTarget,
   guardProxyTarget,
+  getCatalogHosts,
+  resetCatalogHostCache,
+  setCatalogHostLoaderForTests,
+  CATALOG_HOSTS_TTL_MS,
+  CATALOG_HOSTS_RETRY_MS,
 } from './proxy-host-allowlist';
 
 test('parseProxyHostMode: enforce only when asked for, everything else logs', () => {
@@ -130,4 +135,198 @@ test('guardProxyTarget: refusal only in enforce mode against a loaded catalog', 
   assert.deepEqual(await guardProxyTarget('https://attacker.example/x', 'test', 'log', CATALOG), { refusal: null });
   assert.deepEqual(await guardProxyTarget('https://attacker.example/x', 'test', 'enforce', null), { refusal: null });
   assert.deepEqual(await guardProxyTarget('https://cdn.wavlake.com/x', 'test', 'enforce', CATALOG), { refusal: null });
+});
+
+/**
+ * The drift guard for the three host lists STATIC_ALLOWED_HOSTS seeds from.
+ *
+ * The HGH and ITDV playlists hardcode their media URLs in data/, and their
+ * source feeds are deliberately absent from the catalog, so nothing else proves
+ * those hosts are reachable through the proxy. Seeding from only two of the
+ * repo's three host lists left three of them matching nothing, which enforce
+ * mode would have turned into missing artwork on a real page.
+ *
+ * Imports the data files here rather than in the module under test: ~220KB of
+ * URLs belongs in a test run, not in the server bundle.
+ */
+test('every host the HGH and ITDV playlists load is covered without asking the catalog', async () => {
+  const [hghArt, hghAudio, itdvArt, itdvAudio] = await Promise.all([
+    import('../data/hgh-artwork-urls'),
+    import('../data/hgh-audio-urls'),
+    import('../data/itdv-artwork-urls'),
+    import('../data/itdv-audio-urls'),
+  ]);
+
+  const urls = [
+    ...Object.values(hghArt.HGH_ARTWORK_URL_MAP),
+    ...Object.values(hghAudio.HGH_AUDIO_URL_MAP),
+    ...Object.values(itdvArt.ITDV_ARTWORK_URL_MAP),
+    ...Object.values(itdvAudio.ITDV_AUDIO_URL_MAP),
+  ] as string[];
+
+  const hosts = new Set<string>();
+  for (const url of urls) {
+    const host = hostOf(url);
+    if (host) hosts.add(host);
+  }
+
+  // A sanity floor: if the data files ever stop exporting what we think, an
+  // empty set would make the assertion below pass while proving nothing.
+  assert.ok(hosts.size > 50, `expected many playlist hosts, found ${hosts.size}`);
+
+  const uncovered = [...hosts].filter((h) => !hostMatches(h, STATIC_ALLOWED_HOSTS)).sort();
+  assert.deepEqual(
+    uncovered,
+    [],
+    `these playlist hosts match no static entry, so PROXY_HOST_MODE=enforce would refuse them:\n  ${uncovered.join('\n  ')}\nAdd them to PLAYLIST_MEDIA_HOSTS.`
+  );
+});
+
+test('STATIC_ALLOWED_HOSTS seeds from all three of the repo host lists', async () => {
+  const { CORS_PROBLEMATIC_DOMAINS, DIRECT_FIRST_DOMAINS } = await import('./audio-url-utils');
+  const { ALLOWED_IMAGE_DOMAINS } = await import('./cdn-utils');
+
+  for (const host of [...CORS_PROBLEMATIC_DOMAINS, ...DIRECT_FIRST_DOMAINS, ...ALLOWED_IMAGE_DOMAINS]) {
+    if (host === 'localhost') continue; // deliberately filtered out; asserted below
+    assert.ok(hostMatches(host, STATIC_ALLOWED_HOSTS), `${host} is in a repo host list but not allowed`);
+  }
+
+  // ALLOWED_IMAGE_DOMAINS carries localhost for next/image in development. The
+  // seed must not carry it through: isSafePublicUrl rejects loopback first, but
+  // the allowlist should not claim loopback is a fine proxy target either.
+  assert.ok(!hostMatches('localhost', STATIC_ALLOWED_HOSTS), 'loopback is never a proxy target');
+  assert.ok(!hostMatches('127.0.0.1', STATIC_ALLOWED_HOSTS));
+
+  // The two that seeding from only audio-url-utils missed.
+  assert.ok(hostMatches('socialmedia101pro.com', STATIC_ALLOWED_HOSTS));
+  assert.ok(hostMatches('bobcatindex.us-southeast-1.linodeobjects.com', STATIC_ALLOWED_HOSTS));
+
+  // Still not an open proxy.
+  assert.ok(!hostMatches('attacker.example', STATIC_ALLOWED_HOSTS));
+  assert.ok(!hostMatches('wavlake.com.attacker.net', STATIC_ALLOWED_HOSTS));
+});
+
+/**
+ * The catalog cache — the half of this module that holds state, and the half
+ * that had no coverage at all. Every other test drives catalogHostsOverride,
+ * which skips the TTL, the stampede collapse, the cooldown and the
+ * stale-while-revalidate path.
+ */
+test('getCatalogHosts: the first call waits, and later calls inside the TTL do not reload', async () => {
+  let loads = 0;
+  setCatalogHostLoaderForTests(async () => {
+    loads += 1;
+    return new Set(['first.example']);
+  });
+
+  assert.deepEqual([...((await getCatalogHosts(0)) ?? [])], ['first.example']);
+  assert.equal(loads, 1);
+
+  await getCatalogHosts(CATALOG_HOSTS_TTL_MS - 1);
+  assert.equal(loads, 1, 'inside the TTL nothing reloads');
+
+  setCatalogHostLoaderForTests(null);
+});
+
+test('getCatalogHosts: concurrent callers collapse into one load', async () => {
+  let loads = 0;
+  setCatalogHostLoaderForTests(async () => {
+    loads += 1;
+    await new Promise((r) => setTimeout(r, 10));
+    return new Set(['one.example']);
+  });
+
+  const results = await Promise.all([getCatalogHosts(0), getCatalogHosts(0), getCatalogHosts(0)]);
+  assert.equal(loads, 1, 'a page load fires many proxy requests at once');
+  for (const set of results) assert.ok(set?.has('one.example'));
+
+  setCatalogHostLoaderForTests(null);
+});
+
+test('getCatalogHosts: past the TTL it answers from the stale set and refreshes behind the request', async () => {
+  let loads = 0;
+  setCatalogHostLoaderForTests(async () => {
+    loads += 1;
+    await new Promise((r) => setTimeout(r, 10));
+    return new Set([`load${loads}.example`]);
+  });
+
+  await getCatalogHosts(0);
+  assert.equal(loads, 1);
+
+  // The whole point: this call must NOT wait on the query. It returns the old
+  // set immediately, so no user pays 170-650ms for a refresh they did not ask
+  // for — which in log mode would be latency a mode switch is meant to prevent.
+  const stale = await getCatalogHosts(CATALOG_HOSTS_TTL_MS + 1);
+  assert.ok(stale?.has('load1.example'), 'answered from the stale set');
+  assert.equal(loads, 2, 'and started a refresh anyway');
+
+  await new Promise((r) => setTimeout(r, 30));
+  const refreshed = await getCatalogHosts(CATALOG_HOSTS_TTL_MS + 2);
+  assert.ok(refreshed?.has('load2.example'), 'the refresh landed');
+
+  setCatalogHostLoaderForTests(null);
+});
+
+test('getCatalogHosts: a failed load keeps the previous set rather than dropping it', async () => {
+  let fail = false;
+  setCatalogHostLoaderForTests(async () => (fail ? null : new Set(['good.example'])));
+
+  await getCatalogHosts(0);
+  fail = true;
+  const after = await getCatalogHosts(CATALOG_HOSTS_TTL_MS + 1);
+  assert.ok(after?.has('good.example'), 'a database hiccup must not empty the allowlist');
+
+  setCatalogHostLoaderForTests(null);
+});
+
+test('getCatalogHosts: a failed first load returns null, which callers read as allow', async () => {
+  setCatalogHostLoaderForTests(async () => null);
+  assert.equal(await getCatalogHosts(0), null);
+  setCatalogHostLoaderForTests(null);
+});
+
+test('getCatalogHosts: a failure is not retried until the cooldown passes', async () => {
+  let loads = 0;
+  setCatalogHostLoaderForTests(async () => {
+    loads += 1;
+    return null;
+  });
+
+  await getCatalogHosts(0);
+  assert.equal(loads, 1);
+
+  // With no cooldown, a database that is down makes EVERY proxy request start
+  // its own doomed query, during exactly the incident when the proxy has to
+  // stay quick.
+  await getCatalogHosts(CATALOG_HOSTS_RETRY_MS - 1);
+  assert.equal(loads, 1, 'still cooling off');
+
+  await getCatalogHosts(CATALOG_HOSTS_RETRY_MS + 1);
+  assert.equal(loads, 2, 'and retries once it has passed');
+
+  setCatalogHostLoaderForTests(null);
+});
+
+test('getCatalogHosts: a loader that REJECTS does not wedge the module', async () => {
+  // loadCatalogHosts catches everything today, so this cannot happen today. If
+  // it ever can, clearing inFlight only on success would leave a permanently
+  // rejected promise here and every later caller would throw — and
+  // app/api/proxy-audio/route.ts calls guardProxyTarget outside its try, so
+  // that is a 500 on every audio request until the instance restarts.
+  let calls = 0;
+  setCatalogHostLoaderForTests(async () => {
+    calls += 1;
+    throw new Error('connection reset');
+  });
+
+  assert.equal(await getCatalogHosts(0), null, 'a rejection reads as unavailable, not a throw');
+
+  setCatalogHostLoaderForTests(async () => new Set(['recovered.example']));
+  const recovered = await getCatalogHosts(0);
+  assert.ok(recovered?.has('recovered.example'), 'and the module still works afterwards');
+  assert.equal(calls, 1);
+
+  setCatalogHostLoaderForTests(null);
+  resetCatalogHostCache();
 });

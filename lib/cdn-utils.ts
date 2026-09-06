@@ -21,6 +21,69 @@ export function decodeHtmlEntitiesInUrl(url: string): string {
 }
 
 /**
+ * Image hosts configured in next.config.js remotePatterns — next/image can serve
+ * these directly, so getAlbumArtworkUrl does not route them through the proxy.
+ *
+ * Exported because lib/proxy-host-allowlist.ts must seed from it. This repo keeps
+ * THREE host lists — this one, plus CORS_PROBLEMATIC_DOMAINS and
+ * DIRECT_FIRST_DOMAINS in lib/audio-url-utils.ts — and the proxy allowlist has to
+ * cover all three. Seeding from only two left socialmedia101pro.com and
+ * bobcatindex.us-southeast-1.linodeobjects.com matching nothing, which would have
+ * refused real playlist artwork the moment PROXY_HOST_MODE became enforce.
+ *
+ * next.config.js hand-mirrors these same hosts. That copy cannot be imported here
+ * (it is CommonJS config, loaded before the app), so it stays a mirror.
+ */
+export const ALLOWED_IMAGE_DOMAINS: readonly string[] = [
+  'www.doerfelverse.com',
+  'feed.bowlafterbowl.com',
+  'www.thisisjdog.com',
+  'www.sirtjthewrathful.com',
+  'wavlake.com',
+  'www.wavlake.com',
+  'd12wklypp119aj.cloudfront.net',
+  'ableandthewolf.com',
+  'music.behindthesch3m3s.com',
+  'whiterabbitrecords.org',
+  'feed.falsefinish.club',
+  'f4.bcbits.com',
+  'stablekraft.app',
+  'localhost',
+  'static.wixstatic.com',
+  'noagendaassets.com',
+  'media.rssblue.com',
+  'files.heycitizen.xyz',
+  'files.bitpunk.fm',
+  'www.bitpunk.fm',
+  'annipowellmusic.com',
+  'rocknrollbreakheart.com',
+  'via.placeholder.com',
+  'i.nostr.build',
+  'raw.githubusercontent.com',
+  'megaphone.imgix.net',
+  'cdn-images.owltail.com',
+  'www.haciendoelsueco.com',
+  'destinys-music.nyc3.cdn.digitaloceanspaces.com',
+  'dtnmusic1w.sfo3.cdn.digitaloceanspaces.com',
+  'dtnmusic1w.sfo3.digitaloceanspaces.com',
+  'jimmiebratcher.s3.us-west-1.amazonaws.com',
+  'thesynthesatsers.nyc3.cdn.digitaloceanspaces.com',
+  'thebearsnare.com',
+  'socialmedia101pro.com',
+  'bobcatindex.us-southeast-1.linodeobjects.com',
+  'homegrownhits.xyz',
+  'lightningthrashes.com',
+  'picsum.photos',
+  'podcastindex.org',
+  'f.strangetextures.com',
+  'deow9bq0xqvbj.cloudfront.net',
+  'binauralsubliminal.com',
+  'shop.basspistol.com',
+  'feeds.fountain.fm',
+  'assets.podhome.fm',
+];
+
+/**
  * Get album artwork URL with fallback to placeholder
  * @param originalUrl - The original artwork URL
  * @param size - The desired size for placeholder
@@ -51,57 +114,6 @@ export function getAlbumArtworkUrl(originalUrl: string, size: 'thumbnail' | 'med
     originalUrl = originalUrl.replace('http://', 'https://');
   }
 
-  // List of domains that are configured in next.config.js remotePatterns
-  // Images from these domains can be served directly by next/image
-  const allowedImageDomains = [
-    'www.doerfelverse.com',
-    'feed.bowlafterbowl.com',
-    'www.thisisjdog.com',
-    'www.sirtjthewrathful.com',
-    'wavlake.com',
-    'www.wavlake.com',
-    'd12wklypp119aj.cloudfront.net',
-    'ableandthewolf.com',
-    'music.behindthesch3m3s.com',
-    'whiterabbitrecords.org',
-    'feed.falsefinish.club',
-    'f4.bcbits.com',
-    'stablekraft.app',
-    'localhost',
-    'static.wixstatic.com',
-    'noagendaassets.com',
-    'media.rssblue.com',
-    'files.heycitizen.xyz',
-    'files.bitpunk.fm',
-    'www.bitpunk.fm',
-    'annipowellmusic.com',
-    'rocknrollbreakheart.com',
-    'via.placeholder.com',
-    'i.nostr.build',
-    'raw.githubusercontent.com',
-    'megaphone.imgix.net',
-    'cdn-images.owltail.com',
-    'www.haciendoelsueco.com',
-    'destinys-music.nyc3.cdn.digitaloceanspaces.com',
-    'dtnmusic1w.sfo3.cdn.digitaloceanspaces.com',
-    'dtnmusic1w.sfo3.digitaloceanspaces.com',
-    'jimmiebratcher.s3.us-west-1.amazonaws.com',
-    'thesynthesatsers.nyc3.cdn.digitaloceanspaces.com',
-    'thebearsnare.com',
-    'socialmedia101pro.com',
-    'bobcatindex.us-southeast-1.linodeobjects.com',
-    'homegrownhits.xyz',
-    'lightningthrashes.com',
-    'picsum.photos',
-    'podcastindex.org',
-    'f.strangetextures.com',
-    'deow9bq0xqvbj.cloudfront.net',
-    'binauralsubliminal.com',
-    'shop.basspistol.com',
-    'feeds.fountain.fm',
-    'assets.podhome.fm',
-  ];
-
   // Domains that must always be proxied (even if in allowed list)
   // These domains cause Next.js Image optimization to fail with HTTP 400
   const mustProxyDomains = [
@@ -123,7 +135,7 @@ export function getAlbumArtworkUrl(originalUrl: string, size: 'thumbnail' | 'med
     );
     
     // Check for exact match or subdomain match in allowed list
-    isAllowedDomain = allowedImageDomains.some(domain => {
+    isAllowedDomain = ALLOWED_IMAGE_DOMAINS.some(domain => {
       const domainLower = domain.toLowerCase();
       return urlHostname === domainLower || urlHostname.endsWith('.' + domainLower);
     });

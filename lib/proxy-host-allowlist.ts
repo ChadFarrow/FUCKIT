@@ -34,6 +34,7 @@
  */
 
 import { CORS_PROBLEMATIC_DOMAINS, DIRECT_FIRST_DOMAINS } from './audio-url-utils';
+import { ALLOWED_IMAGE_DOMAINS } from './cdn-utils';
 import { hostMatches } from './host-match';
 
 export type ProxyHostMode = 'log' | 'enforce';
@@ -44,17 +45,67 @@ export function parseProxyHostMode(raw: string | undefined): ProxyHostMode {
 }
 
 /**
+ * Media hosts the HGH and ITDV playlists load from that no other list carries.
+ *
+ * data/hgh-*-urls.ts and data/itdv-*-urls.ts hardcode ~1800 artwork and audio
+ * URLs. Those playlists' SOURCE feeds sit in PLAYLIST_SOURCE_FEED_URLS and are
+ * therefore deliberately absent from the catalog, so binding the proxy to the
+ * catalog does not, on its own, cover what the playlists ask it to fetch.
+ *
+ * Most of those hosts do turn out to be in the catalog, via the music feeds the
+ * playlists point AT rather than the playlist feeds themselves. Relying on that
+ * would make the playlists depend on a live database round trip for hosts that
+ * are already known statically, and would break them the moment a track was
+ * removed. These are the remainder, listed so the dependency does not exist.
+ *
+ * proxy-host-allowlist.test.ts reads the data files and asserts every host in
+ * them matches STATIC_ALLOWED_HOSTS, so adding a playlist URL on a host nothing
+ * covers fails the suite rather than the page.
+ */
+export const PLAYLIST_MEDIA_HOSTS: readonly string[] = [
+  'backend-api.justcast.com',
+  'poddownload.justcast.com',
+  'cdn.kolomona.com',
+  'headstarts.uk',
+  'hogstory.net',
+  'i0.wp.com',
+  'images.pexels.com',
+  'images.squarespace-cdn.com',
+  'static1.squarespace.com',
+  'ipfspodcasting.net',
+  'media.blubrry.com',
+  'music.jimmyv4v.com',
+  'nutshellsermons.com',
+  'serve.podhome.fm',
+  'taylor-sound.com',
+  'leuenbergmusic.com',
+];
+
+/**
  * Hosts allowed even when the catalog query has never run.
  *
- * Seeded from the two lists the audio path already maintains, so the media hosts
- * this app is built around keep working from a cold start. `stablekraft.app` and
- * the podcast-namespace hosts are here for artwork that is served from our own
- * domain or from a feed's own site.
+ * Seeded from every host list this repo already maintains, so the media hosts
+ * the app is built around keep working from a cold start. There are THREE such
+ * lists — CORS_PROBLEMATIC_DOMAINS and DIRECT_FIRST_DOMAINS in audio-url-utils,
+ * and ALLOWED_IMAGE_DOMAINS in cdn-utils — and seeding from only the first two
+ * left socialmedia101pro.com and bobcatindex.us-southeast-1.linodeobjects.com
+ * matching nothing at all. Both carry real playlist artwork, so enforce mode
+ * would have refused it. Seed from all three, and from the playlist hosts above.
+ *
+ * `stablekraft.app` and the podcast-namespace hosts are here for artwork that is
+ * served from our own domain or from a feed's own site.
  */
 export const STATIC_ALLOWED_HOSTS: readonly string[] = Array.from(
   new Set([
     ...CORS_PROBLEMATIC_DOMAINS,
     ...DIRECT_FIRST_DOMAINS,
+    // `localhost` belongs in ALLOWED_IMAGE_DOMAINS — next/image needs it in
+    // development — but never here. isSafePublicUrl already rejects loopback
+    // before this check runs, so keeping it out is defence in depth rather than
+    // the control; an allowlist should still not claim loopback is a fine
+    // proxy target.
+    ...ALLOWED_IMAGE_DOMAINS.filter((host) => host !== 'localhost'),
+    ...PLAYLIST_MEDIA_HOSTS,
     'stablekraft.app',
     'podcastindex.org',
     'op3.dev',
@@ -79,11 +130,33 @@ export { hostMatches };
 
 /** Hosts referenced by the catalog, cached in memory. Null until first loaded. */
 let catalogHosts: Set<string> | null = null;
-let catalogHostsLoadedAt = 0;
+// -Infinity, never 0: a falsy sentinel here is indistinguishable from a real
+// timestamp of 0, so "failed just now" would read as "never failed" and the
+// cooldown below would never engage. A production clock hides that; a test with
+// an injected clock does not.
+let catalogHostsLoadedAt = -Infinity;
+let catalogHostsFailedAt = -Infinity;
 let inFlight: Promise<Set<string> | null> | null = null;
 
 /** How long a loaded host set is reused before refreshing. */
 export const CATALOG_HOSTS_TTL_MS = 10 * 60 * 1000;
+
+/**
+ * How long to wait before retrying after the query fails.
+ *
+ * Without this, a database that is down makes every proxy request start its own
+ * doomed query — the load is not cached on failure, so nothing throttles the
+ * retries during exactly the incident when the proxy has to stay quick.
+ */
+export const CATALOG_HOSTS_RETRY_MS = 30 * 1000;
+
+/**
+ * How long the query gets before it is treated as a failure.
+ *
+ * A hung Postgres would otherwise pin `inFlight` forever, and every caller that
+ * awaits it with it.
+ */
+export const CATALOG_HOSTS_QUERY_TIMEOUT_MS = 5000;
 
 /** Extract a lowercased hostname, or null if the value is not a usable URL. */
 export function hostOf(value: string | null | undefined): string | null {
@@ -108,7 +181,7 @@ export async function loadCatalogHosts(): Promise<Set<string> | null> {
     // Imported lazily so the pure helpers above stay unit-testable without a
     // database, and so a proxy request that never reaches here pays nothing.
     const { prisma } = await import('./prisma');
-    const rows = await prisma.$queryRaw<Array<{ host: string | null }>>`
+    const query = prisma.$queryRaw<Array<{ host: string | null }>>`
       SELECT DISTINCT substring("audioUrl" from '://([^/]+)') AS host FROM "Track"
       UNION
       SELECT DISTINCT substring("image"    from '://([^/]+)') AS host FROM "Track"
@@ -117,6 +190,17 @@ export async function loadCatalogHosts(): Promise<Set<string> | null> {
       UNION
       SELECT DISTINCT substring("image"       from '://([^/]+)') AS host FROM "Feed"
     `;
+
+    // A hung query must not pin inFlight, and through it every awaiting caller.
+    const rows = await Promise.race([
+      query,
+      new Promise<null>((resolve) => setTimeout(() => resolve(null), CATALOG_HOSTS_QUERY_TIMEOUT_MS)),
+    ]);
+    if (!rows) {
+      console.warn('[proxy-hosts] catalog host query timed out, allowing all hosts');
+      return null;
+    }
+
     const hosts = new Set<string>();
     for (const row of rows) {
       const host = row.host?.trim().toLowerCase();
@@ -131,30 +215,92 @@ export async function loadCatalogHosts(): Promise<Set<string> | null> {
   }
 }
 
-/** The cached catalog host set, refreshing past the TTL. Never throws. */
-export async function getCatalogHosts(nowMs: number = Date.now()): Promise<Set<string> | null> {
-  if (catalogHosts && nowMs - catalogHostsLoadedAt < CATALOG_HOSTS_TTL_MS) return catalogHosts;
-  // Collapse a stampede: many proxy requests arrive together on a page load.
-  if (!inFlight) {
-    inFlight = loadCatalogHosts().then((hosts) => {
+/**
+ * Start a refresh unless one is already running, and never throw.
+ *
+ * `inFlight` is cleared in a `finally`, not in the success path. loadCatalogHosts
+ * catches everything today, so the promise cannot reject today — but if it ever
+ * could, clearing only on success would leave a permanently rejected promise
+ * here, and every later caller would throw. app/api/proxy-audio/route.ts calls
+ * guardProxyTarget OUTSIDE its try block, so that would be a 500 on every audio
+ * request until the instance restarted. The module's doc says it never throws;
+ * this is what makes that true rather than incidental.
+ */
+function refreshCatalogHosts(nowMs: number): Promise<Set<string> | null> {
+  if (inFlight) return inFlight;
+  inFlight = (loaderForTests ?? loadCatalogHosts)()
+    .catch(() => null)
+    .then((hosts) => {
       if (hosts) {
         catalogHosts = hosts;
-        catalogHostsLoadedAt = Date.now();
+        catalogHostsLoadedAt = nowMs;
+        catalogHostsFailedAt = -Infinity;
+      } else {
+        catalogHostsFailedAt = nowMs;
       }
-      inFlight = null;
       return hosts;
+    })
+    .finally(() => {
+      inFlight = null;
     });
-  }
-  const loaded = await inFlight;
-  // On failure keep serving the previous set if we have one.
-  return loaded ?? catalogHosts;
+  return inFlight;
+}
+
+/**
+ * The cached catalog host set. Never throws, and never makes a request wait
+ * except on the very first call.
+ *
+ * The blocking version of this was a latency bug hiding inside a mode switch.
+ * checkProxyTarget consults the catalog for any host not in STATIC_ALLOWED_HOSTS
+ * whatever the mode, because log mode has to know whether it would have refused
+ * in order to say so. So in LOG mode — the mode this ships in, the one that is
+ * supposed to change nothing — the first proxy request after boot and after
+ * every TTL expiry blocked on a DISTINCT scan of Track and Feed. Measured at
+ * 170–650 ms against production, on a route that serves every image and every
+ * audio stream. "Log mode answers exactly as today" has to be true of latency,
+ * not only of responses.
+ *
+ * So: serve what we have and refresh behind the request. Only a cold start
+ * waits, and that once. A stale set is a far better answer than a slow one —
+ * hosts enter the catalog when a feed is imported, and STATIC_ALLOWED_HOSTS
+ * already covers everything the app itself is built around.
+ */
+export async function getCatalogHosts(nowMs: number = Date.now()): Promise<Set<string> | null> {
+  const fresh = catalogHosts && nowMs - catalogHostsLoadedAt < CATALOG_HOSTS_TTL_MS;
+  if (fresh) return catalogHosts;
+
+  const coolingOff = nowMs - catalogHostsFailedAt < CATALOG_HOSTS_RETRY_MS;
+  if (coolingOff) return catalogHosts;
+
+  // Nothing loaded yet: there is no stale answer to serve, so wait for this one.
+  if (!catalogHosts) return refreshCatalogHosts(nowMs);
+
+  // Stale but usable. Refresh behind the request and answer from the old set.
+  void refreshCatalogHosts(nowMs);
+  return catalogHosts;
 }
 
 /** Test seam. */
 export function resetCatalogHostCache(): void {
   catalogHosts = null;
-  catalogHostsLoadedAt = 0;
+  catalogHostsLoadedAt = -Infinity;
+  catalogHostsFailedAt = -Infinity;
   inFlight = null;
+}
+
+/**
+ * Test seam: run the cache against a stand-in loader instead of Prisma.
+ *
+ * The cache had no coverage at all — every test drove `catalogHostsOverride`,
+ * which skips the TTL, the stampede collapse, the failure cooldown and the
+ * stale-while-revalidate path entirely. That is the half of this module with
+ * state in it, so it is the half worth testing.
+ */
+let loaderForTests: (() => Promise<Set<string> | null>) | null = null;
+
+export function setCatalogHostLoaderForTests(load: (() => Promise<Set<string> | null>) | null): void {
+  loaderForTests = load;
+  resetCatalogHostCache();
 }
 
 /**
