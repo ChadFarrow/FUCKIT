@@ -143,6 +143,7 @@ function BaseMusicTrackCard({
       >
         {/* Play Button */}
         <button
+          aria-label="Play track"
           onClick={handlePlay}
           className="flex-shrink-0 w-8 h-8 rounded-full bg-green-600 hover:bg-green-500 flex items-center justify-center transition-colors"
           disabled={!getAudioUrl()}
@@ -220,6 +221,7 @@ function BaseMusicTrackCard({
           `}
         >
           <button
+            aria-label="Play track"
             onClick={handlePlay}
             className={`
               w-16 h-16 rounded-full bg-green-600 hover:bg-green-500
@@ -392,6 +394,7 @@ function BaseMusicTrackCard({
                 )}
 
                 <button
+                  aria-label="Share track"
                   onClick={handleShare}
                   className="p-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-gray-400 hover:text-white transition-colors"
                 >

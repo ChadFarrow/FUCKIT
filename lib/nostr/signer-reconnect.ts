@@ -66,7 +66,7 @@ async function restoreNIP46Connection(
     // Load saved connection - try with user pubkey first
     let savedConnection = currentUserPubkey ? loadNIP46Connection(currentUserPubkey) : null;
     if (!savedConnection) {
-      console.log('⚠️ No connection found with user pubkey, trying without validation...');
+      console.warn('⚠️ No connection found with user pubkey, trying without validation...');
       savedConnection = loadNIP46Connection();
     }
 
@@ -367,7 +367,7 @@ export async function reconnectSignerManually(): Promise<ReconnectResult> {
       if (verifyResult.success) {
         return verifyResult;
       }
-      console.log('⚠️ Manual reconnect: in-memory revive failed, falling back to localStorage restore:', verifyResult.error);
+      console.warn('⚠️ Manual reconnect: in-memory revive failed, falling back to localStorage restore:', verifyResult.error);
     }
     const currentUserPubkey = getCurrentUserPubkey();
     return restoreNIP46Connection(signer, currentUserPubkey);
@@ -482,7 +482,7 @@ export async function ensureSignerAvailable(): Promise<ReconnectResult> {
       if (verifyResult.success) {
         return verifyResult;
       }
-      console.log('⚠️ In-memory NIP-46 client could not be revived, falling back to localStorage restore:', verifyResult.error);
+      console.warn('⚠️ In-memory NIP-46 client could not be revived, falling back to localStorage restore:', verifyResult.error);
     }
     return restoreNIP46Connection(signer, currentUserPubkey);
   }

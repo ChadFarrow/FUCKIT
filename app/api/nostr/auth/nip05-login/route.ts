@@ -85,7 +85,16 @@ export async function POST(request: NextRequest) {
       profile = await client.getProfile(hexPubkey);
       relayList = await client.getRelayList(hexPubkey) || [];
       await client.disconnect();
-    } catch {}
+    } catch (error) {
+      // Non-fatal: the profile is decoration, and login proceeds without it.
+      // But it was a bare `catch {}` on a LOGIN path, so a relay problem here
+      // was indistinguishable from a user with no profile. console.warn, not
+      // log — next.config.js strips `log` from production builds.
+      console.warn(
+        '⚠️ nip05-login: could not fetch profile/relay list from the default relays:',
+        error instanceof Error ? error.message : error
+      );
+    }
 
     const displayName = profile?.name ?? null;
     const avatar = profile?.picture ?? null;

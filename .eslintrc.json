@@ -1,5 +1,23 @@
 {
-  "extends": [
-    "next/core-web-vitals"
-  ]
+  "extends": ["next/core-web-vitals"],
+  "rules": {
+    // OFF, deliberately, rather than 32 inline disables.
+    //
+    // The rule assumes images come from hosts you control. This app's images do
+    // not: album and podcast art comes from arbitrary podcast CDNs discovered
+    // through RSS, and avatars from arbitrary Nostr hosts. `next/image` requires
+    // every one of those in `remotePatterns` (next.config.js already lists 47
+    // and it is not enough), so the app routes remote art through
+    // /api/proxy-image instead — which is also where the SSRF guard, the size
+    // cap and the SVG refusal live.
+    //
+    // Two of the 32 sites cannot use next/image at all: the
+    // `opengraph-image.tsx` routes render through Next's own ImageResponse,
+    // where a raw <img> is the required element.
+    //
+    // What the rule is really warning about — no lazy loading, no reserved
+    // space — is handled: list-rendered art carries `loading="lazy"`, and every
+    // one of these sits in a CSS-sized container, so there is no layout shift.
+    "@next/next/no-img-element": "off"
+  }
 }

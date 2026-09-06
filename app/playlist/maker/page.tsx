@@ -144,9 +144,9 @@ export default function PlaylistMakerPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-lg bg-white/5 border border-white/10">
           <div className="space-y-3">
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Source RSS feed URL</label>
+              <label htmlFor="pm-feed-url" className="block text-sm text-gray-400 mb-1">Source RSS feed URL</label>
               <div className="flex gap-2">
-                <input className="flex-1 px-3 py-2 rounded bg-black/40 border border-white/10" value={form.feedUrl} onChange={e=>setForm(f=>({...f, feedUrl:e.target.value}))}/>
+                <input id="pm-feed-url" className="flex-1 px-3 py-2 rounded bg-black/40 border border-white/10" value={form.feedUrl} onChange={e=>setForm(f=>({...f, feedUrl:e.target.value}))}/>
                 <button
                   onClick={autoFillFromFeed}
                   className="px-3 py-2 rounded bg-white/10 hover:bg-white/20"
@@ -157,30 +157,30 @@ export default function PlaylistMakerPage() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Title</label>
-                <input className="w-full px-3 py-2 rounded bg-black/40 border border-white/10" value={form.title} onChange={e=>setForm(f=>({...f, title:e.target.value}))}/>
+                <label htmlFor="pm-title" className="block text-sm text-gray-400 mb-1">Title</label>
+                <input id="pm-title" className="w-full px-3 py-2 rounded bg-black/40 border border-white/10" value={form.title} onChange={e=>setForm(f=>({...f, title:e.target.value}))}/>
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Author</label>
-                <input className="w-full px-3 py-2 rounded bg-black/40 border border-white/10" value={form.author} onChange={e=>setForm(f=>({...f, author:e.target.value}))}/>
+                <label htmlFor="pm-author" className="block text-sm text-gray-400 mb-1">Author</label>
+                <input id="pm-author" className="w-full px-3 py-2 rounded bg-black/40 border border-white/10" value={form.author} onChange={e=>setForm(f=>({...f, author:e.target.value}))}/>
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Site Link <span className="text-xs text-gray-500 ml-2">(from feed)</span></label>
-                <input className="w-full px-3 py-2 rounded bg-black/20 border border-white/10 text-gray-300" value={form.link} readOnly aria-readonly="true"/>
+                <label htmlFor="pm-link" className="block text-sm text-gray-400 mb-1">Site Link <span className="text-xs text-gray-500 ml-2">(from feed)</span></label>
+                <input id="pm-link" className="w-full px-3 py-2 rounded bg-black/20 border border-white/10 text-gray-300" value={form.link} readOnly aria-readonly="true"/>
                 <p className="mt-1 text-xs text-gray-500">Auto-filled from the feed and locked to link back to the podcaster site.</p>
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Image URL <span className="text-xs text-gray-500 ml-2">(playlist art)</span></label>
-                <input className="w-full px-3 py-2 rounded bg-black/40 border border-white/10" value={form.imageUrl} onChange={e=>setForm(f=>({...f, imageUrl:e.target.value}))}/>
+                <label htmlFor="pm-image-url" className="block text-sm text-gray-400 mb-1">Image URL <span className="text-xs text-gray-500 ml-2">(playlist art)</span></label>
+                <input id="pm-image-url" className="w-full px-3 py-2 rounded bg-black/40 border border-white/10" value={form.imageUrl} onChange={e=>setForm(f=>({...f, imageUrl:e.target.value}))}/>
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-1 gap-3">
               <div>
-                <label className="block text-sm text-gray-400 mb-1">GUID <span className="text-xs text-gray-500 ml-2">if this is a new playlist click Auto or enter your own new GUID</span></label>
+                <label htmlFor="pm-guid" className="block text-sm text-gray-400 mb-1">GUID <span className="text-xs text-gray-500 ml-2">if this is a new playlist click Auto or enter your own new GUID</span></label>
                 <div className="flex gap-2">
-                  <input
+                  <input id="pm-guid"
                     className="flex-1 px-3 py-2 rounded bg-black/40 border border-white/10"
                     value={form.guid}
                     onChange={e=>setForm(f=>({...f, guid:e.target.value}))}

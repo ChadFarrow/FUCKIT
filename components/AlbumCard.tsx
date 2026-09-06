@@ -34,6 +34,19 @@ function usePrefetchControl() {
   const isIntersectingRef = useRef(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
+  /*
+   * A ref, not the state value, because the observer below is created once with
+   * an empty dep array. Reading `isHovered` directly inside that callback closes
+   * over the value from the FIRST render, so it was permanently `false` — the
+   * `entry.isIntersecting || isHovered` check could never see a hover. Nothing
+   * broke, because the effect below already handles the hover case, but the read
+   * was dead and the lint warning about it was correct.
+   */
+  const isHoveredRef = useRef(false);
+  useEffect(() => {
+    isHoveredRef.current = isHovered;
+  }, [isHovered]);
+
   useEffect(() => {
     if (!cardRef.current) return;
 
@@ -43,7 +56,7 @@ function usePrefetchControl() {
         entries.forEach((entry) => {
           isIntersectingRef.current = entry.isIntersecting;
           // Enable prefetch if card is visible (within 200px of viewport) or hovered
-          setShouldPrefetch(entry.isIntersecting || isHovered);
+          setShouldPrefetch(entry.isIntersecting || isHoveredRef.current);
         });
       },
       {
@@ -148,23 +161,44 @@ function AlbumCard({ album, isPlaying = false, onPlay, className = '', linkFilte
 
   // Let Next.js handle lazy loading natively - much simpler and faster
 
-  const artworkUrl = useMemo(() => 
-    getAlbumArtworkUrl(album.coverArt || (album as any).image || '', 'large'), // Use larger images for better quality
-    [album.coverArt, (album as any).image]
+  /*
+   * These are read out of `album` into locals BEFORE the memos below.
+   *
+   * `(album as any).image` inside a dependency array is a "complex expression"
+   * that the exhaustive-deps rule cannot check statically — it warns and then
+   * verifies nothing, so the arrays it was supposed to be guarding were
+   * unguarded. Naming the values first makes the deps plain identifiers, which
+   * the rule can check, and the behaviour is identical: the same values, read at
+   * the same time, compared the same way.
+   */
+  const albumImage = (album as any).image as string | undefined;
+  const isPlaylistCardProp = (album as any).isPlaylistCard as boolean | undefined;
+  const playlistUrlProp = (album as any).playlistUrl as string | undefined;
+  const albumUrlProp = (album as any).albumUrl as string | undefined;
+  const isPublisherCardProp = (album as any).isPublisherCard as boolean | undefined;
+  const publisherUrlProp = (album as any).publisherUrl as string | undefined;
+  const isPodcastProp = (album as any).isPodcast as boolean | undefined;
+  const albumCoverArt = album.coverArt;
+  const albumTitle = album.title;
+  const albumId = album.id;
+
+  const artworkUrl = useMemo(() =>
+    getAlbumArtworkUrl(albumCoverArt || albumImage || '', 'large'), // Use larger images for better quality
+    [albumCoverArt, albumImage]
   );
   
   // Check if this is a playlist card, publisher card, and use appropriate URL
   const { isPlaylistCard, isPublisherCard, albumUrl } = useMemo(() => {
-    const isPlaylistCard = (album as any).isPlaylistCard;
-    const isPublisherCard = (album as any).isPublisherCard;
+    const isPlaylistCard = isPlaylistCardProp;
+    const isPublisherCard = isPublisherCardProp;
     let albumUrl: string;
 
     if (isPublisherCard) {
-      albumUrl = (album as any).publisherUrl || `/publisher/${album.id}`;
+      albumUrl = publisherUrlProp || `/publisher/${albumId}`;
     } else if (isPlaylistCard) {
-      albumUrl = (album as any).playlistUrl || (album as any).albumUrl;
-    } else if ((album as any).isPodcast) {
-      albumUrl = generateAlbumUrl(album.title, 'podcast');
+      albumUrl = playlistUrlProp || (albumUrlProp as string);
+    } else if (isPodcastProp) {
+      albumUrl = generateAlbumUrl(albumTitle, 'podcast');
     } else {
       albumUrl = generateAlbumHref(album);
     }
@@ -175,9 +209,17 @@ function AlbumCard({ album, isPlaying = false, onPlay, className = '', linkFilte
     }
 
     return { isPlaylistCard, isPublisherCard, albumUrl };
-    // album.feedId is in the deps because it now drives the href — without it a recycled
+    // albumFeedId is in the deps because it now drives the href — without it a recycled
     // card can keep a stale link across two feeds sharing a title (the #183 collision).
-  }, [album.title, album.id, (album as any).feedId, (album as any).isPlaylistCard, (album as any).playlistUrl, (album as any).isPublisherCard, (album as any).publisherUrl, linkFilter]);
+    // `album` is listed because generateAlbumHref() reads the whole object. It
+    // is a prop, so this costs nothing: AlbumCard's custom memo comparator is
+    // what decides whether a new album identity re-renders the card at all.
+    //
+    // It also subsumes the explicit `album.feedId` dep that used to be here for
+    // the #183 collision — a recycled card keeping a stale link across two feeds
+    // that share a title. A changed feedId means a changed `album`, so the
+    // protection is still exact.
+  }, [album, albumTitle, albumId, isPlaylistCardProp, playlistUrlProp, albumUrlProp, isPublisherCardProp, publisherUrlProp, isPodcastProp, linkFilter]);
 
   const hasV4V = checkHasV4V(album as any);
   

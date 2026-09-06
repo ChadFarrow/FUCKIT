@@ -291,6 +291,7 @@ export function WalletInfoDisplay({
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-semibold text-white">Fund Wallet</h3>
                     <button
+                      aria-label="Close"
                       onClick={handleCloseReceive}
                       className="text-gray-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-gray-800"
                     >
@@ -333,6 +334,7 @@ export function WalletInfoDisplay({
                       </p>
                       {/* Prominent Copy Button for mobile */}
                       <button
+                        aria-label="Confirm"
                         onClick={handleCopyInvoice}
                         className="w-full flex items-center justify-center gap-2 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
                       >

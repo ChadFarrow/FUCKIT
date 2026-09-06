@@ -114,6 +114,7 @@ export default function MusicSegmentsPage() {
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-3">
           <button
+            aria-label="Refresh music tracks"
             onClick={handleExtractSegments}
             disabled={isExtracting}
             className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-green-600/50 text-white rounded-lg transition-colors"

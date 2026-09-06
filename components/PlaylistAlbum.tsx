@@ -343,6 +343,8 @@ export default function PlaylistAlbum({ tracks: rawTracks, config, onTrackResolv
                 <img 
                   src={displayImage}
                   alt={displayTitle}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover"
                   onError={(e) => {
                     logger.error(`Image failed to load: ${displayImage}`);

@@ -183,6 +183,7 @@ export default function NowPlayingBar({
             </div>
             <input
               type="range"
+              aria-label="Seek within track"
               min="0"
               max={currentTrack.duration}
               value={currentTrack.currentTime}

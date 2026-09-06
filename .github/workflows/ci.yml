@@ -22,4 +22,17 @@ jobs:
       - run: npx prisma generate
       - run: npm run typecheck
       - run: npm run test:all
-      - run: npx next lint
+      # --max-warnings is a RATCHET, not a target.
+      #
+      # This step used to be a bare `npx next lint`, which exits 0 no matter how
+      # many warnings it prints — so CI was green with 80 of them and could not
+      # catch a new one. The count is now pinned: any added warning fails the
+      # build, and the number only ever goes down.
+      #
+      # The 38 that remain are all `react-hooks/exhaustive-deps`, and they are
+      # left deliberately. A wrong dependency array is not a style problem — it
+      # is a render loop or a stale closure — and each of the 38 needs its own
+      # judgment about which. They are worth burning down one at a time, with
+      # the app running; they are not worth a bulk edit. Lower this number as
+      # they go.
+      - run: npx next lint --max-warnings 38

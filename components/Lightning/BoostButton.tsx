@@ -243,7 +243,10 @@ export function BoostButton({
   // Don't render on server-side
   if (!isClient) {
     return (
-      <button className={`flex items-center ${iconOnly ? 'justify-center p-2' : 'gap-2 px-4 py-2'} rounded-lg bg-gray-600 text-gray-400 cursor-not-allowed ${className}`}>
+      <button
+        aria-label="Send a boost"
+        className={`flex items-center ${iconOnly ? 'justify-center p-2' : 'gap-2 px-4 py-2'} rounded-lg bg-gray-600 text-gray-400 cursor-not-allowed ${className}`}
+      >
         <Zap size={iconOnly ? 20 : 16} className="pointer-events-none" />
         {!iconOnly && <span>Boost</span>}
       </button>
@@ -1295,6 +1298,7 @@ export function BoostButton({
                   : 'Send a Boost ⚡'}
               </h2>
               <button
+                aria-label="Close boost dialog"
                 onClick={handleCloseModal}
                 className="text-gray-400 hover:text-white"
               >
