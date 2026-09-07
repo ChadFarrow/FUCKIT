@@ -5,6 +5,7 @@ import {
   trackToAlbumTrack,
   albumFeedSelect,
   ALBUM_TRACK_SELECT,
+  EPISODE_TRACK_ORDER_BY,
   type AlbumSourceFeed,
   type AlbumSourceTrack,
 } from './album-shape';
@@ -147,21 +148,44 @@ test('duration falls back to 180 when a feed declares none', () => {
   assert.equal(trackToAlbumTrack(track({ duration: 300 })).duration, 300);
 });
 
-// These are queried by /api/albums/[slug] and NOT by the catalog list, because
-// app/page.tsx — the only consumer of both list endpoints — drops them on
-// arrival. They were most of the payload.
-test('the heavy JSON blobs are not in the catalog track select', () => {
+// These five were once cut from the catalog list on the grounds that
+// app/page.tsx discards them and is the only consumer. It is not: /radio and
+// the "New" tab both pass these album objects to AudioContext unmapped, so
+// cutting them silently stopped chapter ticks and VTS payment splits on both.
+// Radio and the home grid share one endpoint, so the fields cannot be cut for
+// one without cutting them for the other.
+test('the playback fields stay in the catalog track select', () => {
   for (const field of ['chapters', 'chaptersUrl', 'valueTimeSplits', 'persons', 'podcastImages']) {
     assert.equal(
       field in ALBUM_TRACK_SELECT,
-      false,
-      `${field} is shipped to a client that discards it`
+      true,
+      `${field} is read off the track by /radio and the New tab`
     );
   }
   const t = trackToAlbumTrack(track());
   for (const field of ['chapters', 'chaptersUrl', 'valueTimeSplits', 'persons', 'podcastImages']) {
-    assert.equal(field in t, false, `${field} should not be in the album-list output`);
+    assert.equal(field in t, true, `${field} must survive the mapper, not just the select`);
   }
+});
+
+test('the playback fields carry their values through the mapper', () => {
+  const t = trackToAlbumTrack(track({
+    chaptersUrl: 'https://example.com/chapters.json',
+    chapters: [{ title: 'One', startTime: 0 }],
+    valueTimeSplits: [{ startTime: 0, duration: 30 }],
+  }));
+  assert.equal(t.chaptersUrl, 'https://example.com/chapters.json');
+  assert.deepEqual(t.chapters, [{ title: 'One', startTime: 0 }]);
+  assert.deepEqual(t.valueTimeSplits, [{ startTime: 0, duration: 30 }]);
+});
+
+// Track.publishedAt is nullable and PostgreSQL sorts NULLs FIRST on DESC, so
+// without `nulls: 'last'` a `take: 20` returns 20 undated episodes and hides
+// every dated one.
+test('episode ordering puts undated episodes last, not first', () => {
+  assert.deepEqual(EPISODE_TRACK_ORDER_BY[0], {
+    publishedAt: { sort: 'desc', nulls: 'last' },
+  });
 });
 
 // The `filter=podcasts` branch of albums-fast omitted `take` entirely and
@@ -237,6 +261,7 @@ test('the track key set is the API contract', () => {
     'alternateEnclosures', 'duration', 'guid', 'id',
     'image', 'mediaType', 'publishedAt', 'startTime',
     'endTime', 'title', 'url', 'v4vRecipient', 'v4vValue',
+    'chaptersUrl', 'chapters', 'valueTimeSplits', 'persons', 'podcastImages',
   ].sort();
   assert.deepEqual(Object.keys(trackToAlbumTrack(track())).sort(), expected);
 });

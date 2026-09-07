@@ -81,7 +81,13 @@ export function DownloadsProvider({ children }: { children: React.ReactNode }) {
   const isOnline = !offlineMode;
 
   // Re-render on any manager change (progress, completion, removal).
-  useSyncExternalStore(
+  //
+  // The version is KEPT, not discarded, because the value memo below depends on
+  // it. Consumers read download state by calling into the manager during render
+  // and hold no subscription of their own, so a re-render of this provider is
+  // the only thing that refreshes them — and a memo that does not move on a
+  // version bump stops that dead.
+  const managerVersion = useSyncExternalStore(
     useCallback((cb) => downloadManager.subscribe(cb), []),
     () => downloadManager.getVersion(),
     () => 0
@@ -97,11 +103,18 @@ export function DownloadsProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  // Memoized. This provider re-renders on every downloadManager version bump
-  // (useSyncExternalStore), and the literal handed all thirteen methods to
-  // every DownloadButton as brand-new closures each time. `downloadManager` is
-  // a module singleton, so the methods only need the three state values in the
-  // dep list.
+  // Memoized so an unrelated parent render does not hand all thirteen methods
+  // to every DownloadButton as brand-new closures. `downloadManager` is a
+  // module singleton, so the methods themselves close over nothing that moves.
+  //
+  // `managerVersion` MUST stay in the dep list. DownloadButton reads
+  // getTrackState/getAlbumState during render (components/downloads/
+  // DownloadButton.tsx:86) and DownloadsClient calls listDownloads() the same
+  // way; neither subscribes. Without the version here React sees the same value
+  // object and the same children element and bails out of the subtree, so the
+  // download arrow never becomes a progress ring and the finished mark never
+  // appears. The state is right again on the next unrelated render, which makes
+  // the fault look intermittent.
   const value: DownloadsContextType = useMemo(() => ({
     ready,
     isOnline,
@@ -121,7 +134,7 @@ export function DownloadsProvider({ children }: { children: React.ReactNode }) {
     listDownloads: () => downloadManager.listDownloads(),
     getStorageEstimate: () => downloadManager.getStorageEstimate(),
     getCoverUrl: (url) => downloadManager.getCoverObjectUrl(url),
-  }), [ready, isOnline, offlineMode, setOfflineMode]);
+  }), [ready, isOnline, offlineMode, setOfflineMode, managerVersion]);
 
   return <DownloadsContext.Provider value={value}>{children}</DownloadsContext.Provider>;
 }

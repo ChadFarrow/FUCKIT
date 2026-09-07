@@ -20,15 +20,27 @@ import { Prisma } from '@prisma/client';
 /**
  * Columns the client actually renders for a track.
  *
- * `chapters`, `chaptersUrl`, `valueTimeSplits`, `persons` and `podcastImages`
- * are deliberately ABSENT. They were selected, serialized, gzipped, shipped,
- * parsed — and then dropped on arrival by the mapper in `app/page.tsx`, which
- * is the only consumer of both `/api/albums-fast` and `/api/feeds/recent`.
- * `chapters` and `valueTimeSplits` are JSON blobs, so they were most of the
- * payload.
+ * `chaptersUrl`, `chapters`, `valueTimeSplits`, `persons` and `podcastImages`
+ * were briefly dropped here on the grounds that `app/page.tsx` discards them
+ * on arrival and is "the only consumer". It is not. There are THREE, and only
+ * one of them goes through that mapper:
  *
- * The album DETAIL endpoint (`/api/albums/[slug]`) still returns all of them,
- * which is where playback with chapter ticks and VTS segments gets its data.
+ *   /api/albums-fast  filter=all  -> app/page.tsx:1066, which lists fields one
+ *                                    by one and does drop these five.
+ *   /api/albums-fast  limit=1000  -> app/radio/RadioClient.tsx hands the raw
+ *                                    albums to setInitialAlbums, unmapped.
+ *   /api/feeds/recent             -> app/page.tsx:802 returns data.albums
+ *                                    verbatim for the "New" tab, unmapped.
+ *
+ * The last two feed AudioContext directly, which reads `track.chaptersUrl`
+ * (4528, 4546), `track.valueTimeSplits` (956, 1096, 2613, 2835) and, via
+ * NowPlayingScreen:878, `track.persons`. Dropping them made chapter ticks,
+ * chapter navigation and VTS payment splits stop on those two surfaces, with
+ * no error anywhere.
+ *
+ * Radio and the home grid share ONE endpoint, so the fields cannot be cut for
+ * the grid without cutting them for playback. The payload win therefore comes
+ * from the `take` bound below, which is where the 5.63 MB actually was.
  */
 export const ALBUM_TRACK_SELECT = {
   id: true,
@@ -45,6 +57,13 @@ export const ALBUM_TRACK_SELECT = {
   trackOrder: true,
   mediaType: true,
   alternateEnclosures: true,
+  // Playback data. See the note above: two of the three consumers pass these
+  // straight to AudioContext, so they are not optional.
+  chaptersUrl: true,
+  chapters: true,
+  valueTimeSplits: true,
+  persons: true,
+  podcastImages: true,
 } satisfies Prisma.TrackSelect;
 
 /** The order the album page expects: explicit track order, then date. */
@@ -64,7 +83,13 @@ export const ALBUM_TRACK_ORDER_BY: Prisma.TrackOrderByWithRelationInput[] = [
  * together.
  */
 export const EPISODE_TRACK_ORDER_BY: Prisma.TrackOrderByWithRelationInput[] = [
-  { publishedAt: 'desc' },
+  // `nulls: 'last'` is load-bearing, not tidiness. `Track.publishedAt` is
+  // nullable, and PostgreSQL sorts NULLs FIRST on DESC. The JavaScript sort
+  // this replaced mapped a null date to 0, so undated episodes went last.
+  // Without this, a podcast whose items carry no <pubDate> returns 20 undated
+  // rows and hides every dated one — the `take` turns a cosmetic ordering
+  // difference into missing episodes.
+  { publishedAt: { sort: 'desc', nulls: 'last' } },
   { createdAt: 'desc' },
 ];
 
@@ -184,6 +209,15 @@ export interface AlbumTrack {
   endTime: number | null;
   mediaType: string;
   alternateEnclosures: unknown;
+  /** Playback data — AudioContext and NowPlayingScreen read these off the
+   *  track object for albums that did not come from the detail endpoint.
+   *  `undefined` rather than `null` when absent, matching what the routes
+   *  emitted before this module existed. */
+  chaptersUrl?: string;
+  chapters?: unknown;
+  valueTimeSplits?: unknown;
+  persons?: unknown;
+  podcastImages?: unknown;
 }
 
 export interface Album {
@@ -246,6 +280,13 @@ export function trackToAlbumTrack(track: AlbumSourceTrack): AlbumTrack {
     endTime: track.endTime,
     mediaType: track.mediaType || 'audio',
     alternateEnclosures: track.alternateEnclosures,
+    // `|| undefined` so an absent value is omitted from the JSON rather than
+    // serialized as null — the shape both routes emitted before.
+    chaptersUrl: track.chaptersUrl || undefined,
+    chapters: track.chapters || undefined,
+    valueTimeSplits: track.valueTimeSplits || undefined,
+    persons: track.persons || undefined,
+    podcastImages: track.podcastImages || undefined,
   };
 }
 

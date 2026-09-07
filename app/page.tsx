@@ -166,12 +166,17 @@ function HomePageContent() {
   // shape unchanged, but a cached album still carries the old internal id and
   // would publish it as podcast:item:guid.
   //
-  // v18: /api/albums-fast track objects no longer carry chapters, chaptersUrl,
-  // valueTimeSplits, persons or podcastImages — this mapper dropped all five on
-  // arrival, so they were queried, shipped and discarded. Podcast episode lists
-  // are also bounded to the 20 newest. Both change the cached SHAPE, so the
-  // version has to move or clients keep serving the old objects from
-  // localStorage indefinitely (CLAUDE.md).
+  // v18: podcast episode lists are now bounded to the 20 NEWEST episodes. The
+  // `filter=podcasts` branch had no `take` at all and loaded every episode of
+  // every podcast, chapters and VTS blobs attached. A bounded list is a
+  // different cached SHAPE, so the version has to move or clients keep serving
+  // the old objects from localStorage indefinitely (CLAUDE.md).
+  //
+  // The track objects still carry chapters, chaptersUrl, valueTimeSplits,
+  // persons and podcastImages. Cutting them was tried and reverted: this mapper
+  // does drop all five, but /radio and the "New" tab do NOT go through it, and
+  // they hand the raw album objects to AudioContext. See lib/catalog/
+  // album-shape.ts.
   const API_VERSION = 'v18';
   
   // HGH filter removed - no longer needed
