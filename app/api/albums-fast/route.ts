@@ -250,7 +250,7 @@ export async function GET(request: Request) {
       // Shared mapper — this object literal was written out seven times across
       // the repo, and one copy had already drifted: app/publisher/[id]/page.tsx
       // used `lastFetched` (the last POLL time) as the release date.
-      feedToAlbum(feed as never, { dedupeTracks: true })
+      feedToAlbum(feed, { dedupeTracks: true })
     );
     
     // Filter out Bowl After Bowl podcast (mis-imported as type='album') but keep
@@ -410,7 +410,7 @@ export async function GET(request: Request) {
             // `newestFirst` is no longer needed here. Podcasts default to type
             // 'podcast' and report only the feed's own V4V, with no track
             // fallback.
-            ...feedToAlbum(feed as never, {
+            ...feedToAlbum(feed, {
               defaultType: 'podcast',
               v4vTrackFallback: false,
             }),

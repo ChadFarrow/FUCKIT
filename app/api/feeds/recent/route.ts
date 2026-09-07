@@ -150,7 +150,7 @@ export async function GET(request: Request) {
       .filter((f): f is NonNullable<typeof f> => Boolean(f))
       // Shared mapper. Note this path does NOT dedupe tracks, which is the one
       // way it differed from albums-fast; that stays true.
-      .map((feed) => feedToAlbum(feed as never));
+      .map((feed) => feedToAlbum(feed));
 
     return NextResponse.json(
       { albums, count: albums.length, total, hasMore: offset + albums.length < total },

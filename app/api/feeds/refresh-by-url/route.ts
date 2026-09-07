@@ -5,7 +5,6 @@ import { resolvePodcastIndexUrl } from '@/lib/podcast-index-api';
 import { normalizeUrl } from '@/lib/url-utils';
 import { findFeedIdByUrl } from '@/lib/feed-lookup';
 import { RateLimiter, clientIp } from '@/lib/rate-limit';
-import { buildRekeyedFeedData } from '@/lib/feeds/rekey-feed';
 
 // Public endpoint (podping consumer) that triggers expensive RSS reparses —
 // cap per-IP request rate. In-memory, so the cap is per Railway instance;
@@ -435,31 +434,44 @@ export async function POST(request: NextRequest) {
       if (customFeedId && customFeedId !== feed.id) {
         console.log(`🔄 Updating feed ID from ${feed.id} to ${customFeedId}`);
 
-        // Update all tracks to reference new feed ID
-        await prisma.track.updateMany({
-          where: { feedId: feed.id },
-          data: { feedId: customFeedId }
-        });
-
-        // Delete old feed and create with new ID (Prisma doesn't allow updating primary key)
-        const oldFeedData = await prisma.feed.findUnique({ where: { id: feed.id } });
-        if (!oldFeedData) {
-          throw new Error('Feed not found after lookup');
+        // Re-key the row IN PLACE, in one statement — not delete-then-create.
+        //
+        // Prisma's client cannot change a primary key, so this used to repoint
+        // the tracks, delete the row, and rebuild it field by field. Two things
+        // were wrong with that, and the second hid the first:
+        //
+        //   1. The rebuild was a hand-written copy that dropped SEVEN columns —
+        //      markedDead, oldestItemPubdate, lastNewTrackAt, podcastImages,
+        //      persons, musicShowOnly and createdAt. A hidden or blacklisted
+        //      feed un-hid itself, the album lost its release date and its place
+        //      in the "New" filter, and createdAt reset to now(), which reorders
+        //      the home grid via Feed_status_priority_createdAt_idx.
+        //   2. The sequence could not complete at all for a feed that has
+        //      tracks. Track_feedId_fkey is a plain immediate constraint (init
+        //      migration line 128), so repointing tracks at an id that does not
+        //      exist yet raises 23503 and the route 500s. Creating the new row
+        //      first does not help either: Feed.originalUrl and Feed.guid are
+        //      both @unique, so the copy collides with the row it is copying.
+        //      Only a track-less feed ever got through.
+        //
+        // Postgres has no such limit on UPDATE, and Track_feedId_fkey is
+        // ON UPDATE CASCADE, so the tracks follow the key in the same statement.
+        // Nothing is copied, so no column can be dropped — the class of bug in
+        // (1) is now unreachable rather than merely fixed.
+        const rekeyedRows = await prisma.$executeRaw`
+          UPDATE "Feed" SET "id" = ${customFeedId} WHERE "id" = ${feed.id}
+        `;
+        if (rekeyedRows !== 1) {
+          throw new Error(
+            `Re-key of feed ${feed.id} to ${customFeedId} updated ${rekeyedRows} rows, expected 1`
+          );
         }
-        await prisma.feed.delete({ where: { id: feed.id } });
 
-        // buildRekeyedFeedData, not an inline literal. The literal that used to
-        // be here carried a comment claiming it was complete and dropped SEVEN
-        // columns, markedDead among them — so a hidden feed un-hid itself.
-        // rekey-feed.test.ts compares the produced keys against schema.prisma,
-        // so the next column added to the model fails the test rather than
-        // vanishing here.
-        feed = await prisma.feed.create({
-          data: buildRekeyedFeedData(oldFeedData, {
-            id: customFeedId,
-            type: customType,
-          }),
-        });
+        const rekeyedFeed = await prisma.feed.findUnique({ where: { id: customFeedId } });
+        if (!rekeyedFeed) {
+          throw new Error(`Feed ${customFeedId} missing after re-key`);
+        }
+        feed = rekeyedFeed;
       }
 
       // Update feed metadata
