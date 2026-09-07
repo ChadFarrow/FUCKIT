@@ -80,14 +80,10 @@ export function DownloadsProvider({ children }: { children: React.ReactNode }) {
   // flip any offline UI or redirect; the user chooses "offline" here explicitly.
   const isOnline = !offlineMode;
 
-  // Re-render on any manager change (progress, completion, removal).
-  //
-  // The version is KEPT, not discarded, because the value memo below depends on
-  // it. Consumers read download state by calling into the manager during render
-  // and hold no subscription of their own, so a re-render of this provider is
-  // the only thing that refreshes them — and a memo that does not move on a
-  // version bump stops that dead.
-  const managerVersion = useSyncExternalStore(
+  // The manager's version counter: every progress tick, completion and removal
+  // bumps it. This is how a manager change reaches the tree, and it MUST stay
+  // in the value memo's dependency list below — see the comment there.
+  const version = useSyncExternalStore(
     useCallback((cb) => downloadManager.subscribe(cb), []),
     () => downloadManager.getVersion(),
     () => 0
@@ -103,18 +99,23 @@ export function DownloadsProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  // Memoized so an unrelated parent render does not hand all thirteen methods
-  // to every DownloadButton as brand-new closures. `downloadManager` is a
-  // module singleton, so the methods themselves close over nothing that moves.
+  // Memoized so a re-render that is NOT a manager bump — a parent re-rendering,
+  // or the Offline switch moving — stops handing all thirteen methods to every
+  // DownloadButton as brand-new closures.
   //
-  // `managerVersion` MUST stay in the dep list. DownloadButton reads
-  // getTrackState/getAlbumState during render (components/downloads/
-  // DownloadButton.tsx:86) and DownloadsClient calls listDownloads() the same
-  // way; neither subscribes. Without the version here React sees the same value
-  // object and the same children element and bails out of the subtree, so the
-  // download arrow never becomes a progress ring and the finished mark never
-  // appears. The state is right again on the next unrelated render, which makes
-  // the fault look intermittent.
+  // `version` is in the dependency list, and it has to be. This provider is the
+  // ONLY subscriber to `downloadManager`, so a NEW context value is the only
+  // thing that re-renders the two components which read download state DURING
+  // RENDER: `DownloadButton` calls `getTrackState`/`getAlbumState` inline, and
+  // `DownloadsClient` calls `listDownloads()`. Neither subscribes on its own.
+  //
+  // Memoizing on the three state values alone (#231) left the value
+  // `Object.is`-equal across every bump. The provider re-rendered, `{children}`
+  // kept its element identity, and React therefore notified nobody: a download
+  // spinner never advanced and never became a tick, and a removed row stayed on
+  // the /downloads page. That silently broke the contract stated at the top of
+  // this file. The methods are cheap arrow closures over a module singleton;
+  // rebuilding them on a bump is the cost of the propagation, not waste.
   const value: DownloadsContextType = useMemo(() => ({
     ready,
     isOnline,
@@ -134,7 +135,7 @@ export function DownloadsProvider({ children }: { children: React.ReactNode }) {
     listDownloads: () => downloadManager.listDownloads(),
     getStorageEstimate: () => downloadManager.getStorageEstimate(),
     getCoverUrl: (url) => downloadManager.getCoverObjectUrl(url),
-  }), [ready, isOnline, offlineMode, setOfflineMode, managerVersion]);
+  }), [version, ready, isOnline, offlineMode, setOfflineMode]);
 
   return <DownloadsContext.Provider value={value}>{children}</DownloadsContext.Provider>;
 }
