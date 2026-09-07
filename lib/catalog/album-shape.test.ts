@@ -5,6 +5,7 @@ import {
   trackToAlbumTrack,
   albumFeedSelect,
   ALBUM_TRACK_SELECT,
+  EPISODE_TRACK_ORDER_BY,
   type AlbumSourceFeed,
   type AlbumSourceTrack,
 } from './album-shape';
@@ -282,4 +283,15 @@ test('track-level podcastImages stays out — nothing reads it', () => {
   assert.ok(!('podcastImages' in ALBUM_TRACK_SELECT));
   assert.ok(!('podcastImages' in trackToAlbumTrack(track())));
   assert.ok('podcastImages' in feedToAlbum(feed()));
+});
+
+// Track.publishedAt is nullable and PostgreSQL sorts NULLs FIRST on DESC, so
+// without `nulls: 'last'` the `take: 20` on the podcast branch returns 20
+// undated episodes and hides every dated one. The JavaScript sort this
+// replaced mapped a null date to 0, so undated episodes used to go last.
+test('episode ordering puts undated episodes last, not first', () => {
+  assert.deepEqual(EPISODE_TRACK_ORDER_BY[0], {
+    publishedAt: { sort: 'desc', nulls: 'last' },
+  });
+  assert.deepEqual(EPISODE_TRACK_ORDER_BY[1], { createdAt: 'desc' });
 });

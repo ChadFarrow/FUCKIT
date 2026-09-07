@@ -222,6 +222,29 @@ export const useAudioTime = (): AudioTimeContextType => {
   return context;
 };
 
+/**
+ * A function identity that never changes, but always calls the LATEST closure.
+ *
+ * WHY THIS EXISTS: the provider's play/pause/seek functions are plain
+ * `const fn = ...` declarations, so every render creates new ones — and
+ * `playNextTrack`/`playPreviousTrack` are useCallbacks that depend on them, so
+ * they churn too. Listing any of them in a memo's dependency array rebuilds
+ * that memo on EVERY render. The value memo below did exactly that, and
+ * `handleTimeUpdate` calls `setCurrentTime` on every `timeupdate` event, so the
+ * memo was invalidated several times a second and every `useAudio()` consumer
+ * re-rendered at the clock rate. Splitting the clock into `AudioTimeContext`
+ * did not fix that on its own; this is the other half of the fix.
+ *
+ * The ref is assigned during render, not in an effect, so a call that arrives
+ * before the commit still runs the current closure. Safe here because these are
+ * only ever invoked from event handlers and effects, never during a render.
+ */
+function useStableFn<A extends unknown[], R>(fn: (...args: A) => R): (...args: A) => R {
+  const ref = useRef(fn);
+  ref.current = fn;
+  return useCallback((...args: A) => ref.current(...args), []);
+}
+
 interface AudioProviderProps {
   children: ReactNode;
   radioMode?: boolean;
@@ -4755,6 +4778,21 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     }
   }, []);
 
+  // Each of these is redefined on every render of this provider, so each one
+  // used to invalidate the memo below on every render. See useStableFn.
+  const stablePlayAlbum = useStableFn(playAlbum);
+  const stablePlayTrack = useStableFn(playTrack);
+  const stablePlayShuffledTrack = useStableFn(playShuffledTrack);
+  const stableShuffleAllTracks = useStableFn(shuffleAllTracks);
+  const stableShuffleAlbums = useStableFn(shuffleAlbums);
+  const stableToggleShuffle = useStableFn(toggleShuffle);
+  const stablePause = useStableFn(pause);
+  const stableResume = useStableFn(resume);
+  const stableSeek = useStableFn(seek);
+  const stablePlayNextTrack = useStableFn(playNextTrack);
+  const stablePlayPreviousTrack = useStableFn(playPreviousTrack);
+  const stableStop = useStableFn(stop);
+
   // Memoized so a state change that is not in the deps below does not re-render
   // every consumer.
   //
@@ -4762,8 +4800,13 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
   // updates from re-rendering all consumers. It did not, and could not:
   // `currentTime` was IN the dependency array, so the memo was invalidated by
   // every tick — several times a second — which is exactly what it claimed to
-  // prevent. The clock now lives in AudioTimeContext, and this array is what
-  // makes that true.
+  // prevent.
+  //
+  // Moving the clock to AudioTimeContext was necessary but NOT sufficient: the
+  // twelve functions listed here were plain declarations, so they changed
+  // identity on every render and kept invalidating the memo just as often. Both
+  // halves are needed, which is why the deps below are state and stable
+  // wrappers only.
   const value: AudioContextType = useMemo(() => ({
     currentPlayingAlbum,
     isPlaying,
@@ -4777,22 +4820,24 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     setRepeatMode,
     chapters,
     currentChapterIndex,
-    playAlbum,
-    playTrack,
-    playShuffledTrack,
-    shuffleAllTracks,
-    shuffleAlbums,
-    toggleShuffle,
-    pause,
-    resume,
-    seek,
-    playNextTrack,
-    playPreviousTrack,
-    stop,
+    playAlbum: stablePlayAlbum,
+    playTrack: stablePlayTrack,
+    playShuffledTrack: stablePlayShuffledTrack,
+    shuffleAllTracks: stableShuffleAllTracks,
+    shuffleAlbums: stableShuffleAlbums,
+    toggleShuffle: stableToggleShuffle,
+    pause: stablePause,
+    resume: stableResume,
+    seek: stableSeek,
+    playNextTrack: stablePlayNextTrack,
+    playPreviousTrack: stablePlayPreviousTrack,
+    stop: stableStop,
     audioRef,
     videoRef,
     setInitialAlbums,
   }), [
+    // State only. Every entry below changes on a real state change, never on a
+    // clock tick — which is what makes the AudioTimeContext split pay off.
     currentPlayingAlbum,
     isPlaying,
     isLoading,
@@ -4803,18 +4848,19 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children, radioMod
     repeatMode,
     chapters,
     currentChapterIndex,
-    playAlbum,
-    playTrack,
-    playShuffledTrack,
-    shuffleAllTracks,
-    shuffleAlbums,
-    toggleShuffle,
-    pause,
-    resume,
-    seek,
-    playNextTrack,
-    playPreviousTrack,
-    stop,
+    // Permanently stable; listed so the exhaustive-deps rule stays satisfied.
+    stablePlayAlbum,
+    stablePlayTrack,
+    stablePlayShuffledTrack,
+    stableShuffleAllTracks,
+    stableShuffleAlbums,
+    stableToggleShuffle,
+    stablePause,
+    stableResume,
+    stableSeek,
+    stablePlayNextTrack,
+    stablePlayPreviousTrack,
+    stableStop,
     setInitialAlbums,
   ]);
 

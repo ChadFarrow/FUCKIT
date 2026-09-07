@@ -90,7 +90,13 @@ export const ALBUM_TRACK_ORDER_BY: Prisma.TrackOrderByWithRelationInput[] = [
  * together.
  */
 export const EPISODE_TRACK_ORDER_BY: Prisma.TrackOrderByWithRelationInput[] = [
-  { publishedAt: 'desc' },
+  // `nulls: 'last'` is load-bearing, not tidiness. `Track.publishedAt` is
+  // nullable, and PostgreSQL sorts NULLs FIRST on DESC. The JavaScript sort
+  // this replaced mapped a null date to 0, so undated episodes went last.
+  // Without this, a podcast whose items carry no <pubDate> returns 20 undated
+  // rows and hides every dated one — the `take` turns what would be a cosmetic
+  // ordering difference into missing episodes.
+  { publishedAt: { sort: 'desc', nulls: 'last' } },
   { createdAt: 'desc' },
 ];
 
