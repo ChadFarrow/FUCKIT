@@ -80,8 +80,10 @@ export function DownloadsProvider({ children }: { children: React.ReactNode }) {
   // flip any offline UI or redirect; the user chooses "offline" here explicitly.
   const isOnline = !offlineMode;
 
-  // Re-render on any manager change (progress, completion, removal).
-  useSyncExternalStore(
+  // The manager's version counter: every progress tick, completion and removal
+  // bumps it. This is how a manager change reaches the tree, and it MUST stay
+  // in the value memo's dependency list below — see the comment there.
+  const version = useSyncExternalStore(
     useCallback((cb) => downloadManager.subscribe(cb), []),
     () => downloadManager.getVersion(),
     () => 0
@@ -97,11 +99,23 @@ export function DownloadsProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  // Memoized. This provider re-renders on every downloadManager version bump
-  // (useSyncExternalStore), and the literal handed all thirteen methods to
-  // every DownloadButton as brand-new closures each time. `downloadManager` is
-  // a module singleton, so the methods only need the three state values in the
-  // dep list.
+  // Memoized so a re-render that is NOT a manager bump — a parent re-rendering,
+  // or the Offline switch moving — stops handing all thirteen methods to every
+  // DownloadButton as brand-new closures.
+  //
+  // `version` is in the dependency list, and it has to be. This provider is the
+  // ONLY subscriber to `downloadManager`, so a NEW context value is the only
+  // thing that re-renders the two components which read download state DURING
+  // RENDER: `DownloadButton` calls `getTrackState`/`getAlbumState` inline, and
+  // `DownloadsClient` calls `listDownloads()`. Neither subscribes on its own.
+  //
+  // Memoizing on the three state values alone (#231) left the value
+  // `Object.is`-equal across every bump. The provider re-rendered, `{children}`
+  // kept its element identity, and React therefore notified nobody: a download
+  // spinner never advanced and never became a tick, and a removed row stayed on
+  // the /downloads page. That silently broke the contract stated at the top of
+  // this file. The methods are cheap arrow closures over a module singleton;
+  // rebuilding them on a bump is the cost of the propagation, not waste.
   const value: DownloadsContextType = useMemo(() => ({
     ready,
     isOnline,
@@ -121,7 +135,7 @@ export function DownloadsProvider({ children }: { children: React.ReactNode }) {
     listDownloads: () => downloadManager.listDownloads(),
     getStorageEstimate: () => downloadManager.getStorageEstimate(),
     getCoverUrl: (url) => downloadManager.getCoverObjectUrl(url),
-  }), [ready, isOnline, offlineMode, setOfflineMode]);
+  }), [version, ready, isOnline, offlineMode, setOfflineMode]);
 
   return <DownloadsContext.Provider value={value}>{children}</DownloadsContext.Provider>;
 }
